@@ -7,4 +7,14 @@ export default defineConfig({
     server: {
         port: 3002,
     },
+    build: {
+        emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                entryFileNames: 'bundle.js',
+                chunkFileNames: 'bundle.js',
+                assetFileNames: 'main.[ext]',
+            },
+        },
+    },
 });
