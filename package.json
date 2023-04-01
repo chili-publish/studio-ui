@@ -1,45 +1,54 @@
 {
-  "name": "studio-end-user-workspace",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "description": "The end user workspace for CHILI GraFx",
-  "main": "src/main.tsx",
-  "repository": "https://github.com/chili-publish/studio-end-user-workspace",
-  "license": "MIT",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
-    "@typescript-eslint/parser": "^4.28.4",
-    "@vitejs/plugin-react-swc": "^3.0.0",
-    "eslint": "^8.2.0",
-    "eslint-config-airbnb": "19.0.4",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-standard-with-typescript": "^34.0.1",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "prettier": "^2.8.7",
-    "typescript": "*",
-    "vite": "^4.2.0"
-  },
-  "engines": {
-    "node": ">=18.0.0 <19.0.0"
-  }
+    "name": "studio-end-user-workspace",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "description": "The end user workspace for CHILI GraFx",
+    "main": "src/main.tsx",
+    "repository": "https://github.com/chili-publish/studio-end-user-workspace",
+    "license": "MIT",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+        "lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
+        "ci-lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,json}\"",
+        "postinstall": "node ./node_modules/husky/lib/bin install"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "engines": {
+        "node": ">=18.0.0 <19.0.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.28",
+        "@types/react-dom": "^18.0.11",
+        "@typescript-eslint/eslint-plugin": "^5.43.0",
+        "@typescript-eslint/parser": "^4.28.4",
+        "@vitejs/plugin-react-swc": "^3.0.0",
+        "eslint": "^8.2.0",
+        "eslint-config-airbnb": "19.0.4",
+        "eslint-config-airbnb-typescript": "^17.0.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-config-standard-with-typescript": "^34.0.1",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-jsx-a11y": "^6.5.1",
+        "eslint-plugin-n": "^15.0.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-promise": "^6.0.0",
+        "eslint-plugin-react": "^7.28.0",
+        "eslint-plugin-react-hooks": "^4.3.0",
+        "prettier": "^2.8.7",
+        "typescript": "*",
+        "vite": "^4.2.0",
+        "husky": "^8.0.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run format-staged"
+        }
+    }
 }

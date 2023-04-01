@@ -19,7 +19,6 @@ module.exports = {
     extends: [
         'airbnb',
         'airbnb/hooks',
-        'airbnb-typescript',
         'plugin:import/errors',
         'plugin:import/warnings',
         'plugin:import/typescript',
@@ -33,7 +32,6 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: './tsconfig.json',
         ecmaFeatures: {
             jsx: true, // Allows for the parsing of JSX
         },
