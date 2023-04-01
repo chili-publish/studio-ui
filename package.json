@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "The end user workspace for CHILI GraFx",
+  "main": "src/main.tsx",
+  "repository": "https://github.com/chili-publish/studio-end-user-workspace",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -18,5 +22,8 @@
     "@vitejs/plugin-react-swc": "^3.0.0",
     "typescript": "^4.9.3",
     "vite": "^4.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
   }
 }
