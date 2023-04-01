@@ -51,6 +51,7 @@ If a new package will be installed,please check the package license information.
 
 `alias linkcomponents='cd ~/path/to/grafx-shared-components && yarn build && yarn link && cd ~/path/to/studio-end-user-workspace && yarn link @chili-publish/grafx-shared-components'`
 `alias linksdk='cd ~/path/to/editor-sdk && yarn build && yarn link && cd ~/path/to/studio-end-user-workspace && yarn link @chili-publish/editor-sdk'`
+
 ## Scripts
 
 ### Start the dev application
@@ -60,3 +61,7 @@ If a new package will be installed,please check the package license information.
 ### Make production build
 
 `yarn build`
+
+### Run linter
+
+`yarn lint`
