@@ -76,8 +76,7 @@ jobs:
                   mkdir -p ${coveragePath%"/merge"}
                   mkdir -p ${buildPath%"/merge"}
 
-                  cp -R coverage/lcov-report/index.html coverage/lcov-report/coverage.html
-                  cp -R coverage/lcov-report/src coverage/lcov-report/coverage.html  coverage/lcov-report/base.css coverage/lcov-report/prettify.css ${coveragePath%"/merge"}
+                  cp -R coverage ${coveragePath%"/merge"}
                   cp -R dist/* ${buildPath%"/merge"}
             - name: Copy to Azure Blob Storage
               uses: azure/CLI@v1
