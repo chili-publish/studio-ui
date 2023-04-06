@@ -15,7 +15,7 @@ jobs:
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
             - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -48,7 +48,7 @@ jobs:
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
             - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -95,7 +95,7 @@ jobs:
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
             - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -142,7 +142,7 @@ jobs:
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
             - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://npm.pkg.github.com'

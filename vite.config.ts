@@ -7,6 +7,7 @@ export default defineConfig({
     server: {
         port: 3002,
     },
+    base: './',
     build: {
         emptyOutDir: true,
         rollupOptions: {
