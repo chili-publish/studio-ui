@@ -1,0 +1,55 @@
+name: Build and deploy to PRD
+on:
+    release:
+        types: [released]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: run license check
+              run: yarn validate-licenses
+            - name: run linting
+              run: yarn ci-lint
+            - name: run tests
+              run: yarn cover
+            - name: build code
+              run: yarn build
+            - name: copy file branch
+              run: |
+                  export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
+                  export PACKAGE_VERSION_TRIMMED=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const path = version[0] + '.' + version[1]; console.log(path)")
+                  export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.');console.log(version[2])")
+
+                  buildPath=upload/$PACKAGE_VERSION_TRIMMED/$PACKAGE_VERSION_PATCH
+                  latestPath=upload/latest
+                  versionedLatestPath=upload/$PACKAGE_VERSION_TRIMMED/latest
+
+                  mkdir -p ${buildPath%"/merge"}
+                  mkdir -p ${latestPath%"/merge"}
+                  mkdir -p ${versionedLatestPath%"/merge"}
+
+
+                  cp -R dist/* ${buildPath%"/merge"}
+                  cp -R dist/* ${latestPath%"/merge"}
+                  cp -R dist/* ${versionedLatestPath%"/merge"}
+            - name: Copy to Azure Blob Storage
+              uses: azure/CLI@v1
+              with:
+                  inlineScript: |
+                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_PRD_CONNECTION_STRING }}" --overwrite true
