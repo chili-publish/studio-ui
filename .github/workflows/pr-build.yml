@@ -1,0 +1,86 @@
+name: Build and deploy PR
+on: [pull_request]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: run license check
+              run: yarn validate-licenses
+            - name: run linting
+              run: yarn ci-lint
+            - name: run tests
+              run: yarn cover
+            - name: Publish Unit Test Results
+              uses: EnricoMi/publish-unit-test-result-action@v2
+              if: always()
+              with:
+                  files: coverage/**/*.xml
+            - name: build code
+              run: yarn build
+
+            - name: 'Comment on PR'
+              uses: actions/github-script@0.3.0
+              if: github.event_name == 'pull_request'
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  script: |
+                      const formatBytes=(a, b = 2, k = 1024)=>{
+                          with (Math) {
+                              let d = floor(log(a) / log(k));
+                              return 0 == a
+                                  ? '0 Bytes'
+                                  : parseFloat((a / pow(k, d)).toFixed(max(0, b))) +
+                                        ' ' +
+                                        ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][d];
+                          }
+                      }
+                      const fs = require("fs");
+                      const stats = fs.statSync("./dist/bundle.js")
+                      const fileSizeInBytes = stats.size;
+                      const limit=1000000;
+                      const getSizeDif = () => {
+                          let sizeDif = 0;
+                          if (limit > fileSizeInBytes) {
+                              sizeDif = limit - fileSizeInBytes;
+                              return `${formatBytes(sizeDif, 3)} less than limit`;
+                          }
+                          sizeDif = fileSizeInBytes - limit;
+                          return `${formatBytes(sizeDif, 3)} more than limit`;
+                      };
+
+                      const formattedSize = formatBytes(stats.size,3);
+                      const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
+
+                      github.issues.createComment({ issue_number, owner, repo, body: 'PR bundle size is ' + formattedSize+ ' and ' +getSizeDif()+'.'  });
+            - name: copy file branch
+              run: |
+                  coveragePath=upload/coverage_reports/$CI_REF_NAME
+                  buildPath=upload/pr_builds/$CI_REF_NAME
+
+                  mkdir -p ${coveragePath%"/merge"}
+                  mkdir -p ${buildPath%"/merge"}
+
+                  cp -R coverage/lcov-report/index.html coverage/lcov-report/coverage.html
+                  cp -R coverage/lcov-report/src coverage/lcov-report/coverage.html  coverage/lcov-report/base.css coverage/lcov-report/prettify.css ${coveragePath%"/merge"}
+                  cp -R dist/* ${buildPath%"/merge"}
+            - name: Copy to Azure Blob Storage
+              uses: azure/CLI@v1
+              with:
+                  inlineScript: |
+                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
