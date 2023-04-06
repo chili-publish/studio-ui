@@ -1,0 +1,166 @@
+name: Build and deploy to DEV / STG
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build-preflight:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.PACKAGE_SECRET }}
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: run license check
+              run: yarn validate-licenses
+            - name: run linting
+              run: yarn ci-lint
+            - name: run tests
+              run: yarn cover
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: coverage-artifact
+                  path: coverage/coverage-summary.json
+
+    build-deploy-dev:
+        needs: build-preflight
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.PACKAGE_SECRET }}
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: build code
+              run: yarn build
+            - name: copy file branch
+              run: |
+                  export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
+                  export PACKAGE_VERSION_TRIMMED=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const path = version[0] + '.' + version[1]; console.log(path)")
+                  export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.');console.log(version[2])")
+
+                  buildPath=upload/$PACKAGE_VERSION_TRIMMED/$PACKAGE_VERSION_PATCH
+                  latestPath=upload/latest
+                  versionedLatestPath=upload/$PACKAGE_VERSION_TRIMMED/latest
+
+                  mkdir -p ${buildPath%"/merge"}
+                  mkdir -p ${latestPath%"/merge"}
+                  mkdir -p ${versionedLatestPath%"/merge"}
+
+                  cp -R dist/* ${buildPath%"/merge"}
+                  cp -R dist/* ${latestPath%"/merge"}
+                  cp -R dist/* ${versionedLatestPath%"/merge"}
+            - name: Copy to Azure Blob Storage
+              uses: azure/CLI@v1
+              with:
+                  inlineScript: |
+                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+
+    build-deploy-stg:
+        needs: build-preflight
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.PACKAGE_SECRET }}
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: build code stable
+              run: yarn build:stable
+            - name: copy file branch
+              run: |
+                  export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
+                  export PACKAGE_VERSION_TRIMMED=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const path = version[0] + '.' + version[1]; console.log(path)")
+                  export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.');console.log(version[2])")
+
+                  buildPath=upload/$PACKAGE_VERSION_TRIMMED/$PACKAGE_VERSION_PATCH
+                  latestPath=upload/latest
+                  versionedLatestPath=upload/$PACKAGE_VERSION_TRIMMED/latest
+
+                  mkdir -p ${buildPath%"/merge"}
+                  mkdir -p ${latestPath%"/merge"}
+                  mkdir -p ${versionedLatestPath%"/merge"}
+
+                  cp -R dist/* ${buildPath%"/merge"}
+                  cp -R dist/* ${latestPath%"/merge"}
+                  cp -R dist/* ${versionedLatestPath%"/merge"}
+            - name: Copy to Azure Blob Storage
+              uses: azure/CLI@v1
+              with:
+                  inlineScript: |
+                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_STG_CONNECTION_STRING }}" --overwrite true
+
+    bump-version:
+        needs: build-preflight
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.PACKAGE_SECRET }}
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - uses: actions/download-artifact@v3
+              with:
+                  name: coverage-artifact
+                  path: coverage
+            - name: Display structure of downloaded files
+              run: ls -R
+              working-directory: coverage
+            - name: run readmeUpdater
+              run: yarn make-badges
+            - name: bump version
+              uses: phips28/gh-action-bump-version@master
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+              with:
+                  version-type: 'patch'
+                  commit-message: 'CI: bumps version to {{version}} [skip ci]'

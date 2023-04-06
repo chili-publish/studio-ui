@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="3.091">
-  <testsuite name="Dum test" errors="0" failures="0" skipped="0" timestamp="2023-04-01T12:02:32" time="2.298" tests="1">
-    <testcase classname="Dum test just a placeholder test" name="Dum test just a placeholder test" time="0.001">
-    </testcase>
-  </testsuite>
-</testsuites>
