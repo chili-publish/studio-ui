@@ -105,8 +105,8 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: build code stable
-              run: yarn build:stable
+            - name: build code
+              run: yarn build
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
