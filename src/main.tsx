@@ -39,7 +39,7 @@ export default class EndUserWorkspace {
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken?: string,
     ) {
-        const editorLink = 'default editor link';
+        const editorLink = '';
         return new this(selector, editorLink, {
             templateDownloadUrl,
             templateUploadUrl,

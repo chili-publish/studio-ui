@@ -13,7 +13,21 @@
         <script>
             // We need to wait for the DOMContentLoaded otherwise the script will not find EndUserWorkspace
             document.addEventListener('DOMContentLoaded', () => {
-                EndUserWorkspace.defaultConfigWithEditorLink('end-user-workspace-root', 'default-editor-link');
+                var queryString = window.location.search;
+                var urlParams = new URLSearchParams(queryString);
+
+                var editorVersion = urlParams.get('editor');
+                editorVersion = editorVersion == null ? 'master' : editorVersion;
+
+                const isProd = window.location.origin.includes('red-tree');
+                var baseUrl = isProd
+                    ? 'https://chili-dev.azureedge.net/'
+                    : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
+
+                EndUserWorkspace.defaultConfigWithEditorLink(
+                    'end-user-workspace-root',
+                    baseUrl + '/editor/' + editorVersion + '/web',
+                );
                 // // use this for local dev and debug
                 // EndUserWorkspace.studioLoaderConfig(
                 //     'end-user-workspace-root',
