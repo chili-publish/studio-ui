@@ -17,9 +17,7 @@ interface projectConfig {
     authToken?: string;
 }
 export default class EndUserWorkspace {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
