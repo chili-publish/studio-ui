@@ -1,9 +1,5 @@
-// import { BreakPoints } from '@chili-publish/grafx-shared-components';
+import { BreakPoints } from '@chili-publish/grafx-shared-components';
 import { useLayoutEffect, useState } from 'react';
-
-const BreakPoints = {
-    mobileSize: '768px',
-};
 
 function useMobileSize() {
     const [isMobileSize, setIsMobileSize] = useState<boolean>();

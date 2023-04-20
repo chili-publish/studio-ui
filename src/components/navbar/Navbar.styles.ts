@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import { mobileMediaQuery } from '../../utils/media-utils';
 
 export const StyledNavbar = styled.nav`
     box-sizing: border-box;
@@ -31,17 +32,21 @@ export const NavbarItem = styled.li<{ hideOnMobile?: boolean }>`
         margin-left: auto;
     }
 
-    @media (max-width: 768px) {
+    ${mobileMediaQuery} {
         display: ${(props) => (props.hideOnMobile ? 'none !important' : 'list-item')};
     }
 `;
 
-export const NavbarLabel = styled.span`
+export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`
     max-width: 15ch;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: ${FontSizes.regular};
+
+    ${mobileMediaQuery} {
+        display: ${(props) => (props.hideOnMobile ? 'none !important' : 'list-item')};
+    }
 `;
 
 export const NavbarGroup = styled.div<{ withGap?: boolean }>`
