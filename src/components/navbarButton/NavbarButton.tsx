@@ -2,7 +2,7 @@ import { Button, ButtonTypes, FontSizes, Icon } from '@chili-publish/grafx-share
 import { NavbarButtonProps } from './NavbarButton.types';
 
 function NavbarButton(props: NavbarButtonProps) {
-    const { label, ariaLabel, icon, disabled, flipIconY = false, buttonType = ButtonTypes.tertiary } = props;
+    const { label, ariaLabel, icon, disabled, flipIconY = false, buttonType = ButtonTypes.tertiary, noPadding } = props;
 
     const handleOnClick = () => {
         // eslint-disable-next-line no-console
@@ -16,7 +16,7 @@ function NavbarButton(props: NavbarButtonProps) {
             onClick={() => handleOnClick()}
             icon={<Icon key={`icon-${ariaLabel}`} icon={icon} transform={{ flipY: flipIconY }} />}
             disabled={disabled}
-            noPadding={!label}
+            noPadding={noPadding}
             label={label}
             buttonFontSize={FontSizes.button}
         />

@@ -9,4 +9,5 @@ export type NavbarButtonProps = {
     disabled?: boolean;
     flipIconY?: boolean;
     buttonType?: ButtonTypes;
+    noPadding?: boolean;
 };

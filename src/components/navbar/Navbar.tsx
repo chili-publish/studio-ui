@@ -41,9 +41,14 @@ function Navbar() {
                 content: (
                     <NavbarButton
                         ariaLabel="Download"
-                        label={!isMobile ? <NavbarLabel key="label-Download">Download</NavbarLabel> : undefined}
+                        label={
+                            <NavbarLabel key="Download" hideOnMobile>
+                                Download
+                            </NavbarLabel>
+                        }
                         icon={AvailableIcons.faArrowDownToLine}
                         buttonType={ButtonTypes.primary}
+                        noPadding={isMobile}
                     />
                 ),
             },
