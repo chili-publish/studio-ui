@@ -41,7 +41,7 @@ function Navbar() {
                 content: (
                     <NavbarButton
                         ariaLabel="Download"
-                        label={!isMobile ? <NavbarLabel hideOnMobile>Download</NavbarLabel> : undefined}
+                        label={!isMobile ? <NavbarLabel key="label-Download">Download</NavbarLabel> : undefined}
                         icon={AvailableIcons.faArrowDownToLine}
                         buttonType={ButtonTypes.primary}
                     />
@@ -57,7 +57,7 @@ function Navbar() {
     );
 
     return (
-        <StyledNavbar>
+        <StyledNavbar data-testid="navbar">
             <ul>
                 {navbarItems.map((item) => (
                     <NavbarItem aria-label={item.label} key={item.label} hideOnMobile={item.hideOnMobile}>

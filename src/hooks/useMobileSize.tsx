@@ -1,10 +1,14 @@
-import { BreakPoints } from '@chili-publish/grafx-shared-components/lib/utils/enums';
-import { useEffect, useState } from 'react';
+// import { BreakPoints } from '@chili-publish/grafx-shared-components';
+import { useLayoutEffect, useState } from 'react';
+
+const BreakPoints = {
+    mobileSize: '768px',
+};
 
 function useMobileSize() {
     const [isMobileSize, setIsMobileSize] = useState<boolean>();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         function checkMobileSize() {
             setIsMobileSize(window.innerWidth <= parseInt(BreakPoints.mobileSize, 10));
         }

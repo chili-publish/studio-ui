@@ -32,20 +32,16 @@ export const NavbarItem = styled.li<{ hideOnMobile?: boolean }>`
     }
 
     @media (max-width: 768px) {
-        ${({ hideOnMobile }) => hideOnMobile && 'display: none'};
+        display: ${(props) => (props.hideOnMobile ? 'none !important' : 'list-item')};
     }
 `;
 
-export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`
+export const NavbarLabel = styled.span`
     max-width: 15ch;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: ${FontSizes.regular};
-
-    @media (max-width: 768px) {
-        ${({ hideOnMobile }) => hideOnMobile && 'display: none'};
-    }
 `;
 
 export const NavbarGroup = styled.div<{ withGap?: boolean }>`

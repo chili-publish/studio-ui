@@ -11,11 +11,10 @@ function NavbarButton(props: NavbarButtonProps) {
 
     return (
         <Button
-            aria-label={ariaLabel}
             type="button"
             buttonType={buttonType}
             onClick={() => handleOnClick()}
-            icon={<Icon icon={icon} transform={{ flipY: flipIconY }} />}
+            icon={<Icon key={`icon-${ariaLabel}`} icon={icon} transform={{ flipY: flipIconY }} />}
             disabled={disabled}
             noPadding={!label}
             label={label}

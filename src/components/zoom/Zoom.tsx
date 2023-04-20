@@ -6,13 +6,17 @@ import { NavbarGroup } from '../navbar/Navbar.styles';
 
 function ZoomButton(props: ZoomButtonProps) {
     const { type, handleOnClick } = props;
+    const isDecrement = type === ZoomTypeEnum.DECREMENT;
+    const ariaLabel = `Zoom ${isDecrement ? 'out' : 'in'}`;
+
     return (
         <Button
-            aria-label={type === ZoomTypeEnum.DECREMENT ? 'zoom out' : 'zoom in'}
             type="button"
             buttonType={ButtonTypes.tertiary}
             onClick={() => handleOnClick(type)}
-            icon={<Icon icon={type === ZoomTypeEnum.DECREMENT ? AvailableIcons.faMinus : AvailableIcons.faPlus} />}
+            icon={
+                <Icon key={`icon-${ariaLabel}`} icon={isDecrement ? AvailableIcons.faMinus : AvailableIcons.faPlus} />
+            }
             noPadding
         />
     );
@@ -31,7 +35,7 @@ function Zoom() {
     };
 
     return (
-        <NavbarGroup withGap>
+        <NavbarGroup withGap data-testid="zoom">
             <ZoomButton type={ZoomTypeEnum.DECREMENT} handleOnClick={handleOnClick} />
             <ZoomValue aria-label="zoom level">{zoom}%</ZoomValue>
             <ZoomButton handleOnClick={handleOnClick} />
