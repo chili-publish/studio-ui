@@ -14,7 +14,8 @@
     -webkit-text-size-adjust: 100%;
 }
 #end-user-workspace-root {
-    margin: auto;
+    width: 100vw;
+    height: 100vh;
 }
 
 a {

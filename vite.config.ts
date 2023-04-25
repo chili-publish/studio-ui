@@ -8,6 +8,14 @@ export default defineConfig({
         port: 3002,
     },
     base: './',
+    optimizeDeps: {
+        include: ['node_modules/@chili-publish/grafx-shared-components'],
+    },
+
+    resolve: {
+        // force Vite to always resolve listed dependencies to the same copy (from project root).
+        dedupe: ['react', 'react-dom'],
+    },
     build: {
         emptyOutDir: true,
         rollupOptions: {
