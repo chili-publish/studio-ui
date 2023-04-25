@@ -23,6 +23,9 @@
         "validate-licenses": "node validate_licenses.cjs"
     },
     "dependencies": {
+        "@chili-publish/editor-sdk": "^0.118.0",
+        "@chili-publish/grafx-shared-components": "^0.31.12",
+        "axios": "^1.3.6",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     },
