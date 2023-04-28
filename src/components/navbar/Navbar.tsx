@@ -17,7 +17,7 @@ function Navbar() {
                 label: 'Project information',
                 content: (
                     <NavbarGroup>
-                        <NavbarButton ariaLabel="Go back" icon={AvailableIcons.faArrowLeft} />
+                        <NavbarButton ariaLabel="Go back" icon={AvailableIcons.faArrowLeft} noPadding />
                         <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
                     </NavbarGroup>
                 ),
@@ -31,8 +31,9 @@ function Navbar() {
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
                             disabled={!hasHistory}
+                            noPadding
                         />
-                        <NavbarButton ariaLabel="Redo" icon={AvailableIcons.faArrowTurnDownRight} flipIconY />
+                        <NavbarButton ariaLabel="Redo" icon={AvailableIcons.faArrowTurnDownRight} flipIconY noPadding />
                     </NavbarGroup>
                 ),
             },
