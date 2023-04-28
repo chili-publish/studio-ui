@@ -20,11 +20,16 @@ body {
     margin: 0;
 }
 
+#end-user-workspace-root {
+    margin: auto;
+}
+
 a {
     font-weight: 500;
     color: #646cff;
     text-decoration: inherit;
 }
+
 a:hover {
     color: #535bf2;
 }

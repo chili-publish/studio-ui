@@ -3,8 +3,50 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-);
+declare global {
+    interface Window {
+        EndUserWorkspace: unknown;
+    }
+}
+
+interface projectConfig {
+    templateDownloadUrl: string;
+    templateUploadUrl: string;
+    templateId: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+    authToken?: string;
+}
+export default class EndUserWorkspace {
+    constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
+        ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
+            <React.StrictMode>
+                <App editorLink={editorLink} projectConfig={projectConfig} />
+            </React.StrictMode>,
+        );
+    }
+
+    static defaultConfigWithEditorLink(selector: string, editorLink: string) {
+        return new this(selector, editorLink, undefined);
+    }
+
+    static studioLoaderConfig(
+        selector: string,
+        templateDownloadUrl: string,
+        templateUploadUrl: string,
+        templateId: string,
+        graFxStudioEnvironmentApiBaseUrl: string,
+        authToken?: string,
+    ) {
+        const editorLink = '';
+        return new this(selector, editorLink, {
+            templateDownloadUrl,
+            templateUploadUrl,
+            templateId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+        });
+    }
+}
+
+// Make this class accessible on window
+window.EndUserWorkspace = EndUserWorkspace;
