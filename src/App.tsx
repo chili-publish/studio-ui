@@ -18,6 +18,8 @@ interface projectConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken?: string;
     refreshTokenAction: () => Promise<string>;
+    projectName: string;
+    onBack: () => void;
 }
 function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
@@ -124,6 +126,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
 
     return (
         <div className="App">
+            <h3>{projectConfig?.projectName}</h3>
+            {/* TODO: remove after integration with topbar */}
+            <button type="button" onClick={() => projectConfig?.onBack() || null}>
+                Back
+            </button>
             <div className="editor-workspace-canvas" data-id="layout-canvas">
                 <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
             </div>
