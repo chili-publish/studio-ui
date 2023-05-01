@@ -16,7 +16,7 @@ function NavbarButton(props: NavbarButtonProps) {
             onClick={() => handleOnClick()}
             icon={<Icon key={`icon-${ariaLabel}`} icon={icon} transform={{ flipY: flipIconY }} />}
             disabled={disabled}
-            noPadding={noPadding}
+            padding={noPadding ? '0px' : undefined}
             label={label}
             buttonFontSize={FontSizes.button}
         />

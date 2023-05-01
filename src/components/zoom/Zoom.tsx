@@ -17,7 +17,7 @@ function ZoomButton(props: ZoomButtonProps) {
             icon={
                 <Icon key={`icon-${ariaLabel}`} icon={isDecrement ? AvailableIcons.faMinus : AvailableIcons.faPlus} />
             }
-            noPadding
+            padding="0"
         />
     );
 }
