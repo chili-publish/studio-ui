@@ -15,10 +15,8 @@ function VariablesPanel() {
                     buttonType={ButtonTypes.primary}
                     type="button"
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
-                    buttonFontSize={FontSizes.button}
-                    cornerRadius="3rem"
-                    padding="15px"
                     onClick={() => setIsVariablesPanelVisible(true)}
+                    style={{ borderRadius: '3rem', padding: '0.9375rem', fontSize: FontSizes.button }}
                 />
             </EditButtonWrapper>
             <Tray isOpen={isVariablesPanelVisible} close={closeVariablePanel} title="Customize">
