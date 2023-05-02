@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
+import EditorSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
 
 import './App.css';
+import VariablesComponentsList from './VariablesComponents';
 
 declare global {
     interface Window {
@@ -24,6 +25,7 @@ interface projectConfig {
 function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
+    const [variables, setVariables] = useState<Variable[]>([]);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -70,6 +72,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
+            },
+            onVariableListChanged: (variableList: Variable[]) => {
+                // eslint-disable-next-line no-console
+                console.log('%c⧭', 'color: #7f2200', variableList);
+                setVariables(variableList);
+                // dispatch(setVariables(variableList));
             },
             editorLink,
         });
@@ -124,6 +132,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
         graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
     });
 
+    const handleChange = (e: any) => {
+        // eslint-disable-next-line no-console
+        console.log('%c⧭', 'color: #8c0038', e.target.value);
+    };
+
     return (
         <div className="App">
             <h3>{projectConfig?.projectName}</h3>
@@ -131,8 +144,29 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
             <button type="button" onClick={() => projectConfig?.onBack() || null}>
                 Back
             </button>
-            <div className="editor-workspace-canvas" data-id="layout-canvas">
-                <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
+            <div style={{ display: 'flex', height: '100%' }}>
+                <div style={{ height: '100%', width: '300px', display: 'flex', flexDirection: 'column' }}>
+                    {variables.length > 0 &&
+                        variables.map((variable: any) => {
+                            return (
+                                <>
+                                    <p>{variable.name}</p>
+                                    {React.createElement(
+                                        VariablesComponentsList[variable.type as keyof typeof VariablesComponentsList],
+                                        {
+                                            key: `variable-${variable.id}`,
+                                            value: variable.value,
+                                            handleChange,
+                                            src: variable.src?.url || '',
+                                        },
+                                    )}
+                                </>
+                            );
+                        })}
+                </div>
+                <div className="editor-workspace-canvas" data-id="layout-canvas">
+                    <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
+                </div>
             </div>
         </div>
     );
