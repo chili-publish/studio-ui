@@ -1,4 +1,4 @@
-import './App.css';
+import Navbar from './components/navbar/Navbar';
 
 interface projectConfig {
     templateDownloadUrl: string;
@@ -9,7 +9,8 @@ interface projectConfig {
 }
 function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
     return (
-        <div className="App">
+        <div>
+            <Navbar />
             <h1>End User workspace</h1>
             <h3>editorLink : {editorLink}</h3>
             <h3>authtoken : {projectConfig?.authToken}</h3>
