@@ -11,9 +11,8 @@
 }
 
 .editor-workspace-canvas {
-    height: 90%;
-    width: 90%;
-    margin: auto;
+    height: 100%;
+    width: 100%;
 }
 
 @keyframes logo-spin {
