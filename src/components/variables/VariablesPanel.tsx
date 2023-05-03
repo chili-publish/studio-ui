@@ -26,6 +26,7 @@ function VariablesPanel() {
                     <div style={{ display: 'flex' }}>TextF2:</div>
                     <div style={{ display: 'flex' }}>TextF1:</div>
                     <div style={{ display: 'flex' }}>TextF2:</div>
+                    <input />
                 </div>
             </Tray>
         </>
