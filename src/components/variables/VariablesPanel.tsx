@@ -21,11 +21,7 @@ function VariablesPanel() {
             </EditButtonWrapper>
             <Tray isOpen={isVariablesPanelVisible} close={closeVariablePanel} title="Customize">
                 <div style={{ marginTop: '30px' }}>
-                    <div style={{ display: 'flex' }}>TextF1:</div>
-                    <div style={{ display: 'flex' }}>TextF2:</div>
-                    <div style={{ display: 'flex' }}>TextF2:</div>
-                    <div style={{ display: 'flex' }}>TextF1:</div>
-                    <div style={{ display: 'flex' }}>TextF2:</div>
+                    <div style={{ display: 'flex' }}>TO BE IMPLEMENTED</div>
                     <input />
                 </div>
             </Tray>
