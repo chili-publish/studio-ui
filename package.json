@@ -1,7 +1,7 @@
 {
     "name": "studio-end-user-workspace",
     "private": true,
-    "version": "0.0.5",
+    "version": "0.0.6",
     "type": "module",
     "description": "The end user workspace for CHILI GraFx",
     "main": "src/main.tsx",
