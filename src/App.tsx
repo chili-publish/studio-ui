@@ -1,5 +1,6 @@
 import { ImagePicker } from '@chili-publish/grafx-shared-components';
 import Navbar from './components/navbar/Navbar';
+import VariablesPanel from './components/variables/VariablesPanel';
 
 interface projectConfig {
     templateDownloadUrl: string;
@@ -34,6 +35,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
             <h3>templateUploadUrl : {projectConfig?.templateUploadUrl}</h3>
             <h3>templateId : {projectConfig?.templateId}</h3>
             <h3>graFxStudioEnvironmentApiBaseUrl : {projectConfig?.graFxStudioEnvironmentApiBaseUrl}</h3>
+            <VariablesPanel />
         </div>
     );
 }
