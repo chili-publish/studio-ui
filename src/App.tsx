@@ -3,6 +3,7 @@ import axios from 'axios';
 import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
+import VariablesPanel from './components/variables/VariablesPanel';
 import './App.css';
 
 declare global {
@@ -125,6 +126,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
     return (
         <div style={{ height: '100vh' }}>
             <Navbar />
+            <VariablesPanel />
+
             <div className="editor-workspace-canvas" data-id="layout-canvas">
                 <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
             </div>
