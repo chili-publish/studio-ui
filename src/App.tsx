@@ -1,3 +1,4 @@
+import { ImagePicker } from '@chili-publish/grafx-shared-components';
 import Navbar from './components/navbar/Navbar';
 
 interface projectConfig {
@@ -11,6 +12,21 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
     return (
         <div>
             <Navbar />
+            <div style={{ width: '260px', padding: '1rem' }}>
+                <ImagePicker name="Empty image" label={<span>Empty image</span>} />
+            </div>
+            <div style={{ width: '260px', padding: '1rem' }}>
+                <ImagePicker
+                    previewImage={{
+                        url: 'https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg',
+                        name: 'Test image',
+                        format: 'png',
+                        id: '1',
+                    }}
+                    name="Test image"
+                    label={<span>Test image</span>}
+                />
+            </div>
             <h1>End User workspace</h1>
             <h3>editorLink : {editorLink}</h3>
             <h3>authtoken : {projectConfig?.authToken}</h3>
