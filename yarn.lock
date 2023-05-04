@@ -318,24 +318,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.32.3":
-  version "0.32.3"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.32.3/acea5fbce5e9e88d4291f3332591da696b0e3fc6#acea5fbce5e9e88d4291f3332591da696b0e3fc6"
-  integrity sha512-rrIoLX6mZJnCNVSMDt/giJKUIThIBctJYSqantde9z6pyzadX8qEvwMh2PxdSwZuHgQYCARSqNAXlHrI4Gw1mg==
-  dependencies:
-    "@fortawesome/fontawesome-svg-core" "^6.4.0"
-    "@fortawesome/free-regular-svg-icons" "^6.4.0"
-    "@fortawesome/free-solid-svg-icons" "^6.4.0"
-    "@fortawesome/pro-light-svg-icons" "^6.4.0"
-    "@fortawesome/pro-regular-svg-icons" "^6.4.0"
-    "@fortawesome/pro-solid-svg-icons" "^6.4.0"
-    "@fortawesome/react-fontawesome" "^0.2.0"
-    react-select "^5.6.1"
-    styled-components "^5.3.6"
-"@chili-publish/grafx-shared-components@^0.32.3":
-  version "0.32.3"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.32.3/acea5fbce5e9e88d4291f3332591da696b0e3fc6#acea5fbce5e9e88d4291f3332591da696b0e3fc6"
-  integrity sha512-rrIoLX6mZJnCNVSMDt/giJKUIThIBctJYSqantde9z6pyzadX8qEvwMh2PxdSwZuHgQYCARSqNAXlHrI4Gw1mg==
+"@chili-publish/grafx-shared-components@^0.33.4":
+  version "0.33.4"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.33.4/6cc6fd7edab6cdde8c350bab78533bf614301a0d#6cc6fd7edab6cdde8c350bab78533bf614301a0d"
+  integrity sha512-Rjd8G2timYdw1P3k3jCE25vGu/uxrZQi2EAgV+/VN7b1vo+anKTjPF8YSylU9FAFFR/nYM/as7JKuaGfXWTECg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/free-regular-svg-icons" "^6.4.0"
