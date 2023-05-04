@@ -15,6 +15,7 @@ interface projectConfig {
     templateId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken?: string;
+    refreshTokenAction: () => Promise<string>;
 }
 export default class EndUserWorkspace {
     constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
@@ -35,7 +36,8 @@ export default class EndUserWorkspace {
         templateUploadUrl: string,
         templateId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
-        authToken?: string,
+        authToken: string,
+        refreshTokenAction: () => Promise<string>,
     ) {
         const editorLink = '';
         return new this(selector, editorLink, {
@@ -44,6 +46,7 @@ export default class EndUserWorkspace {
             templateId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            refreshTokenAction: () => refreshTokenAction(),
         });
     }
 }

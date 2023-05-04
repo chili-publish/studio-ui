@@ -15,19 +15,27 @@ interface ImagePanelProps {
 }
 
 function ImagePanel({ showVariablesPanel }: ImagePanelProps) {
-    const { assets, handleAssetClick, breadCrumbs } = useImagePanel();
+    const { assets, handleAssetClick, breadCrumbs, navigationStack, setNavigationStack } = useImagePanel();
+
+    const handleBackButtonPressed = () => {
+        if (!navigationStack.length) {
+            showVariablesPanel();
+        } else {
+            const navigationStackCopy = [...navigationStack];
+            navigationStackCopy.pop();
+            setNavigationStack(navigationStackCopy);
+        }
+    };
+
     return (
         <>
             <LeftPanelHeader>
                 <FirstRow>
                     <Button
                         buttonType={ButtonTypes.tertiary}
-                        onClick={showVariablesPanel}
+                        onClick={handleBackButtonPressed}
                         type="button"
                         icon={<Icon icon={AvailableIcons.faArrowLeft} />}
-                        width="2.5rem"
-                        height="2.5rem"
-                        noPadding
                     />
                     <HeaderText>Select image</HeaderText>
                 </FirstRow>

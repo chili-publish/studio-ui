@@ -1,7 +1,7 @@
 {
     "name": "studio-end-user-workspace",
     "private": true,
-    "version": "0.0.5",
+    "version": "0.0.6",
     "type": "module",
     "description": "The end user workspace for CHILI GraFx",
     "main": "src/main.tsx",
@@ -23,9 +23,11 @@
         "validate-licenses": "node validate_licenses.cjs"
     },
     "dependencies": {
+        "@chili-publish/grafx-shared-components": "^0.33.4",
+        "@chili-publish/editor-sdk": "^0.118.0",
+        "axios": "^1.3.6",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "@chili-publish/grafx-shared-components": "^0.33.4",
         "styled-components": "^5.3.9"
     },
     "engines": {
