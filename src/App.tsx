@@ -4,6 +4,8 @@ import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
+import { ProjectConfig } from './types/types';
+import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 
 declare global {
@@ -12,15 +14,7 @@ declare global {
     }
 }
 
-interface projectConfig {
-    templateDownloadUrl: string;
-    templateUploadUrl: string;
-    templateId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken?: string;
-    refreshTokenAction: () => Promise<string>;
-}
-function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
 
@@ -124,13 +118,15 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
     });
 
     return (
-        <div style={{ height: '100vh' }}>
+        <div className="app">
             <Navbar />
             <VariablesPanel />
 
             <div className="editor-workspace-canvas" data-id="layout-canvas">
-                <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
+                <div className="chili-editor" id="chili-editor" />
             </div>
+
+            <AnimationTimeline />
         </div>
     );
 }

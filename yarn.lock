@@ -333,10 +333,10 @@
     mathjs "^10.0.2"
     penpal "6.1.0"
 
-"@chili-publish/grafx-shared-components@^0.33.4":
-  version "0.33.4"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.33.4/6cc6fd7edab6cdde8c350bab78533bf614301a0d#6cc6fd7edab6cdde8c350bab78533bf614301a0d"
-  integrity sha512-Rjd8G2timYdw1P3k3jCE25vGu/uxrZQi2EAgV+/VN7b1vo+anKTjPF8YSylU9FAFFR/nYM/as7JKuaGfXWTECg==
+"@chili-publish/grafx-shared-components@^0.34.2":
+  version "0.34.2"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.34.2/f632763f3d63627bea5c592339778b2e1b577bca#f632763f3d63627bea5c592339778b2e1b577bca"
+  integrity sha512-6esihMzbtayGbQkAAbs8TkykSvpaxpRScq67XG3YSxHp1i1BMtey9mUIagJTB6Nh80a1AU/PeTDaw/NtMe1rVg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/free-regular-svg-icons" "^6.4.0"
