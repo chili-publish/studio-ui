@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { ProjectConfig } from './types/types';
 import './index.css';
 
 declare global {
@@ -9,18 +10,8 @@ declare global {
     }
 }
 
-interface projectConfig {
-    templateDownloadUrl: string;
-    templateUploadUrl: string;
-    templateId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken?: string;
-    refreshTokenAction: () => Promise<string>;
-    projectName: string;
-    onBack: () => void;
-}
 export default class EndUserWorkspace {
-    constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
+    constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
         ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />

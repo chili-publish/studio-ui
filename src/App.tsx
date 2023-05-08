@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import EditorSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
-
+import Navbar from './components/navbar/Navbar';
+import VariablesPanel from './components/variables/VariablesPanel';
+import { ProjectConfig } from './types/types';
+import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 import VariablesComponentsList from './VariablesComponents';
 
@@ -12,17 +15,13 @@ declare global {
     }
 }
 
-interface projectConfig {
-    templateDownloadUrl: string;
-    templateUploadUrl: string;
-    templateId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken?: string;
-    refreshTokenAction: () => Promise<string>;
-    projectName: string;
-    onBack: () => void;
+declare global {
+    interface Window {
+        SDK: EditorSDK;
+    }
 }
-function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
+
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
@@ -35,7 +34,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
             if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
                 return projectConfig.refreshTokenAction().then((token) => {
-                    setAuthToken(token);
+                    setAuthToken(token as string);
                     originalRequest.headers.Authorization = `Bearer ${token}`;
                     return axios(originalRequest);
                 });
@@ -138,12 +137,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
     };
 
     return (
-        <div className="App">
-            <h3>{projectConfig?.projectName}</h3>
-            {/* TODO: remove after integration with topbar */}
-            <button type="button" onClick={() => projectConfig?.onBack() || null}>
-                Back
-            </button>
+        <div className="app">
+            <Navbar />
+            <VariablesPanel />
             <div style={{ display: 'flex', height: '100%' }}>
                 <div style={{ height: '100%', width: '300px', display: 'flex', flexDirection: 'column' }}>
                     {variables.length > 0 &&
@@ -164,10 +160,13 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
                             );
                         })}
                 </div>
-                <div className="editor-workspace-canvas" data-id="layout-canvas">
-                    <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
-                </div>
             </div>
+
+            <div className="editor-workspace-canvas" data-id="layout-canvas">
+                <div className="chili-editor" id="chili-editor" />
+            </div>
+
+            <AnimationTimeline />
         </div>
     );
 }
