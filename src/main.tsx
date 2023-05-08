@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AxiosError } from 'axios';
 import App from './App';
 import './index.css';
 
@@ -9,18 +10,18 @@ declare global {
     }
 }
 
-interface projectConfig {
+interface ProjectConfig {
     templateDownloadUrl: string;
     templateUploadUrl: string;
     templateId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken?: string;
-    refreshTokenAction: () => Promise<string>;
+    refreshTokenAction: () => Promise<string | AxiosError>;
     projectName: string;
     onBack: () => void;
 }
 export default class EndUserWorkspace {
-    constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
+    constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
         ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
@@ -39,7 +40,7 @@ export default class EndUserWorkspace {
         templateId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
-        refreshTokenAction: () => Promise<string>,
+        refreshTokenAction: () => Promise<string | AxiosError>,
         projectName: string,
         onBack: () => void,
     ) {

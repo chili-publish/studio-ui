@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
 
@@ -11,17 +11,17 @@ declare global {
     }
 }
 
-interface projectConfig {
+interface ProjectConfig {
     templateDownloadUrl: string;
     templateUploadUrl: string;
     templateId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken?: string;
-    refreshTokenAction: () => Promise<string>;
+    refreshTokenAction: () => Promise<string | AxiosError>;
     projectName: string;
     onBack: () => void;
 }
-function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
 
@@ -32,11 +32,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
             const originalRequest = error.config;
             if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
-                return projectConfig.refreshTokenAction().then((token) => {
-                    setAuthToken(token);
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
-                    return axios(originalRequest);
-                });
+                return projectConfig
+                    .refreshTokenAction()
+                    .then((token) => {
+                        setAuthToken(token as string);
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return axios(originalRequest);
+                    })
+                    .catch((err: AxiosError) => {
+                        // eslint-disable-next-line no-console
+                        console.error(err);
+                    });
             }
 
             return Promise.reject(error);
