@@ -2,10 +2,11 @@ import { AvailableIconsType, ButtonTypes } from '@chili-publish/grafx-shared-com
 import { ReactElement } from 'react';
 
 export type NavbarButtonProps = {
-    key?: string | number;
+    handleOnClick: () => void;
     ariaLabel: string;
-    label?: string | ReactElement;
     icon: AvailableIconsType;
+    key?: string | number;
+    label?: string | ReactElement;
     disabled?: boolean;
     flipIconY?: boolean;
     buttonType?: ButtonTypes;

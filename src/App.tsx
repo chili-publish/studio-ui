@@ -133,7 +133,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     return (
         <div style={{ height: '100vh' }}>
-            <Navbar />
+            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
             <VariablesPanel />
 
             <div className="editor-workspace-canvas" data-id="layout-canvas">
