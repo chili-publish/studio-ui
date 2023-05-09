@@ -1,8 +1,12 @@
-import { AvailableIcons, Button, ButtonTypes, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { useState } from 'react';
+import { AvailableIcons, Button, ButtonTypes, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
+import { Variable } from '@chili-publish/editor-sdk';
 import { EditButtonWrapper } from './VariablesPanel.styles';
+import VariableComponent from '../variableComponent/VariableComponent';
 
-function VariablesPanel() {
+function VariablesPanel(props: { variables: Variable[] }) {
+    const { variables } = props;
+
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
@@ -21,8 +25,16 @@ function VariablesPanel() {
             </EditButtonWrapper>
             <Tray isOpen={isVariablesPanelVisible} close={closeVariablePanel} title="Customize">
                 <div style={{ marginTop: '30px' }}>
-                    <div style={{ display: 'flex' }}>TO BE IMPLEMENTED</div>
-                    <input />
+                    {variables.length > 0 &&
+                        variables.map((variable: Variable) => {
+                            return (
+                                <VariableComponent
+                                    key={`variable-component-${variable.id}`}
+                                    type={variable.type}
+                                    variable={variable}
+                                />
+                            );
+                        })}
                 </div>
             </Tray>
         </>
