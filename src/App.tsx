@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import EditorSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -7,13 +7,6 @@ import VariablesPanel from './components/variables/VariablesPanel';
 import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
-import VariablesComponentsList from './VariablesComponents';
-
-declare global {
-    interface Window {
-        SDK: EditorSDK;
-    }
-}
 
 declare global {
     interface Window {
@@ -33,11 +26,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             const originalRequest = error.config;
             if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
-                return projectConfig.refreshTokenAction().then((token) => {
-                    setAuthToken(token as string);
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
-                    return axios(originalRequest);
-                });
+                return projectConfig
+                    .refreshTokenAction()
+                    .then((token) => {
+                        setAuthToken(token as string);
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return axios(originalRequest);
+                    })
+                    .catch((err: AxiosError) => {
+                        // eslint-disable-next-line no-console
+                        console.error(err);
+                    });
             }
 
             return Promise.reject(error);
@@ -72,11 +71,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
             },
-            onVariableListChanged: (variableList: Variable[]) => {
-                // eslint-disable-next-line no-console
-                console.log('%c⧭', 'color: #7f2200', variableList);
+            onVariableListChanged: (variableList) => {
                 setVariables(variableList);
-                // dispatch(setVariables(variableList));
             },
             editorLink,
         });
@@ -131,36 +127,10 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
     });
 
-    const handleChange = (e: any) => {
-        // eslint-disable-next-line no-console
-        console.log('%c⧭', 'color: #8c0038', e.target.value);
-    };
-
     return (
-        <div className="app">
+        <div style={{ height: '100vh' }}>
             <Navbar />
-            <VariablesPanel />
-            <div style={{ display: 'flex', height: '100%' }}>
-                <div style={{ height: '100%', width: '300px', display: 'flex', flexDirection: 'column' }}>
-                    {variables.length > 0 &&
-                        variables.map((variable: any) => {
-                            return (
-                                <>
-                                    <p>{variable.name}</p>
-                                    {React.createElement(
-                                        VariablesComponentsList[variable.type as keyof typeof VariablesComponentsList],
-                                        {
-                                            key: `variable-${variable.id}`,
-                                            value: variable.value,
-                                            handleChange,
-                                            src: variable.src?.url || '',
-                                        },
-                                    )}
-                                </>
-                            );
-                        })}
-                </div>
-            </div>
+            <VariablesPanel variables={variables} />
 
             <div className="editor-workspace-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />
