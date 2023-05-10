@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AxiosError } from 'axios';
 import App from './App';
 import { ProjectConfig } from './types/types';
 import './index.css';
@@ -30,7 +31,7 @@ export default class EndUserWorkspace {
         templateId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
-        refreshTokenAction: () => Promise<string>,
+        refreshTokenAction: () => Promise<string | AxiosError>,
         projectName: string,
         onBack: () => void,
     ) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import EditorSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
@@ -129,9 +129,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     return (
         <div className="app">
-            <Navbar />
+            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
             <VariablesPanel variables={variables} />
-
             <div className="editor-workspace-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />
             </div>
