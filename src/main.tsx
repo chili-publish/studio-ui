@@ -7,13 +7,13 @@ import './index.css';
 
 declare global {
     interface Window {
-        EndUserWorkspace: unknown;
+        StudioUI: unknown;
     }
 }
 
-export default class EndUserWorkspace {
+export default class StudioUI {
     constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
-        ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
+        ReactDOM.createRoot(document.getElementById(selector || 'studio-ui-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
             </React.StrictMode>,
@@ -50,4 +50,4 @@ export default class EndUserWorkspace {
 }
 
 // Make this class accessible on window
-window.EndUserWorkspace = EndUserWorkspace;
+window.StudioUI = StudioUI;
