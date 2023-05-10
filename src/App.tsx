@@ -128,7 +128,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <div style={{ height: '100vh' }}>
+        <div className="app">
             <Navbar />
             <VariablesPanel variables={variables} />
 
