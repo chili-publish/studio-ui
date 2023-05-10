@@ -2,18 +2,21 @@ import { Button, ButtonTypes, FontSizes, Icon } from '@chili-publish/grafx-share
 import { NavbarButtonProps } from './NavbarButton.types';
 
 function NavbarButton(props: NavbarButtonProps) {
-    const { label, ariaLabel, icon, disabled, flipIconY = false, buttonType = ButtonTypes.tertiary, noPadding } = props;
-
-    const handleOnClick = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${NavbarButton.name}] Clicked`);
-    };
-
+    const {
+        label,
+        ariaLabel,
+        icon,
+        disabled,
+        flipIconY = false,
+        buttonType = ButtonTypes.tertiary,
+        noPadding,
+        handleOnClick,
+    } = props;
     return (
         <Button
             type="button"
             buttonType={buttonType}
-            onClick={() => handleOnClick()}
+            onClick={handleOnClick}
             icon={<Icon key={`icon-${ariaLabel}`} icon={icon} transform={{ flipY: flipIconY }} />}
             disabled={disabled}
             label={label}

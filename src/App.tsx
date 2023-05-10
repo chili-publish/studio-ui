@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -25,11 +25,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             const originalRequest = error.config;
             if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
-                return projectConfig.refreshTokenAction().then((token) => {
-                    setAuthToken(token);
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
-                    return axios(originalRequest);
-                });
+                return projectConfig
+                    .refreshTokenAction()
+                    .then((token) => {
+                        setAuthToken(token as string);
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return axios(originalRequest);
+                    })
+                    .catch((err: AxiosError) => {
+                        // eslint-disable-next-line no-console
+                        console.error(err);
+                    });
             }
 
             return Promise.reject(error);
@@ -118,8 +124,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <div className="app">
-            <Navbar />
+        <div style={{ height: '100vh' }}>
+            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
             <VariablesPanel />
 
             <div className="editor-workspace-canvas" data-id="layout-canvas">
