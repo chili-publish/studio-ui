@@ -11,7 +11,7 @@
         <script type="module" src="./src/main.tsx"></script>
 
         <script>
-            // We need to wait for the DOMContentLoaded otherwise the script will not find EndUserWorkspace
+            // We need to wait for the DOMContentLoaded otherwise the script will not find StudioUI
             document.addEventListener('DOMContentLoaded', () => {
                 var queryString = window.location.search;
                 var urlParams = new URLSearchParams(queryString);
@@ -24,12 +24,9 @@
                     ? 'https://chili-dev.azureedge.net/'
                     : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                EndUserWorkspace.defaultConfigWithEditorLink(
-                    'studio-ui-root',
-                    baseUrl + '/editor/' + editorVersion + '/web',
-                );
+                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // // use this for local dev and debug
-                // EndUserWorkspace.studioLoaderConfig(
+                // StudioUI.studioLoaderConfig(
                 //     'studio-ui-root',
                 //     "<open a template on chiligrafx.com to retrieve AT from network requests>",     /*authToken:*/
                 //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>/download",  /*templateDownloadUrl:*/
