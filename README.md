@@ -45,12 +45,12 @@ If a new package will be installed,please check the package license information.
 #### Manual
 
 -   run `yarn build && yarn link` inside grafx-shared-components repo
--   run `yarn link @chili-publish/grafx-shared-components` inside studio-studio-ui (this) repo
+-   run `yarn link @chili-publish/grafx-shared-components` inside studio-ui (this) repo
 
 #### Alias in .bashrc
 
-`alias linkcomponents='cd ~/path/to/grafx-shared-components && yarn build && yarn link && cd ~/path/to/studio-studio-ui && yarn link @chili-publish/grafx-shared-components'`
-`alias linksdk='cd ~/path/to/studio-sdk && yarn build && yarn link && cd ~/path/to/studio-studio-ui && yarn link @chili-publish/studio-sdk'`
+`alias linkcomponents='cd ~/path/to/grafx-shared-components && yarn build && yarn link && cd ~/path/to/studio-ui && yarn link @chili-publish/grafx-shared-components'`
+`alias linksdk='cd ~/path/to/studio-sdk && yarn build && yarn link && cd ~/path/to/studio-ui && yarn link @chili-publish/studio-sdk'`
 
 ## Scripts
 
