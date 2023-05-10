@@ -1,6 +1,6 @@
-# studio-end-user-workspace
+# Studio UI
 
-This repository includes the end-user-workspace, which will be used by CHILI GraFx end users
+This repository includes the Studio UI, which will be used by CHILI GraFx end users
 
 ## Deployment
 
@@ -38,19 +38,19 @@ example .npmrc file:
 
 ### Link local instance of components repository
 
-To work on the [grafx-shared-components library](https://github.com/chili-publish/grafx-shared-components) or the [editor-sdk library](https://github.com/chili-publish/editor-sdk), you will need to link your local instance to the package.json of this repository.
+To work on the [grafx-shared-components library](https://github.com/chili-publish/grafx-shared-components) or the [studio-sdk library](https://github.com/chili-publish/studio-sdk), you will need to link your local instance to the package.json of this repository.
 To simply do this, we use the `yarn link` functionality. To make it even more easier, it is adviced to make an alias in your .bashrc file.
 If a new package will be installed,please check the package license information.
 
 #### Manual
 
 -   run `yarn build && yarn link` inside grafx-shared-components repo
--   run `yarn link @chili-publish/grafx-shared-components` inside studio-end-user-workspace (this) repo
+-   run `yarn link @chili-publish/grafx-shared-components` inside studio-studio-ui (this) repo
 
 #### Alias in .bashrc
 
-`alias linkcomponents='cd ~/path/to/grafx-shared-components && yarn build && yarn link && cd ~/path/to/studio-end-user-workspace && yarn link @chili-publish/grafx-shared-components'`
-`alias linksdk='cd ~/path/to/editor-sdk && yarn build && yarn link && cd ~/path/to/studio-end-user-workspace && yarn link @chili-publish/editor-sdk'`
+`alias linkcomponents='cd ~/path/to/grafx-shared-components && yarn build && yarn link && cd ~/path/to/studio-studio-ui && yarn link @chili-publish/grafx-shared-components'`
+`alias linksdk='cd ~/path/to/studio-sdk && yarn build && yarn link && cd ~/path/to/studio-studio-ui && yarn link @chili-publish/studio-sdk'`
 
 ## Scripts
 

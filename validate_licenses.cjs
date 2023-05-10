@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 
 exec(
-    'npm-license-scraper --export --exclude=@chili-publish/editor-components,@chili-publish/editor-sdk',
+    'npm-license-scraper --export --exclude=@chili-publish/grafx-shared-components,@chili-publish/studio-sdk',
     (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
+import StudioSDK, { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -10,7 +10,7 @@ import './App.css';
 
 declare global {
     interface Window {
-        SDK: EditorSDK;
+        SDK: StudioSDK;
     }
 }
 
@@ -64,7 +64,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     };
 
     useEffect(() => {
-        const sdk = new EditorSDK({
+        const sdk = new StudioSDK({
             onSelectedFrameLayoutChanged: (frameLayout) => {
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
@@ -85,7 +85,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         // eslint-disable-next-line no-console
         console.table({
-            'SDK version': packageInfo.dependencies['@chili-publish/editor-sdk'],
+            'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
             'EUW version': packageInfo.version,
         });
 
@@ -128,7 +128,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
             <VariablesPanel />
 
-            <div className="editor-workspace-canvas" data-id="layout-canvas">
+            <div className="studio-ui-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />
             </div>
 

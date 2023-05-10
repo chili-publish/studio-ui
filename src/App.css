@@ -4,7 +4,7 @@
     position: relative;
 }
 
-.editor-workspace-canvas {
+.studio-ui-canvas {
     height: calc(100vh - 4rem - 5rem);
     width: 100%;
 }

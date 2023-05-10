@@ -13,7 +13,7 @@ declare global {
 
 export default class EndUserWorkspace {
     constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
-        ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
+        ReactDOM.createRoot(document.getElementById(selector || 'studio-ui-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
             </React.StrictMode>,

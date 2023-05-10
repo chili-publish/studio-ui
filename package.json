@@ -1,11 +1,11 @@
 {
-    "name": "studio-end-user-workspace",
+    "name": "studio-ui",
     "private": true,
     "version": "0.0.8",
     "type": "module",
-    "description": "The end user workspace for CHILI GraFx",
+    "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
-    "repository": "https://github.com/chili-publish/studio-end-user-workspace",
+    "repository": "https://github.com/chili-publish/studio-ui",
     "license": "MIT",
     "scripts": {
         "dev": "vite",
@@ -24,7 +24,7 @@
     },
     "dependencies": {
         "@chili-publish/grafx-shared-components": "^0.34.2",
-        "@chili-publish/editor-sdk": "^0.118.0",
+        "@chili-publish/studio-sdk": "^0.121.0",
         "axios": "^1.3.6",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
