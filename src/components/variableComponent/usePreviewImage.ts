@@ -6,7 +6,7 @@ import {
     MediaConnectorImageVariableSource,
     ImageVariable,
     UrlImageVariableSource,
-} from '@chili-publish/editor-sdk';
+} from '@chili-publish/studio-sdk';
 
 const DEFAULT_IMAGE_FORMAT = 'PNG';
 

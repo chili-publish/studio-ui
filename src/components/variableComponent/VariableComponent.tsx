@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 import { DropDown, ImagePicker, Label, TextField } from '@chili-publish/grafx-shared-components';
-import { LongTextVariable, Media, MediaDownloadType, ShortTextVariable, VariableType } from '@chili-publish/editor-sdk';
+import { LongTextVariable, Media, MediaDownloadType, ShortTextVariable, VariableType } from '@chili-publish/studio-sdk';
 import { IVariablesComponents } from './VariableComponent.types';
 import { useVariableComponents } from './useVariableComponent';
 import { usePreviewImages } from './usePreviewImage';

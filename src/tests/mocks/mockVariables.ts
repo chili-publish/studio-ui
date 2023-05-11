@@ -6,7 +6,7 @@ import {
     Variable,
     VariableType,
     ImageVariableSourceType,
-} from '@chili-publish/editor-sdk';
+} from '@chili-publish/studio-sdk';
 
 export const variables: Variable[] = [
     <ImageVariable>{

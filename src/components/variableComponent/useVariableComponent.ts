@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Id, ImageVariableSource } from '@chili-publish/editor-sdk';
+import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
 
 export const useVariableComponents = (currentVariable: Id) => {
     const closePanel = () => {

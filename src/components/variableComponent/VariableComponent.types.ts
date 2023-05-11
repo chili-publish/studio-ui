@@ -1,4 +1,4 @@
-import { Variable, VariableType } from '@chili-publish/editor-sdk';
+import { Variable, VariableType } from '@chili-publish/studio-sdk';
 
 export interface IVariablesComponents {
     type: VariableType;
