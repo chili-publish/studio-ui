@@ -7,23 +7,13 @@ import { IImageVariable } from '../VariablesComponents.types';
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
     const [selectedImage] = useState<Media>();
+    const mediaConnector = process.env.DEFAULT_MEDIA_CONNECTOR || '';
+    const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
 
     const previewCall = (id: string): Promise<Uint8Array> =>
-        window.SDK.mediaConnector.download(
-            import.meta.env.VITE_DEFAULT_MEDIA_CONNECTOR,
-            id,
-            MediaDownloadType.LowResolutionWeb,
-            {},
-        );
+        window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
 
-    const { currentPreviewImage } = usePreviewImages(
-        import.meta.env.VITE_DEFAULT_MEDIA_CONNECTOR,
-        import.meta.env.VITE_PREVIEW_ERROR_URL,
-        true,
-        previewCall,
-        selectedImage,
-        variable,
-    );
+    const { currentPreviewImage } = usePreviewImages(mediaConnector, true, previewCall, selectedImage, variable);
     return (
         <ImagePicker
             name={variable.id}
@@ -33,7 +23,7 @@ function ImageVariable(props: IImageVariable) {
             // TODO: replace with the action that opens the assets panel
             // eslint-disable-next-line no-console
             onClick={() => console.log('open assets panel')}
-            previewErrorUrl={import.meta.env.VITE_PREVIEW_ERROR_URL}
+            previewErrorUrl={previewErrorUrl}
         />
     );
 }
