@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import EditorSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
+import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -10,7 +10,7 @@ import './App.css';
 
 declare global {
     interface Window {
-        SDK: EditorSDK;
+        SDK: StudioSDK;
     }
 }
 
@@ -65,13 +65,13 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     };
 
     useEffect(() => {
-        const sdk = new EditorSDK({
-            onSelectedFrameLayoutChanged: (frameLayout) => {
+        const sdk = new StudioSDK({
+            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => {
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
             },
-            onVariableListChanged: (variableList) => {
+            onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
             },
             editorLink,
@@ -89,7 +89,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         // eslint-disable-next-line no-console
         console.table({
-            'SDK version': packageInfo.dependencies['@chili-publish/editor-sdk'],
+            'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
             'EUW version': packageInfo.version,
         });
 
@@ -131,7 +131,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         <div className="app">
             <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
             <VariablesPanel variables={variables} />
-            <div className="editor-workspace-canvas" data-id="layout-canvas">
+            <div className="studio-ui-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />
             </div>
 
