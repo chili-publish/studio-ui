@@ -12,7 +12,6 @@ const DEFAULT_IMAGE_FORMAT = 'PNG';
 
 export const usePreviewImages = (
     mediaConnector: string,
-    previewErrorUrl: string,
     settingsPanelOpen: boolean,
     previewCall: (id: string) => Promise<Uint8Array>,
     selectedImage?: Media,
