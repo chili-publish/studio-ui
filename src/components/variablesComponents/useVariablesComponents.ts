@@ -11,7 +11,7 @@ export const useVariableComponents = (currentVariable: Id) => {
     };
 
     const handleImageRemove = () => {
-        console.log('%c⧭', 'color: #00a3cc', 'removing the image');
+        console.log('%c⧭', 'color: #00a3cc', 'removing the image', currentVariable);
     };
 
     const handleValueChange = (value: string) => {

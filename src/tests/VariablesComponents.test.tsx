@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
-import VariableComponent from '../components/variableComponent/VariableComponent';
+import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
 beforeEach(() => {
-    jest.mock('@chili-publish/stdio-sdk');
+    jest.mock('@chili-publish/studio-sdk');
     const mockSDK = mock<EditorSDK>();
     mockSDK.mediaConnector.detail = jest
         .fn()
