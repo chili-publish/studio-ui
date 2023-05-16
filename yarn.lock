@@ -318,10 +318,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.34.2":
-  version "0.34.5"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.34.5/38c562789358a6e741e574d58f1f591645cc306e#38c562789358a6e741e574d58f1f591645cc306e"
-  integrity sha512-+kv8vvlTU0H7tPs0PM9Rj+gUtTt3GE41N8D7jd92kidyCV89mBDNOhhSyOdWX00CuT0/43SQl0inFDxEsoO6jA==
+"@chili-publish/grafx-shared-components@^0.34.6":
+  version "0.34.6"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.34.6/673a84d0dbdfadef092c7a8c383285885cfb6109#673a84d0dbdfadef092c7a8c383285885cfb6109"
+  integrity sha512-dfDi6bVEihaIPdHY7+qdNCemY8lOQy8oLJMxBVC+f7+TquK5gUMYYLWtBYnMJzLrcAqAFiX983pLqI/H6j57NQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -4935,6 +4935,11 @@ v8-to-istanbul@^9.0.1:
     "@jridgewell/trace-mapping" "^0.3.12"
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
+
+vite-plugin-environment@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/vite-plugin-environment/-/vite-plugin-environment-1.1.3.tgz#d01a04abb2f69730a4866c9c9db51d3dab74645b"
+  integrity sha512-9LBhB0lx+2lXVBEWxFZC+WO7PKEyE/ykJ7EPWCq95NEcCpblxamTbs5Dm3DLBGzwODpJMEnzQywJU8fw6XGGGA==
 
 vite@^4.2.0:
   version "4.3.5"

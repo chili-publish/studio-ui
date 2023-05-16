@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -17,6 +17,7 @@ declare global {
 function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
+    const [variables, setVariables] = useState<Variable[]>([]);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -65,10 +66,13 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     useEffect(() => {
         const sdk = new StudioSDK({
-            onSelectedFrameLayoutChanged: (frameLayout) => {
+            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => {
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
+            },
+            onVariableListChanged: (variableList: Variable[]) => {
+                setVariables(variableList);
             },
             editorLink,
         });
@@ -124,10 +128,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <div style={{ height: '100vh' }}>
+        <div className="app">
             <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
-            <VariablesPanel />
-
+            <VariablesPanel variables={variables} />
             <div className="studio-ui-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />
             </div>
