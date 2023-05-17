@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonTypes, Icon } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { useState } from 'react';
 import { ZoomButtonProps, ZoomTypeEnum } from './Zoom.types';
 import { ZoomValue } from './Zoom.styles';
@@ -11,13 +11,11 @@ function ZoomButton(props: ZoomButtonProps) {
 
     return (
         <Button
-            type="button"
-            buttonType={ButtonTypes.tertiary}
+            variant={ButtonVariant.tertiary}
             onClick={() => handleOnClick(type)}
             icon={
                 <Icon key={`icon-${ariaLabel}`} icon={isDecrement ? AvailableIcons.faMinus : AvailableIcons.faPlus} />
             }
-            style={{ padding: '0px' }}
         />
     );
 }
