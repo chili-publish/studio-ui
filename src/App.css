@@ -1,11 +1,11 @@
 .app {
-    height: 100vh;
+    height: 100svh;
     overflow: hidden;
     position: relative;
 }
 
 .studio-ui-canvas {
-    height: calc(100vh - 4rem - 5rem);
+    height: calc(100% - 4rem - 5rem);
     width: 100%;
 }
 
