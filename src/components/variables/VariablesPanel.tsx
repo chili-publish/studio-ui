@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { AvailableIcons, Button, ButtonTypes, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
+import { css } from 'styled-components';
 import { EditButtonWrapper } from './VariablesPanel.styles';
 import VariableComponent from '../variablesComponents/VariablesComponents';
 
@@ -16,11 +17,18 @@ function VariablesPanel(props: { variables: Variable[] }) {
         <>
             <EditButtonWrapper>
                 <Button
-                    buttonType={ButtonTypes.primary}
-                    type="button"
+                    variant={ButtonVariant.primary}
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                     onClick={() => setIsVariablesPanelVisible(true)}
-                    style={{ borderRadius: '3rem', padding: '0.9375rem', fontSize: FontSizes.button }}
+                    styles={css`
+                        border-radius: 3rem;
+                        padding: 0.9375rem;
+                        fontsize: ${FontSizes.button};
+
+                        svg {
+                            width: 1.125rem !important;
+                        }
+                    `}
                 />
             </EditButtonWrapper>
             <Tray isOpen={isVariablesPanelVisible} close={closeVariablePanel} title="Customize">

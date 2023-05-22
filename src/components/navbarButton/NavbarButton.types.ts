@@ -1,4 +1,4 @@
-import { AvailableIconsType, ButtonTypes } from '@chili-publish/grafx-shared-components';
+import { AvailableIconsType, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { ReactElement } from 'react';
 
 export type NavbarButtonProps = {
@@ -9,6 +9,5 @@ export type NavbarButtonProps = {
     label?: string | ReactElement;
     disabled?: boolean;
     flipIconY?: boolean;
-    buttonType?: ButtonTypes;
-    noPadding?: boolean;
+    variant?: ButtonVariant;
 };

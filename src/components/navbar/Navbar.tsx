@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ButtonTypes, AvailableIcons } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { StyledNavbar, NavbarGroup, NavbarItem, NavbarLabel } from './Navbar.styles';
 import { INavbar, NavbarItemType } from './Navbar.types';
 import Zoom from '../zoom/Zoom';
@@ -20,7 +20,6 @@ function Navbar(props: INavbar) {
                         <NavbarButton
                             ariaLabel="Go back"
                             icon={AvailableIcons.faArrowLeft}
-                            noPadding
                             handleOnClick={goBack || (() => null)}
                         />
                         <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
@@ -36,14 +35,12 @@ function Navbar(props: INavbar) {
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
                             disabled={!hasHistory}
-                            noPadding
                             handleOnClick={() => null}
                         />
                         <NavbarButton
                             ariaLabel="Redo"
                             icon={AvailableIcons.faArrowTurnDownRight}
                             flipIconY
-                            noPadding
                             handleOnClick={() => null}
                         />
                     </NavbarGroup>
@@ -55,13 +52,14 @@ function Navbar(props: INavbar) {
                     <NavbarButton
                         ariaLabel="Download"
                         label={
-                            <NavbarLabel key="Download" hideOnMobile>
-                                Download
-                            </NavbarLabel>
+                            !isMobile ? (
+                                <NavbarLabel key="Download" hideOnMobile>
+                                    Download
+                                </NavbarLabel>
+                            ) : undefined
                         }
                         icon={AvailableIcons.faArrowDownToLine}
-                        buttonType={ButtonTypes.primary}
-                        noPadding={isMobile}
+                        variant={ButtonVariant.primary}
                         handleOnClick={() => null}
                     />
                 ),
