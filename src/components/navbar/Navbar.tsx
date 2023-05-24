@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import { ButtonTypes, AvailableIcons } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { StyledNavbar, NavbarGroup, NavbarItem, NavbarLabel } from './Navbar.styles';
-import { NavbarItemType } from './Navbar.types';
+import { INavbar, NavbarItemType } from './Navbar.types';
 import Zoom from '../zoom/Zoom';
 import NavbarButton from '../navbarButton/NavbarButton';
 import useMobileSize from '../../hooks/useMobileSize';
 
-function Navbar() {
+function Navbar(props: INavbar) {
+    const { projectName, goBack } = props;
     const isMobile = useMobileSize();
-    const projectName = 'Project 1'; // This should be dynamic
     const hasHistory = false; // This should be dynamic
 
     const navbarItems = useMemo(
@@ -17,7 +17,11 @@ function Navbar() {
                 label: 'Project information',
                 content: (
                     <NavbarGroup>
-                        <NavbarButton ariaLabel="Go back" icon={AvailableIcons.faArrowLeft} noPadding />
+                        <NavbarButton
+                            ariaLabel="Go back"
+                            icon={AvailableIcons.faArrowLeft}
+                            handleOnClick={goBack || (() => null)}
+                        />
                         <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
                     </NavbarGroup>
                 ),
@@ -31,9 +35,14 @@ function Navbar() {
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
                             disabled={!hasHistory}
-                            noPadding
+                            handleOnClick={() => null}
                         />
-                        <NavbarButton ariaLabel="Redo" icon={AvailableIcons.faArrowTurnDownRight} flipIconY noPadding />
+                        <NavbarButton
+                            ariaLabel="Redo"
+                            icon={AvailableIcons.faArrowTurnDownRight}
+                            flipIconY
+                            handleOnClick={() => null}
+                        />
                     </NavbarGroup>
                 ),
             },
@@ -43,13 +52,15 @@ function Navbar() {
                     <NavbarButton
                         ariaLabel="Download"
                         label={
-                            <NavbarLabel key="Download" hideOnMobile>
-                                Download
-                            </NavbarLabel>
+                            !isMobile ? (
+                                <NavbarLabel key="Download" hideOnMobile>
+                                    Download
+                                </NavbarLabel>
+                            ) : undefined
                         }
                         icon={AvailableIcons.faArrowDownToLine}
-                        buttonType={ButtonTypes.primary}
-                        noPadding={isMobile}
+                        variant={ButtonVariant.primary}
+                        handleOnClick={() => null}
                     />
                 ),
             },
@@ -59,7 +70,7 @@ function Navbar() {
                 hideOnMobile: true,
             },
         ],
-        [projectName, hasHistory, isMobile],
+        [goBack, projectName, hasHistory, isMobile],
     );
 
     return (

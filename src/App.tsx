@@ -1,31 +1,24 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import EditorSDK, { WellKnownConfigurationKeys } from '@chili-publish/editor-sdk';
+import axios, { AxiosError } from 'axios';
+import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
+import { ProjectConfig } from './types/types';
+import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
-import { LeftPanelContentType } from './components/layout-panels/leftPanel/LeftPanel.types';
-import ImagePanel from './components/imagePanel/ImagePanel';
 
 declare global {
     interface Window {
-        SDK: EditorSDK;
+        SDK: StudioSDK;
     }
 }
 
-interface projectConfig {
-    templateDownloadUrl: string;
-    templateUploadUrl: string;
-    templateId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken?: string;
-    refreshTokenAction: () => Promise<string>;
-}
-function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; editorLink: string }) {
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
+    const [variables, setVariables] = useState<Variable[]>([]);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -34,11 +27,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
             const originalRequest = error.config;
             if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
-                return projectConfig.refreshTokenAction().then((token) => {
-                    setAuthToken(token);
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
-                    return axios(originalRequest);
-                });
+                return projectConfig
+                    .refreshTokenAction()
+                    .then((token) => {
+                        setAuthToken(token as string);
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return axios(originalRequest);
+                    })
+                    .catch((err: AxiosError) => {
+                        // eslint-disable-next-line no-console
+                        console.error(err);
+                    });
             }
 
             return Promise.reject(error);
@@ -67,11 +66,14 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
     };
 
     useEffect(() => {
-        const sdk = new EditorSDK({
-            onSelectedFrameLayoutChanged: (frameLayout) => {
+        const sdk = new StudioSDK({
+            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => {
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
+            },
+            onVariableListChanged: (variableList: Variable[]) => {
+                setVariables(variableList);
             },
             editorLink,
         });
@@ -88,12 +90,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
 
         // eslint-disable-next-line no-console
         console.table({
-            'SDK version': packageInfo.dependencies['@chili-publish/editor-sdk'],
+            'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
             'EUW version': packageInfo.version,
         });
 
         return () => {
-            // Prevent loading multiple iframes
+            // PRevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
         };
@@ -106,10 +108,10 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
                 await window.SDK.document.loadDocument(fetchedDocument);
 
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
+                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
-                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
+                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
                 }
@@ -126,32 +128,18 @@ function App({ projectConfig, editorLink }: { projectConfig?: projectConfig; edi
         graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
     });
 
-    const [leftPanelContentType, setLeftPanelContentType] = useState(LeftPanelContentType.VARIABLES_PANEL);
-    const showVariablesPanel = () => {
-        setLeftPanelContentType(LeftPanelContentType.VARIABLES_PANEL);
-    };
-
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}>
-            <Navbar />
-            <LeftPanel>
-                {leftPanelContentType === LeftPanelContentType.VARIABLES_PANEL ? (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setLeftPanelContentType(LeftPanelContentType.IMAGE_PANEL);
-                        }}
-                    >
-                        Switch
-                    </button>
-                ) : (
-                    <ImagePanel showVariablesPanel={showVariablesPanel} />
-                )}
-            </LeftPanel>
-            <VariablesPanel />
-
-            <div className="editor-workspace-canvas" data-id="layout-canvas">
-                <div id="chili-editor" style={{ width: '100%', height: '100%' }} />
+        <div className="app">
+            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+            <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
+                <LeftPanel />
+                <div style={{ width: '100%' }}>
+                    <VariablesPanel variables={variables} />
+                    <div className="studio-ui-canvas" data-id="layout-canvas">
+                        <div className="chili-editor" id="chili-editor" />
+                    </div>
+                    <AnimationTimeline />
+                </div>
             </div>
         </div>
     );

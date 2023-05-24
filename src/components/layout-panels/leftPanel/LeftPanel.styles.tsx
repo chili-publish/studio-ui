@@ -3,12 +3,14 @@ import { Colors } from '../../../styles/vars/Colors';
 import FontSizes from '../../../styles/vars/FontSizes';
 
 export const LeftPanelContainer = styled.div`
+    min-width: 18.75rem;
     width: 18.75rem;
-    position: absolute;
-    top: 4rem;
-    left: 0;
-    bottom: 0;
     background-color: ${Colors.PRIMARY_WHITE}};
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
 `;
 
 export const LeftPanelHeader = styled.div`
@@ -35,8 +37,8 @@ export const FirstRow = styled.div`
 export const SecondRow = styled.div`
     background-color: lightpink;
     height: 2.5rem;
-    display: flex;
-    align-items: center;
+    // display: flex;
+    // align-items: center;
     padding-left: 1rem;
 `;
 

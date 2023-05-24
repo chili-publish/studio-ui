@@ -1,25 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AxiosError } from 'axios';
 import App from './App';
+import { ProjectConfig } from './types/types';
 import './index.css';
 
 declare global {
     interface Window {
-        EndUserWorkspace: unknown;
+        StudioUI: unknown;
     }
 }
 
-interface projectConfig {
-    templateDownloadUrl: string;
-    templateUploadUrl: string;
-    templateId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken?: string;
-    refreshTokenAction: () => Promise<string>;
-}
-export default class EndUserWorkspace {
-    constructor(selector: string, editorLink: string, projectConfig?: projectConfig) {
-        ReactDOM.createRoot(document.getElementById(selector || 'end-user-workspace-root') as HTMLElement).render(
+export default class StudioUI {
+    constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
+        ReactDOM.createRoot(document.getElementById(selector || 'studio-ui-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
             </React.StrictMode>,
@@ -37,7 +31,9 @@ export default class EndUserWorkspace {
         templateId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
-        refreshTokenAction: () => Promise<string>,
+        refreshTokenAction: () => Promise<string | AxiosError>,
+        projectName: string,
+        onBack: () => void,
     ) {
         const editorLink = '';
         return new this(selector, editorLink, {
@@ -47,9 +43,11 @@ export default class EndUserWorkspace {
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             refreshTokenAction: () => refreshTokenAction(),
+            projectName,
+            onBack: () => onBack(),
         });
     }
 }
 
 // Make this class accessible on window
-window.EndUserWorkspace = EndUserWorkspace;
+window.StudioUI = StudioUI;
