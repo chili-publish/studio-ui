@@ -6,6 +6,7 @@ import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
 import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
+import useDebounce from './hooks/useDebounce';
 import './App.css';
 
 declare global {
@@ -18,6 +19,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
+
+    // eslint-disable-next-line no-console
+    const debounced = useDebounce((arg: string) => console.log('%c⧭', 'color: darkred', arg));
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -70,10 +74,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 // TODO: this is only for testing remove it when some integration is done
                 // eslint-disable-next-line no-console
                 console.log('%c⧭', 'color: #408059', frameLayout);
+                debounced('Saved...');
             },
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
             },
+
             editorLink,
         });
         // Connect to ths SDK
