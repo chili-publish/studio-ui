@@ -3,15 +3,25 @@ import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@c
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import { EditButtonWrapper } from './VariablesPanel.styles';
-import VariableComponent from '../variablesComponents/VariablesComponents';
+import VariablesList from './VariablesList';
+import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
+import { ContentType } from '../../contexts/TrayAndLeftPanelContext.types';
+import ImagePanel from '../imagePanel/ImagePanel';
 
-function VariablesPanel(props: { variables: Variable[] }) {
+interface VariablesPanelProps {
+    variables: Variable[];
+}
+
+function VariablesPanel(props: VariablesPanelProps) {
     const { variables } = props;
+    const { contentType } = useTrayAndLeftPanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
+
+    const showVariablesList = contentType === ContentType.VARIABLES_LIST;
 
     return (
         <>
@@ -31,19 +41,13 @@ function VariablesPanel(props: { variables: Variable[] }) {
                     `}
                 />
             </EditButtonWrapper>
-            <Tray isOpen={isVariablesPanelVisible} close={closeVariablePanel} title="Customize">
-                <div style={{ marginTop: '30px' }}>
-                    {variables.length > 0 &&
-                        variables.map((variable: Variable) => {
-                            return (
-                                <VariableComponent
-                                    key={`variable-component-${variable.id}`}
-                                    type={variable.type}
-                                    variable={variable}
-                                />
-                            );
-                        })}
-                </div>
+            <Tray
+                isOpen={isVariablesPanelVisible}
+                close={closeVariablePanel}
+                title={showVariablesList ? 'Customize' : null}
+                noPadding={!showVariablesList}
+            >
+                <div>{showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}</div>
             </Tray>
         </>
     );

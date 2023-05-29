@@ -35,8 +35,8 @@ export const NavigationWrapper = styled.div`
         padding: 0.5rem 0.5625rem !important;
     }
 
-    & svg:hover path {
-        color: ${Colors.PRIMARY_WHITE};
+    & svg path {
+        color: ${Colors.PRIMARY_FONT};
     }
 
     & svg.close-icon,

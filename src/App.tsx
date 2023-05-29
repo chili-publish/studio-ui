@@ -8,6 +8,8 @@ import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import useMobileSize from './hooks/useMobileSize';
+import { TrayAndLeftPanelContextProvider } from './contexts/TrayAndLeftPanelContext';
 
 declare global {
     interface Window {
@@ -19,6 +21,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
+    const isMobileSize = useMobileSize();
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -129,19 +132,21 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <div className="app">
-            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
-            <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
-                <LeftPanel />
-                <div style={{ width: '100%' }}>
-                    <VariablesPanel variables={variables} />
-                    <div className="studio-ui-canvas" data-id="layout-canvas">
-                        <div className="chili-editor" id="chili-editor" />
+        <TrayAndLeftPanelContextProvider>
+            <div className="app">
+                <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+                <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
+                    {!isMobileSize && <LeftPanel variables={variables} />}
+                    <div style={{ width: '100%' }}>
+                        {isMobileSize && <VariablesPanel variables={variables} />}
+                        <div className="studio-ui-canvas" data-id="layout-canvas">
+                            <div className="chili-editor" id="chili-editor" />
+                        </div>
+                        <AnimationTimeline />
                     </div>
-                    <AnimationTimeline />
                 </div>
             </div>
-        </div>
+        </TrayAndLeftPanelContextProvider>
     );
 }
 

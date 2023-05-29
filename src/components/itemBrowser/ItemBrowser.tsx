@@ -23,17 +23,18 @@ import {
     ResourcesPreview,
 } from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
+import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
+import { AssetType } from '../../utils/ApiTypes';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
     connectorId: string;
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
-    convertToPreviewType: (input: string | number) => PreviewType;
+    convertToPreviewType: (_: AssetType) => PreviewType;
     onSelect: (items: T[]) => void | null;
     isModal?: boolean;
     handleCloseModal?: () => void;
-    showVariablesPanel: () => void;
 };
 
 function ItemBrowser<
@@ -54,7 +55,6 @@ function ItemBrowser<
         convertToPreviewType,
         isModal,
         handleCloseModal,
-        showVariablesPanel,
     } = props;
     const [selectedItems, setSelectedItems] = useState<T[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>();
@@ -65,6 +65,8 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
+
+    const { showVariablesPanel } = useTrayAndLeftPanelContext();
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -153,7 +155,7 @@ function ItemBrowser<
 
     const generator = () => {
         return list.map((listItem, idx) => {
-            const itemType = convertToPreviewType(listItem.instance.type);
+            const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
             const onClick = () => {
                 if (itemType === PreviewType.COLLECTION) {
@@ -218,11 +220,13 @@ function ItemBrowser<
                 type="button"
                 variant={ButtonVariant.tertiary}
                 onClick={(navigationStack ?? []).length ? previousPath : showVariablesPanel}
-                icon={<Icon icon={AvailableIcons.faArrowLeft} />}
+                icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
                 styles={{ padding: '0' }}
             />
             <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
-            {isModal && handleCloseModal && <Icon icon="faXmark" className="close-icon" onClick={handleCloseModal} />}
+            {isModal && handleCloseModal && (
+                <Icon icon="faXmark" onClick={handleCloseModal} color={Colors.PRIMARY_FONT} />
+            )}
         </NavigationWrapper>
     );
 
@@ -232,38 +236,41 @@ function ItemBrowser<
 
     return (
         <Panel parentOverflow={!isModal} title={panelTitle} dataId="widget-media-panel" isModal={isModal}>
-            <BreadCrumbsWrapper>
-                <BreadCrumb
-                    href={navigationStackString}
-                    color={Colors.SECONDARY_FONT}
-                    activeColor={Colors.PRIMARY_FONT}
-                    onClick={(test: string) => {
-                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(test) + 1);
-                        setNavigationStack(newNavigationStack);
-                    }}
-                />
-            </BreadCrumbsWrapper>
-            {isModal ? (
-                // We need to set height on the `ScrollbarWrapper` and `width` on it's child
-                // to make scrollbar overlay work without content-shift
-                <ScrollbarWrapper darkTheme height="22rem" invertScrollbarColors>
-                    <ModalResourcesContainer width="45rem">
-                        {elements}
-                        <LoadPageContainer>
-                            <div ref={infiniteScrollingRef} />
-                        </LoadPageContainer>
-                    </ModalResourcesContainer>
-                </ScrollbarWrapper>
-            ) : (
-                <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
-                    <ResourcesContainer data-id="resources-container">
-                        {elements}
-                        <LoadPageContainer>
-                            <div ref={infiniteScrollingRef} />
-                        </LoadPageContainer>
-                    </ResourcesContainer>
-                </ScrollbarWrapper>
-            )}
+            <>
+                {/* {panelTitle} */}
+                {/* <BreadCrumbsWrapper>
+                    <BreadCrumb
+                        href={navigationStackString}
+                        color={Colors.SECONDARY_FONT}
+                        activeColor={Colors.PRIMARY_FONT}
+                        onClick={(test: string) => {
+                            const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(test) + 1);
+                            setNavigationStack(newNavigationStack);
+                        }}
+                    />
+                </BreadCrumbsWrapper> */}
+                {isModal ? (
+                    // We need to set height on the `ScrollbarWrapper` and `width` on it's child
+                    // to make scrollbar overlay work without content-shift
+                    <ScrollbarWrapper darkTheme height="22rem" invertScrollbarColors>
+                        <ModalResourcesContainer width="45rem">
+                            {elements}
+                            <LoadPageContainer>
+                                <div ref={infiniteScrollingRef} />
+                            </LoadPageContainer>
+                        </ModalResourcesContainer>
+                    </ScrollbarWrapper>
+                ) : (
+                    <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
+                        <ResourcesContainer data-id="resources-container">
+                            {elements}
+                            <LoadPageContainer>
+                                <div ref={infiniteScrollingRef} />
+                            </LoadPageContainer>
+                        </ResourcesContainer>
+                    </ScrollbarWrapper>
+                )}
+            </>
         </Panel>
     );
 }

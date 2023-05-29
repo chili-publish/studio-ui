@@ -1,31 +1,29 @@
-import React, { useState } from 'react';
-import { ImagePicker } from '@chili-publish/grafx-shared-components/lib';
+import { Variable } from '@chili-publish/studio-sdk';
 import { LeftPanelContainer } from './LeftPanel.styles';
-import { LeftPanelContentType } from './LeftPanel.types';
 import ImagePanel from '../../imagePanel/ImagePanel';
+import VariablesList from '../../variables/VariablesList';
+import { useTrayAndLeftPanelContext } from '../../../contexts/TrayAndLeftPanelContext';
+import { ContentType } from '../../../contexts/TrayAndLeftPanelContext.types';
 
-function LeftPanel() {
-    const [leftPanelContentType, setLeftPanelContentType] = useState(LeftPanelContentType.VARIABLES_PANEL);
+interface LeftPanelProps {
+    variables: Variable[];
+}
 
-    const showVariablesPanel = () => {
-        setLeftPanelContentType(LeftPanelContentType.VARIABLES_PANEL);
-    };
+function LeftPanel({ variables }: LeftPanelProps) {
+    const { contentType } = useTrayAndLeftPanelContext();
 
     return (
         <LeftPanelContainer>
-            {leftPanelContentType === LeftPanelContentType.VARIABLES_PANEL ? (
+            {contentType === ContentType.VARIABLES_LIST ? (
                 <div style={{ padding: '0 1.25rem' }}>
-                    <ImagePicker
-                        label={<div>Background Image</div>}
-                        name="background"
-                        onClick={() => {
-                            setLeftPanelContentType(LeftPanelContentType.IMAGE_PANEL);
-                        }}
-                    />
+                    <VariablesList variables={variables} />
                 </div>
             ) : (
-                <ImagePanel showVariablesPanel={showVariablesPanel} />
+                <ImagePanel />
             )}
+            {/* <div style={{ padding: '0 1.25rem' }}>
+                <VariablesList variables={variables} />
+            </div> */}
         </LeftPanelContainer>
     );
 }
