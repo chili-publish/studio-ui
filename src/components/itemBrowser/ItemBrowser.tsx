@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     AvailableIcons,
-    BreadCrumb,
     Button,
     ButtonVariant,
     PreviewCard as ChiliPreview,
@@ -14,7 +13,6 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import {
-    BreadCrumbsWrapper,
     LoadPageContainer,
     ModalResourcesContainer,
     NavigationTitle,
@@ -210,9 +208,9 @@ function ItemBrowser<
 
     const elements = generator();
 
-    const navigationStackString = useMemo(() => {
-        return navigationStack?.join('\\') ?? '';
-    }, [navigationStack]);
+    // const navigationStackString = useMemo(() => {
+    //     return navigationStack?.join('\\') ?? '';
+    // }, [navigationStack]);
 
     const panelTitle = (
         <NavigationWrapper>
