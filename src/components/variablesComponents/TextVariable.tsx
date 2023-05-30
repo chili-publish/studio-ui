@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { TextField, Label } from '@chili-publish/grafx-shared-components';
+import { Label, Input } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { ITextVariable } from './VariablesComponents.types';
 
@@ -15,7 +15,8 @@ function TextVariable(props: ITextVariable) {
     };
 
     return (
-        <TextField
+        <Input
+            type="text"
             value={variableValue}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}
