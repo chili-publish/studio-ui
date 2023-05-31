@@ -1,4 +1,4 @@
-import { Variable, VariableType } from '@chili-publish/studio-sdk';
+import { EditorResponse, Variable, VariableType } from '@chili-publish/studio-sdk';
 
 export interface IVariablesComponents {
     type: VariableType;
@@ -7,7 +7,7 @@ export interface IVariablesComponents {
 
 export interface IImageVariable {
     variable: Variable;
-    handleImageRemove: () => void;
+    handleImageRemove: () => Promise<EditorResponse<null> | null>;
 }
 
 export interface ITextVariable {

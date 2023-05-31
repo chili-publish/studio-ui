@@ -31,9 +31,8 @@ function VariablesPanel(props: VariablesPanelProps) {
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                     onClick={() => setIsVariablesPanelVisible(true)}
                     styles={css`
-                        border-radius: 3rem;
                         padding: 0.9375rem;
-                        fontsize: ${FontSizes.button};
+                        fontsize: ${FontSizes.regular};
 
                         svg {
                             width: 1.125rem !important;
@@ -44,8 +43,10 @@ function VariablesPanel(props: VariablesPanelProps) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={showVariablesList ? 'Customize' : null}
-                noPadding={!showVariablesList}
+                title={showVariablesList ? 'Customize' : ''}
+                styles={css`
+                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
+                `}
             >
                 <div>{showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}</div>
             </Tray>

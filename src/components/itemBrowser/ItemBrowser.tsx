@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     AvailableIcons,
+    BreadCrumb,
     Button,
     ButtonVariant,
     PreviewCard as ChiliPreview,
@@ -12,7 +13,9 @@ import {
     useInfiniteScrolling,
 } from '@chili-publish/grafx-shared-components';
 import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
+import { css } from 'styled-components';
 import {
+    BreadCrumbsWrapper,
     LoadPageContainer,
     ModalResourcesContainer,
     NavigationTitle,
@@ -208,9 +211,9 @@ function ItemBrowser<
 
     const elements = generator();
 
-    // const navigationStackString = useMemo(() => {
-    //     return navigationStack?.join('\\') ?? '';
-    // }, [navigationStack]);
+    const navigationStackString = useMemo(() => {
+        return navigationStack?.join('\\') ?? '';
+    }, [navigationStack]);
 
     const panelTitle = (
         <NavigationWrapper>
@@ -219,7 +222,9 @@ function ItemBrowser<
                 variant={ButtonVariant.tertiary}
                 onClick={(navigationStack ?? []).length ? previousPath : showVariablesPanel}
                 icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
-                styles={{ padding: '0' }}
+                styles={css`
+                    padding: 0;
+                `}
             />
             <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
             {isModal && handleCloseModal && (
@@ -235,8 +240,7 @@ function ItemBrowser<
     return (
         <Panel parentOverflow={!isModal} title={panelTitle} dataId="widget-media-panel" isModal={isModal}>
             <>
-                {/* {panelTitle} */}
-                {/* <BreadCrumbsWrapper>
+                <BreadCrumbsWrapper>
                     <BreadCrumb
                         href={navigationStackString}
                         color={Colors.SECONDARY_FONT}
@@ -246,7 +250,7 @@ function ItemBrowser<
                             setNavigationStack(newNavigationStack);
                         }}
                     />
-                </BreadCrumbsWrapper> */}
+                </BreadCrumbsWrapper>
                 {isModal ? (
                     // We need to set height on the `ScrollbarWrapper` and `width` on it's child
                     // to make scrollbar overlay work without content-shift

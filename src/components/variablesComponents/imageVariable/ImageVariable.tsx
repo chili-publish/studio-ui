@@ -23,7 +23,7 @@ function ImageVariable(props: IImageVariable) {
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={currentPreviewImage}
-            onRemove={handleImageRemove}
+            onRemove={() => handleImageRemove()}
             onClick={() => {
                 showImagePanel(variable.id);
             }}

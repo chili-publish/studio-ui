@@ -1,7 +1,8 @@
-import { ImageVariableSource, ImageVariableSourceType, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { ImageVariableSourceType, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { convertToPreviewType } from '../../utils/media-utils';
 import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
+import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
 
 const DEFAULT_MEDIA_CONNECTOR = 'grafx-media';
 
@@ -10,14 +11,7 @@ function ImagePanel() {
         window.SDK.mediaConnector.download(DEFAULT_MEDIA_CONNECTOR, id, MediaDownloadType.LowResolutionWeb, {});
 
     const { currentVariableId, showVariablesPanel } = useTrayAndLeftPanelContext();
-
-    const handleImageChange = async (source: ImageVariableSource) => {
-        if (currentVariableId) {
-            const result = await window.SDK.variable.setVariableSource(currentVariableId, source);
-            return result;
-        }
-        return null;
-    };
+    const { handleImageChange } = useVariableComponents(currentVariableId);
 
     const handleUpdateImage = async (source: Media) => {
         await handleImageChange({
@@ -35,7 +29,7 @@ function ImagePanel() {
             queryCall={window.SDK.mediaConnector.query}
             previewCall={previewCall}
             onSelect={(assets) => {
-                handleUpdateImage(assets[0]);
+                if (assets.length > 0) handleUpdateImage(assets[0]);
             }}
             convertToPreviewType={convertToPreviewType}
             isModal={false}

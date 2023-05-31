@@ -6,12 +6,20 @@ export const useVariableComponents = (currentVariable: Id) => {
         console.log('%c⧭', 'color: #ff0000', 'Closing the panel');
     };
 
-    const handleImageChange = (source: ImageVariableSource) => {
-        console.log('%c⧭', 'color: #00e600', 'changing the image to', source);
+    const handleImageChange = async (source: ImageVariableSource) => {
+        if (currentVariable) {
+            const result = await window.SDK.variable.setVariableSource(currentVariable, source);
+            return result;
+        }
+        return null;
     };
 
-    const handleImageRemove = () => {
-        console.log('%c⧭', 'color: #00a3cc', 'removing the image', currentVariable);
+    const handleImageRemove = async () => {
+        if (currentVariable) {
+            const result = await window.SDK.variable.removeVariableSource(currentVariable);
+            return result;
+        }
+        return null;
     };
 
     const handleValueChange = (value: string) => {
