@@ -1,25 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-    AvailableIcons,
     BreadCrumb,
-    Button,
-    ButtonVariant,
     PreviewCard as ChiliPreview,
     Colors,
-    Icon,
     Panel,
     PreviewType,
     ScrollbarWrapper,
     useInfiniteScrolling,
 } from '@chili-publish/grafx-shared-components';
-import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
-import { css } from 'styled-components';
+import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage, Media } from '@chili-publish/studio-sdk';
 import {
     BreadCrumbsWrapper,
     LoadPageContainer,
     ModalResourcesContainer,
-    NavigationTitle,
-    NavigationWrapper,
     ResourcesContainer,
     ResourcesPreview,
 } from './ItemBrowser.styles';
@@ -35,7 +28,6 @@ type ItemBrowserProps<T extends { id: string }> = {
     convertToPreviewType: (_: AssetType) => PreviewType;
     onSelect: (items: T[]) => void | null;
     isModal?: boolean;
-    handleCloseModal?: () => void;
 };
 
 function ItemBrowser<
@@ -47,18 +39,7 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
-    const {
-        isPanelOpen,
-        connectorId,
-        queryCall,
-        previewCall,
-        onSelect,
-        convertToPreviewType,
-        isModal,
-        handleCloseModal,
-    } = props;
-    const [selectedItems, setSelectedItems] = useState<T[]>([]);
-    const [navigationStack, setNavigationStack] = useState<string[]>();
+    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType, isModal } = props;
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
         requested: false,
@@ -67,7 +48,7 @@ function ItemBrowser<
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
 
-    const { showVariablesPanel } = useTrayAndLeftPanelContext();
+    const { selectedItems, navigationStack, setSelectedItems, setNavigationStack } = useTrayAndLeftPanelContext();
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -127,6 +108,7 @@ function ItemBrowser<
         return () => {
             setSelectedItems([]);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Handle double clicking a item to unselect it.
@@ -136,20 +118,10 @@ function ItemBrowser<
         // If the `selectedItems` is empty, just make one item array, otherwise pass in the `filteredItems`
         const items = selectedItems.length === 0 ? [item] : filteredItems;
 
-        setSelectedItems(items);
+        setSelectedItems(items as unknown as Media[]);
         if (onSelect) {
             onSelect(items);
         }
-    };
-
-    const previousPath = () => {
-        // We are removing any selected element from the state. This is because
-        // for now we do not support multiselection.
-        setSelectedItems([]);
-        if (onSelect) {
-            onSelect([]);
-        }
-        setNavigationStack((current) => current?.slice(0, -1));
     };
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
@@ -215,30 +187,12 @@ function ItemBrowser<
         return navigationStack?.join('\\') ?? '';
     }, [navigationStack]);
 
-    const panelTitle = (
-        <NavigationWrapper>
-            <Button
-                type="button"
-                variant={ButtonVariant.tertiary}
-                onClick={(navigationStack ?? []).length ? previousPath : showVariablesPanel}
-                icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
-                styles={css`
-                    padding: 0;
-                `}
-            />
-            <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
-            {isModal && handleCloseModal && (
-                <Icon icon="faXmark" onClick={handleCloseModal} color={Colors.PRIMARY_FONT} />
-            )}
-        </NavigationWrapper>
-    );
-
     if (!isPanelOpen) {
         return null;
     }
 
     return (
-        <Panel parentOverflow={!isModal} title={panelTitle} dataId="widget-media-panel" isModal={isModal}>
+        <Panel parentOverflow={!isModal} title={null} dataId="widget-media-panel" isModal={isModal}>
             <>
                 <BreadCrumbsWrapper>
                     <BreadCrumb
