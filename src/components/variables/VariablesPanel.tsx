@@ -23,7 +23,7 @@ function VariablesPanel(props: { variables: Variable[] }) {
                     styles={css`
                         border-radius: 3rem;
                         padding: 0.9375rem;
-                        fontsize: ${FontSizes.button};
+                        fontsize: ${FontSizes.regular};
 
                         svg {
                             width: 1.125rem !important;
