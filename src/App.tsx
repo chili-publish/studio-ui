@@ -21,12 +21,15 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
-    const autoSaveRef = useRef(false);
+    const enableAutoSaveRef = useRef(false);
 
     const saveDocument = async (docEditorLink?: string, templateUrl?: string, token?: string) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
 
-        if (url) {
+        // eslint-disable-next-line no-console
+        console.log(`[${saveDocument.name}] Saving document`);
+
+        if (url && import.meta.env.MODE !== 'development') {
             try {
                 const document = await window.SDK.document.getCurrentDocumentState();
 
@@ -118,14 +121,14 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
-                if (autoSaveRef.current === true) {
+                if (enableAutoSaveRef.current === true) {
                     saveDocumentDebounced(editorLink, projectConfig?.templateUploadUrl, projectConfig?.authToken);
                 }
 
-                if (autoSaveRef.current === false) {
+                if (enableAutoSaveRef.current === false) {
                     // eslint-disable-next-line no-console
                     console.log(`[${App.name}] Autosaving enabled`);
-                    autoSaveRef.current = true;
+                    enableAutoSaveRef.current = true;
                 }
             },
 
@@ -151,6 +154,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             // PRevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
+            enableAutoSaveRef.current = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
