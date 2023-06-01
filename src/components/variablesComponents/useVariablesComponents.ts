@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
 
-export const useVariableComponents = (currentVariable: Id) => {
+export const useVariableComponents = (currentVariableId: Id) => {
     const closePanel = () => {
         console.log('%c⧭', 'color: #ff0000', 'Closing the panel');
     };
@@ -11,11 +11,13 @@ export const useVariableComponents = (currentVariable: Id) => {
     };
 
     const handleImageRemove = () => {
-        console.log('%c⧭', 'color: #00a3cc', 'removing the image', currentVariable);
+        console.log('%c⧭', 'color: #00a3cc', 'removing the image', currentVariableId);
     };
 
-    const handleValueChange = (value: string) => {
-        console.log('%c⧭', 'color: #aa00ff', 'changing the value of variable ', currentVariable, 'to ', value);
+    const handleValueChange = async (value: string) => {
+        // This is only for testing purposes
+        await window.SDK.variable.setVariableValue(currentVariableId, value);
+        console.log('%c⧭', 'color: #aa00ff', 'changing the value of variable ', currentVariableId, 'to ', value);
     };
 
     return {
