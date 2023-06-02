@@ -29,7 +29,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         // eslint-disable-next-line no-console
         console.log(`[${saveDocument.name}] Saving document`);
 
-        if (url && import.meta.env.MODE !== 'development') {
+        if (url && process.env.NODE_ENV !== 'development') {
             try {
                 const document = await window.SDK.document.getCurrentDocumentState();
 
@@ -61,7 +61,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         }
     };
 
-    // eslint-disable-next-line no-console
     const saveDocumentDebounced = useDebounce((...args: (string | undefined)[]) => saveDocument(...args));
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
@@ -148,7 +147,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         // eslint-disable-next-line no-console
         console.table({
             'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
-            'EUW version': packageInfo.version,
+            'Studio UI version': packageInfo.version,
         });
         return () => {
             // PRevent loading multiple iframes

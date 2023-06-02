@@ -8,7 +8,7 @@
     "repository": "https://github.com/chili-publish/studio-ui",
     "license": "MIT",
     "scripts": {
-        "dev": "vite --mode development",
+        "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
         "testw": "jest --watch --silent",
