@@ -25,15 +25,14 @@
                     : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
                 StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
-                // use this for local dev and debug
+                // // use this for local dev and debug
                 // StudioUI.studioLoaderConfig(
-                //    'studio-ui-root',
-                //    'https://devchili.cpstaging.online/grafx/api/v1/environment/cp-jul-809/templates/fbde0f46-932d-47e8-b8cb-64dbefe29ba0/download' /*templateDownloadUrl:*/,
-                //    'https://devchili.cpstaging.online/grafx/api/v1/environment/cp-jul-809/templates/fbde0f46-932d-47e8-b8cb-64dbefe29ba0' /*templateUploadUrl:*/,
-                //    'fbde0f46-932d-47e8-b8cb-64dbefe29ba0' /*templateId:*/,
-                //    'https://devchili.cpstaging.online/grafx/api/v1/environment/cp-jul-809' /*graFxStudioEnvironmentApiBaseUrl:*/,
-                //    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL21ldGFkYXRhIjp7ImN1c3RvbWVyR3VpZCI6IjUxNTFlZjliLWRjNmYtNDU1OC05MDdkLTczZTc3NzNiYTU0MSIsInJvbGVzIjpbIkZBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNVIiwiODliOTVhZDgtMjQ1OS00YWM0LTk0ZDktN2UyM2I2ZDBmNDY2fEVBIiwiZDRiZDQ1YzItOGE1OC00Y2Y2LWI4MmItYWRiYTY4YWNmZWI5fEVBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNBIl0sInN1YnNjcmlwdGlvbklkcyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiXX0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vdHlwZV9vZl91c2VyIjoiVXNlciIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiRkEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U1UiLCI4OWI5NWFkOC0yNDU5LTRhYzQtOTRkOS03ZTIzYjZkMGY0NjZ8RUEiLCJkNGJkNDVjMi04YTU4LTRjZjYtYjgyYi1hZGJhNjhhY2ZlYjl8RUEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U0EiXSwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9jdXN0b21lcl9ndWlkIjoiNTE1MWVmOWItZGM2Zi00NTU4LTkwN2QtNzNlNzc3M2JhNTQxIiwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9zdWJzY3JpcHRpb25zIjpbIjU3NzE4ZmY2LTgxYzgtNGU5ZS1iYmU4LTNjNGVjODZjZjE4NCJdLCJpc3MiOiJodHRwczovL2xvZ2luLmNoaWxpZ3JhZngtZGV2LmNvbS8iLCJzdWIiOiJhdXRoMHw2MzkwOTdjYjQ4NDJiMTU0YTAzNjc0NzkiLCJhdWQiOlsiaHR0cHM6Ly9jaGlsaWdyYWZ4LmNvbSIsImh0dHBzOi8vZ3JhZngtZGV2LmV1LmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2ODU5NDE4ODUsImV4cCI6MTY4NjAyODI4NSwiYXpwIjoic0dKMzJHaXdYRklJZVpaZXk0aU5uMGJuR2t0RnJSZjEiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIn0.ag0hlzrGV1X3fw0wOBrYCsW6fE_Cxxegwuiswb_UOVEbMpVHqE99KECf4gALhwpx2qfBsJ-uT3NmoOqgEKcv0IKj5GBTxdnli5sri8WvaxNT5Z08NeaRqcw6xUO0sdLNc1iWdZBWHP1W61vPj632fyaXx9Yhqq7PRS7PFYklK0N1bqB0-gF67ihxumYuXsOSTzvbyedC0-LYVRu93iSs2QetpoWULCahqWd-F-Zqotfrx0JZLOeoCfHBkGdhVtEFhB53yqB_FTzPhqKso9SCeHK8bCZ_k_FfoqCGucfSTZs6D2Mq8xHAyQhIDAfHcvad0FEo99Joe-Oh22XshA_pBA' /*authToken:*/,
-                //);
+                //     'studio-ui-root',
+                //     "<open a template on chiligrafx.com to retrieve AT from network requests>",     /*authToken:*/
+                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>/download",  /*templateDownloadUrl:*/
+                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>",           /*templateUploadUrl:*/
+                //     "<template guid>",                                                              /*templateId:*/
+                //     "https://<baseUrl>/environment/<env-name>/"                                     /*graFxStudioEnvironmentApiBaseUrl:*/
             });
         </script>
     </body>
