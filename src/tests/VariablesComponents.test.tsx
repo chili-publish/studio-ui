@@ -28,6 +28,11 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
+    mockSDK.connector.getState = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
+
     window.SDK = mockSDK;
 });
 
