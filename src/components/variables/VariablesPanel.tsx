@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
+import {
+    AvailableIcons,
+    Button,
+    ButtonVariant,
+    FontSizes,
+    Icon,
+    Tray,
+    Colors,
+} from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import { Colors } from '@chili-publish/grafx-shared-components/lib';
 import { EditButtonWrapper } from './VariablesPanel.styles';
 import VariableComponent from '../variablesComponents/VariablesComponents';
 
