@@ -1,16 +1,8 @@
 import { useState } from 'react';
-import {
-    AvailableIcons,
-    Button,
-    ButtonVariant,
-    FontSizes,
-    Icon,
-    Tray,
-    Colors,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import { EditButtonWrapper } from './VariablesPanel.styles';
+import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import VariableComponent from '../variablesComponents/VariablesComponents';
 
 function VariablesPanel(props: { variables: Variable[] }) {
@@ -42,9 +34,7 @@ function VariablesPanel(props: { variables: Variable[] }) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={
-                    <h2 style={{ fontSize: '18px', fontWeight: 500, color: Colors.LIGHT_PRIMARY_WHITE }}>Customize</h2>
-                }
+                title={<VariablesPanelTitle>Customize</VariablesPanelTitle>}
             >
                 <div style={{ marginTop: '8px' }}>
                     {variables.length > 0 &&
