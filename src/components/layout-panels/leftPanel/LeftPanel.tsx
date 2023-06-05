@@ -1,5 +1,5 @@
 import { Variable } from '@chili-publish/studio-sdk';
-import { LeftPanelContainer } from './LeftPanel.styles';
+import { LeftPanelContainer, VariablesListContainer } from './LeftPanel.styles';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
 import { useTrayAndLeftPanelContext } from '../../../contexts/TrayAndLeftPanelContext';
@@ -13,17 +13,14 @@ function LeftPanel({ variables }: LeftPanelProps) {
     const { contentType } = useTrayAndLeftPanelContext();
 
     return (
-        <LeftPanelContainer>
+        <LeftPanelContainer id="left-panel">
             {contentType === ContentType.VARIABLES_LIST ? (
-                <div style={{ padding: '0 1.25rem' }}>
+                <VariablesListContainer>
                     <VariablesList variables={variables} />
-                </div>
+                </VariablesListContainer>
             ) : (
                 <ImagePanel />
             )}
-            {/* <div style={{ padding: '0 1.25rem' }}>
-                <VariablesList variables={variables} />
-            </div> */}
         </LeftPanelContainer>
     );
 }

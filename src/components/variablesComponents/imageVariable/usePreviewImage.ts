@@ -57,6 +57,10 @@ export const usePreviewImages = (
         if (!settingsPanelOpen) return;
 
         const getPreviewCall = async (assetId: string) => {
+            const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
+            if (mediaConnectorState.parsedData?.type !== 'ready') {
+                await window.SDK.connector.waitForConnectorReady(mediaConnector);
+            }
             if (previewCall) {
                 const response = await previewCall(assetId);
                 return response;

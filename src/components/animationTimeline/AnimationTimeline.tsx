@@ -1,4 +1,4 @@
-import { Timeline } from '@chili-publish/grafx-shared-components/lib';
+import { Timeline } from '@chili-publish/grafx-shared-components';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 
 function AnimationTimeline() {

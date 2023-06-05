@@ -19,6 +19,8 @@ import {
 import { ItemCache } from './ItemCache';
 import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
 import { AssetType } from '../../utils/ApiTypes';
+import useMobileSize from '../../hooks/useMobileSize';
+import { ContentType } from '../../contexts/TrayAndLeftPanelContext.types';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -48,7 +50,9 @@ function ItemBrowser<
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
 
-    const { selectedItems, navigationStack, setSelectedItems, setNavigationStack } = useTrayAndLeftPanelContext();
+    const { selectedItems, navigationStack, setSelectedItems, setNavigationStack, imagePanelTitle, contentType } =
+        useTrayAndLeftPanelContext();
+    const isMobileSize = useMobileSize();
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -191,42 +195,43 @@ function ItemBrowser<
         return null;
     }
 
+    // eslint-disable-next-line no-nested-ternary
+    const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
+
     return (
-        <Panel parentOverflow={!isModal} title={null} dataId="widget-media-panel" isModal={isModal}>
-            <>
-                <BreadCrumbsWrapper>
-                    <BreadCrumb
-                        href={navigationStackString}
-                        color={Colors.SECONDARY_FONT}
-                        activeColor={Colors.PRIMARY_FONT}
-                        onClick={(test: string) => {
-                            const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(test) + 1);
-                            setNavigationStack(newNavigationStack);
-                        }}
-                    />
-                </BreadCrumbsWrapper>
-                {isModal ? (
-                    // We need to set height on the `ScrollbarWrapper` and `width` on it's child
-                    // to make scrollbar overlay work without content-shift
-                    <ScrollbarWrapper darkTheme height="22rem" invertScrollbarColors>
-                        <ModalResourcesContainer width="45rem">
-                            {elements}
-                            <LoadPageContainer>
-                                <div ref={infiniteScrollingRef} />
-                            </LoadPageContainer>
-                        </ModalResourcesContainer>
-                    </ScrollbarWrapper>
-                ) : (
-                    <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
-                        <ResourcesContainer data-id="resources-container">
-                            {elements}
-                            <LoadPageContainer>
-                                <div ref={infiniteScrollingRef} />
-                            </LoadPageContainer>
-                        </ResourcesContainer>
-                    </ScrollbarWrapper>
-                )}
-            </>
+        <Panel parentOverflow={!isModal} title={panelTitle} dataId="widget-media-panel" isModal={isModal}>
+            <BreadCrumbsWrapper>
+                <BreadCrumb
+                    href={navigationStackString}
+                    color={Colors.SECONDARY_FONT}
+                    activeColor={Colors.PRIMARY_FONT}
+                    onClick={(test: string) => {
+                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(test) + 1);
+                        setNavigationStack(newNavigationStack);
+                    }}
+                />
+            </BreadCrumbsWrapper>
+            {isModal ? (
+                // We need to set height on the `ScrollbarWrapper` and `width` on it's child
+                // to make scrollbar overlay work without content-shift
+                <ScrollbarWrapper darkTheme height="22rem" invertScrollbarColors>
+                    <ModalResourcesContainer width="45rem">
+                        {elements}
+                        <LoadPageContainer>
+                            <div ref={infiniteScrollingRef} />
+                        </LoadPageContainer>
+                    </ModalResourcesContainer>
+                </ScrollbarWrapper>
+            ) : (
+                <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
+                    <ResourcesContainer data-id="resources-container">
+                        {elements}
+                        <LoadPageContainer>
+                            <div ref={infiniteScrollingRef} />
+                        </LoadPageContainer>
+                    </ResourcesContainer>
+                </ScrollbarWrapper>
+            )}
         </Panel>
     );
 }

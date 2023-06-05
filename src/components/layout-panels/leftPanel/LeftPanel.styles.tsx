@@ -53,3 +53,7 @@ export const FilenameSpan = styled.span<{ last: boolean }>`
     font-weight: ${(props) => (props.last ? 'bold' : 'normal')};
     padding: 0 0.5rem;
 `;
+
+export const VariablesListContainer = styled.div`
+    padding: 0 1.25rem;
+`;

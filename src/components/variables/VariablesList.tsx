@@ -1,13 +1,17 @@
 import { Variable } from '@chili-publish/studio-sdk';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
+import { VariablesPanelHeader } from './VariablesPanel.styles';
+import useMobileSize from '../../hooks/useMobileSize';
 
 interface VariablesListProps {
     variables: Variable[];
 }
 
 function VariablesList({ variables }: VariablesListProps) {
+    const isMobileSize = useMobileSize();
     return (
-        <div style={{ marginTop: '30px' }}>
+        <>
+            {!isMobileSize && <VariablesPanelHeader>Customize</VariablesPanelHeader>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     return (
@@ -18,7 +22,7 @@ function VariablesList({ variables }: VariablesListProps) {
                         />
                     );
                 })}
-        </div>
+        </>
     );
 }
 

@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-    AvailableIcons,
-    Button,
-    ButtonVariant,
-    Colors,
-    FontSizes,
-    Icon,
-    Tray,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import { EditButtonWrapper } from './VariablesPanel.styles';
@@ -15,7 +7,6 @@ import VariablesList from './VariablesList';
 import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
 import { ContentType } from '../../contexts/TrayAndLeftPanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import { NavigationTitle, NavigationWrapper } from '../itemBrowser/ItemBrowser.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -23,7 +14,7 @@ interface VariablesPanelProps {
 
 function VariablesPanel(props: VariablesPanelProps) {
     const { variables } = props;
-    const { contentType, navigationStack, previousPath, showVariablesPanel } = useTrayAndLeftPanelContext();
+    const { contentType, showVariablesPanel, imagePanelTitle } = useTrayAndLeftPanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const closeVariablePanel = () => {
@@ -31,21 +22,6 @@ function VariablesPanel(props: VariablesPanelProps) {
     };
 
     const showVariablesList = contentType === ContentType.VARIABLES_LIST;
-
-    const panelTitle = (
-        <NavigationWrapper>
-            <Button
-                type="button"
-                variant={ButtonVariant.tertiary}
-                onClick={(navigationStack ?? []).length ? previousPath : showVariablesPanel}
-                icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
-                styles={css`
-                    padding: 0;
-                `}
-            />
-            <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
-        </NavigationWrapper>
-    );
 
     return (
         <>
@@ -67,12 +43,13 @@ function VariablesPanel(props: VariablesPanelProps) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={showVariablesList ? 'Customize' : panelTitle}
+                title={showVariablesList ? 'Customize' : imagePanelTitle}
+                onTrayHidden={showVariablesPanel}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
                 `}
             >
-                <div>{showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}</div>
+                {showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}
             </Tray>
         </>
     );

@@ -1,7 +1,10 @@
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { ImageVariableSourceType, Media } from '@chili-publish/studio-sdk';
+import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
+import { css } from 'styled-components';
 import { ContentType, ITrayAndLeftPanelContext } from './TrayAndLeftPanelContext.types';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
+import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
 
 const TrayAndLeftPanelContextDefaultValues: ITrayAndLeftPanelContext = {
     showVariablesPanel: () => undefined,
@@ -14,6 +17,7 @@ const TrayAndLeftPanelContextDefaultValues: ITrayAndLeftPanelContext = {
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     previousPath: () => undefined,
+    imagePanelTitle: <div />,
 };
 
 export const TrayAndLeftPanelContext = createContext<ITrayAndLeftPanelContext>(TrayAndLeftPanelContextDefaultValues);
@@ -51,6 +55,26 @@ export function TrayAndLeftPanelContextProvider({ children }: { children: ReactN
         setNavigationStack((current) => current?.slice(0, -1));
     }, []);
 
+    const imagePanelTitle = useMemo(
+        () => (
+            <NavigationWrapper>
+                <Button
+                    type="button"
+                    variant={ButtonVariant.tertiary}
+                    onClick={
+                        (navigationStack ?? []).length ? previousPath : () => setContentType(ContentType.VARIABLES_LIST)
+                    }
+                    icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
+                    styles={css`
+                        padding: 0;
+                    `}
+                />
+                <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
+            </NavigationWrapper>
+        ),
+        [navigationStack, previousPath],
+    );
+
     const data = useMemo(
         () => ({
             showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
@@ -66,8 +90,17 @@ export function TrayAndLeftPanelContextProvider({ children }: { children: ReactN
             setSelectedItems,
             setNavigationStack,
             previousPath,
+            imagePanelTitle,
         }),
-        [contentType, currentVariableId, handleUpdateImage, navigationStack, previousPath, selectedItems],
+        [
+            contentType,
+            currentVariableId,
+            handleUpdateImage,
+            navigationStack,
+            imagePanelTitle,
+            previousPath,
+            selectedItems,
+        ],
     );
 
     return <TrayAndLeftPanelContext.Provider value={data}>{children}</TrayAndLeftPanelContext.Provider>;

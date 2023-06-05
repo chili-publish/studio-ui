@@ -17,4 +17,5 @@ export interface ITrayAndLeftPanelContext {
     setSelectedItems: Dispatch<SetStateAction<Media[]>>;
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
     previousPath: () => void;
+    imagePanelTitle: JSX.Element;
 }
