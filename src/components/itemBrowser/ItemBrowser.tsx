@@ -9,13 +9,7 @@ import {
     useInfiniteScrolling,
 } from '@chili-publish/grafx-shared-components';
 import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage, Media } from '@chili-publish/studio-sdk';
-import {
-    BreadCrumbsWrapper,
-    LoadPageContainer,
-    ModalResourcesContainer,
-    ResourcesContainer,
-    ResourcesPreview,
-} from './ItemBrowser.styles';
+import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer, ResourcesPreview } from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
 import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
 import { AssetType } from '../../utils/ApiTypes';
@@ -29,7 +23,6 @@ type ItemBrowserProps<T extends { id: string }> = {
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
     onSelect: (items: T[]) => void | null;
-    isModal?: boolean;
 };
 
 function ItemBrowser<
@@ -41,7 +34,7 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
-    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType, isModal } = props;
+    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
         requested: false,
@@ -166,12 +159,12 @@ function ItemBrowser<
                             : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
                     }
                     onClickCard={onClick}
-                    isModal={isModal}
+                    isModal={false}
                 />
             );
             return (
                 <ResourcesPreview
-                    width={isModal ? '25%' : undefined}
+                    width={undefined}
                     data-id={`resources-preview-${listItem.instance.name}`}
                     key={getKey(
                         `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
@@ -199,7 +192,7 @@ function ItemBrowser<
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
 
     return (
-        <Panel parentOverflow={!isModal} title={panelTitle} dataId="widget-media-panel" isModal={isModal}>
+        <Panel parentOverflow title={panelTitle} dataId="widget-media-panel" isModal={false}>
             <BreadCrumbsWrapper>
                 <BreadCrumb
                     href={navigationStackString}
@@ -211,27 +204,14 @@ function ItemBrowser<
                     }}
                 />
             </BreadCrumbsWrapper>
-            {isModal ? (
-                // We need to set height on the `ScrollbarWrapper` and `width` on it's child
-                // to make scrollbar overlay work without content-shift
-                <ScrollbarWrapper darkTheme height="22rem" invertScrollbarColors>
-                    <ModalResourcesContainer width="45rem">
-                        {elements}
-                        <LoadPageContainer>
-                            <div ref={infiniteScrollingRef} />
-                        </LoadPageContainer>
-                    </ModalResourcesContainer>
-                </ScrollbarWrapper>
-            ) : (
-                <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
-                    <ResourcesContainer data-id="resources-container">
-                        {elements}
-                        <LoadPageContainer>
-                            <div ref={infiniteScrollingRef} />
-                        </LoadPageContainer>
-                    </ResourcesContainer>
-                </ScrollbarWrapper>
-            )}
+            <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
+                <ResourcesContainer data-id="resources-container">
+                    {elements}
+                    <LoadPageContainer>
+                        <div ref={infiniteScrollingRef} />
+                    </LoadPageContainer>
+                </ResourcesContainer>
+            </ScrollbarWrapper>
         </Panel>
     );
 }

@@ -80,7 +80,7 @@ export const LoadPageContainer = styled.div`
 `;
 
 export const BreadCrumbsWrapper = styled.div`
-    width: 250px;
+    width: 15.625rem;
     height: 2.5rem;
     margin-left: 1.5rem;
     overflow: visible;

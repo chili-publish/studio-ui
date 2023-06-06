@@ -10,6 +10,7 @@ import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import useMobileSize from './hooks/useMobileSize';
 import { TrayAndLeftPanelContextProvider } from './contexts/TrayAndLeftPanelContext';
+import { CanvasContainer, MainContentContainer } from './Aoo.styles';
 
 declare global {
     interface Window {
@@ -135,16 +136,16 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         <TrayAndLeftPanelContextProvider>
             <div className="app">
                 <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
-                <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
+                <MainContentContainer>
                     {!isMobileSize && <LeftPanel variables={variables} />}
-                    <div style={{ width: '100%' }}>
+                    <CanvasContainer>
                         {isMobileSize && <VariablesPanel variables={variables} />}
                         <div className="studio-ui-canvas" data-id="layout-canvas">
                             <div className="chili-editor" id="chili-editor" />
                         </div>
                         <AnimationTimeline />
-                    </div>
-                </div>
+                    </CanvasContainer>
+                </MainContentContainer>
             </div>
         </TrayAndLeftPanelContextProvider>
     );
