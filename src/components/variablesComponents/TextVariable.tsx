@@ -16,6 +16,7 @@ function TextVariable(props: ITextVariable) {
 
     return (
         <Input
+            type="text"
             value={variableValue}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}

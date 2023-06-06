@@ -7,11 +7,8 @@ export const EditButtonWrapper = styled.div`
     bottom: 6.5rem;
 `;
 
-export const VariablesPanelHeader = styled.div`
-    height: 3.5rem;
-    display: flex;
-    align-items: center;
-    color: ${Colors.PRIMARY_FONT};
+export const VariablesPanelTitle = styled.h2`
     font-size: ${FontSizes.heading2};
     font-weight: 500;
+    color: ${Colors.LIGHT_PRIMARY_WHITE};
 `;
