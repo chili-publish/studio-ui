@@ -1,14 +1,23 @@
 /* eslint-disable no-console */
-import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
+import {
+    Id,
+    ImageVariableSource,
+    ImageVariableSourceType,
+    MediaConnectorImageVariableSource,
+} from '@chili-publish/studio-sdk';
 
 export const useVariableComponents = (currentVariable: Id) => {
     const closePanel = () => {
         console.log('%c⧭', 'color: #ff0000', 'Closing the panel');
     };
 
-    const handleImageChange = async (source: ImageVariableSource) => {
+    const handleImageChange = async (src: ImageVariableSource) => {
         if (currentVariable) {
-            const result = await window.SDK.variable.setVariableSource(currentVariable, source);
+            const value =
+                src && src.sourceType === ImageVariableSourceType.mediaConnector
+                    ? (src as MediaConnectorImageVariableSource).assetId
+                    : null;
+            const result = await window.SDK.variable.setVariableValue(currentVariable, value);
             return result;
         }
         return null;
@@ -16,7 +25,7 @@ export const useVariableComponents = (currentVariable: Id) => {
 
     const handleImageRemove = async () => {
         if (currentVariable) {
-            const result = await window.SDK.variable.removeVariableSource(currentVariable);
+            const result = await window.SDK.variable.setVariableValue(currentVariable, null);
             return result;
         }
         return null;
