@@ -26,13 +26,15 @@
 
                 StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // // use this for local dev and debug
-                // StudioUI.studioLoaderConfig(
-                //     'studio-ui-root',
-                //     "<open a template on chiligrafx.com to retrieve AT from network requests>",     /*authToken:*/
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>/download",  /*templateDownloadUrl:*/
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>",           /*templateUploadUrl:*/
-                //     "<template guid>",                                                              /*templateId:*/
-                //     "https://<baseUrl>/environment/<env-name>/"                                     /*graFxStudioEnvironmentApiBaseUrl:*/
+                const templateId = 'bdbd4e2b-568a-4475-8248-f627a48934ef';
+                StudioUI.studioLoaderConfig(
+                    'studio-ui-root',
+                    `https://devblubird.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/templates/${templateId}/download` /*templateDownloadUrl:*/,
+                    `https://devblubird.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/templates/${templateId}` /*templateUploadUrl:*/,
+                    templateId /*templateId:*/,
+                    'https://devblubird.cpstaging.online/grafx/api/v1/environment/cp-dyx-217',
+                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL21ldGFkYXRhIjp7ImN1c3RvbWVyR3VpZCI6IjUxNTFlZjliLWRjNmYtNDU1OC05MDdkLTczZTc3NzNiYTU0MSIsInJvbGVzIjpbIkZBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNVIiwiODliOTVhZDgtMjQ1OS00YWM0LTk0ZDktN2UyM2I2ZDBmNDY2fEVBIiwiZDRiZDQ1YzItOGE1OC00Y2Y2LWI4MmItYWRiYTY4YWNmZWI5fEVBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNBIl0sInN1YnNjcmlwdGlvbklkcyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiXX0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vdHlwZV9vZl91c2VyIjoiVXNlciIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiRkEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U1UiLCI4OWI5NWFkOC0yNDU5LTRhYzQtOTRkOS03ZTIzYjZkMGY0NjZ8RUEiLCJkNGJkNDVjMi04YTU4LTRjZjYtYjgyYi1hZGJhNjhhY2ZlYjl8RUEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U0EiXSwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9jdXN0b21lcl9ndWlkIjoiNTE1MWVmOWItZGM2Zi00NTU4LTkwN2QtNzNlNzc3M2JhNTQxIiwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9zdWJzY3JpcHRpb25zIjpbIjU3NzE4ZmY2LTgxYzgtNGU5ZS1iYmU4LTNjNGVjODZjZjE4NCJdLCJpc3MiOiJodHRwczovL2xvZ2luLmNoaWxpZ3JhZngtZGV2LmNvbS8iLCJzdWIiOiJhdXRoMHw2MzkwOTdjYjQ4NDJiMTU0YTAzNjc0NzkiLCJhdWQiOlsiaHR0cHM6Ly9jaGlsaWdyYWZ4LmNvbSIsImh0dHBzOi8vZ3JhZngtZGV2LmV1LmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2ODYwMzE0MzIsImV4cCI6MTY4NjExNzgzMiwiYXpwIjoic0dKMzJHaXdYRklJZVpaZXk0aU5uMGJuR2t0RnJSZjEiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIn0.vunBJlllAYodDOJIHAPeQwbHPO0kjn3Z1P55ctpCIgHH_Ijqm1yLe4wTEDXKSEB8-k-u4B84j2wYfBHhFU7TEL3HaKXy0PLNQqCD9sd3v2YN3cENhdpy-ogE3hyFwqOHFGt74G2pJxTemDukzUIMYnwYRRnXTH4j8VwXn7IA926cBgpOT9c6wOsurFRwTFXhFvwZ_rdJIk-AHUvjmPuX89mSZmjI2GwpjhBF-EjdyXWVlz7g9Ufg9WNNq2WQ_gPoPTS7oDqPzOSHAMEbsl_1lOASDp50nlTIrLJ3FsUa-B7jRuZleHne6aFUB1wAlZpGOTQuB9tRfWU8XGFjHsA2TA',
+                );
             });
         </script>
     </body>
