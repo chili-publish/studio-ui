@@ -54,7 +54,7 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 
-    mockSDK.variable.setVariableSource = jest
+    mockSDK.variable.setVariableValue = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -161,6 +161,6 @@ describe('Image Panel', () => {
             image.click();
         });
 
-        expect(window.SDK.variable.setVariableSource).toBeCalledTimes(1);
+        expect(window.SDK.variable.setVariableValue).toBeCalledTimes(1);
     });
 });
