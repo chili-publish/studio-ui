@@ -132,6 +132,7 @@ function ItemBrowser<
                     setNavigationStack(() => toNavigationStack(listItem.instance.relativePath));
                 } else {
                     selectItem(listItem.instance);
+                    setNavigationStack([]);
                 }
             };
 

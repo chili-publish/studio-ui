@@ -332,9 +332,9 @@
     styled-components "^5.3.6"
 
 "@chili-publish/studio-sdk@^0.125.1":
-  version "0.125.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.125.1/0f197fc9d704cfe380f3f0f4c504cc688cb9bb88#0f197fc9d704cfe380f3f0f4c504cc688cb9bb88"
-  integrity sha512-XujxQquQwCFAx6IwgGmeC/rVTXMzvduJ1ijBVTvOUJoqjz/TemzFQgCR3+CkzjT9auhF/P3PkUldwQMlTKFm8w==
+  version "0.125.3"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.125.3/1130558e0562c9ae075905e0fe6d15c604c5146a#1130558e0562c9ae075905e0fe6d15c604c5146a"
+  integrity sha512-VhpBT4aQ+l6glhkkVUCMXWYiSixFwDbMLPMWnyOn6WLjriJbQve8voPqLNrzazDiCdcsM6obvF/x9pVn7UZbzA==
   dependencies:
     mathjs "^10.0.2"
     penpal "6.1.0"

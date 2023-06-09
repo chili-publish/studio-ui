@@ -8,6 +8,7 @@ export const useVariableComponents = (currentVariable: Id) => {
 
     const handleImageChange = async (src: ImageVariableSource) => {
         if (currentVariable) {
+            console.log(src, currentVariable);
             const result = await window.SDK.variable.setVariableSource(currentVariable, src);
             return result;
         }
