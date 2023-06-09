@@ -14,8 +14,9 @@ export const useVariableComponents = (currentVariable: Id) => {
         console.log('%c⧭', 'color: #00a3cc', 'removing the image', currentVariable);
     };
 
-    const handleValueChange = (value: string) => {
+    const handleValueChange = async (value: string) => {
         console.log('%c⧭', 'color: #aa00ff', 'changing the value of variable ', currentVariable, 'to ', value);
+        await window.SDK.variable.setVariableValue(currentVariable, value);
     };
 
     return {
