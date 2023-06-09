@@ -66,6 +66,30 @@ beforeEach(() => {
             }),
         );
 
+    mockSDK.variable.setVariableSource = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                success: true,
+                status: 0,
+                data: '',
+                parsedData: null,
+            }),
+        );
+
+    mockSDK.variable.removeVariableSource = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                success: true,
+                status: 0,
+                data: '',
+                parsedData: null,
+            }),
+        );
+
     window.SDK = mockSDK;
 
     window.IntersectionObserver = jest.fn(
@@ -161,6 +185,6 @@ describe('Image Panel', () => {
             image.click();
         });
 
-        expect(window.SDK.variable.setVariableValue).toBeCalledTimes(1);
+        expect(window.SDK.variable.setVariableSource).toBeCalledTimes(1);
     });
 });
