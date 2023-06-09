@@ -18,6 +18,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
+    const [animationLength, setAnimationLength] = useState(0);
+    const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -73,6 +75,15 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             },
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
+            },
+            onSelectedLayoutPropertiesChanged: (layoutProperties) => {
+                if (layoutProperties) {
+                    setAnimationLength(layoutProperties.timelineLengthMs.value);
+                }
+            },
+            onScrubberPositionChanged: (animationPlayback) => {
+                setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
+                // dispatch(setIsPlaying(animationPlayback?.animationIsPlaying || false));
             },
             editorLink,
         });
@@ -135,7 +146,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 <div className="chili-editor" id="chili-editor" />
             </div>
 
-            <AnimationTimeline />
+            <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
         </div>
     );
 }

@@ -1,32 +1,40 @@
 import { Timeline } from '@chili-publish/grafx-shared-components';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 
-function AnimationTimeline() {
-    const animationLength = 30000; // This should be dynamic
+interface AnimationTimelineI {
+    scrubberTimeMs: number;
+    animationLength: number;
+}
+function AnimationTimeline(props: AnimationTimelineI) {
+    const { scrubberTimeMs, animationLength } = props;
 
-    const handlePlay = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Play`);
+    // const test = animationLength || 8000;
+    const handlePlay = async () => {
+        await window.SDK.animation.playAnimation();
     };
 
-    const handlePause = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Pause`);
+    const handlePause = async () => {
+        await window.SDK.animation.pauseAnimation();
     };
 
-    const handleSetScrubberPosition = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Scrubber position changed`);
+    const handleSetScrubberPosition = async (milliseconds: number) => {
+        await window.SDK.animation.setScrubberPosition(milliseconds);
     };
+
+    // TODO: pass this to the timeline to set the thumb position
+    // eslint-disable-next-line no-console
+    console.log('%c⧭ scrubberTimeMs', 'color: #f279ca', scrubberTimeMs);
 
     return (
         <AnimationTimelineWrapper>
-            <Timeline
-                animationLength={animationLength}
-                setScrubberPosition={handleSetScrubberPosition}
-                playAnimation={handlePlay}
-                pauseAnimation={handlePause}
-            />
+            {animationLength > 0 && (
+                <Timeline
+                    animationLength={animationLength}
+                    setScrubberPosition={(milliseconds: number) => handleSetScrubberPosition(milliseconds)}
+                    playAnimation={handlePlay}
+                    pauseAnimation={handlePause}
+                />
+            )}
         </AnimationTimelineWrapper>
     );
 }
