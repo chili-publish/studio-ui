@@ -21,10 +21,6 @@ function AnimationTimeline(props: AnimationTimelineI) {
         await window.SDK.animation.setScrubberPosition(milliseconds);
     };
 
-    // TODO: pass this to the timeline to set the thumb position
-    // eslint-disable-next-line no-console
-    console.log('%c⧭ scrubberTimeMs', 'color: #f279ca', scrubberTimeMs);
-
     return (
         <AnimationTimelineWrapper>
             {animationLength > 0 && (
@@ -33,6 +29,7 @@ function AnimationTimeline(props: AnimationTimelineI) {
                     setScrubberPosition={(milliseconds: number) => handleSetScrubberPosition(milliseconds)}
                     playAnimation={handlePlay}
                     pauseAnimation={handlePause}
+                    timestamp={scrubberTimeMs}
                 />
             )}
         </AnimationTimelineWrapper>
