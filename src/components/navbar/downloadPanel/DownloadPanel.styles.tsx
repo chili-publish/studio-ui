@@ -41,3 +41,21 @@ export const DropdownOptionText = styled.span`
     font-size: ${FontSizes.regular};
     color: ${Colors.LIGHT_PRIMARY_WHITE};
 `;
+
+export const MobileDropdownContainer = styled.div`
+    display: flex;
+    padding: 0 0.75rem;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    background-color: ${Colors.LIGHT_GRAY};
+    height: 2.5rem;
+    border-radius: 0.25rem;
+`;
+
+export const MobileDropdownLeftContent = styled.div`
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+`;
