@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
+import { useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
 import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
-import useDebounce from './hooks/useDebounce';
 import './App.css';
 
 declare global {
@@ -25,9 +25,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     const saveDocument = async (docEditorLink?: string, templateUrl?: string, token?: string) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
-
-        // eslint-disable-next-line no-console
-        console.log(`[${saveDocument.name}] Saving document`);
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
