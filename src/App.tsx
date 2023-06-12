@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
+import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import { useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -14,10 +15,44 @@ declare global {
     }
 }
 
+type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
+
 function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
+    const enableAutoSaveRef = useRef(false);
+
+    const saveDocument = async (docEditorLink?: string, templateUrl?: string, token?: string) => {
+        const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
+
+        if (url && process.env.NODE_ENV !== 'development') {
+            try {
+                const document = await window.SDK.document.getCurrentDocumentState();
+
+                const config: HttpHeaders = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                if (token) {
+                    config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+                }
+
+                axios.put(url, JSON.parse(document.data || '{}'), config).catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.error(`[${saveDocument.name}] There was an issue saving document`);
+                    return err;
+                });
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error(`[${saveDocument.name}] There was an fetching the current document state`);
+            }
+        }
+    };
+
+    const saveDocumentDebounced = useDebounce((...args: (string | undefined)[]) => saveDocument(...args));
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -35,7 +70,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     })
                     .catch((err: AxiosError) => {
                         // eslint-disable-next-line no-console
-                        console.error(err);
+                        console.error(`[${App.name}] Axios error`, err);
                     });
             }
 
@@ -66,14 +101,20 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     useEffect(() => {
         const sdk = new StudioSDK({
-            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => {
-                // TODO: this is only for testing remove it when some integration is done
-                // eslint-disable-next-line no-console
-                console.log('%c⧭', 'color: #408059', frameLayout);
-            },
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
+
+                // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
+                // we are using ref to keep track if the `onVariablesListChanged` was called second time.
+                if (enableAutoSaveRef.current === true) {
+                    saveDocumentDebounced(editorLink, projectConfig?.templateUploadUrl, projectConfig?.authToken);
+                }
+
+                if (enableAutoSaveRef.current === false) {
+                    enableAutoSaveRef.current = true;
+                }
             },
+
             editorLink,
         });
         // Connect to ths SDK
@@ -90,13 +131,13 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         // eslint-disable-next-line no-console
         console.table({
             'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
-            'EUW version': packageInfo.version,
+            'Studio UI version': packageInfo.version,
         });
-
         return () => {
             // PRevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
+            enableAutoSaveRef.current = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

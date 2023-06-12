@@ -24,9 +24,6 @@ function Zoom() {
     const [zoom, setZoom] = useState(100);
 
     const handleOnClick = (type: ZoomTypeEnum = ZoomTypeEnum.INCREMENT) => {
-        // eslint-disable-next-line no-console
-        console.log(`[${Zoom.name}] Clicked`);
-
         if (type === ZoomTypeEnum.DECREMENT) return setZoom(zoom - 10);
 
         return setZoom(zoom + 10);
