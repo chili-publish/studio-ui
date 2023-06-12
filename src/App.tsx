@@ -173,9 +173,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     // eslint-disable-next-line no-console
     console.table({
-        templateDownloadUrl: projectConfig?.templateDownloadUrl,
-        templateUploadUrl: projectConfig?.templateUploadUrl,
-        templateId: projectConfig?.templateId,
+        projectDownloadUrl: projectConfig?.templateDownloadUrl,
+        projectUploadUrl: projectConfig?.templateUploadUrl,
+        projectId: projectConfig?.templateId,
         graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
     });
 
