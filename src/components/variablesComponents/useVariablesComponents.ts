@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
 import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
 
+// NOTE(@pkgacek): this is an custom hook to handle updating components. Currently it
+// is only a boiler plate to be expanded upon in the future.
 export const useVariableComponents = (currentVariableId: Id) => {
     const closePanel = () => null;
 
