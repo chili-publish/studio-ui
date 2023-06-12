@@ -26,11 +26,11 @@ export default class StudioUI {
 
     static studioLoaderConfig(
         selector: string,
-        authToken: string,
         templateDownloadUrl: string,
         templateUploadUrl: string,
         templateId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
+        authToken: string,
         refreshTokenAction: () => Promise<string | AxiosError>,
         projectName: string,
         onBack: () => void,

@@ -11,8 +11,6 @@ function TextVariable(props: ITextVariable) {
     );
 
     const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        await window.SDK.variable.setVariableValue(variable.id, e.target.value);
-
         setVariableValue(e.target.value);
     };
 
