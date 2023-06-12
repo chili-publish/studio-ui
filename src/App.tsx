@@ -40,17 +40,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
                 }
 
-                axios
-                    .put(url, JSON.parse(document.data || '{}'), config)
-                    .then(() => {
-                        // eslint-disable-next-line no-console
-                        console.log(`[${saveDocument.name}] Document saved`);
-                    })
-                    .catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.error(`[${saveDocument.name}] There was an issue saving document`);
-                        return err;
-                    });
+                axios.put(url, JSON.parse(document.data || '{}'), config).catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.error(`[${saveDocument.name}] There was an issue saving document`);
+                    return err;
+                });
             } catch (error) {
                 // eslint-disable-next-line no-console
                 console.error(`[${saveDocument.name}] There was an fetching the current document state`);
@@ -76,7 +70,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     })
                     .catch((err: AxiosError) => {
                         // eslint-disable-next-line no-console
-                        console.error(err);
+                        console.error(`[${App.name}] Axios error`, err);
                     });
             }
 
@@ -107,11 +101,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     useEffect(() => {
         const sdk = new StudioSDK({
-            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => {
-                // TODO: this is only for testing remove it when some integration is done
-                // eslint-disable-next-line no-console
-                console.log('%c⧭', 'color: #408059', frameLayout);
-            },
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => null,
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
 
@@ -122,8 +113,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 }
 
                 if (enableAutoSaveRef.current === false) {
-                    // eslint-disable-next-line no-console
-                    console.log(`[${App.name}] Autosaving enabled`);
                     enableAutoSaveRef.current = true;
                 }
             },

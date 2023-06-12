@@ -4,20 +4,11 @@ import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 function AnimationTimeline() {
     const animationLength = 30000; // This should be dynamic
 
-    const handlePlay = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Play`);
-    };
+    const handlePlay = () => null;
 
-    const handlePause = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Pause`);
-    };
+    const handlePause = () => null;
 
-    const handleSetScrubberPosition = () => {
-        // eslint-disable-next-line no-console
-        console.log(`[${AnimationTimeline.name}] Scrubber position changed`);
-    };
+    const handleSetScrubberPosition = () => null;
 
     return (
         <AnimationTimelineWrapper>
