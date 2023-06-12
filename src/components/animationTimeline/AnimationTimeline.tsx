@@ -8,7 +8,6 @@ interface AnimationTimelineI {
 function AnimationTimeline(props: AnimationTimelineI) {
     const { scrubberTimeMs, animationLength } = props;
 
-    // const test = animationLength || 8000;
     const handlePlay = async () => {
         await window.SDK.animation.playAnimation();
     };
