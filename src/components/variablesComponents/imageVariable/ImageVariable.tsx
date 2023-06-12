@@ -21,8 +21,7 @@ function ImageVariable(props: IImageVariable) {
             previewImage={currentPreviewImage}
             onRemove={handleImageRemove}
             // TODO: replace with the action that opens the assets panel
-            // eslint-disable-next-line no-console
-            onClick={() => console.log('open assets panel')}
+            onClick={() => null}
             previewErrorUrl={previewErrorUrl}
         />
     );

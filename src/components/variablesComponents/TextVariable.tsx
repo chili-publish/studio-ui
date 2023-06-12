@@ -10,7 +10,7 @@ function TextVariable(props: ITextVariable) {
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
     );
 
-    const handleVariableChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
         setVariableValue(e.target.value);
     };
 
