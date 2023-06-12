@@ -4,19 +4,13 @@ import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 function AnimationTimeline() {
     const animationLength = 30000; // This should be dynamic
 
-    const handlePlay = () => null;
-
-    const handlePause = () => null;
-
-    const handleSetScrubberPosition = () => null;
-
     return (
         <AnimationTimelineWrapper>
             <Timeline
                 animationLength={animationLength}
-                setScrubberPosition={handleSetScrubberPosition}
-                playAnimation={handlePlay}
-                pauseAnimation={handlePause}
+                setScrubberPosition={() => null}
+                playAnimation={() => null}
+                pauseAnimation={() => null}
             />
         </AnimationTimelineWrapper>
     );

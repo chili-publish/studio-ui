@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys, FrameLayoutType } from '@chili-publish/studio-sdk';
+import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import { useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -101,8 +101,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     useEffect(() => {
         const sdk = new StudioSDK({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            onSelectedFrameLayoutChanged: (frameLayout: FrameLayoutType) => null,
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
 
