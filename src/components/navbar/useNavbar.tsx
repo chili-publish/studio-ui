@@ -1,4 +1,4 @@
-import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components/lib';
+import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
@@ -9,10 +9,14 @@ import useMobileSize from '../../hooks/useMobileSize';
 const useNavbar = (projectName: string | undefined, goBack: (() => void) | undefined) => {
     const isMobile = useMobileSize();
     const hasHistory = false; // This should be dynamic
-    const [showDownloadPanel, setShowDownloadPanel] = useState(false);
+    const [isDownloadPanelShown, setIsDownloadPanelShown] = useState(false);
 
-    const toggleDownloadPanel = () => {
-        setShowDownloadPanel((prev) => !prev);
+    const hideDownloadPanel = () => {
+        setIsDownloadPanelShown(false);
+    };
+
+    const showDownloadPanel = () => {
+        setIsDownloadPanelShown(true);
     };
 
     const navbarItems = useMemo(
@@ -64,7 +68,7 @@ const useNavbar = (projectName: string | undefined, goBack: (() => void) | undef
                         }
                         icon={AvailableIcons.faArrowDownToLine}
                         variant={ButtonVariant.primary}
-                        handleOnClick={toggleDownloadPanel}
+                        handleOnClick={showDownloadPanel}
                     />
                 ),
             },
@@ -77,7 +81,7 @@ const useNavbar = (projectName: string | undefined, goBack: (() => void) | undef
         [goBack, projectName, hasHistory, isMobile],
     );
 
-    return { navbarItems, showDownloadPanel, toggleDownloadPanel };
+    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelShown };
 };
 
 export default useNavbar;

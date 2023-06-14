@@ -31,7 +31,6 @@ export const DownloadDropdownLabel = styled.span`
 `;
 
 export const DropdownOptionLabel = styled.div`
-    width: 14.6rem;
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -58,4 +57,18 @@ export const MobileDropdownLeftContent = styled.div`
     gap: 0.5rem;
     justify-content: space-between;
     align-items: center;
+`;
+
+export const MobileDropdownOption = styled.div<{ selected?: boolean }>`
+    display: flex;
+    align-items: center;
+    height: 3rem;
+    padding: 0 1rem;
+    ${({ selected }) => selected && `background-color: ${Colors.LIGHT_GRAY_200};`};
+`;
+
+export const MobileDropdownOptionContent = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 `;
