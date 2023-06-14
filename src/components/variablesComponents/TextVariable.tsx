@@ -10,12 +10,13 @@ function TextVariable(props: ITextVariable) {
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
     );
 
-    const handleVariableChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
         setVariableValue(e.target.value);
     };
 
     return (
         <Input
+            type="text"
             value={variableValue}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}
