@@ -1,12 +1,19 @@
 import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
+import { DownloadFormats } from '@chili-publish/studio-sdk';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
 import useMobileSize from '../../hooks/useMobileSize';
+import { ProjectConfig } from '../../types/types';
+import { getDownloadLink } from '../../utils/documentExportHelper';
 
-const useNavbar = (projectName: string | undefined, goBack: (() => void) | undefined) => {
+const useNavbar = (
+    projectName: string | undefined,
+    goBack: (() => void) | undefined,
+    projectConfig?: ProjectConfig,
+) => {
     const isMobile = useMobileSize();
     const hasHistory = false; // This should be dynamic
     const [isDownloadPanelShown, setIsDownloadPanelShown] = useState(false);
@@ -81,7 +88,39 @@ const useNavbar = (projectName: string | undefined, goBack: (() => void) | undef
         [goBack, projectName, hasHistory, isMobile],
     );
 
-    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelShown };
+    const handleDownload = async (extension: DownloadFormats) => {
+        try {
+            const { data: downloadURL } = await getDownloadLink(
+                extension,
+                projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
+                projectConfig?.authToken ?? '',
+                '0',
+                projectConfig?.templateId ?? '',
+            );
+
+            const config = { headers: { Authorization: `Bearer ${projectConfig?.authToken}` } };
+            const response = await fetch(downloadURL ?? '', config);
+
+            if (response.status !== 200) return;
+
+            const objectUrl = window.URL.createObjectURL(await response.blob());
+            const a = Object.assign(document.createElement('a'), {
+                href: objectUrl,
+                style: 'display: none',
+                download: `export.${extension}`,
+            });
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(objectUrl);
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(error);
+        }
+        hideDownloadPanel();
+    };
+
+    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelShown, handleDownload };
 };
 
 export default useNavbar;

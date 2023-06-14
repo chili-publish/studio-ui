@@ -4,8 +4,12 @@ import DownloadPanel from './downloadPanel/DownloadPanel';
 import useNavbar from './useNavbar';
 
 function Navbar(props: INavbar) {
-    const { projectName, goBack } = props;
-    const { navbarItems, isDownloadPanelShown, hideDownloadPanel } = useNavbar(projectName, goBack);
+    const { projectName, goBack, projectConfig } = props;
+    const { navbarItems, isDownloadPanelShown, hideDownloadPanel, handleDownload } = useNavbar(
+        projectName,
+        goBack,
+        projectConfig,
+    );
 
     return (
         <StyledNavbar data-testid="navbar">
@@ -16,7 +20,11 @@ function Navbar(props: INavbar) {
                     </NavbarItem>
                 ))}
             </ul>
-            <DownloadPanel isDownloadPanelShown={isDownloadPanelShown} hideDownloadPanel={hideDownloadPanel} />
+            <DownloadPanel
+                isDownloadPanelShown={isDownloadPanelShown}
+                hideDownloadPanel={hideDownloadPanel}
+                handleDownload={handleDownload}
+            />
         </StyledNavbar>
     );
 }

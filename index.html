@@ -24,16 +24,16 @@
                     ? 'https://chili-dev.azureedge.net/'
                     : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                // StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                // StudioUI.studioLoaderConfig(
-                //     'studio-ui-root',
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>/download",  /*templateDownloadUrl:*/
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>",           /*templateUploadUrl:*/
-                //     "<template guid>",                                                              /*templateId:*/
-                //     "https://<baseUrl>/environment/<env-name>/"                                     /*graFxStudioEnvironmentApiBaseUrl:*/
-                //     "<open a template on chiligrafx.com to retrieve AT from network requests>",     /*authToken:*/
-                // );
+                StudioUI.studioLoaderConfig(
+                    'studio-ui-root',
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/38c79ff2-e68b-40ce-b92e-3e7e2696e744/document' /*templateDownloadUrl:*/,
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/38c79ff2-e68b-40ce-b92e-3e7e2696e744/document' /*templateUploadUrl:*/,
+                    '38c79ff2-e68b-40ce-b92e-3e7e2696e744' /*templateId:*/,
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217' /*graFxStudioEnvironmentApiBaseUrl:*/,
+                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3JvbGVzIjpbIkZBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNVIiwiODliOTVhZDgtMjQ1OS00YWM0LTk0ZDktN2UyM2I2ZDBmNDY2fEVBIiwiZDRiZDQ1YzItOGE1OC00Y2Y2LWI4MmItYWRiYTY4YWNmZWI5fEVBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNBIl0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vY3VzdG9tZXJfZ3VpZCI6IjUxNTFlZjliLWRjNmYtNDU1OC05MDdkLTczZTc3NzNiYTU0MSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vc3Vic2NyaXB0aW9ucyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiXSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5jaGlsaWdyYWZ4LWRldi5jb20vIiwic3ViIjoiYXV0aDB8NjM5MDk3Y2I0ODQyYjE1NGEwMzY3NDc5IiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjg2NzM1MDM1LCJleHAiOjE2ODY4MjE0MzUsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.zPp7PywHfk-PGF0LqhEICrxBmZNtx5SjznhimdvHPxVQdwwFOJnDBVAf1RxmuNDFl1HWG5QJH7vdfD_Hb04vkcY6-wluB-pPLZJ7qQ0PT78izvxKu5MnOAkRBEJDLFNP9or4sJeEzRkeDD6w5X7gTee1cXuHYi8tKlXa74MBbf_ETXcX6Vx-TZdsIrem9W6OdoKHBcFErzpsaUJXoO9jQIBfRKc2Cka-JVy_8GDxPMppuL_iPAJYAR7uru-3lGRt1UZXqvIRGV0UnjjGPNtw4WJNZjqmou8t3bM4RJNjUmIDgdy6oFWACZL8BPHxfYGuFjZpE20fSYd85DLeaiD14Q' /*authToken:*/,
+                );
             });
         </script>
     </body>

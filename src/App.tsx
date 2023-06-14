@@ -170,7 +170,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     return (
         <div className="app">
-            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+            <Navbar
+                projectName={projectConfig?.projectName}
+                goBack={projectConfig?.onBack}
+                projectConfig={projectConfig}
+            />
             <VariablesPanel variables={variables} />
             <div className="studio-ui-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />

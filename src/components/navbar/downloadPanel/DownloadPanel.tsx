@@ -11,6 +11,7 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { useMemo, useRef, useState } from 'react';
 import { css } from 'styled-components';
+import { DownloadFormats } from '@chili-publish/studio-sdk';
 import {
     DownloadDropdownContainer,
     DownloadDropdownLabel,
@@ -28,10 +29,11 @@ import useMobileSize from '../../../hooks/useMobileSize';
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
     isDownloadPanelShown: boolean;
+    handleDownload: (_: DownloadFormats) => Promise<void>;
 }
 
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelShown } = props;
+    const { hideDownloadPanel, isDownloadPanelShown, handleDownload } = props;
     const isMobileSize = useMobileSize();
 
     const [mobileDropdownPressed, setMobileDropdownPressed] = useState(false);
@@ -77,6 +79,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                 </MobileDropdownContainer>
             </DownloadDropdownContainer>
             <Button
+                onClick={() => {
+                    handleDownload(selectedOption.toUpperCase() as DownloadFormats);
+                }}
                 variant={ButtonVariant.primary}
                 label="Download"
                 icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
@@ -95,7 +100,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 title={!mobileDropdownPressed && 'Download'}
                 onTrayHidden={() => setMobileDropdownPressed(false)}
                 styles={css`
-                    ${mobileDropdownPressed && 'padding: 0;'}
+                    ${mobileDropdownPressed ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
                 `}
                 hideCloseButton={mobileDropdownPressed}
@@ -115,6 +120,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                         <DropDown options={downloadOptions} isSearchable={false} width="16.25rem" />
                     </DownloadDropdownContainer>
                     <Button
+                        onClick={() => {
+                            handleDownload(selectedOption.toUpperCase() as DownloadFormats);
+                        }}
                         variant={ButtonVariant.primary}
                         label="Download"
                         icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
