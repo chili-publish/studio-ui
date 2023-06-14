@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import StudioSDK, { DocumentType, Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import { useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -133,6 +133,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             },
 
             editorLink,
+            documentType: DocumentType.project,
         });
         // Connect to ths SDK
         window.SDK = sdk;
@@ -177,13 +178,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         loadDocument();
     }, [authToken, fetchedDocument, projectConfig]);
 
-    // eslint-disable-next-line no-console
-    console.table({
-        projectDownloadUrl: projectConfig?.templateDownloadUrl,
-        projectUploadUrl: projectConfig?.templateUploadUrl,
-        projectId: projectConfig?.templateId,
-        graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
-    });
+    useEffect(
+        () =>
+            // eslint-disable-next-line no-console
+            console.table({
+                projectDownloadUrl: projectConfig?.templateDownloadUrl,
+                projectUploadUrl: projectConfig?.templateUploadUrl,
+                projectId: projectConfig?.templateId,
+                graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
+            }),
+        [],
+    );
 
     return (
         <div className="app">
