@@ -16,7 +16,6 @@ import {
     DownloadDropdownLabel,
     DownloadDropdownTitle,
     DownloadPanelContainer,
-    DropdownOptionText,
     MobileDropdownContainer,
     MobileDropdownLeftContent,
     MobileDropdownOption,
@@ -35,7 +34,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const isMobileSize = useMobileSize();
 
     const [mobileDropdownPressed, setMobileDropdownPressed] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<string>();
+    const [selectedOption, setSelectedOption] = useState<string>('jpg');
 
     const downloadPanelRef = useRef<HTMLDivElement | null>(null);
     useOnClickOutside(downloadPanelRef, hideDownloadPanel);
@@ -71,8 +70,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <DownloadDropdownLabel>Output type</DownloadDropdownLabel>
                 <MobileDropdownContainer>
                     <MobileDropdownLeftContent>
-                        <Icon icon={AvailableIcons.faImage} />
-                        <DropdownOptionText>PDF print</DropdownOptionText>
+                        {downloadOptions.find((option) => option.value === selectedOption)?.label}
                     </MobileDropdownLeftContent>
                     <Icon icon={AvailableIcons.faChevronDown} />
                 </MobileDropdownContainer>
