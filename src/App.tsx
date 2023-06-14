@@ -20,6 +20,9 @@ type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string }
 function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
+    const [canUndo, setCanUndo] = useState(false);
+    const [canRedo, setCanRedo] = useState(false);
+
     const [variables, setVariables] = useState<Variable[]>([]);
     const [animationLength, setAnimationLength] = useState(0);
     const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
@@ -123,7 +126,10 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
-                // dispatch(setIsPlaying(animationPlayback?.animationIsPlaying || false));
+            },
+            onUndoStackStateChanged: (undoStackState) => {
+                setCanUndo(undoStackState.canUndo);
+                setCanRedo(undoStackState.canRedo);
             },
 
             editorLink,
@@ -181,7 +187,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
     return (
         <div className="app">
-            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+            <Navbar
+                projectName={projectConfig?.projectName}
+                goBack={projectConfig?.onBack}
+                undoStackState={{ canRedo, canUndo }}
+            />
             <VariablesPanel variables={variables} />
             <div className="studio-ui-canvas" data-id="layout-canvas">
                 <div className="chili-editor" id="chili-editor" />

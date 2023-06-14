@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { StyledNavbar, NavbarGroup, NavbarItem, NavbarLabel } from './Navbar.styles';
 import { INavbar, NavbarItemType } from './Navbar.types';
@@ -7,9 +7,20 @@ import NavbarButton from '../navbarButton/NavbarButton';
 import useMobileSize from '../../hooks/useMobileSize';
 
 function Navbar(props: INavbar) {
-    const { projectName, goBack } = props;
+    const { projectName, goBack, undoStackState } = props;
     const isMobile = useMobileSize();
-    const hasHistory = false; // This should be dynamic
+
+    const handleUndo = useCallback(() => {
+        (async () => {
+            if (undoStackState.canUndo) await window.SDK.undoManager.undo();
+        })();
+    }, [undoStackState.canUndo]);
+
+    const handleRedo = useCallback(() => {
+        (async () => {
+            if (undoStackState.canRedo) await window.SDK.undoManager.redo();
+        })();
+    }, [undoStackState.canRedo]);
 
     const navbarItems = useMemo(
         (): NavbarItemType[] => [
@@ -34,14 +45,15 @@ function Navbar(props: INavbar) {
                             ariaLabel="Undo"
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
-                            disabled={!hasHistory}
-                            handleOnClick={() => null}
+                            disabled={!undoStackState.canUndo}
+                            handleOnClick={handleUndo}
                         />
                         <NavbarButton
                             ariaLabel="Redo"
                             icon={AvailableIcons.faArrowTurnDownRight}
                             flipIconY
-                            handleOnClick={() => null}
+                            handleOnClick={handleRedo}
+                            disabled={!undoStackState.canRedo}
                         />
                     </NavbarGroup>
                 ),
@@ -70,7 +82,7 @@ function Navbar(props: INavbar) {
                 hideOnMobile: true,
             },
         ],
-        [goBack, projectName, hasHistory, isMobile],
+        [goBack, projectName, undoStackState.canUndo, undoStackState.canRedo, handleRedo, isMobile],
     );
 
     return (
