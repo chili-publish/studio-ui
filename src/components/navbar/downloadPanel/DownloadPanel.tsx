@@ -20,6 +20,7 @@ import {
     MobileDropdownLeftContent,
     MobileDropdownOption,
     MobileDropdownOptionContent,
+    TrayContentContainer,
 } from './DownloadPanel.styles';
 import DropdownOption from './DropdownOption';
 import useMobileSize from '../../../hooks/useMobileSize';
@@ -50,7 +51,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     );
 
     const trayContent = mobileDropdownPressed ? (
-        <div style={{ paddingTop: '1.25rem' }}>
+        <TrayContentContainer>
             {downloadOptions.map((option) => (
                 <MobileDropdownOption
                     key={option.value}
@@ -63,7 +64,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     </MobileDropdownOptionContent>
                 </MobileDropdownOption>
             ))}
-        </div>
+        </TrayContentContainer>
     ) : (
         <>
             <DownloadDropdownContainer onClick={() => setMobileDropdownPressed(true)}>

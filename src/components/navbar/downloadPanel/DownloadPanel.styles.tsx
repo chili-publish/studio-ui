@@ -72,3 +72,7 @@ export const MobileDropdownOptionContent = styled.div`
     justify-content: space-between;
     width: 100%;
 `;
+
+export const TrayContentContainer = styled.div`
+    padding-top: 1rem;
+`;
