@@ -46,7 +46,7 @@ function DownloadPanel(props: DownloadPanelProps) {
         () => [
             { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: 'jpg' },
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: 'png' },
-            { label: <DropdownOption icon={AvailableIcons.faImage} text="PDF" />, value: 'pdf' },
+            // { label: <DropdownOption icon={AvailableIcons.faImage} text="PDF print" />, value: 'pdf' },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: 'mp4' },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: 'gif' },
         ],
