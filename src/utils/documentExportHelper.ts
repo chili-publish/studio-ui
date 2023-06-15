@@ -23,11 +23,13 @@ export const getDownloadLink = async (
         let generateExportUrl = `${baseUrl}/output/`;
 
         // Use different URL when format is one of array ['png', 'jpg'].
-        if (['png', 'jpg', 'pdf', 'mp4', 'gif'].includes(format)) {
+        if (['png', 'jpg'].includes(format)) {
             generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
-        } else {
+        } else if (['mp4', 'gif'].includes(format)) {
             // Here we also pass additional query param `fps` with a default value of `30`.
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
+        } else {
+            // pdf case
         }
 
         const config: HttpHeaders = {
