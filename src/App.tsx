@@ -11,7 +11,7 @@ import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import useMobileSize from './hooks/useMobileSize';
 import { TrayAndLeftPanelContextProvider } from './contexts/TrayAndLeftPanelContext';
-import { CanvasContainer, MainContentContainer } from './Aoo.styles';
+import { CanvasContainer, MainContentContainer } from './App.styles';
 
 declare global {
     interface Window {
