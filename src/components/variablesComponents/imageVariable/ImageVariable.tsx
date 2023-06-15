@@ -28,12 +28,14 @@ function ImageVariable(props: IImageVariable) {
 
     useEffect(() => {
         async function getImagePreview() {
-            const { parsedData } = await window.SDK.mediaConnector.detail(
-                mediaConnector,
-                ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
-            );
+            if ((variable as ImageVariable)?.src) {
+                const { parsedData } = await window.SDK.mediaConnector.detail(
+                    mediaConnector,
+                    ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
+                );
 
-            setMediaInformation(parsedData);
+                setMediaInformation(parsedData);
+            }
         }
 
         getImagePreview();
