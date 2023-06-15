@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { act } from 'react-dom/test-utils';
@@ -112,7 +112,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} />
             </TrayAndLeftPanelContextProvider>,
         );
-        const imagePicker = getAllByTestId('image-picker-content')[0];
+        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {

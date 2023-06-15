@@ -64,7 +64,13 @@ export function TrayAndLeftPanelContextProvider({ children }: { children: ReactN
                     onClick={
                         (navigationStack ?? []).length ? previousPath : () => setContentType(ContentType.VARIABLES_LIST)
                     }
-                    icon={<Icon icon={AvailableIcons.faArrowLeft} color={Colors.PRIMARY_FONT} />}
+                    icon={
+                        <Icon
+                            key={navigationStack.length}
+                            icon={AvailableIcons.faArrowLeft}
+                            color={Colors.PRIMARY_FONT}
+                        />
+                    }
                     styles={css`
                         padding: 0;
                     `}

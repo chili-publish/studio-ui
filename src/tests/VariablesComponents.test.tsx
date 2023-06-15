@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
@@ -38,7 +38,7 @@ beforeEach(() => {
 });
 
 describe('Variable Component', () => {
-    it('Shows the image picker component for image variable', () => {
+    it('Shows the image picker component for image variable', async () => {
         render(
             <VariableComponent
                 key={`variable-component-${variables[0].id}`}
@@ -46,7 +46,8 @@ describe('Variable Component', () => {
                 variable={variables[0]}
             />,
         );
-        expect(screen.getByText('Variable1')).toBeInTheDocument();
+        const variable = await waitFor(() => screen.getByText('Variable1'));
+        expect(variable).toBeInTheDocument();
     });
 
     it('Shows the input component for short text and long text variables', () => {
