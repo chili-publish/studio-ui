@@ -11,6 +11,6 @@ export interface IImageVariable {
 }
 
 export interface ITextVariable {
-    handleValueChange: (value: string) => void;
+    handleValueChange: (value: string) => Promise<void>;
     variable: Variable;
 }

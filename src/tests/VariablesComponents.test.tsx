@@ -32,6 +32,7 @@ beforeEach(() => {
         .fn()
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
+    mockSDK.variable.setVariableValue = jest.fn().mockImplementation();
 
     window.SDK = mockSDK;
 });

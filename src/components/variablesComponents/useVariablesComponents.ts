@@ -1,30 +1,29 @@
-/* eslint-disable no-console */
 import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
 
-export const useVariableComponents = (currentVariable: Id) => {
-    const closePanel = () => {
-        console.log('%c⧭', 'color: #ff0000', 'Closing the panel');
-    };
+// NOTE(@pkgacek): this is an custom hook to handle updating components. Currently it
+// is only a boiler plate to be expanded upon in the future.
+export const useVariableComponents = (currentVariableId: Id) => {
+    const closePanel = () => null;
 
     const handleImageChange = async (src: ImageVariableSource) => {
-        if (currentVariable) {
-            console.log(src, currentVariable);
-            const result = await window.SDK.variable.setVariableSource(currentVariable, src);
+        if (currentVariableId) {
+            const result = await window.SDK.variable.setVariableSource(currentVariableId, src);
             return result;
         }
         return null;
     };
 
     const handleImageRemove = async () => {
-        if (currentVariable) {
-            const result = await window.SDK.variable.removeVariableSource(currentVariable);
+        if (currentVariableId) {
+            const result = await window.SDK.variable.removeVariableSource(currentVariableId);
             return result;
         }
         return null;
     };
 
-    const handleValueChange = (value: string) => {
-        console.log('%c⧭', 'color: #aa00ff', 'changing the value of variable ', currentVariable, 'to ', value);
+    const handleValueChange = async (value: string) => {
+        // This is only for testing purposes
+        await window.SDK.variable.setVariableValue(currentVariableId, value);
     };
 
     return {
