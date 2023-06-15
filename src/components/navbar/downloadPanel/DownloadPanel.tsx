@@ -46,6 +46,7 @@ function DownloadPanel(props: DownloadPanelProps) {
         () => [
             { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: 'jpg' },
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: 'png' },
+            { label: <DropdownOption icon={AvailableIcons.faImage} text="PDF" />, value: 'pdf' },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: 'mp4' },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: 'gif' },
         ],
@@ -117,11 +118,16 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DownloadDropdownContainer>
                         <DownloadDropdownLabel>Output type</DownloadDropdownLabel>
-                        <DropDown options={downloadOptions} isSearchable={false} width="16.25rem" />
+                        <DropDown
+                            options={downloadOptions}
+                            isSearchable={false}
+                            width="16.25rem"
+                            onChange={(option) => setSelectedOption(option?.value as string)}
+                        />
                     </DownloadDropdownContainer>
                     <Button
                         onClick={() => {
-                            handleDownload(selectedOption.toUpperCase() as DownloadFormats);
+                            handleDownload(selectedOption as DownloadFormats);
                         }}
                         variant={ButtonVariant.primary}
                         label="Download"

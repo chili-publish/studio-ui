@@ -1,4 +1,5 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
+import axios from 'axios';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -22,11 +23,11 @@ export const getDownloadLink = async (
         let generateExportUrl = `${baseUrl}/output/`;
 
         // Use different URL when format is one of array ['png', 'jpg'].
-        if ([DownloadFormats.PNG, DownloadFormats.JPG].includes(format)) {
+        if (['png', 'jpg', 'pdf', 'mp4', 'gif'].includes(format)) {
             generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
         } else {
             // Here we also pass additional query param `fps` with a default value of `30`.
-            generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1`;
+            generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
         }
 
         const config: HttpHeaders = {
@@ -41,9 +42,10 @@ export const getDownloadLink = async (
             config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
         }
 
-        const httpResponse = await fetch(generateExportUrl, config);
+        // const httpResponse = await fetch(generateExportUrl, config);
+        const httpResponse = await axios.post(generateExportUrl, undefined, config);
 
-        const response: GenerateAnimationResponse | ApiError = (await httpResponse.json()) as
+        const response: GenerateAnimationResponse | ApiError = httpResponse.data as
             | GenerateAnimationResponse
             | ApiError;
 
