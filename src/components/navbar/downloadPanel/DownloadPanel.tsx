@@ -131,7 +131,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         }}
                         variant={ButtonVariant.primary}
                         label="Download"
-                        icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
+                        icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
                         styles={css`
                             width: 100%;
                             margin-bottom: 1.25rem;
