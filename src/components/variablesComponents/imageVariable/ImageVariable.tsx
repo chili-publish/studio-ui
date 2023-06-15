@@ -29,6 +29,10 @@ function ImageVariable(props: IImageVariable) {
     useEffect(() => {
         async function getImagePreview() {
             if ((variable as ImageVariable)?.src) {
+                const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
+                if (mediaConnectorState.parsedData?.type !== 'ready') {
+                    await window.SDK.connector.waitForConnectorReady(mediaConnector);
+                }
                 const { parsedData } = await window.SDK.mediaConnector.detail(
                     mediaConnector,
                     ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
