@@ -2,6 +2,6 @@ This PR
 
 ## Related tickets
 
--   [WRS-1](https://support.chili-publish.com/browse/WRS-1)
+-   [WRS-NUMBER](https://chilipublishintranet.atlassian.net/browse/WRS-NUMBER)
 
 ## Screenshots
