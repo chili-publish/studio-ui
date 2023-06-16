@@ -116,6 +116,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             },
 
             editorLink,
+            studioStyling: { uiBackgroundColorHex: '#f5f5f5' },
         });
         // Connect to ths SDK
         window.SDK = sdk;

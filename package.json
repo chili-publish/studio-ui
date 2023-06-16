@@ -24,7 +24,7 @@
     },
     "dependencies": {
         "@chili-publish/grafx-shared-components": "^0.35.34",
-        "@chili-publish/studio-sdk": "^0.125.1",
+        "@chili-publish/studio-sdk": "^0.128.0",
         "axios": "^1.4.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
