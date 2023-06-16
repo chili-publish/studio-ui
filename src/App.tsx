@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { useDebounce } from '@chili-publish/grafx-shared-components';
+import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -116,7 +116,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             },
 
             editorLink,
-            studioStyling: { uiBackgroundColorHex: '#f5f5f5' },
+            studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
         });
         // Connect to ths SDK
         window.SDK = sdk;
