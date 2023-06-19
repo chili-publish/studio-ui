@@ -5,6 +5,7 @@ import { Id, ImageVariableSource } from '@chili-publish/studio-sdk';
 export const useVariableComponents = (currentVariableId: Id) => {
     const closePanel = () => null;
 
+    /* TODO: Update to use setVariableValue when SDK version goes to 0.125.0 or higher */
     const handleImageChange = async (src: ImageVariableSource) => {
         if (currentVariableId) {
             const result = await window.SDK.variable.setVariableSource(currentVariableId, src);
@@ -13,6 +14,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
         return null;
     };
 
+    /* TODO: Update to use setVariableValue when SDK version goes to 0.125.0 or higher */
     const handleImageRemove = async () => {
         if (currentVariableId) {
             const result = await window.SDK.variable.removeVariableSource(currentVariableId);

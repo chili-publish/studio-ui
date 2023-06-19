@@ -139,7 +139,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             'Studio UI version': packageInfo.version,
         });
         return () => {
-            // PRevent loading multiple iframes
+            // Prevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
             enableAutoSaveRef.current = false;
