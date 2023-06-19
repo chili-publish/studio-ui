@@ -125,6 +125,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         <DownloadDropdownContainer>
                             <DownloadDropdownLabel>Output type</DownloadDropdownLabel>
                             <DropDown
+                                defaultValue={downloadOptions.find((option) => option.value === selectedOption)}
                                 options={downloadOptions}
                                 isSearchable={false}
                                 width="16.25rem"
