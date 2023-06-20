@@ -2,7 +2,6 @@ import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const DownloadPanelContainer = styled.div`
-    padding: 1rem 1.25rem 0;
     background-color: ${Colors.LIGHT_GRAY_70};
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
     border: solid 1px #fff;
@@ -13,19 +12,22 @@ export const DownloadPanelContainer = styled.div`
 `;
 
 export const DownloadDropdownContainer = styled.div`
+    padding: 0 1.5rem 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    border-top: 1px solid ${Colors.LIGHT_GRAY_100};
 `;
 
 export const DownloadDropdownTitle = styled.div`
+    padding: 1rem 1.25rem 1rem;
     font-size: ${FontSizes.heading2};
     font-weight: bold;
     color: ${Colors.LIGHT_PRIMARY_WHITE};
+    border-bottom: 1px solid ${Colors.LIGHT_GRAY_100};
 `;
 
 export const DownloadDropdownLabel = styled.span`
-    margin-top; 2rem;
     color: ${Colors.SECONDARY_FONT};
     font-size: ${FontSizes.label};
 `;
