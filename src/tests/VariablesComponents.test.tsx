@@ -28,6 +28,10 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
+    mockSDK.connector.getState = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
     mockSDK.variable.setVariableValue = jest.fn().mockImplementation();
 
     window.SDK = mockSDK;
@@ -42,8 +46,8 @@ describe('Variable Component', () => {
                 variable={variables[0]}
             />,
         );
-        const variable1 = await waitFor(() => screen.getByText('Variable1'));
-        expect(variable1).toBeInTheDocument();
+        const variable = await waitFor(() => screen.getByText('Variable1'));
+        expect(variable).toBeInTheDocument();
     });
 
     it('Shows the input component for short text and long text variables', () => {
