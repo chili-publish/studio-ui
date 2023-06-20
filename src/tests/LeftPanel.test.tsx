@@ -4,7 +4,7 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { act } from 'react-dom/test-utils';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { variables } from './mocks/mockVariables';
-import { TrayAndLeftPanelContextProvider } from '../contexts/TrayAndLeftPanelContext';
+import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
 
 beforeEach(() => {
@@ -108,9 +108,9 @@ afterEach(() => {
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const { getAllByTestId, getByText, getByRole } = render(
-            <TrayAndLeftPanelContextProvider>
+            <VariablePanelContextProvider>
                 <LeftPanel variables={variables} />
-            </TrayAndLeftPanelContextProvider>,
+            </VariablePanelContextProvider>,
         );
         const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
         expect(imagePicker).toBeInTheDocument();
@@ -134,9 +134,9 @@ describe('Image Panel', () => {
 
     test('Media assets are correctly fetched', async () => {
         const { getAllByTestId, getByRole } = render(
-            <TrayAndLeftPanelContextProvider>
+            <VariablePanelContextProvider>
                 <LeftPanel variables={variables} />
-            </TrayAndLeftPanelContextProvider>,
+            </VariablePanelContextProvider>,
         );
         const imagePicker = getAllByTestId('image-picker-content')[0];
         await act(async () => {
@@ -151,9 +151,9 @@ describe('Image Panel', () => {
 
     test('Media asset folder navigation works', async () => {
         const { getAllByTestId, getByRole, getByText } = render(
-            <TrayAndLeftPanelContextProvider>
+            <VariablePanelContextProvider>
                 <LeftPanel variables={variables} />
-            </TrayAndLeftPanelContextProvider>,
+            </VariablePanelContextProvider>,
         );
         const imagePicker = getAllByTestId('image-picker-content')[0];
         await act(async () => {
@@ -171,9 +171,9 @@ describe('Image Panel', () => {
 
     test('Image Picker udpates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
-            <TrayAndLeftPanelContextProvider>
+            <VariablePanelContextProvider>
                 <LeftPanel variables={variables} />
-            </TrayAndLeftPanelContextProvider>,
+            </VariablePanelContextProvider>,
         );
         const imagePicker = getAllByTestId('image-picker-content')[0];
         await act(async () => {

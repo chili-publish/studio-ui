@@ -3,8 +3,8 @@ import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@c
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import VariablesList from './VariablesList';
-import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
-import { ContentType } from '../../contexts/TrayAndLeftPanelContext.types';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
 import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 
@@ -14,7 +14,7 @@ interface VariablesPanelProps {
 
 function VariablesPanel(props: VariablesPanelProps) {
     const { variables } = props;
-    const { contentType, showVariablesPanel, imagePanelTitle } = useTrayAndLeftPanelContext();
+    const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const closeVariablePanel = () => {

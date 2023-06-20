@@ -6,7 +6,7 @@ export const enum ContentType {
     IMAGE_PANEL = 'image_panel',
 }
 
-export interface ITrayAndLeftPanelContext {
+export interface IVariablePanelContext {
     showVariablesPanel: () => void;
     showImagePanel: (_: string) => void;
     contentType: ContentType;

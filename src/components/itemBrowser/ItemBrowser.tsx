@@ -11,10 +11,10 @@ import {
 import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage, Media } from '@chili-publish/studio-sdk';
 import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer, ResourcesPreview } from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
-import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { AssetType } from '../../utils/ApiTypes';
 import useMobileSize from '../../hooks/useMobileSize';
-import { ContentType } from '../../contexts/TrayAndLeftPanelContext.types';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -44,7 +44,7 @@ function ItemBrowser<
     const moreData = !!nextPageToken?.token;
 
     const { selectedItems, navigationStack, setSelectedItems, setNavigationStack, imagePanelTitle, contentType } =
-        useTrayAndLeftPanelContext();
+        useVariablePanelContext();
     const isMobileSize = useMobileSize();
 
     const onScroll = () => {

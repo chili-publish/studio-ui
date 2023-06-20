@@ -2,15 +2,15 @@ import { Variable } from '@chili-publish/studio-sdk';
 import { LeftPanelContainer, VariablesListContainer } from './LeftPanel.styles';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
-import { useTrayAndLeftPanelContext } from '../../../contexts/TrayAndLeftPanelContext';
-import { ContentType } from '../../../contexts/TrayAndLeftPanelContext.types';
+import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
+import { ContentType } from '../../../contexts/VariablePanelContext.types';
 
 interface LeftPanelProps {
     variables: Variable[];
 }
 
 function LeftPanel({ variables }: LeftPanelProps) {
-    const { contentType } = useTrayAndLeftPanelContext();
+    const { contentType } = useVariablePanelContext();
 
     return (
         <LeftPanelContainer id="left-panel">

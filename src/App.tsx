@@ -10,7 +10,7 @@ import AnimationTimeline from './components/animationTimeline/AnimationTimeline'
 import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import useMobileSize from './hooks/useMobileSize';
-import { TrayAndLeftPanelContextProvider } from './contexts/TrayAndLeftPanelContext';
+import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
 
 declare global {
@@ -175,7 +175,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <TrayAndLeftPanelContextProvider>
+        <VariablePanelContextProvider>
             <div className="app">
                 <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
                 <MainContentContainer>
@@ -189,7 +189,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     </CanvasContainer>
                 </MainContentContainer>
             </div>
-        </TrayAndLeftPanelContextProvider>
+        </VariablePanelContextProvider>
     );
 }
 

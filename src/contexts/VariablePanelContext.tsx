@@ -2,11 +2,11 @@ import { ReactNode, createContext, useCallback, useContext, useMemo, useState } 
 import { ImageVariableSourceType, Media } from '@chili-publish/studio-sdk';
 import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
-import { ContentType, ITrayAndLeftPanelContext } from './TrayAndLeftPanelContext.types';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
+import { ContentType, IVariablePanelContext } from './VariablePanelContext.types';
 
-const TrayAndLeftPanelContextDefaultValues: ITrayAndLeftPanelContext = {
+const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
     showImagePanel: () => undefined,
     contentType: ContentType.VARIABLES_LIST,
@@ -20,13 +20,13 @@ const TrayAndLeftPanelContextDefaultValues: ITrayAndLeftPanelContext = {
     imagePanelTitle: <div />,
 };
 
-export const TrayAndLeftPanelContext = createContext<ITrayAndLeftPanelContext>(TrayAndLeftPanelContextDefaultValues);
+export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
 
-export const useTrayAndLeftPanelContext = () => {
-    return useContext(TrayAndLeftPanelContext);
+export const useVariablePanelContext = () => {
+    return useContext(VariablePanelContext);
 };
 
-export function TrayAndLeftPanelContextProvider({ children }: { children: ReactNode }) {
+export function VariablePanelContextProvider({ children }: { children: ReactNode }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
 
@@ -109,5 +109,5 @@ export function TrayAndLeftPanelContextProvider({ children }: { children: ReactN
         ],
     );
 
-    return <TrayAndLeftPanelContext.Provider value={data}>{children}</TrayAndLeftPanelContext.Provider>;
+    return <VariablePanelContext.Provider value={data}>{children}</VariablePanelContext.Provider>;
 }

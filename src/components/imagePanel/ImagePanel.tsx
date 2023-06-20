@@ -1,7 +1,7 @@
 import { Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { convertToPreviewType } from '../../utils/media-utils';
 import ItemBrowser from '../itemBrowser/ItemBrowser';
-import { useTrayAndLeftPanelContext } from '../../contexts/TrayAndLeftPanelContext';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
 function ImagePanel() {
     const previewCall = (id: string): Promise<Uint8Array> =>
@@ -12,7 +12,7 @@ function ImagePanel() {
             {},
         );
 
-    const { handleUpdateImage } = useTrayAndLeftPanelContext();
+    const { handleUpdateImage } = useVariablePanelContext();
 
     return (
         <ItemBrowser<Media>

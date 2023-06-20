@@ -8,7 +8,7 @@ import {
 } from '@chili-publish/studio-sdk';
 import { ImagePicker, Label, usePreviewImages } from '@chili-publish/grafx-shared-components';
 import { IImageVariable } from '../VariablesComponents.types';
-import { useTrayAndLeftPanelContext } from '../../../contexts/TrayAndLeftPanelContext';
+import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
@@ -16,7 +16,7 @@ function ImageVariable(props: IImageVariable) {
     const mediaConnector = process.env.DEFAULT_MEDIA_CONNECTOR || '';
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
     const [mediaInformation, setMediaInformation] = useState<Media | null>(null);
-    const { showImagePanel } = useTrayAndLeftPanelContext();
+    const { showImagePanel } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
         const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
