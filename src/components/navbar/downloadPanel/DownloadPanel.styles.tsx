@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const DownloadPanelContainer = styled.div`
     background-color: ${Colors.LIGHT_GRAY_70};
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
-    border: solid 1px #fff;
+    border: solid 1px ${Colors.PRIMARY_WHITE};
     border-radius: 0.25rem;
 `;
 

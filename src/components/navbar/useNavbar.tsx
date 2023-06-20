@@ -16,14 +16,14 @@ const useNavbar = (
 ) => {
     const isMobile = useMobileSize();
     const hasHistory = false; // This should be dynamic
-    const [isDownloadPanelShown, setIsDownloadPanelShown] = useState(false);
+    const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
     const hideDownloadPanel = () => {
-        setIsDownloadPanelShown(false);
+        setIsDownloadPanelVisible(false);
     };
 
     const showDownloadPanel = () => {
-        setIsDownloadPanelShown(true);
+        setIsDownloadPanelVisible(true);
     };
 
     const navbarItems = useMemo(
@@ -120,7 +120,7 @@ const useNavbar = (
         hideDownloadPanel();
     };
 
-    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelShown, handleDownload };
+    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelVisible, handleDownload };
 };
 
 export default useNavbar;

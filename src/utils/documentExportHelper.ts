@@ -44,7 +44,6 @@ export const getDownloadLink = async (
             config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
         }
 
-        // const httpResponse = await fetch(generateExportUrl, config);
         const httpResponse = await axios.post(generateExportUrl, undefined, config);
 
         const response: GenerateAnimationResponse | ApiError = httpResponse.data as

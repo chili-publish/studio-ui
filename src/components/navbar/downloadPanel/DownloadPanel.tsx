@@ -29,12 +29,12 @@ import useMobileSize from '../../../hooks/useMobileSize';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
-    isDownloadPanelShown: boolean;
+    isDownloadPanelVisible: boolean;
     handleDownload: (_: DownloadFormats) => Promise<void>;
 }
 
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelShown, handleDownload } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
 
     const [mobileDropdownPressed, setMobileDropdownPressed] = useState(false);
@@ -100,7 +100,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     return (
         <>
             <Tray
-                isOpen={!!isMobileSize && isDownloadPanelShown}
+                isOpen={!!isMobileSize && isDownloadPanelVisible}
                 close={() => {
                     hideDownloadPanel();
                     setMobileDropdownPressed(false);
@@ -115,7 +115,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 {trayContent}
             </Tray>
             <Menu
-                isVisible={!isMobileSize && isDownloadPanelShown}
+                isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
                 position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}

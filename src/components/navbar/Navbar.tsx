@@ -5,7 +5,7 @@ import useNavbar from './useNavbar';
 
 function Navbar(props: INavbar) {
     const { projectName, goBack, projectConfig } = props;
-    const { navbarItems, isDownloadPanelShown, hideDownloadPanel, handleDownload } = useNavbar(
+    const { navbarItems, isDownloadPanelVisible, hideDownloadPanel, handleDownload } = useNavbar(
         projectName,
         goBack,
         projectConfig,
@@ -21,7 +21,7 @@ function Navbar(props: INavbar) {
                 ))}
             </ul>
             <DownloadPanel
-                isDownloadPanelShown={isDownloadPanelShown}
+                isDownloadPanelVisible={isDownloadPanelVisible}
                 hideDownloadPanel={hideDownloadPanel}
                 handleDownload={handleDownload}
             />
