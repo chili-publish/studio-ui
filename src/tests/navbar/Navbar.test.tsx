@@ -15,7 +15,7 @@ describe('Navbar', () => {
         fireEvent.click(downloadButton);
         expect(getByText(/output type/i)).toBeInTheDocument();
 
-        const dropdown = getByText(/select\.\.\./i);
+        const dropdown = getByText(/jpg/i);
         expect(dropdown).toBeInTheDocument();
 
         fireEvent.click(dropdown);
