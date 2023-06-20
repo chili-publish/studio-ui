@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import StudioSDK, { Variable, VariableType, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -102,7 +102,21 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const sdk = new StudioSDK({
             onVariableListChanged: (variableList: Variable[]) => {
-                setVariables(variableList);
+                const list = [
+                    {
+                        id: 'demo',
+                        type: VariableType.list,
+                        name: 'Variable List demo',
+                        label: 'variable list label',
+                        isHidden: false,
+                        isReadonly: false,
+                        isRequired: false,
+                        selected: 'Opt2',
+                        items: ['Opt1', 'Opt2', 'Opt3'],
+                    },
+                    ...variableList,
+                ];
+                setVariables(list);
 
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.

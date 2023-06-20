@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { DropDown } from '@chili-publish/grafx-shared-components';
-import { VariableType } from '@chili-publish/studio-sdk';
+import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { IVariablesComponents } from './VariablesComponents.types';
 import { useVariableComponents } from './useVariablesComponents';
 import ImageVariable from './imageVariable/ImageVariable';
 import TextVariable from './TextVariable';
 
+const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
+
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable } = props;
-    const { handleValueChange, handleImageRemove } = useVariableComponents(variable.id);
+    const { handleValueChange, handleImageRemove, handleListValueChange } = useVariableComponents(variable.id);
 
     const RenderComponents = useMemo(() => {
         switch (type) {
@@ -29,10 +31,26 @@ function VariablesComponents(props: IVariablesComponents) {
             case VariableType.group: {
                 return <DropDown options={[]} />;
             }
+            case VariableType.list: {
+                if (isListVariable(variable)) {
+                    const options = variable.items.map((item) => ({ label: item, value: item }));
+                    const selectedValue = variable.selected
+                        ? { label: variable.selected, value: variable.selected }
+                        : undefined;
+                    return (
+                        <DropDown
+                            value={selectedValue}
+                            options={options}
+                            onChange={(val) => handleListValueChange(val?.value?.toString() || '')}
+                        />
+                    );
+                }
+                return null;
+            }
             default:
                 return null;
         }
-    }, [handleImageRemove, handleValueChange, type, variable]);
+    }, [handleImageRemove, handleValueChange, handleListValueChange, type, variable]);
 
     return <div style={{ width: '100%', marginBottom: '1rem' }}>{RenderComponents}</div>;
 }
