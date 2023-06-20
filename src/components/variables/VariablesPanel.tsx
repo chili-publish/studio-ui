@@ -2,16 +2,26 @@ import { useState } from 'react';
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
+import VariablesList from './VariablesList';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
+import ImagePanel from '../imagePanel/ImagePanel';
 import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
-import VariableComponent from '../variablesComponents/VariablesComponents';
 
-function VariablesPanel(props: { variables: Variable[] }) {
+interface VariablesPanelProps {
+    variables: Variable[];
+}
+
+function VariablesPanel(props: VariablesPanelProps) {
     const { variables } = props;
+    const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
+
+    const showVariablesList = contentType === ContentType.VARIABLES_LIST;
 
     return (
         <>
@@ -21,9 +31,9 @@ function VariablesPanel(props: { variables: Variable[] }) {
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                     onClick={() => setIsVariablesPanelVisible(true)}
                     styles={css`
-                        border-radius: 3rem;
                         padding: 0.9375rem;
                         fontsize: ${FontSizes.regular};
+                        border-radius: 50%;
 
                         svg {
                             width: 1.125rem !important;
@@ -34,20 +44,13 @@ function VariablesPanel(props: { variables: Variable[] }) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={<VariablesPanelTitle>Customize</VariablesPanelTitle>}
+                title={showVariablesList ? <VariablesPanelTitle>Customize</VariablesPanelTitle> : imagePanelTitle}
+                onTrayHidden={showVariablesPanel}
+                styles={css`
+                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
+                `}
             >
-                <div style={{ marginTop: '8px' }}>
-                    {variables.length > 0 &&
-                        variables.map((variable: Variable) => {
-                            return (
-                                <VariableComponent
-                                    key={`variable-component-${variable.id}`}
-                                    type={variable.type}
-                                    variable={variable}
-                                />
-                            );
-                        })}
-                </div>
+                {showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}
             </Tray>
         </>
     );
