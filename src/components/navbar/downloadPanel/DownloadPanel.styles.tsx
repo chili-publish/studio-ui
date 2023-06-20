@@ -6,17 +6,13 @@ export const DownloadPanelContainer = styled.div`
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
     border: solid 1px #fff;
     border-radius: 0.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 `;
 
-export const DownloadDropdownContainer = styled.div`
-    padding: 0 1.5rem 0;
+export const DownloadDropdownContainer = styled.div<{ noPadding?: boolean }>`
+    border-top: 1px solid ${Colors.LIGHT_GRAY_100};
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    border-top: 1px solid ${Colors.LIGHT_GRAY_100};
 `;
 
 export const DownloadDropdownTitle = styled.div`
@@ -27,9 +23,15 @@ export const DownloadDropdownTitle = styled.div`
     border-bottom: 1px solid ${Colors.LIGHT_GRAY_100};
 `;
 
-export const DownloadDropdownLabel = styled.span`
-    color: ${Colors.SECONDARY_FONT};
+export const DesktopDropdownContainer = styled.div`
+    padding: 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+`;
+export const DropdownLabel = styled.span`
     font-size: ${FontSizes.label};
+    color: ${Colors.DARK_GRAY_500};
 `;
 
 export const DropdownOptionLabel = styled.div`
@@ -77,4 +79,5 @@ export const MobileDropdownOptionContent = styled.div`
 
 export const TrayContentContainer = styled.div`
     padding-top: 1rem;
+    background-color: red;
 `;
