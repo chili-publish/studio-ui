@@ -32,6 +32,7 @@ export const DesktopDropdownContainer = styled.div`
 export const DropdownLabel = styled.span`
     font-size: ${FontSizes.label};
     color: ${Colors.DARK_GRAY_500};
+    padding-top: 1rem;
 `;
 
 export const DropdownOptionLabel = styled.div`
@@ -79,5 +80,4 @@ export const MobileDropdownOptionContent = styled.div`
 
 export const TrayContentContainer = styled.div`
     padding-top: 1rem;
-    background-color: red;
 `;
