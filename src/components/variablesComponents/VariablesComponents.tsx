@@ -18,13 +18,7 @@ function VariablesComponents(props: IVariablesComponents) {
             }
 
             case VariableType.image: {
-                return (
-                    <ImageVariable
-                        variable={variable}
-                        handleImageRemove={handleImageRemove}
-                        // TODO: uncomment when assets browser is integrated
-                    />
-                );
+                return <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />;
             }
             case VariableType.group: {
                 return <DropDown options={[]} />;
