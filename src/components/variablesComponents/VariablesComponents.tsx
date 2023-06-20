@@ -42,6 +42,8 @@ function VariablesComponents(props: IVariablesComponents) {
                             value={selectedValue}
                             options={options}
                             onChange={(val) => handleListValueChange(val?.value?.toString() || '')}
+                            width="100%"
+                            isSearchable={false}
                         />
                     );
                 }
