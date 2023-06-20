@@ -72,7 +72,7 @@ export const usePreviewImages = (
                 ((currentVariable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
             );
 
-            if ((currentVariable as ImageVariable)?.src?.sourceType === ImageVariableSourceType.mediaConnector) {
+            if ((currentVariable as ImageVariable)?.src?.type === ImageVariableSourceType.mediaConnector) {
                 const response = await getPreviewCall(
                     ((currentVariable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
                 );
@@ -82,7 +82,7 @@ export const usePreviewImages = (
                 }
             }
 
-            if ((currentVariable as ImageVariable)?.src?.sourceType === ImageVariableSourceType.url) {
+            if ((currentVariable as ImageVariable)?.src?.type === ImageVariableSourceType.url) {
                 url = ((currentVariable as ImageVariable)?.src as UrlImageVariableSource)?.url;
             }
 

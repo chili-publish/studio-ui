@@ -12,7 +12,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
 
     const handleValueChange = async (value: string) => {
         // This is only for testing purposes
-        await window.SDK.variable.setVariableValue(currentVariableId, value);
+        await window.SDK.variable.setValue(currentVariableId, value);
     };
 
     return {

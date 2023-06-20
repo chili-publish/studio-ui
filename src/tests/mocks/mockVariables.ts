@@ -9,7 +9,7 @@ import {
 } from '@chili-publish/studio-sdk';
 
 export const variables: Variable[] = [
-    <ImageVariable>{
+    <ImageVariable>(<unknown>{
         id: 'variable1',
         name: 'Variable1',
         label: 'First Variable',
@@ -22,7 +22,7 @@ export const variables: Variable[] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
-    },
+    }),
     <ImageVariable>{
         id: 'image12',
         name: 'Variable12',
@@ -35,7 +35,7 @@ export const variables: Variable[] = [
         id: 'shortVariable 1',
         name: 'Short Variable 1',
         label: 'Short Variable1',
-        type: VariableType.shorttext,
+        type: VariableType.shortText,
         value: 'I am short text',
         occurrences: 22,
         parentId: '2',
@@ -45,7 +45,7 @@ export const variables: Variable[] = [
         id: 'longVariable1',
         name: 'Long Variable 1',
         label: 'Long Variable 1',
-        type: VariableType.longtext,
+        type: VariableType.longText,
         value: 'I am long text',
         occurrences: 52,
         isHidden: true,

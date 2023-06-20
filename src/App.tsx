@@ -28,7 +28,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
-                const document = await window.SDK.document.getCurrentDocumentState();
+                const document = await window.SDK.document.getCurrentState();
 
                 const config: HttpHeaders = {
                     headers: {
@@ -146,13 +146,10 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const loadDocument = async () => {
             if (fetchedDocument) {
-                await window.SDK.document.loadDocument(fetchedDocument);
+                await window.SDK.document.load(fetchedDocument);
 
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
-                    });
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
+                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
                 }

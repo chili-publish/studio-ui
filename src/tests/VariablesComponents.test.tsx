@@ -28,7 +28,7 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-    mockSDK.variable.setVariableValue = jest.fn().mockImplementation();
+    mockSDK.variable.setValue = jest.fn().mockImplementation();
 
     window.SDK = mockSDK;
 });
