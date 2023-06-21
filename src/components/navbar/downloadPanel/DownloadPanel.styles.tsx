@@ -42,3 +42,8 @@ export const DropdownOptionText = styled.span`
 export const ButtonWrapper = styled.div`
     margin-top: 1rem;
 `;
+
+export const Content = styled.div<{ borderTop?: boolean }>`
+    padding-top: 1rem;
+    border-top: ${(props) => (props.borderTop ? `1px solid ${Colors.LIGHT_GRAY_100}` : 'none')};
+`;

@@ -1,17 +1,18 @@
 import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import useMobileSize from '../../hooks/useMobileSize';
 import StudioDropdown from '../shared/StudioDropdown';
 
 interface VariablesListProps {
     variables: Variable[];
+    onMobileOptionListToggle: (_: boolean) => void;
 }
 
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
 
-function VariablesList({ variables }: VariablesListProps) {
+function VariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
 
@@ -19,8 +20,14 @@ function VariablesList({ variables }: VariablesListProps) {
         if (!listVariableOpen) return;
         await window.SDK.variable.setVariableValue(listVariableOpen?.id, value);
     };
+
+    useEffect(() => {
+        if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [listVariableOpen]);
+
     return (
-        <>
+        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
@@ -51,7 +58,7 @@ function VariablesList({ variables }: VariablesListProps) {
                         </ComponentWrapper>
                     ) : null;
                 })}
-        </>
+        </VariablesListWrapper>
     );
 }
 

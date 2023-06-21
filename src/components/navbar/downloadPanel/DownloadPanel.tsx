@@ -14,6 +14,7 @@ import { css } from 'styled-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import {
     ButtonWrapper,
+    Content,
     DesktopDropdownContainer,
     DownloadDropdownTitle,
     DownloadPanelContainer,
@@ -33,7 +34,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
 
-    const [mobileDropdownPressed, setMobileDropdownPressed] = useState(false);
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string>('jpg');
 
     const downloadPanelRef = useRef<HTMLDivElement | null>(null);
@@ -52,15 +53,17 @@ function DownloadPanel(props: DownloadPanelProps) {
 
     const trayContent = (
         <>
-            <StudioDropdown
-                label="Output type"
-                selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
-                options={downloadOptions}
-                onChange={(val) => setSelectedOption(val)}
-                onMenuOpen={() => setMobileDropdownPressed(true)}
-                onMenuClose={() => setMobileDropdownPressed(false)}
-            />
-            {!mobileDropdownPressed ? (
+            <Content borderTop={!mobileDropdownOpen}>
+                <StudioDropdown
+                    label="Output type"
+                    selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
+                    options={downloadOptions}
+                    onChange={(val) => setSelectedOption(val)}
+                    onMenuOpen={() => setMobileDropdownOpen(true)}
+                    onMenuClose={() => setMobileDropdownOpen(false)}
+                />
+            </Content>
+            {!mobileDropdownOpen ? (
                 <ButtonWrapper>
                     <Button
                         onClick={() => {
@@ -84,14 +87,14 @@ function DownloadPanel(props: DownloadPanelProps) {
                 isOpen={!!isMobileSize && isDownloadPanelVisible}
                 close={() => {
                     hideDownloadPanel();
-                    // setMobileDropdownPressed(false);
+                    setMobileDropdownOpen(false);
                 }}
-                title={!mobileDropdownPressed && 'Download'}
+                title={!mobileDropdownOpen && 'Download'}
                 styles={css`
-                    ${mobileDropdownPressed ? 'padding: 0;' : 'padding-bottom: 1rem;'}
+                    ${mobileDropdownOpen ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
                 `}
-                hideCloseButton={mobileDropdownPressed}
+                hideCloseButton={mobileDropdownOpen}
             >
                 {trayContent}
             </Tray>
