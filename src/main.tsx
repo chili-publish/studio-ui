@@ -12,7 +12,7 @@ declare global {
 }
 
 export default class StudioUI {
-    constructor(selector: string, editorLink: string, projectConfig?: ProjectConfig) {
+    constructor(selector: string, editorLink?: string, projectConfig?: ProjectConfig) {
         ReactDOM.createRoot(document.getElementById(selector || 'studio-ui-root') as HTMLElement).render(
             <React.StrictMode>
                 <App editorLink={editorLink} projectConfig={projectConfig} />
@@ -34,8 +34,8 @@ export default class StudioUI {
         refreshTokenAction: () => Promise<string | AxiosError>,
         projectName: string,
         onBack: () => void,
+        editorLink?: string,
     ) {
-        const editorLink = '';
         return new this(selector, editorLink, {
             templateDownloadUrl,
             templateUploadUrl,
