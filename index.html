@@ -18,11 +18,7 @@
 
                 var editorVersion = urlParams.get('editor');
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
-
-                const isProd = window.location.origin.includes('red-tree');
-                var baseUrl = isProd
-                    ? 'https://chili-dev.azureedge.net/'
-                    : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
+                var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
                 StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
