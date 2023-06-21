@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { DocumentType, Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { useDebounce } from '@chili-publish/grafx-shared-components';
+import StudioSDK, { Variable, WellKnownConfigurationKeys, DocumentType } from '@chili-publish/studio-sdk';
+import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
 import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
+import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import useMobileSize from './hooks/useMobileSize';
+import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
+import { CanvasContainer, MainContentContainer } from './App.styles';
 
 declare global {
     interface Window {
@@ -27,6 +31,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [animationLength, setAnimationLength] = useState(0);
     const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
     const enableAutoSaveRef = useRef(false);
+    const isMobileSize = useMobileSize();
 
     const saveDocument = async (docEditorLink?: string, templateUrl?: string, token?: string) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
@@ -134,6 +139,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
             editorLink,
             documentType: DocumentType.project,
+            studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
         });
         // Connect to ths SDK
         window.SDK = sdk;
@@ -152,7 +158,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             'Studio UI version': packageInfo.version,
         });
         return () => {
-            // PRevent loading multiple iframes
+            // Prevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
             enableAutoSaveRef.current = false;
@@ -166,7 +172,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 await window.SDK.document.loadDocument(fetchedDocument);
 
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
+                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
                     await window.SDK.connector.configure('grafx-font', async (configurator) => {
@@ -191,19 +197,25 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     );
 
     return (
-        <div className="app">
-            <Navbar
-                projectName={projectConfig?.projectName}
-                goBack={projectConfig?.onBack}
-                undoStackState={{ canRedo, canUndo }}
-            />
-            <VariablesPanel variables={variables} />
-            <div className="studio-ui-canvas" data-id="layout-canvas">
-                <div className="chili-editor" id="chili-editor" />
+        <VariablePanelContextProvider>
+            <div className="app">
+                <Navbar
+                    projectName={projectConfig?.projectName}
+                    goBack={projectConfig?.onBack}
+                    undoStackState={{ canRedo, canUndo }}
+                />
+                <MainContentContainer>
+                    {!isMobileSize && <LeftPanel variables={variables} />}
+                    <CanvasContainer>
+                        {isMobileSize && <VariablesPanel variables={variables} />}
+                        <div className="studio-ui-canvas" data-id="layout-canvas">
+                            <div className="chili-editor" id="chili-editor" />
+                        </div>
+                        <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
+                    </CanvasContainer>
+                </MainContentContainer>
             </div>
-
-            <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
-        </div>
+        </VariablePanelContextProvider>
     );
 }
 

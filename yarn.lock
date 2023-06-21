@@ -318,10 +318,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.35.35":
-  version "0.35.35"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.35.35/1e2cf780d79efcaba263e36c041f371ed0376f00#1e2cf780d79efcaba263e36c041f371ed0376f00"
-  integrity sha512-d2deJZbiHsNUMQAuQk9oKI75lPPKf8RkzIUdI6wM94+cwmfijNAyhfrxk0QfgB4+h7o3Qh7fU/UDtYWR4ZXIFQ==
+"@chili-publish/grafx-shared-components@^0.36.2":
+  version "0.36.2"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.36.2/004d794ff1eef185df97adabcbe4e3fb82270f50#004d794ff1eef185df97adabcbe4e3fb82270f50"
+  integrity sha512-3tDHiTYB6SEijjrZsGHmcENmmhLEBTp+atyS4KJQyPYRobItyKgUZVSGWywfDMVn2Fgq9aAUzyG+lPIm4F7vvg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -331,10 +331,10 @@
     react-select "^5.6.1"
     styled-components "^5.3.6"
 
-"@chili-publish/studio-sdk@^0.125.1":
-  version "0.125.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.125.1/0f197fc9d704cfe380f3f0f4c504cc688cb9bb88#0f197fc9d704cfe380f3f0f4c504cc688cb9bb88"
-  integrity sha512-XujxQquQwCFAx6IwgGmeC/rVTXMzvduJ1ijBVTvOUJoqjz/TemzFQgCR3+CkzjT9auhF/P3PkUldwQMlTKFm8w==
+"@chili-publish/studio-sdk@^0.129.0":
+  version "0.129.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.129.1/9801f388d08045eaede9c345deec1beaceddc595#9801f388d08045eaede9c345deec1beaceddc595"
+  integrity sha512-p4HTZR2uOhLYOCosEauDFpNmU50MqagJl7hvZ+FxWH/DrGxnWxTlGeIk8yStWQiTPZqxmq5W5NxI9GwNRLBFng==
   dependencies:
     mathjs "^10.0.2"
     penpal "6.1.0"
@@ -4549,7 +4549,7 @@ slash@^3.0.0:
 
 source-map-js@^1.0.2:
   version "1.0.2"
-  resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
 source-map-support@0.5.13:

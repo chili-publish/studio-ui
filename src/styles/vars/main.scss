@@ -1,0 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+$primary-font: Roboto, serif;
+:export {
+    primary-font: $primary-color;
+}
