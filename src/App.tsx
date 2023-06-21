@@ -128,7 +128,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                         isReadonly: false,
                         isRequired: false,
                         selected: 'Opt4',
-                        items: ['Opt3', 'Opt4', 'Opt5'],
+                        items: ['Opt7', 'Opt4', 'Opt5'],
                     },
                     ...variableList,
                 ];

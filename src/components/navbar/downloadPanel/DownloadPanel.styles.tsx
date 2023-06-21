@@ -8,13 +8,6 @@ export const DownloadPanelContainer = styled.div`
     border-radius: 0.25rem;
 `;
 
-export const DownloadDropdownContainer = styled.div<{ noPadding?: boolean }>`
-    border-top: 1px solid ${Colors.LIGHT_GRAY_100};
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-`;
-
 export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-size: ${FontSizes.heading2};
@@ -46,38 +39,6 @@ export const DropdownOptionText = styled.span`
     color: ${Colors.LIGHT_PRIMARY_WHITE};
 `;
 
-export const MobileDropdownContainer = styled.div`
-    display: flex;
-    padding: 0 0.75rem;
-    margin-bottom: 1rem;
-    justify-content: space-between;
-    align-items: center;
-    background-color: ${Colors.LIGHT_GRAY};
-    height: 2.5rem;
-    border-radius: 0.25rem;
-`;
-
-export const MobileDropdownLeftContent = styled.div`
-    display: flex;
-    gap: 0.5rem;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-export const MobileDropdownOption = styled.div<{ selected?: boolean }>`
-    display: flex;
-    align-items: center;
-    height: 3rem;
-    padding: 0 1rem;
-    ${({ selected }) => selected && `background-color: ${Colors.LIGHT_GRAY_200};`};
-`;
-
-export const MobileDropdownOptionContent = styled.div`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-`;
-
-export const TrayContentContainer = styled.div`
-    padding-top: 1rem;
+export const ButtonWrapper = styled.div`
+    margin-top: 1rem;
 `;
