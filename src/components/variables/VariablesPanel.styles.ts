@@ -12,3 +12,7 @@ export const VariablesPanelTitle = styled.h2`
     font-weight: 500;
     color: ${Colors.LIGHT_PRIMARY_WHITE};
 `;
+
+export const ComponentWrapper = styled.div`
+    margin-bottom: 1rem;
+`;

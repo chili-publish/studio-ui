@@ -132,6 +132,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
         });
+
         // Connect to ths SDK
         window.SDK = sdk;
         window.SDK.loadEditor();
@@ -161,7 +162,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         const loadDocument = async () => {
             if (fetchedDocument) {
                 await window.SDK.document.loadDocument(fetchedDocument);
-
                 if (authToken) {
                     await window.SDK.connector.configure('grafx-font', async (configurator) => {
                         await configurator.setChiliToken(authToken);
