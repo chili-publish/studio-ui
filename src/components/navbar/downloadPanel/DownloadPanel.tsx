@@ -85,7 +85,7 @@ function DownloadPanel(props: DownloadPanelProps) {
             </DownloadDropdownContainer>
             <Button
                 onClick={() => {
-                    handleDownload(selectedOption.toUpperCase() as DownloadFormats);
+                    handleDownload(selectedOption as DownloadFormats);
                 }}
                 variant={ButtonVariant.primary}
                 label="Download"
