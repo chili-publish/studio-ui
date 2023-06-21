@@ -8,6 +8,10 @@ import VariablesPanel from './components/variables/VariablesPanel';
 import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
+import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import useMobileSize from './hooks/useMobileSize';
+import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
+import { CanvasContainer, MainContentContainer } from './App.styles';
 
 declare global {
     interface Window {
@@ -22,6 +26,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
     const enableAutoSaveRef = useRef(false);
+    const isMobileSize = useMobileSize();
 
     const saveDocument = async (docEditorLink?: string, templateUrl?: string, token?: string) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
@@ -114,6 +119,17 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                         selected: 'Opt2',
                         items: ['Opt1', 'Opt2', 'Opt3'],
                     },
+                    {
+                        id: 'demo22',
+                        type: VariableType.list,
+                        name: 'Variable List 22',
+                        label: 'variable list 22',
+                        isHidden: false,
+                        isReadonly: false,
+                        isRequired: false,
+                        selected: 'Opt4',
+                        items: ['Opt3', 'Opt4', 'Opt5'],
+                    },
                     ...variableList,
                 ];
                 setVariables(list);
@@ -150,7 +166,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             'Studio UI version': packageInfo.version,
         });
         return () => {
-            // PRevent loading multiple iframes
+            // Prevent loading multiple iframes
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
             enableAutoSaveRef.current = false;
@@ -163,7 +179,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             if (fetchedDocument) {
                 await window.SDK.document.loadDocument(fetchedDocument);
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
+                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
                     await window.SDK.connector.configure('grafx-font', async (configurator) => {
@@ -184,15 +200,25 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     });
 
     return (
-        <div className="app">
-            <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
-            <VariablesPanel variables={variables} />
-            <div className="studio-ui-canvas" data-id="layout-canvas">
-                <div className="chili-editor" id="chili-editor" />
+        <VariablePanelContextProvider>
+            <div className="app">
+                <Navbar
+                    projectName={projectConfig?.projectName}
+                    goBack={projectConfig?.onBack}
+                    projectConfig={projectConfig}
+                />
+                <MainContentContainer>
+                    {!isMobileSize && <LeftPanel variables={variables} />}
+                    <CanvasContainer>
+                        {isMobileSize && <VariablesPanel variables={variables} />}
+                        <div className="studio-ui-canvas" data-id="layout-canvas">
+                            <div className="chili-editor" id="chili-editor" />
+                        </div>
+                        <AnimationTimeline />
+                    </CanvasContainer>
+                </MainContentContainer>
             </div>
-
-            <AnimationTimeline />
-        </div>
+        </VariablePanelContextProvider>
     );
 }
 

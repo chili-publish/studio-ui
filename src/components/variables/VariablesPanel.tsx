@@ -1,26 +1,27 @@
 import { useState } from 'react';
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
-import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import { ComponentWrapper, EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
-import VariableComponent from '../variablesComponents/VariablesComponents';
-import StudioDropdown from '../shared/StudioDropdown';
+import VariablesList from './VariablesList';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
+import ImagePanel from '../imagePanel/ImagePanel';
+import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 
-const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
+interface VariablesPanelProps {
+    variables: Variable[];
+}
 
-function VariablesPanel(props: { variables: Variable[] }) {
+function VariablesPanel(props: VariablesPanelProps) {
     const { variables } = props;
+    const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
-    const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
 
-    const updateListVariableValue = async (value: string) => {
-        if (!listVariableOpen) return;
-        await window.SDK.variable.setVariableValue(listVariableOpen?.id, value);
-    };
+    const showVariablesList = contentType === ContentType.VARIABLES_LIST;
 
     return (
         <>
@@ -30,9 +31,9 @@ function VariablesPanel(props: { variables: Variable[] }) {
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                     onClick={() => setIsVariablesPanelVisible(true)}
                     styles={css`
-                        border-radius: 3rem;
                         padding: 0.9375rem;
                         fontsize: ${FontSizes.regular};
+                        border-radius: 50%;
 
                         svg {
                             width: 1.125rem !important;
@@ -43,48 +44,13 @@ function VariablesPanel(props: { variables: Variable[] }) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={<VariablesPanelTitle>Customize</VariablesPanelTitle>}
+                title={showVariablesList ? <VariablesPanelTitle>Customize</VariablesPanelTitle> : imagePanelTitle}
+                onTrayHidden={showVariablesPanel}
+                styles={css`
+                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
+                `}
             >
-                <div style={{ marginTop: '8px' }}>
-                    {listVariableOpen ? (
-                        <StudioDropdown
-                            label={listVariableOpen.name}
-                            selectedValue={
-                                listVariableOpen.selected
-                                    ? { label: listVariableOpen.selected, value: listVariableOpen.selected }
-                                    : undefined
-                            }
-                            options={listVariableOpen.items.map((item) => ({ label: item, value: item }))}
-                            onChange={(val) => updateListVariableValue(val)}
-                            onMenuClose={() => setListVariableOpen(null)}
-                        />
-                    ) : (
-                        variables.length > 0 &&
-                        variables.map((variable: Variable) => {
-                            if (isListVariable(variable)) {
-                                const options = variable.items.map((item) => ({ label: item, value: item }));
-                                const selectedValue = variable.selected
-                                    ? { label: variable.selected, value: variable.selected }
-                                    : undefined;
-                                return (
-                                    <ComponentWrapper key={`variable-component-${variable.id}`}>
-                                        <StudioDropdown
-                                            label={variable.name}
-                                            selectedValue={selectedValue}
-                                            options={options}
-                                            onMenuOpen={() => setListVariableOpen(variable)}
-                                        />
-                                    </ComponentWrapper>
-                                );
-                            }
-                            return (
-                                <ComponentWrapper key={`variable-component-${variable.id}`}>
-                                    <VariableComponent type={variable.type} variable={variable} />
-                                </ComponentWrapper>
-                            );
-                        })
-                    )}
-                </div>
+                {showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}
             </Tray>
         </>
     );

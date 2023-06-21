@@ -318,10 +318,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.35.34":
-  version "0.35.34"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.35.34/3c15408660291d4ab7b19570349d864685c24964#3c15408660291d4ab7b19570349d864685c24964"
-  integrity sha512-UlPc4gRcQP+8C3HmLvM0EUFTo/KW4YUMoux9jyGPXlpTOWt7OAaVG316qrHh0Uy6Xqh2RJ35PVTbWuxtUzP19Q==
+"@chili-publish/grafx-shared-components@^0.36.5":
+  version "0.36.5"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.36.5/c65632962ed84f75c724717db8d94a4600eea35f#c65632962ed84f75c724717db8d94a4600eea35f"
+  integrity sha512-BmRsvM5vXFSWUhiDEv0njPKGTtxqegFGZeHtzjTRmOzF5Njeh6Jl6EFbG0BaBCYlgmYPLyXTKN38qJo9q0ytxg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -4549,7 +4549,7 @@ slash@^3.0.0:
 
 source-map-js@^1.0.2:
   version "1.0.2"
-  resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
 source-map-support@0.5.13:
