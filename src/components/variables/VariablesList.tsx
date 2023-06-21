@@ -14,13 +14,15 @@ function VariablesList({ variables }: VariablesListProps) {
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
-                    return (
+                    // TODO: isHidden has to be renamed when EDT-985 is closed
+                    const isVisible = !variable.isHidden;
+                    return isVisible ? (
                         <VariablesComponents
                             key={`variable-component-${variable.id}`}
                             type={variable.type}
                             variable={variable}
                         />
-                    );
+                    ) : null;
                 })}
         </>
     );

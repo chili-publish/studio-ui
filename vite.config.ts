@@ -10,7 +10,7 @@ export default defineConfig({
     },
     base: './',
     optimizeDeps: {
-        include: ['@chili-publish/grafx-shared-components'],
+        include: ['@chili-publish/grafx-shared-components', '@chili-publish/studio-sdk'],
     },
     resolve: {
         // force Vite to always resolve listed dependencies to the same copy (from project root).

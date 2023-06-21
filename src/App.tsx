@@ -107,7 +107,8 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const sdk = new StudioSDK({
             onVariableListChanged: (variableList: Variable[]) => {
-                setVariables(variableList);
+                const list = variableList.map((item) => ({ ...item, isHidden: true }));
+                setVariables(list);
 
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
