@@ -7,8 +7,8 @@ function AnimationTimeline() {
     return (
         <AnimationTimelineWrapper>
             <Timeline
-                animationLength={animationLength}
                 timestamp={0}
+                animationLength={animationLength}
                 setScrubberPosition={() => null}
                 playAnimation={() => null}
                 pauseAnimation={() => null}

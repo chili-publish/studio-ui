@@ -33,7 +33,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
-                const document = await window.SDK.document.getCurrentDocumentState();
+                const document = await window.SDK.document.getCurrentState();
 
                 const config: HttpHeaders = {
                     headers: {
@@ -107,8 +107,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const sdk = new StudioSDK({
             onVariableListChanged: (variableList: Variable[]) => {
-                const list = variableList.map((item) => ({ ...item, isHidden: true }));
-                setVariables(list);
+                setVariables(variableList);
 
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
@@ -152,7 +151,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const loadDocument = async () => {
             if (fetchedDocument) {
-                await window.SDK.document.loadDocument(fetchedDocument);
+                await window.SDK.document.load(fetchedDocument);
 
                 if (authToken) {
                     await window.SDK.connector.configure('grafx-media', async (configurator) => {
@@ -178,7 +177,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     return (
         <VariablePanelContextProvider>
             <div className="app">
-                <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+                <Navbar
+                    projectName={projectConfig?.projectName}
+                    goBack={projectConfig?.onBack}
+                    projectConfig={projectConfig}
+                />
                 <MainContentContainer>
                     {!isMobileSize && <LeftPanel variables={variables} />}
                     <CanvasContainer>
