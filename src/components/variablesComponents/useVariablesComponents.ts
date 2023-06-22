@@ -8,7 +8,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
     /* TODO: Update to use setVariableValue when SDK version goes to 0.125.0 or higher */
     const handleImageChange = async (src: ImageVariableSource) => {
         if (currentVariableId) {
-            const result = await window.SDK.variable.setVariableSource(currentVariableId, src);
+            const result = await window.SDK.variable.setSource(currentVariableId, src);
             return result;
         }
         return null;
@@ -17,7 +17,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
     /* TODO: Update to use setVariableValue when SDK version goes to 0.125.0 or higher */
     const handleImageRemove = async () => {
         if (currentVariableId) {
-            const result = await window.SDK.variable.removeVariableSource(currentVariableId);
+            const result = await window.SDK.variable.setSource(currentVariableId);
             return result;
         }
         return null;
@@ -25,7 +25,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
 
     const handleValueChange = async (value: string) => {
         // This is only for testing purposes
-        await window.SDK.variable.setVariableValue(currentVariableId, value);
+        await window.SDK.variable.setValue(currentVariableId, value);
     };
 
     const handleListValueChange = async (value?: string) => {

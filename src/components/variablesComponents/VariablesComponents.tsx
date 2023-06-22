@@ -12,8 +12,8 @@ function VariablesComponents(props: IVariablesComponents) {
 
     const RenderComponents = useMemo(() => {
         switch (type) {
-            case VariableType.longtext:
-            case VariableType.shorttext: {
+            case VariableType.longText:
+            case VariableType.shortText: {
                 return <TextVariable handleValueChange={handleValueChange} variable={variable} />;
             }
 

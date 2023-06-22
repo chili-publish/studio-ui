@@ -19,7 +19,7 @@ export const getDownloadLink = async (
     projectId: string,
 ) => {
     try {
-        const documentResponse = await window.SDK.document.getCurrentDocumentState();
+        const documentResponse = await window.SDK.document.getCurrentState();
         let generateExportUrl = `${baseUrl}/output/`;
 
         // Use different URL when format is one of array ['png', 'jpg'].

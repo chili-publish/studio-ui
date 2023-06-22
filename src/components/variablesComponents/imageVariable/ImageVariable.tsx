@@ -19,9 +19,9 @@ function ImageVariable(props: IImageVariable) {
     const { showImagePanel } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
+        const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
         if (mediaConnectorState.parsedData?.type !== 'ready') {
-            await window.SDK.connector.waitForConnectorReady(mediaConnector);
+            await window.SDK.connector.waitToBeReady(mediaConnector);
         }
         return window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
     };
@@ -29,9 +29,9 @@ function ImageVariable(props: IImageVariable) {
     useEffect(() => {
         async function getImagePreview() {
             if ((variable as ImageVariable)?.src) {
-                const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
+                const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
-                    await window.SDK.connector.waitForConnectorReady(mediaConnector);
+                    await window.SDK.connector.waitToBeReady(mediaConnector);
                 }
                 const { parsedData } = await window.SDK.mediaConnector.detail(
                     mediaConnector,
