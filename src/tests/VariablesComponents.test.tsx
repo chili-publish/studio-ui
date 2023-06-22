@@ -28,6 +28,11 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
+    mockSDK.connector.waitToBeReady = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve([1, 2, 3]));
+
     mockSDK.connector.getById = jest
         .fn()
         .mockImplementation()
