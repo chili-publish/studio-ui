@@ -49,12 +49,12 @@ beforeEach(() => {
 
     mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
 
-    mockSDK.connector.getState = jest
+    mockSDK.connector.getById = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 
-    mockSDK.variable.setVariableValue = jest
+    mockSDK.variable.setValue = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -65,20 +65,12 @@ beforeEach(() => {
                 parsedData: null,
             }),
         );
-
-    mockSDK.variable.setVariableSource = jest
+    mockSDK.connector.waitToBeReady = jest
         .fn()
         .mockImplementation()
-        .mockReturnValue(
-            Promise.resolve({
-                success: true,
-                status: 0,
-                data: '',
-                parsedData: null,
-            }),
-        );
+        .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-    mockSDK.variable.removeVariableSource = jest
+    mockSDK.variable.setValue = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -138,7 +130,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = getAllByTestId('image-picker-content')[0];
+        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -155,7 +147,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = getAllByTestId('image-picker-content')[0];
+        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -175,7 +167,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = getAllByTestId('image-picker-content')[0];
+        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -185,6 +177,6 @@ describe('Image Panel', () => {
             image.click();
         });
 
-        expect(window.SDK.variable.setVariableSource).toBeCalledTimes(1);
+        expect(window.SDK.variable.setValue).toBeCalledTimes(1);
     });
 });
