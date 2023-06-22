@@ -29,7 +29,7 @@ export const variables: Variable[] = [
         label: 'First Image',
         type: VariableType.image,
         occurrences: 2,
-        isHidden: false,
+        isVisible: true,
     },
     <ShortTextVariable>{
         id: 'shortVariable 1',
@@ -39,7 +39,7 @@ export const variables: Variable[] = [
         value: 'I am short text',
         occurrences: 22,
         parentId: '2',
-        isHidden: false,
+        isVisible: true,
     },
     <LongTextVariable>{
         id: 'longVariable1',
@@ -48,7 +48,7 @@ export const variables: Variable[] = [
         type: VariableType.longText,
         value: 'I am long text',
         occurrences: 52,
-        isHidden: true,
+        isVisible: false,
     },
     <GroupVariable>{
         id: '2',
