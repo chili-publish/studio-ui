@@ -17,22 +17,21 @@ function ImageVariable(props: IImageVariable) {
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
     const [mediaInformation, setMediaInformation] = useState<Media | null>(null);
     const { showImagePanel } = useVariablePanelContext();
+    const [isConnectorReady, setIsConnectorReady] = useState(false);
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
-        if (mediaConnectorState.parsedData?.type !== 'ready') {
-            await window.SDK.connector.waitForConnectorReady(mediaConnector);
+        const response = await window.SDK.connector.waitToBeReady(mediaConnector);
+        if (response.success) {
+            return window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
         }
-        return window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
+        return null;
     };
 
     useEffect(() => {
         async function getImagePreview() {
             if ((variable as ImageVariable)?.src) {
-                const mediaConnectorState = await window.SDK.connector.getState(mediaConnector);
-                if (mediaConnectorState.parsedData?.type !== 'ready') {
-                    await window.SDK.connector.waitForConnectorReady(mediaConnector);
-                }
+                await window.SDK.connector.waitToBeReady(mediaConnector);
+                setIsConnectorReady(true);
                 const { parsedData } = await window.SDK.mediaConnector.detail(
                     mediaConnector,
                     ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
@@ -55,7 +54,7 @@ function ImageVariable(props: IImageVariable) {
         'PNG',
     );
 
-    return (
+    return isConnectorReady ? (
         <ImagePicker
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
@@ -66,7 +65,7 @@ function ImageVariable(props: IImageVariable) {
             }}
             previewErrorUrl={previewErrorUrl}
         />
-    );
+    ) : null;
 }
 
 export default ImageVariable;

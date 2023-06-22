@@ -28,11 +28,12 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-    mockSDK.connector.getState = jest
+    mockSDK.connector.waitToBeReady = jest
         .fn()
         .mockImplementation()
-        .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
-    mockSDK.variable.setVariableValue = jest.fn().mockImplementation();
+        .mockReturnValue(Promise.resolve([1, 2, 3]));
+
+    mockSDK.variable.setValue = jest.fn().mockImplementation();
 
     window.SDK = mockSDK;
 });

@@ -40,8 +40,8 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                connectorId: process.env.DEFAULT_MEDIA_CONNECTOR as string,
-                sourceType: ImageVariableSourceType.mediaConnector,
+                id: process.env.DEFAULT_MEDIA_CONNECTOR as string,
+                type: ImageVariableSourceType.mediaConnector,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
