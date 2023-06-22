@@ -14,8 +14,7 @@ function VariablesList({ variables }: VariablesListProps) {
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
-                    // TODO: isHidden has to be renamed when EDT-985 is closed
-                    const isVisible = !variable.isHidden;
+                    const isVisible = variable.isVisible;
                     return isVisible ? (
                         <VariablesComponents
                             key={`variable-component-${variable.id}`}

@@ -331,10 +331,10 @@
     react-select "^5.6.1"
     styled-components "^5.3.6"
 
-"@chili-publish/studio-sdk@^0.128.0":
-  version "0.128.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.128.0/32677699e5a48a947a3a1e10babd5b6f506f307f#32677699e5a48a947a3a1e10babd5b6f506f307f"
-  integrity sha512-4qe1nps2lKBY7ervmpc92qxYalD2d5kBZPOHOYOpYI1bHdXhGTZBtaEQwZWL3PP3mIwaasTrG3EVtsQFeHaWfQ==
+"@chili-publish/studio-sdk@^0.129.3":
+  version "0.129.3"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.129.3/0426a3c7cc69d8ed8b8e1ab3366dfbcdd987aba6#0426a3c7cc69d8ed8b8e1ab3366dfbcdd987aba6"
+  integrity sha512-aGff88QVc/iI0XG96Gl7Yvez0M8+PPzgxQzX8smFKtw5TTKXZ/rZelw6Uq9MZfJSZ4mcerZSc4o0lnzRgKbyrg==
   dependencies:
     mathjs "^10.0.2"
     penpal "6.1.0"
