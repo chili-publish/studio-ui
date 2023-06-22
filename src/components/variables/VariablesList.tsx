@@ -7,7 +7,7 @@ import StudioDropdown from '../shared/StudioDropdown';
 
 interface VariablesListProps {
     variables: Variable[];
-    onMobileOptionListToggle: (_: boolean) => void;
+    onMobileOptionListToggle?: (_: boolean) => void;
 }
 
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
@@ -16,9 +16,8 @@ function VariablesList({ variables, onMobileOptionListToggle }: VariablesListPro
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
 
-    const updateListVariableValue = async (value: string) => {
-        if (!listVariableOpen) return;
-        await window.SDK.variable.setVariableValue(listVariableOpen?.id, value);
+    const updateListVariableValue = async (variableId: string, value: string) => {
+        await window.SDK.variable.setValue(variableId, value);
     };
 
     useEffect(() => {
@@ -45,7 +44,7 @@ function VariablesList({ variables, onMobileOptionListToggle }: VariablesListPro
                                     label={variable.name}
                                     selectedValue={selectedValue}
                                     options={options}
-                                    onChange={(val) => updateListVariableValue(val)}
+                                    onChange={(val) => updateListVariableValue(variable.id, val)}
                                     onMenuOpen={() => setListVariableOpen(variable)}
                                     onMenuClose={() => setListVariableOpen(null)}
                                 />

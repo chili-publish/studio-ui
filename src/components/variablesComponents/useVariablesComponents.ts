@@ -28,16 +28,10 @@ export const useVariableComponents = (currentVariableId: Id) => {
         await window.SDK.variable.setValue(currentVariableId, value);
     };
 
-    const handleListValueChange = async (value?: string) => {
-        if (!value) return;
-        await window.SDK.variable.setVariableValue(currentVariableId, value);
-    };
-
     return {
         handleImageChange,
         handleImageRemove,
         handleValueChange,
-        handleListValueChange,
         closePanel,
     };
 };
