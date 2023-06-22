@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { Input, Label } from '@chili-publish/grafx-shared-components';
+import { Label, Input } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { ITextVariable } from './VariablesComponents.types';
 

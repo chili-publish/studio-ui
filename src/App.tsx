@@ -174,7 +174,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     return (
         <VariablePanelContextProvider>
             <div className="app">
-                <Navbar projectName={projectConfig?.projectName} goBack={projectConfig?.onBack} />
+                <Navbar
+                    projectName={projectConfig?.projectName}
+                    goBack={projectConfig?.onBack}
+                    projectConfig={projectConfig}
+                />
                 <MainContentContainer>
                     {!isMobileSize && <LeftPanel variables={variables} />}
                     <CanvasContainer>
