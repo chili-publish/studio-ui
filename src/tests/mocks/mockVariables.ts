@@ -9,7 +9,7 @@ import {
 } from '@chili-publish/studio-sdk';
 
 export const variables: Variable[] = [
-    <ImageVariable>{
+    <ImageVariable>(<unknown>{
         id: 'variable1',
         name: 'Variable1',
         label: 'First Variable',
@@ -22,7 +22,7 @@ export const variables: Variable[] = [
             id: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
-    },
+    }),
     <ImageVariable>{
         id: 'image12',
         name: 'Variable12',

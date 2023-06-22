@@ -33,6 +33,10 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
+    mockSDK.connector.getById = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
     mockSDK.variable.setValue = jest.fn().mockImplementation();
 
     window.SDK = mockSDK;

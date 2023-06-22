@@ -20,7 +20,11 @@ function ImageVariable(props: IImageVariable) {
     const [isConnectorReady, setIsConnectorReady] = useState(false);
 
     const previewCall = async (id: string) => {
-        const response = await window.SDK.connector.waitToBeReady(mediaConnector);
+        const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
+        let response = { success: true };
+        if (mediaConnectorState.parsedData?.type !== 'ready') {
+            response = await window.SDK.connector.waitToBeReady(mediaConnector);
+        }
         if (response.success) {
             return window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
         }
@@ -30,7 +34,10 @@ function ImageVariable(props: IImageVariable) {
     useEffect(() => {
         async function getImagePreview() {
             if ((variable as ImageVariable)?.src) {
-                await window.SDK.connector.waitToBeReady(mediaConnector);
+                const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
+                if (mediaConnectorState.parsedData?.type !== 'ready') {
+                    await window.SDK.connector.waitToBeReady(mediaConnector);
+                }
                 setIsConnectorReady(true);
                 const { parsedData } = await window.SDK.mediaConnector.detail(
                     mediaConnector,

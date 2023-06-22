@@ -49,6 +49,11 @@ beforeEach(() => {
 
     mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
 
+    mockSDK.connector.getById = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
+
     mockSDK.variable.setValue = jest
         .fn()
         .mockImplementation()
@@ -64,6 +69,18 @@ beforeEach(() => {
         .fn()
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
+
+    mockSDK.variable.setValue = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                success: true,
+                status: 0,
+                data: '',
+                parsedData: null,
+            }),
+        );
 
     window.SDK = mockSDK;
 
