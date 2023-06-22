@@ -14,7 +14,7 @@ function VariablesList({ variables }: VariablesListProps) {
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
-                    const isVisible = variable.isVisible;
+                    const { isVisible } = variable;
                     return isVisible ? (
                         <VariablesComponents
                             key={`variable-component-${variable.id}`}
