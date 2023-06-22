@@ -15,7 +15,7 @@ export const variables: Variable[] = [
         label: 'First Variable',
         type: VariableType.image,
         occurrences: 2,
-        isHidden: false,
+        isVisible: true,
         parentId: '2',
         src: {
             sourceType: ImageVariableSourceType.mediaConnector,
