@@ -49,12 +49,12 @@ beforeEach(() => {
 
     mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
 
-    mockSDK.connector.getState = jest
+    mockSDK.connector.getById = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 
-    mockSDK.variable.setVariableValue = jest
+    mockSDK.variable.setValue = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -66,7 +66,7 @@ beforeEach(() => {
             }),
         );
 
-    mockSDK.variable.setVariableSource = jest
+    mockSDK.variable.setValue = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -78,7 +78,7 @@ beforeEach(() => {
             }),
         );
 
-    mockSDK.variable.removeVariableSource = jest
+    mockSDK.variable.setSource = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(
@@ -185,6 +185,6 @@ describe('Image Panel', () => {
             image.click();
         });
 
-        expect(window.SDK.variable.setVariableSource).toBeCalledTimes(1);
+        expect(window.SDK.variable.setSource).toBeCalledTimes(1);
     });
 });
