@@ -234,13 +234,16 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         setHandTool();
     }, [authToken, fetchedDocument, projectConfig]);
 
-    // eslint-disable-next-line no-console
-    console.table({
-        templateDownloadUrl: projectConfig?.projectDownloadUrl,
-        templateUploadUrl: projectConfig?.projectUploadUrl,
-        templateId: projectConfig?.projectId,
-        graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
-    });
+    useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.table({
+            projectDownloadUrl: projectConfig?.projectDownloadUrl,
+            projectUploadUrl: projectConfig?.projectUploadUrl,
+            projectId: projectConfig?.projectId,
+            graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <VariablePanelContextProvider>
