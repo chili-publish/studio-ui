@@ -27,7 +27,7 @@
                 // StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
 
-                if (environment && projectId && authToken) {
+                if (environmentUrl && projectId && authToken) {
                     StudioUI.studioLoaderConfig(
                         'studio-ui-root',
                         `${environmentUrl}/projects/${projectId}/document` /*projectDownloadUrl:*/,
