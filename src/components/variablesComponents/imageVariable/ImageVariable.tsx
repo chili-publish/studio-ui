@@ -6,16 +6,15 @@ import {
     ImageVariableSourceType,
     MediaDownloadType,
 } from '@chili-publish/studio-sdk';
-import { ImagePicker, Label, usePreviewImages } from '@chili-publish/grafx-shared-components';
+import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
-    const [selectedImage] = useState<Media>();
     const mediaConnector = process.env.DEFAULT_MEDIA_CONNECTOR || '';
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
-    const [mediaInformation, setMediaInformation] = useState<Media | null>(null);
+    const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const { showImagePanel } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
@@ -31,7 +30,7 @@ function ImageVariable(props: IImageVariable) {
     };
 
     useEffect(() => {
-        async function getImagePreview() {
+        async function getMediaDetails() {
             if ((variable as ImageVariable)?.src) {
                 const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
@@ -42,28 +41,20 @@ function ImageVariable(props: IImageVariable) {
                     ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
                 );
 
-                setMediaInformation(parsedData);
+                setMediaDetails(parsedData);
             }
         }
 
-        getImagePreview();
+        getMediaDetails();
     }, [variable, mediaConnector]);
 
-    const { currentPreviewImage } = usePreviewImages(
-        mediaInformation,
-        ImageVariableSourceType,
-        previewCall,
-        true,
-        selectedImage,
-        variable,
-        'PNG',
-    );
+    const { previewImage } = usePreviewImage(mediaDetails, ImageVariableSourceType, previewCall, true, variable);
 
     return (
         <ImagePicker
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
-            previewImage={currentPreviewImage}
+            previewImage={previewImage}
             onRemove={() => handleImageRemove()}
             onClick={() => {
                 showImagePanel(variable.id);
