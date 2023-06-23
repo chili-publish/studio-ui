@@ -318,10 +318,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.36.5":
-  version "0.36.5"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.36.5/c65632962ed84f75c724717db8d94a4600eea35f#c65632962ed84f75c724717db8d94a4600eea35f"
-  integrity sha512-BmRsvM5vXFSWUhiDEv0njPKGTtxqegFGZeHtzjTRmOzF5Njeh6Jl6EFbG0BaBCYlgmYPLyXTKN38qJo9q0ytxg==
+"@chili-publish/grafx-shared-components@^0.36.14":
+  version "0.36.14"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.36.14/e90b64ea5c404e9c263322620adb3d3dcc3692a6#e90b64ea5c404e9c263322620adb3d3dcc3692a6"
+  integrity sha512-f6dUmrS+ovaZzQObOkeSp1l0M5epJKAEQb8wbsEPXDYTarslyec0mqslsWCZ8WZRlNHc4djax9yFv5BXbf5kDg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -331,10 +331,10 @@
     react-select "^5.6.1"
     styled-components "^5.3.6"
 
-"@chili-publish/studio-sdk@^0.129.4":
-  version "0.129.4"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.129.4/b6308535fb47475d37d8c229e13b4c5f9ebfc555#b6308535fb47475d37d8c229e13b4c5f9ebfc555"
-  integrity sha512-njsoVHAbuoFCZMwd9fEbJ3ATfiWN5U+a6+eQ+TuV0t3JyqIi6l1LwbVlUBzy10MDpnSJ8gJIZF5xET93klw1aA==
+"@chili-publish/studio-sdk@^0.133.1":
+  version "0.133.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.133.1/9b8645f4706df16d9082c9d22a69e09256b00efc#9b8645f4706df16d9082c9d22a69e09256b00efc"
+  integrity sha512-LX9BIXpsuDF2FeD6MuWi7YTBEBivvPCcfeVXvgySnTnAnNkG/vDCYmvoJ/cYCiqQQs7OezGDA1SGTl9xBQYoCw==
   dependencies:
     mathjs "^10.0.2"
     penpal "6.1.0"

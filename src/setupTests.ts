@@ -31,4 +31,9 @@ mockSDK.connector.getById = jest
     .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 mockSDK.variable.setValue = jest.fn().mockImplementation();
 
+mockSDK.connector.waitToBeReady = jest
+    .fn()
+    .mockImplementation()
+    .mockReturnValue(Promise.resolve([1, 2, 3]));
+
 window.SDK = mockSDK;

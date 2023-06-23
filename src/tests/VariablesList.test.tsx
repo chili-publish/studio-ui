@@ -7,7 +7,7 @@ describe('Variables List', () => {
         render(<VariablesList variables={variables} />);
 
         const variable1 = await screen.findByText('Variable1');
-        const variable12 = screen.getByText('Variable12');
+        const variable12 = await screen.findByText('Variable12');
         const shortVariable1 = screen.getByText('Short Variable 1');
         const longVariable1 = screen.queryByText('Long Variable 1');
 
