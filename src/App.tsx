@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import StudioSDK, { Variable, WellKnownConfigurationKeys, DocumentType } from '@chili-publish/studio-sdk';
 import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -20,11 +20,18 @@ declare global {
 }
 
 type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
+type Project = { name: string; id: string; template: { id: string } };
 
-function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink?: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
+    const [canUndo, setCanUndo] = useState(false);
+    const [canRedo, setCanRedo] = useState(false);
+    const [animationLength, setAnimationLength] = useState(0);
+    const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
+    const [currentZoom, setCurrentZoom] = useState<number>(100);
+    const [currentProject, setCurrentProject] = useState<Project>();
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -34,7 +41,6 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         if (url && process.env.NODE_ENV !== 'development') {
             try {
                 const document = await window.SDK.document.getCurrentState();
-
                 const config: HttpHeaders = {
                     headers: {
                         'Content-Type': 'application/json',
@@ -104,24 +110,71 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         }
     };
 
+    const getProject = useCallback(() => {
+        axios
+            .get(`${projectConfig?.graFxStudioEnvironmentApiBaseUrl}/projects/${projectConfig?.projectId}`, {
+                headers: { Authorization: `Bearer ${authToken}` },
+            })
+            .then((res) => {
+                setCurrentProject(res.data);
+            });
+    }, [authToken, projectConfig?.graFxStudioEnvironmentApiBaseUrl, projectConfig?.projectId]);
+
+    useEffect(() => {
+        getProject();
+    }, [getProject, projectConfig?.graFxStudioEnvironmentApiBaseUrl, projectConfig?.projectId]);
+
+    const zoomToPage = async () => {
+        const zoomParams = {
+            pageId: null,
+            left: 0,
+            top: 0,
+            width: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().width),
+            height: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().height),
+        };
+
+        await window.SDK.canvas.zoomToPage(
+            zoomParams.pageId,
+            zoomParams.left,
+            zoomParams.top,
+            zoomParams.width,
+            zoomParams.height,
+        );
+    };
+
     useEffect(() => {
         const sdk = new StudioSDK({
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
-
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
                 if (enableAutoSaveRef.current === true) {
-                    saveDocumentDebounced(editorLink, projectConfig?.templateUploadUrl, projectConfig?.authToken);
+                    saveDocumentDebounced(editorLink, projectConfig?.projectUploadUrl, projectConfig?.authToken);
                 }
 
                 if (enableAutoSaveRef.current === false) {
                     enableAutoSaveRef.current = true;
                 }
             },
+            onSelectedLayoutPropertiesChanged: (layoutProperties) => {
+                if (layoutProperties) {
+                    setAnimationLength(layoutProperties.timelineLengthMs.value);
+                }
+            },
+            onScrubberPositionChanged: (animationPlayback) => {
+                setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
+            },
+            onUndoStackStateChanged: (undoStackState) => {
+                setCanUndo(undoStackState.canUndo);
+                setCanRedo(undoStackState.canRedo);
+            },
+            onZoomChanged: (zoom) => {
+                setCurrentZoom(zoom);
+            },
 
             editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
+            documentType: DocumentType.project,
         });
 
         // Connect to ths SDK
@@ -133,7 +186,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
             projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
         );
-        fetchDocument(editorLink, projectConfig?.templateDownloadUrl, projectConfig?.authToken);
+        fetchDocument(editorLink, projectConfig?.projectDownloadUrl, projectConfig?.authToken);
 
         // eslint-disable-next-line no-console
         console.table({
@@ -150,9 +203,19 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     }, []);
 
     useEffect(() => {
+        if (currentProject?.template.id) {
+            window.SDK.configuration.setValue(
+                WellKnownConfigurationKeys.GraFxStudioTemplateId,
+                currentProject?.template.id ?? '',
+            );
+        }
+    }, [currentProject?.template.id]);
+
+    useEffect(() => {
         const loadDocument = async () => {
             if (fetchedDocument) {
                 await window.SDK.document.load(fetchedDocument);
+                zoomToPage();
 
                 if (authToken) {
                     await window.SDK.connector.configure('grafx-media', async (configurator) => {
@@ -172,21 +235,26 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         setHandTool();
     }, [authToken, fetchedDocument, projectConfig]);
 
-    // eslint-disable-next-line no-console
-    console.table({
-        templateDownloadUrl: projectConfig?.templateDownloadUrl,
-        templateUploadUrl: projectConfig?.templateUploadUrl,
-        templateId: projectConfig?.templateId,
-        graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
-    });
+    useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.table({
+            projectDownloadUrl: projectConfig?.projectDownloadUrl,
+            projectUploadUrl: projectConfig?.projectUploadUrl,
+            projectId: projectConfig?.projectId,
+            graFxStudioEnvironmentApiBaseUrl: projectConfig?.graFxStudioEnvironmentApiBaseUrl,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <VariablePanelContextProvider>
             <div className="app">
                 <Navbar
-                    projectName={projectConfig?.projectName}
+                    projectName={projectConfig?.projectName || currentProject?.name}
                     goBack={projectConfig?.onBack}
                     projectConfig={projectConfig}
+                    undoStackState={{ canRedo, canUndo }}
+                    zoom={currentZoom}
                 />
                 <MainContentContainer>
                     {!isMobileSize && <LeftPanel variables={variables} />}
@@ -195,7 +263,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                         <div className="studio-ui-canvas" data-id="layout-canvas">
                             <div className="chili-editor" id="chili-editor" />
                         </div>
-                        <AnimationTimeline />
+                        <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
                     </CanvasContainer>
                 </MainContentContainer>
             </div>

@@ -38,7 +38,6 @@ export const NavbarItem = styled.li<{ hideOnMobile?: boolean }>`
 `;
 
 export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`
-    max-width: 15ch;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -46,6 +45,7 @@ export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`
 
     ${mobileMediaQuery} {
         display: ${(props) => (props.hideOnMobile ? 'none !important' : 'list-item')};
+        max-width: 15ch;
     }
 `;
 

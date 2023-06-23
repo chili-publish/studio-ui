@@ -30,6 +30,8 @@ function VariablesList({ variables, onMobileOptionListToggle }: VariablesListPro
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
+                    if (!variable.isVisible) return null;
+
                     const isListVariabledDisplayed =
                         !listVariableOpen || (listVariableOpen && variable.id === listVariableOpen.id);
                     if (isListVariable(variable) && isListVariabledDisplayed) {

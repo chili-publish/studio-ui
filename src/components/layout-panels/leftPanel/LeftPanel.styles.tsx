@@ -4,8 +4,9 @@ import styled from 'styled-components';
 export const LeftPanelContainer = styled.div`
     min-width: 18.75rem;
     width: 18.75rem;
-    background-color: ${Colors.PRIMARY_WHITE}};
+    background-color: ${Colors.PRIMARY_WHITE};
     overflow: scroll;
+    margin-bottom: 3rem;
 
     &::-webkit-scrollbar {
         width: 0;

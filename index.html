@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vite + React + TS</title>
+        <title>GraFx Studio UI</title>
     </head>
     <body>
         <div id="studio-ui-root"></div>
@@ -18,21 +18,18 @@
 
                 var editorVersion = urlParams.get('editor');
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
-
-                const isProd = window.location.origin.includes('red-tree');
-                var baseUrl = isProd
-                    ? 'https://chili-dev.azureedge.net/'
-                    : 'https://stgrafxstudiodevpublic.blob.core.windows.net';
+                var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
                 StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
                 // StudioUI.studioLoaderConfig(
                 //     'studio-ui-root',
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>/download",  /*templateDownloadUrl:*/
-                //     "https://<baseUrl>/environment/<env-name>/templates/<template guid>",           /*templateUploadUrl:*/
-                //     "<template guid>",                                                              /*templateId:*/
-                //     "https://<baseUrl>/environment/<env-name>/"                                     /*graFxStudioEnvironmentApiBaseUrl:*/
-                //     "<open a template on chiligrafx.com to retrieve AT from network requests>",     /*authToken:*/
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
+                //     "<project guid>",                                                             /*projectId:*/
+                //     "https://<baseUrl>/environment/<env-name>/"                                   /*graFxStudioEnvironmentApiBaseUrl:*/
+                //     "<open a project on chiligrafx.com to retrieve AT from network requests>",    /*authToken:*/
+                //)
             });
         </script>
     </body>
