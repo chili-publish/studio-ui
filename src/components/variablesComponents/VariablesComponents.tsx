@@ -20,11 +20,10 @@ function VariablesComponents(props: IVariablesComponents) {
             case VariableType.image: {
                 return <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />;
             }
-            case VariableType.group: {
-                /* TODO: Uncomment later when groups should not be hidden anymore */
-                // return <DropDown options={[]} />;
-                return null;
-            }
+            // This was temporarily hidden
+            // case VariableType.group: {
+            //     return <DropDown options={[]} />;
+            // }
             default:
                 return null;
         }

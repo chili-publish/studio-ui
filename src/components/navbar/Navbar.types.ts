@@ -4,6 +4,8 @@ import { ProjectConfig } from '../../types/types';
 export interface INavbar {
     projectName?: string;
     goBack?: () => void;
+    zoom: number;
+    undoStackState: { canRedo: boolean; canUndo: boolean };
     projectConfig?: ProjectConfig;
 }
 export interface NavbarItemType {
