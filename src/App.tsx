@@ -21,7 +21,7 @@ declare global {
 
 type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
-function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink: string }) {
+function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; editorLink?: string }) {
     const [authToken, setAuthToken] = useState(projectConfig?.authToken);
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
