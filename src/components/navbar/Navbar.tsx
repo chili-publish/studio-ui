@@ -4,10 +4,13 @@ import DownloadPanel from './downloadPanel/DownloadPanel';
 import useNavbar from './useNavbar';
 
 function Navbar(props: INavbar) {
-    const { projectName, goBack, projectConfig } = props;
+    const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+
     const { navbarItems, isDownloadPanelVisible, hideDownloadPanel, handleDownload } = useNavbar(
         projectName,
         goBack,
+        zoom,
+        undoStackState,
         projectConfig,
     );
 

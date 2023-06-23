@@ -1,5 +1,5 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ZoomButtonProps, ZoomTypeEnum } from './Zoom.types';
 import { ZoomValue } from './Zoom.styles';
 import { NavbarGroup } from '../navbar/Navbar.styles';
@@ -20,20 +20,33 @@ function ZoomButton(props: ZoomButtonProps) {
     );
 }
 
-function Zoom() {
-    const [zoom, setZoom] = useState(100);
+interface IZoom {
+    zoomIn: () => Promise<void>;
+    zoomOut: () => Promise<void>;
+    zoom: number;
+}
+function Zoom(props: IZoom) {
+    const { zoom, zoomIn, zoomOut } = props;
 
-    const handleOnClick = (type: ZoomTypeEnum = ZoomTypeEnum.INCREMENT) => {
-        if (type === ZoomTypeEnum.DECREMENT) return setZoom(zoom - 10);
+    const [currentZoom, setCurrentZoom] = useState(zoom);
 
-        return setZoom(zoom + 10);
-    };
+    useEffect(() => {
+        setCurrentZoom(zoom);
+    }, [zoom]);
+
+    // const zoomIn = async () => {
+    //     await window.SDK.canvas.setZoomPercentage(currentZoom * 1.142);
+    // };
+
+    // const zoomOut = async () => {
+    //     await window.SDK.canvas.setZoomPercentage(currentZoom * 0.875);
+    // };
 
     return (
         <NavbarGroup withGap data-testid="zoom">
-            <ZoomButton type={ZoomTypeEnum.DECREMENT} handleOnClick={handleOnClick} />
-            <ZoomValue aria-label="zoom level">{zoom}%</ZoomValue>
-            <ZoomButton handleOnClick={handleOnClick} />
+            <ZoomButton type={ZoomTypeEnum.DECREMENT} handleOnClick={zoomOut} />
+            <ZoomValue aria-label="zoom level">{currentZoom}%</ZoomValue>
+            <ZoomButton handleOnClick={zoomIn} />
         </NavbarGroup>
     );
 }

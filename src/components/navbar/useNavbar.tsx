@@ -1,5 +1,5 @@
 import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
@@ -12,10 +12,11 @@ import { getDownloadLink } from '../../utils/documentExportHelper';
 const useNavbar = (
     projectName: string | undefined,
     goBack: (() => void) | undefined,
+    zoom: number,
+    undoStackState: { canRedo: boolean; canUndo: boolean },
     projectConfig?: ProjectConfig,
 ) => {
     const isMobile = useMobileSize();
-    const hasHistory = false; // This should be dynamic
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
     const hideDownloadPanel = () => {
@@ -25,6 +26,30 @@ const useNavbar = (
     const showDownloadPanel = () => {
         setIsDownloadPanelVisible(true);
     };
+
+    const handleUndo = useCallback(() => {
+        (async () => {
+            if (undoStackState.canUndo) await window.SDK.undoManager.undo();
+        })();
+    }, [undoStackState.canUndo]);
+
+    const handleRedo = useCallback(() => {
+        (async () => {
+            if (undoStackState.canRedo) await window.SDK.undoManager.redo();
+        })();
+    }, [undoStackState.canRedo]);
+
+    const zoomIn = useCallback(async () => {
+        (async () => {
+            await window.SDK.canvas.setZoomPercentage(zoom * 1.142);
+        })();
+    }, [zoom]);
+
+    const zoomOut = useCallback(async () => {
+        (async () => {
+            await window.SDK.canvas.setZoomPercentage(zoom * 0.875);
+        })();
+    }, [zoom]);
 
     const navbarItems = useMemo(
         (): NavbarItemType[] => [
@@ -49,14 +74,15 @@ const useNavbar = (
                             ariaLabel="Undo"
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
-                            disabled={!hasHistory}
-                            handleOnClick={() => null}
+                            disabled={!undoStackState.canUndo}
+                            handleOnClick={handleUndo}
                         />
                         <NavbarButton
                             ariaLabel="Redo"
                             icon={AvailableIcons.faArrowTurnDownRight}
                             flipIconY
-                            handleOnClick={() => null}
+                            disabled={!undoStackState.canRedo}
+                            handleOnClick={handleRedo}
                         />
                     </NavbarGroup>
                 ),
@@ -81,11 +107,22 @@ const useNavbar = (
             },
             {
                 label: 'Zoom',
-                content: <Zoom />,
+                content: <Zoom zoom={zoom} zoomIn={zoomIn} zoomOut={zoomOut} />,
                 hideOnMobile: true,
             },
         ],
-        [goBack, projectName, hasHistory, isMobile],
+        [
+            goBack,
+            projectName,
+            undoStackState.canUndo,
+            undoStackState.canRedo,
+            handleUndo,
+            handleRedo,
+            isMobile,
+            zoom,
+            zoomIn,
+            zoomOut,
+        ],
     );
 
     const handleDownload = async (extension: DownloadFormats) => {
@@ -95,7 +132,7 @@ const useNavbar = (
                 projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
                 projectConfig?.authToken ?? '',
                 '0',
-                projectConfig?.templateId ?? '',
+                projectConfig?.projectId ?? '',
             );
 
             const config = { headers: { Authorization: `Bearer ${projectConfig?.authToken}` } };
