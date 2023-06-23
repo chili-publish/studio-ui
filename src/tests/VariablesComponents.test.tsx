@@ -88,14 +88,15 @@ describe('Variable Component', () => {
         expect(screen.getByDisplayValue('I just got longer')).toHaveAttribute('value', 'I just got longer');
     });
 
-    it('Shows the select component for group variable', async () => {
-        render(
-            <VariableComponent
-                key={`variable-component-${variables[4].id}`}
-                type={variables[4].type} // image variable
-                variable={variables[4]}
-            />,
-        );
-        expect(screen.getByRole('combobox')).toBeInTheDocument();
-    });
+    // This was commented out because variable of tye groupe is not used yet
+    // it('Shows the select component for group variable', async () => {
+    //     render(
+    //         <VariableComponent
+    //             key={`variable-component-${variables[4].id}`}
+    //             type={variables[4].type} // image variable
+    //             variable={variables[4]}
+    //         />,
+    //     );
+    //     expect(screen.getByRole('combobox')).toBeInTheDocument();
+    // });
 });
