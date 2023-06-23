@@ -16,7 +16,6 @@ function ImageVariable(props: IImageVariable) {
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const { showImagePanel } = useVariablePanelContext();
-    const [isConnectorReady, setIsConnectorReady] = useState(false);
 
     const previewCall = async (id: string) => {
         const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
@@ -37,7 +36,6 @@ function ImageVariable(props: IImageVariable) {
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.SDK.connector.waitToBeReady(mediaConnector);
                 }
-                setIsConnectorReady(true);
                 const { parsedData } = await window.SDK.mediaConnector.detail(
                     mediaConnector,
                     ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
@@ -52,7 +50,7 @@ function ImageVariable(props: IImageVariable) {
 
     const { previewImage } = usePreviewImage(mediaDetails, ImageVariableSourceType, previewCall, true, variable);
 
-    return isConnectorReady ? (
+    return (
         <ImagePicker
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
@@ -63,7 +61,7 @@ function ImageVariable(props: IImageVariable) {
             }}
             previewErrorUrl={previewErrorUrl}
         />
-    ) : null;
+    );
 }
 
 export default ImageVariable;

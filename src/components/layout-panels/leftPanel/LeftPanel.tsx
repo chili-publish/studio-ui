@@ -7,16 +7,17 @@ import { ContentType } from '../../../contexts/VariablePanelContext.types';
 
 interface LeftPanelProps {
     variables: Variable[];
+    isDocumentLoaded: boolean;
 }
 
-function LeftPanel({ variables }: LeftPanelProps) {
+function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
 
     return (
         <LeftPanelContainer id="left-panel">
             {contentType === ContentType.VARIABLES_LIST ? (
                 <VariablesListContainer>
-                    <VariablesList variables={variables} />
+                    <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
                 </VariablesListContainer>
             ) : (
                 <ImagePanel />

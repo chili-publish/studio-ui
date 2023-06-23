@@ -7,7 +7,7 @@ import ImageVariable from './imageVariable/ImageVariable';
 import TextVariable from './TextVariable';
 
 function VariablesComponents(props: IVariablesComponents) {
-    const { type, variable } = props;
+    const { type, variable, isDocumentLoaded } = props;
     const { handleValueChange, handleImageRemove } = useVariableComponents(variable.id);
 
     const RenderComponents = useMemo(() => {
@@ -18,7 +18,9 @@ function VariablesComponents(props: IVariablesComponents) {
             }
 
             case VariableType.image: {
-                return <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />;
+                return isDocumentLoaded ? (
+                    <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />
+                ) : null;
             }
             // This was temporarily hidden
             // case VariableType.group: {
@@ -27,7 +29,7 @@ function VariablesComponents(props: IVariablesComponents) {
             default:
                 return null;
         }
-    }, [handleImageRemove, handleValueChange, type, variable]);
+    }, [handleImageRemove, handleValueChange, type, variable, isDocumentLoaded]);
 
     return <div style={{ width: '100%' }}>{RenderComponents}</div>;
 }

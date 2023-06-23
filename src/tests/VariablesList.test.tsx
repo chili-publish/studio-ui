@@ -4,7 +4,7 @@ import { variables } from './mocks/mockVariables';
 
 describe('Variables List', () => {
     it('Hidden variables should not be shown', async () => {
-        render(<VariablesList variables={variables} />);
+        render(<VariablesList variables={variables} isDocumentLoaded />);
 
         const variable1 = await screen.findByText('Variable1');
         const variable12 = await screen.findByText('Variable12');

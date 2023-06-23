@@ -9,6 +9,7 @@ describe('Variable Component', () => {
                 key={`variable-component-${variables[0].id}`}
                 type={variables[0].type} // image variable
                 variable={variables[0]}
+                isDocumentLoaded
             />,
         );
         const variable = await waitFor(() => screen.getByText('Variable1'));
@@ -21,6 +22,7 @@ describe('Variable Component', () => {
                 key={`variable-component-${variables[2].id}`}
                 type={variables[2].type} // short text variable
                 variable={variables[2]}
+                isDocumentLoaded
             />,
         );
         const input = container.container.getElementsByTagName('input')[0];
@@ -36,6 +38,7 @@ describe('Variable Component', () => {
                 key={`variable-component-${variables[3].id}`}
                 type={variables[3].type} // short text variable
                 variable={variables[3]}
+                isDocumentLoaded
             />,
         );
 

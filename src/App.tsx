@@ -32,6 +32,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
+    const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -214,7 +215,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     useEffect(() => {
         const loadDocument = async () => {
             if (fetchedDocument) {
-                await window.SDK.document.load(fetchedDocument);
+                await window.SDK.document.load(fetchedDocument).then((res) => {
+                    setIsDocumentLoaded(res.success);
+                });
                 zoomToPage();
 
                 if (authToken) {
@@ -257,9 +260,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     zoom={currentZoom}
                 />
                 <MainContentContainer>
-                    {!isMobileSize && <LeftPanel variables={variables} />}
+                    {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                     <CanvasContainer>
-                        {isMobileSize && <VariablesPanel variables={variables} />}
+                        {isMobileSize && <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                         <div className="studio-ui-canvas" data-id="layout-canvas">
                             <div className="chili-editor" id="chili-editor" />
                         </div>
