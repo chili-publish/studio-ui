@@ -223,7 +223,15 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 }
             }
         };
+
+        const setHandTool = async () => {
+            if (fetchedDocument) {
+                await window.SDK.tool.setHand();
+            }
+        };
+
         loadDocument();
+        setHandTool();
     }, [authToken, fetchedDocument, projectConfig]);
 
     // eslint-disable-next-line no-console
