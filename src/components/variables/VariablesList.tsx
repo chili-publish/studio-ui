@@ -8,11 +8,12 @@ import StudioDropdown from '../shared/StudioDropdown';
 interface VariablesListProps {
     variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
+    isDocumentLoaded: boolean;
 }
 
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
 
-function VariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
+function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
 
@@ -55,7 +56,11 @@ function VariablesList({ variables, onMobileOptionListToggle }: VariablesListPro
                     }
                     return !listVariableOpen ? (
                         <ComponentWrapper key={`variable-component-${variable.id}`}>
-                            <VariablesComponents type={variable.type} variable={variable} />
+                            <VariablesComponents
+                                type={variable.type}
+                                variable={variable}
+                                isDocumentLoaded={isDocumentLoaded}
+                            />
                         </ComponentWrapper>
                     ) : null;
                 })}

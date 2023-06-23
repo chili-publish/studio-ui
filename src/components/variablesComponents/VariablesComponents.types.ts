@@ -3,6 +3,7 @@ import { EditorResponse, Variable, VariableType } from '@chili-publish/studio-sd
 export interface IVariablesComponents {
     type: VariableType;
     variable: Variable;
+    isDocumentLoaded: boolean;
 }
 
 export interface IImageVariable {

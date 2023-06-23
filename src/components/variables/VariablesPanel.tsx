@@ -10,10 +10,11 @@ import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles'
 
 interface VariablesPanelProps {
     variables: Variable[];
+    isDocumentLoaded: boolean;
 }
 
 function VariablesPanel(props: VariablesPanelProps) {
-    const { variables } = props;
+    const { variables, isDocumentLoaded } = props;
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
@@ -56,6 +57,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                     <VariablesList
                         variables={variables}
                         onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
+                        isDocumentLoaded={isDocumentLoaded}
                     />
                 ) : (
                     <ImagePanel />

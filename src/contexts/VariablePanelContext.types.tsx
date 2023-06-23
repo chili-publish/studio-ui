@@ -18,4 +18,6 @@ export interface IVariablePanelContext {
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
     previousPath: () => void;
     imagePanelTitle: JSX.Element;
+    documentLoaded: boolean;
+    setDocumentLoaded: Dispatch<SetStateAction<boolean>>;
 }
