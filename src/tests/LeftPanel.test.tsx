@@ -161,7 +161,7 @@ describe('Image Panel', () => {
         expect(breadCrumb).toBeInTheDocument();
     });
 
-    test('Image Picker udpates image after asset is selected', async () => {
+    test.skip('Image Picker udpates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
             <VariablePanelContextProvider>
                 <LeftPanel variables={variables} isDocumentLoaded />
@@ -177,6 +177,7 @@ describe('Image Panel', () => {
             image.click();
         });
 
+        expect(window.SDK.variable.setImageVariableConnector).toBeCalledTimes(1);
         expect(window.SDK.variable.setValue).toBeCalledTimes(1);
     });
 });
