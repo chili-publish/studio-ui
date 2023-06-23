@@ -29,7 +29,7 @@ function VariablesComponents(props: IVariablesComponents) {
         }
     }, [handleImageRemove, handleValueChange, type, variable]);
 
-    return <div style={{ width: '100%', marginBottom: '1rem' }}>{RenderComponents}</div>;
+    return <div style={{ width: '100%' }}>{RenderComponents}</div>;
 }
 
 export default VariablesComponents;

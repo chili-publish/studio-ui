@@ -176,6 +176,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
             documentType: DocumentType.project,
         });
+
         // Connect to ths SDK
         window.SDK = sdk;
         window.SDK.loadEditor();

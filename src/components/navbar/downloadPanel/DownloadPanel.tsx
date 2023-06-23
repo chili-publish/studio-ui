@@ -13,19 +13,16 @@ import { useMemo, useRef, useState } from 'react';
 import { css } from 'styled-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import {
+    ButtonWrapper,
+    Content,
     DesktopDropdownContainer,
-    DownloadDropdownContainer,
     DownloadDropdownTitle,
     DownloadPanelContainer,
     DropdownLabel,
-    MobileDropdownContainer,
-    MobileDropdownLeftContent,
-    MobileDropdownOption,
-    MobileDropdownOptionContent,
-    TrayContentContainer,
 } from './DownloadPanel.styles';
 import DropdownOption from './DropdownOption';
 import useMobileSize from '../../../hooks/useMobileSize';
+import StudioDropdown from '../../shared/StudioDropdown';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
@@ -37,7 +34,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
 
-    const [mobileDropdownPressed, setMobileDropdownPressed] = useState(false);
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string>('jpg');
 
     const downloadPanelRef = useRef<HTMLDivElement | null>(null);
@@ -54,46 +51,33 @@ function DownloadPanel(props: DownloadPanelProps) {
         [],
     );
 
-    const trayContent = mobileDropdownPressed ? (
-        <TrayContentContainer>
-            {downloadOptions.map((option) => (
-                <MobileDropdownOption
-                    key={option.value}
-                    selected={selectedOption === option.value}
-                    onClick={() => {
-                        setSelectedOption(option.value as string);
-                        setMobileDropdownPressed(false);
-                    }}
-                >
-                    <MobileDropdownOptionContent>
-                        {option.label}
-                        {selectedOption === option.value && <Icon icon={AvailableIcons.faCheck} />}
-                    </MobileDropdownOptionContent>
-                </MobileDropdownOption>
-            ))}
-        </TrayContentContainer>
-    ) : (
+    const trayContent = (
         <>
-            <DownloadDropdownContainer noPadding>
-                <DropdownLabel>Output type</DropdownLabel>
-                <MobileDropdownContainer onClick={() => setMobileDropdownPressed(true)}>
-                    <MobileDropdownLeftContent>
-                        {downloadOptions.find((option) => option.value === selectedOption)?.label}
-                    </MobileDropdownLeftContent>
-                    <Icon icon={AvailableIcons.faChevronDown} />
-                </MobileDropdownContainer>
-            </DownloadDropdownContainer>
-            <Button
-                onClick={() => {
-                    handleDownload(selectedOption as DownloadFormats);
-                }}
-                variant={ButtonVariant.primary}
-                label="Download"
-                icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
-                styles={css`
-                    width: 100%;
-                `}
-            />
+            <Content borderTop={!mobileDropdownOpen}>
+                <StudioDropdown
+                    label="Output type"
+                    selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
+                    options={downloadOptions}
+                    onChange={(val) => setSelectedOption(val)}
+                    onMenuOpen={() => setMobileDropdownOpen(true)}
+                    onMenuClose={() => setMobileDropdownOpen(false)}
+                />
+            </Content>
+            {!mobileDropdownOpen ? (
+                <ButtonWrapper>
+                    <Button
+                        onClick={() => {
+                            handleDownload(selectedOption as DownloadFormats);
+                        }}
+                        variant={ButtonVariant.primary}
+                        label="Download"
+                        icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
+                        styles={css`
+                            width: 100%;
+                        `}
+                    />
+                </ButtonWrapper>
+            ) : null}
         </>
     );
 
@@ -103,14 +87,14 @@ function DownloadPanel(props: DownloadPanelProps) {
                 isOpen={!!isMobileSize && isDownloadPanelVisible}
                 close={() => {
                     hideDownloadPanel();
-                    setMobileDropdownPressed(false);
+                    setMobileDropdownOpen(false);
                 }}
-                title={!mobileDropdownPressed && 'Download'}
+                title={!mobileDropdownOpen && 'Download'}
                 styles={css`
-                    ${mobileDropdownPressed ? 'padding: 0;' : 'padding-bottom: 1rem;'}
+                    ${mobileDropdownOpen ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
                 `}
-                hideCloseButton={mobileDropdownPressed}
+                hideCloseButton={mobileDropdownOpen}
             >
                 {trayContent}
             </Tray>

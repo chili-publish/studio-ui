@@ -17,6 +17,7 @@ function VariablesPanel(props: VariablesPanelProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
+    const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
@@ -49,8 +50,16 @@ function VariablesPanel(props: VariablesPanelProps) {
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
                 `}
+                hideCloseButton={mobileOptionsListOpen}
             >
-                {showVariablesList ? <VariablesList variables={variables} /> : <ImagePanel />}
+                {showVariablesList ? (
+                    <VariablesList
+                        variables={variables}
+                        onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
+                    />
+                ) : (
+                    <ImagePanel />
+                )}
             </Tray>
         </>
     );
