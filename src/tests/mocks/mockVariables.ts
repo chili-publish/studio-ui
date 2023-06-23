@@ -30,6 +30,11 @@ export const variables: Variable[] = [
         type: VariableType.image,
         occurrences: 2,
         isVisible: true,
+        src: {
+            type: ImageVariableSourceType.mediaConnector,
+            id: 'grafx-media',
+            assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
+        },
     },
     <ShortTextVariable>{
         id: 'shortVariable 1',

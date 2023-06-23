@@ -14,13 +14,14 @@ function VariablesList({ variables }: VariablesListProps) {
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
-                    return (
+                    const { isVisible } = variable;
+                    return isVisible ? (
                         <VariablesComponents
                             key={`variable-component-${variable.id}`}
                             type={variable.type}
                             variable={variable}
                         />
-                    );
+                    ) : null;
                 })}
         </>
     );
