@@ -120,7 +120,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 }
             },
 
-            editorLink: 'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/dev/web',
+            editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
         });
         // Connect to ths SDK
