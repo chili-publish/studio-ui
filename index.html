@@ -20,16 +20,17 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                // StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                // StudioUI.studioLoaderConfig(
-                //     'studio-ui-root',
-                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
-                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
-                //     "<project guid>",                                                             /*projectId:*/
-                //     "https://<baseUrl>/environment/<env-name>/"                                   /*graFxStudioEnvironmentApiBaseUrl:*/
-                //     "<open a project on chiligrafx.com to retrieve AT from network requests>",    /*authToken:*/
-                //)
+                StudioUI.studioLoaderConfig(
+                    'studio-ui-root',
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/c3c69a5f-8456-44bd-875d-45be47e5a291/document' /*projectDownloadUrl:*/,
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/c3c69a5f-8456-44bd-875d-45be47e5a291/document' /*projectUploadUrl:*/,
+                    'c3c69a5f-8456-44bd-875d-45be47e5a291' /*projectId:*/,
+                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/' /*graFxStudioEnvironmentApiBaseUrl:*/,
+                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3JvbGVzIjpbIkZBIl0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vY3VzdG9tZXJfZ3VpZCI6IiIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vc3Vic2NyaXB0aW9ucyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiXSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5jaGlsaWdyYWZ4LWRldi5jb20vIiwic3ViIjoiYXV0aDB8NjMwNWUzM2QyYzM5OGE0MmFhOWVhMDY1IiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjg3NTI2MjcwLCJleHAiOjE2ODc2MTI2NzAsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.CCDsqckurRQAjfLGocrTgItfu9F5nUeTSdoDaEMPiGy_M8Ep5_mNyXJ4Da4AHZbITzphZGRy_eAE8NaGiSbbjrFztQKc-Iy4RD6_yL1L_OeLCi_eNt9HBcsP6o59kBtEv8IbywxcBAvN8KP6G7PPh2BkpJ2cYp4e0rPjGNvb7SwQdFMU8EjhBEnGR5emCvRwwLAXcZtIRZv5_aSJ2mKIGrw7Edog2u5SetVi3cupnTOBLr28rzKXMrxyJ_ybSdM_GypzRqKvK-LW9R9yx-6YAki3K-QC3YG-u_Uw49Fb7Dj0yOybilSNhIC-kNPjJGMYa9J9BTBkQiO_ISM6Mvr7NQ' /*authToken:*/,
+                    baseUrl + '/editor/' + editorVersion + '/web',
+                );
             });
         </script>
     </body>
