@@ -26,9 +26,9 @@ export default class StudioUI {
 
     static studioLoaderConfig(
         selector: string,
-        templateDownloadUrl: string,
-        templateUploadUrl: string,
-        templateId: string,
+        projectDownloadUrl: string,
+        projectUploadUrl: string,
+        projectId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
         refreshTokenAction: () => Promise<string | AxiosError>,
@@ -37,9 +37,9 @@ export default class StudioUI {
     ) {
         const editorLink = '';
         return new this(selector, editorLink, {
-            templateDownloadUrl,
-            templateUploadUrl,
-            templateId,
+            projectDownloadUrl,
+            projectUploadUrl,
+            projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             refreshTokenAction: () => refreshTokenAction(),
