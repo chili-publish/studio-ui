@@ -18,8 +18,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     setNavigationStack: () => undefined,
     previousPath: () => undefined,
     imagePanelTitle: <div />,
-    documentLoaded: false,
-    setDocumentLoaded: () => undefined,
 };
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
@@ -31,7 +29,6 @@ export const useVariablePanelContext = () => {
 export function VariablePanelContextProvider({ children }: { children: ReactNode }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
-    const [documentLoaded, setDocumentLoaded] = useState(false);
 
     /* Image Panel Folder Navigation */
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
@@ -100,8 +97,6 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
             setNavigationStack,
             previousPath,
             imagePanelTitle,
-            documentLoaded,
-            setDocumentLoaded,
         }),
         [
             contentType,
