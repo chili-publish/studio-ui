@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DropDown } from '@chili-publish/grafx-shared-components';
+// import { DropDown } from '@chili-publish/grafx-shared-components';
 import { VariableType } from '@chili-publish/studio-sdk';
 import { IVariablesComponents } from './VariablesComponents.types';
 import { useVariableComponents } from './useVariablesComponents';
@@ -21,7 +21,9 @@ function VariablesComponents(props: IVariablesComponents) {
                 return <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />;
             }
             case VariableType.group: {
-                return <DropDown options={[]} />;
+                /* TODO: Uncomment later when groups should not be hidden anymore */
+                // return <DropDown options={[]} />;
+                return null;
             }
             default:
                 return null;
