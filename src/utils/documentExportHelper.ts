@@ -30,6 +30,9 @@ export const getDownloadLink = async (
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
         } else {
             // pdf case
+            // replace /v1/ with /experimental/ in baseurl
+            generateExportUrl = generateExportUrl.replace('/v1/', '/experimental/');
+            generateExportUrl += `pdf?layoutToExport=${layoutId}&projectId=${projectId}`;
         }
 
         const config: HttpHeaders = {
