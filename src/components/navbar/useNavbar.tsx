@@ -64,7 +64,7 @@ const useNavbar = (
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
                         />
-                        <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
+                        <NavbarLabel aria-label={`Project: ${projectName}`}>{decodeURI(projectName || '')}</NavbarLabel>
                     </NavbarGroup>
                 ),
             },
