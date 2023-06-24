@@ -11,15 +11,11 @@ function TextVariable(props: ITextVariable) {
     );
 
     useEffect(() => {
-        const newValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
-        if (newValue !== variableValue) {
-            setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
     }, [variable]);
 
     const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        if (variableValue !== e.target.value) setVariableValue(e.target.value);
+        setVariableValue(e.target.value);
     };
 
     return (
@@ -27,7 +23,11 @@ function TextVariable(props: ITextVariable) {
             type="text"
             value={variableValue}
             onChange={handleVariableChange}
-            onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}
+            onBlur={(event: ChangeEvent<HTMLInputElement>) => {
+                const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
+                const newValue = event.target.value;
+                if (oldValue !== newValue) handleValueChange(newValue);
+            }}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
         />
