@@ -11,11 +11,15 @@ function TextVariable(props: ITextVariable) {
     );
 
     useEffect(() => {
-        setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
+        const newValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
+        if (newValue !== variableValue) {
+            setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [variable]);
 
     const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        setVariableValue(e.target.value);
+        if (variableValue !== e.target.value) setVariableValue(e.target.value);
     };
 
     return (
