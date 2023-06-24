@@ -23,7 +23,11 @@ function TextVariable(props: ITextVariable) {
             type="text"
             value={variableValue}
             onChange={handleVariableChange}
-            onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}
+            onBlur={(event: ChangeEvent<HTMLInputElement>) => {
+                const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
+                const newValue = event.target.value;
+                if (oldValue !== newValue) handleValueChange(newValue);
+            }}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
         />

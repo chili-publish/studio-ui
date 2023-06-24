@@ -32,6 +32,7 @@ export const NavigationWrapper = styled.div`
     margin-left: 0.5rem;
 
     & svg {
+        box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
     }
 

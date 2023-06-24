@@ -64,7 +64,7 @@ const useNavbar = (
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
                         />
-                        <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
+                        <NavbarLabel aria-label={`Project: ${projectName}`}>{decodeURI(projectName || '')}</NavbarLabel>
                     </NavbarGroup>
                 ),
             },
@@ -129,11 +129,12 @@ const useNavbar = (
 
     const handleDownload = async (extension: DownloadFormats) => {
         try {
+            const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await getDownloadLink(
                 extension,
                 projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
                 projectConfig?.authToken ?? '',
-                '0',
+                selectedLayoutID || '0',
                 projectConfig?.projectId ?? '',
             );
 
