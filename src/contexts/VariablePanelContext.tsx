@@ -13,7 +13,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     currentVariableId: '',
     handleUpdateImage: () => undefined,
     selectedItems: [],
-    navigationStack: [],
+    navigationStack: [''],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     previousPath: () => undefined,
@@ -61,9 +61,10 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
-                    onClick={
-                        (navigationStack ?? []).length ? previousPath : () => setContentType(ContentType.VARIABLES_LIST)
-                    }
+                    onClick={() => {
+                        setContentType(ContentType.VARIABLES_LIST);
+                        setNavigationStack([]);
+                    }}
                     icon={
                         <Icon
                             key={navigationStack.length}
@@ -78,7 +79,7 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                 <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, previousPath],
+        [navigationStack],
     );
 
     const data = useMemo(
