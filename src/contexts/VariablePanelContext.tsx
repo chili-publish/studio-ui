@@ -16,7 +16,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     navigationStack: [''],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
-    previousPath: () => undefined,
     imagePanelTitle: <div />,
 };
 
@@ -47,13 +46,6 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         },
         [handleImageChange],
     );
-
-    const previousPath = useCallback(() => {
-        // We are removing any selected element from the state. This is because
-        // for now we do not support multiselection.
-        setSelectedItems([]);
-        setNavigationStack((current) => current?.slice(0, -1));
-    }, []);
 
     const imagePanelTitle = useMemo(
         () => (
@@ -96,18 +88,9 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
             navigationStack,
             setSelectedItems,
             setNavigationStack,
-            previousPath,
             imagePanelTitle,
         }),
-        [
-            contentType,
-            currentVariableId,
-            handleUpdateImage,
-            navigationStack,
-            imagePanelTitle,
-            previousPath,
-            selectedItems,
-        ],
+        [contentType, currentVariableId, handleUpdateImage, navigationStack, imagePanelTitle, selectedItems],
     );
 
     return <VariablePanelContext.Provider value={data}>{children}</VariablePanelContext.Provider>;
