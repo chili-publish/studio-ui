@@ -13,7 +13,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     currentVariableId: '',
     handleUpdateImage: () => undefined,
     selectedItems: [],
-    navigationStack: [''],
+    navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     imagePanelTitle: <div />,
