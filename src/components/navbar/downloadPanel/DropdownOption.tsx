@@ -15,7 +15,7 @@ function DropdownOption(props: DropdownOptionProps) {
         <DropdownOptionLabel>
             <Icon icon={icon} />
             <DropdownOptionText>{text}</DropdownOptionText>
-            {isExperimental && <ExperimentalPill />}
+            {isExperimental && <ExperimentalPill>Experimental</ExperimentalPill>}
         </DropdownOptionLabel>
     );
 }

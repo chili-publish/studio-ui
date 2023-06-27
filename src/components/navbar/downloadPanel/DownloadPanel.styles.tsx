@@ -53,9 +53,9 @@ export const ExperimentalPill = styled.span`
     border-radius: 5rem;
     border: 1px solid green;
     color: green;
-    margin: 0.5rem 1rem;
+    margin: 0 1rem;
     margin-bottom: 0;
-    padding: 2px 0.5rem;
+    padding: 2px 0.25rem;
     display: inline-block;
     width: auto;
 `;
