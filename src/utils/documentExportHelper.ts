@@ -29,7 +29,10 @@ export const getDownloadLink = async (
             // Here we also pass additional query param `fps` with a default value of `30`.
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
         } else {
-            // pdf case
+            generateExportUrl = `${baseUrl.replace(
+                'v1',
+                'experimental',
+            )}/output/pdf?layoutToExport=${layoutId}&projectId=${projectId}`;
         }
 
         const config: HttpHeaders = {
