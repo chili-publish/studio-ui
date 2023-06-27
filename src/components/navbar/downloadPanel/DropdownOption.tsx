@@ -1,10 +1,11 @@
 import React from 'react';
 import { AvailableIcons, Icon } from '@chili-publish/grafx-shared-components';
-import { DropdownOptionLabel, DropdownOptionText } from './DownloadPanel.styles';
+import { DropdownOptionLabel, DropdownOptionText, ExperimentalPill } from './DownloadPanel.styles';
 
 interface DropdownOptionProps {
     icon: keyof typeof AvailableIcons;
     text: string;
+    isExperimental?: boolean;
 }
 
 function DropdownOption(props: DropdownOptionProps) {
@@ -14,6 +15,7 @@ function DropdownOption(props: DropdownOptionProps) {
         <DropdownOptionLabel>
             <Icon icon={icon} />
             <DropdownOptionText>{text}</DropdownOptionText>
+            {isExperimental && <ExperimentalPill />}
         </DropdownOptionLabel>
     );
 }
