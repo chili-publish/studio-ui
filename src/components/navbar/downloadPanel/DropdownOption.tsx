@@ -9,7 +9,7 @@ interface DropdownOptionProps {
 }
 
 function DropdownOption(props: DropdownOptionProps) {
-    const { icon, text } = props;
+    const { icon, text, isExperimental } = props;
 
     return (
         <DropdownOptionLabel>
