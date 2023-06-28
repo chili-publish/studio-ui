@@ -104,7 +104,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId('test-gsc-image-picker-content')[0]);
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {
@@ -130,7 +130,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId('test-gsc-image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -147,7 +147,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId('test-gsc-image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -167,7 +167,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId('test-gsc-image-picker-content')[0]);
         await act(async () => {
             imagePicker.click();
         });
