@@ -193,7 +193,7 @@ function ItemBrowser<
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
 
     return (
-        <Panel parentOverflow title={panelTitle} dataId="widget-media-panel" isModal={false}>
+        <Panel parentOverflow title={panelTitle} dataId="widget-media-panel" isModal={false} padding="0 0.5">
             <BreadCrumbsWrapper>
                 <BreadCrumb
                     href={`Home${navigationStack.length ? '\\' : ''}${navigationStackString}`}
