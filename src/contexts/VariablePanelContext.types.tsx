@@ -16,6 +16,5 @@ export interface IVariablePanelContext {
     navigationStack: string[];
     setSelectedItems: Dispatch<SetStateAction<Media[]>>;
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
-    previousPath: () => void;
     imagePanelTitle: JSX.Element;
 }

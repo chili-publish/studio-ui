@@ -202,14 +202,15 @@ function ItemBrowser<
             dataId={getDataIdForSUI('widget-media-panel')}
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
             isModal={false}
+            padding="0 0.5"
         >
             <BreadCrumbsWrapper>
                 <BreadCrumb
-                    href={navigationStackString}
+                    href={`Home${navigationStack.length ? '\\' : ''}${navigationStackString}`}
                     color={Colors.SECONDARY_FONT}
                     activeColor={Colors.PRIMARY_FONT}
-                    onClick={(test: string) => {
-                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(test) + 1);
+                    onClick={(breadCrumb: string) => {
+                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(breadCrumb) + 1);
                         setNavigationStack(newNavigationStack);
                     }}
                 />
