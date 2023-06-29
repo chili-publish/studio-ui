@@ -15,6 +15,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { AssetType } from '../../utils/ApiTypes';
 import useMobileSize from '../../hooks/useMobileSize';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -139,7 +140,8 @@ function ItemBrowser<
             const previewCard = (
                 <ChiliPreview
                     key={listItem.instance.id}
-                    dataId={`card-preview-${listItem.instance.name}`}
+                    dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
+                    dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
                     itemId={listItem.instance.id}
                     name={listItem.instance.name}
                     type={itemType as unknown as PreviewType}
@@ -166,7 +168,8 @@ function ItemBrowser<
             return (
                 <ResourcesPreview
                     width={undefined}
-                    data-id={`resources-preview-${listItem.instance.name}`}
+                    data-id={getDataIdForSUI(`resources-preview-${listItem.instance.name}`)}
+                    data-testid={getDataTestIdForSUI(`resources-preview-${listItem.instance.name}`)}
                     key={getKey(
                         `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
                         idx,
@@ -193,7 +196,13 @@ function ItemBrowser<
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
 
     return (
-        <Panel parentOverflow title={panelTitle} dataId="widget-media-panel" isModal={false}>
+        <Panel
+            parentOverflow
+            title={panelTitle}
+            dataId={getDataIdForSUI('widget-media-panel')}
+            dataTestId={getDataTestIdForSUI('widget-media-panel')}
+            isModal={false}
+        >
             <BreadCrumbsWrapper>
                 <BreadCrumb
                     href={navigationStackString}
@@ -206,7 +215,10 @@ function ItemBrowser<
                 />
             </BreadCrumbsWrapper>
             <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
-                <ResourcesContainer data-id="resources-container">
+                <ResourcesContainer
+                    data-id={getDataIdForSUI('resources-container')}
+                    data-testid={getDataTestIdForSUI('resources-container')}
+                >
                     {elements}
                     <LoadPageContainer>
                         <div ref={infiniteScrollingRef} />

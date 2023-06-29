@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 describe('Navbar', () => {
     it('Should render 4 navbar items', () => {
@@ -12,7 +13,7 @@ describe('Navbar', () => {
                 }}
             />,
         );
-        const navbarItems = Array.from(getByTestId('navbar').children[0].children);
+        const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
         expect(navbarItems).toHaveLength(4);
     });
 

@@ -7,7 +7,7 @@
         <title>GraFx Studio UI</title>
     </head>
     <body>
-        <div id="studio-ui-root"></div>
+        <div id="sui-root"></div>
         <script type="module" src="./src/main.tsx"></script>
 
         <script>
@@ -20,10 +20,10 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
                 // StudioUI.studioLoaderConfig(
-                //     'studio-ui-root',
+                //     'sui-root',
                 //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
                 //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
                 //     "<project guid>",                                                             /*projectId:*/
