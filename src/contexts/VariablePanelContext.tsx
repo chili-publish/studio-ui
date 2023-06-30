@@ -16,7 +16,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
-    previousPath: () => undefined,
     imagePanelTitle: <div />,
 };
 
@@ -48,22 +47,16 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         [handleImageChange],
     );
 
-    const previousPath = useCallback(() => {
-        // We are removing any selected element from the state. This is because
-        // for now we do not support multiselection.
-        setSelectedItems([]);
-        setNavigationStack((current) => current?.slice(0, -1));
-    }, []);
-
     const imagePanelTitle = useMemo(
         () => (
             <NavigationWrapper>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
-                    onClick={
-                        (navigationStack ?? []).length ? previousPath : () => setContentType(ContentType.VARIABLES_LIST)
-                    }
+                    onClick={() => {
+                        setContentType(ContentType.VARIABLES_LIST);
+                        setNavigationStack([]);
+                    }}
                     icon={
                         <Icon
                             key={navigationStack.length}
@@ -78,7 +71,7 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                 <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, previousPath],
+        [navigationStack],
     );
 
     const data = useMemo(
@@ -95,18 +88,9 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
             navigationStack,
             setSelectedItems,
             setNavigationStack,
-            previousPath,
             imagePanelTitle,
         }),
-        [
-            contentType,
-            currentVariableId,
-            handleUpdateImage,
-            navigationStack,
-            imagePanelTitle,
-            previousPath,
-            selectedItems,
-        ],
+        [contentType, currentVariableId, handleUpdateImage, navigationStack, imagePanelTitle, selectedItems],
     );
 
     return <VariablePanelContext.Provider value={data}>{children}</VariablePanelContext.Provider>;
