@@ -23,7 +23,7 @@
         "validate-licenses": "node validate_licenses.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-shared-components": "^0.37.9",
+        "@chili-publish/grafx-shared-components": "^0.37.13",
         "@chili-publish/studio-sdk": "^0.135.0",
         "axios": "^1.4.0",
         "react": "^18.2.0",
