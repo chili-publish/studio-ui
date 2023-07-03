@@ -20,16 +20,16 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                // StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                StudioUI.studioLoaderConfig(
-                    'studio-ui-root',
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/d76c2ac4-c409-47a9-a7c8-de06a57398ca/document' /*projectDownloadUrl:*/,
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/d76c2ac4-c409-47a9-a7c8-de06a57398ca/document' /*projectUploadUrl:*/,
-                    'd76c2ac4-c409-47a9-a7c8-de06a57398ca' /*projectId:*/,
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217' /*graFxStudioEnvironmentApiBaseUrl:*/,
-                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3JvbGVzIjpbIkZBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNVIiwiODliOTVhZDgtMjQ1OS00YWM0LTk0ZDktN2UyM2I2ZDBmNDY2fEVBIiwiZDRiZDQ1YzItOGE1OC00Y2Y2LWI4MmItYWRiYTY4YWNmZWI5fEVBIiwiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fFNBIl0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vY3VzdG9tZXJfZ3VpZCI6IjUxNTFlZjliLWRjNmYtNDU1OC05MDdkLTczZTc3NzNiYTU0MSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vc3Vic2NyaXB0aW9ucyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiXSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5jaGlsaWdyYWZ4LWRldi5jb20vIiwic3ViIjoic2FtbHB8Y2hpbGktcHVibGlzaC1kZXZ8cnN0ZWZhbkBjaGlsaS1wdWJsaXNoLmNvbSIsImF1ZCI6WyJodHRwczovL2NoaWxpZ3JhZnguY29tIiwiaHR0cHM6Ly9ncmFmeC1kZXYuZXUuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY4ODM3MTUyMywiZXhwIjoxNjg4NDU3OTIzLCJhenAiOiJiaWlONkVEWDJKcVVoajRmSW5vWEgzNk1mbjRMZEN5SiIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgb2ZmbGluZV9hY2Nlc3MifQ.xy2ta4HRpFl6HGfMLPxKTfzOSSCLSiR3v1CbBWd8uWQjejpSeKhOYber5SXwpIO3iDq9uJu_2Sn4NZXRyPAKSoaspud747-h_PrS8CD00VWefiIFLEabFXMY8hq3GTGjitmMYCUlwOH1dQs6-rughzLdyvixvuMz7fKdzt9qzwB2yhWv-PH8YvEZRF1lmRyMc6rvhza6acjVo6qF3kGBBy3CcrQS0V0cdqIICvrSvf7FFkzqE9Jt53EMoDAos9_j7b-UTwqxLPWyZIydVnhObbZ2QVQwcLFfm4Fycl6Awvo_0vcqVvtm4g6YTSn-NRdVy9uTwtxTBmvrEiKhiRLrpw' /*authToken:*/,
-                );
+                // StudioUI.studioLoaderConfig(
+                //     'studio-ui-root',
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
+                //     "<project guid>",                                                             /*projectId:*/
+                //     "https://<baseUrl>/environment/<env-name>/"                                   /*graFxStudioEnvironmentApiBaseUrl:*/
+                //     "<open a project on chiligrafx.com to retrieve AT from network requests>",    /*authToken:*/
+                //)
             });
         </script>
     </body>
