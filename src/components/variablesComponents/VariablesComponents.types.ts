@@ -17,6 +17,6 @@ export interface ITextVariable {
 }
 
 export interface IBooleanVariable {
-    handleValueChange: (value: boolean | boolean) => Promise<EditorResponse<null> | null> | null;
+    handleValueChange: (value: boolean) => Promise<EditorResponse<null> | null> | null;
     variable: Variable;
 }
