@@ -1,7 +1,6 @@
-import { Colors, Switch } from '@chili-publish/grafx-shared-components';
+import { Colors, Switch, SwitchSize } from '@chili-publish/grafx-shared-components';
 import { useState } from 'react';
 import { BooleanVariable } from '@chili-publish/studio-sdk';
-import { SwitchSize } from '@chili-publish/grafx-shared-components/lib/components/switch/Switch.types';
 import { IBooleanVariable } from './VariablesComponents.types';
 
 function BooleanVariable(props: IBooleanVariable) {
