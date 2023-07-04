@@ -7,3 +7,9 @@ export const VariableContainer = styled.div`
 export const VariableLabel = styled.span`
     color: red;
 `;
+
+export const BooleanVariableContainer = styled.div`
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+`;

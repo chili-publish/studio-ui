@@ -2,19 +2,14 @@ import { Colors, Switch, SwitchSize } from '@chili-publish/grafx-shared-componen
 import { useState } from 'react';
 import { BooleanVariable } from '@chili-publish/studio-sdk';
 import { IBooleanVariable } from './VariablesComponents.types';
+import { BooleanVariableContainer } from './VariablesComponents.styles';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
     const [state, setState] = useState((variable as BooleanVariable).value);
 
     return (
-        <div
-            style={{
-                height: '2.5rem',
-                display: 'flex',
-                alignItems: 'center',
-            }}
-        >
+        <BooleanVariableContainer>
             <Switch
                 isChecked={state}
                 name="booleanValue"
@@ -29,7 +24,7 @@ function BooleanVariable(props: IBooleanVariable) {
                 labelColor={Colors.SECONDARY_FONT}
                 size={SwitchSize.LARGE}
             />
-        </div>
+        </BooleanVariableContainer>
     );
 }
 
