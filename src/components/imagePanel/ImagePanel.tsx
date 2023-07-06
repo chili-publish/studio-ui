@@ -1,5 +1,5 @@
 import { Media, MediaDownloadType } from '@chili-publish/studio-sdk';
-import { convertToPreviewType } from '../../utils/media-utils';
+import { convertToPreviewType } from '../../utils/mediaUtils';
 import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
