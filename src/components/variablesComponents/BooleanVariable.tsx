@@ -12,7 +12,7 @@ function BooleanVariable(props: IBooleanVariable) {
         <BooleanVariableContainer>
             <Switch
                 isChecked={state}
-                name="booleanValue"
+                id={variable.id}
                 label={{
                     key: 'visible',
                     value: variable.name,
