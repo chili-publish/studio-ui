@@ -12,6 +12,7 @@ import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import useMobileSize from './hooks/useMobileSize';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
 declare global {
     interface Window {
@@ -263,7 +264,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                     <CanvasContainer>
                         {isMobileSize && <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                        <div className="studio-ui-canvas" data-id="layout-canvas">
+                        <div
+                            className="sui-canvas"
+                            data-id={getDataIdForSUI('canvas')}
+                            data-testid={getDataTestIdForSUI('canvas')}
+                        >
                             <div className="chili-editor" id="chili-editor" />
                         </div>
                         <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />

@@ -1,3 +1,4 @@
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { StyledNavbar, NavbarItem } from './Navbar.styles';
 import { INavbar } from './Navbar.types';
 import DownloadPanel from './downloadPanel/DownloadPanel';
@@ -15,10 +16,16 @@ function Navbar(props: INavbar) {
     );
 
     return (
-        <StyledNavbar data-testid="navbar">
+        <StyledNavbar data-id={getDataIdForSUI('navbar')} data-testid={getDataTestIdForSUI('navbar')}>
             <ul>
                 {navbarItems.map((item) => (
-                    <NavbarItem aria-label={item.label} key={item.label} hideOnMobile={item.hideOnMobile}>
+                    <NavbarItem
+                        data-id={getDataIdForSUI(`navbar-item-${item.label}`)}
+                        data-testid={getDataTestIdForSUI(`navbar-item-${item.label}`)}
+                        aria-label={item.label}
+                        key={item.label}
+                        hideOnMobile={item.hideOnMobile}
+                    >
                         {item.content}
                     </NavbarItem>
                 ))}

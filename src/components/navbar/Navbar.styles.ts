@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
-import { mobileMediaQuery } from '../../utils/media-utils';
+import { mobileMediaQuery } from '../../utils/mediaUtils';
 
 export const StyledNavbar = styled.nav`
     box-sizing: border-box;
