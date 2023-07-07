@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { act } from 'react-dom/test-utils';
+import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { variables } from './mocks/mockVariables';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
@@ -104,7 +105,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {
@@ -130,7 +131,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -147,7 +148,7 @@ describe('Image Panel', () => {
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });
@@ -161,13 +162,13 @@ describe('Image Panel', () => {
         expect(breadCrumb).toBeInTheDocument();
     });
 
-    test.skip('Image Picker udpates image after asset is selected', async () => {
+    test.skip('Image Picker updates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
             <VariablePanelContextProvider>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });

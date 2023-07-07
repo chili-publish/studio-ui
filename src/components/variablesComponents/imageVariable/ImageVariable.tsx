@@ -9,6 +9,7 @@ import {
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
@@ -53,6 +54,8 @@ function ImageVariable(props: IImageVariable) {
     return (
         <ImagePicker
             name={variable.id}
+            dataId={getDataIdForSUI('image-picker')}
+            dataTestId={getDataTestIdForSUI('image-picker')}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
