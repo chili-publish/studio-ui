@@ -23,6 +23,7 @@ function BooleanVariable(props: IBooleanVariable) {
                 }}
                 labelColor={Colors.SECONDARY_FONT}
                 size={SwitchSize.LARGE}
+                noLabelHeight
             />
         </BooleanVariableContainer>
     );

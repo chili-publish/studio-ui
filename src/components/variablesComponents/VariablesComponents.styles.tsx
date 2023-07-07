@@ -9,7 +9,7 @@ export const VariableLabel = styled.span`
 `;
 
 export const BooleanVariableContainer = styled.div`
-    height: 2.5rem;
+    min-height: 2.5rem;
     display: flex;
     align-items: center;
 `;
