@@ -1,17 +1,21 @@
 import { Colors, Switch, SwitchSize } from '@chili-publish/grafx-shared-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BooleanVariable } from '@chili-publish/studio-sdk';
 import { IBooleanVariable } from './VariablesComponents.types';
 import { BooleanVariableContainer } from './VariablesComponents.styles';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
-    const [state, setState] = useState((variable as BooleanVariable).value);
+    const [toggled, setToggled] = useState((variable as BooleanVariable).value);
+
+    useEffect(() => {
+        setToggled((variable as BooleanVariable).value);
+    }, [variable]);
 
     return (
         <BooleanVariableContainer>
             <Switch
-                isChecked={state}
+                isChecked={toggled}
                 id={variable.id}
                 label={{
                     key: 'visible',
@@ -19,7 +23,7 @@ function BooleanVariable(props: IBooleanVariable) {
                 }}
                 onChange={(val: boolean) => {
                     handleValueChange(val);
-                    setState(val);
+                    setToggled(val);
                 }}
                 labelColor={Colors.SECONDARY_FONT}
                 size={SwitchSize.LARGE}
