@@ -44,9 +44,12 @@ function DownloadPanel(props: DownloadPanelProps) {
         () => [
             { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: DownloadFormats.JPG },
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
-            // { label: <DropdownOption icon={AvailableIcons.faImage} text="PDF print" />, value: DownloadFormats.PDF },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
+            {
+                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" isExperimental />,
+                value: DownloadFormats.EXPERIMENTAL_PDF,
+            },
         ],
         [],
     );
