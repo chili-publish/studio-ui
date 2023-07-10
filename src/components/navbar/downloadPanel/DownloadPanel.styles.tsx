@@ -47,3 +47,15 @@ export const Content = styled.div<{ borderTop?: boolean }>`
     padding-top: 1rem;
     border-top: ${(props) => (props.borderTop ? `1px solid ${Colors.LIGHT_GRAY_100}` : 'none')};
 `;
+
+export const ExperimentalPill = styled.span`
+    font-size: ${FontSizes.label};
+    border-radius: 5rem;
+    border: 1px solid green;
+    color: green;
+    margin: 0 1rem;
+    margin-bottom: 0;
+    padding: 2px 0.25rem;
+    display: inline-block;
+    width: auto;
+`;
