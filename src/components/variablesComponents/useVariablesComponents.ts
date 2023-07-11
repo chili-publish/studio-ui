@@ -20,10 +20,9 @@ export const useVariableComponents = (currentVariableId: Id) => {
         return null;
     };
 
-    const handleValueChange = async (value: string) => {
-        if (currentVariableId) {
-            await window.SDK.variable.setValue(currentVariableId, value);
-        }
+    const handleValueChange = async (value: string | boolean) => {
+        if (!currentVariableId) return null;
+        return window.SDK.variable.setValue(currentVariableId, value);
     };
 
     return {

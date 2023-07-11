@@ -5,6 +5,7 @@ import { IVariablesComponents } from './VariablesComponents.types';
 import { useVariableComponents } from './useVariablesComponents';
 import ImageVariable from './imageVariable/ImageVariable';
 import TextVariable from './TextVariable';
+import BooleanVariable from './BooleanVariable';
 
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable, isDocumentLoaded } = props;
@@ -21,6 +22,9 @@ function VariablesComponents(props: IVariablesComponents) {
                 return isDocumentLoaded ? (
                     <ImageVariable variable={variable} handleImageRemove={handleImageRemove} />
                 ) : null;
+            }
+            case VariableType.boolean: {
+                return <BooleanVariable variable={variable} handleValueChange={handleValueChange} />;
             }
             // This was temporarily hidden
             // case VariableType.group: {

@@ -12,6 +12,11 @@ export interface IImageVariable {
 }
 
 export interface ITextVariable {
-    handleValueChange: (value: string) => Promise<void>;
+    handleValueChange: (value: string | boolean) => Promise<EditorResponse<null> | null> | null;
+    variable: Variable;
+}
+
+export interface IBooleanVariable {
+    handleValueChange: (value: boolean) => Promise<EditorResponse<null> | null> | null;
     variable: Variable;
 }
