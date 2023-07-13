@@ -174,7 +174,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 setCurrentZoom(zoom);
             },
 
-            editorLink: 'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/dev/web',
+            editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
             documentType: DocumentType.project,
         });
