@@ -153,7 +153,7 @@ function ItemBrowser<
                     renameItem={() => null}
                     options={[]}
                     titleFontSize="0.813rem"
-                    padding="0.75rem"
+                    padding="0.7rem"
                     footerTopMargin="0.75rem"
                     selected={selectedItems[0]?.id === listItem.instance.id}
                     byteArray={
@@ -162,7 +162,7 @@ function ItemBrowser<
                             : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
                     }
                     onClickCard={onClick}
-                    isModal={false}
+                    backgroundColor={Colors.LIGHT_GRAY}
                 />
             );
             return (
@@ -202,7 +202,7 @@ function ItemBrowser<
             dataId={getDataIdForSUI('widget-media-panel')}
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
             isModal={false}
-            padding="0 0.5"
+            padding="0"
         >
             <BreadCrumbsWrapper>
                 <BreadCrumb

@@ -7,6 +7,7 @@ export const LeftPanelContainer = styled.div`
     background-color: ${Colors.PRIMARY_WHITE};
     overflow: scroll;
     margin-bottom: 3rem;
+    padding-left: 0;
 
     &::-webkit-scrollbar {
         width: 0;

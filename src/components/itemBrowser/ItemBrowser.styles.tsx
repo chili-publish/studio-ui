@@ -8,7 +8,7 @@ export const ResourcesContainer = styled.div`
     align-content: flex-start;
     flex-wrap: wrap;
 
-    padding: 0 0.875rem 1.75rem 0.875rem;
+    padding: 0 0.125rem 1.75rem 0.5rem;
     justify-content: space-between;
 `;
 
