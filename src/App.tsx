@@ -42,7 +42,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
-                const document = await window.SDK.document.getCurrentState();
+                const document = await window.SDK.document.getCurrentState().then((res) => {
+                    if (!res.success) {
+                        return res;
+                    }
+                    throw new Error();
+                });
                 const config: HttpHeaders = {
                     headers: {
                         'Content-Type': 'application/json',
@@ -52,15 +57,16 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 if (token) {
                     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
                 }
-
-                axios.put(url, JSON.parse(document.data || '{}'), config).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.error(`[${saveDocument.name}] There was an issue saving document`);
-                    return err;
-                });
+                if (document.data) {
+                    axios.put(url, JSON.parse(document.data), config).catch((err) => {
+                        // eslint-disable-next-line no-console
+                        console.error(`[${saveDocument.name}] There was an issue saving document`);
+                        return err;
+                    });
+                }
             } catch (error) {
                 // eslint-disable-next-line no-console
-                console.error(`[${saveDocument.name}] There was an fetching the current document state`);
+                console.error(`[${saveDocument.name}] There was an issue fetching the current document state`);
             }
         }
     };
