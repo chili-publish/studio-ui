@@ -2,14 +2,10 @@ import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const ResourcesContainer = styled.div`
-    display: flex;
-    height: 100%;
-    overflow: scroll;
-    align-content: flex-start;
-    flex-wrap: wrap;
-
+    display: grid;
+    grid-template-columns: 120px 120px;
+    gap: 1.3rem;
     padding: 0 0.875rem 1.75rem 0.875rem;
-    justify-content: space-between;
 `;
 
 export const ModalResourcesContainer = styled.div<{ width?: string }>`

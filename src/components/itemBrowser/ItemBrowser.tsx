@@ -7,15 +7,29 @@ import {
     PreviewType,
     ScrollbarWrapper,
     useInfiniteScrolling,
+    PreviewCardVariant,
 } from '@chili-publish/grafx-shared-components';
 import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage, Media } from '@chili-publish/studio-sdk';
-import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer, ResourcesPreview } from './ItemBrowser.styles';
+import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { AssetType } from '../../utils/ApiTypes';
 import useMobileSize from '../../hooks/useMobileSize';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+
+const TOP_BAR_HEIGHT_REM = '4rem';
+const TOP_BAR_BORDER_HEIGHT = '2px';
+const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
+const BREADCRUMBS_HEIGHT_REM = '2.5rem';
+
+const leftPanelHeight = `
+    calc(100vh
+        - ${TOP_BAR_HEIGHT_REM}
+        - ${TOP_BAR_BORDER_HEIGHT}
+        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
+        - ${BREADCRUMBS_HEIGHT_REM}
+    )`;
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -24,6 +38,15 @@ type ItemBrowserProps<T extends { id: string }> = {
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
     onSelect: (items: T[]) => void | null;
+};
+
+const SKELETONS = [...Array.from(Array(10).keys())];
+
+const getPreviewThumbnail = (type: PreviewType, name?: string, path?: string): string | undefined => {
+    if (type === PreviewType.COLLECTION)
+        return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
+
+    return path;
 };
 
 function ItemBrowser<
@@ -35,12 +58,13 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
         requested: false,
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
 
@@ -105,6 +129,7 @@ function ItemBrowser<
     useEffect(() => {
         return () => {
             setSelectedItems([]);
+            setNavigationStack([]);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -128,32 +153,44 @@ function ItemBrowser<
         return list.map((listItem, idx) => {
             const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const onClick = () => {
                 if (itemType === PreviewType.COLLECTION) {
-                    setNavigationStack(() => toNavigationStack(listItem.instance.relativePath));
+                    setNavigationStack(() => {
+                        setIsLoading(true);
+                        return toNavigationStack(listItem.instance.relativePath);
+                    });
                 } else {
                     selectItem(listItem.instance);
-                    setNavigationStack([]);
                 }
             };
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const previewPath = getPreviewThumbnail(
+                itemType as unknown as PreviewType,
+                listItem.instance.name,
+                listItem.instance.relativePath,
+            );
+
             const previewCard = (
                 <ChiliPreview
-                    key={listItem.instance.id}
+                    key={getKey(
+                        `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
+                        idx,
+                    )}
                     dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
                     dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
                     itemId={listItem.instance.id}
                     name={listItem.instance.name}
                     type={itemType as unknown as PreviewType}
-                    path={listItem.instance.relativePath}
+                    path={previewPath}
                     metaData={
                         listItem?.instance?.extension?.toUpperCase() ??
                         (itemType?.replace('collection', 'Folder') || '')
                     }
                     renameItem={() => null}
                     options={[]}
-                    titleFontSize="0.813rem"
-                    padding="0.75rem"
+                    padding="0rem"
                     footerTopMargin="0.75rem"
                     selected={selectedItems[0]?.id === listItem.instance.id}
                     byteArray={
@@ -165,19 +202,7 @@ function ItemBrowser<
                     isModal={false}
                 />
             );
-            return (
-                <ResourcesPreview
-                    width={undefined}
-                    data-id={getDataIdForSUI(`resources-preview-${listItem.instance.name}`)}
-                    data-testid={getDataTestIdForSUI(`resources-preview-${listItem.instance.name}`)}
-                    key={getKey(
-                        `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
-                        idx,
-                    )}
-                >
-                    {previewCard}
-                </ResourcesPreview>
-            );
+            return previewCard;
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     };
@@ -215,12 +240,22 @@ function ItemBrowser<
                     }}
                 />
             </BreadCrumbsWrapper>
-            <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
+            <ScrollbarWrapper height={leftPanelHeight}>
                 <ResourcesContainer
                     data-id={getDataIdForSUI('resources-container')}
                     data-testid={getDataTestIdForSUI('resources-container')}
                 >
                     {elements}
+                    {isLoading &&
+                        SKELETONS.map((el) => (
+                            <ChiliPreview
+                                key={el}
+                                itemId={el}
+                                variant={PreviewCardVariant.SKELETON}
+                                padding="0"
+                                type={PreviewType.COLLECTION}
+                            />
+                        ))}
                     <LoadPageContainer>
                         <div ref={infiniteScrollingRef} />
                     </LoadPageContainer>
