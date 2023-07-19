@@ -68,7 +68,7 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                         padding: 0;
                     `}
                 />
-                <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
+                <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
         [navigationStack],

@@ -112,7 +112,7 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const imagePanel = getByText('Select Image');
+        const imagePanel = getByText('Select image');
         expect(imagePanel).toBeInTheDocument();
 
         const goBackButton = getByRole('button');
