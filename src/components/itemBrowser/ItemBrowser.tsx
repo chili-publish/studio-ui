@@ -19,9 +19,9 @@ import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './Ite
 import { ItemCache } from './ItemCache';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
-const TOP_BAR_BORDER_HEIGHT = '2px';
+const TOP_BAR_BORDER_HEIGHT = '1px';
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-const BREADCRUMBS_HEIGHT_REM = '2.5rem';
+const BREADCRUMBS_HEIGHT_REM = '3.5rem';
 
 const leftPanelHeight = `
     calc(100vh
@@ -120,7 +120,7 @@ function ItemBrowser<
         };
 
         // call the function
-        fetchData().catch(() => {
+        fetchData().then(() => {
             setIsLoading(false);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,57 +149,49 @@ function ItemBrowser<
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
-    const generator = () => {
-        return list.map((listItem, idx) => {
-            const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
+    const elements = list.map((listItem, idx) => {
+        const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const onClick = () => {
-                if (itemType === PreviewType.COLLECTION) {
-                    setNavigationStack(() => {
-                        setIsLoading(true);
-                        return toNavigationStack(listItem.instance.relativePath);
-                    });
-                } else {
-                    selectItem(listItem.instance);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const onClick = () => {
+            if (itemType === PreviewType.COLLECTION) {
+                setNavigationStack(() => {
+                    setIsLoading(true);
+                    return toNavigationStack(listItem.instance.relativePath);
+                });
+            } else {
+                selectItem(listItem.instance);
+            }
+        };
+
+        return (
+            <ChiliPreview
+                key={getKey(`${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`, idx)}
+                dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
+                dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
+                itemId={listItem.instance.id}
+                name={listItem.instance.name}
+                type={itemType as unknown as PreviewType}
+                path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
+                metaData={
+                    listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || '')
                 }
-            };
-
-            return (
-                <ChiliPreview
-                    key={getKey(
-                        `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
-                        idx,
-                    )}
-                    dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                    dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                    itemId={listItem.instance.id}
-                    name={listItem.instance.name}
-                    type={itemType as unknown as PreviewType}
-                    path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
-                    metaData={
-                        listItem?.instance?.extension?.toUpperCase() ??
-                        (itemType?.replace('collection', 'Folder') || '')
-                    }
-                    renameItem={() => null}
-                    options={[]}
-                    padding="0rem"
-                    footerTopMargin="0.75rem"
-                    selected={selectedItems[0]?.id === listItem.instance.id}
-                    backgroundColor={Colors.LIGHT_GRAY}
-                    byteArray={
-                        itemType === PreviewType.COLLECTION
-                            ? undefined
-                            : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
-                    }
-                    onClickCard={onClick}
-                    isModal={false}
-                />
-            );
-        });
-    };
-
-    const elements = generator();
+                renameItem={() => null}
+                options={[]}
+                padding="0rem"
+                footerTopMargin="0.75rem"
+                selected={selectedItems[0]?.id === listItem.instance.id}
+                backgroundColor={Colors.LIGHT_GRAY}
+                byteArray={
+                    itemType === PreviewType.COLLECTION
+                        ? undefined
+                        : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
+                }
+                onClickCard={onClick}
+                isModal={false}
+            />
+        );
+    });
 
     const navigationStackString = useMemo(() => {
         return navigationStack?.join('\\') ?? '';
@@ -232,7 +224,7 @@ function ItemBrowser<
                     }}
                 />
             </BreadCrumbsWrapper>
-            <ScrollbarWrapper height={leftPanelHeight}>
+            <ScrollbarWrapper height={leftPanelHeight} scrollbarWidth="0">
                 <ResourcesContainer
                     data-id={getDataIdForSUI('resources-container')}
                     data-testid={getDataTestIdForSUI('resources-container')}

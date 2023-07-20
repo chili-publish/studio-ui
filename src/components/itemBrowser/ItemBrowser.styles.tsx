@@ -26,6 +26,7 @@ export const NavigationWrapper = styled.div`
     white-space: nowrap;
     position: relative;
     margin-left: 0.5rem;
+    background-color: red;
 
     & svg {
         box-sizing: content-box !important;
