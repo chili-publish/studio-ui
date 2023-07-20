@@ -84,4 +84,5 @@ export const BreadCrumbsWrapper = styled.div`
     white-space: nowrap;
     display: flex;
     margin-left: 1.25rem;
+    margin-bottom: 1rem;
 `;

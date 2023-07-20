@@ -42,7 +42,7 @@ type ItemBrowserProps<T extends { id: string }> = {
 
 const SKELETONS = [...Array.from(Array(10).keys())];
 
-const getPreviewThumbnail = (type: PreviewType, name?: string, path?: string): string | undefined => {
+const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
     if (type === PreviewType.COLLECTION)
         return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
 
@@ -165,14 +165,7 @@ function ItemBrowser<
                 }
             };
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const previewPath = getPreviewThumbnail(
-                itemType as unknown as PreviewType,
-                listItem.instance.name,
-                listItem.instance.relativePath,
-            );
-
-            const previewCard = (
+            return (
                 <ChiliPreview
                     key={getKey(
                         `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
@@ -183,7 +176,7 @@ function ItemBrowser<
                     itemId={listItem.instance.id}
                     name={listItem.instance.name}
                     type={itemType as unknown as PreviewType}
-                    path={previewPath}
+                    path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
                     metaData={
                         listItem?.instance?.extension?.toUpperCase() ??
                         (itemType?.replace('collection', 'Folder') || '')
@@ -203,9 +196,7 @@ function ItemBrowser<
                     isModal={false}
                 />
             );
-            return previewCard;
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     };
 
     const elements = generator();
