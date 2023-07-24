@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const ResourcesContainer = styled.div`
     display: grid;
-    grid-template-columns: 120px 120px;
+    grid-template-columns: 7.5rem 7.5rem;
     gap: 1.3rem;
     padding-left: 1.25rem;
 `;

@@ -64,7 +64,7 @@ function ItemBrowser<
         token: null,
         requested: false,
     });
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
 
