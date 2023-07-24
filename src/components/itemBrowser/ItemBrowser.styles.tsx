@@ -2,14 +2,10 @@ import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const ResourcesContainer = styled.div`
-    display: flex;
-    height: 100%;
-    overflow: scroll;
-    align-content: flex-start;
-    flex-wrap: wrap;
-
-    padding: 0 0.875rem 1.75rem 0.875rem;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 7.5rem 7.5rem;
+    gap: 1.3rem;
+    padding-left: 1.25rem;
 `;
 
 export const ModalResourcesContainer = styled.div<{ width?: string }>`
@@ -87,4 +83,6 @@ export const BreadCrumbsWrapper = styled.div`
     overflow: visible;
     white-space: nowrap;
     display: flex;
+    margin-left: 1.25rem;
+    margin-bottom: 1rem;
 `;

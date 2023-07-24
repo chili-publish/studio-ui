@@ -1,21 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     BreadCrumb,
     PreviewCard as ChiliPreview,
     Colors,
     Panel,
+    PreviewCardVariant,
     PreviewType,
     ScrollbarWrapper,
     useInfiniteScrolling,
 } from '@chili-publish/grafx-shared-components';
-import { MediaType, EditorResponse, MetaData, QueryOptions, QueryPage, Media } from '@chili-publish/studio-sdk';
-import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer, ResourcesPreview } from './ItemBrowser.styles';
-import { ItemCache } from './ItemCache';
+import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { AssetType } from '../../utils/ApiTypes';
-import useMobileSize from '../../hooks/useMobileSize';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import useMobileSize from '../../hooks/useMobileSize';
+import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './ItemBrowser.styles';
+import { ItemCache } from './ItemCache';
+
+const TOP_BAR_HEIGHT_REM = '4rem';
+const TOP_BAR_BORDER_HEIGHT = '1px';
+const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
+const BREADCRUMBS_HEIGHT_REM = '3.5rem';
+
+const leftPanelHeight = `
+    calc(100vh
+        - ${TOP_BAR_HEIGHT_REM}
+        - ${TOP_BAR_BORDER_HEIGHT}
+        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
+        - ${BREADCRUMBS_HEIGHT_REM}
+    )`;
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -24,6 +38,15 @@ type ItemBrowserProps<T extends { id: string }> = {
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
     onSelect: (items: T[]) => void | null;
+};
+
+const SKELETONS = [...Array.from(Array(10).keys())];
+
+const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
+    if (type === PreviewType.COLLECTION)
+        return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
+
+    return path;
 };
 
 function ItemBrowser<
@@ -35,6 +58,7 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
@@ -96,7 +120,7 @@ function ItemBrowser<
         };
 
         // call the function
-        fetchData().catch(() => {
+        fetchData().then(() => {
             setIsLoading(false);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,6 +129,7 @@ function ItemBrowser<
     useEffect(() => {
         return () => {
             setSelectedItems([]);
+            setNavigationStack([]);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -124,65 +149,49 @@ function ItemBrowser<
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
-    const generator = () => {
-        return list.map((listItem, idx) => {
-            const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
+    const elements = list.map((listItem, idx) => {
+        const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
-            const onClick = () => {
-                if (itemType === PreviewType.COLLECTION) {
-                    setNavigationStack(() => toNavigationStack(listItem.instance.relativePath));
-                } else {
-                    selectItem(listItem.instance);
-                    setNavigationStack([]);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const onClick = () => {
+            if (itemType === PreviewType.COLLECTION) {
+                setNavigationStack(() => {
+                    setIsLoading(true);
+                    return toNavigationStack(listItem.instance.relativePath);
+                });
+            } else {
+                selectItem(listItem.instance);
+            }
+        };
+
+        return (
+            <ChiliPreview
+                key={getKey(`${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`, idx)}
+                dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
+                dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
+                itemId={listItem.instance.id}
+                name={listItem.instance.name}
+                type={itemType as unknown as PreviewType}
+                path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
+                metaData={
+                    listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || '')
                 }
-            };
-
-            const previewCard = (
-                <ChiliPreview
-                    key={listItem.instance.id}
-                    dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                    dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                    itemId={listItem.instance.id}
-                    name={listItem.instance.name}
-                    type={itemType as unknown as PreviewType}
-                    path={listItem.instance.relativePath}
-                    metaData={
-                        listItem?.instance?.extension?.toUpperCase() ??
-                        (itemType?.replace('collection', 'Folder') || '')
-                    }
-                    renameItem={() => null}
-                    options={[]}
-                    titleFontSize="0.813rem"
-                    padding="0.75rem"
-                    footerTopMargin="0.75rem"
-                    selected={selectedItems[0]?.id === listItem.instance.id}
-                    byteArray={
-                        itemType === PreviewType.COLLECTION
-                            ? undefined
-                            : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
-                    }
-                    onClickCard={onClick}
-                    isModal={false}
-                />
-            );
-            return (
-                <ResourcesPreview
-                    width={undefined}
-                    data-id={getDataIdForSUI(`resources-preview-${listItem.instance.name}`)}
-                    data-testid={getDataTestIdForSUI(`resources-preview-${listItem.instance.name}`)}
-                    key={getKey(
-                        `${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`,
-                        idx,
-                    )}
-                >
-                    {previewCard}
-                </ResourcesPreview>
-            );
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    };
-
-    const elements = generator();
+                renameItem={() => null}
+                options={[]}
+                padding="0rem"
+                footerTopMargin="0.75rem"
+                selected={selectedItems[0]?.id === listItem.instance.id}
+                backgroundColor={Colors.LIGHT_GRAY}
+                byteArray={
+                    itemType === PreviewType.COLLECTION
+                        ? undefined
+                        : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
+                }
+                onClickCard={onClick}
+                isModal={false}
+            />
+        );
+    });
 
     const navigationStackString = useMemo(() => {
         return navigationStack?.join('\\') ?? '';
@@ -202,7 +211,7 @@ function ItemBrowser<
             dataId={getDataIdForSUI('widget-media-panel')}
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
             isModal={false}
-            padding="0 0.5"
+            padding="0"
         >
             <BreadCrumbsWrapper>
                 <BreadCrumb
@@ -215,12 +224,23 @@ function ItemBrowser<
                     }}
                 />
             </BreadCrumbsWrapper>
-            <ScrollbarWrapper darkTheme height="100%" invertScrollbarColors>
+            <ScrollbarWrapper height={leftPanelHeight} scrollbarWidth="0">
                 <ResourcesContainer
                     data-id={getDataIdForSUI('resources-container')}
                     data-testid={getDataTestIdForSUI('resources-container')}
                 >
                     {elements}
+                    {isLoading &&
+                        SKELETONS.map((el) => (
+                            <ChiliPreview
+                                key={el}
+                                itemId={el.toString()}
+                                variant={PreviewCardVariant.GRID}
+                                padding="0"
+                                type={PreviewType.COLLECTION}
+                                isSkeleton
+                            />
+                        ))}
                     <LoadPageContainer>
                         <div ref={infiniteScrollingRef} />
                     </LoadPageContainer>

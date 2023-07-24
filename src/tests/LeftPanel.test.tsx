@@ -1,12 +1,12 @@
+import { getDataTestId } from '@chili-publish/grafx-shared-components';
+import EditorSDK from '@chili-publish/studio-sdk';
 import { render, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
-import EditorSDK from '@chili-publish/studio-sdk';
 import { act } from 'react-dom/test-utils';
-import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
-import { variables } from './mocks/mockVariables';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
+import { variables } from './mocks/mockVariables';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
@@ -112,7 +112,7 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const imagePanel = getByText('Select Image');
+        const imagePanel = getByText('Select image');
         expect(imagePanel).toBeInTheDocument();
 
         const goBackButton = getByRole('button');
@@ -126,7 +126,7 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
-        const { getAllByTestId, getByRole } = render(
+        const { getAllByTestId, getByRole, getByText } = render(
             <VariablePanelContextProvider>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
@@ -136,9 +136,9 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const folder = getByRole('img', { name: /foldericon/i });
+        const folder = getByRole('img', { name: /grafx/i });
         expect(folder).toBeInTheDocument();
-        const image = getByRole('img', { name: mockAssets[1].name });
+        const image = getByText(mockAssets[1].name);
         expect(image).toBeInTheDocument();
     });
 
@@ -152,7 +152,7 @@ describe('Image Panel', () => {
         await act(async () => {
             imagePicker.click();
         });
-        const image = getByRole('img', { name: /foldericon/i });
+        const image = getByRole('img', { name: /grafx/i });
 
         await act(async () => {
             image.click();
