@@ -235,9 +235,10 @@ function ItemBrowser<
                             <ChiliPreview
                                 key={el}
                                 itemId={el.toString()}
-                                variant={PreviewCardVariant.SKELETON}
+                                variant={PreviewCardVariant.GRID}
                                 padding="0"
                                 type={PreviewType.COLLECTION}
+                                isSkeleton
                             />
                         ))}
                     <LoadPageContainer>
