@@ -43,7 +43,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         if (url && process.env.NODE_ENV !== 'development') {
             try {
                 const document = await window.SDK.document.getCurrentState().then((res) => {
-                    if (!res.success) {
+                    if (res.success) {
                         return res;
                     }
                     throw new Error();
