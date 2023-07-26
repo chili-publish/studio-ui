@@ -49,13 +49,14 @@ export const Content = styled.div<{ borderTop?: boolean }>`
 `;
 
 export const ExperimentalPill = styled.span`
-    font-size: ${FontSizes.label};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: ${FontSizes.small};
+    color: ${Colors.LIGHT_PRIMARY_WHITE};
+    border: 1px solid ${Colors.LIGHT_PRIMARY_WHITE};
     border-radius: 5rem;
-    border: 1px solid green;
-    color: green;
-    margin: 0 1rem;
-    margin-bottom: 0;
-    padding: 2px 0.25rem;
-    display: inline-block;
-    width: auto;
+    height: 1.375rem;
+    margin: 0 0.5rem;
+    padding: 0 0.75rem;
 `;
