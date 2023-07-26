@@ -231,6 +231,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     await window.SDK.connector.configure('grafx-media', async (configurator) => {
                         await configurator.setChiliToken(authToken);
                     });
+                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
+                        await configurator.setChiliToken(authToken);
+                    });
                 }
             }
         };
