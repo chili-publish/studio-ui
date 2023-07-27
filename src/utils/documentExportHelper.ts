@@ -35,6 +35,22 @@ export const getDownloadLink = async (
             )}/output/pdf?layoutToExport=${layoutId}&projectId=${projectId}`;
         }
 
+        // TODO: we tend to use this code only on DEV, we need a better way to verify it
+        if (window.location.hostname !== 'chiligrafx.com') {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let engineVersion = urlParams.get('engine');
+            if (engineVersion) {
+                if (/^\d+$/.test(engineVersion)) {
+                    engineVersion = `prs/${engineVersion}`;
+                }
+            } else {
+                engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
+            }
+
+            generateExportUrl += `&engineVersion=${engineVersion}`;
+        }
+
         const config: HttpHeaders = {
             method: 'POST',
             headers: {
