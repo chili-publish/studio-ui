@@ -8,7 +8,7 @@ export const AnimationTimelineWrapper = styled.div`
     background: ${Colors.PRIMARY_WHITE};
     // This was added as a workaround because the global style in grafx platform (box-sizing: border-box;)
     // Affects the box-sizing of the icons inside the play/pause button
-    & path {
+    & svg {
         box-sizing: content-box !important;
     }
 `;
