@@ -318,10 +318,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.38.8":
-  version "0.38.8"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.38.8/a7b299b202a232367683cbe2d7e8c4a610ead0b2#a7b299b202a232367683cbe2d7e8c4a610ead0b2"
-  integrity sha512-A2821aA5D107HbeFOC5i4mARukGJypqfmvikMaheBIRY72yY8OUTjkVTpRe/GGvl0q+ZVAatE8PltBQAqWQHow==
+"@chili-publish/grafx-shared-components@^0.38.12":
+  version "0.38.12"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.38.12/d2034a220b12a04fd9915a3f62955670519e2c87#d2034a220b12a04fd9915a3f62955670519e2c87"
+  integrity sha512-14h7asdj7OE1LV4qca8FyqU78Ar+d+qFMRBuIwxj0medHm5PEQzXM2Y1ZGnsTz44T0hv8P9BR7dULFahDXz91g==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -4486,7 +4486,7 @@ seedrandom@^3.0.5:
   resolved "https://registry.npmjs.org/seedrandom/-/seedrandom-3.0.5.tgz"
   integrity sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==
 
-semver@7.x, semver@^7.0.0, semver@^7.3.5, semver@^7.3.7, semver@^7.5.0:
+semver@7.x, semver@^7.0.0, semver@^7.3.5, semver@^7.3.7:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
   integrity sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==
