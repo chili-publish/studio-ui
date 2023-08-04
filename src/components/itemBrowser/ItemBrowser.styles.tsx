@@ -7,7 +7,7 @@ export const ResourcesContainer = styled.div`
     grid-template-columns: 7.5rem 7.5rem;
     gap: 1.3rem;
     ${mobileMediaQuery} {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(7.5rem, 1fr) minmax(7.5rem, 1fr);
         gap: 1rem;
     }
 `;
