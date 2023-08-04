@@ -240,6 +240,7 @@ function ItemBrowser<
                                 padding="0"
                                 type={PreviewType.COLLECTION}
                                 isSkeleton
+                                onClickCard={() => null}
                             />
                         ))}
                     <LoadPageContainer>
