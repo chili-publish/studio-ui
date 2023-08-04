@@ -13,6 +13,15 @@ interface VariablesPanelProps {
     isDocumentLoaded: boolean;
 }
 
+const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
+const BREADCRUMBS_HEIGHT_REM = '3.5rem';
+
+const imagePanelHeight = `
+    calc(100%
+        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
+        - ${BREADCRUMBS_HEIGHT_REM}
+    )`;
+
 function VariablesPanel(props: VariablesPanelProps) {
     const { variables, isDocumentLoaded } = props;
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
@@ -60,7 +69,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                         isDocumentLoaded={isDocumentLoaded}
                     />
                 ) : (
-                    <ImagePanel />
+                    <ImagePanel height={imagePanelHeight} />
                 )}
             </Tray>
         </>
