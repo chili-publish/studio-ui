@@ -1,11 +1,15 @@
 import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
+import { mobileMediaQuery } from '../../utils/mediaUtils';
 
 export const ResourcesContainer = styled.div`
     display: grid;
     grid-template-columns: 7.5rem 7.5rem;
     gap: 1.3rem;
     padding-left: 1.25rem;
+    ${mobileMediaQuery} {
+        grid-template-columns: 1fr 1fr;
+    }
 `;
 
 export const ModalResourcesContainer = styled.div<{ width?: string }>`
