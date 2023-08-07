@@ -88,7 +88,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         (response) => response,
         (error) => {
             const originalRequest = error.config;
-            if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
+            if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
                 return projectConfig
                     .refreshTokenAction()
@@ -100,6 +100,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     .catch((err: AxiosError) => {
                         // eslint-disable-next-line no-console
                         console.error(`[${App.name}] Axios error`, err);
+                        return err;
                     });
             }
 
@@ -120,8 +121,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 .then((res) => {
                     setFetchedDocument(JSON.stringify(res.data));
                 })
-                .catch(() => {
+                .catch((error) => {
                     setFetchedDocument('{}');
+                    return error;
                 });
         } else {
             setFetchedDocument('{}');
@@ -289,16 +291,16 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     );
 
     return (
-        <VariablePanelContextProvider>
-            <div className="app">
-                <Navbar
-                    projectName={projectConfig?.projectName || currentProject?.name}
-                    goBack={projectConfig?.onBack}
-                    projectConfig={projectConfig}
-                    undoStackState={{ canRedo, canUndo }}
-                    zoom={currentZoom}
-                />
-                <connectorsContext.Provider value={connectorsData}>
+        <connectorsContext.Provider value={connectorsData}>
+            <VariablePanelContextProvider>
+                <div className="app">
+                    <Navbar
+                        projectName={projectConfig?.projectName || currentProject?.name}
+                        goBack={projectConfig?.onBack}
+                        projectConfig={projectConfig}
+                        undoStackState={{ canRedo, canUndo }}
+                        zoom={currentZoom}
+                    />
                     <MainContentContainer>
                         {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                         <CanvasContainer>
@@ -315,9 +317,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                             <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
                         </CanvasContainer>
                     </MainContentContainer>
-                </connectorsContext.Provider>
-            </div>
-        </VariablePanelContextProvider>
+                </div>
+            </VariablePanelContextProvider>
+        </connectorsContext.Provider>
     );
 }
 

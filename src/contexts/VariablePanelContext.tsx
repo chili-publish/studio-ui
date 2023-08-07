@@ -41,7 +41,7 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                id: mediaConnectors[0].id as string,
+                id: mediaConnectors[0].id,
                 type: ImageVariableSourceType.mediaConnector,
             });
             setContentType(ContentType.VARIABLES_LIST);
