@@ -5,6 +5,7 @@ import { css } from 'styled-components';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
 import { ContentType, IVariablePanelContext } from './VariablePanelContext.types';
+import { connectorsContext } from './ConnectorsContext';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
@@ -26,6 +27,7 @@ export const useVariablePanelContext = () => {
 };
 
 export function VariablePanelContextProvider({ children }: { children: ReactNode }) {
+    const { mediaConnectors } = useContext(connectorsContext);
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
 
@@ -39,12 +41,12 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                id: process.env.DEFAULT_MEDIA_CONNECTOR as string,
+                id: mediaConnectors[0].id as string,
                 type: ImageVariableSourceType.mediaConnector,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
-        [handleImageChange],
+        [handleImageChange, mediaConnectors],
     );
 
     const imagePanelTitle = useMemo(

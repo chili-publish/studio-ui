@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     ImageVariable,
     Media,
@@ -10,11 +10,14 @@ import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { connectorsContext } from '../../../contexts/ConnectorsContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
-    const mediaConnector = process.env.DEFAULT_MEDIA_CONNECTOR || '';
-    const previewErrorUrl = process.env.PREVIEW_ERROR_URL || '';
+    const { mediaConnectors } = useContext(connectorsContext);
+
+    const mediaConnector = mediaConnectors[0]?.id ?? '';
+    const previewErrorUrl = process.env.PREVIEW_ERROR_URL ?? '';
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const { showImagePanel } = useVariablePanelContext();
 

@@ -1,6 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys, DocumentType } from '@chili-publish/studio-sdk';
+import StudioSDK, {
+    Variable,
+    WellKnownConfigurationKeys,
+    DocumentType,
+    ConnectorType,
+    ConnectorInstance,
+} from '@chili-publish/studio-sdk';
 import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -13,6 +19,7 @@ import useMobileSize from './hooks/useMobileSize';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import { connectorsContext } from './contexts/ConnectorsContext';
 
 declare global {
     interface Window {
@@ -34,6 +41,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
+    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
+    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
+
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -228,11 +238,22 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 zoomToPage();
 
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
+                    window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                        if (res.success && res.parsedData) {
+                            setMediaConnectors(res.parsedData);
+                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
+                                await configurator.setChiliToken(authToken);
+                            });
+                        }
                     });
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
+
+                    window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                        if (res.success && res.parsedData) {
+                            setFontsConnectors(res.parsedData);
+                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
+                                await configurator.setChiliToken(authToken);
+                            });
+                        }
                     });
                 }
             }
@@ -259,6 +280,14 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const connectorsData = useMemo(
+        () => ({
+            mediaConnectors,
+            fontsConnectors,
+        }),
+        [fontsConnectors, mediaConnectors],
+    );
+
     return (
         <VariablePanelContextProvider>
             <div className="app">
@@ -269,20 +298,24 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     undoStackState={{ canRedo, canUndo }}
                     zoom={currentZoom}
                 />
-                <MainContentContainer>
-                    {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                    <CanvasContainer>
-                        {isMobileSize && <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                        <div
-                            className="sui-canvas"
-                            data-id={getDataIdForSUI('canvas')}
-                            data-testid={getDataTestIdForSUI('canvas')}
-                        >
-                            <div className="chili-editor" id="chili-editor" />
-                        </div>
-                        <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
-                    </CanvasContainer>
-                </MainContentContainer>
+                <connectorsContext.Provider value={connectorsData}>
+                    <MainContentContainer>
+                        {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
+                        <CanvasContainer>
+                            {isMobileSize && (
+                                <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                            )}
+                            <div
+                                className="sui-canvas"
+                                data-id={getDataIdForSUI('canvas')}
+                                data-testid={getDataTestIdForSUI('canvas')}
+                            >
+                                <div className="chili-editor" id="chili-editor" />
+                            </div>
+                            <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
+                        </CanvasContainer>
+                    </MainContentContainer>
+                </connectorsContext.Provider>
             </div>
         </VariablePanelContextProvider>
     );
