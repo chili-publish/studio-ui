@@ -15,5 +15,3 @@ export enum AssetType {
 export enum AssetTypeToString {
     FOLDER = 'Folder',
 }
-
-export const DEFAULT_MEDIA_CONNECTOR = 'grafx-media';
