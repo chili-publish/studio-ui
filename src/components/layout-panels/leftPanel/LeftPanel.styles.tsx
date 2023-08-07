@@ -17,3 +17,7 @@ export const LeftPanelContainer = styled.div`
 export const VariablesListContainer = styled.div`
     padding: 0 1.25rem;
 `;
+
+export const ImagePanelContainer = styled.div`
+    padding-left: 1.25rem;
+`;
