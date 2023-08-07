@@ -34,6 +34,7 @@ const leftPanelHeight = `
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
     connectorId: string;
+    height?: string;
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
@@ -59,7 +60,7 @@ function ItemBrowser<
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
         requested: false,
@@ -224,7 +225,7 @@ function ItemBrowser<
                     }}
                 />
             </BreadCrumbsWrapper>
-            <ScrollbarWrapper height={leftPanelHeight} scrollbarWidth="0">
+            <ScrollbarWrapper height={height ?? leftPanelHeight} scrollbarWidth="0">
                 <ResourcesContainer
                     data-id={getDataIdForSUI('resources-container')}
                     data-testid={getDataTestIdForSUI('resources-container')}
@@ -239,6 +240,7 @@ function ItemBrowser<
                                 padding="0"
                                 type={PreviewType.COLLECTION}
                                 isSkeleton
+                                onClickCard={() => null}
                             />
                         ))}
                     <LoadPageContainer>

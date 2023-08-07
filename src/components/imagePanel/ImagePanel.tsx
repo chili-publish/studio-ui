@@ -5,7 +5,7 @@ import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { connectorsContext } from '../../contexts/ConnectorsContext';
 
-function ImagePanel() {
+function ImagePanel({ height }: { height?: string }) {
     const { mediaConnectors } = useContext(connectorsContext);
     const previewCall = (id: string): Promise<Uint8Array> =>
         window.SDK.mediaConnector.download(mediaConnectors[0].id as string, id, MediaDownloadType.LowResolutionWeb, {});
@@ -22,6 +22,7 @@ function ImagePanel() {
                 if (assets.length > 0) handleUpdateImage(assets[0]);
             }}
             convertToPreviewType={convertToPreviewType}
+            height={height}
         />
     );
 }
