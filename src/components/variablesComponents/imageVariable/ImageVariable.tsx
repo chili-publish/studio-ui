@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ImageVariable,
     Media,
@@ -10,47 +10,53 @@ import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import { connectorsContext } from '../../../contexts/ConnectorsContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
-    const { mediaConnectors } = useContext(connectorsContext);
-
-    const mediaConnector = mediaConnectors[0]?.id ?? '';
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL ?? '';
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
-    const { showImagePanel } = useVariablePanelContext();
+    const { showImagePanel, defaultMediaConnector, connectorCapabilities } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
+        const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector?.id);
         let response = { success: true };
         if (mediaConnectorState.parsedData?.type !== 'ready') {
-            response = await window.SDK.connector.waitToBeReady(mediaConnector);
+            response = await window.SDK.connector.waitToBeReady(defaultMediaConnector?.id);
         }
         if (response.success) {
-            return window.SDK.mediaConnector.download(mediaConnector, id, MediaDownloadType.LowResolutionWeb, {});
+            return window.SDK.mediaConnector.download(
+                defaultMediaConnector?.id,
+                id,
+                MediaDownloadType.LowResolutionWeb,
+                {},
+            );
         }
         return null;
     };
 
     useEffect(() => {
         async function getMediaDetails() {
-            if ((variable as ImageVariable)?.src) {
-                const mediaConnectorState = await window.SDK.connector.getById(mediaConnector);
+            if ((variable as ImageVariable)?.src && defaultMediaConnector?.id) {
+                const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector.id);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
-                    await window.SDK.connector.waitToBeReady(mediaConnector);
+                    await window.SDK.connector.waitToBeReady(defaultMediaConnector.id);
                 }
-                const { parsedData } = await window.SDK.mediaConnector.detail(
-                    mediaConnector,
-                    ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
-                );
+                if (
+                    connectorCapabilities[defaultMediaConnector.id] &&
+                    connectorCapabilities[defaultMediaConnector.id].detail
+                ) {
+                    const { parsedData } = await window.SDK.mediaConnector.detail(
+                        defaultMediaConnector?.id,
+                        ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
+                    );
 
-                setMediaDetails(parsedData);
+                    setMediaDetails(parsedData);
+                }
             }
         }
 
         getMediaDetails();
-    }, [variable, mediaConnector]);
+    }, [variable, defaultMediaConnector?.id, connectorCapabilities]);
 
     const { previewImage } = usePreviewImage(mediaDetails, ImageVariableSourceType, previewCall, true, variable);
 
