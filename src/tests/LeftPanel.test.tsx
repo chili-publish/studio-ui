@@ -7,6 +7,7 @@ import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
 import { variables } from './mocks/mockVariables';
+import { mockConnectors } from './mocks/mockConnectors';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
@@ -83,6 +84,24 @@ beforeEach(() => {
             }),
         );
 
+    mockSDK.mediaConnector.getCapabilities = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                parsedData: { copy: false, detail: true, filtering: true, query: true, remove: false, upload: false },
+            }),
+        );
+
+    mockSDK.fontConnector.getCapabilities = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                parsedData: { copy: false, detail: true, filtering: true, query: true, remove: false, upload: false },
+            }),
+        );
+
     window.SDK = mockSDK;
 
     window.IntersectionObserver = jest.fn(
@@ -101,7 +120,7 @@ afterEach(() => {
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const { getAllByTestId, getByText, getByRole } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
@@ -127,7 +146,7 @@ describe('Image Panel', () => {
 
     test('Media assets are correctly fetched', async () => {
         const { getAllByTestId, getByRole, getByText } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
@@ -144,7 +163,7 @@ describe('Image Panel', () => {
 
     test('Media asset folder navigation works', async () => {
         const { getAllByTestId, getByRole, getByText } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
@@ -164,7 +183,7 @@ describe('Image Panel', () => {
 
     test.skip('Image Picker updates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
