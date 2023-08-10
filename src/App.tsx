@@ -187,7 +187,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 shortcutOptions: {
                     debugPanel: { enabled: true },
                     ellipse: { enabled: false },
-                    hand: { enabled: false },
+                    hand: { enabled: true },
                     image: { enabled: false },
                     polygon: { enabled: false },
                     rectangle: { enabled: false },
