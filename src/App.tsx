@@ -183,6 +183,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
             documentType: DocumentType.project,
+            studioOptions: {
+                shortcutOptions: {
+                    debugPanel: { enabled: true },
+                    zoom: { enabled: true },
+                },
+            },
         });
 
         // Connect to ths SDK
