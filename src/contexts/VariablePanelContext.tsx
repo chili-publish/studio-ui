@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { ImageVariableSourceType, Media } from '@chili-publish/studio-sdk';
+import { Media } from '@chili-publish/studio-sdk';
 import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
@@ -39,8 +39,7 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                id: process.env.DEFAULT_MEDIA_CONNECTOR as string,
-                type: ImageVariableSourceType.mediaConnector,
+                connectorId: process.env.DEFAULT_MEDIA_CONNECTOR as string,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
