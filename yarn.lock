@@ -330,10 +330,10 @@
     "@fortawesome/react-fontawesome" "^0.2.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^0.136.0":
-  version "0.136.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.136.0/83adf376166eb0fff0583a5917f6a9a6b2f16072#83adf376166eb0fff0583a5917f6a9a6b2f16072"
-  integrity sha512-Ftle5LuO44F5a/K3g5mCMK4S4vTyj7D2J3oR40A89snf8N971z0SuAq6L67W5BWY+zCi8l8nbUzAUe4LWQYCeA==
+"@chili-publish/studio-sdk@^0.138.0":
+  version "0.138.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/0.138.0/cae59a73a6adfd7257a6d3809c1900fe55bb6c85#cae59a73a6adfd7257a6d3809c1900fe55bb6c85"
+  integrity sha512-7ELPJNZ+MxeXC1j7Q7JLTwjhe9ZIRDb7PpJwydKZa12FgUoQLqiayQS4x34pGK2T2zo0hG8kGQvfEBZ4s28UOA==
   dependencies:
     mathjs "^10.0.2"
     penpal "6.1.0"

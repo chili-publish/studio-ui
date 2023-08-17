@@ -191,9 +191,22 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 setCurrentZoom(zoom);
             },
 
-            editorLink,
+            editorLink: 'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/dev/web',
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
             documentType: DocumentType.project,
+            studioOptions: {
+                shortcutOptions: {
+                    debugPanel: { enabled: true },
+                    ellipse: { enabled: false },
+                    hand: { enabled: true },
+                    image: { enabled: false },
+                    polygon: { enabled: false },
+                    rectangle: { enabled: false },
+                    select: { enabled: false },
+                    text: { enabled: false },
+                    zoom: { enabled: true },
+                },
+            },
         });
 
         // Connect to ths SDK
