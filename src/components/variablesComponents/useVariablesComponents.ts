@@ -1,11 +1,11 @@
-import { Id, ImageVariableSource, MediaConnectorImageVariableSource } from '@chili-publish/studio-sdk';
+import { ConnectorImageVariableSource, Id } from '@chili-publish/studio-sdk';
 
 export const useVariableComponents = (currentVariableId: Id) => {
     const closePanel = () => null;
 
-    const handleImageChange = async (src: ImageVariableSource) => {
+    const handleImageChange = async (value: ConnectorImageVariableSource) => {
         if (currentVariableId) {
-            const assetId = (src as MediaConnectorImageVariableSource).assetId ?? null;
+            const assetId = value.assetId ?? null;
             const result = await window.SDK.variable.setValue(currentVariableId, assetId);
             return result;
         }
