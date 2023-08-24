@@ -2,16 +2,18 @@ import {
     AvailableIcons,
     Button,
     ButtonVariant,
+    Colors,
     DropDown,
     Icon,
+    LoadingIcon,
     Menu,
-    Option,
     Tray,
-    useOnClickOutside,
 } from '@chili-publish/grafx-shared-components';
-import { useMemo, useRef, useState } from 'react';
-import { css } from 'styled-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { css } from 'styled-components';
+import { Dispatch } from 'react';
+import useMobileSize from '../../../hooks/useMobileSize';
+import StudioDropdown from '../../shared/StudioDropdown';
 import {
     ButtonWrapper,
     Content,
@@ -19,70 +21,30 @@ import {
     DownloadDropdownTitle,
     DownloadPanelContainer,
     DropdownLabel,
+    SpinnerContainer,
 } from './DownloadPanel.styles';
-import DropdownOption from './DropdownOption';
-import useMobileSize from '../../../hooks/useMobileSize';
-import StudioDropdown from '../../shared/StudioDropdown';
+import useDownload from './useDownload';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
     isDownloadPanelVisible: boolean;
-    handleDownload: (_: DownloadFormats) => Promise<void>;
+    handleDownload: (_: DownloadFormats, __: Dispatch<Partial<Record<DownloadFormats, boolean>>>) => Promise<void>;
 }
 
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
 
-    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<string>('jpg');
-
-    const downloadPanelRef = useRef<HTMLDivElement | null>(null);
-    useOnClickOutside(downloadPanelRef, hideDownloadPanel);
-
-    const downloadOptions: Option[] = useMemo(
-        () => [
-            { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: DownloadFormats.JPG },
-            { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
-            { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
-            { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
-            {
-                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" isExperimental />,
-                value: DownloadFormats.EXPERIMENTAL_PDF,
-            },
-        ],
-        [],
-    );
-
-    const trayContent = (
-        <>
-            <Content borderTop={!mobileDropdownOpen}>
-                <StudioDropdown
-                    label="Output type"
-                    selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
-                    options={downloadOptions}
-                    onChange={(val) => setSelectedOption(val)}
-                    onMenuOpen={() => setMobileDropdownOpen(true)}
-                    onMenuClose={() => setMobileDropdownOpen(false)}
-                />
-            </Content>
-            {!mobileDropdownOpen ? (
-                <ButtonWrapper>
-                    <Button
-                        onClick={() => {
-                            handleDownload(selectedOption as DownloadFormats);
-                        }}
-                        variant={ButtonVariant.primary}
-                        label="Download"
-                        icon={<Icon icon={AvailableIcons.faArrowDownToLine} />}
-                        styles={css`
-                            width: 100%;
-                        `}
-                    />
-                </ButtonWrapper>
-            ) : null}
-        </>
-    );
+    const {
+        downloadOptions,
+        downloadPanelRef,
+        downloadState,
+        mobileDropdownOpen,
+        selectedOption,
+        setMobileDropdownOpen,
+        setSelectedOption,
+        updateDownloadState,
+    } = useDownload(hideDownloadPanel);
 
     return (
         <>
@@ -99,7 +61,37 @@ function DownloadPanel(props: DownloadPanelProps) {
                 `}
                 hideCloseButton={mobileDropdownOpen}
             >
-                {trayContent}
+                <Content borderTop={!mobileDropdownOpen}>
+                    <StudioDropdown
+                        label="Output type"
+                        selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
+                        options={downloadOptions}
+                        onChange={(val) => setSelectedOption(val as typeof selectedOption)}
+                        onMenuOpen={() => setMobileDropdownOpen(true)}
+                        onMenuClose={() => setMobileDropdownOpen(false)}
+                    />
+                </Content>
+                {!mobileDropdownOpen ? (
+                    <ButtonWrapper>
+                        {downloadState[selectedOption] ? (
+                            <SpinnerContainer mobile>
+                                <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                            </SpinnerContainer>
+                        ) : (
+                            <Button
+                                onClick={() => {
+                                    handleDownload(selectedOption, updateDownloadState);
+                                }}
+                                variant={ButtonVariant.primary}
+                                label="Download"
+                                icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
+                                styles={css`
+                                    width: 100%;
+                                `}
+                            />
+                        )}
+                    </ButtonWrapper>
+                ) : null}
             </Tray>
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
@@ -116,21 +108,27 @@ function DownloadPanel(props: DownloadPanelProps) {
                             options={downloadOptions}
                             isSearchable={false}
                             width="16.25rem"
-                            onChange={(option) => setSelectedOption(option?.value as string)}
+                            onChange={(option) => setSelectedOption(option?.value as typeof selectedOption)}
                         />
                     </DesktopDropdownContainer>
-                    <Button
-                        onClick={() => {
-                            handleDownload(selectedOption as DownloadFormats);
-                        }}
-                        variant={ButtonVariant.primary}
-                        label="Download"
-                        icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
-                        styles={css`
-                            margin: 1.25rem auto 1.25rem;
-                            width: 16.25rem;
-                        `}
-                    />
+                    {downloadState[selectedOption] ? (
+                        <SpinnerContainer>
+                            <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                        </SpinnerContainer>
+                    ) : (
+                        <Button
+                            onClick={() => {
+                                handleDownload(selectedOption, updateDownloadState);
+                            }}
+                            variant={ButtonVariant.primary}
+                            label="Download"
+                            icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
+                            styles={css`
+                                margin: 1.25rem auto 1.25rem;
+                                width: 16.25rem;
+                            `}
+                        />
+                    )}
                 </DownloadPanelContainer>
             </Menu>
         </>

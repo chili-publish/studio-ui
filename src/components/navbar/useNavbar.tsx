@@ -1,5 +1,5 @@
 import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { useCallback, useMemo, useState } from 'react';
+import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
@@ -127,8 +127,12 @@ const useNavbar = (
         ],
     );
 
-    const handleDownload = async (extension: DownloadFormats) => {
+    const handleDownload = async (
+        extension: DownloadFormats,
+        updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
+    ) => {
         try {
+            updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await getDownloadLink(
                 extension,
@@ -156,6 +160,8 @@ const useNavbar = (
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+        } finally {
+            updateDownloadState({ [extension]: false });
         }
         hideDownloadPanel();
     };
