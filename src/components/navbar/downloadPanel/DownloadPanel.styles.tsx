@@ -60,3 +60,27 @@ export const ExperimentalPill = styled.span`
     margin: 0 0.5rem;
     padding: 0 0.75rem;
 `;
+
+export const SpinnerContainer = styled.div<{ mobile?: boolean }>`
+    width: ${(props) => (props.mobile ? '100%' : '16.25rem')};
+    height: 2.5rem;
+    margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto 1.25rem;')};
+    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const LoadPageContainer = styled.div`
+    margin: 40px 0;
+`;
+export const LoadingIndicatorContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    color: ${Colors.SECONDARY_FONT};
+    font-size: 14px;
+`;
+export const Text = styled.span<{ color?: string }>`
+    color: ${(props) => props.color ?? Colors.SECONDARY_FONT};
+`;
