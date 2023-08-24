@@ -4,7 +4,7 @@ import EnvironmentPlugin from 'vite-plugin-environment';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), EnvironmentPlugin(['NODE_ENV', 'DEFAULT_MEDIA_CONNECTOR', 'PREVIEW_ERROR_URL'])],
+    plugins: [react(), EnvironmentPlugin(['NODE_ENV', 'PREVIEW_ERROR_URL'])],
     server: {
         port: 3002,
     },
