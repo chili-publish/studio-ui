@@ -69,8 +69,15 @@ function ItemBrowser<
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
 
-    const { selectedItems, navigationStack, setSelectedItems, setNavigationStack, imagePanelTitle, contentType } =
-        useVariablePanelContext();
+    const {
+        selectedItems,
+        navigationStack,
+        setSelectedItems,
+        setNavigationStack,
+        imagePanelTitle,
+        contentType,
+        connectorCapabilities,
+    } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
 
     const onScroll = () => {
@@ -96,27 +103,29 @@ function ItemBrowser<
         setIsLoading(true);
         // declare the async data fetching function
         const fetchData = async () => {
-            const data = await queryCall(
-                connectorId,
-                {
-                    collection: `/${navigationStack?.join('/') ?? ''}`,
-                    pageToken: nextPageToken.token ? nextPageToken.token : '',
-                    pageSize: 15,
-                },
-                {},
-            );
-            // parse the token used if we need to fetch the next page
-            if (data.success && data.parsedData && data.parsedData.data) {
-                const token = data.parsedData.nextPageToken
-                    ? new URL(data.parsedData.nextPageToken).searchParams.get('nextPageToken')
-                    : null;
-                setNextPageToken(() => {
-                    return { token, requested: false };
-                });
-                setIsLoading(false);
-                // convert to ItemCache to memoize the preview download call
-                const itemsWithCache = data.parsedData.data.map((r: T) => new ItemCache<T>(r));
-                setList((current) => [...current, ...itemsWithCache]);
+            if (connectorCapabilities && connectorCapabilities[connectorId].query) {
+                const data = await queryCall(
+                    connectorId,
+                    {
+                        collection: `/${navigationStack?.join('/') ?? ''}`,
+                        pageToken: nextPageToken.token ? nextPageToken.token : '',
+                        pageSize: 15,
+                    },
+                    {},
+                );
+                // parse the token used if we need to fetch the next page
+                if (data.success && data.parsedData && data.parsedData.data) {
+                    const token = data.parsedData.nextPageToken
+                        ? new URL(data.parsedData.nextPageToken).searchParams.get('nextPageToken')
+                        : null;
+                    setNextPageToken(() => {
+                        return { token, requested: false };
+                    });
+                    setIsLoading(false);
+                    // convert to ItemCache to memoize the preview download call
+                    const itemsWithCache = data.parsedData.data.map((r: T) => new ItemCache<T>(r));
+                    setList((current) => [...current, ...itemsWithCache]);
+                }
             }
         };
 
