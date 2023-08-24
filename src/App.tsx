@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys, DocumentType } from '@chili-publish/studio-sdk';
+import StudioSDK, {
+    Variable,
+    WellKnownConfigurationKeys,
+    DocumentType,
+    ConnectorType,
+    ConnectorInstance,
+} from '@chili-publish/studio-sdk';
 import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
@@ -34,6 +40,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
+    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
+    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
+
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -78,7 +87,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         (response) => response,
         (error) => {
             const originalRequest = error.config;
-            if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
+            if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
                 return projectConfig
                     .refreshTokenAction()
@@ -90,6 +99,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     .catch((err: AxiosError) => {
                         // eslint-disable-next-line no-console
                         console.error(`[${App.name}] Axios error`, err);
+                        return err;
                     });
             }
 
@@ -110,8 +120,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 .then((res) => {
                     setFetchedDocument(JSON.stringify(res.data));
                 })
-                .catch(() => {
+                .catch((error) => {
                     setFetchedDocument('{}');
+                    return error;
                 });
         } else {
             setFetchedDocument('{}');
@@ -244,11 +255,22 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 zoomToPage();
 
                 if (authToken) {
-                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
+                    window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                        if (res.success && res.parsedData) {
+                            setMediaConnectors(res.parsedData);
+                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
+                                await configurator.setChiliToken(authToken);
+                            });
+                        }
                     });
-                    await window.SDK.connector.configure('grafx-font', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
+
+                    window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                        if (res.success && res.parsedData) {
+                            setFontsConnectors(res.parsedData);
+                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
+                                await configurator.setChiliToken(authToken);
+                            });
+                        }
                     });
                 }
             }
@@ -276,7 +298,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     }, []);
 
     return (
-        <VariablePanelContextProvider>
+        <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
             <div className="app">
                 <Navbar
                     projectName={projectConfig?.projectName || currentProject?.name}
