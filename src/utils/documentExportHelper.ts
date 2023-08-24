@@ -40,6 +40,7 @@ export const getDownloadLink = async (
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             let engineVersion = urlParams.get('engine');
+            const engineCommitSha = urlParams.get('engineCommitSha');
             if (engineVersion) {
                 if (/^\d+$/.test(engineVersion)) {
                     engineVersion = `prs/${engineVersion}`;
@@ -48,7 +49,7 @@ export const getDownloadLink = async (
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
 
-            generateExportUrl += `&engineVersion=${engineVersion}`;
+            generateExportUrl += `&engineVersion=${engineVersion}-${engineCommitSha}`;
         }
 
         const config: HttpHeaders = {
