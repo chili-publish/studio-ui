@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-    ImageVariable,
-    Media,
-    MediaConnectorImageVariableSource,
-    ImageVariableSourceType,
-    MediaDownloadType,
-} from '@chili-publish/studio-sdk';
+import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -36,7 +30,7 @@ function ImageVariable(props: IImageVariable) {
 
     useEffect(() => {
         async function getMediaDetails() {
-            if ((variable as ImageVariable)?.src && defaultMediaConnector?.id) {
+            if ((variable as ImageVariable)?.value && defaultMediaConnector?.id) {
                 const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector.id);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.SDK.connector.waitToBeReady(defaultMediaConnector.id);
@@ -47,7 +41,7 @@ function ImageVariable(props: IImageVariable) {
                 ) {
                     const { parsedData } = await window.SDK.mediaConnector.detail(
                         defaultMediaConnector?.id,
-                        ((variable as ImageVariable)?.src as MediaConnectorImageVariableSource)?.assetId,
+                        (variable as ImageVariable).value?.assetId as string,
                     );
 
                     setMediaDetails(parsedData);
@@ -58,7 +52,7 @@ function ImageVariable(props: IImageVariable) {
         getMediaDetails();
     }, [variable, defaultMediaConnector?.id, connectorCapabilities]);
 
-    const { previewImage } = usePreviewImage(mediaDetails, ImageVariableSourceType, previewCall, true, variable);
+    const { previewImage } = usePreviewImage(mediaDetails, previewCall, true, variable);
 
     return (
         <ImagePicker
