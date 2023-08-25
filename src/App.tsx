@@ -244,43 +244,36 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     }, [currentProject?.template.id]);
 
     useEffect(() => {
-        const loadDocument = async () => {
-            if (fetchedDocument) {
-                await window.SDK.document.load(fetchedDocument).then((res) => {
-                    setIsDocumentLoaded(res.success);
-                });
-                zoomToPage();
-
-                if (authToken) {
-                    window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
-                        if (res.success && res.parsedData) {
-                            setMediaConnectors(res.parsedData);
-                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
-                                await configurator.setChiliToken(authToken);
-                            });
-                        }
-                    });
-
-                    window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
-                        if (res.success && res.parsedData) {
-                            setFontsConnectors(res.parsedData);
-                            await window.SDK.connector.configure(res.parsedData[0].id, async (configurator) => {
-                                await configurator.setChiliToken(authToken);
-                            });
-                        }
-                    });
-                }
-            }
-        };
-
         const setHandTool = async () => {
             if (fetchedDocument) {
                 await window.SDK.tool.setHand();
             }
         };
+        const loadDocument = async () => {
+            if (authToken) {
+                await window.SDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+                window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                    if (res.success && res.parsedData) {
+                        setMediaConnectors(res.parsedData);
+                    }
+                });
+
+                window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                    if (res.success && res.parsedData) {
+                        setFontsConnectors(res.parsedData);
+                    }
+                });
+            }
+            if (fetchedDocument) {
+                await window.SDK.document.load(fetchedDocument).then((res) => {
+                    setIsDocumentLoaded(res.success);
+                });
+                setHandTool();
+                zoomToPage();
+            }
+        };
 
         loadDocument();
-        setHandTool();
     }, [authToken, fetchedDocument, projectConfig]);
 
     useEffect(() => {
