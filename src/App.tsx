@@ -180,6 +180,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
                 }
             },
+            onSelectedLayoutIdChanged() {
+                zoomToPage();
+            },
             onScrubberPositionChanged: (animationPlayback) => {
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
             },
