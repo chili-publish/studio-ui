@@ -255,25 +255,25 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         const loadDocument = async () => {
             if (authToken) {
                 await window.SDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
-                window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
-                    if (res.success && res.parsedData) {
-                        setMediaConnectors(res.parsedData);
-                    }
-                });
+            }
 
-                window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
-                    if (res.success && res.parsedData) {
-                        setFontsConnectors(res.parsedData);
-                    }
-                });
-            }
-            if (fetchedDocument) {
-                await window.SDK.document.load(fetchedDocument).then((res) => {
-                    setIsDocumentLoaded(res.success);
-                });
-                setHandTool();
-                zoomToPage();
-            }
+            if (!fetchedDocument) return;
+            await window.SDK.document.load(fetchedDocument).then((res) => {
+                setIsDocumentLoaded(res.success);
+            });
+            window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                if (res.success && res.parsedData) {
+                    setMediaConnectors(res.parsedData);
+                }
+            });
+
+            window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                if (res.success && res.parsedData) {
+                    setFontsConnectors(res.parsedData);
+                }
+            });
+            setHandTool();
+            zoomToPage();
         };
 
         loadDocument();
