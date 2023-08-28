@@ -73,13 +73,13 @@ export const SpinnerContainer = styled.div<{ mobile?: boolean }>`
 `;
 
 export const LoadPageContainer = styled.div`
-    margin: 40px 0;
+    margin: 2.5rem 0;
 `;
 export const LoadingIndicatorContainer = styled.div`
     display: flex;
     justify-content: center;
     color: ${Colors.SECONDARY_FONT};
-    font-size: 14px;
+    font-size: ${FontSizes.regular};
 `;
 export const Text = styled.span<{ color?: string }>`
     color: ${(props) => props.color ?? Colors.SECONDARY_FONT};

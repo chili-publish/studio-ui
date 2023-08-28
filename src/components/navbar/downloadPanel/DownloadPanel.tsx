@@ -11,7 +11,7 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import { Dispatch } from 'react';
+import { Dispatch, useState } from 'react';
 import useMobileSize from '../../../hooks/useMobileSize';
 import StudioDropdown from '../../shared/StudioDropdown';
 import {
@@ -34,17 +34,10 @@ interface DownloadPanelProps {
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
 
-    const {
-        downloadOptions,
-        downloadPanelRef,
-        downloadState,
-        mobileDropdownOpen,
-        selectedOption,
-        setMobileDropdownOpen,
-        setSelectedOption,
-        updateDownloadState,
-    } = useDownload(hideDownloadPanel);
+    const { downloadOptions, downloadPanelRef, downloadState, selectedOption, setSelectedOption, updateDownloadState } =
+        useDownload(hideDownloadPanel);
 
     return (
         <>

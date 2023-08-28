@@ -12,7 +12,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
         [DownloadFormats.EXPERIMENTAL_PDF]: false,
     };
 
-    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
@@ -45,9 +44,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
         downloadOptions,
         downloadPanelRef,
         downloadState,
-        mobileDropdownOpen,
         selectedOption,
-        setMobileDropdownOpen,
         setSelectedOption,
         updateDownloadState,
     };
