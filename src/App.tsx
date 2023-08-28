@@ -180,6 +180,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
                 }
             },
+            onSelectedLayoutIdChanged() {
+                zoomToPage();
+            },
             onScrubberPositionChanged: (animationPlayback) => {
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
             },
@@ -196,7 +199,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             documentType: DocumentType.project,
             studioOptions: {
                 shortcutOptions: {
-                    debugPanel: { enabled: true },
+                    debugPanel: { enabled: false },
                     ellipse: { enabled: false },
                     hand: { enabled: true },
                     image: { enabled: false },
@@ -204,7 +207,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     rectangle: { enabled: false },
                     select: { enabled: false },
                     text: { enabled: false },
-                    zoom: { enabled: true },
+                    zoom: { enabled: false },
                 },
             },
         });
