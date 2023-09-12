@@ -48,10 +48,9 @@ export const getDownloadLink = async (
             } else {
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
-
-            generateExportUrl += `&engineVersion=${engineVersion}-${engineCommitSha}`;
+            generateExportUrl += `&engineVersion=${engineVersion}`;
+            if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
         }
-
         const config: HttpHeaders = {
             method: 'POST',
             headers: {
