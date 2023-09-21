@@ -3,16 +3,17 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
 
+type StudioUIDownloadFormats = Exclude<DownloadFormats, DownloadFormats.EXPERIMENTAL_PDF>;
+
 const useDownload = (hideDownloadPanel: () => void) => {
-    const initialDownloadState: Record<DownloadFormats, boolean> = {
+    const initialDownloadState: Record<StudioUIDownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
         [DownloadFormats.MP4]: false,
         [DownloadFormats.GIF]: false,
-        [DownloadFormats.EXPERIMENTAL_PDF]: false,
     };
 
-    const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOption, setSelectedOption] = useState<StudioUIDownloadFormats>(DownloadFormats.JPG);
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
         return {
@@ -32,10 +33,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
-            {
-                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" isExperimental />,
-                value: DownloadFormats.EXPERIMENTAL_PDF,
-            },
         ],
         [],
     );
