@@ -1,6 +1,5 @@
-import { AvailableIcons, DropDown, Icon, Option } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, DropDown, Icon, Option, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
-import useMobileSize from '../../hooks/useMobileSize';
 import {
     Label,
     MobileDropdownOptionContainer,

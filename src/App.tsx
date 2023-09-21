@@ -7,7 +7,7 @@ import StudioSDK, {
     ConnectorType,
     ConnectorInstance,
 } from '@chili-publish/studio-sdk';
-import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
+import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -15,7 +15,6 @@ import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
-import useMobileSize from './hooks/useMobileSize';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';

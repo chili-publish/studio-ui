@@ -8,11 +8,11 @@ import {
     LoadingIcon,
     Menu,
     Tray,
+    useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import { Dispatch, useState } from 'react';
-import useMobileSize from '../../../hooks/useMobileSize';
 import StudioDropdown from '../../shared/StudioDropdown';
 import {
     ButtonWrapper,
