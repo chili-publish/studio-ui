@@ -1,11 +1,10 @@
-import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
-import useMobileSize from '../../hooks/useMobileSize';
 import { ProjectConfig } from '../../types/types';
 import { getDownloadLink } from '../../utils/documentExportHelper';
 

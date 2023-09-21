@@ -7,12 +7,12 @@ import {
     PreviewType,
     ScrollbarWrapper,
     useInfiniteScrolling,
+    useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import useMobileSize from '../../hooks/useMobileSize';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './ItemBrowser.styles';
