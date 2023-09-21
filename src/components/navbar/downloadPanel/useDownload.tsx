@@ -3,15 +3,17 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
 
+type StudioUIDownloadFormats = Exclude<DownloadFormats, DownloadFormats.EXPERIMENTAL_PDF>;
+
 const useDownload = (hideDownloadPanel: () => void) => {
-    const initialDownloadState: Record<DownloadFormats, boolean> = {
+    const initialDownloadState: Record<StudioUIDownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
         [DownloadFormats.MP4]: false,
         [DownloadFormats.GIF]: false,
     };
 
-    const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOption, setSelectedOption] = useState<StudioUIDownloadFormats>(DownloadFormats.JPG);
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
         return {
