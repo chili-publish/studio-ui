@@ -9,7 +9,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
         [DownloadFormats.PNG]: false,
         [DownloadFormats.MP4]: false,
         [DownloadFormats.GIF]: false,
-        [DownloadFormats.EXPERIMENTAL_PDF]: false,
     };
 
     const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
@@ -32,10 +31,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
-            {
-                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" isExperimental />,
-                value: DownloadFormats.EXPERIMENTAL_PDF,
-            },
         ],
         [],
     );

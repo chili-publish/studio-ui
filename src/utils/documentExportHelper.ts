@@ -25,14 +25,9 @@ export const getDownloadLink = async (
         // Use different URL when format is one of array ['png', 'jpg'].
         if (['png', 'jpg'].includes(format)) {
             generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
-        } else if (['mp4', 'gif'].includes(format)) {
+        } else {
             // Here we also pass additional query param `fps` with a default value of `30`.
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
-        } else {
-            generateExportUrl = `${baseUrl.replace(
-                'v1',
-                'experimental',
-            )}/output/pdf?layoutToExport=${layoutId}&projectId=${projectId}`;
         }
 
         // TODO: we tend to use this code only on DEV, we need a better way to verify it
