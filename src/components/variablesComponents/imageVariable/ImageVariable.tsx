@@ -6,7 +6,7 @@ import {
     ImageVariableSourceType,
     MediaDownloadType,
 } from '@chili-publish/studio-sdk';
-import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
+import { ImagePicker, Label, getDataId, getDataTestId, usePreviewImage } from '@chili-publish/grafx-shared-components';
 import { IImageVariable } from '../VariablesComponents.types';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 
@@ -52,6 +52,8 @@ function ImageVariable(props: IImageVariable) {
 
     return (
         <ImagePicker
+            dataId={getDataId(`img-picker-${variable.id}`, 'sui')}
+            dataTestId={getDataTestId(`dropdown-${variable.id}`, 'sui')}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}

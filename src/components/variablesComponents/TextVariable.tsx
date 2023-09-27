@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Label, Input } from '@chili-publish/grafx-shared-components';
+import { Label, Input, getDataId, getDataTestId } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { ITextVariable } from './VariablesComponents.types';
 
@@ -21,6 +21,8 @@ function TextVariable(props: ITextVariable) {
     return (
         <Input
             type="text"
+            dataId={getDataId(`input-${variable.id}`, 'sui')}
+            dataTestId={getDataTestId(`input-${variable.id}`, 'sui')}
             value={variableValue}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.value)}

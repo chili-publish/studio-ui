@@ -44,6 +44,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         return (
                             <ComponentWrapper key={`variable-component-${variable.id}`}>
                                 <StudioDropdown
+                                    id={variable.id}
                                     label={variable.name}
                                     selectedValue={selectedValue}
                                     options={options}
