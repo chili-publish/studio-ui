@@ -20,30 +20,16 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                const environmentUrl = 'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217';
-                const projectId = '440fab7a-e3c4-4de7-a7c2-18a2aa27e9b7';
-                const authToken =
-                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL2VtYWlsIjoiYWJyaUBjaGlsaS1wdWJsaXNoLmNvbSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiNTc3MThmZjYtODFjOC00ZTllLWJiZTgtM2M0ZWM4NmNmMTg0fEZBIl0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vY3VzdG9tZXJfZ3VpZCI6IjUxNTFlZjliLWRjNmYtNDU1OC05MDdkLTczZTc3NzNiYTU0MSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vc3Vic2NyaXB0aW9ucyI6W10sImlzcyI6Imh0dHBzOi8vbG9naW4uY2hpbGlncmFmeC1kZXYuY29tLyIsInN1YiI6InNhbWxwfGNoaWxpLXB1Ymxpc2gtZGV2fDV6UEg5dHBEa2ZZYWtoNXltMHctMERIZS1tS0lCOENpVFl5cWNuYkFHRUkiLCJhdWQiOlsiaHR0cHM6Ly9jaGlsaWdyYWZ4LmNvbSIsImh0dHBzOi8vZ3JhZngtZGV2LmV1LmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2OTU3MzU5OTMsImV4cCI6MTY5NTgyMjM5MywiYXpwIjoiYmlpTjZFRFgySnFVaGo0Zklub1hIMzZNZm40TGRDeUoiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIG9mZmxpbmVfYWNjZXNzIn0.Ls2xnShqYmTOTpm4bgmk4S70S3gWcdQd4vwAXeieF_E1RE3fYp4E9ZKO5n32offcxeRy0AbbsBpvg1HDpSTs0VBLzTb4Q0s6onEkzz9j56HZE5no70RjjKLMLVFAm2eGrnnPkJztzRirbVbIrddc-jTGxzQ1u7VXZfXUuzTL8fZG_Ej5zUeQAWpYYC2NWATGzOMhoucVQVwsYyWOaObsF7t2bJDIRoE44aBcS0IJR4ORE44q4L5zLFjTNiHTi5TsVfk9HELoojT5cjo0hw0PK3fHLioAgnTgY25QBxvf1c3crKp8Iy4FZpWJy6UvtfDkC5FvmwZmAjqPxqh5ZsdzIA';
-
-                // StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                StudioUI.defaultConfigWithEditorLink('studio-ui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-
-                if (environmentUrl && projectId && authToken) {
-                    StudioUI.studioLoaderConfig(
-                        'studio-ui-root',
-                        `${environmentUrl}/projects/${projectId}/document` /*projectDownloadUrl:*/,
-                        `${environmentUrl}/projects/${projectId}/document` /*projectUploadUrl:*/,
-                        projectId /*projectId:*/,
-                        `${environmentUrl}/` /*graFxStudioEnvironmentApiBaseUrl:*/,
-                        authToken /*authToken:*/,
-                        baseUrl + '/editor/' + editorVersion + '/web',
-                    );
-                } else {
-                    StudioUI.defaultConfigWithEditorLink(
-                        'studio-ui-root',
-                        baseUrl + '/editor/' + editorVersion + '/web',
-                    );
-                }
+                // StudioUI.studioLoaderConfig(
+                //     'studio-ui-root',
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
+                //     "<project guid>",                                                             /*projectId:*/
+                //     "https://<baseUrl>/environment/<env-name>/"                                   /*graFxStudioEnvironmentApiBaseUrl:*/
+                //     "<open a project on chiligrafx.com to retrieve AT from network requests>",    /*authToken:*/
+                //)
             });
         </script>
     </body>
