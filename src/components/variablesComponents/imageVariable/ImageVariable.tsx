@@ -53,7 +53,7 @@ function ImageVariable(props: IImageVariable) {
     return (
         <ImagePicker
             dataId={getDataId(`img-picker-${variable.id}`, 'sui')}
-            dataTestId={getDataTestId(`dropdown-${variable.id}`, 'sui')}
+            dataTestId={getDataTestId(`img-picker-${variable.id}`, 'sui')}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}
