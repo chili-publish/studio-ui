@@ -56,6 +56,7 @@ function DownloadPanel(props: DownloadPanelProps) {
             >
                 <Content borderTop={!mobileDropdownOpen}>
                     <StudioDropdown
+                        dataId="output-type"
                         label="Output type"
                         selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
                         options={downloadOptions}

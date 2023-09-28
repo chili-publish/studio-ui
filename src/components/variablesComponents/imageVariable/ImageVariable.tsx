@@ -56,9 +56,9 @@ function ImageVariable(props: IImageVariable) {
 
     return (
         <ImagePicker
+            dataId={getDataIdForSUI(`img-picker-${variable.id}`)}
+            dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
             name={variable.id}
-            dataId={getDataIdForSUI('image-picker')}
-            dataTestId={getDataTestIdForSUI('image-picker')}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
