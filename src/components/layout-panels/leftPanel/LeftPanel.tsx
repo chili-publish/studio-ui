@@ -20,7 +20,9 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
                     <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
                 </VariablesListContainer>
             ) : (
-                <ImagePanel />
+                <div style={{ padding: '0 0 0 1.25rem' }}>
+                    <ImagePanel />
+                </div>
             )}
         </LeftPanelContainer>
     );

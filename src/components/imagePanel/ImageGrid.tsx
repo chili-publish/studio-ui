@@ -1,7 +1,7 @@
 import React from 'react';
 import { PreviewCard } from '@chili-publish/grafx-shared-components';
 import { Grid, GridItem } from './ImagePanel.styles';
-import { convertAssetTypeToString, convertToPreviewType } from '../../utils/media-utils';
+import { convertAssetTypeToString, convertToPreviewType } from '../../utils/mediaUtils';
 import { AssetType, AssetWithPreview } from '../../utils/ApiTypes';
 
 interface ImageGridProps {

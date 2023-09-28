@@ -1,15 +1,15 @@
 import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
+import { mobileMediaQuery } from '../../utils/mediaUtils';
 
 export const ResourcesContainer = styled.div`
-    display: flex;
-    height: 100%;
-    overflow: scroll;
-    align-content: flex-start;
-    flex-wrap: wrap;
-
-    padding: 0 0.875rem 1.75rem 0.875rem;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 7.5rem 7.5rem;
+    gap: 1.3rem;
+    ${mobileMediaQuery} {
+        grid-template-columns: minmax(7.5rem, 1fr) minmax(7.5rem, 1fr);
+        gap: 1rem;
+    }
 `;
 
 export const ModalResourcesContainer = styled.div<{ width?: string }>`
@@ -29,9 +29,10 @@ export const NavigationWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     position: relative;
-    margin-left: 0.5rem;
+    margin-left: -0.75rem;
 
     & svg {
+        box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
     }
 
@@ -82,8 +83,8 @@ export const LoadPageContainer = styled.div`
 export const BreadCrumbsWrapper = styled.div`
     width: 15.625rem;
     height: 2.5rem;
-    margin-left: 1.5rem;
     overflow: visible;
     white-space: nowrap;
     display: flex;
+    margin-bottom: 1rem;
 `;

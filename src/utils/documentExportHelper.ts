@@ -25,13 +25,27 @@ export const getDownloadLink = async (
         // Use different URL when format is one of array ['png', 'jpg'].
         if (['png', 'jpg'].includes(format)) {
             generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
-        } else if (['mp4', 'gif'].includes(format)) {
+        } else {
             // Here we also pass additional query param `fps` with a default value of `30`.
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
-        } else {
-            // pdf case
         }
 
+        // TODO: we tend to use this code only on DEV, we need a better way to verify it
+        if (window.location.hostname !== 'chiligrafx.com') {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let engineVersion = urlParams.get('engine');
+            const engineCommitSha = urlParams.get('engineCommitSha');
+            if (engineVersion) {
+                if (/^\d+$/.test(engineVersion)) {
+                    engineVersion = `prs/${engineVersion}`;
+                }
+            } else {
+                engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
+            }
+            generateExportUrl += `&engineVersion=${engineVersion}`;
+            if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+        }
         const config: HttpHeaders = {
             method: 'POST',
             headers: {

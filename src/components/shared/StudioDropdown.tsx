@@ -1,13 +1,5 @@
-import {
-    AvailableIcons,
-    DropDown,
-    Icon,
-    Option,
-    getDataId,
-    getDataTestId,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, DropDown, Icon, Option, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
-import useMobileSize from '../../hooks/useMobileSize';
 import {
     Label,
     MobileDropdownOptionContainer,
@@ -16,6 +8,7 @@ import {
     MobileDropdownOptionContent,
     MobileDropdownValue,
 } from './StudioDropdown.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface StudioDropdownProps {
     id: string;
@@ -55,8 +48,8 @@ function StudioDropdown({
             <>
                 {label && <Label marginBottom="0.75rem">{label}</Label>}
                 <DropDown
-                    dataId={getDataId(`dropdown-${id}`, 'sui')}
-                    dataTestId={getDataTestId(`dropdown-${id}`, 'sui')}
+                    dataId={getDataIdForSUI(`dropdown-${id}`)}
+                    dataTestId={getDataTestIdForSUI(`dropdown-${id}`)}
                     value={selectedValue}
                     options={options}
                     onChange={(val) => onChange?.(val?.value?.toString() || '')}

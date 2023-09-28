@@ -1,8 +1,8 @@
-import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
+import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { useMobileSize } from '@chili-publish/grafx-shared-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
-import useMobileSize from '../../hooks/useMobileSize';
 import StudioDropdown from '../shared/StudioDropdown';
 
 interface VariablesListProps {

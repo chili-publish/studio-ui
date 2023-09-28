@@ -47,3 +47,40 @@ export const Content = styled.div<{ borderTop?: boolean }>`
     padding-top: 1rem;
     border-top: ${(props) => (props.borderTop ? `1px solid ${Colors.LIGHT_GRAY_100}` : 'none')};
 `;
+
+export const ExperimentalPill = styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: ${FontSizes.small};
+    color: ${Colors.LIGHT_PRIMARY_WHITE};
+    border: 1px solid ${Colors.LIGHT_PRIMARY_WHITE};
+    border-radius: 5rem;
+    height: 1.375rem;
+    margin: 0 0.5rem;
+    padding: 0 0.75rem;
+`;
+
+export const SpinnerContainer = styled.div<{ mobile?: boolean }>`
+    width: ${(props) => (props.mobile ? '100%' : '16.25rem')};
+    height: 2.5rem;
+    margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto 1.25rem;')};
+    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const LoadPageContainer = styled.div`
+    margin: 2.5rem 0;
+`;
+export const LoadingIndicatorContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    color: ${Colors.SECONDARY_FONT};
+    font-size: ${FontSizes.regular};
+`;
+export const Text = styled.span<{ color?: string }>`
+    color: ${(props) => props.color ?? Colors.SECONDARY_FONT};
+`;

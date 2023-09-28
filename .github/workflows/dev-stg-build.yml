@@ -162,5 +162,6 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
               with:
-                  version-type: 'patch'
+                  minor-wording: 'RELEASE,Release,release'
+                  major-wording: 'BREAKING,Breaking,breaking'
                   commit-message: 'CI: bumps version to {{version}} [skip ci]'

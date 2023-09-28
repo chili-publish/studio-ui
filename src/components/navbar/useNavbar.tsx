@@ -1,11 +1,10 @@
-import { AvailableIcons, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { useCallback, useMemo, useState } from 'react';
+import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
-import useMobileSize from '../../hooks/useMobileSize';
 import { ProjectConfig } from '../../types/types';
 import { getDownloadLink } from '../../utils/documentExportHelper';
 
@@ -64,7 +63,7 @@ const useNavbar = (
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
                         />
-                        <NavbarLabel aria-label={`Project: ${projectName}`}>{projectName}</NavbarLabel>
+                        <NavbarLabel aria-label={`Project: ${projectName}`}>{decodeURI(projectName || '')}</NavbarLabel>
                     </NavbarGroup>
                 ),
             },
@@ -127,13 +126,18 @@ const useNavbar = (
         ],
     );
 
-    const handleDownload = async (extension: DownloadFormats) => {
+    const handleDownload = async (
+        extension: DownloadFormats,
+        updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
+    ) => {
         try {
+            updateDownloadState({ [extension]: true });
+            const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await getDownloadLink(
                 extension,
                 projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
                 projectConfig?.authToken ?? '',
-                '0',
+                selectedLayoutID || '0',
                 projectConfig?.projectId ?? '',
             );
 
@@ -155,6 +159,8 @@ const useNavbar = (
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+        } finally {
+            updateDownloadState({ [extension]: false });
         }
         hideDownloadPanel();
     };

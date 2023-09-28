@@ -1,10 +1,10 @@
-import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { ImageVariableSourceType, Media } from '@chili-publish/studio-sdk';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ConnectorInstance, Media } from '@chili-publish/studio-sdk';
 import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
-import { ContentType, IVariablePanelContext } from './VariablePanelContext.types';
+import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
@@ -16,8 +16,10 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
-    previousPath: () => undefined,
     imagePanelTitle: <div />,
+    defaultFontsConnector: { id: '', iconUrl: '', name: '' },
+    defaultMediaConnector: { id: '', iconUrl: '', name: '' },
+    connectorCapabilities: {},
 };
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
@@ -26,13 +28,75 @@ export const useVariablePanelContext = () => {
     return useContext(VariablePanelContext);
 };
 
-export function VariablePanelContextProvider({ children }: { children: ReactNode }) {
+export function VariablePanelContextProvider({
+    children,
+    connectors,
+}: {
+    children: ReactNode;
+    connectors: IConnectors;
+}) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
+    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>(connectors.mediaConnectors);
+    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>(connectors.fontsConnectors);
+    const [defaultMediaConnector, setDefaultMediaConnector] = useState<ConnectorInstance>({
+        id: '',
+        iconUrl: '',
+        name: '',
+    });
+    const [defaultFontsConnector, setDefaultFontsConnector] = useState<ConnectorInstance>({
+        id: '',
+        iconUrl: '',
+        name: '',
+    });
 
+    const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
     /* Image Panel Folder Navigation */
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>([]);
+    useEffect(() => {
+        setMediaConnectors(connectors.mediaConnectors);
+    }, [connectors.mediaConnectors]);
+
+    useEffect(() => {
+        setFontsConnectors(connectors.fontsConnectors);
+    }, [connectors.fontsConnectors]);
+
+    useEffect(() => {
+        if (mediaConnectors) setDefaultMediaConnector(mediaConnectors[0]);
+    }, [mediaConnectors]);
+
+    useEffect(() => {
+        if (fontsConnectors) setDefaultFontsConnector(fontsConnectors[0]);
+    }, [fontsConnectors]);
+
+    useEffect(() => {
+        const getCapabilities = async () => {
+            if (defaultMediaConnector?.id) {
+                await window.SDK.mediaConnector.getCapabilities(defaultMediaConnector.id).then((res) => {
+                    if (res.parsedData)
+                        setConnectorCapabilities((prev) => {
+                            return {
+                                ...prev,
+                                [defaultMediaConnector.id]: res.parsedData,
+                            } as ICapabilities;
+                        });
+                });
+            }
+            if (defaultFontsConnector?.id) {
+                await window.SDK.fontConnector.getCapabilities(defaultFontsConnector.id).then((res) => {
+                    if (res.parsedData)
+                        setConnectorCapabilities((prev) => {
+                            return {
+                                ...prev,
+                                [defaultFontsConnector.id]: res.parsedData,
+                            } as ICapabilities;
+                        });
+                });
+            }
+        };
+        getCapabilities();
+    }, [defaultFontsConnector?.id, defaultMediaConnector?.id]);
 
     const { handleImageChange } = useVariableComponents(currentVariableId);
 
@@ -40,20 +104,12 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                id: process.env.DEFAULT_MEDIA_CONNECTOR as string,
-                type: ImageVariableSourceType.mediaConnector,
+                connectorId: defaultMediaConnector?.id,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
-        [handleImageChange],
+        [defaultMediaConnector?.id, handleImageChange],
     );
-
-    const previousPath = useCallback(() => {
-        // We are removing any selected element from the state. This is because
-        // for now we do not support multiselection.
-        setSelectedItems([]);
-        setNavigationStack((current) => current?.slice(0, -1));
-    }, []);
 
     const imagePanelTitle = useMemo(
         () => (
@@ -61,9 +117,10 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
-                    onClick={
-                        (navigationStack ?? []).length ? previousPath : () => setContentType(ContentType.VARIABLES_LIST)
-                    }
+                    onClick={() => {
+                        setContentType(ContentType.VARIABLES_LIST);
+                        setNavigationStack([]);
+                    }}
                     icon={
                         <Icon
                             key={navigationStack.length}
@@ -75,10 +132,10 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
                         padding: 0;
                     `}
                 />
-                <NavigationTitle className="navigation-path">Select Image</NavigationTitle>
+                <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, previousPath],
+        [navigationStack],
     );
 
     const data = useMemo(
@@ -95,17 +152,23 @@ export function VariablePanelContextProvider({ children }: { children: ReactNode
             navigationStack,
             setSelectedItems,
             setNavigationStack,
-            previousPath,
             imagePanelTitle,
+            defaultMediaConnector,
+            defaultFontsConnector,
+            connectorCapabilities,
+            connectors,
         }),
         [
             contentType,
             currentVariableId,
             handleUpdateImage,
+            selectedItems,
             navigationStack,
             imagePanelTitle,
-            previousPath,
-            selectedItems,
+            defaultMediaConnector,
+            defaultFontsConnector,
+            connectorCapabilities,
+            connectors,
         ],
     );
 

@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import StudioSDK, { Variable, WellKnownConfigurationKeys, DocumentType } from '@chili-publish/studio-sdk';
-import { Colors, useDebounce } from '@chili-publish/grafx-shared-components';
+import StudioSDK, {
+    Variable,
+    WellKnownConfigurationKeys,
+    DocumentType,
+    ConnectorType,
+    ConnectorInstance,
+} from '@chili-publish/studio-sdk';
+import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -9,9 +15,9 @@ import { ProjectConfig } from './types/types';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import './App.css';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
-import useMobileSize from './hooks/useMobileSize';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
 declare global {
     interface Window {
@@ -33,6 +39,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
+    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
+    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
+
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -41,7 +50,12 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
-                const document = await window.SDK.document.getCurrentState();
+                const document = await window.SDK.document.getCurrentState().then((res) => {
+                    if (res.success) {
+                        return res;
+                    }
+                    throw new Error();
+                });
                 const config: HttpHeaders = {
                     headers: {
                         'Content-Type': 'application/json',
@@ -51,15 +65,16 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 if (token) {
                     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
                 }
-
-                axios.put(url, JSON.parse(document.data || '{}'), config).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.error(`[${saveDocument.name}] There was an issue saving document`);
-                    return err;
-                });
+                if (document.data) {
+                    axios.put(url, JSON.parse(document.data), config).catch((err) => {
+                        // eslint-disable-next-line no-console
+                        console.error(`[${saveDocument.name}] There was an issue saving document`);
+                        return err;
+                    });
+                }
             } catch (error) {
                 // eslint-disable-next-line no-console
-                console.error(`[${saveDocument.name}] There was an fetching the current document state`);
+                console.error(`[${saveDocument.name}] There was an issue fetching the current document state`);
             }
         }
     };
@@ -71,7 +86,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
         (response) => response,
         (error) => {
             const originalRequest = error.config;
-            if (error.response.status === 401 && !originalRequest.retry && projectConfig) {
+            if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
                 originalRequest.retry = true;
                 return projectConfig
                     .refreshTokenAction()
@@ -83,6 +98,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     .catch((err: AxiosError) => {
                         // eslint-disable-next-line no-console
                         console.error(`[${App.name}] Axios error`, err);
+                        return err;
                     });
             }
 
@@ -103,8 +119,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                 .then((res) => {
                     setFetchedDocument(JSON.stringify(res.data));
                 })
-                .catch(() => {
+                .catch((error) => {
                     setFetchedDocument('{}');
+                    return error;
                 });
         } else {
             setFetchedDocument('{}');
@@ -162,6 +179,9 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
                 }
             },
+            onSelectedLayoutIdChanged() {
+                zoomToPage();
+            },
             onScrubberPositionChanged: (animationPlayback) => {
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
             },
@@ -176,6 +196,19 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
             editorLink,
             studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
             documentType: DocumentType.project,
+            studioOptions: {
+                shortcutOptions: {
+                    debugPanel: { enabled: false },
+                    ellipse: { enabled: false },
+                    hand: { enabled: true },
+                    image: { enabled: false },
+                    polygon: { enabled: false },
+                    rectangle: { enabled: false },
+                    select: { enabled: false },
+                    text: { enabled: false },
+                    zoom: { enabled: false },
+                },
+            },
         });
 
         // Connect to ths SDK
@@ -213,29 +246,36 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     }, [currentProject?.template.id]);
 
     useEffect(() => {
-        const loadDocument = async () => {
-            if (fetchedDocument) {
-                await window.SDK.document.load(fetchedDocument).then((res) => {
-                    setIsDocumentLoaded(res.success);
-                });
-                zoomToPage();
-
-                if (authToken) {
-                    await window.SDK.connector.configure('grafx-media', async (configurator) => {
-                        await configurator.setChiliToken(authToken);
-                    });
-                }
-            }
-        };
-
         const setHandTool = async () => {
             if (fetchedDocument) {
                 await window.SDK.tool.setHand();
             }
         };
+        const loadDocument = async () => {
+            if (authToken) {
+                await window.SDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+            }
+
+            if (!fetchedDocument) return;
+            await window.SDK.document.load(fetchedDocument).then((res) => {
+                setIsDocumentLoaded(res.success);
+            });
+            window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                if (res.success && res.parsedData) {
+                    setMediaConnectors(res.parsedData);
+                }
+            });
+
+            window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                if (res.success && res.parsedData) {
+                    setFontsConnectors(res.parsedData);
+                }
+            });
+            setHandTool();
+            zoomToPage();
+        };
 
         loadDocument();
-        setHandTool();
     }, [authToken, fetchedDocument, projectConfig]);
 
     useEffect(() => {
@@ -250,7 +290,7 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
     }, []);
 
     return (
-        <VariablePanelContextProvider>
+        <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
             <div className="app">
                 <Navbar
                     projectName={projectConfig?.projectName || currentProject?.name}
@@ -263,7 +303,11 @@ function App({ projectConfig, editorLink }: { projectConfig?: ProjectConfig; edi
                     {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                     <CanvasContainer>
                         {isMobileSize && <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                        <div className="studio-ui-canvas" data-id="layout-canvas">
+                        <div
+                            className="sui-canvas"
+                            data-id={getDataIdForSUI('canvas')}
+                            data-testid={getDataTestIdForSUI('canvas')}
+                        >
                             <div className="chili-editor" id="chili-editor" />
                         </div>
                         <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />

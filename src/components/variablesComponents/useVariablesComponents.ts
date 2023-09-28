@@ -1,13 +1,11 @@
-import { Id, ImageVariableSource, MediaConnectorImageVariableSource } from '@chili-publish/studio-sdk';
-import { DEFAULT_MEDIA_CONNECTOR } from '../../utils/ApiTypes';
+import { ConnectorImageVariableSource, Id } from '@chili-publish/studio-sdk';
 
 export const useVariableComponents = (currentVariableId: Id) => {
     const closePanel = () => null;
 
-    const handleImageChange = async (src: ImageVariableSource) => {
+    const handleImageChange = async (value: ConnectorImageVariableSource) => {
         if (currentVariableId) {
-            await window.SDK.variable.setImageVariableConnector(currentVariableId, DEFAULT_MEDIA_CONNECTOR);
-            const assetId = (src as MediaConnectorImageVariableSource).assetId ?? null;
+            const assetId = value.assetId ?? null;
             const result = await window.SDK.variable.setValue(currentVariableId, assetId);
             return result;
         }
@@ -22,10 +20,9 @@ export const useVariableComponents = (currentVariableId: Id) => {
         return null;
     };
 
-    const handleValueChange = async (value: string) => {
-        if (currentVariableId) {
-            await window.SDK.variable.setValue(currentVariableId, value);
-        }
+    const handleValueChange = async (value: string | boolean) => {
+        if (!currentVariableId) return null;
+        return window.SDK.variable.setValue(currentVariableId, value);
     };
 
     return {

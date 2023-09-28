@@ -1,11 +1,13 @@
+import { getDataTestId } from '@chili-publish/grafx-shared-components';
+import EditorSDK from '@chili-publish/studio-sdk';
 import { render, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
-import EditorSDK from '@chili-publish/studio-sdk';
 import { act } from 'react-dom/test-utils';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
-import { variables } from './mocks/mockVariables';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
+import { variables } from './mocks/mockVariables';
+import { mockConnectors } from './mocks/mockConnectors';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
@@ -82,6 +84,24 @@ beforeEach(() => {
             }),
         );
 
+    mockSDK.mediaConnector.getCapabilities = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                parsedData: { copy: false, detail: true, filtering: true, query: true, remove: false, upload: false },
+            }),
+        );
+
+    mockSDK.fontConnector.getCapabilities = jest
+        .fn()
+        .mockImplementation()
+        .mockReturnValue(
+            Promise.resolve({
+                parsedData: { copy: false, detail: true, filtering: true, query: true, remove: false, upload: false },
+            }),
+        );
+
     window.SDK = mockSDK;
 
     window.IntersectionObserver = jest.fn(
@@ -100,18 +120,18 @@ afterEach(() => {
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const { getAllByTestId, getByText, getByRole } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {
             imagePicker.click();
         });
 
-        const imagePanel = getByText('Select Image');
+        const imagePanel = getByText('Select image');
         expect(imagePanel).toBeInTheDocument();
 
         const goBackButton = getByRole('button');
@@ -125,33 +145,33 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
-        const { getAllByTestId, getByRole } = render(
-            <VariablePanelContextProvider>
+        const { getAllByTestId, getByRole, getByText } = render(
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });
 
-        const folder = getByRole('img', { name: /foldericon/i });
+        const folder = getByRole('img', { name: /grafx/i });
         expect(folder).toBeInTheDocument();
-        const image = getByRole('img', { name: mockAssets[1].name });
+        const image = getByText(mockAssets[1].name);
         expect(image).toBeInTheDocument();
     });
 
     test('Media asset folder navigation works', async () => {
         const { getAllByTestId, getByRole, getByText } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });
-        const image = getByRole('img', { name: /foldericon/i });
+        const image = getByRole('img', { name: /grafx/i });
 
         await act(async () => {
             image.click();
@@ -161,13 +181,13 @@ describe('Image Panel', () => {
         expect(breadCrumb).toBeInTheDocument();
     });
 
-    test.skip('Image Picker udpates image after asset is selected', async () => {
+    test.skip('Image Picker updates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
-            <VariablePanelContextProvider>
+            <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId('image-picker-content')[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
             imagePicker.click();
         });
