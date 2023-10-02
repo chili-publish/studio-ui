@@ -12,20 +12,27 @@ function ImageVariable(props: IImageVariable) {
     const { showImagePanel, connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getState(variable.value?.connectorId ?? '');
         let response = { success: true };
-        if (mediaConnectorState.parsedData?.type !== 'ready') {
-            response = await window.SDK.connector.waitToBeReady(variable.value?.connectorId ?? '');
-        }
-        if (response.success) {
+        const downloadCall = async () => {
             return window.SDK.mediaConnector.download(
                 variable.value?.connectorId ?? '',
                 id,
                 MediaDownloadType.LowResolutionWeb,
                 {},
             );
+        };
+        try {
+            return downloadCall();
+        } catch {
+            const mediaConnectorState = await window.SDK.connector.getState(variable.value?.connectorId ?? '');
+            if (mediaConnectorState.parsedData?.type !== 'ready') {
+                response = await window.SDK.connector.waitToBeReady(variable.value?.connectorId ?? '');
+            }
+            if (response.success) {
+                return downloadCall();
+            }
+            return null;
         }
-        return null;
     };
 
     useEffect(() => {
@@ -34,25 +41,27 @@ function ImageVariable(props: IImageVariable) {
 
             const mediaConnectorState = await window.SDK.connector.getState(variable.value.connectorId);
             if (mediaConnectorState.parsedData?.type !== 'ready') {
-                await window.SDK.connector.waitToBeReady(variable.value.connectorId ?? '');
+                await window.SDK.connector.waitToBeReady(variable.value.connectorId);
             }
-            if (
-                !connectorCapabilities[variable.value.connectorId] ||
-                !connectorCapabilities[variable.value.connectorId].detail
-            ) {
-                getCapabilitiesForConnector(variable.value.connectorId);
+            if (!connectorCapabilities[variable.value.connectorId]) {
+                try {
+                    await getCapabilitiesForConnector(variable.value.connectorId);
+                } catch (e) {
+                    return;
+                }
             }
 
-            const { parsedData } = await window.SDK.mediaConnector.detail(
+            const { parsedData, success } = await window.SDK.mediaConnector.detail(
                 variable.value.connectorId,
                 variable.value.assetId as string,
             );
-
+            if (!success) return;
             setMediaDetails(parsedData);
         }
 
         getMediaDetails();
-    }, [variable, connectorCapabilities, getCapabilitiesForConnector]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [variable, getCapabilitiesForConnector]);
 
     const { previewImage } = usePreviewImage(mediaDetails, previewCall, true, variable);
 

@@ -28,8 +28,6 @@ export interface IVariablePanelContext {
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
     imagePanelTitle: JSX.Element;
     connectors?: IConnectors;
-    defaultMediaConnector: ConnectorInstance;
-    defaultFontsConnector: ConnectorInstance;
     connectorCapabilities: ICapabilities;
     getCapabilitiesForConnector: (connectorId: string) => Promise<void>;
 }

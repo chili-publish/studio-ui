@@ -1,9 +1,9 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ConnectorInstance, ConnectorRegistrationSource, ImageVariable, Media } from '@chili-publish/studio-sdk';
-import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publish/grafx-shared-components';
+import { ImageVariable, Media } from '@chili-publish/studio-sdk';
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
-import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
 import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
@@ -18,18 +18,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     imagePanelTitle: <div />,
-    defaultMediaConnector: {
-        id: '',
-        name: '',
-        iconUrl: '',
-        source: { source: ConnectorRegistrationSource.grafx, url: '' },
-    },
-    defaultFontsConnector: {
-        id: '',
-        name: '',
-        iconUrl: '',
-        source: { source: ConnectorRegistrationSource.grafx, url: '' },
-    },
     connectorCapabilities: {},
     getCapabilitiesForConnector: async () => undefined,
 };
@@ -50,77 +38,34 @@ export function VariablePanelContextProvider({
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
-    /* Connectors */
-    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>(connectors.mediaConnectors);
-    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>(connectors.fontsConnectors);
-    const [defaultMediaConnector, setDefaultMediaConnector] = useState<ConnectorInstance>({
-        id: '',
-        name: '',
-        iconUrl: '',
-        source: { source: ConnectorRegistrationSource.grafx, url: '' },
-    });
-    const [defaultFontsConnector, setDefaultFontsConnector] = useState<ConnectorInstance>({
-        id: '',
-        name: '',
-        iconUrl: '',
-        source: { source: ConnectorRegistrationSource.grafx, url: '' },
-    });
-    /* Image Panel Folder Navigation */
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>([]);
 
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
-    const getCapabilitiesForConnector = useCallback(
-        async (connectorId: string) => {
-            if (!connectorId) return;
-            const res = await window.SDK.mediaConnector.getCapabilities(connectorId);
-            if (!res.parsedData) return;
-            setConnectorCapabilities((prev) => {
-                return {
-                    ...prev,
-                    [connectorId]: res.parsedData,
-                } as ICapabilities;
-            });
-        },
-        [setConnectorCapabilities],
-    );
 
-    useEffect(() => {
-        setMediaConnectors(connectors.mediaConnectors);
-    }, [connectors.mediaConnectors]);
-
-    useEffect(() => {
-        setFontsConnectors(connectors.fontsConnectors);
-    }, [connectors.fontsConnectors]);
-
-    useEffect(() => {
-        if (mediaConnectors) setDefaultMediaConnector(mediaConnectors[0]);
-    }, [mediaConnectors]);
-
-    useEffect(() => {
-        if (fontsConnectors) setDefaultFontsConnector(fontsConnectors[0]);
-    }, [fontsConnectors]);
-
-    /* Get default connector capabilities */
-    useEffect(() => {
-        const getCapabilitiesForDefaultConnectors = async () => {
-            await getCapabilitiesForConnector(defaultMediaConnector?.id);
-            await getCapabilitiesForConnector(defaultFontsConnector?.id);
-        };
-        getCapabilitiesForDefaultConnectors();
-    }, [defaultFontsConnector?.id, defaultMediaConnector?.id, getCapabilitiesForConnector]);
-
+    const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
+        if (!connectorId) throw new Error('ConnectorId is not defined');
+        const res = await window.SDK.mediaConnector.getCapabilities(connectorId);
+        if (!res.parsedData) throw new Error('Connector capabilities are not defined');
+        setConnectorCapabilities((prev) => {
+            const t = {
+                ...prev,
+                [connectorId]: res.parsedData,
+            } as ICapabilities;
+            return t;
+        });
+    }, []);
     const { handleImageChange } = useVariableComponents(currentVariableId);
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                connectorId: defaultMediaConnector?.id,
+                connectorId: currentVariableConnectorId,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
-        [defaultMediaConnector?.id, handleImageChange],
+        [currentVariableConnectorId, handleImageChange],
     );
 
     const imagePanelTitle = useMemo(
@@ -167,8 +112,6 @@ export function VariablePanelContextProvider({
             setSelectedItems,
             setNavigationStack,
             imagePanelTitle,
-            defaultMediaConnector,
-            defaultFontsConnector,
             connectorCapabilities,
             connectors,
             getCapabilitiesForConnector,
@@ -181,8 +124,6 @@ export function VariablePanelContextProvider({
             selectedItems,
             navigationStack,
             imagePanelTitle,
-            defaultMediaConnector,
-            defaultFontsConnector,
             connectorCapabilities,
             connectors,
             getCapabilitiesForConnector,
