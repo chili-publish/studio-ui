@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ConnectorInstance, Media } from '@chili-publish/studio-sdk';
+import { ConnectorInstance, ConnectorRegistrationSource, ImageVariable, Media } from '@chili-publish/studio-sdk';
 import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
@@ -11,15 +11,27 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showImagePanel: () => undefined,
     contentType: ContentType.VARIABLES_LIST,
     currentVariableId: '',
+    currentVariableConnectorId: '',
     handleUpdateImage: () => undefined,
     selectedItems: [],
     navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     imagePanelTitle: <div />,
-    defaultFontsConnector: { id: '', iconUrl: '', name: '' },
-    defaultMediaConnector: { id: '', iconUrl: '', name: '' },
+    defaultMediaConnector: {
+        id: '',
+        name: '',
+        iconUrl: '',
+        source: { source: ConnectorRegistrationSource.grafx, url: '' },
+    },
+    defaultFontsConnector: {
+        id: '',
+        name: '',
+        iconUrl: '',
+        source: { source: ConnectorRegistrationSource.grafx, url: '' },
+    },
     connectorCapabilities: {},
+    getCapabilitiesForConnector: async () => undefined,
 };
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
@@ -37,23 +49,42 @@ export function VariablePanelContextProvider({
 }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
+    const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
+    /* Connectors */
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>(connectors.mediaConnectors);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>(connectors.fontsConnectors);
     const [defaultMediaConnector, setDefaultMediaConnector] = useState<ConnectorInstance>({
         id: '',
-        iconUrl: '',
         name: '',
+        iconUrl: '',
+        source: { source: ConnectorRegistrationSource.grafx, url: '' },
     });
     const [defaultFontsConnector, setDefaultFontsConnector] = useState<ConnectorInstance>({
         id: '',
-        iconUrl: '',
         name: '',
+        iconUrl: '',
+        source: { source: ConnectorRegistrationSource.grafx, url: '' },
     });
-
-    const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
     /* Image Panel Folder Navigation */
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>([]);
+
+    const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
+    const getCapabilitiesForConnector = useCallback(
+        async (connectorId: string) => {
+            if (!connectorId) return;
+            const res = await window.SDK.mediaConnector.getCapabilities(connectorId);
+            if (!res.parsedData) return;
+            setConnectorCapabilities((prev) => {
+                return {
+                    ...prev,
+                    [connectorId]: res.parsedData,
+                } as ICapabilities;
+            });
+        },
+        [setConnectorCapabilities],
+    );
+
     useEffect(() => {
         setMediaConnectors(connectors.mediaConnectors);
     }, [connectors.mediaConnectors]);
@@ -70,33 +101,14 @@ export function VariablePanelContextProvider({
         if (fontsConnectors) setDefaultFontsConnector(fontsConnectors[0]);
     }, [fontsConnectors]);
 
+    /* Get default connector capabilities */
     useEffect(() => {
-        const getCapabilities = async () => {
-            if (defaultMediaConnector?.id) {
-                await window.SDK.mediaConnector.getCapabilities(defaultMediaConnector.id).then((res) => {
-                    if (res.parsedData)
-                        setConnectorCapabilities((prev) => {
-                            return {
-                                ...prev,
-                                [defaultMediaConnector.id]: res.parsedData,
-                            } as ICapabilities;
-                        });
-                });
-            }
-            if (defaultFontsConnector?.id) {
-                await window.SDK.fontConnector.getCapabilities(defaultFontsConnector.id).then((res) => {
-                    if (res.parsedData)
-                        setConnectorCapabilities((prev) => {
-                            return {
-                                ...prev,
-                                [defaultFontsConnector.id]: res.parsedData,
-                            } as ICapabilities;
-                        });
-                });
-            }
+        const getCapabilitiesForDefaultConnectors = async () => {
+            await getCapabilitiesForConnector(defaultMediaConnector?.id);
+            await getCapabilitiesForConnector(defaultFontsConnector?.id);
         };
-        getCapabilities();
-    }, [defaultFontsConnector?.id, defaultMediaConnector?.id]);
+        getCapabilitiesForDefaultConnectors();
+    }, [defaultFontsConnector?.id, defaultMediaConnector?.id, getCapabilitiesForConnector]);
 
     const { handleImageChange } = useVariableComponents(currentVariableId);
 
@@ -141,12 +153,14 @@ export function VariablePanelContextProvider({
     const data = useMemo(
         () => ({
             showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
-            showImagePanel: (variableId: string) => {
-                setCurrentVariableId(variableId);
+            showImagePanel: (variable: ImageVariable) => {
+                setCurrentVariableId(variable.id);
+                setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
                 setContentType(ContentType.IMAGE_PANEL);
             },
             contentType,
             currentVariableId,
+            currentVariableConnectorId,
             handleUpdateImage,
             selectedItems,
             navigationStack,
@@ -157,10 +171,12 @@ export function VariablePanelContextProvider({
             defaultFontsConnector,
             connectorCapabilities,
             connectors,
+            getCapabilitiesForConnector,
         }),
         [
             contentType,
             currentVariableId,
+            currentVariableConnectorId,
             handleUpdateImage,
             selectedItems,
             navigationStack,
@@ -169,6 +185,7 @@ export function VariablePanelContextProvider({
             defaultFontsConnector,
             connectorCapabilities,
             connectors,
+            getCapabilitiesForConnector,
         ],
     );
 

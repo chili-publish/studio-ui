@@ -9,17 +9,17 @@ function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL ?? '';
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
-    const { showImagePanel, defaultMediaConnector, connectorCapabilities } = useVariablePanelContext();
+    const { showImagePanel, connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector?.id);
+        const mediaConnectorState = await window.SDK.connector.getState(variable.value?.connectorId ?? '');
         let response = { success: true };
         if (mediaConnectorState.parsedData?.type !== 'ready') {
-            response = await window.SDK.connector.waitToBeReady(defaultMediaConnector?.id);
+            response = await window.SDK.connector.waitToBeReady(variable.value?.connectorId ?? '');
         }
         if (response.success) {
             return window.SDK.mediaConnector.download(
-                defaultMediaConnector?.id,
+                variable.value?.connectorId ?? '',
                 id,
                 MediaDownloadType.LowResolutionWeb,
                 {},
@@ -30,27 +30,29 @@ function ImageVariable(props: IImageVariable) {
 
     useEffect(() => {
         async function getMediaDetails() {
-            if ((variable as ImageVariable)?.value && defaultMediaConnector?.id) {
-                const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector.id);
-                if (mediaConnectorState.parsedData?.type !== 'ready') {
-                    await window.SDK.connector.waitToBeReady(defaultMediaConnector.id);
-                }
-                if (
-                    connectorCapabilities[defaultMediaConnector.id] &&
-                    connectorCapabilities[defaultMediaConnector.id].detail
-                ) {
-                    const { parsedData } = await window.SDK.mediaConnector.detail(
-                        defaultMediaConnector?.id,
-                        (variable as ImageVariable).value?.assetId as string,
-                    );
+            if (!variable.value || !variable.value.connectorId) return;
 
-                    setMediaDetails(parsedData);
-                }
+            const mediaConnectorState = await window.SDK.connector.getState(variable.value.connectorId);
+            if (mediaConnectorState.parsedData?.type !== 'ready') {
+                await window.SDK.connector.waitToBeReady(variable.value.connectorId ?? '');
             }
+            if (
+                !connectorCapabilities[variable.value.connectorId] ||
+                !connectorCapabilities[variable.value.connectorId].detail
+            ) {
+                getCapabilitiesForConnector(variable.value.connectorId);
+            }
+
+            const { parsedData } = await window.SDK.mediaConnector.detail(
+                variable.value.connectorId,
+                variable.value.assetId as string,
+            );
+
+            setMediaDetails(parsedData);
         }
 
         getMediaDetails();
-    }, [variable, defaultMediaConnector?.id, connectorCapabilities]);
+    }, [variable, connectorCapabilities, getCapabilitiesForConnector]);
 
     const { previewImage } = usePreviewImage(mediaDetails, previewCall, true, variable);
 
@@ -59,11 +61,11 @@ function ImageVariable(props: IImageVariable) {
             name={variable.id}
             dataId={getDataIdForSUI('image-picker')}
             dataTestId={getDataTestIdForSUI('image-picker')}
-            label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
+            label={<Label translationKey={variable.name ?? ''} value={variable.name ?? ''} />}
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
             onClick={() => {
-                showImagePanel(variable.id);
+                showImagePanel(variable as ImageVariable);
             }}
             previewErrorUrl={previewErrorUrl}
         />
