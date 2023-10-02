@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { BooleanVariable } from '@chili-publish/studio-sdk';
 import { IBooleanVariable } from './VariablesComponents.types';
 import { BooleanVariableContainer } from './VariablesComponents.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
@@ -15,6 +16,8 @@ function BooleanVariable(props: IBooleanVariable) {
     return (
         <BooleanVariableContainer>
             <Switch
+                dataId={getDataIdForSUI(`switch-${variable.id}`)}
+                dataTestId={getDataTestIdForSUI(`switch-${variable.id}`)}
                 isChecked={toggled}
                 id={variable.id}
                 label={{

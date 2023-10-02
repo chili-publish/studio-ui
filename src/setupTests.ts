@@ -3,6 +3,19 @@ import { mock } from 'jest-mock-extended';
 import EditorSDK from '@chili-publish/studio-sdk';
 
 jest.mock('@chili-publish/studio-sdk');
+
+window.matchMedia =
+    window.matchMedia ||
+    function () {
+        return {
+            matches: false,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            addEventListener() {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            removeEventListener() {},
+        };
+    };
+
 const mockSDK = mock<EditorSDK>();
 mockSDK.mediaConnector.detail = jest
     .fn()

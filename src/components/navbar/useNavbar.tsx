@@ -59,6 +59,7 @@ const useNavbar = (
                 content: (
                     <NavbarGroup>
                         <NavbarButton
+                            dataId="back-btn"
                             ariaLabel="Go back"
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
@@ -72,6 +73,7 @@ const useNavbar = (
                 content: (
                     <NavbarGroup withGap>
                         <NavbarButton
+                            dataId="undo-btn"
                             ariaLabel="Undo"
                             icon={AvailableIcons.faArrowTurnDownLeft}
                             flipIconY
@@ -79,6 +81,7 @@ const useNavbar = (
                             handleOnClick={handleUndo}
                         />
                         <NavbarButton
+                            dataId="redo-btn"
                             ariaLabel="Redo"
                             icon={AvailableIcons.faArrowTurnDownRight}
                             flipIconY
@@ -92,6 +95,7 @@ const useNavbar = (
                 label: 'Download',
                 content: (
                     <NavbarButton
+                        dataId="navbar-download-btn"
                         ariaLabel="Download"
                         label={
                             !isMobile ? (

@@ -24,6 +24,7 @@ import {
     SpinnerContainer,
 } from './DownloadPanel.styles';
 import useDownload from './useDownload';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
@@ -56,6 +57,7 @@ function DownloadPanel(props: DownloadPanelProps) {
             >
                 <Content borderTop={!mobileDropdownOpen}>
                     <StudioDropdown
+                        dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output type"
                         selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
                         options={downloadOptions}
@@ -72,6 +74,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                             </SpinnerContainer>
                         ) : (
                             <Button
+                                dataId={getDataIdForSUI(`download-btn`)}
+                                dataTestId={getDataTestIdForSUI(`download-btn`)}
                                 onClick={() => {
                                     handleDownload(selectedOption, updateDownloadState);
                                 }}
@@ -97,6 +101,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <DesktopDropdownContainer>
                         <DropdownLabel>Output type</DropdownLabel>
                         <DropDown
+                            dataId={getDataIdForSUI(`output-dropdown`)}
+                            dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={downloadOptions.find((option) => option.value === selectedOption)}
                             options={downloadOptions}
                             isSearchable={false}
@@ -110,6 +116,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                         </SpinnerContainer>
                     ) : (
                         <Button
+                            dataId={getDataIdForSUI(`download-btn`)}
+                            dataTestId={getDataTestIdForSUI(`download-btn`)}
                             onClick={() => {
                                 handleDownload(selectedOption, updateDownloadState);
                             }}
