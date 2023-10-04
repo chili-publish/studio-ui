@@ -1,12 +1,10 @@
-import type SDK from '@chili-publish/studio-sdk';
-
 export interface ProjectConfig {
     projectId: string;
     projectName: string;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectTemplateRequested: (projectId: string) => Promise<string>;
-    onProjectLoaded: (project: Project, sdk: SDK) => void;
-    onProjectSave: (sdk: SDK) => Promise<Project>;
+    onProjectLoaded: (project: Project) => void;
+    onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
     onAuthenticationExpired: () => Promise<string>;
     onUserInterfaceBack: () => void;

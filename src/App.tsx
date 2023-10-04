@@ -42,7 +42,17 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
-    const saveDocumentDebounced = useDebounce(() => projectConfig.onProjectSave(window.SDK));
+    const saveDocumentDebounced = useDebounce(() =>
+        projectConfig.onProjectSave(async () => {
+            const { data } = await window.SDK.document.getCurrentState();
+
+            if (!data) {
+                throw new Error('Document data is empty');
+            }
+
+            return data;
+        }),
+    );
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -149,7 +159,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
         // loadEditor is a synchronous call after which we are sure
         // the connection to the engine is established
-        projectConfig.onProjectLoaded(currentProject as Project, window.SDK);
+        projectConfig.onProjectLoaded(currentProject as Project);
 
         projectConfig.onProjectTemplateRequested(projectConfig.projectId).then((template) => {
             setFetchedDocument(template);

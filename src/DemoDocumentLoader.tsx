@@ -1,5 +1,4 @@
 import axios from 'axios';
-import type SDK from '@chili-publish/studio-sdk';
 import { DownloadLinkResult, Project } from './types/types';
 
 export class DemoDocumentLoader {
@@ -9,7 +8,7 @@ export class DemoDocumentLoader {
 
     onProjectTemplateRequested: (projectId: string) => Promise<string>;
 
-    onProjectLoaded: (project: Project, sdk: SDK) => void;
+    onProjectLoaded: (project: Project) => void;
 
     onProjectSave: () => Promise<Project>;
 

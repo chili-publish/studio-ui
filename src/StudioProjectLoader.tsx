@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios';
-import type SDK from '@chili-publish/studio-sdk';
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import { DownloadLinkResult, HttpHeaders, Project } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
@@ -62,15 +61,15 @@ export class StudioProjectLoader {
         return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.authToken);
     };
 
-    public onProjectLoaded = (_project: Project, sdk: SDK): void => {
-        sdk.configuration.setValue(
+    public onProjectLoaded = (): void => {
+        window.SDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
             this.graFxStudioEnvironmentApiBaseUrl ?? '',
         );
     };
 
-    public onProjectSave = async (sdk: SDK): Promise<Project> => {
-        await this.saveDocument(sdk, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
+    public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
+        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
         return this.onProjectInfoRequested();
     };
 
@@ -129,13 +128,18 @@ export class StudioProjectLoader {
         return '{}';
     };
 
-    private saveDocument = async (sdk: SDK, docEditorLink?: string, templateUrl?: string, token?: string) => {
+    private saveDocument = async (
+        generateJson: () => Promise<string>,
+        docEditorLink?: string,
+        templateUrl?: string,
+        token?: string,
+    ) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
 
         if (url && process.env.NODE_ENV !== 'development') {
             try {
-                const document = await sdk.document.getCurrentState().then((res) => {
-                    if (res.success) {
+                const document = await generateJson().then((res) => {
+                    if (res) {
                         return res;
                     }
                     throw new Error();
@@ -149,8 +153,8 @@ export class StudioProjectLoader {
                 if (token) {
                     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
                 }
-                if (document.data) {
-                    axios.put(url, JSON.parse(document.data), config).catch((err) => {
+                if (document) {
+                    axios.put(url, JSON.parse(document), config).catch((err) => {
                         // eslint-disable-next-line no-console
                         console.error(`[${this.saveDocument.name}] There was an issue saving document`);
                         return err;

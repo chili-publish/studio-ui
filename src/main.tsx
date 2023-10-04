@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { AxiosError } from 'axios';
-import type SDK from '@chili-publish/studio-sdk';
 import App from './App';
 import { DownloadLinkResult, Project, ProjectConfig } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
@@ -73,8 +72,8 @@ export default class StudioUI {
         projectName: string,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
         onProjectTemplateRequested: (projectId: string) => Promise<string>,
-        onProjectSave: (sdk: SDK) => Promise<Project>,
-        onProjectLoaded: (project: Project, sdk: SDK) => void,
+        onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
+        onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
         onAuthenticationExpired: () => Promise<string>,
         onUserInterfaceBack: () => void,
@@ -175,7 +174,7 @@ export default class StudioUI {
         onBack: () => void,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
         onProjectTemplateRequested: (projectId: string) => Promise<string>,
-        onProjectSave: (sdk: SDK) => Promise<Project>,
+        onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
     ) {
         const projectLoader = new StudioProjectLoader(
             projectId,
