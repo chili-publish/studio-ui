@@ -8,8 +8,10 @@ import {
     MobileDropdownOptionContent,
     MobileDropdownValue,
 } from './StudioDropdown.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface StudioDropdownProps {
+    dataId: string;
     label?: string;
     selectedValue?: Option;
     options: Option[];
@@ -19,6 +21,7 @@ interface StudioDropdownProps {
     onMenuClose?: () => void;
 }
 function StudioDropdown({
+    dataId,
     label,
     selectedValue,
     options,
@@ -45,6 +48,8 @@ function StudioDropdown({
             <>
                 {label && <Label marginBottom="0.75rem">{label}</Label>}
                 <DropDown
+                    dataId={getDataIdForSUI(`dropdown-${dataId}`)}
+                    dataTestId={getDataTestIdForSUI(`dropdown-${dataId}`)}
                     value={selectedValue}
                     options={options}
                     onChange={(val) => onChange?.(val?.value?.toString() || '')}
