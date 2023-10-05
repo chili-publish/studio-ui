@@ -6,14 +6,13 @@ import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
 import { ProjectConfig } from '../../types/types';
-import { getDownloadLink } from '../../utils/documentExportHelper';
 
 const useNavbar = (
     projectName: string | undefined,
     goBack: (() => void) | undefined,
     zoom: number,
     undoStackState: { canRedo: boolean; canUndo: boolean },
-    projectConfig?: ProjectConfig,
+    projectConfig: ProjectConfig,
 ) => {
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
@@ -137,15 +136,8 @@ const useNavbar = (
         try {
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
-            const { data: downloadURL } = await getDownloadLink(
-                extension,
-                projectConfig?.graFxStudioEnvironmentApiBaseUrl ?? '',
-                projectConfig?.authToken ?? '',
-                selectedLayoutID || '0',
-                projectConfig?.projectId ?? '',
-            );
-
-            const config = { headers: { Authorization: `Bearer ${projectConfig?.authToken}` } };
+            const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
+            const config = { headers: { Authorization: `Bearer ${projectConfig?.onAuthenticationRequested()}` } };
             const response = await fetch(downloadURL ?? '', config);
 
             if (response.status !== 200) return;
