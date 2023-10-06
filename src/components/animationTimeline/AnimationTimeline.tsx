@@ -4,9 +4,10 @@ import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 interface IAnimationTimeline {
     scrubberTimeMs: number;
     animationLength: number;
+    isAnimationPlaying: boolean;
 }
 function AnimationTimeline(props: IAnimationTimeline) {
-    const { scrubberTimeMs, animationLength } = props;
+    const { scrubberTimeMs, animationLength, isAnimationPlaying } = props;
 
     const handlePlay = async () => {
         await window.SDK.animation.play();
@@ -29,6 +30,7 @@ function AnimationTimeline(props: IAnimationTimeline) {
                     playAnimation={handlePlay}
                     pauseAnimation={handlePause}
                     timestamp={scrubberTimeMs}
+                    isPlaying={isAnimationPlaying}
                 />
             )}
         </AnimationTimelineWrapper>
