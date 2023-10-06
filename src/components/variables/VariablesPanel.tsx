@@ -43,7 +43,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                     onClick={() => setIsVariablesPanelVisible(true)}
                     styles={css`
                         padding: 0.9375rem;
-                        fontsize: ${FontSizes.regular};
+                        font-size: ${FontSizes.regular};
                         border-radius: 50%;
 
                         svg {
