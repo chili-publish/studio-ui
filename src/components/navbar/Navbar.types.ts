@@ -6,7 +6,7 @@ export interface INavbar {
     goBack?: () => void;
     zoom: number;
     undoStackState: { canRedo: boolean; canUndo: boolean };
-    projectConfig?: ProjectConfig;
+    projectConfig: ProjectConfig;
 }
 export interface NavbarItemType {
     label: string;
