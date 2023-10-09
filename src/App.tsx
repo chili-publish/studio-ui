@@ -150,7 +150,6 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     zoom: { enabled: false },
                 },
             },
-            // editorLink: projectConfig.overrideEngineUrl,
             editorLink: projectConfig.overrideEngineUrl,
         });
 
