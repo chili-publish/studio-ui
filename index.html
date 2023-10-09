@@ -20,20 +20,20 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                // StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                StudioUI.studioLoaderConfig(
-                    'sui-root',
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/9b8303ff-98ea-4378-8353-15cc291e1d53/document' /*projectDownloadUrl:*/,
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217/projects/9b8303ff-98ea-4378-8353-15cc291e1d53/document' /*projectUploadUrl:*/,
-                    '9b8303ff-98ea-4378-8353-15cc291e1d53' /*projectId:*/,
-                    'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217' /*graFxStudioEnvironmentApiBaseUrl:*/,
-                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL2VtYWlsIjoicnN0ZWZhbkBjaGlsaS1wdWJsaXNoLmNvbSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiRkEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U1UiLCI4OWI5NWFkOC0yNDU5LTRhYzQtOTRkOS03ZTIzYjZkMGY0NjZ8RUEiLCJkNGJkNDVjMi04YTU4LTRjZjYtYjgyYi1hZGJhNjhhY2ZlYjl8RUEiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U0EiXSwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9jdXN0b21lcl9ndWlkIjoiNTE1MWVmOWItZGM2Zi00NTU4LTkwN2QtNzNlNzc3M2JhNTQxIiwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9zdWJzY3JpcHRpb25zIjpbIjU3NzE4ZmY2LTgxYzgtNGU5ZS1iYmU4LTNjNGVjODZjZjE4NCJdLCJpc3MiOiJodHRwczovL2xvZ2luLmNoaWxpZ3JhZngtZGV2LmNvbS8iLCJzdWIiOiJzYW1scHxjaGlsaS1wdWJsaXNoLWRldnxzTVRab0tJT0lBbm1NVC1BbDBnZGxRQ1dBMmVjNXFOZnlMTkNlVkRXVURrIiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjk2ODM2NjgzLCJleHAiOjE2OTY5MjMwODMsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.wypK93yiI3cpAI13wg2K6Ywn3l-WzqeIGMwYrjmOXj1g4VwCIXhluLP-EqObLhj7_rl8ygXC76-Tas5J2BQ1d4gcKSvh-GrQs2FrtER4xOJjWuCDbPPGmjrqmcbaP3VZeb0fFgERoBgBqVKQ0rdxtuszdZ7yze3Qzq7mrIIbnwGASEw84Eo9Vb9RfGgYAFP-GzYLHvGX0aVUMd4ItY6z-xgeZfqCTDyjd8V518cFLvcXGmND7p-wMe-OhqQ2qMD1a1dLG9yXJTNxu0ZY96z2mSUhvr2hf09h6CpS8yF-YiHY6h5of7PJmLzHAXvUY7josVWH8YcBGsASsCmgZrDmuQ' /*authToken:*/,
-                    () => null /*refreshTokenAction*/,
-                    'Project 1' /*documentName*/,
-                    () => null /*onBack event*/,
-                    'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/main/web' /*editorEngineUrl*/,
-                );
+                // StudioUI.studioLoaderConfig(
+                //     'sui-root',
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectDownloadUrl:*/
+                //     "https://<baseUrl>/environment/<env-name>/projects/<project guid>/document",  /*projectUploadUrl:*/
+                //     "<project guid>",                                                             /*projectId:*/
+                //     "https://<baseUrl>/environment/<env-name>/"                                   /*graFxStudioEnvironmentApiBaseUrl:*/
+                //     "<open a project on chiligrafx.com to retrieve AT from network requests>",    /*authToken:*/
+                //     () => null                                                                    /*refreshTokenAction*/
+                //     "Project 1"                                                                   /*documentName*/
+                //     () => null                                                                    /*onBack event*/
+                //     "<Link to the engine you want to use>"                                        /*editorEngineUrl*/
+                //)
             });
         </script>
     </body>

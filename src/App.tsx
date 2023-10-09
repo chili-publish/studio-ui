@@ -151,7 +151,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 },
             },
             // editorLink: projectConfig.overrideEngineUrl,
-            editorLink: 'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/main/web',
+            editorLink: projectConfig.overrideEngineUrl,
         });
 
         // Connect to ths SDK
