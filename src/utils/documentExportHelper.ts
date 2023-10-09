@@ -1,5 +1,6 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import axios from 'axios';
+import { DownloadLinkResult } from '../types/types';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -17,7 +18,7 @@ export const getDownloadLink = async (
     token: string,
     layoutId: Id,
     projectId: string,
-) => {
+): Promise<DownloadLinkResult> => {
     try {
         const documentResponse = await window.SDK.document.getCurrentState();
         let generateExportUrl = `${baseUrl}/output/`;
@@ -70,7 +71,8 @@ export const getDownloadLink = async (
                 status: Number.parseInt(err.status),
                 error: err.detail,
                 success: false,
-                parsedData: null,
+                parsedData: undefined,
+                data: undefined,
             };
         }
 
@@ -78,18 +80,30 @@ export const getDownloadLink = async (
         const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, token);
 
         if (pollingResult === null) {
-            return { status: 500, error: 'Error during polling', success: false, parsedData: null };
+            return {
+                status: 500,
+                error: 'Error during polling',
+                success: false,
+                parsedData: undefined,
+                data: undefined,
+            };
         }
 
         return {
             status: 200,
-            error: null,
             success: true,
             parsedData: pollingResult.links.download,
             data: pollingResult.links.download,
+            error: undefined,
         };
     } catch {
-        return { status: 500, error: 'Unexpected error during polling', success: false, parsedData: null };
+        return {
+            status: 500,
+            error: 'Unexpected error during polling',
+            success: false,
+            parsedData: undefined,
+            data: undefined,
+        };
     }
 };
 
