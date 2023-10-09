@@ -318,10 +318,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.44.12":
-  version "0.44.12"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.44.12/c4acaac2acd03eca6bd1f5fb86acbcbcdc0a5af6#c4acaac2acd03eca6bd1f5fb86acbcbcdc0a5af6"
-  integrity sha512-WyecUgkU2E8Nrwk8dDz1fgAI4tSRwQ21WSa9fu196GvX8IBIP3QiN09sEuqK7dbElwNJ/Uz4KaO8rkmCMLxPMQ==
+"@chili-publish/grafx-shared-components@^0.44.14":
+  version "0.44.14"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.44.14/6e3a8c13554bc0e914b1e18793b1d85e8c3105e1#6e3a8c13554bc0e914b1e18793b1d85e8c3105e1"
+  integrity sha512-7NpZUFAPeMYszKckGb4W0siPIgQBXoE1I0+qemDinio2qo6XW7tDDPEQWcQwJdLhjO4pVbOnWixw43ye9FesJw==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -4185,9 +4185,9 @@ postcss-value-parser@^4.0.2:
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
 postcss@^8.4.23:
-  version "8.4.23"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.23.tgz"
-  integrity sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==
+  version "8.4.31"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.31.tgz#92b451050a9f914da6755af352bdc0192508656d"
+  integrity sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==
   dependencies:
     nanoid "^3.3.6"
     picocolors "^1.0.0"
