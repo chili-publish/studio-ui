@@ -12,7 +12,7 @@ function ImageVariable(props: IImageVariable) {
     const { showImagePanel, defaultMediaConnector, connectorCapabilities } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
-        const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector?.id);
+        const mediaConnectorState = await window.SDK.connector.getState(defaultMediaConnector?.id);
         let response = { success: true };
         if (mediaConnectorState.parsedData?.type !== 'ready') {
             response = await window.SDK.connector.waitToBeReady(defaultMediaConnector?.id);
@@ -31,7 +31,7 @@ function ImageVariable(props: IImageVariable) {
     useEffect(() => {
         async function getMediaDetails() {
             if ((variable as ImageVariable)?.value && defaultMediaConnector?.id) {
-                const mediaConnectorState = await window.SDK.connector.getById(defaultMediaConnector.id);
+                const mediaConnectorState = await window.SDK.connector.getState(defaultMediaConnector.id);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.SDK.connector.waitToBeReady(defaultMediaConnector.id);
                 }

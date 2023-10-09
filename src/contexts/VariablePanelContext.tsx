@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ConnectorInstance, Media } from '@chili-publish/studio-sdk';
+import { ConnectorInstance, ConnectorRegistrationSource, Media } from '@chili-publish/studio-sdk';
 import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
@@ -17,8 +17,18 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     imagePanelTitle: <div />,
-    defaultFontsConnector: { id: '', iconUrl: '', name: '' },
-    defaultMediaConnector: { id: '', iconUrl: '', name: '' },
+    defaultFontsConnector: {
+        id: '',
+        iconUrl: '',
+        name: '',
+        source: { url: '', source: ConnectorRegistrationSource.grafx },
+    },
+    defaultMediaConnector: {
+        id: '',
+        iconUrl: '',
+        name: '',
+        source: { url: '', source: ConnectorRegistrationSource.grafx },
+    },
     connectorCapabilities: {},
 };
 
@@ -43,11 +53,13 @@ export function VariablePanelContextProvider({
         id: '',
         iconUrl: '',
         name: '',
+        source: { url: '', source: ConnectorRegistrationSource.grafx },
     });
     const [defaultFontsConnector, setDefaultFontsConnector] = useState<ConnectorInstance>({
         id: '',
         iconUrl: '',
         name: '',
+        source: { url: '', source: ConnectorRegistrationSource.grafx },
     });
 
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});

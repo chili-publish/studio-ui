@@ -150,7 +150,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     zoom: { enabled: false },
                 },
             },
-            editorLink: projectConfig.overrideEngineUrl,
+            // editorLink: projectConfig.overrideEngineUrl,
+            editorLink: 'https://stgrafxstudiodevpublic.blob.core.windows.net/editor/main/web',
         });
 
         // Connect to ths SDK
@@ -180,13 +181,13 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, []);
 
     useEffect(() => {
-        if (currentProject?.template.id) {
+        if (currentProject?.template?.id) {
             window.SDK.configuration.setValue(
                 WellKnownConfigurationKeys.GraFxStudioTemplateId,
                 currentProject?.template.id ?? '',
             );
         }
-    }, [currentProject?.template.id]);
+    }, [currentProject?.template?.id]);
 
     useEffect(() => {
         const setHandTool = async () => {
