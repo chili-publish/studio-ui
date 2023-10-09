@@ -51,7 +51,7 @@ beforeEach(() => {
 
     mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
 
-    mockSDK.connector.getById = jest
+    mockSDK.connector.getState = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
@@ -177,7 +177,7 @@ describe('Image Panel', () => {
             image.click();
         });
 
-        const breadCrumb = getByText('Root');
+        const breadCrumb = getByText('Home');
         expect(breadCrumb).toBeInTheDocument();
     });
 
