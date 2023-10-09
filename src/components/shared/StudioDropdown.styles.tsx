@@ -12,8 +12,25 @@ export const MobileDropdownOptionContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     background-color: ${Colors.LIGHT_GRAY};
+    border: 1px solid transparent;
+    font-size: ${FontSizes.regular};
+    line-height: 1.29;
     height: 2.5rem;
     border-radius: 0.25rem;
+
+    &:hover {
+        box-shadow: none;
+        border-color: ${Colors.PRIMARY_FONT};
+        cursor: pointer;
+
+        svg {
+            color: ${Colors.PRIMARY_FONT};
+        }
+    }
+
+    svg {
+        color: ${Colors.SECONDARY_FONT};
+    }
 `;
 
 export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
@@ -21,6 +38,7 @@ export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
     align-items: center;
     height: 3rem;
     padding: 0 1rem;
+    font-size: ${FontSizes.regular};
     ${({ selected }) => selected && `background-color: ${Colors.LIGHT_GRAY_200};`};
 `;
 

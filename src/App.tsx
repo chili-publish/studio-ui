@@ -33,6 +33,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [canRedo, setCanRedo] = useState(false);
     const [animationLength, setAnimationLength] = useState(0);
     const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
+    const [animationStatus, setAnimationStatus] = useState(false);
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
@@ -126,6 +127,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 zoomToPage();
             },
             onScrubberPositionChanged: (animationPlayback) => {
+                setAnimationStatus(animationPlayback?.animationIsPlaying || false);
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
             },
             onUndoStackStateChanged: (undoStackState) => {
@@ -248,7 +250,11 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                         >
                             <div className="chili-editor" id="chili-editor" />
                         </div>
-                        <AnimationTimeline scrubberTimeMs={scrubberTimeMs} animationLength={animationLength} />
+                        <AnimationTimeline
+                            scrubberTimeMs={scrubberTimeMs}
+                            animationLength={animationLength}
+                            isAnimationPlaying={animationStatus}
+                        />
                     </CanvasContainer>
                 </MainContentContainer>
             </div>
