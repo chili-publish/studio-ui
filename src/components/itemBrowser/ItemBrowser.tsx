@@ -61,6 +61,7 @@ function ItemBrowser<
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
         requested: false,
@@ -70,13 +71,13 @@ function ItemBrowser<
     const moreData = !!nextPageToken?.token;
 
     const {
-        selectedItems,
-        navigationStack,
-        setSelectedItems,
-        setNavigationStack,
-        imagePanelTitle,
-        contentType,
         connectorCapabilities,
+        contentType,
+        imagePanelTitle,
+        navigationStack,
+        selectedItems,
+        setNavigationStack,
+        setSelectedItems,
     } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
 
@@ -169,6 +170,7 @@ function ItemBrowser<
                     setIsLoading(true);
                     return toNavigationStack(listItem.instance.relativePath);
                 });
+                setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
                 selectItem(listItem.instance);
             }
@@ -203,9 +205,9 @@ function ItemBrowser<
         );
     });
 
-    const navigationStackString = useMemo(() => {
-        return navigationStack?.join('\\') ?? '';
-    }, [navigationStack]);
+    const breacrumbStackString = useMemo(() => {
+        return breadcrumbStack?.join('\\') ?? '';
+    }, [breadcrumbStack]);
 
     if (!isPanelOpen) {
         return null;
@@ -225,12 +227,14 @@ function ItemBrowser<
         >
             <BreadCrumbsWrapper>
                 <BreadCrumb
-                    href={`Home${navigationStack.length ? '\\' : ''}${navigationStackString}`}
+                    href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                     color={Colors.SECONDARY_FONT}
                     activeColor={Colors.PRIMARY_FONT}
                     onClick={(breadCrumb: string) => {
                         const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(breadCrumb) + 1);
+                        const newBreadcrumbStack = breadcrumbStack?.splice(0, breadcrumbStack.indexOf(breadCrumb) + 1);
                         setNavigationStack(newNavigationStack);
+                        setBreadcrumbStack(newBreadcrumbStack);
                     }}
                 />
             </BreadCrumbsWrapper>

@@ -38,7 +38,7 @@ mockSDK.mediaConnector.download = jest
     .mockImplementation()
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-mockSDK.connector.getById = jest
+mockSDK.connector.getState = jest
     .fn()
     .mockImplementation()
     .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));

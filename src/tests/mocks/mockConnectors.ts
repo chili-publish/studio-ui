@@ -6,7 +6,7 @@ export const mockConnectors = {
             id: 'grafx-media',
             name: 'GraFx Media',
             iconUrl: '',
-            source: { url: '', source: ConnectorRegistrationSource.grafx },
+            source: { source: ConnectorRegistrationSource.grafx, url: '' },
         },
     ],
     fontsConnectors: [
@@ -14,7 +14,7 @@ export const mockConnectors = {
             id: 'grafx-font',
             name: 'GraFx Font',
             iconUrl: '',
-            source: { url: '', source: ConnectorRegistrationSource.grafx },
+            source: { source: ConnectorRegistrationSource.grafx, url: '' },
         },
     ],
 };
