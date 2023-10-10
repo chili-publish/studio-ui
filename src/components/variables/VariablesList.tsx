@@ -14,6 +14,7 @@ interface VariablesListProps {
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
 
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
+    console.log('variables', variables);
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
 

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { ImagePicker, Label } from '@chili-publish/grafx-shared-components';
 import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
-import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
-import { IImageVariable } from '../VariablesComponents.types';
+import { useCallback, useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { IImageVariable } from '../VariablesComponents.types';
+import usePreviewImage from './usePreviewStuff/usePreviewImage';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
@@ -11,7 +12,7 @@ function ImageVariable(props: IImageVariable) {
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const { showImagePanel, connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
 
-    const previewCall = async (id: string) => {
+    const previewCall = useCallback(async (id: string) => {
         let response = { success: true };
         const downloadCall = async () => {
             return window.SDK.mediaConnector.download(
@@ -22,6 +23,7 @@ function ImageVariable(props: IImageVariable) {
             );
         };
         try {
+            console.log('previewCall');
             return downloadCall();
         } catch {
             const mediaConnectorState = await window.SDK.connector.getState(variable.value?.connectorId ?? '');
@@ -33,9 +35,10 @@ function ImageVariable(props: IImageVariable) {
             }
             return null;
         }
-    };
+    }, []);
 
     useEffect(() => {
+        console.log('useEffect');
         async function getMediaDetails() {
             if (!variable.value || !variable.value.connectorId) return;
 
@@ -63,7 +66,13 @@ function ImageVariable(props: IImageVariable) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { previewImage } = usePreviewImage(mediaDetails, previewCall, true, variable);
+    const { previewImage } = usePreviewImage(
+        mediaDetails,
+        previewCall,
+        true,
+        variable.value?.assetId ?? '',
+        variable.name,
+    );
 
     return (
         <ImagePicker
