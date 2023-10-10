@@ -61,7 +61,7 @@ function ImageVariable(props: IImageVariable) {
 
         getMediaDetails();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [variable, getCapabilitiesForConnector]);
+    }, []);
 
     const { previewImage } = usePreviewImage(mediaDetails, previewCall, true, variable);
 
