@@ -4,16 +4,14 @@ import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
 function ImagePanel({ height }: { height?: string }) {
-    const { defaultMediaConnector } = useVariablePanelContext();
+    const { handleUpdateImage, currentVariableConnectorId } = useVariablePanelContext();
     const previewCall = (id: string): Promise<Uint8Array> =>
-        window.SDK.mediaConnector.download(defaultMediaConnector.id, id, MediaDownloadType.LowResolutionWeb, {});
-
-    const { handleUpdateImage } = useVariablePanelContext();
+        window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.LowResolutionWeb, {});
 
     return (
         <ItemBrowser<Media>
             isPanelOpen
-            connectorId={defaultMediaConnector.id}
+            connectorId={currentVariableConnectorId}
             queryCall={window.SDK.mediaConnector.query}
             previewCall={previewCall}
             onSelect={(assets) => {

@@ -1,4 +1,4 @@
-import { ConnectorCapabilities, ConnectorInstance, Media } from '@chili-publish/studio-sdk';
+import { ConnectorCapabilities, ConnectorInstance, ImageVariable, Media } from '@chili-publish/studio-sdk';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
@@ -17,9 +17,10 @@ export interface ICapabilities {
 
 export interface IVariablePanelContext {
     showVariablesPanel: () => void;
-    showImagePanel: (_: string) => void;
+    showImagePanel: (_: ImageVariable) => void;
     contentType: ContentType;
     currentVariableId: string;
+    currentVariableConnectorId: string;
     handleUpdateImage: (_: Media) => void;
     selectedItems: Media[];
     navigationStack: string[];
@@ -27,7 +28,6 @@ export interface IVariablePanelContext {
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
     imagePanelTitle: JSX.Element;
     connectors?: IConnectors;
-    defaultMediaConnector: ConnectorInstance;
-    defaultFontsConnector: ConnectorInstance;
-    connectorCapabilities: { [index: string]: ConnectorCapabilities };
+    connectorCapabilities: ICapabilities;
+    getCapabilitiesForConnector: (connectorId: string) => Promise<void>;
 }

@@ -1,9 +1,9 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ConnectorInstance, Media } from '@chili-publish/studio-sdk';
-import { Button, ButtonVariant, Icon, AvailableIcons, Colors } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publish/grafx-shared-components';
+import { ImageVariable, Media } from '@chili-publish/studio-sdk';
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
-import { NavigationWrapper, NavigationTitle } from '../components/itemBrowser/ItemBrowser.styles';
 import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
@@ -11,15 +11,15 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showImagePanel: () => undefined,
     contentType: ContentType.VARIABLES_LIST,
     currentVariableId: '',
+    currentVariableConnectorId: '',
     handleUpdateImage: () => undefined,
     selectedItems: [],
     navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
     imagePanelTitle: <div />,
-    defaultFontsConnector: { id: '', iconUrl: '', name: '' },
-    defaultMediaConnector: { id: '', iconUrl: '', name: '' },
     connectorCapabilities: {},
+    getCapabilitiesForConnector: async () => undefined,
 };
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
@@ -37,78 +37,35 @@ export function VariablePanelContextProvider({
 }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
-    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>(connectors.mediaConnectors);
-    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>(connectors.fontsConnectors);
-    const [defaultMediaConnector, setDefaultMediaConnector] = useState<ConnectorInstance>({
-        id: '',
-        iconUrl: '',
-        name: '',
-    });
-    const [defaultFontsConnector, setDefaultFontsConnector] = useState<ConnectorInstance>({
-        id: '',
-        iconUrl: '',
-        name: '',
-    });
-
-    const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
-    /* Image Panel Folder Navigation */
+    const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>([]);
-    useEffect(() => {
-        setMediaConnectors(connectors.mediaConnectors);
-    }, [connectors.mediaConnectors]);
 
-    useEffect(() => {
-        setFontsConnectors(connectors.fontsConnectors);
-    }, [connectors.fontsConnectors]);
+    const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
 
-    useEffect(() => {
-        if (mediaConnectors) setDefaultMediaConnector(mediaConnectors[0]);
-    }, [mediaConnectors]);
-
-    useEffect(() => {
-        if (fontsConnectors) setDefaultFontsConnector(fontsConnectors[0]);
-    }, [fontsConnectors]);
-
-    useEffect(() => {
-        const getCapabilities = async () => {
-            if (defaultMediaConnector?.id) {
-                await window.SDK.mediaConnector.getCapabilities(defaultMediaConnector.id).then((res) => {
-                    if (res.parsedData)
-                        setConnectorCapabilities((prev) => {
-                            return {
-                                ...prev,
-                                [defaultMediaConnector.id]: res.parsedData,
-                            } as ICapabilities;
-                        });
-                });
-            }
-            if (defaultFontsConnector?.id) {
-                await window.SDK.fontConnector.getCapabilities(defaultFontsConnector.id).then((res) => {
-                    if (res.parsedData)
-                        setConnectorCapabilities((prev) => {
-                            return {
-                                ...prev,
-                                [defaultFontsConnector.id]: res.parsedData,
-                            } as ICapabilities;
-                        });
-                });
-            }
-        };
-        getCapabilities();
-    }, [defaultFontsConnector?.id, defaultMediaConnector?.id]);
-
+    const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
+        if (!connectorId) throw new Error('ConnectorId is not defined');
+        const res = await window.SDK.mediaConnector.getCapabilities(connectorId);
+        if (!res.parsedData) throw new Error('Connector capabilities are not defined');
+        setConnectorCapabilities((prev) => {
+            const t = {
+                ...prev,
+                [connectorId]: res.parsedData,
+            } as ICapabilities;
+            return t;
+        });
+    }, []);
     const { handleImageChange } = useVariableComponents(currentVariableId);
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
             await handleImageChange({
                 assetId: source.id,
-                connectorId: defaultMediaConnector?.id,
+                connectorId: currentVariableConnectorId,
             });
             setContentType(ContentType.VARIABLES_LIST);
         },
-        [defaultMediaConnector?.id, handleImageChange],
+        [currentVariableConnectorId, handleImageChange],
     );
 
     const imagePanelTitle = useMemo(
@@ -141,34 +98,35 @@ export function VariablePanelContextProvider({
     const data = useMemo(
         () => ({
             showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
-            showImagePanel: (variableId: string) => {
-                setCurrentVariableId(variableId);
+            showImagePanel: (variable: ImageVariable) => {
+                setCurrentVariableId(variable.id);
+                setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
                 setContentType(ContentType.IMAGE_PANEL);
             },
             contentType,
             currentVariableId,
+            currentVariableConnectorId,
             handleUpdateImage,
             selectedItems,
             navigationStack,
             setSelectedItems,
             setNavigationStack,
             imagePanelTitle,
-            defaultMediaConnector,
-            defaultFontsConnector,
             connectorCapabilities,
             connectors,
+            getCapabilitiesForConnector,
         }),
         [
             contentType,
             currentVariableId,
+            currentVariableConnectorId,
             handleUpdateImage,
             selectedItems,
             navigationStack,
             imagePanelTitle,
-            defaultMediaConnector,
-            defaultFontsConnector,
             connectorCapabilities,
             connectors,
+            getCapabilitiesForConnector,
         ],
     );
 
