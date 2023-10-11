@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import Navbar from '../../components/navbar/Navbar';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
-import { getDataTestId } from '@chili-publish/grafx-shared-components';
 
 describe('Navbar', () => {
     it('Should render 4 navbar items', () => {
