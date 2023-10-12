@@ -82,6 +82,7 @@ export default class StudioUI {
             extension: string,
             selectedLayoutID: string | undefined,
         ) => Promise<DownloadLinkResult>,
+        editorLink?: string,
     ) {
         return new StudioUI(selector, {
             projectId,
@@ -95,6 +96,7 @@ export default class StudioUI {
             onUserInterfaceBack,
             onLogInfoRequested,
             onProjectGetDownloadLink,
+            overrideEngineUrl: editorLink,
         });
     }
 
@@ -121,6 +123,7 @@ export default class StudioUI {
         refreshTokenAction: () => Promise<string | AxiosError>,
         projectName: string,
         onBack: () => void,
+        editorLink?: string,
     ) {
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -144,6 +147,7 @@ export default class StudioUI {
             onBack,
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
+            editorLink,
         );
     }
 
