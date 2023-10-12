@@ -179,6 +179,7 @@ function ItemBrowser<
                 setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
                 selectItem(listItem.instance);
+                setNavigationStack([]);
             }
         };
 
