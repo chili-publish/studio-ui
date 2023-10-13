@@ -29,6 +29,7 @@ export interface DefaultStudioConfig {
     outputSettings?: OutputSettings;
     projectName: string;
     refreshTokenAction: () => Promise<string | AxiosError>;
+    editorLink?: string;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {
