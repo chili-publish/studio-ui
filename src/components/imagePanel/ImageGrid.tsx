@@ -23,6 +23,7 @@ export function ImageGrid(props: ImageGridProps) {
                 menuWidth="11rem"
                 onClickCard={() => handleAssetClick(asset)}
                 footerTopMargin="1rem"
+                renamingDisabled
             />
         </GridItem>
     ));
