@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 export interface ProjectConfig {
     projectId: string;
     projectName: string;
@@ -24,3 +25,26 @@ export type DownloadLinkResult = {
 export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
 export type Project = { name: string; id: string; template: { id: string } };
+
+export interface IStudioUILoaderConfig {
+    selector: string;
+    projectDownloadUrl: string;
+    projectUploadUrl: string;
+    projectId: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+    authToken: string;
+    projectName: string;
+    editorLink?: string;
+    refreshTokenAction: () => Promise<string | AxiosError>;
+    onBack: () => void;
+
+    onProjectInfoRequested?: (projectId: string) => Promise<Project>;
+    onProjectTemplateRequested?: (projectId: string) => Promise<string>;
+    onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
+    onProjectLoaded?: (project: Project) => void;
+    onAuthenticationRequested?: () => string;
+    onAuthenticationExpired?: () => Promise<string>;
+    onUserInterfaceBack?: () => void;
+    onLogInfoRequested?: () => void;
+    onProjectGetDownloadLink?: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+}
