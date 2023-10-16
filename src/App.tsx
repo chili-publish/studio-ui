@@ -183,13 +183,13 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, []);
 
     useEffect(() => {
-        if (currentProject?.template.id) {
+        if (currentProject?.template?.id) {
             window.SDK.configuration.setValue(
                 WellKnownConfigurationKeys.GraFxStudioTemplateId,
                 currentProject?.template.id ?? '',
             );
         }
-    }, [currentProject?.template.id]);
+    }, [currentProject?.template?.id]);
 
     useEffect(() => {
         const setHandTool = async () => {
