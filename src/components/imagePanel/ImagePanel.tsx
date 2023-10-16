@@ -8,6 +8,8 @@ function ImagePanel({ height }: { height?: string }) {
     const previewCall = (id: string): Promise<Uint8Array> =>
         window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.LowResolutionWeb, {});
 
+    if (!currentVariableConnectorId) return null;
+
     return (
         <ItemBrowser<Media>
             isPanelOpen

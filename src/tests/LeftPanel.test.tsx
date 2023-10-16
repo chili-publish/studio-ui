@@ -6,8 +6,8 @@ import { act } from 'react-dom/test-utils';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
-import { variables } from './mocks/mockVariables';
 import { mockConnectors } from './mocks/mockConnectors';
+import { variables } from './mocks/mockVariables';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
@@ -131,7 +131,7 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const imagePanel = getByText('Select image');
+        const imagePanel = await getByText(/home/i);
         expect(imagePanel).toBeInTheDocument();
 
         const goBackButton = getByRole('button');
