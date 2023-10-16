@@ -96,6 +96,11 @@ function ItemBrowser<
         setList(() => []);
     }, [navigationStack]);
 
+    useEffect(() => {
+        setBreadcrumbStack([]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contentType]);
+
     // nextPagetoken is first set with 'requested: false' whenever we know the next
     // pagetoken. When the last item of the previous page comes into view (in html)
     // then we flip the requested to 'true' to trigger this effect.
@@ -104,6 +109,7 @@ function ItemBrowser<
         setIsLoading(true);
         // declare the async data fetching function
         const fetchData = async () => {
+            if (contentType !== ContentType.IMAGE_PANEL) return;
             if (connectorCapabilities && connectorCapabilities[connectorId].query) {
                 const data = await queryCall(
                     connectorId,
@@ -135,7 +141,7 @@ function ItemBrowser<
             setIsLoading(false);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken]);
+    }, [nextPageToken, contentType]);
 
     useEffect(() => {
         return () => {
@@ -173,6 +179,7 @@ function ItemBrowser<
                 setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
                 selectItem(listItem.instance);
+                setNavigationStack([]);
             }
         };
 
