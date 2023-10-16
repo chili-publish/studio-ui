@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { useMobileSize } from '@chili-publish/grafx-shared-components';
+import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
@@ -40,13 +40,13 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         const options = variableItem.items.map((item) => ({ label: item, value: item }));
                         const selectedValue = variableItem.selected
                             ? { label: variableItem.selected, value: variableItem.selected }
-                            : undefined;
+                            : ('' as unknown as Option);
                         return (
                             <ComponentWrapper key={`variable-component-${variable.id}`}>
                                 <StudioDropdown
                                     dataId={variable.id}
                                     label={variable.name}
-                                    selectedValue={selectedValue}
+                                    selectedValue={selectedValue || ''}
                                     options={options}
                                     onChange={(val) => updateListVariableValue(variable.id, val)}
                                     onMenuOpen={() => setListVariableOpen(variable)}
