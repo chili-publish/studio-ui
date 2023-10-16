@@ -18,6 +18,7 @@ import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import { UiConfigContextProvider } from './contexts/UiConfigContext';
 
 declare global {
     interface Window {
@@ -230,35 +231,39 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, []);
 
     return (
-        <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
-            <div className="app">
-                <Navbar
-                    projectName={projectConfig?.projectName || currentProject?.name}
-                    goBack={projectConfig?.onUserInterfaceBack}
-                    projectConfig={projectConfig}
-                    undoStackState={{ canRedo, canUndo }}
-                    zoom={currentZoom}
-                />
-                <MainContentContainer>
-                    {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                    <CanvasContainer>
-                        {isMobileSize && <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                        <div
-                            className="sui-canvas"
-                            data-id={getDataIdForSUI('canvas')}
-                            data-testid={getDataTestIdForSUI('canvas')}
-                        >
-                            <div className="chili-editor" id="chili-editor" />
-                        </div>
-                        <AnimationTimeline
-                            scrubberTimeMs={scrubberTimeMs}
-                            animationLength={animationLength}
-                            isAnimationPlaying={animationStatus}
-                        />
-                    </CanvasContainer>
-                </MainContentContainer>
-            </div>
-        </VariablePanelContextProvider>
+        <UiConfigContextProvider projectConfig={projectConfig}>
+            <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
+                <div className="app">
+                    <Navbar
+                        projectName={projectConfig?.projectName || currentProject?.name}
+                        goBack={projectConfig?.onUserInterfaceBack}
+                        projectConfig={projectConfig}
+                        undoStackState={{ canRedo, canUndo }}
+                        zoom={currentZoom}
+                    />
+                    <MainContentContainer>
+                        {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
+                        <CanvasContainer>
+                            {isMobileSize && (
+                                <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                            )}
+                            <div
+                                className="sui-canvas"
+                                data-id={getDataIdForSUI('canvas')}
+                                data-testid={getDataTestIdForSUI('canvas')}
+                            >
+                                <div className="chili-editor" id="chili-editor" />
+                            </div>
+                            <AnimationTimeline
+                                scrubberTimeMs={scrubberTimeMs}
+                                animationLength={animationLength}
+                                isAnimationPlaying={animationStatus}
+                            />
+                        </CanvasContainer>
+                    </MainContentContainer>
+                </div>
+            </VariablePanelContextProvider>
+        </UiConfigContextProvider>
     );
 }
 
