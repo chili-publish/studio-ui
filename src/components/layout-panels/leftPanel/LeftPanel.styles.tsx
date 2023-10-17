@@ -15,10 +15,12 @@ export const LeftPanelContainer = styled.div`
     }
 `;
 
-export const VariablesListContainer = styled.div`
+export const VariablesListContainer = styled.div<{ hidden: boolean }>`
     padding: 0 1.25rem;
+    ${({ hidden }) => hidden && 'display: none;'};
 `;
 
-export const ImagePanelContainer = styled.div`
-    padding-left: 1.25rem;
+export const ImagePanelContainer = styled.div<{ hidden: boolean }>`
+    padding: 0 0 0 1.25rem;
+    ${({ hidden }) => hidden && 'display: none;'};
 `;

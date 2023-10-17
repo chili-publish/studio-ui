@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
-import { IImageVariable } from '../VariablesComponents.types';
+import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { IImageVariable } from '../VariablesComponents.types';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
