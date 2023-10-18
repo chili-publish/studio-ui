@@ -2,37 +2,55 @@
 
 This repository includes the Studio UI, which will be used by CHILI GraFx end users
 
+## Prerequisites
+
+### Tools setup
+
+-   [Node v18](https://nodejs.org/en) is installed
+    > node -v # to check existing node version
+-   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) is installed
+    > yarn -v # to check existing yarn version
+
+### Configure .npmrc to access private npm repositories
+
+-   Setup access to `@chili-publish` registry
+
+    -   Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only neccessary scopes (`read:packages`) and expiration time recommendataion is `90 days`.
+
+    -   Login to the repository
+
+    ```bash
+    npm login --scope=@chili-publish --registry=https://npm.pkg.github.com
+    ```
+
+    > you need to login with your github credentials, when asked for a password, use the previously generated `GH_ACCESS_TOKEN`
+
+Example of the .npmrc (npmrc file for windows, ~/.npmrc for mac / linux) file:
+
+```
+//npm.pkg.github.com/:_authToken=${GH_ACCESS_TOKEN}
+@chili-publish:registry=https://npm.pkg.github.com/
+```
+
+## Getting started
+
+To execute studio ui with empty content
+
+```bash
+yarn install
+yarn start
+```
+
+Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
+
+> To see actual template you have to modife `index.html` file with corresponding configuration
+
 ## Deployment
 
 Live demo's on different environments:
 
 -   Staging (latest development): TBD
 -   Stable (latest master branch): TBD
-
-## Dependencies
-
--   yarn ^1.22.10
--   node ^18
-
-## Install other dependencies
-
-be sure to add your Github Personal Access token to your local(_per-user config_) .npmrc file (npmrc file for windows, ~/.npmrc for mac / linux)
-
-example .npmrc file:
-
-```
-//npm.pkg.github.com/:_authToken=${YOUR_GH_PAT}
-@chili-publish:registry=https://npm.pkg.github.com/
-@fortawesome:registry=https://npm.fontawesome.com/
-//npm.fontawesome.com/:_authToken=${YOUR_FA_AUTHTOKEN}
-```
-
--   YOUR_GH_PAT can be created in [the developer settings of your github account](https://github.com/settings/tokens)
--   The fontawesome token can be provided by one of the devs.
-
-`npm login --scope=@chili-publish --registry=https://npm.pkg.github.com`
-
-!! you need to login with your github credentials, when asked for a password, fill-in the PAT you used in the local .npmrc file
 
 ## Local development
 
