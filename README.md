@@ -74,7 +74,7 @@ If a new package will be installed,please check the package license information.
 
 ### Start the dev application
 
-`yarn start`
+`yarn dev`
 
 ### Make production build
 
