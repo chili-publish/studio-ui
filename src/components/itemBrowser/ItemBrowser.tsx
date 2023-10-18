@@ -208,6 +208,7 @@ function ItemBrowser<
                 }
                 onClickCard={onClick}
                 isModal={false}
+                renamingDisabled
             />
         );
     });
@@ -261,6 +262,7 @@ function ItemBrowser<
                                 type={PreviewType.COLLECTION}
                                 isSkeleton
                                 onClickCard={() => null}
+                                renamingDisabled
                             />
                         ))}
                     <LoadPageContainer>
