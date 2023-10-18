@@ -38,7 +38,7 @@ To execute studio ui with empty content
 
 ```bash
 yarn install
-yarn start
+yarn dev
 ```
 
 Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
