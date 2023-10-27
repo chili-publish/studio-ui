@@ -1,4 +1,4 @@
-import { ConnectorCapabilities, ConnectorInstance, ImageVariable, Media } from '@chili-publish/studio-sdk';
+import { MediaConnectorCapabilities, ConnectorInstance, ImageVariable, Media } from '@chili-publish/studio-sdk';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
@@ -12,7 +12,7 @@ export interface IConnectors {
 }
 
 export interface ICapabilities {
-    [index: string]: ConnectorCapabilities;
+    [index: string]: MediaConnectorCapabilities;
 }
 
 export interface IVariablePanelContext {
