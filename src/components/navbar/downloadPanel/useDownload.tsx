@@ -2,10 +2,12 @@ import { AvailableIcons, Option, useOnClickOutside } from '@chili-publish/grafx-
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 type StudioUIDownloadFormats = Exclude<DownloadFormats, DownloadFormats.EXPERIMENTAL_PDF>;
 
 const useDownload = (hideDownloadPanel: () => void) => {
+    const { outputSettings } = useUiConfigContext();
     const initialDownloadState: Record<StudioUIDownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
@@ -27,15 +29,16 @@ const useDownload = (hideDownloadPanel: () => void) => {
     const downloadPanelRef = useRef<HTMLDivElement | null>(null);
     useOnClickOutside(downloadPanelRef, hideDownloadPanel);
 
-    const downloadOptions: Option[] = useMemo(
-        () => [
+    const downloadOptions: Option[] = useMemo(() => {
+        const options = [
             { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: DownloadFormats.JPG },
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
-        ],
-        [],
-    );
+        ].filter((opt) => !!outputSettings[opt.value]);
+
+        return options;
+    }, [outputSettings]);
 
     return {
         downloadOptions,
