@@ -20,16 +20,24 @@
                 editorVersion = editorVersion == null ? 'master' : editorVersion;
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
 
-                StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
+                const environmentUrl = 'https://cp-dyx-217.cpstaging.online/grafx/api/v1/environment/cp-dyx-217';
+                const projectId = 'e1ca3d7f-0f8d-4117-85d2-320dc3005064';
+                const authToken =
+                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL2VtYWlsIjoiYWJyaUBjaGlsaS1wdWJsaXNoLmNvbSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiRkEiXSwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9jdXN0b21lcl9ndWlkIjoiNTE1MWVmOWItZGM2Zi00NTU4LTkwN2QtNzNlNzc3M2JhNTQxIiwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9zdWJzY3JpcHRpb25zIjpbIjU3NzE4ZmY2LTgxYzgtNGU5ZS1iYmU4LTNjNGVjODZjZjE4NCJdLCJpc3MiOiJodHRwczovL2xvZ2luLmNoaWxpZ3JhZngtZGV2LmNvbS8iLCJzdWIiOiJzYW1scHxjaGlsaS1wdWJsaXNoLWRldnw1elBIOXRwRGtmWWFraDV5bTB3LTBESGUtbUtJQjhDaVRZeXFjbmJBR0VJIiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjk4Mzk0MTczLCJleHAiOjE2OTg0ODA1NzMsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.luPZ0GBca5ycbuMLySh6Y-uqeEeRDyP_uxK0QCIp4LfSrO6_yDGVT1kcnahFaX6fQOBH_agNpPZBdoM9O2VIqHRjebp8zmk0a3cTJsQHe0asdjhLm9Vv9auYwp_P8CW0Or9s_a8nNS7wn3Zd2QSbQKWLx57_Sh6elm7uY51ZmYOIupAHBKxCqQrUGGw2qcljah9h2pFJ6h1U8aPxSFhxOGWhSs1WT22xKwDyPjYB4oUZqLtW4khHcQoMt9c91fGZKe5YcVQBakhgz9WqtwQ7EmkzVS4rWkZy4HKCLf_zIKLnXC68AzEIHgLxnoym_BaZc0WeBgvm1eiPdOqxFe828w';
+
+                // StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                // StudioUI.studioLoaderConfig({
-                //     selector: 'sui-root',
-                //     projectDownloadUrl: `${environmentUrl}/projects/${projectId}/document`,
-                //     projectUploadUrl: `${environmentUrl}/projects/${projectId}/document`,
-                //     projectId,
-                //     graFxStudioEnvironmentApiBaseUrl: `${environmentUrl}/`,
-                //     authToken,
-                // });
+                StudioUI.studioLoaderConfig({
+                    selector: 'sui-root',
+                    projectDownloadUrl: `${environmentUrl}/projects/${projectId}/document`,
+                    projectUploadUrl: `${environmentUrl}/projects/${projectId}/document`,
+                    projectId,
+                    graFxStudioEnvironmentApiBaseUrl: `${environmentUrl}/`,
+                    authToken,
+                    refreshTokenAction: () => null,
+                    editorLink: baseUrl + '/editor/' + 'main' + '/web',
+                    uiOptions: { widgets: { downloadButton: { visible: false } } },
+                });
             });
         </script>
     </body>
