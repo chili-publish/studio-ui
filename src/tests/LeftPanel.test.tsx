@@ -8,6 +8,7 @@ import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
 import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
+import { getDataTestIdForSUI } from '../utils/dataIds';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
@@ -145,7 +146,7 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
-        const { getAllByTestId, getAllByRole, getAllByText } = render(
+        const { getByText, getByTestId, getAllByTestId, getAllByRole, getAllByText } = render(
             <VariablePanelContextProvider connectors={mockConnectors}>
                 <LeftPanel variables={variables} isDocumentLoaded />
             </VariablePanelContextProvider>,
@@ -157,7 +158,14 @@ describe('Image Panel', () => {
 
         const folder = getAllByRole('img', { name: /grafx/i })[0];
         expect(folder).toBeInTheDocument();
+
+        const container = getByTestId(getDataTestIdForSUI('resources-container'));
+        // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
+        expect(container.childNodes).toHaveLength(3);
+
         expect(getAllByText(/grafx/i)).not.toHaveLength(0);
+        expect(getByText('ProductShot')).toBeInTheDocument();
+        expect(getByText('grafx')).toBeInTheDocument();
     });
 
     test('Media asset folder navigation works', async () => {
