@@ -91,7 +91,7 @@ const uiOptions = {
     widgets: {
         downloadButton: {
             visible: true;
-        };
+        },
         backButton: {
             visible: true;
             event: () => console.log("back button pressed");
