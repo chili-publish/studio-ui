@@ -5,6 +5,8 @@ This application is intended to be used with CHILI GraFx (My) Projects, which us
 
 This repository can be used as an example of integrating the studio-sdk within your own project, or the application itself can also be integrated within your own projects.
 
+> For the time being, we don't have a framework for external contributions on this repository yet. We made our source available but it's not the intent to accept external pull requests or issues yet. If you founf a bug, please contact your CS representative using the known canals.
+
 ## Integration guide
 
 ### Info to start with
@@ -77,6 +79,8 @@ If you need help generating a token or would like code samples, please see our [
     </body>
 </html>
 ```
+
+for a more advanced example, and extra information about building an integration go to our [advanced-integration guide](documentation/advanced-integration.md).
 
 ## Repository development prerequisites
 
