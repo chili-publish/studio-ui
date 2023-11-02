@@ -42,7 +42,10 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                             ? { label: variableItem.selected, value: variableItem.selected }
                             : ('' as unknown as Option);
                         return (
-                            <ComponentWrapper key={`variable-component-${variable.id}`}>
+                            <ComponentWrapper
+                                key={`variable-component-${variable.id}`}
+                                data-intercom-target={`dropdown-variable-${variable.name}`}
+                            >
                                 <StudioDropdown
                                     dataId={variable.id}
                                     label={variable.name}

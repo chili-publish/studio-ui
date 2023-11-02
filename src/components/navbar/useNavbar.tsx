@@ -63,6 +63,7 @@ const useNavbar = (
                         <NavbarButton
                             dataId="back-btn"
                             dataTestId="back-btn"
+                            dataIntercomId="Go back button"
                             ariaLabel="Go back"
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
@@ -104,6 +105,7 @@ const useNavbar = (
                 content: (
                     <NavbarButton
                         dataId="navbar-download-btn"
+                        dataIntercomId="Download button"
                         ariaLabel="Download"
                         label={
                             !isMobile ? (
