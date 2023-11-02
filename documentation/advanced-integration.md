@@ -84,20 +84,20 @@ const refreshTokenAction = () => Promise.resolve('Nothing');
 const outputSettings = {
     mp4: true,
     gif: true,
-}
+};
 
 /* this example of uiOptions will show everything and will use a console log when pressing the back button inside the UI. */
 const uiOptions = {
     widgets: {
         downloadButton: {
-            visible: true;
+            visible: true,
         },
         backButton: {
-            visible: true;
-            event: () => console.log("back button pressed");
-        };
-    };
-}
+            visible: true,
+            event: () => console.log('back button pressed'),
+        },
+    },
+};
 
 window.StudioUI.studioLoaderConfig({
     // Div id to inject studio-ui in

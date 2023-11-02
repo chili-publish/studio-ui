@@ -30,14 +30,24 @@ const useDownload = (hideDownloadPanel: () => void) => {
     useOnClickOutside(downloadPanelRef, hideDownloadPanel);
 
     const downloadOptions: Option[] = useMemo(() => {
-        const options = [
+        const allOptions = [
             { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: DownloadFormats.JPG },
             { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
             { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
             { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
-        ].filter((opt) => !!outputSettings[opt.value]);
+        ];
 
-        return options;
+        // if no outputsettings defined, show all
+        if (Object.keys(outputSettings).length === 0) return allOptions;
+
+        // check if all keys are false or undefined
+        const onlyFalse = Object.values(outputSettings).every((val) => val === false);
+
+        if (onlyFalse) {
+            return allOptions.filter((opt) => outputSettings[opt.value] !== false);
+        }
+
+        return allOptions.filter((opt) => outputSettings[opt.value] === true);
     }, [outputSettings]);
 
     return {

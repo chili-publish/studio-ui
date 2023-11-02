@@ -58,7 +58,7 @@ export interface UiOptions {
     };
 }
 
-export type OutputSettings = { [K in DownloadFormats]: boolean };
+export type OutputSettings = { [K in DownloadFormats]?: boolean };
 
 export const defaultUiOptions: UiOptions = {
     widgets: {
