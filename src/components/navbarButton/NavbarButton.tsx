@@ -6,6 +6,7 @@ function NavbarButton(props: NavbarButtonProps) {
     const {
         dataId,
         dataTestId,
+        dataIntercomId,
         label,
         ariaLabel,
         icon,
@@ -18,6 +19,7 @@ function NavbarButton(props: NavbarButtonProps) {
         <Button
             dataId={getDataIdForSUI(dataId)}
             dataTestId={dataTestId && getDataTestId(dataTestId)}
+            dataIntercomId={dataIntercomId}
             variant={variant}
             onClick={handleOnClick}
             icon={<Icon key={`icon-${ariaLabel}`} icon={icon} transform={{ flipY: flipIconY }} />}

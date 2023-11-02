@@ -14,7 +14,7 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
 
     return (
-        <LeftPanelContainer id="left-panel">
+        <LeftPanelContainer id="left-panel" data-intercom-target="Customize panel">
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>

@@ -118,6 +118,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         <Button
                             dataId={getDataIdForSUI(`download-btn`)}
                             dataTestId={getDataTestIdForSUI(`download-btn`)}
+                            dataIntercomId="Download selected output"
                             onClick={() => {
                                 handleDownload(selectedOption, updateDownloadState);
                             }}
