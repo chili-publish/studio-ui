@@ -70,6 +70,7 @@ function ImageVariable(props: IImageVariable) {
         <ImagePicker
             dataId={getDataIdForSUI(`img-picker-${variable.id}`)}
             dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
+            dataIntercomId={`image-picker-${variable.name}`}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}

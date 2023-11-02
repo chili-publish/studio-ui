@@ -10,7 +10,7 @@ export const EditButtonWrapper = styled.div`
 export const VariablesPanelTitle = styled.h2`
     font-size: ${FontSizes.heading2};
     font-weight: 500;
-    color: ${Colors.LIGHT_PRIMARY_WHITE};
+    color: ${Colors.PRIMARY_FONT};
 `;
 
 export const ComponentWrapper = styled.div`
