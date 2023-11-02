@@ -32,14 +32,14 @@ If you need help generating a token or would like code samples, please see our [
     <head>
         <!-- ... insert your own stuff here ... -->
         <!-- link to the studio ui css, to inject the styling -->
-        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/main.css" />
+        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/studio-ui/latest/main.css" />
     </head>
     <body>
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
         <!-- script to inject latest studio ui -->
-        <script src="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/bundle.js"></script>
+        <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
 
         <!-- custom logic -->
         <script>

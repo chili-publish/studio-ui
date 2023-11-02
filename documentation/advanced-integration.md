@@ -44,14 +44,14 @@ Create a new html file, you can call it whatever you want, but in our case we ca
     <head>
         <!-- ... insert your own stuff here ... -->
         <!-- link to the studio ui css, to inject the styling -->
-        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/main.css" />
+        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/studio-ui/latest/main.css" />
     </head>
     <body>
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
         <!-- script to inject latest studio ui -->
-        <script src="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/bundle.js"></script>
+        <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
 
         <!-- custom logic in seperate js file -->
         <script srs="./integration.js"></script>
