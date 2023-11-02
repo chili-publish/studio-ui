@@ -4,6 +4,8 @@
 
 ### UI options
 
+> Alpha
+
 The UI is configurable by some UI options explained in the concepts below.
 
 #### Widgets
@@ -22,3 +24,159 @@ Add your own theming to the Studio UI, to give the UI a little touch of your own
 > Alpha
 
 This setting allows you to fine grain which output types are possible within the integration. At the time of writing we are working on simplifying this drastically, but this isn't implemented yet.
+
+## Prequisites
+
+Before we start, make sure the following bulletpoints are checked off:
+
+-   [ ] Local webserver that can serve html
+-   [ ] Little bit of JS knowledge, but don't let it scare you
+
+## Advanced example
+
+### HTML
+
+Create a new html file, you can call it whatever you want, but in our case we call it `index.html`.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- ... insert your own stuff here ... -->
+        <!-- link to the studio ui css, to inject the styling -->
+        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/main.css" />
+    </head>
+    <body>
+        <!-- div where studio ui will be constructed in -->
+        <div id="studio-ui-container"></div>
+
+        <!-- script to inject latest studio ui -->
+        <script src="https://studio-cdn.chiligrafx.com/end-user-workspace/latest/bundle.js"></script>
+
+        <!-- custom logic in seperate js file -->
+        <script srs="./integration.js"></script>
+    </body>
+</html>
+```
+
+### JavaScript
+
+For this example we seperate the javascript from the html to have a clearer seperation of concerns. The javascript will handle the "logic" to inject Studio UI.
+
+You can choose whichever filename you want, but for simplicity we called it `integration.js`.
+
+```js
+/* your access token, should be gathered on the fly, is just here for demo purposes. */
+const token = `<YOUR INTEGRATION ACCESS TOKEN>`;
+/* The HTML div for the editor. */
+const studioUIContainer = 'studio-ui-container';
+/* The environment API base url for the environment that you're using in your integration. */
+const environmentBaseURL =
+    'https://training-create-us23.chili-publish.online/grafx/api/v1/environment/training-create-us23';
+/* ID of the project you want to load, this is optional and will enable auto-save when used. */
+const projectID = '859dd405-bfed-467f-b833-510afef5fda4';
+/* Name of the project, but can be whatever you want, is only a static indication that is displayed in the UI. */
+const projectName = 'End User view';
+/* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. Preferably you retrieve a token here silently. */
+const refreshTokenAction = () => Promise.resolve('Nothing');
+
+/* this example will allow only animated output within your user interface */
+const outputSettings = {
+    mp4: true,
+    gif: true,
+}
+
+/* this example of uiOptions will show everything and will use a console log when pressing the back button inside the UI. */
+const uiOptions = {
+    widgets: {
+        downloadButton: {
+            visible: true;
+        };
+        backButton: {
+            visible: true;
+            event: () => console.log("back button pressed");
+        };
+    };
+}
+
+window.StudioUI.studioLoaderConfig({
+    // Div id to inject studio-ui in
+    selector: studioUIContainer,
+
+    // downloadUrl used to fetch the document
+    projectDownloadUrl: `${environmentBaseURL}/projects/${projectID}/document`,
+
+    // uploadUrl used to save the changes you did to the document (autosave)
+    projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
+
+    // project Id to enable autosave
+    projectId: projectID,
+
+    /* environment base URL ex: https://cp-abc-123.chili-publish.online/grafx/api/v1/cp-abc-123 */
+    graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
+
+    /* Integration access token */
+    authToken: token,
+
+    /* refreshTokenAction, being a function that will return a promise () => Promise<string | Error> */
+    refreshTokenAction: refreshTokenAction,
+
+    /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
+    projectName: projectName,
+
+    /* outputTypes: object of all available output types (optional) that have a boolean value */
+    outputTypes: outputTypes,
+
+    /* uiOptions: object to play around with parts of the UI.*/
+    uiOptions: uiOptions,
+});
+```
+
+To see if your code works, serve your html file and use a known project ID, you'll need to have a working access token to be able to fetch the document though.
+
+### Settings deep dive
+
+#### uiSettings, widgets
+
+For now there are 2 components (widgets) that are able to retrieve some settings.
+
+The downloadButton can be hidden to f.e. disable output in your integration.
+
+The backButton can be hidden, and is actually hidden by default, but you can also explicitly show it and change what the behaviour will be when pressing it. This can be done by passing a function to `event`.
+
+#### outputSettings
+
+The outputSettings option, is quite a flexible way to set the available output types for your integrations.
+
+It's an optional parameter, that will show every output setting that is available when not probided, but it allows some fine-grained management of the output types available.
+
+Setting one outputSetting to true, will explicitly set all other outputSettings to false. So if you want to add other settings, you'll need to be specific which ones you want.
+
+Setting one ouptutSetting to false, will do the oposite and will not allow that specific output setting, but will allow all the others. Beneath some examples:
+
+Let's start with the example which is used above in the code example. This setting will only allow mp4 and gif output types.
+
+```js
+const outputSettings = {
+    mp4: true,
+    gif: true,
+};
+```
+
+The following example, will have the exact same effect, although in reverse logic.
+
+```js
+const outputSettings = {
+    png: false,
+    jpg: false,
+};
+```
+
+The last example, will only show png, jpg is explicitly set to false, and the others are as well implied to be false.
+
+```js
+const outputSettings = {
+    png: true,
+    jpg: false,
+};
+```
