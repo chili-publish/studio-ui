@@ -47,7 +47,7 @@ export default class StudioUI {
             uiOptions: defaultUiOptions,
             outputSettings: defaultOutputSettings,
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
-            onProjectTemplateRequested: demoDocumentLoader.onProjectTemplateRequested,
+            onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
             onProjectSave: demoDocumentLoader.onProjectSave,
             onAuthenticationRequested: demoDocumentLoader.onAuthenticationRequested,
@@ -70,7 +70,7 @@ export default class StudioUI {
      * @param config.uiOptions - The configuration of ui widgets.
      * @param config.outputSettings - The flags to manage the available types of outputs.
      * @param onProjectInfoRequested - Callback to get the project info.
-     * @param onProjectTemplateRequested - Callback to get the project template.
+     * @param onProjectDocumentRequested - Callback to get the project template.
      * @param onProjectSave - Callback to save the project.
      * @param onProjectLoaded - Callback when the project is loaded. use this to set the configuration values on sdk.
      * @param onAuthenticationRequested - Callback to get the authentication token.
@@ -87,7 +87,7 @@ export default class StudioUI {
         uiOptions: UiOptions,
         outputSettings: OutputSettings,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectTemplateRequested: (projectId: string) => Promise<string>,
+        onProjectDocumentRequested: (projectId: string) => Promise<string>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
@@ -106,7 +106,7 @@ export default class StudioUI {
             uiOptions,
             outputSettings,
             onProjectInfoRequested,
-            onProjectTemplateRequested,
+            onProjectDocumentRequested,
             onProjectLoaded,
             onProjectSave,
             onAuthenticationRequested,
@@ -166,7 +166,7 @@ export default class StudioUI {
             uiOptions || defaultPlatformUiOptions,
             outputSettings || defaultOutputSettings,
             projectLoader.onProjectInfoRequested,
-            projectLoader.onProjectTemplateRequested,
+            projectLoader.onProjectDocumentRequested,
             projectLoader.onProjectSave,
             projectLoader.onProjectLoaded,
             projectLoader.onAuthenticationRequested,
@@ -193,7 +193,7 @@ export default class StudioUI {
      * @param config.outputSettings - The flags to manage the available types of outputs.
      * @param config.refreshTokenAction - Callback to refresh the authentication token.
      * @param config.onProjectInfoRequested - Callback to get the project info.
-     * @param config.onProjectTemplateRequested - Callback to get the project template.
+     * @param config.onProjectDocumentRequested - Callback to get the project template.
      * @param config.onProjectSave - Callback to save the project.
      * @returns
      */
@@ -206,7 +206,7 @@ export default class StudioUI {
             authToken,
             refreshTokenAction,
             onProjectInfoRequested,
-            onProjectTemplateRequested,
+            onProjectDocumentRequested,
             onProjectSave,
             uiOptions,
             outputSettings,
@@ -227,7 +227,7 @@ export default class StudioUI {
             uiOptions || defaultUiOptions,
             outputSettings || defaultOutputSettings,
             onProjectInfoRequested,
-            onProjectTemplateRequested,
+            onProjectDocumentRequested,
             onProjectSave,
             projectLoader.onProjectLoaded,
             projectLoader.onAuthenticationRequested,

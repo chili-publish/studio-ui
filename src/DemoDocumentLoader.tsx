@@ -6,7 +6,7 @@ export class DemoDocumentLoader {
 
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
 
-    onProjectTemplateRequested: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested: (projectId: string) => Promise<string>;
 
     onProjectLoaded: (project: Project) => void;
 
@@ -37,7 +37,7 @@ export class DemoDocumentLoader {
                 },
             };
         };
-        this.onProjectTemplateRequested = async (): Promise<string> => {
+        this.onProjectDocumentRequested = async (): Promise<string> => {
             return axios.get(`${editorLink}/assets/assets/documents/demo.json`).then((res) => {
                 return JSON.stringify(res.data);
             });

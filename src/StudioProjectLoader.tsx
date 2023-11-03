@@ -57,7 +57,7 @@ export class StudioProjectLoader {
         return this.cachedProject;
     };
 
-    public onProjectTemplateRequested = async (): Promise<string> => {
+    public onProjectDocumentRequested = async (): Promise<string> => {
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
         return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
     };

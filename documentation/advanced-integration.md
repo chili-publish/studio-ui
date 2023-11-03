@@ -32,7 +32,7 @@ Before we start, make sure the following bulletpoints are checked off:
 -   [ ] Local webserver that can serve html
 -   [ ] Little bit of JS knowledge, but don't let it scare you
 
-## Advanced example
+## Advanced example using GraFx API for document retrieval
 
 ### HTML
 
@@ -179,4 +179,79 @@ const outputSettings = {
     png: true,
     jpg: false,
 };
+```
+
+## Advanced example using own documents
+
+In some cases, integrations will need to have the flexibility to load in the document from another source than the GraFx environments, also here we got you covered.
+
+### HTML
+
+The HTML file will still be the same, no changes required
+
+### JavaScript
+
+Also here there aren't a ton of changes necessary but we'll highlight some of them below.
+
+```js
+// All above mentioned logic should be added here as well
+
+// New things to add
+
+/* 
+A call to request the metadata of the project.
+The return value below is what the application expects the format to be 
+*/
+const onProjectInfoRequested = async () => {
+    return {
+        id: 'id of the project',
+        name: 'name of the project',
+        template: {
+            id: 'id of the template it is based on',
+        },
+    };
+};
+
+/* 
+A call to fetch a template that is not inside GraFx (when you want to store it elsewhere f.e.).
+Off course this call needs to be in a correct GraFx Studio Project or Template format, and the function expects it to be stringified.
+*/
+const onProjectDocumentRequested = () => {
+    return fetch(`${editorLink}/assets/assets/documents/demo.json`).then((res) => {
+        return JSON.stringify(res.data);
+    });
+};
+
+const onProjectSave = () => {};
+window.StudioUI.studioLoaderCustomTemplateConfig({
+    // Div id to inject studio-ui in
+    selector: studioUIContainer,
+
+    // downloadUrl used to fetch the document
+    projectDownloadUrl: `${environmentBaseURL}/projects/${projectID}/document`,
+
+    // uploadUrl used to save the changes you did to the document (autosave)
+    projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
+
+    // project Id to enable autosave
+    projectId: projectID,
+
+    /* environment base URL ex: https://cp-abc-123.chili-publish.online/grafx/api/v1/cp-abc-123 */
+    graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
+
+    /* Integration access token */
+    authToken: token,
+
+    /* refreshTokenAction, being a function that will return a promise () => Promise<string | Error> */
+    refreshTokenAction: refreshTokenAction,
+
+    /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
+    projectName: projectName,
+
+    /* outputTypes: object of all available output types (optional) that have a boolean value */
+    outputTypes: outputTypes,
+
+    /* uiOptions: object to play around with parts of the UI.*/
+    uiOptions: uiOptions,
+});
 ```
