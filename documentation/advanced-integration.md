@@ -10,7 +10,7 @@ The UI is configurable by some UI options explained in the concepts below.
 
 #### Widgets
 
-Studio UI is build with a couple of widgets, that are configurable. The list below contains all widgets available in the latest build. Widgets can be viewed as a component or a group of components working together.
+Studio UI is built with a couple of widgets, that are configurable. The list below contains all widgets available in the latest build. Widgets can be viewed as a component or a group of components working together.
 Configurable widgets are able to be hidden, or in some cases you can add events to the widget, which will do something.
 
 #### Theming
@@ -25,7 +25,7 @@ Add your own theming to the Studio UI, to give the UI a little touch of your own
 
 This setting allows you to fine grain which output types are possible within the integration. At the time of writing we are working on simplifying this drastically, but this isn't implemented yet.
 
-## Prequisites
+## Perquisites
 
 Before we start, make sure the following bulletpoints are checked off:
 
@@ -61,7 +61,7 @@ Create a new html file, you can call it whatever you want, but in our case we ca
 
 ### JavaScript
 
-For this example we seperate the javascript from the html to have a clearer seperation of concerns. The javascript will handle the "logic" to inject Studio UI.
+For this example we separate the javascript from the html to have a clearer separation of concerns. The javascript will handle the "logic" to inject Studio UI.
 
 You can choose whichever filename you want, but for simplicity we called it `integration.js`.
 
@@ -148,11 +148,11 @@ The backButton can be hidden, and is actually hidden by default, but you can als
 
 The outputSettings option, is quite a flexible way to set the available output types for your integrations.
 
-It's an optional parameter, that will show every output setting that is available when not probided, but it allows some fine-grained management of the output types available.
+It's an optional parameter, that will show every output setting that is available when not provided, but it allows some fine-grained management of the output types available.
 
 Setting one outputSetting to true, will explicitly set all other outputSettings to false. So if you want to add other settings, you'll need to be specific which ones you want.
 
-Setting one ouptutSetting to false, will do the oposite and will not allow that specific output setting, but will allow all the others. Beneath some examples:
+Setting one ouptutSetting to false, will do the opposite and will not allow that specific output setting, but will allow all the others. Beneath some examples:
 
 Let's start with the example which is used above in the code example. This setting will only allow mp4 and gif output types.
 

@@ -5,7 +5,7 @@ This application is intended to be used with CHILI GraFx (My) Projects, which us
 
 This repository can be used as an example of integrating the studio-sdk within your own project, or the application itself can also be integrated within your own projects.
 
-> For the time being, we don't have a framework for external contributions on this repository yet. We made our source available but it's not the intent to accept external pull requests or issues yet. If you founf a bug, please contact your CS representative using the known canals.
+> For the time being, we don't have a framework for external contributions on this repository yet. We made our source available but it's not the intent to accept external pull requests or issues yet. If you found a bug, please contact your CS representative using the known canals.
 
 ## Integration guide
 
@@ -18,7 +18,7 @@ If you need help generating a token or would like code samples, please see our [
 
 > Important to note that projects are context based, if you look at the projects on the GraFx platform you are quite literally looking at _YOUR USER_ or \_YOUR USER_APPLICATION projects. That mean that another context doesn't have access to the projects. This means that the integration context doesn't have access to the projects you create on your account in GraFx Platform.
 
-### Prequisites
+### Perquisites
 
 -   A working (preferably new) project
 -   Some way to serve an html file (webserver like nginx, mamp, apache, ...)
@@ -97,7 +97,7 @@ This step is only applicable if you have access to the CHILI publish organisatio
 
 -   Setup access to `@chili-publish` registry
 
-    -   Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only neccessary scopes (`read:packages`) and expiration time recommendataion is `90 days`.
+    -   Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only necessary scopes (`read:packages`) and expiration time recommendation is `90 days`.
 
     -   Login to the repository
 
@@ -125,7 +125,7 @@ yarn dev
 
 Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
 
-> To see actual template you have to modife `index.html` file with corresponding configuration
+> To see actual template you have to modify `index.html` file with corresponding configuration
 
 ## Scripts
 
@@ -146,7 +146,7 @@ Open [http://localhost:3002](http://localhost:3002) with your browser to see the
 ### Link local instance of components repository
 
 To work on the [grafx-shared-components library](https://github.com/chili-publish/grafx-shared-components) or the [studio-sdk library](https://github.com/chili-publish/studio-sdk), you will need to link your local instance to the package.json of this repository.
-To simply do this, we use the `yarn link` functionality. To make it even more easier, it is adviced to make an alias in your .bashrc file.
+To simply do this, we use the `yarn link` functionality. To make it even more easier, it is advised to make an alias in your .bashrc file.
 If a new package will be installed,please check the package license information.
 
 #### Manual
