@@ -86,9 +86,9 @@ for a more advanced example, and extra information about building an integration
 
 ### Tools setup
 
--   [Node v18](https://nodejs.org/en) or newer is installed
+-   [Node v18](https://nodejs.org/en) LTS
     > node -v # to check existing node version
--   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed
+-   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed (yarn `major version 1` though)
     > yarn -v # to check existing yarn version
 
 ### Configure .npmrc to access private npm repositories

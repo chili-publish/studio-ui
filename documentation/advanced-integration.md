@@ -222,7 +222,10 @@ const onProjectDocumentRequested = async () => {
     });
 };
 
-const onProjectSave = async () => {
+/*
+Call to save the document, a good example can be found below.
+*/
+const onProjectSave = async (generateJson) => {
     return {
         id: 'id of the project',
         name: 'name of the project',
@@ -264,3 +267,17 @@ window.StudioUI.studioLoaderCustomTemplateConfig({
     uiOptions: uiOptions,
 });
 ```
+
+onProjectSave example implementation [can be found here](https://github.com/chili-publish/studio-ui/blob/b2f7e5307cc8dee41eb89a15c3647a8ce1d13768/src/StudioProjectLoader.tsx#L72).
+
+### Is that all?
+
+No it isn't, there are a bunch of loaders, the one more restricting than the other. But it is better to have a look yourself.
+
+Following callbacks are also available (in other loaders):
+
+-   `onProjectLoaded`: callback that listens on when the project is completely loaded
+-   `onAuthenticationRequested`: Basically the same as auth token action, but instead of using a string directly, it's a callback
+-   `onAuthenticationExpired`: Basically the same as refreshTokenAction above
+-   `onLogInfoRequested`: A callback used to generate some loading information in the console.
+-   `onProjectGetDownloadLink`: A callback to get the output download link for the project.
