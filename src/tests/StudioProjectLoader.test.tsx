@@ -68,7 +68,7 @@ describe('StudioProjectLoader', () => {
         });
     });
 
-    describe('onProjectTemplateRequested', () => {
+    describe('onProjectDocumentRequested', () => {
         it('should fetch project template using fallback URL if download URL is not provided', async () => {
             (axios.get as jest.Mock).mockResolvedValueOnce({ data: mockDocument.data });
             const loader = new StudioProjectLoader(
@@ -80,7 +80,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
             );
 
-            const result = await loader.onProjectTemplateRequested();
+            const result = await loader.onProjectDocumentRequested();
 
             expect(result).toEqual(JSON.stringify(mockDocument.data));
             expect(axios.get).toHaveBeenCalledWith(
@@ -100,7 +100,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
             );
 
-            const result = await loader.onProjectTemplateRequested();
+            const result = await loader.onProjectDocumentRequested();
 
             expect(result).toEqual(JSON.stringify(mockDocument.data));
             expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {

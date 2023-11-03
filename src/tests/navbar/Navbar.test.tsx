@@ -120,7 +120,7 @@ class ProjectConfigs {
         onProjectInfoRequested: async () => {
             return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
         },
-        onProjectTemplateRequested: async () => {
+        onProjectDocumentRequested: async () => {
             return '';
         },
         onProjectLoaded: () => {

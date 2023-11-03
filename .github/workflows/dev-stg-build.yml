@@ -81,7 +81,7 @@ jobs:
               uses: azure/CLI@v1
               with:
                   inlineScript: |
-                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
 
     build-deploy-stg:
         needs: build-preflight
@@ -128,7 +128,7 @@ jobs:
               uses: azure/CLI@v1
               with:
                   inlineScript: |
-                      az storage blob upload-batch -d end-user-workspace -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_STG_CONNECTION_STRING }}" --overwrite true
+                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_STG_CONNECTION_STRING }}" --overwrite true
 
     bump-version:
         needs: build-preflight

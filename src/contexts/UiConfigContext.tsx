@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext, useMemo } from 'react';
 import { IUiConfigContext } from './UiConfigContext.types';
 import { ProjectConfig, defaultOutputSettings, defaultUiOptions } from '../types/types';
 
-const UiConfigContextDefaultValues: IUiConfigContext = {
+export const UiConfigContextDefaultValues: IUiConfigContext = {
     uiOptions: defaultUiOptions,
     outputSettings: defaultOutputSettings,
     isDownloadBtnVisible: defaultUiOptions.widgets.backButton?.visible || false,

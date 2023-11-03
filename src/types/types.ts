@@ -7,7 +7,7 @@ export interface ProjectConfig {
     uiOptions: UiOptions;
     outputSettings: OutputSettings;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
-    onProjectTemplateRequested: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested: (projectId: string) => Promise<string>;
     onProjectLoaded: (project: Project) => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
@@ -34,7 +34,7 @@ export interface DefaultStudioConfig {
 
 export interface StudioConfig extends DefaultStudioConfig {
     onProjectInfoRequested: () => Promise<Project>;
-    onProjectTemplateRequested: () => Promise<string>;
+    onProjectDocumentRequested: () => Promise<string>;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
 }
 
@@ -58,7 +58,7 @@ export interface UiOptions {
     };
 }
 
-export type OutputSettings = { [K in DownloadFormats]: boolean };
+export type OutputSettings = { [K in DownloadFormats]?: boolean };
 
 export const defaultUiOptions: UiOptions = {
     widgets: {

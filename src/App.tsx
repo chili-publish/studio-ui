@@ -164,7 +164,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         // the connection to the engine is established
         projectConfig.onProjectLoaded(currentProject as Project);
 
-        projectConfig.onProjectTemplateRequested(projectConfig.projectId).then((template) => {
+        projectConfig.onProjectDocumentRequested(projectConfig.projectId).then((template) => {
             setFetchedDocument(template);
         });
 
