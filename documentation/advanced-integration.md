@@ -214,7 +214,7 @@ const onProjectInfoRequested = async () => {
 
 /* 
 A call to fetch a template that is not inside GraFx (when you want to store it elsewhere f.e.).
-Off course this call needs to be in a correct GraFx Studio Project or Template format, and the function expects it to be stringified.
+Of course this call needs to be in a correct GraFx Studio Project or Template format, and the function expects it to be stringified.
 */
 const onProjectDocumentRequested = async () => {
     return fetch(`${editorLink}/assets/assets/documents/demo.json`).then((res) => {
