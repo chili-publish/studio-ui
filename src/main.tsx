@@ -1,8 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { AxiosError } from 'axios';
 import App from './App';
-import { DownloadLinkResult, IStudioUILoaderConfig, Project, ProjectConfig } from './types/types';
+import {
+    DownloadLinkResult,
+    OutputSettings,
+    Project,
+    ProjectConfig,
+    StudioConfig,
+    UiOptions,
+    defaultBackFn,
+    defaultOutputSettings,
+    defaultPlatformUiOptions,
+    defaultUiOptions,
+    IStudioUILoaderConfig,
+} from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
@@ -34,8 +45,10 @@ export default class StudioUI {
         return new StudioUI(selector, {
             projectId: 'demo',
             projectName: 'Demo',
+            uiOptions: defaultUiOptions,
+            outputSettings: defaultOutputSettings,
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
-            onProjectTemplateRequested: demoDocumentLoader.onProjectTemplateRequested,
+            onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
             onProjectSave: demoDocumentLoader.onProjectSave,
             onAuthenticationRequested: demoDocumentLoader.onAuthenticationRequested,
@@ -55,8 +68,10 @@ export default class StudioUI {
      * @param selector - The selector for the root element of the UI.
      * @param projectId - The id of the project to load.
      * @param projectName - The name of the project to load.
+     * @param config.uiOptions - The configuration of ui widgets.
+     * @param config.outputSettings - The flags to manage the available types of outputs.
      * @param onProjectInfoRequested - Callback to get the project info.
-     * @param onProjectTemplateRequested - Callback to get the project template.
+     * @param onProjectDocumentRequested - Callback to get the project template.
      * @param onProjectSave - Callback to save the project.
      * @param onProjectLoaded - Callback when the project is loaded. use this to set the configuration values on sdk.
      * @param onAuthenticationRequested - Callback to get the authentication token.
@@ -70,8 +85,10 @@ export default class StudioUI {
         selector: string,
         projectId: string,
         projectName: string,
+        uiOptions: UiOptions,
+        outputSettings: OutputSettings,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectTemplateRequested: (projectId: string) => Promise<string>,
+        onProjectDocumentRequested: (projectId: string) => Promise<string>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
@@ -87,8 +104,10 @@ export default class StudioUI {
         return new StudioUI(selector, {
             projectId,
             projectName,
+            uiOptions,
+            outputSettings,
             onProjectInfoRequested,
-            onProjectTemplateRequested,
+            onProjectDocumentRequested,
             onProjectLoaded,
             onProjectSave,
             onAuthenticationRequested,
@@ -102,29 +121,34 @@ export default class StudioUI {
 
     /**
      * Creates a new instance of StudioUI with the default project loader and authentication.
-     * @param selector - The selector for the root element of the UI.
-     * @param projectDownloadUrl - Environment API url to download the project.
-     * @param projectUploadUrl - Environment API url to upload the project.
-     * @param projectId - The id of the project to load.
-     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
-     * @param authToken - Environment API authentication token.
-     * @param refreshTokenAction - Callback to refresh the authentication token.
-     * @param projectName - The name of the project to load.
-     * @param onBack - Callback when the user clicks the back button.
+     * @param config - The configuration data.
+     * @param config.selector - The selector for the root element of the UI.
+     * @param config.projectDownloadUrl - Environment API url to download the project.
+     * @param config.projectUploadUrl - Environment API url to upload the project.
+     * @param config.projectId - The id of the project to load.
+     * @param config.graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
+     * @param config.authToken - Environment API authentication token.
+     * @param config.uiOptions - The configuration of ui widgets.
+     * @param config.outputSettings - The flags to manage the available types of outputs.
+     * @param config.refreshTokenAction - Callback to refresh the authentication token.
+     * @param config.projectName - The name of the project to load.
+     * @param config.onBack - Callback when the user clicks the back button.
      * @returns
      */
-    static studioLoaderConfig(
-        selector: string,
-        projectDownloadUrl: string,
-        projectUploadUrl: string,
-        projectId: string,
-        graFxStudioEnvironmentApiBaseUrl: string,
-        authToken: string,
-        refreshTokenAction: () => Promise<string | AxiosError>,
-        projectName: string,
-        onBack: () => void,
-        editorLink?: string,
-    ) {
+    static studioLoaderConfig(config: StudioConfig) {
+        const {
+            selector,
+            projectDownloadUrl,
+            projectUploadUrl,
+            projectId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            uiOptions,
+            outputSettings,
+            projectName,
+            refreshTokenAction,
+            editorLink,
+        } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
@@ -134,12 +158,16 @@ export default class StudioUI {
             projectUploadUrl,
         );
 
+        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
+
         return StudioUI.fullIntegrationConfig(
             selector,
             projectId,
             projectName,
+            uiOptions ?? defaultPlatformUiOptions,
+            outputSettings ?? defaultOutputSettings,
             projectLoader.onProjectInfoRequested,
-            projectLoader.onProjectTemplateRequested,
+            projectLoader.onProjectDocumentRequested,
             projectLoader.onProjectSave,
             projectLoader.onProjectLoaded,
             projectLoader.onAuthenticationRequested,
@@ -152,34 +180,40 @@ export default class StudioUI {
     }
 
     /**
-     * Creates a new instance of StudioUI with the default  authentication, and allows to set
+     * Creates a new instance of StudioUI with the default authentication, and allows to set
      * the project loader callbacks. Bring your own project json.
      * In this scenario, the environment api is used for the template connectors and
      * to generate output download links.
-     * @param selector - The selector for the root element of the UI.
-     * @param projectId - The id of the project to load.
-     * @param projectName - The name of the project to load.
-     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
-     * @param authToken - Environment API authentication token.
-     * @param refreshTokenAction - Callback to refresh the authentication token.
-     * @param onBack - Callback when the user clicks the back button.
-     * @param onProjectInfoRequested - Callback to get the project info.
-     * @param onProjectTemplateRequested - Callback to get the project template.
-     * @param onProjectSave - Callback to save the project.
+     * @param config - The configuration data.
+     * @param config.selector - The selector for the root element of the UI.
+     * @param config.projectId - The id of the project to load.
+     * @param config.projectName - The name of the project to load.
+     * @param config.graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
+     * @param config.authToken - Environment API authentication token.
+     * @param config.uiOptions - The configuration of ui widgets.
+     * @param config.outputSettings - The flags to manage the available types of outputs.
+     * @param config.refreshTokenAction - Callback to refresh the authentication token.
+     * @param config.onProjectInfoRequested - Callback to get the project info.
+     * @param config.onProjectDocumentRequested - Callback to get the project template.
+     * @param config.onProjectSave - Callback to save the project.
      * @returns
      */
-    static studioLoaderCustomTemplateConfig(
-        selector: string,
-        projectId: string,
-        projectName: string,
-        graFxStudioEnvironmentApiBaseUrl: string,
-        authToken: string,
-        refreshTokenAction: () => Promise<string | AxiosError>,
-        onBack: () => void,
-        onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectTemplateRequested: (projectId: string) => Promise<string>,
-        onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
-    ) {
+    static studioLoaderCustomTemplateConfig(config: StudioConfig) {
+        const {
+            selector,
+            projectId,
+            projectName,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            refreshTokenAction,
+            onProjectInfoRequested,
+            onProjectDocumentRequested,
+            onProjectSave,
+            uiOptions,
+            outputSettings,
+        } = config;
+
+        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
@@ -191,8 +225,10 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            uiOptions || defaultUiOptions,
+            outputSettings || defaultOutputSettings,
             onProjectInfoRequested,
-            onProjectTemplateRequested,
+            onProjectDocumentRequested,
             onProjectSave,
             projectLoader.onProjectLoaded,
             projectLoader.onAuthenticationRequested,
@@ -228,15 +264,15 @@ export default class StudioUI {
             authToken,
             projectName,
             editorLink,
+            uiOptions,
+            outputSettings,
             refreshTokenAction,
-            onBack,
             onProjectInfoRequested,
             onProjectTemplateRequested,
             onProjectSave,
             onProjectLoaded,
             onAuthenticationRequested,
             onAuthenticationExpired,
-            onUserInterfaceBack,
             onLogInfoRequested,
             onProjectGetDownloadLink,
         } = config;
@@ -249,18 +285,20 @@ export default class StudioUI {
             projectDownloadUrl,
             projectUploadUrl,
         );
-
+        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         return StudioUI.fullIntegrationConfig(
             selector,
             projectId,
             projectName,
+            uiOptions ?? defaultPlatformUiOptions,
+            outputSettings ?? defaultOutputSettings,
             onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
-            onProjectTemplateRequested ?? projectLoader.onProjectTemplateRequested,
+            onProjectTemplateRequested ?? projectLoader.onProjectDocumentRequested,
             onProjectSave ?? projectLoader.onProjectSave,
             onProjectLoaded ?? projectLoader.onProjectLoaded,
             onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
             onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
-            onUserInterfaceBack ?? onBack,
+            onBack,
             onLogInfoRequested ?? projectLoader.onLogInfoRequested,
             onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             editorLink,

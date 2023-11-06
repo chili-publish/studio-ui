@@ -93,23 +93,22 @@ export type Project = { name: string; id: string; template: { id: string } };
 
 export interface IStudioUILoaderConfig {
     selector: string;
-    projectDownloadUrl: string;
-    projectUploadUrl: string;
     projectId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName: string;
-    editorLink?: string;
     refreshTokenAction: () => Promise<string | AxiosError>;
-    onBack: () => void;
-
+    uiOptions?: UiOptions;
+    outputSettings?: OutputSettings;
+    editorLink?: string;
+    projectDownloadUrl?: string;
+    projectUploadUrl?: string;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
     onProjectTemplateRequested?: (projectId: string) => Promise<string>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
     onProjectLoaded?: (project: Project) => void;
     onAuthenticationRequested?: () => string;
     onAuthenticationExpired?: () => Promise<string>;
-    onUserInterfaceBack?: () => void;
     onLogInfoRequested?: () => void;
     onProjectGetDownloadLink?: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
 }
