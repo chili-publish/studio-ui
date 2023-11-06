@@ -6,6 +6,7 @@ import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
 import { ProjectConfig } from '../../types/types';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 const useNavbar = (
     projectName: string | undefined,
@@ -14,6 +15,7 @@ const useNavbar = (
     undoStackState: { canRedo: boolean; canUndo: boolean },
     projectConfig: ProjectConfig,
 ) => {
+    const { isBackBtnVisible, isDownloadBtnVisible } = useUiConfigContext();
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
@@ -51,14 +53,17 @@ const useNavbar = (
         })();
     }, [zoom]);
 
-    const navbarItems = useMemo(
-        (): NavbarItemType[] => [
-            {
+    const navbarItems = useMemo((): NavbarItemType[] => {
+        let items = [];
+        if (isBackBtnVisible) {
+            items.push({
                 label: 'Project information',
                 content: (
                     <NavbarGroup>
                         <NavbarButton
                             dataId="back-btn"
+                            dataTestId="back-btn"
+                            dataIntercomId="Go back button"
                             ariaLabel="Go back"
                             icon={AvailableIcons.faArrowLeft}
                             handleOnClick={goBack || (() => null)}
@@ -66,7 +71,10 @@ const useNavbar = (
                         <NavbarLabel aria-label={`Project: ${projectName}`}>{decodeURI(projectName || '')}</NavbarLabel>
                     </NavbarGroup>
                 ),
-            },
+            });
+        }
+        items = [
+            ...items,
             {
                 label: 'Actions',
                 content: (
@@ -90,11 +98,14 @@ const useNavbar = (
                     </NavbarGroup>
                 ),
             },
-            {
+        ];
+        if (isDownloadBtnVisible) {
+            items.push({
                 label: 'Download',
                 content: (
                     <NavbarButton
                         dataId="navbar-download-btn"
+                        dataIntercomId="Download button"
                         ariaLabel="Download"
                         label={
                             !isMobile ? (
@@ -108,26 +119,31 @@ const useNavbar = (
                         handleOnClick={showDownloadPanel}
                     />
                 ),
-            },
+            });
+        }
+        items = [
+            ...items,
             {
                 label: 'Zoom',
                 content: <Zoom zoom={zoom} zoomIn={zoomIn} zoomOut={zoomOut} />,
                 hideOnMobile: true,
             },
-        ],
-        [
-            goBack,
-            projectName,
-            undoStackState.canUndo,
-            undoStackState.canRedo,
-            handleUndo,
-            handleRedo,
-            isMobile,
-            zoom,
-            zoomIn,
-            zoomOut,
-        ],
-    );
+        ];
+        return items;
+    }, [
+        goBack,
+        projectName,
+        undoStackState.canUndo,
+        undoStackState.canRedo,
+        handleUndo,
+        handleRedo,
+        isMobile,
+        zoom,
+        zoomIn,
+        zoomOut,
+        isBackBtnVisible,
+        isDownloadBtnVisible,
+    ]);
 
     const handleDownload = async (
         extension: DownloadFormats,

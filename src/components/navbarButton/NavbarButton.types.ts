@@ -3,6 +3,8 @@ import { ReactElement } from 'react';
 
 export type NavbarButtonProps = {
     dataId: string;
+    dataTestId?: string;
+    dataIntercomId?: string;
     handleOnClick: () => void;
     ariaLabel: string;
     icon: AvailableIconsType;

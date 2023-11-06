@@ -12,7 +12,7 @@ export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-size: ${FontSizes.heading2};
     font-weight: bold;
-    color: ${Colors.LIGHT_PRIMARY_WHITE};
+    color: ${Colors.PRIMARY_FONT};
     border-bottom: 1px solid ${Colors.LIGHT_GRAY_100};
 `;
 
@@ -36,7 +36,7 @@ export const DropdownOptionLabel = styled.div`
 
 export const DropdownOptionText = styled.span`
     font-size: ${FontSizes.regular};
-    color: ${Colors.LIGHT_PRIMARY_WHITE};
+    color: ${Colors.PRIMARY_FONT};
 `;
 
 export const ButtonWrapper = styled.div`
@@ -53,8 +53,8 @@ export const ExperimentalPill = styled.span`
     justify-content: center;
     align-items: center;
     font-size: ${FontSizes.small};
-    color: ${Colors.LIGHT_PRIMARY_WHITE};
-    border: 1px solid ${Colors.LIGHT_PRIMARY_WHITE};
+    color: ${Colors.PRIMARY_FONT};
+    border: 1px solid ${Colors.PRIMARY_FONT};
     border-radius: 5rem;
     height: 1.375rem;
     margin: 0 0.5rem;

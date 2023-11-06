@@ -3,3 +3,4 @@
 
 node_modules/pretty-quick/bin/pretty-quick.js --staged
 yarn lint
+yarn validate-versions

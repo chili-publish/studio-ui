@@ -1,5 +1,5 @@
 import { Variable } from '@chili-publish/studio-sdk';
-import { LeftPanelContainer, VariablesListContainer } from './LeftPanel.styles';
+import { ImagePanelContainer, LeftPanelContainer, VariablesListContainer } from './LeftPanel.styles';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -14,16 +14,13 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
 
     return (
-        <LeftPanelContainer id="left-panel">
-            {contentType === ContentType.VARIABLES_LIST ? (
-                <VariablesListContainer>
-                    <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
-                </VariablesListContainer>
-            ) : (
-                <div style={{ padding: '0 0 0 1.25rem' }}>
-                    <ImagePanel />
-                </div>
-            )}
+        <LeftPanelContainer id="left-panel" data-intercom-target="Customize panel">
+            <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
+                <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
+            </VariablesListContainer>
+            <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
+                <ImagePanel />
+            </ImagePanelContainer>
         </LeftPanelContainer>
     );
 }

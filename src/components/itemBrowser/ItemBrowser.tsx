@@ -96,14 +96,26 @@ function ItemBrowser<
         setList(() => []);
     }, [navigationStack]);
 
+    useEffect(() => {
+        setBreadcrumbStack([]);
+        setNavigationStack([]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contentType]);
+
     // nextPagetoken is first set with 'requested: false' whenever we know the next
     // pagetoken. When the last item of the previous page comes into view (in html)
     // then we flip the requested to 'true' to trigger this effect.
     useEffect(() => {
+        // initially set to false, which means the 'fetch' result won't be ignored.
+        // in case the useEffect runs again (dependencies change) while the promise did not resolve, the cleanup function
+        // makes sure that the result that is not relevant anymore, won't affect the state.
+        let ignore = false;
+
         if (!nextPageToken.requested) return;
         setIsLoading(true);
         // declare the async data fetching function
         const fetchData = async () => {
+            if (contentType !== ContentType.IMAGE_PANEL) return;
             if (connectorCapabilities && connectorCapabilities[connectorId].query) {
                 const data = await queryCall(
                     connectorId,
@@ -116,16 +128,19 @@ function ItemBrowser<
                 );
                 // parse the token used if we need to fetch the next page
                 if (data.success && data.parsedData && data.parsedData.data) {
-                    const token = data.parsedData.nextPageToken
-                        ? new URL(data.parsedData.nextPageToken).searchParams.get('nextPageToken')
-                        : null;
-                    setNextPageToken(() => {
-                        return { token, requested: false };
-                    });
-                    setIsLoading(false);
-                    // convert to ItemCache to memoize the preview download call
-                    const itemsWithCache = data.parsedData.data.map((r: T) => new ItemCache<T>(r));
-                    setList((current) => [...current, ...itemsWithCache]);
+                    if (!ignore) {
+                        const token = data.parsedData.nextPageToken
+                            ? new URL(data.parsedData.nextPageToken).searchParams.get('nextPageToken')
+                            : null;
+                        setNextPageToken(() => {
+                            return { token, requested: false };
+                        });
+                        setIsLoading(false);
+
+                        // convert to ItemCache to memoize the preview download call
+                        const itemsWithCache = data.parsedData.data.map((r: T) => new ItemCache<T>(r));
+                        setList((current) => [...current, ...itemsWithCache]);
+                    }
                 }
             }
         };
@@ -134,8 +149,13 @@ function ItemBrowser<
         fetchData().then(() => {
             setIsLoading(false);
         });
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+            ignore = true;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken]);
+    }, [nextPageToken, contentType]);
 
     useEffect(() => {
         return () => {
@@ -173,6 +193,7 @@ function ItemBrowser<
                 setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
                 selectItem(listItem.instance);
+                setNavigationStack([]);
             }
         };
 
@@ -201,6 +222,7 @@ function ItemBrowser<
                 }
                 onClickCard={onClick}
                 isModal={false}
+                renamingDisabled
             />
         );
     });
@@ -254,6 +276,7 @@ function ItemBrowser<
                                 type={PreviewType.COLLECTION}
                                 isSkeleton
                                 onClickCard={() => null}
+                                renamingDisabled
                             />
                         ))}
                     <LoadPageContainer>

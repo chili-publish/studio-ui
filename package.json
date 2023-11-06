@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "0.153.2",
+    "version": "1.3.1",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -20,11 +20,12 @@
         "format-staged": "pretty-quick --staged",
         "cover": "jest --coverage",
         "make-badges": "node createCoverageBadge.cjs",
-        "validate-licenses": "node validate_licenses.cjs"
+        "validate-licenses": "node validate_licenses.cjs",
+        "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/studio-sdk": "^0.153.0",
-        "@chili-publish/grafx-shared-components": "^0.44.14",
+        "@chili-publish/studio-sdk": "1.3.0",
+        "@chili-publish/grafx-shared-components": "^0.46.2",
         "axios": "^1.4.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

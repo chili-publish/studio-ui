@@ -59,7 +59,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <StudioDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output type"
-                        selectedValue={downloadOptions.find((item) => item.value === selectedOption)}
+                        selectedValue={
+                            downloadOptions.find((item) => item.value === selectedOption) || downloadOptions[0]
+                        }
                         options={downloadOptions}
                         onChange={(val) => setSelectedOption(val as typeof selectedOption)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
@@ -118,6 +120,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         <Button
                             dataId={getDataIdForSUI(`download-btn`)}
                             dataTestId={getDataTestIdForSUI(`download-btn`)}
+                            dataIntercomId="Download selected output"
                             onClick={() => {
                                 handleDownload(selectedOption, updateDownloadState);
                             }}

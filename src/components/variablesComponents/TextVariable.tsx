@@ -24,6 +24,7 @@ function TextVariable(props: ITextVariable) {
             type="text"
             dataId={getDataIdForSUI(`input-${variable.id}`)}
             dataTestId={getDataTestIdForSUI(`input-${variable.id}`)}
+            dataIntercomId={`input-variable-${variable.name}`}
             value={variableValue}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {

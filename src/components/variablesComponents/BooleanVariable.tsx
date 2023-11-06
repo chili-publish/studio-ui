@@ -14,7 +14,7 @@ function BooleanVariable(props: IBooleanVariable) {
     }, [variable]);
 
     return (
-        <BooleanVariableContainer>
+        <BooleanVariableContainer data-intercom-target={`boolean-variable-${variable.name}`}>
             <Switch
                 dataId={getDataIdForSUI(`switch-${variable.id}`)}
                 dataTestId={getDataTestIdForSUI(`switch-${variable.id}`)}

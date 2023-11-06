@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
-import { IImageVariable } from '../VariablesComponents.types';
+import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { IImageVariable } from '../VariablesComponents.types';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
@@ -17,7 +17,7 @@ function ImageVariable(props: IImageVariable) {
             return window.SDK.mediaConnector.download(
                 variable.value?.connectorId ?? '',
                 id,
-                MediaDownloadType.LowResolutionWeb,
+                MediaDownloadType.thumbnail,
                 {},
             );
         };
@@ -51,6 +51,7 @@ function ImageVariable(props: IImageVariable) {
                 }
             }
 
+            if (!variable.value.assetId) return;
             const { parsedData, success } = await window.SDK.mediaConnector.detail(
                 variable.value.connectorId,
                 variable.value.assetId as string,
@@ -69,6 +70,7 @@ function ImageVariable(props: IImageVariable) {
         <ImagePicker
             dataId={getDataIdForSUI(`img-picker-${variable.id}`)}
             dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
+            dataIntercomId={`image-picker-${variable.name}`}
             name={variable.id}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
             previewImage={previewImage}
