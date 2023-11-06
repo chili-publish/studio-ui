@@ -104,7 +104,7 @@ export interface IStudioUILoaderConfig {
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
-    onProjectTemplateRequested?: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested?: (projectId: string) => Promise<string>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
     onProjectLoaded?: (project: Project) => void;
     onAuthenticationRequested?: () => string;
