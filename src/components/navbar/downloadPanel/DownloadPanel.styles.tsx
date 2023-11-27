@@ -6,12 +6,6 @@ export const DownloadPanelContainer = styled.div`
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
     border: solid 1px ${Colors.PRIMARY_WHITE};
     border-radius: 0.25rem;
-    /* & .grafx-drop-down__option--is-selected {
-        & svg {
-            min-width: 1.125rem !important;
-            min-height: 1.125rem !important;
-        }
-    } */
 `;
 
 export const DownloadDropdownTitle = styled.div`
