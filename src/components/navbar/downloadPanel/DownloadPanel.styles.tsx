@@ -6,6 +6,12 @@ export const DownloadPanelContainer = styled.div`
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
     border: solid 1px ${Colors.PRIMARY_WHITE};
     border-radius: 0.25rem;
+    /* & .grafx-drop-down__option--is-selected {
+        & svg {
+            min-width: 1.125rem !important;
+            min-height: 1.125rem !important;
+        }
+    } */
 `;
 
 export const DownloadDropdownTitle = styled.div`
@@ -32,11 +38,37 @@ export const DropdownOptionLabel = styled.div`
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    overflow: hidden;
+    margin-right: 0.25rem;
+    flex: 1;
+`;
+
+export const Container = styled.div`
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 export const DropdownOptionText = styled.span`
     font-size: ${FontSizes.regular};
     color: ${Colors.PRIMARY_FONT};
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+export const DropdownOptionDescription = styled.span`
+    font-size: ${FontSizes.label};
+    color: ${Colors.DARK_GRAY_500};
+    font-weight: normal;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `;
 
 export const ButtonWrapper = styled.div`
