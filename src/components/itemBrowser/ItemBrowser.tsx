@@ -116,7 +116,7 @@ function ItemBrowser<
         // declare the async data fetching function
         const fetchData = async () => {
             if (contentType !== ContentType.IMAGE_PANEL) return;
-            if (connectorCapabilities && connectorCapabilities[connectorId].query) {
+            if (connectorCapabilities[connectorId]?.query) {
                 const data = await queryCall(
                     connectorId,
                     {
@@ -129,9 +129,8 @@ function ItemBrowser<
                 // parse the token used if we need to fetch the next page
                 if (data.success && data.parsedData && data.parsedData.data) {
                     if (!ignore) {
-                        const token = data.parsedData.nextPageToken
-                            ? new URL(data.parsedData.nextPageToken).searchParams.get('nextPageToken')
-                            : null;
+                        const token = data.parsedData.nextPageToken ? parseNextPageToken(data) : null;
+
                         setNextPageToken(() => {
                             return { token, requested: false };
                         });
@@ -144,6 +143,20 @@ function ItemBrowser<
                 }
             }
         };
+
+        function parseNextPageToken(data: EditorResponse<QueryPage<T>>): string {
+            if (!data.parsedData?.nextPageToken) {
+                return '';
+            }
+
+            const rawToken = data.parsedData.nextPageToken;
+
+            try {
+                return new URL(rawToken).searchParams.get('nextPageToken') ?? '';
+            } catch (error) {
+                return rawToken;
+            }
+        }
 
         // call the function
         fetchData().then(() => {
