@@ -405,10 +405,10 @@
     "@fortawesome/react-fontawesome" "^0.2.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@1.3.1":
-  version "1.3.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.3.1/e11657737ee8fb053d19ca4751eeb0ecdb2076ce#e11657737ee8fb053d19ca4751eeb0ecdb2076ce"
-  integrity sha512-4/uNJ27Dz4YaujBnrU6dcgWiBismOpymlkhEr1/H15j+sMnv0Z++ntvAloGQBQcqU4xEFNKM68d3NDQxlmSilw==
+"@chili-publish/studio-sdk@1.4.1":
+  version "1.4.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.4.1/94ee79cf5dc67ae0462289a59137580cd62293f9#94ee79cf5dc67ae0462289a59137580cd62293f9"
+  integrity sha512-KsD4LNEiElLbTwDAX7rh4Fh5Zd05r4LXaFXGBeCEaQbbisXBnsk3H1rgLebuaq8hgSKAFI9ZDsIIbOVttFjagQ==
   dependencies:
     penpal "6.1.0"
 
@@ -1659,7 +1659,7 @@ axe-core@=4.7.0:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.7.0.tgz#34ba5a48a8b564f67e103f0aa5768d76e15bbbbf"
   integrity sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==
 
-axios@^1.4.0:
+axios@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.0.tgz#f1e5292f26b2fd5c2e66876adc5b06cdbd7d2102"
   integrity sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==

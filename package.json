@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.3.4",
+    "version": "1.4.2",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -24,9 +24,9 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/studio-sdk": "1.3.1",
+        "@chili-publish/studio-sdk": "1.4.1",
         "@chili-publish/grafx-shared-components": "^0.46.3",
-        "axios": "^1.4.0",
+        "axios": "^1.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "styled-components": "^5.3.11"
