@@ -31,10 +31,34 @@ const useDownload = (hideDownloadPanel: () => void) => {
 
     const downloadOptions: Option[] = useMemo(() => {
         const allOptions = [
-            { label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" />, value: DownloadFormats.JPG },
-            { label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" />, value: DownloadFormats.PNG },
-            { label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4" />, value: DownloadFormats.MP4 },
-            { label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" />, value: DownloadFormats.GIF },
+            {
+                label: (
+                    <DropdownOption
+                        icon={AvailableIcons.faImage}
+                        text="JPG this is only for testing  will be removed later"
+                        description="this description is only for testing and will be removed later"
+                    />
+                ),
+                value: DownloadFormats.JPG,
+            },
+            {
+                label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" description="" />,
+                value: DownloadFormats.PNG,
+            },
+            {
+                label: (
+                    <DropdownOption
+                        icon={AvailableIcons.faFileVideo}
+                        text="MP4 this is only for testing  will be removed later"
+                        description=""
+                    />
+                ),
+                value: DownloadFormats.MP4,
+            },
+            {
+                label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" description="" />,
+                value: DownloadFormats.GIF,
+            },
         ];
 
         // if no outputsettings defined, show all

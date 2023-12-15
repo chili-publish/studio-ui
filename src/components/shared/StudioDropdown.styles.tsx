@@ -17,7 +17,6 @@ export const MobileDropdownOptionContainer = styled.div`
     line-height: 1.29;
     height: 2.5rem;
     border-radius: 0.25rem;
-
     &:hover {
         box-shadow: none;
         border-color: ${Colors.PRIMARY_FONT};
@@ -45,6 +44,7 @@ export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
 export const MobileDropdownOptionContent = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 `;
 
@@ -53,6 +53,9 @@ export const MobileDropdownValue = styled.div`
     gap: 0.5rem;
     justify-content: space-between;
     align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 export const Label = styled.div<{ marginBottom?: string }>`
