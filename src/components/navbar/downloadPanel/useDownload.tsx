@@ -32,13 +32,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
     const downloadOptions: Option[] = useMemo(() => {
         const allOptions = [
             {
-                label: (
-                    <DropdownOption
-                        icon={AvailableIcons.faImage}
-                        text="JPG this is only for testing  will be removed later"
-                        description="this description is only for testing and will be removed later"
-                    />
-                ),
+                label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" description="" />,
                 value: DownloadFormats.JPG,
             },
             {
@@ -46,13 +40,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
                 value: DownloadFormats.PNG,
             },
             {
-                label: (
-                    <DropdownOption
-                        icon={AvailableIcons.faFileVideo}
-                        text="MP4 this is only for testing  will be removed later"
-                        description=""
-                    />
-                ),
+                label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4 " description="" />,
                 value: DownloadFormats.MP4,
             },
             {
