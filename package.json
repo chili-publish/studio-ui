@@ -24,7 +24,7 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/studio-sdk": "1.4.1",
+        "@chili-publish/studio-sdk": "1.4.4",
         "@chili-publish/grafx-shared-components": "^0.46.3",
         "axios": "^1.6.0",
         "react": "^18.2.0",
