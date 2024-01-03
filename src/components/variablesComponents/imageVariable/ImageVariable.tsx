@@ -17,7 +17,7 @@ function ImageVariable(props: IImageVariable) {
             return window.SDK.mediaConnector.download(
                 variable.value?.connectorId ?? '',
                 id,
-                MediaDownloadType.thumbnail,
+                MediaDownloadType.mediumres,
                 {},
             );
         };
