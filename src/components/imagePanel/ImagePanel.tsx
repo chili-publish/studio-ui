@@ -6,7 +6,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 function ImagePanel({ height }: { height?: string }) {
     const { handleUpdateImage, currentVariableConnectorId } = useVariablePanelContext();
     const previewCall = (id: string): Promise<Uint8Array> =>
-        window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.thumbnail, {});
+        window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
 
     if (!currentVariableConnectorId) return null;
 
