@@ -88,3 +88,19 @@ export const BreadCrumbsWrapper = styled.div`
     display: flex;
     margin-bottom: 1rem;
 `;
+
+export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
+    width: ${(props) => (props.isMobile ? '100%' : '16.25rem')};
+    ${(props) =>
+        props.hasSearchQuery &&
+        `
+        margin-bottom: 1rem;
+    `};
+`;
+
+export const EmptySearchResultContainer = styled.div`
+    padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
+    color: ${Colors.SECONDARY_FONT};
+    font-size: 0.875rem;
+    text-align: center;
+`;
