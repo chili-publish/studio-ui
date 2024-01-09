@@ -90,3 +90,25 @@ export const defaultBackFn = () => history.back();
 export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
 export type Project = { name: string; id: string; template: { id: string } };
+
+export interface IStudioUILoaderConfig {
+    selector: string;
+    projectId: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+    authToken: string;
+    projectName: string;
+    refreshTokenAction: () => Promise<string | AxiosError>;
+    uiOptions?: UiOptions;
+    outputSettings?: OutputSettings;
+    editorLink?: string;
+    projectDownloadUrl?: string;
+    projectUploadUrl?: string;
+    onProjectInfoRequested?: (projectId: string) => Promise<Project>;
+    onProjectDocumentRequested?: (projectId: string) => Promise<string>;
+    onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
+    onProjectLoaded?: (project: Project) => void;
+    onAuthenticationRequested?: () => string;
+    onAuthenticationExpired?: () => Promise<string>;
+    onLogInfoRequested?: () => void;
+    onProjectGetDownloadLink?: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+}
