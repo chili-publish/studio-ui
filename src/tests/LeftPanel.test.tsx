@@ -1,6 +1,6 @@
 import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK from '@chili-publish/studio-sdk';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
@@ -10,11 +10,11 @@ import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 
-beforeEach(() => {
-    jest.mock('@chili-publish/studio-sdk');
-    const mockSDK = mock<EditorSDK>();
-    global.URL.createObjectURL = jest.fn();
+jest.mock('@chili-publish/studio-sdk');
+const mockSDK = mock<EditorSDK>();
 
+beforeEach(() => {
+    global.URL.createObjectURL = jest.fn();
     mockSDK.mediaConnector.query = jest
         .fn()
         .mockImplementation()
@@ -206,5 +206,59 @@ describe('Image Panel', () => {
 
         expect(window.SDK.variable.setImageVariableConnector).toBeCalledTimes(1);
         expect(window.SDK.variable.setValue).toBeCalledTimes(1);
+    });
+    test('Do not render search input when filtering is not supported', async () => {
+        mockSDK.mediaConnector.getCapabilities = jest
+            .fn()
+            .mockImplementation()
+            .mockReturnValue(
+                Promise.resolve({
+                    parsedData: {
+                        copy: false,
+                        detail: true,
+                        filtering: false,
+                        query: true,
+                        remove: false,
+                        upload: false,
+                    },
+                }),
+            );
+
+        const { getAllByTestId, getAllByRole } = render(
+            <VariablePanelContextProvider connectors={mockConnectors}>
+                <LeftPanel variables={variables} isDocumentLoaded />
+            </VariablePanelContextProvider>,
+        );
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        await act(async () => {
+            imagePicker.click();
+        });
+        const image = getAllByRole('img', { name: /grafx/i })[0];
+
+        await act(async () => {
+            image.click();
+        });
+
+        const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
+        expect(input).toBeNull();
+    });
+    test('Render search input when filtering is supported', async () => {
+        const { getAllByTestId, getAllByRole, getByTestId } = render(
+            <VariablePanelContextProvider connectors={mockConnectors}>
+                <LeftPanel variables={variables} isDocumentLoaded />
+            </VariablePanelContextProvider>,
+        );
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        await act(async () => {
+            imagePicker.click();
+        });
+        const image = getAllByRole('img', { name: /grafx/i })[0];
+
+        await act(async () => {
+            image.click();
+        });
+
+        const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
+        expect(input).toBeInTheDocument();
     });
 });
