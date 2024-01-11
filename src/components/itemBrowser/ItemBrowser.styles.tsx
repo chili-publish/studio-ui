@@ -9,6 +9,9 @@ export const ResourcesContainer = styled.div`
     ${mobileMediaQuery} {
         grid-template-columns: minmax(7.5rem, 1fr) minmax(7.5rem, 1fr);
         gap: 1rem;
+        max-height: 500px;
+        overflow: scroll;
+        height: auto;
     }
 `;
 

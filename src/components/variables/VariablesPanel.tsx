@@ -59,6 +59,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                 onTrayHidden={showVariablesPanel}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
+                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
                 `}
                 hideCloseButton={mobileOptionsListOpen}
             >
