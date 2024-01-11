@@ -218,6 +218,8 @@ function ItemBrowser<
             } else {
                 selectItem(listItem.instance);
                 setNavigationStack([]);
+                setSearchQuery('');
+                setSearchKeyWord('');
             }
         };
 
@@ -276,49 +278,51 @@ function ItemBrowser<
             isModal={false}
             padding="0"
         >
-            <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
-                <Input
-                    type="text"
-                    name="search"
-                    placeholder="Search"
-                    value={searchKeyWord}
-                    onChange={(e) => setSearchKeyWord(e.target.value)}
-                    onBlur={() => handleSearch(searchKeyWord)}
-                    width="260px"
-                    leftIcon={{
-                        icon: (
-                            <Icon
-                                editorComponent
-                                dataId={getDataIdForSUI('media-panel-search-icon')}
-                                dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
-                                icon={AvailableIcons.faMagnifyingGlass}
-                            />
-                        ),
-                        label: 'Search icon',
-                    }}
-                    dataId={getDataIdForSUI('media-panel-search-input')}
-                    dataTestId={getDataTestIdForSUI('media-panel-search-input')}
-                    rightIcon={
-                        searchKeyWord
-                            ? {
-                                  label: 'Clear search icon',
-                                  icon: (
-                                      <Icon
-                                          dataId={getDataIdForSUI('media-panel-clear-search-icon')}
-                                          dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
-                                          icon={AvailableIcons.faXmark}
-                                      />
-                                  ),
-                                  onClick: () => {
-                                      setSearchKeyWord('');
-                                      setSearchQuery('');
-                                  },
-                              }
-                            : undefined
-                    }
-                    isHighlightOnClick
-                />
-            </SearchInputWrapper>
+            {connectorCapabilities[connectorId]?.filtering && (
+                <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
+                    <Input
+                        type="text"
+                        name="search"
+                        placeholder="Search"
+                        value={searchKeyWord}
+                        onChange={(e) => setSearchKeyWord(e.target.value)}
+                        onBlur={() => handleSearch(searchKeyWord)}
+                        width="260px"
+                        leftIcon={{
+                            icon: (
+                                <Icon
+                                    editorComponent
+                                    dataId={getDataIdForSUI('media-panel-search-icon')}
+                                    dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
+                                    icon={AvailableIcons.faMagnifyingGlass}
+                                />
+                            ),
+                            label: 'Search icon',
+                        }}
+                        dataId={getDataIdForSUI('media-panel-search-input')}
+                        dataTestId={getDataTestIdForSUI('media-panel-search-input')}
+                        rightIcon={
+                            searchKeyWord
+                                ? {
+                                      label: 'Clear search icon',
+                                      icon: (
+                                          <Icon
+                                              dataId={getDataIdForSUI('media-panel-clear-search-icon')}
+                                              dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
+                                              icon={AvailableIcons.faXmark}
+                                          />
+                                      ),
+                                      onClick: () => {
+                                          setSearchKeyWord('');
+                                          setSearchQuery('');
+                                      },
+                                  }
+                                : undefined
+                        }
+                        isHighlightOnClick
+                    />
+                </SearchInputWrapper>
+            )}
             {!searchQuery && (
                 <BreadCrumbsWrapper>
                     <BreadCrumb
