@@ -12,6 +12,7 @@ import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
     defaultUiOptions,
+    IStudioUILoaderConfig,
 } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -163,8 +164,8 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
-            uiOptions || defaultPlatformUiOptions,
-            outputSettings || defaultOutputSettings,
+            uiOptions ?? defaultPlatformUiOptions,
+            outputSettings ?? defaultOutputSettings,
             projectLoader.onProjectInfoRequested,
             projectLoader.onProjectDocumentRequested,
             projectLoader.onProjectSave,
@@ -235,6 +236,72 @@ export default class StudioUI {
             onBack,
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
+        );
+    }
+
+    /**
+     * Creates a new instance of StudioUI with the default project loader and authentication based on the fullIntegration.
+     * if an optional callback is provided f.e onProjectInfoRequested it will be used instead of the default one
+     * @param selector - The selector for the root element of the UI.
+     * @param projectDownloadUrl - Environment API url to download the project.
+     * @param projectUploadUrl - Environment API url to upload the project.
+     * @param projectId - The id of the project to load.
+     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
+     * @param authToken - Environment API authentication token.
+     * @param refreshTokenAction - Callback to refresh the authentication token.
+     * @param projectName - The name of the project to load.
+     * @param onBack - Callback when the user clicks the back button.
+     * @returns
+     */
+
+    static studioUILoaderConfig(config: IStudioUILoaderConfig) {
+        const {
+            selector,
+            projectDownloadUrl,
+            projectUploadUrl,
+            projectId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            projectName,
+            editorLink,
+            uiOptions,
+            outputSettings,
+            refreshTokenAction,
+            onProjectInfoRequested,
+            onProjectDocumentRequested,
+            onProjectSave,
+            onProjectLoaded,
+            onAuthenticationRequested,
+            onAuthenticationExpired,
+            onLogInfoRequested,
+            onProjectGetDownloadLink,
+        } = config;
+
+        const projectLoader = new StudioProjectLoader(
+            projectId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            refreshTokenAction,
+            projectDownloadUrl,
+            projectUploadUrl,
+        );
+        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
+        return StudioUI.fullIntegrationConfig(
+            selector,
+            projectId,
+            projectName,
+            uiOptions ?? defaultPlatformUiOptions,
+            outputSettings ?? defaultOutputSettings,
+            onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
+            onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
+            onProjectSave ?? projectLoader.onProjectSave,
+            onProjectLoaded ?? projectLoader.onProjectLoaded,
+            onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
+            onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
+            onBack,
+            onLogInfoRequested ?? projectLoader.onLogInfoRequested,
+            onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+            editorLink,
         );
     }
 }
