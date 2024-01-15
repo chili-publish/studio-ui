@@ -5,7 +5,7 @@
 }
 
 .sui-canvas {
-    height: calc(100% - 4rem - 5rem);
+    height: calc(100% - 5rem);
     width: 100%;
 }
 
