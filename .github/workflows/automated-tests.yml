@@ -7,9 +7,8 @@ jobs:
         if: github.event.label.name == 'Ready for QA'
         name: run-automated-tests
         timeout-minutes: 90
-        runs-on:
-            group: k8s-runners-qa
-            labels: qa
+        runs-on: ubuntu-latest
+        
         strategy:
             fail-fast: false
             matrix:
