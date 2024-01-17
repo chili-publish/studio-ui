@@ -1,0 +1,114 @@
+name: Self hosted run
+
+on:    
+    pull_request:
+        types: [labeled]
+jobs:
+  create-gh-repo-self-hosted-runner:
+    name: Create GH runner
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    outputs:
+      runner-name: ${{ steps.create-gh-repo-self-hosted-runner.outputs.runner-name }}
+      studioUi: ${{ steps.defineTestTag.outputs.studioUi }}
+      tag: ${{ steps.defineTestTag.outputs.tag }}
+
+    steps:
+      # This step automatically creates assign needed test tag and other test variables in github ENV storage
+      - name: define test tag
+        id: defineTestTag
+        run: |
+            SETTAG="StudioUI"
+            PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+            echo "workspace=https://chiligrafx-dev.com/environments/4283baaa-43dd-4dc6-a5c9-a97790caa278/studio/templates/6bfc1c70-2268-4e1f-96ad-25359277ecec?&workspace=latest" >> $GITHUB_OUTPUT
+            echo "studioUi=https://chiligrafx-dev.com/environments/43b59331-9a98-4c64-8c5a-2a98d279fff9/studio/projects/9cf26f44-6891-4855-b09d-3db76b919189?studio-ui=pr_builds/$(echo $PR_NUMBER)" >> $GITHUB_OUTPUT
+            echo "$SETTAG"
+            echo "tag=$SETTAG" >> $GITHUB_OUTPUT
+      # This step for check job variables need to run tests
+      - name: check settings
+        id: checkSet
+        run: |
+          echo Test tag: "${{ steps.defineTestTag.outputs.tag }}"
+          echo Test branch: "${GITHUB_HEAD_REF}"
+          echo StudioUi URL: "${{ steps.defineTestTag.outputs.studioUi }}"
+      # This step creates container from azure image
+      - name: Create GitHub repository self hosted runner
+        id: create-gh-repo-self-hosted-runner
+        uses: chili-publish/delivery-github-utilities/actions/create-gh-repo-self-hosted-runner@create-gh-repo-self-hosted-runner_1.0.1
+        with:
+          gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_SELF_HOSTED_RUNNER }}
+          gh-app-id: 295462
+          gh-app-installation-id: 34376649
+          az-sp-client-id: ${{ vars.AZ_AD_CLIENT_ID_CP_DVO_INT_GITHUB_SP_RUNNERS }}
+          az-sp-client-secret: ${{ secrets.AZ_AD_CLIENT_SECRET_CP_DVO_INT_GITHUB_SP_RUNNERS }}
+          az-sp-tenant-id: 2ea0bc9e-f829-408f-badf-30a37e6bc865
+          az-sp-subscription-id: 357eddfa-a52e-4fd8-bc05-8e6a358f2c1f
+          az-acr-name: cpdvointdtiacr
+          az-acr-username: cpdvointdtiacr
+          az-acr-password: ${{ secrets.CPDVOINTDTIACR_PASSWORD }}
+          az-acr-repository-name: github-runner-qa-frontend
+          az-acr-repository-tag: 1.0.3
+          az-rg-runner: cp-dvo-int-github-rg
+          runner-label: ${{ github.run_id }}
+
+  # This step runs automated tests
+  run-self-hosted-tests:
+    timeout-minutes: 60
+    needs: [create-gh-repo-self-hosted-runner]
+    runs-on: [self-hosted, '${{ github.run_id }}']
+    steps:
+      - name: Test execution inside selfhosted container
+        id: selfRunner
+        run: |
+          pwd
+          export StudioUi="${{ needs.create-gh-repo-self-hosted-runner.outputs.studioUi }}"
+          cd ../..
+          cd ../..
+          mkdir framework
+          cd framework      
+          git clone --depth 1 --branch "${GITHUB_HEAD_REF}" "${{ secrets.AZURE_QA_TEST_URL }}" .
+          npm i 
+          echo '{"StudioUi":"${{ needs.create-gh-repo-self-hosted-runner.outputs.studioUi }}"}' > url.json
+          cat url.json
+          sudo gauge run --env ciSelf --tags "${{ needs.create-gh-repo-self-hosted-runner.outputs.tag }}" --max-retries-count=2
+  # This step for upload artifacts
+  upload-artifacts:
+    needs: [run-self-hosted-tests]
+    runs-on: [self-hosted, '${{ github.run_id }}']
+    if: always()
+
+    steps:
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: /environment/framework/reports
+          retention-days: 30
+
+  # This step for delete self hosted runners
+  destroy-gh-repo-self-hosted-runner:
+    name: Destroy GH runner
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    needs: [create-gh-repo-self-hosted-runner, upload-artifacts]
+    if: always()
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+
+      - name: Destroy GitHub repository self hosted runner
+        id: destroy-gh-repo-self-hosted-runner
+        uses: chili-publish/delivery-github-utilities/actions/destroy-gh-repo-self-hosted-runner@destroy-gh-repo-self-hosted-runner_1.0.1
+        with:
+          gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_SELF_HOSTED_RUNNER }}
+          gh-app-id: 295462
+          gh-app-installation-id: 34376649
+          az-sp-client-id: ${{ vars.AZ_AD_CLIENT_ID_CP_DVO_INT_GITHUB_SP_RUNNERS }}
+          az-sp-client-secret: ${{ secrets.AZ_AD_CLIENT_SECRET_CP_DVO_INT_GITHUB_SP_RUNNERS }}
+          az-sp-tenant-id: 2ea0bc9e-f829-408f-badf-30a37e6bc865
+          az-sp-subscription-id: 357eddfa-a52e-4fd8-bc05-8e6a358f2c1f
+          az-rg-runner: cp-dvo-int-github-rg
+          runner-name: ${{ needs.create-gh-repo-self-hosted-runner.outputs.runner-name }}
