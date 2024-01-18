@@ -136,35 +136,33 @@ export class StudioProjectLoader {
         token?: string,
     ) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
-
-        if (url) {
-            try {
-                const document = await generateJson().then((res) => {
-                    if (res) {
-                        return res;
-                    }
-                    throw new Error();
-                });
-                const config: HttpHeaders = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
-
-                if (token) {
-                    config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+        if (!url) return;
+        try {
+            const document = await generateJson().then((res) => {
+                if (res) {
+                    return res;
                 }
-                if (document) {
-                    axios.put(url, JSON.parse(document), config).catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                        return err;
-                    });
-                }
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
+                throw new Error();
+            });
+            const config: HttpHeaders = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            if (token) {
+                config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
             }
+            if (document) {
+                axios.put(url, JSON.parse(document), config).catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.error(`[${this.saveDocument.name}] There was an issue saving document`);
+                    return err;
+                });
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
         }
     };
 }
