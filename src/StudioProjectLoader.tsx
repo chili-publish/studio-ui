@@ -137,7 +137,7 @@ export class StudioProjectLoader {
     ) => {
         const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
 
-        if (url && process.env.NODE_ENV !== 'development') {
+        if (url) {
             try {
                 const document = await generateJson().then((res) => {
                     if (res) {
