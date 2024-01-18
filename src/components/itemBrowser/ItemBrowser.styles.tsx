@@ -9,6 +9,9 @@ export const ResourcesContainer = styled.div`
     ${mobileMediaQuery} {
         grid-template-columns: minmax(7.5rem, 1fr) minmax(7.5rem, 1fr);
         gap: 1rem;
+        max-height: 500px;
+        overflow: scroll;
+        height: auto;
     }
 `;
 
@@ -87,4 +90,20 @@ export const BreadCrumbsWrapper = styled.div`
     white-space: nowrap;
     display: flex;
     margin-bottom: 1rem;
+`;
+
+export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
+    width: ${(props) => (props.isMobile ? '100%' : '16.25rem')};
+    ${(props) =>
+        props.hasSearchQuery &&
+        `
+        margin-bottom: 1rem;
+    `};
+`;
+
+export const EmptySearchResultContainer = styled.div`
+    padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
+    color: ${Colors.SECONDARY_FONT};
+    font-size: 0.875rem;
+    text-align: center;
 `;

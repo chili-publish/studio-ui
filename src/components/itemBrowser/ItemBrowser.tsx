@@ -1,7 +1,10 @@
 import {
+    AvailableIcons,
     BreadCrumb,
     PreviewCard as ChiliPreview,
     Colors,
+    Icon,
+    Input,
     Panel,
     PreviewCardVariant,
     PreviewType,
@@ -15,7 +18,13 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './ItemBrowser.styles';
+import {
+    BreadCrumbsWrapper,
+    LoadPageContainer,
+    ResourcesContainer,
+    SearchInputWrapper,
+    EmptySearchResultContainer,
+} from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
@@ -68,6 +77,8 @@ function ItemBrowser<
     });
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
+    const [searchKeyWord, setSearchKeyWord] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const moreData = !!nextPageToken?.token;
 
     const {
@@ -94,7 +105,7 @@ function ItemBrowser<
             return { token: null, requested: true };
         });
         setList(() => []);
-    }, [navigationStack]);
+    }, [navigationStack, searchQuery]);
 
     useEffect(() => {
         setBreadcrumbStack([]);
@@ -110,7 +121,6 @@ function ItemBrowser<
         // in case the useEffect runs again (dependencies change) while the promise did not resolve, the cleanup function
         // makes sure that the result that is not relevant anymore, won't affect the state.
         let ignore = false;
-
         if (!nextPageToken.requested) return;
         setIsLoading(true);
         // declare the async data fetching function
@@ -123,6 +133,7 @@ function ItemBrowser<
                         collection: `/${navigationStack?.join('/') ?? ''}`,
                         pageToken: nextPageToken.token ? nextPageToken.token : '',
                         pageSize: 15,
+                        filter: [searchQuery],
                     },
                     {},
                 );
@@ -168,7 +179,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken, contentType]);
+    }, [nextPageToken, contentType, searchQuery]);
 
     useEffect(() => {
         return () => {
@@ -207,6 +218,8 @@ function ItemBrowser<
             } else {
                 selectItem(listItem.instance);
                 setNavigationStack([]);
+                setSearchQuery('');
+                setSearchKeyWord('');
             }
         };
 
@@ -251,6 +264,11 @@ function ItemBrowser<
     // eslint-disable-next-line no-nested-ternary
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
 
+    const handleSearch = (keyword: string) => {
+        setSearchQuery(keyword);
+        setNavigationStack([]);
+        setBreadcrumbStack([]);
+    };
     return (
         <Panel
             parentOverflow
@@ -260,20 +278,78 @@ function ItemBrowser<
             isModal={false}
             padding="0"
         >
-            <BreadCrumbsWrapper>
-                <BreadCrumb
-                    href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                    color={Colors.SECONDARY_FONT}
-                    activeColor={Colors.PRIMARY_FONT}
-                    onClick={(breadCrumb: string) => {
-                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(breadCrumb) + 1);
-                        const newBreadcrumbStack = breadcrumbStack?.splice(0, breadcrumbStack.indexOf(breadCrumb) + 1);
-                        setNavigationStack(newNavigationStack);
-                        setBreadcrumbStack(newBreadcrumbStack);
-                    }}
-                />
-            </BreadCrumbsWrapper>
+            {connectorCapabilities[connectorId]?.filtering && (
+                <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
+                    <Input
+                        type="text"
+                        name="search"
+                        placeholder="Search"
+                        value={searchKeyWord}
+                        onChange={(e) => setSearchKeyWord(e.target.value)}
+                        onBlur={() => handleSearch(searchKeyWord)}
+                        width="260px"
+                        leftIcon={{
+                            icon: (
+                                <Icon
+                                    editorComponent
+                                    dataId={getDataIdForSUI('media-panel-search-icon')}
+                                    dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
+                                    icon={AvailableIcons.faMagnifyingGlass}
+                                />
+                            ),
+                            label: 'Search icon',
+                        }}
+                        dataId={getDataIdForSUI('media-panel-search-input')}
+                        dataTestId={getDataTestIdForSUI('media-panel-search-input')}
+                        rightIcon={
+                            searchKeyWord
+                                ? {
+                                      label: 'Clear search icon',
+                                      icon: (
+                                          <Icon
+                                              dataId={getDataIdForSUI('media-panel-clear-search-icon')}
+                                              dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
+                                              icon={AvailableIcons.faXmark}
+                                          />
+                                      ),
+                                      onClick: () => {
+                                          setSearchKeyWord('');
+                                          setSearchQuery('');
+                                      },
+                                  }
+                                : undefined
+                        }
+                        isHighlightOnClick
+                    />
+                </SearchInputWrapper>
+            )}
+            {!searchQuery && (
+                <BreadCrumbsWrapper>
+                    <BreadCrumb
+                        href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        color={Colors.SECONDARY_FONT}
+                        activeColor={Colors.PRIMARY_FONT}
+                        onClick={(breadCrumb: string) => {
+                            const newNavigationStack = navigationStack?.splice(
+                                0,
+                                navigationStack.indexOf(breadCrumb) + 1,
+                            );
+                            const newBreadcrumbStack = breadcrumbStack?.splice(
+                                0,
+                                breadcrumbStack.indexOf(breadCrumb) + 1,
+                            );
+                            setNavigationStack(newNavigationStack);
+                            setBreadcrumbStack(newBreadcrumbStack);
+                        }}
+                    />
+                </BreadCrumbsWrapper>
+            )}
             <ScrollbarWrapper height={height ?? leftPanelHeight} scrollbarWidth="0">
+                {elements.length === 0 && !isLoading && searchQuery && (
+                    <EmptySearchResultContainer>
+                        No search results found. Maybe try another keyword?
+                    </EmptySearchResultContainer>
+                )}
                 <ResourcesContainer
                     data-id={getDataIdForSUI('resources-container')}
                     data-testid={getDataTestIdForSUI('resources-container')}
