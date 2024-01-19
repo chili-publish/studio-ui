@@ -150,7 +150,7 @@ describe('StudioProjectLoader', () => {
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
         });
 
-        it('should not save document if document URL is not provided', async () => {
+        it('Should use fallback url to save document when document URL is not provided', async () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -165,7 +165,7 @@ describe('StudioProjectLoader', () => {
 
             expect(result).toEqual(mockCachedProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
-            expect(axios.put).not.toHaveBeenCalled();
+            expect(axios.put).toHaveBeenCalled();
         });
     });
 
