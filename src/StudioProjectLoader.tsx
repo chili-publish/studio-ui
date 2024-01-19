@@ -135,7 +135,13 @@ export class StudioProjectLoader {
         templateUrl?: string,
         token?: string,
     ) => {
-        const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
+        // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
+        const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
+        const url =
+            templateUrl ||
+            (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null) ||
+            fallbackDownloadUrl;
+
         if (!url) return;
         try {
             const document = await generateJson().then((res) => {
