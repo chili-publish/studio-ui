@@ -135,36 +135,40 @@ export class StudioProjectLoader {
         templateUrl?: string,
         token?: string,
     ) => {
-        const url = templateUrl || (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null);
+        // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
+        const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
+        const url =
+            templateUrl ||
+            (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null) ||
+            fallbackDownloadUrl;
 
-        if (url && process.env.NODE_ENV !== 'development') {
-            try {
-                const document = await generateJson().then((res) => {
-                    if (res) {
-                        return res;
-                    }
-                    throw new Error();
-                });
-                const config: HttpHeaders = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
+        if (!url) return;
+        try {
+            const document = await generateJson().then((res) => {
+                if (res) {
+                    return res;
+                }
+                throw new Error();
+            });
+            const config: HttpHeaders = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
 
-                if (token) {
-                    config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-                }
-                if (document) {
-                    axios.put(url, JSON.parse(document), config).catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                        return err;
-                    });
-                }
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
+            if (token) {
+                config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
             }
+            if (document) {
+                axios.put(url, JSON.parse(document), config).catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.error(`[${this.saveDocument.name}] There was an issue saving document`);
+                    return err;
+                });
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
         }
     };
 }
