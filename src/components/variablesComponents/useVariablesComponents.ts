@@ -5,7 +5,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
 
     const handleImageChange = async (value: ConnectorImageVariableSource) => {
         if (currentVariableId) {
-            const assetId = value.assetId ?? null;
+            const assetId = value.resolved?.mediaId ?? value.assetId ?? null;
             const result = await window.SDK.variable.setValue(currentVariableId, assetId);
             return result;
         }
