@@ -204,6 +204,13 @@ function ItemBrowser<
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
+    const formatRelativePath = useCallback((item: T) => {
+        const { name, relativePath } = item;
+        if (!relativePath) return '/';
+        if (!relativePath.includes(name)) return relativePath + name;
+        return relativePath;
+    }, []);
+
     const elements = list.map((listItem, idx) => {
         const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
@@ -212,7 +219,7 @@ function ItemBrowser<
             if (itemType === PreviewType.COLLECTION) {
                 setNavigationStack(() => {
                     setIsLoading(true);
-                    return toNavigationStack(listItem.instance.relativePath);
+                    return toNavigationStack(formatRelativePath(listItem.instance));
                 });
                 setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
@@ -225,13 +232,16 @@ function ItemBrowser<
 
         return (
             <ChiliPreview
-                key={getKey(`${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`, idx)}
+                key={getKey(
+                    `${formatRelativePath(listItem.instance)}-${listItem.instance.name}-${listItem.instance.id}`,
+                    idx,
+                )}
                 dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
                 dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
                 itemId={listItem.instance.id}
                 name={listItem.instance.name}
                 type={itemType as unknown as PreviewType}
-                path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
+                path={getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance))}
                 metaData={
                     listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || '')
                 }
