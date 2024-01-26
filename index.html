@@ -26,7 +26,6 @@
                 if (!urlParams.get('engineCommitSha')) {
                     window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
                 }
-                var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
                 // use this for local dev and debug
                 var authToken = '';
                 var envName = '';
@@ -37,7 +36,7 @@
                     projectId,
                     graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
                     authToken,
-                    editorLink: `${baseUrl}/editor/${engineVersion}-${engineCommitSha}/web`,
+                    editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineVersion}-${engineCommitSha}/web`,
                 });
             });
         </script>
