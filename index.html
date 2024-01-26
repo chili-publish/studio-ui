@@ -15,10 +15,20 @@
             document.addEventListener('DOMContentLoaded', () => {
                 var queryString = window.location.search;
                 var urlParams = new URLSearchParams(queryString);
-                // the engineVersion should either changed here or in the URL (PR number or main)
+                // the engineVersion should either be changed here or in the URL (PR number or main)
                 var engineVersion = urlParams.get('engine') ?? 'main';
-                // the engineCommitSha should either changed here or in the URL
-                var engineCommitSha = urlParams.get('engineCommitSha') ?? '857211e434199c0428234f085c06c6d26bb2d098';
+                var engineCommitSha = urlParams.get('engineCommitSha');
+                // the engineCommitSha can be changed here or in the URL
+                engineCommitSha =
+                    engineCommitSha && engineCommitSha !== ''
+                        ? engineCommitSha
+                        : '857211e434199c0428234f085c06c6d26bb2d098';
+
+                // The following will take released versions in consideration
+                const engineRegex = /^\d+\.\d+\.\d+$/;
+                const engineSource = engineRegex.test(engineVersion)
+                    ? engineVersion
+                    : `${engineVersion}-${engineCommitSha}`;
 
                 if (!urlParams.get('engine')) {
                     window.history.replaceState(null, '', `${window.location.href}?engine=${engineVersion}`);
@@ -36,7 +46,7 @@
                     projectId,
                     graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
                     authToken,
-                    editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineVersion}-${engineCommitSha}/web`,
+                    editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
                 });
             });
         </script>
