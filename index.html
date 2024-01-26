@@ -15,21 +15,30 @@
             document.addEventListener('DOMContentLoaded', () => {
                 var queryString = window.location.search;
                 var urlParams = new URLSearchParams(queryString);
+                // the engineVersion should either changed here or in the URL (PR number or main)
+                var engineVersion = urlParams.get('engine') ?? 'main';
+                // the engineCommitSha should either changed here or in the URL
+                var engineCommitSha = urlParams.get('engineCommitSha') ?? '857211e434199c0428234f085c06c6d26bb2d098';
 
-                var editorVersion = urlParams.get('editor');
-                editorVersion = editorVersion == null ? 'master' : editorVersion;
+                if (!urlParams.get('engine')) {
+                    window.history.replaceState(null, '', `${window.location.href}?engine=${engineVersion}`);
+                }
+                if (!urlParams.get('engineCommitSha')) {
+                    window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
+                }
                 var baseUrl = 'https://stgrafxstudiodevpublic.blob.core.windows.net';
-
-                StudioUI.defaultConfigWithEditorLink('sui-root', baseUrl + '/editor/' + editorVersion + '/web');
                 // use this for local dev and debug
-                // StudioUI.studioLoaderConfig({
-                //     selector: 'sui-root',
-                //     projectDownloadUrl: `${environmentUrl}/projects/${projectId}/document`,
-                //     projectUploadUrl: `${environmentUrl}/projects/${projectId}/document`,
-                //     projectId,
-                //     graFxStudioEnvironmentApiBaseUrl: `${environmentUrl}/`,
-                //     authToken,
-                // });
+                var authToken = '';
+                var envName = '';
+                var projectId = '';
+                var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
+                StudioUI.studioUILoaderConfig({
+                    selector: 'sui-root',
+                    projectId,
+                    graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
+                    authToken,
+                    editorLink: `${baseUrl}/editor/${engineVersion}-${engineCommitSha}/web`,
+                });
             });
         </script>
     </body>
