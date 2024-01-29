@@ -204,12 +204,12 @@ function ItemBrowser<
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
-    const formatRelativePath = useCallback((item: T) => {
+    const formatRelativePath = (item: T) => {
         const { name, relativePath } = item;
         if (!relativePath) return '/';
         if (!relativePath.includes(name)) return relativePath + name;
         return relativePath;
-    }, []);
+    };
 
     const elements = list.map((listItem, idx) => {
         const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
