@@ -17,18 +17,16 @@
                 var urlParams = new URLSearchParams(queryString);
                 // the engineVersion should either be changed here or in the URL (PR number or main)
                 var engineVersion = urlParams.get('engine') ?? 'main';
-                var engineCommitSha = urlParams.get('engineCommitSha');
+
                 // the engineCommitSha can be changed here or in the URL
-                engineCommitSha =
-                    engineCommitSha && engineCommitSha !== ''
-                        ? engineCommitSha
-                        : '857211e434199c0428234f085c06c6d26bb2d098';
+                var engineCommitSha = urlParams.get('engineCommitSha');
 
                 // The following will take released versions in consideration
                 const engineRegex = /^\d+\.\d+\.\d+$/;
-                const engineSource = engineRegex.test(engineVersion)
-                    ? engineVersion
-                    : `${engineVersion}-${engineCommitSha}`;
+                const engineSource =
+                    engineRegex.test(engineVersion) || !engineCommitSha
+                        ? engineVersion
+                        : `${engineVersion}-${engineCommitSha}`;
 
                 if (!urlParams.get('engine')) {
                     window.history.replaceState(null, '', `${window.location.href}?engine=${engineVersion}`);
@@ -41,6 +39,23 @@
                 var envName = '';
                 var projectId = '';
                 var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
+
+                if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !templateGuid) {
+                    let messageString = `Please make sure to specify the`;
+                    if (!engineCommitSha) {
+                        messageString += ` engineCommitSha`;
+                    }
+                    if (!authToken) {
+                        messageString += ` authToken`;
+                    }
+                    if (!envName) {
+                        messageString += ` envName`;
+                    }
+                    if (!templateGuid) {
+                        messageString += ` templateGuid`;
+                    }
+                    alert(messageString);
+                }
                 StudioUI.studioUILoaderConfig({
                     selector: 'sui-root',
                     projectId,
