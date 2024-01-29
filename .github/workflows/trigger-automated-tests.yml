@@ -1,0 +1,25 @@
+name: Trigger the automated tests
+on:
+    pull_request:
+        types: [labeled]
+jobs:
+    trigger-automated-tests:
+        if: github.event.label.name == 'Ready for QA'
+        runs-on: ubuntu-latest
+        steps:
+          - name: Trigger the automated tests
+            uses: convictional/trigger-workflow-and-wait@v1.6.1
+            env:
+              PR_NUMBER: ${{ github.event.number }}
+              SETTAG: 'StudioUI'
+            with:
+              owner: brapoprod
+              repo: editor-qa-framework
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              workflow_file_name: parallel_arc.yml
+              ref: main
+              wait_interval: 10
+              propagate_failure	: true
+              trigger_workflow: true
+              wait_workflow: true
+              client_payload: '{"PR_NUMBER": "$PR_NUMBER", "SETTAG": "$SETTAG"}'
