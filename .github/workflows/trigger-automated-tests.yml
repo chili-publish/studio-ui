@@ -7,6 +7,7 @@ jobs:
         if: github.event.label.name == 'Ready for QA'
         runs-on: ubuntu-latest
         steps:
+          - uses: actions/checkout@v3
           - name: Get GitHub application JWT
             id: get-gh-app-jwt
             uses: ./.github/actions/get-gh-app-jwt
@@ -14,6 +15,7 @@ jobs:
               gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_REPO_ACTIONS }}
               gh-app-id: ${{ vars.GH_APP_ID_CHILI_REPO_ACTIONS }}
 
+          - uses: actions/checkout@v3
           - name: Get GitHub application installation access token
             id: get-gh-app-installation-access-token
             uses: ./.github/actions/get-gh-app-installation-access-token
