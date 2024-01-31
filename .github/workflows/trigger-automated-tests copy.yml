@@ -30,4 +30,4 @@ jobs:
               gh-access-token: ${{ steps.get-gh-app-installation-access-token.outputs.gh-app-installation-access-token }}
               gh-repo: chili-publish/editor-qa-framework
               gh-repo-workflow: parallel_run_trigger.yml
-              gh-repo-workflow-inputs: '{"PR_NUMBER": "StudioUI", "SETTAG": "pr_builds=/${{ github.event.number }}"}'
+              gh-repo-workflow-inputs: '{"PR_NUMBER": "pr_builds=/${{ github.event.number }}", "SETTAG": "StudioUI"}'

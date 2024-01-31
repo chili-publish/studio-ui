@@ -26,8 +26,8 @@ jobs:
           - name: Trigger the automated tests
             uses: convictional/trigger-workflow-and-wait@v1.6.1
             with:
-              owner: brapoprod
-              repo: chili-publish/editor-qa-framework
+              owner: chili-publish
+              repo: editor-qa-framework
               github_token: ${{ steps.get-gh-app-installation-access-token.outputs.gh-app-installation-access-token }}
               workflow_file_name: parallel_run_trigger.yml
               ref: main
@@ -35,4 +35,4 @@ jobs:
               propagate_failure	: true
               trigger_workflow: true
               wait_workflow: true
-              client_payload: '{"PR_NUMBER": "StudioUI", "SETTAG": "pr_builds=/${{ github.event.number }}"}'
+              client_payload: '{"PR_NUMBER": "pr_builds=/${{ github.event.number }}", "SETTAG": "StudioUI"}'
