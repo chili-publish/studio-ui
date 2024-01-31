@@ -27,7 +27,7 @@ jobs:
             uses: convictional/trigger-workflow-and-wait@v1.6.1
             with:
               owner: brapoprod
-              repo: editor-qa-framework
+              repo: chili-publish/editor-qa-framework
               github_token: ${{ steps.get-gh-app-installation-access-token.outputs.gh-app-installation-access-token }}
               workflow_file_name: parallel_run_trigger.yml
               ref: main
