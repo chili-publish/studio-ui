@@ -35,9 +35,11 @@
                     window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
                 }
                 // use this for local dev and debug
-                var authToken = '';
-                var envName = '';
-                var projectId = '';
+                var authToken =
+                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL2VtYWlsIjoiYWJyaUBjaGlsaS1wdWJsaXNoLmNvbSIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vcm9sZXMiOlsiRkEiLCIxYmI4N2FmYy1kNTg3LTQxMjQtODBiYS02OWQyZWUxMzM0MDR8RUEiLCJmNmViMzczZS04NmE3LTQ0ZjAtYTNhNi1iM2QyZmEwZWI5MTF8RUEiLCI4Y2Q5MTEwNC02ZjA5LTRkMTgtYTRlNS1mNWZiOGYzMDlkMjd8RVUiLCI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODR8U0EiXSwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9jdXN0b21lcl9ndWlkIjoiNTE1MWVmOWItZGM2Zi00NTU4LTkwN2QtNzNlNzc3M2JhNTQxIiwiaHR0cHM6Ly9jaGlsaS1wdWJsaXNoLmNvbS9zdWJzY3JpcHRpb25zIjpbIjU3NzE4ZmY2LTgxYzgtNGU5ZS1iYmU4LTNjNGVjODZjZjE4NCJdLCJpc3MiOiJodHRwczovL2xvZ2luLmNoaWxpZ3JhZngtZGV2LmNvbS8iLCJzdWIiOiJzYW1scHxjaGlsaS1wdWJsaXNoLWRldnw1elBIOXRwRGtmWWFraDV5bTB3LTBESGUtbUtJQjhDaVRZeXFjbmJBR0VJIiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzA2ODA3MDQyLCJleHAiOjE3MDY4OTM0NDIsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.DKizZNGGNVx25vflDqhlAS_Ra-xFhnlyDVRN8CCZUPZVOk0GSicdnNoQVxJvpmcz4yNbHXbsG33vbXTgfQtJUuOcZhO0_exY2JGUZqQjXww8C3jN4fjX8w4YJT0aCLTFe0tB26lX4HuH9FM8vNv1j37rUlhgW2thP-F12pP6EsHOywW24GxBrC7HveHbOMPsJrER7H0Vm_syc9os1zX6-wvtx7_z6Y3Dqw4aRDwkDK8xCnhZXNH_GrR01amh7Z1YrF4Tq6XCypDyfJ_MxF0RYK2Q8G4Tdfiy9_WokpCK8lGEGHhmBG35pVr7s0G_josdh-wwFFKwXStXP9Tas8OEhg';
+                var envName = 'cp-dyx-217';
+                var projectId = '7a6895ba-9131-47c5-82d3-abf51969a372';
+                var templateGuid = '7901d0d1-9c41-4aff-aa71-0e4533b0e584';
                 var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
                 if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !templateGuid) {
