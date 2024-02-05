@@ -94,8 +94,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             pageId: null,
             left: 0,
             top: 0,
-            width: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().width),
-            height: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().height),
+            width: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().width),
+            height: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().height),
         };
 
         await window.SDK.canvas.zoomToPage(
@@ -205,6 +205,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             }
 
             if (!fetchedDocument) return;
+
             await window.SDK.document.load(fetchedDocument).then((res) => {
                 setIsDocumentLoaded(res.success);
             });
