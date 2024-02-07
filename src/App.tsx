@@ -124,6 +124,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
+                    setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
                 }
             },
             onSelectedLayoutIdChanged() {
