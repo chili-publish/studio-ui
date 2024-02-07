@@ -35,11 +35,9 @@
                     window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
                 }
                 // use this for local dev and debug
-                var authToken =
-                    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImM3VXJIX1UzTGNPNnBsYWthNnFrTSJ9.eyJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3R5cGVfb2ZfdXNlciI6IlVzZXIiLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL2VtYWlsIjoicHVycHVydW5pY29ybis0MUBnbWFpbC5jb20iLCJodHRwczovL2NoaWxpLXB1Ymxpc2guY29tL3JvbGVzIjpbIkZBIiwiYjBmYzNhNmQtYjY3OS00MjRlLThiYzEtNjc0YmQ4YjBjMDVlfFNBIiwiZDRiZDQ1YzItOGE1OC00Y2Y2LWI4MmItYWRiYTY4YWNmZWI5fEVVIiwiN2YwYjRjMDItMGNiOC00MDkwLWE1OWYtYWJiNmZmODM2ZDA2fEVVIiwiNGNhNmMzZjgtYTc0NC00YjkxLWI3ZmYtNWI2NzY2N2Q0ZTQ2fEVVIiwiMzU2NWNjYWItMWQ5ZS00MDMzLWI3ZTgtZmE5NGE4NjMzNjU0fEVVIiwiYWZiN2Q5M2QtNDFhOC00NmJlLWE0MGEtYjFjMGU0NTQ5M2JhfEVVIl0sImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vY3VzdG9tZXJfZ3VpZCI6ImM0ZmExYzg5LWU1M2EtNDkxMS1iZmUyLTc1ODkzZDdhZWMzMCIsImh0dHBzOi8vY2hpbGktcHVibGlzaC5jb20vc3Vic2NyaXB0aW9ucyI6WyI1NzcxOGZmNi04MWM4LTRlOWUtYmJlOC0zYzRlYzg2Y2YxODQiLCJlYjlhNGY2Yy04ZmFmLTRmYzAtYWNiNS1lMTA2MzU5MTVlMWUiLCJiMGZjM2E2ZC1iNjc5LTQyNGUtOGJjMS02NzRiZDhiMGMwNWUiXSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5jaGlsaWdyYWZ4LWRldi5jb20vIiwic3ViIjoiYXV0aDB8NjU0M2I1M2RlYjQyYThjMDVjNDU5ZmUwIiwiYXVkIjpbImh0dHBzOi8vY2hpbGlncmFmeC5jb20iLCJodHRwczovL2dyYWZ4LWRldi5ldS5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzA3MzA3MjUxLCJleHAiOjE3MDczOTM2NTEsImF6cCI6ImJpaU42RURYMkpxVWhqNGZJbm9YSDM2TWZuNExkQ3lKIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBvZmZsaW5lX2FjY2VzcyJ9.SzjM04_Y5UYGmbY-BnNDJC82vK95XcwKniBrqf4FPYvRCybSVE9bFNsYWlPGRpaZCO_3bAu7HhHVS3jxUSev3lvSXFzr5G_6jo4UKLGv4n4kFq8CltlPxZsNSYl558d-BNMveSs7zzpx9qTvyEaCXCK_alSG-Rf9JbxhLVluozUwbnIWvajiUP7hhPScbIr6gkIz_1dDrFL_c1IOlpQyJ0wkTrysJqNS0hwL0L6_cs67ptDN_df2oeY6TyxTsceeDX3sSUS44iDiEIWvN-oowQKTQDOZzwOmNNEkCgfMa0euVP1zKPf09MklX8WYnTGAGRbFpj2_OdEeGHRxqlbang';
-                var envName = 'cp-dyx-217';
-                var projectId = '7fefe450-c4cb-44bd-84ef-fec4c808f7b2';
-                var templateGuid = 'b92f68a0-d448-46ae-88e2-eb5d0f9453e9';
+                var authToken = '';
+                var envName = '';
+                var projectId = '';
                 var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
                 if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !templateGuid) {
