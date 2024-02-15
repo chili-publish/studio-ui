@@ -6,6 +6,7 @@ import StudioSDK, {
     DocumentType,
     ConnectorType,
     ConnectorInstance,
+    LayoutIntent,
 } from '@chili-publish/studio-sdk';
 import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
@@ -40,6 +41,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
+    const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
@@ -92,8 +94,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             pageId: null,
             left: 0,
             top: 0,
-            width: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().width),
-            height: Math.floor(document.getElementsByTagName('iframe')[0].getBoundingClientRect().height),
+            width: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().width),
+            height: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().height),
         };
 
         await window.SDK.canvas.zoomToPage(
@@ -122,6 +124,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
+                    setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
                 }
             },
             onSelectedLayoutIdChanged() {
@@ -204,6 +207,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             }
 
             if (!fetchedDocument) return;
+
             await window.SDK.document.load(fetchedDocument).then((res) => {
                 setIsDocumentLoaded(res.success);
             });
@@ -218,6 +222,10 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     setFontsConnectors(res.parsedData);
                 }
             });
+
+            const layoutIntentData = (await window.SDK.layout.getSelected()).parsedData?.intent.value || null;
+            setLayoutIntent(layoutIntentData);
+
             setHandTool();
             zoomToPage();
         };
@@ -255,11 +263,13 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                             >
                                 <div className="chili-editor" id="chili-editor" />
                             </div>
-                            <AnimationTimeline
-                                scrubberTimeMs={scrubberTimeMs}
-                                animationLength={animationLength}
-                                isAnimationPlaying={animationStatus}
-                            />
+                            {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                <AnimationTimeline
+                                    scrubberTimeMs={scrubberTimeMs}
+                                    animationLength={animationLength}
+                                    isAnimationPlaying={animationStatus}
+                                />
+                            ) : null}
                         </CanvasContainer>
                     </MainContentContainer>
                 </div>
