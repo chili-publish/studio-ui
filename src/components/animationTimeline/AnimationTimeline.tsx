@@ -1,5 +1,6 @@
 import { Timeline } from '@chili-publish/grafx-shared-components';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface IAnimationTimeline {
     scrubberTimeMs: number;
@@ -22,7 +23,7 @@ function AnimationTimeline(props: IAnimationTimeline) {
     };
 
     return (
-        <AnimationTimelineWrapper>
+        <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')}>
             {animationLength > 0 && (
                 <Timeline
                     animationLength={animationLength}
