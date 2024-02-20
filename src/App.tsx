@@ -154,6 +154,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     select: { enabled: false },
                     text: { enabled: false },
                     zoom: { enabled: false },
+                    viewMode: { enabled: false },
                 },
             },
             editorLink: projectConfig.overrideEngineUrl,
