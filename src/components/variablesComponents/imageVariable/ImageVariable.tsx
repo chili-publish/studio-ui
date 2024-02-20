@@ -51,10 +51,10 @@ function ImageVariable(props: IImageVariable) {
                 }
             }
 
-            if (!variable.value.assetId) return;
+            if (!variable.value.resolved?.mediaId && !variable.value.assetId) return;
             const { parsedData, success } = await window.SDK.mediaConnector.detail(
                 variable.value.connectorId,
-                variable.value.assetId as string,
+                variable.value.resolved?.mediaId ?? (variable.value.assetId as string),
             );
             if (!success) return;
             setMediaDetails(parsedData);
