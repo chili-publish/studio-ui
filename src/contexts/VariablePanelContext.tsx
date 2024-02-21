@@ -17,6 +17,10 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     navigationStack: [],
     setSelectedItems: () => undefined,
     setNavigationStack: () => undefined,
+    searchKeyWord: '',
+    setSearchKeyWord: () => undefined,
+    searchQuery: '',
+    setSearchQuery: () => undefined,
     imagePanelTitle: <div />,
     connectorCapabilities: {},
     getCapabilitiesForConnector: async () => undefined,
@@ -40,6 +44,8 @@ export function VariablePanelContextProvider({
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
     const [navigationStack, setNavigationStack] = useState<string[]>([]);
+    const [searchKeyWord, setSearchKeyWord] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
 
@@ -77,6 +83,8 @@ export function VariablePanelContextProvider({
                     onClick={() => {
                         setContentType(ContentType.VARIABLES_LIST);
                         setNavigationStack([]);
+                        setSearchKeyWord('');
+                        setSearchQuery('');
                     }}
                     icon={
                         <Icon
@@ -111,6 +119,10 @@ export function VariablePanelContextProvider({
             navigationStack,
             setSelectedItems,
             setNavigationStack,
+            searchKeyWord,
+            setSearchKeyWord,
+            searchQuery,
+            setSearchQuery,
             imagePanelTitle,
             connectorCapabilities,
             connectors,
@@ -123,6 +135,8 @@ export function VariablePanelContextProvider({
             handleUpdateImage,
             selectedItems,
             navigationStack,
+            searchKeyWord,
+            searchQuery,
             imagePanelTitle,
             connectorCapabilities,
             connectors,
