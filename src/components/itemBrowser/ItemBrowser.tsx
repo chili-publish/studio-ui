@@ -179,7 +179,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken, contentType, searchQuery]);
+    }, [nextPageToken.requested, nextPageToken.token, contentType, searchQuery]);
 
     useEffect(() => {
         return () => {
