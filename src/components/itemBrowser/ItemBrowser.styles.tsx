@@ -90,6 +90,15 @@ export const BreadCrumbsWrapper = styled.div`
     white-space: nowrap;
     display: flex;
     margin-bottom: 1rem;
+    margin-top: 0.5rem;
+    & .grafx-drop-down__control {
+        &:hover {
+            border: 1px solid transparent !important;
+        }
+        &--is-focused {
+            border: 1px solid transparent !important;
+        }
+    }
 `;
 
 export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
