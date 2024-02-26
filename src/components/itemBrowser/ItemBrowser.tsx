@@ -68,7 +68,6 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
@@ -77,8 +76,6 @@ function ItemBrowser<
     });
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
-    const [searchKeyWord, setSearchKeyWord] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
     const moreData = !!nextPageToken?.token;
 
     const {
@@ -89,6 +86,10 @@ function ItemBrowser<
         selectedItems,
         setNavigationStack,
         setSelectedItems,
+        searchKeyWord,
+        setSearchKeyWord,
+        searchQuery,
+        setSearchQuery,
     } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
 
@@ -179,7 +180,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken, contentType, searchQuery]);
+    }, [nextPageToken.requested, nextPageToken.token, contentType, searchQuery]);
 
     useEffect(() => {
         return () => {

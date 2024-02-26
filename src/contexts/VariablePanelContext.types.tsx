@@ -30,4 +30,8 @@ export interface IVariablePanelContext {
     connectors?: IConnectors;
     connectorCapabilities: ICapabilities;
     getCapabilitiesForConnector: (connectorId: string) => Promise<void>;
+    searchKeyWord: string;
+    setSearchKeyWord: Dispatch<SetStateAction<string>>;
+    searchQuery: string;
+    setSearchQuery: Dispatch<SetStateAction<string>>;
 }

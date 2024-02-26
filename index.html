@@ -40,7 +40,7 @@
                 var projectId = '';
                 var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
-                if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !templateGuid) {
+                if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !projectId) {
                     let messageString = `Please make sure to specify the`;
                     if (!engineCommitSha) {
                         messageString += ` engineCommitSha`;
@@ -51,8 +51,8 @@
                     if (!envName) {
                         messageString += ` envName`;
                     }
-                    if (!templateGuid) {
-                        messageString += ` templateGuid`;
+                    if (!projectId) {
+                        messageString += ` projectId`;
                     }
                     alert(messageString);
                 }
