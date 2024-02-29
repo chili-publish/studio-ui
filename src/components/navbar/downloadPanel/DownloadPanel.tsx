@@ -76,9 +76,6 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <StudioDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output type"
-                        // selectedValue={
-                        //     downloadOptions.find((item) => item.value === selectedOption) ?? downloadOptions[0]
-                        // }
                         selectedValue={getSelectedValue}
                         options={userInterfaceDownloadOptions ?? downloadOptions}
                         onChange={(val) => setSelectedOption(val as typeof selectedOption)}
@@ -123,7 +120,6 @@ function DownloadPanel(props: DownloadPanelProps) {
                         <DropDown
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                            // defaultValue={downloadOptions.find((option) => option.value === selectedOption)}
                             defaultValue={getSelectedValue}
                             options={userInterfaceDownloadOptions ?? downloadOptions}
                             isSearchable={false}
