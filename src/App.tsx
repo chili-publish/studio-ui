@@ -127,8 +127,10 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
                 }
             },
-            onSelectedLayoutIdChanged() {
+            onSelectedLayoutIdChanged: async () => {
                 zoomToPage();
+                const layoutIntentData = (await window.SDK.layout.getSelected()).parsedData?.intent.value ?? null;
+                setLayoutIntent(layoutIntentData);
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -240,7 +242,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, []);
 
     return (
-        <UiConfigContextProvider projectConfig={projectConfig}>
+        <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
             <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
                 <div className="app">
                     <Navbar
