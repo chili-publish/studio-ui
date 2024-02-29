@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { DownloadLinkResult, HttpHeaders, Project } from './types/types';
+import { DownloadLinkResult, HttpHeaders, Project, UserInterfaceOutputSettings } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
 
 export class StudioProjectLoader {
@@ -18,6 +18,8 @@ export class StudioProjectLoader {
 
     private cachedProject: Project | undefined;
 
+    private userInterfaceID?: string;
+
     constructor(
         projectId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
@@ -25,6 +27,7 @@ export class StudioProjectLoader {
         refreshTokenAction: () => Promise<string | AxiosError>,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
+        userInterfaceID?: string,
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
@@ -32,6 +35,7 @@ export class StudioProjectLoader {
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.authToken = authToken;
         this.refreshTokenAction = refreshTokenAction;
+        this.userInterfaceID = userInterfaceID;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -170,5 +174,27 @@ export class StudioProjectLoader {
             // eslint-disable-next-line no-console
             console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
         }
+    };
+
+    public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
+        if (this.userInterfaceID) {
+            const userInterfaceOutputSettings = await axios.get(
+                `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`,
+                { headers: { Authorization: `Bearer ${this.authToken}` } },
+            );
+            const tmpTypes = ['mp4', 'gif', 'jpg', 'pdf'];
+            const intents = ['digitalAnimated', 'digitalAnimated', 'print', '"digitalStatic'];
+            return userInterfaceOutputSettings.data.outputSettings.map(
+                (val: UserInterfaceOutputSettings, idx: number) => {
+                    return {
+                        ...val,
+                        type: tmpTypes[idx],
+                        descriptions: tmpTypes[idx],
+                        intent: intents[idx],
+                    };
+                },
+            );
+        }
+        return null;
     };
 }

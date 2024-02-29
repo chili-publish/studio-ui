@@ -13,6 +13,7 @@ import {
     defaultPlatformUiOptions,
     defaultUiOptions,
     IStudioUILoaderConfig,
+    UserInterfaceOutputSettings,
 } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -100,6 +101,7 @@ export default class StudioUI {
             selectedLayoutID: string | undefined,
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
+        onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
     ) {
         return new StudioUI(selector, {
             projectId,
@@ -116,6 +118,7 @@ export default class StudioUI {
             onLogInfoRequested,
             onProjectGetDownloadLink,
             overrideEngineUrl: editorLink,
+            onFetchOutputSettings,
         });
     }
 
@@ -132,6 +135,7 @@ export default class StudioUI {
      * @param config.outputSettings - The flags to manage the available types of outputs.
      * @param config.refreshTokenAction - Callback to refresh the authentication token.
      * @param config.projectName - The name of the project to load.
+     * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
      * @param config.onBack - Callback when the user clicks the back button.
      * @returns
      */
@@ -148,6 +152,7 @@ export default class StudioUI {
             projectName,
             refreshTokenAction,
             editorLink,
+            userInterfaceID,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -156,6 +161,7 @@ export default class StudioUI {
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
+            userInterfaceID,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -176,6 +182,7 @@ export default class StudioUI {
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
             editorLink,
+            projectLoader.onFetchOutputSettings,
         );
     }
 
@@ -251,6 +258,7 @@ export default class StudioUI {
      * @param refreshTokenAction - Callback to refresh the authentication token.
      * @param projectName - The name of the project to load.
      * @param onBack - Callback when the user clicks the back button.
+     * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
      * @returns
      */
 
@@ -266,6 +274,7 @@ export default class StudioUI {
             editorLink,
             uiOptions,
             outputSettings,
+            userInterfaceID,
             refreshTokenAction,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -284,6 +293,7 @@ export default class StudioUI {
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
+            userInterfaceID,
         );
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         return StudioUI.fullIntegrationConfig(
@@ -302,6 +312,7 @@ export default class StudioUI {
             onLogInfoRequested ?? projectLoader.onLogInfoRequested,
             onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             editorLink,
+            projectLoader.onFetchOutputSettings,
         );
     }
 }
