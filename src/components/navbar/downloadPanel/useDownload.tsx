@@ -7,7 +7,7 @@ import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 type StudioUIDownloadFormats = Exclude<DownloadFormats, DownloadFormats.EXPERIMENTAL_PDF>;
 
 const useDownload = (hideDownloadPanel: () => void) => {
-    const { outputSettings } = useUiConfigContext();
+    const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
     const initialDownloadState: Record<StudioUIDownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
@@ -62,8 +62,28 @@ const useDownload = (hideDownloadPanel: () => void) => {
         return allOptions.filter((opt) => outputSettings[opt.value] === true);
     }, [outputSettings]);
 
+    const userInterfaceDownloadOptions: Option[] | null = useMemo(() => {
+        if (!userInterfaceOutputSettings) return null;
+        const outputTypesIcons = {
+            jpg: AvailableIcons.faImage,
+            png: AvailableIcons.faImage,
+            mp4: AvailableIcons.faFileVideo,
+            gif: AvailableIcons.faGif,
+            pdf: AvailableIcons.faFilePdf,
+        };
+        return userInterfaceOutputSettings.map((val) => {
+            return {
+                label: (
+                    <DropdownOption icon={outputTypesIcons[val.type]} text={val.name} description={val.description} />
+                ),
+                value: val.id,
+            };
+        });
+    }, [userInterfaceOutputSettings]);
+
     return {
         downloadOptions,
+        userInterfaceDownloadOptions,
         downloadPanelRef,
         downloadState,
         selectedOption,

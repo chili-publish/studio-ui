@@ -1,10 +1,11 @@
-import { ReactNode, createContext, useContext, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { IUiConfigContext } from './UiConfigContext.types';
-import { ProjectConfig, defaultOutputSettings, defaultUiOptions } from '../types/types';
+import { ProjectConfig, UserInterfaceOutputSettings, defaultOutputSettings, defaultUiOptions } from '../types/types';
 
 export const UiConfigContextDefaultValues: IUiConfigContext = {
     uiOptions: defaultUiOptions,
     outputSettings: defaultOutputSettings,
+    userInterfaceOutputSettings: null,
     isDownloadBtnVisible: defaultUiOptions.widgets.backButton?.visible || false,
     isBackBtnVisible: defaultUiOptions.widgets.downloadButton?.visible || false,
 };
@@ -18,18 +19,38 @@ export const useUiConfigContext = () => {
 export function UiConfigContextProvider({
     children,
     projectConfig,
+    layoutIntent,
 }: {
     children: ReactNode;
     projectConfig: ProjectConfig;
+    layoutIntent: string | null;
 }) {
+    const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
+        UserInterfaceOutputSettings[] | null
+    >(null);
+
+    useEffect(() => {
+        if (projectConfig.onFetchOutputSettings) {
+            projectConfig.onFetchOutputSettings().then((res: UserInterfaceOutputSettings[] | null) => {
+                setUserInterfaceOutputSettings(res?.filter((val) => val.intent === layoutIntent) ?? null);
+            });
+        }
+    }, [projectConfig, layoutIntent]);
     const data = useMemo(
         () => ({
             uiOptions: projectConfig.uiOptions,
             outputSettings: projectConfig.outputSettings,
-            isDownloadBtnVisible: projectConfig.uiOptions.widgets?.downloadButton?.visible || false,
-            isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible || false,
+            userInterfaceOutputSettings,
+            isDownloadBtnVisible: projectConfig.uiOptions.widgets?.downloadButton?.visible ?? false,
+            isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible ?? false,
         }),
-        [projectConfig],
+        [
+            projectConfig.outputSettings,
+            projectConfig.uiOptions,
+            userInterfaceOutputSettings,
+            layoutIntent,
+            projectConfig.onFetchOutputSettings,
+        ],
     );
 
     return <UiConfigContext.Provider value={data}>{children}</UiConfigContext.Provider>;
