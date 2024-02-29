@@ -411,8 +411,8 @@
 
 "@chili-publish/studio-sdk@1.6.2":
   version "1.6.2"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.6.2/c811f170495a853d283014c11029b447b5b5737a#c811f170495a853d283014c11029b447b5b5737a"
-  integrity sha512-qqwnQQfvBEiDA7xxUPmdFelU+0CgB/8kTv7QucpsQVZSmJ0ayAhM02YzJR4SZFAtm7c1y7memT5RUwcQUN5X+w==
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.6.2/92a3b636c01b8afb8f5b36f0c76dba6bd6eb8c78#92a3b636c01b8afb8f5b36f0c76dba6bd6eb8c78"
+  integrity sha512-k6thGpWKK3Cas4vZrgqy+9BVkEi8OxAHrqgFlfErPHdm5XHlWJ34VONe9fn/kuApvLQvB1aI4Zw8BwVaqzQP3Q==
   dependencies:
     penpal "6.1.0"
 
