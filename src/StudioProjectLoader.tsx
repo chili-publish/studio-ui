@@ -182,6 +182,7 @@ export class StudioProjectLoader {
                 `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`,
                 { headers: { Authorization: `Bearer ${this.authToken}` } },
             );
+            // TODO: once the backend implement description, intent and type remove those tmp variables and the map
             const tmpTypes = ['mp4', 'gif', 'jpg', 'pdf'];
             const intents = ['digitalAnimated', 'digitalAnimated', 'print', '"digitalStatic'];
             return userInterfaceOutputSettings.data.outputSettings.map(
