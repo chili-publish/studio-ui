@@ -32,7 +32,7 @@ export function UiConfigContextProvider({
     useEffect(() => {
         if (projectConfig.onFetchOutputSettings) {
             projectConfig.onFetchOutputSettings().then((res: UserInterfaceOutputSettings[] | null) => {
-                setUserInterfaceOutputSettings(res?.filter((val) => val.intent === layoutIntent) ?? null);
+                setUserInterfaceOutputSettings(res?.filter((val) => val.intents.includes(layoutIntent ?? '')) ?? null);
             });
         }
     }, [projectConfig, layoutIntent]);
@@ -44,13 +44,7 @@ export function UiConfigContextProvider({
             isDownloadBtnVisible: projectConfig.uiOptions.widgets?.downloadButton?.visible ?? false,
             isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible ?? false,
         }),
-        [
-            projectConfig.outputSettings,
-            projectConfig.uiOptions,
-            userInterfaceOutputSettings,
-            layoutIntent,
-            projectConfig.onFetchOutputSettings,
-        ],
+        [projectConfig.outputSettings, projectConfig.uiOptions, userInterfaceOutputSettings],
     );
 
     return <UiConfigContext.Provider value={data}>{children}</UiConfigContext.Provider>;

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { DownloadLinkResult, HttpHeaders, Project, UserInterfaceOutputSettings } from './types/types';
+import { DownloadLinkResult, HttpHeaders, IOutputSetting, Project, UserInterfaceOutputSettings } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
 
 export class StudioProjectLoader {
@@ -178,23 +178,29 @@ export class StudioProjectLoader {
 
     public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
         if (this.userInterfaceID) {
-            const userInterfaceOutputSettings = await axios.get(
+            const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: { Authorization: `Bearer ${this.authToken}` },
+            });
+            const userInterface = await axios.get(
                 `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`,
                 { headers: { Authorization: `Bearer ${this.authToken}` } },
             );
-            // TODO: once the backend implement description, intent and type remove those tmp variables and the map
-            const tmpTypes = ['mp4', 'gif', 'jpg', 'pdf'];
-            const intents = ['digitalAnimated', 'digitalAnimated', 'print', '"digitalStatic'];
-            return userInterfaceOutputSettings.data.outputSettings.map(
-                (val: UserInterfaceOutputSettings, idx: number) => {
-                    return {
-                        ...val,
-                        type: tmpTypes[idx],
-                        descriptions: tmpTypes[idx],
-                        intent: intents[idx],
+            const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
+
+            Object.keys(userInterface.data.outputSettings).forEach((outputSettingId) => {
+                const matchedOutputSetting = outputSettings.data.data.find(
+                    (outputSetting: IOutputSetting) => outputSetting.id === outputSettingId,
+                );
+                if (matchedOutputSetting) {
+                    const final = {
+                        ...matchedOutputSetting,
+                        intents: userInterface.data.outputSettings[outputSettingId].layoutIntents.intents,
                     };
-                },
-            );
+                    mappedOutputSettings.push(final);
+                }
+            });
+
+            return mappedOutputSettings;
         }
         return null;
     };
