@@ -67,8 +67,18 @@ export type UserInterfaceOutputSettings = {
     id: string;
     description: string;
     type: DownloadFormats;
-    intent: string;
+    intents: string[];
 };
+
+export interface IOutputSetting {
+    WatermarkText: string;
+    default: boolean;
+    description: string;
+    id: string;
+    name: string;
+    type: string;
+    watermark: boolean;
+}
 
 export const defaultUiOptions: UiOptions = {
     widgets: {
