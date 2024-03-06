@@ -58,14 +58,14 @@ describe('useDownload', () => {
                         id: '1',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intent: 'digitalAnimated',
+                        intents: ['digitalAnimated'],
                     },
                     {
                         name: 'GIF',
                         id: '2',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intent: 'digitalAnimated',
+                        intents: ['digitalAnimated'],
                     },
                 ],
             };

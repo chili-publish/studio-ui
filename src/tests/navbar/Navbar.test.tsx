@@ -103,7 +103,7 @@ describe('Navbar', () => {
         const downloadButton = getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output type/i)).toBeInTheDocument();
+        expect(getByText(/output/i)).toBeInTheDocument();
 
         const dropdown = getByText(/jpg/i);
         expect(dropdown).toBeInTheDocument();
@@ -134,14 +134,14 @@ describe('Navbar', () => {
                         id: '1',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intent: 'digitalAnimated',
+                        intents: ['digitalAnimated'],
                     },
                     {
                         name: 'user interface GIF',
                         id: '2',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intent: 'digitalAnimated',
+                        intents: ['digitalAnimated'],
                     },
                 ],
             };
@@ -149,7 +149,7 @@ describe('Navbar', () => {
         const downloadButton = getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output type/i)).toBeInTheDocument();
+        expect(getByText(/output/i)).toBeInTheDocument();
 
         const dropdown = getByText(/user interface MP4/i);
         expect(dropdown).toBeInTheDocument();
