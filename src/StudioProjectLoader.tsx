@@ -194,7 +194,7 @@ export class StudioProjectLoader {
                 if (matchedOutputSetting) {
                     const final = {
                         ...matchedOutputSetting,
-                        intents: userInterface.data.outputSettings[outputSettingId].layoutIntents.intents,
+                        layoutIntents: userInterface.data.outputSettings[outputSettingId].layoutIntents,
                     };
                     mappedOutputSettings.push(final);
                 }

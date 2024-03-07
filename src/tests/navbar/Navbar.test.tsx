@@ -134,14 +134,14 @@ describe('Navbar', () => {
                         id: '1',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intents: ['digitalAnimated'],
+                        layoutIntents: ['digitalAnimated'],
                     },
                     {
                         name: 'user interface GIF',
                         id: '2',
                         description: 'some decs',
                         type: DownloadFormats.MP4,
-                        intents: ['digitalAnimated'],
+                        layoutIntents: ['digitalAnimated'],
                     },
                 ],
             };

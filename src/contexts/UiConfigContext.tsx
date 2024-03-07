@@ -32,7 +32,9 @@ export function UiConfigContextProvider({
     useEffect(() => {
         if (projectConfig.onFetchOutputSettings) {
             projectConfig.onFetchOutputSettings().then((res: UserInterfaceOutputSettings[] | null) => {
-                setUserInterfaceOutputSettings(res?.filter((val) => val.intents.includes(layoutIntent ?? '')) ?? null);
+                setUserInterfaceOutputSettings(
+                    res?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ?? null,
+                );
             });
         }
     }, [projectConfig, layoutIntent]);

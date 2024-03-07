@@ -67,7 +67,7 @@ export type UserInterfaceOutputSettings = {
     id: string;
     description: string;
     type: DownloadFormats;
-    intents: string[];
+    layoutIntents: string[];
 };
 
 export interface IOutputSetting {
