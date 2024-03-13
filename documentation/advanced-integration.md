@@ -85,6 +85,8 @@ const outputSettings = {
     mp4: true,
     gif: true,
 };
+/* The ID of the user interface, used to fetch output settings, if passed it will override the default output settings set above */
+const userInterfaceID = '859dd405-bfed-467f-b833-510afef5fda4';
 
 /* this example of uiOptions will show everything and will use a console log when pressing the back button inside the UI. */
 const uiOptions = {
@@ -129,6 +131,10 @@ window.StudioUI.studioLoaderConfig({
 
     /* uiOptions: object to play around with parts of the UI.*/
     uiOptions: uiOptions,
+
+    /* userInterfaceID: string, The id of the user interface used to fetch output settings, 
+    if passed it will override the default output settings */
+    userInterfaceID: userInterfaceID,
 });
 ```
 
@@ -146,7 +152,7 @@ The backButton can be hidden, and is actually hidden by default, but you can als
 
 #### outputSettings
 
-The outputSettings option, is quite a flexible way to set the available output types for your integrations.
+The outputSettings option, is quite a flexible way to set the available output types for your integrations, this option will be overridden when `userInterfaceID` is provided.
 
 It's an optional parameter, that will show every output setting that is available when not provided, but it allows some fine-grained management of the output types available.
 
@@ -180,6 +186,13 @@ const outputSettings = {
     jpg: false,
 };
 ```
+
+#### userInterfaceID
+
+The `userInterfaceID` option is an optional parameter, setting it to valid interface id, means the output settings will be fetched from the API and `outputSettings` will be overridden if set.
+
+When a valid interface id is provided and output settings are returned, every output setting with the same selected layout intent will be available,
+and if no output setting is available for the selected layout intent, the download button will be disabled.
 
 ## Advanced example using own documents
 
