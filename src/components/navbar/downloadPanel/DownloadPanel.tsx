@@ -12,7 +12,7 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import { Dispatch, useState } from 'react';
+import { Dispatch, useMemo, useState } from 'react';
 import StudioDropdown from '../../shared/StudioDropdown';
 import {
     ButtonWrapper,
@@ -37,8 +37,25 @@ function DownloadPanel(props: DownloadPanelProps) {
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
 
-    const { downloadOptions, downloadPanelRef, downloadState, selectedOption, setSelectedOption, updateDownloadState } =
-        useDownload(hideDownloadPanel);
+    const {
+        downloadOptions,
+        userInterfaceDownloadOptions,
+        downloadPanelRef,
+        downloadState,
+        selectedOption,
+        setSelectedOption,
+        updateDownloadState,
+    } = useDownload(hideDownloadPanel);
+
+    const getSelectedValue = useMemo(() => {
+        if (userInterfaceDownloadOptions) {
+            return (
+                userInterfaceDownloadOptions.find((item) => item.value === selectedOption) ??
+                userInterfaceDownloadOptions[0]
+            );
+        }
+        return downloadOptions.find((item) => item.value === selectedOption) ?? downloadOptions[0];
+    }, [downloadOptions, selectedOption, userInterfaceDownloadOptions]);
 
     return (
         <>
@@ -58,11 +75,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <Content borderTop={!mobileDropdownOpen}>
                     <StudioDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
-                        label="Output type"
-                        selectedValue={
-                            downloadOptions.find((item) => item.value === selectedOption) || downloadOptions[0]
-                        }
-                        options={downloadOptions}
+                        label="Output"
+                        selectedValue={getSelectedValue}
+                        options={userInterfaceDownloadOptions ?? downloadOptions}
                         onChange={(val) => setSelectedOption(val as typeof selectedOption)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
                         onMenuClose={() => setMobileDropdownOpen(false)}
@@ -101,12 +116,12 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <DownloadPanelContainer ref={downloadPanelRef}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
-                        <DropdownLabel>Output type</DropdownLabel>
+                        <DropdownLabel>Output</DropdownLabel>
                         <DropDown
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                            defaultValue={downloadOptions.find((option) => option.value === selectedOption)}
-                            options={downloadOptions}
+                            defaultValue={getSelectedValue}
+                            options={userInterfaceDownloadOptions ?? downloadOptions}
                             isSearchable={false}
                             width="16.25rem"
                             onChange={(option) => setSelectedOption(option?.value as typeof selectedOption)}

@@ -15,7 +15,8 @@ export interface ProjectConfig {
     onUserInterfaceBack: () => void;
     onLogInfoRequested: () => unknown;
     onProjectGetDownloadLink: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
-    overrideEngineUrl?: string | undefined;
+    overrideEngineUrl?: string;
+    onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>;
 }
 
 export interface DefaultStudioConfig {
@@ -30,6 +31,7 @@ export interface DefaultStudioConfig {
     projectName: string;
     refreshTokenAction: () => Promise<string | AxiosError>;
     editorLink?: string;
+    userInterfaceID?: string;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {
@@ -59,6 +61,24 @@ export interface UiOptions {
 }
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
+
+export type UserInterfaceOutputSettings = {
+    name: string;
+    id: string;
+    description: string;
+    type: DownloadFormats;
+    layoutIntents: string[];
+};
+
+export interface IOutputSetting {
+    WatermarkText: string;
+    default: boolean;
+    description: string;
+    id: string;
+    name: string;
+    type: string;
+    watermark: boolean;
+}
 
 export const defaultUiOptions: UiOptions = {
     widgets: {
@@ -99,6 +119,7 @@ export interface IStudioUILoaderConfig {
     projectName: string;
     refreshTokenAction: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
+    userInterfaceID?: string;
     outputSettings?: OutputSettings;
     editorLink?: string;
     projectDownloadUrl?: string;

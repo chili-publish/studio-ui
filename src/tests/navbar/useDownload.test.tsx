@@ -47,4 +47,30 @@ describe('useDownload', () => {
         expect(result.current.downloadOptions.length).toBe(1);
         expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
     });
+
+    test('Show output settings that are coming from selected user interface', () => {
+        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+            return {
+                ...UiConfigContext.UiConfigContextDefaultValues,
+                userInterfaceOutputSettings: [
+                    {
+                        name: 'MP4',
+                        id: '1',
+                        description: 'some decs',
+                        type: DownloadFormats.MP4,
+                        layoutIntents: ['digitalAnimated'],
+                    },
+                    {
+                        name: 'GIF',
+                        id: '2',
+                        description: 'some decs',
+                        type: DownloadFormats.MP4,
+                        layoutIntents: ['digitalAnimated'],
+                    },
+                ],
+            };
+        });
+        const { result } = renderHook(() => useDownload(() => null));
+        expect(result.current.userInterfaceDownloadOptions?.length).toBe(2);
+    });
 });

@@ -15,7 +15,7 @@ const useNavbar = (
     undoStackState: { canRedo: boolean; canUndo: boolean },
     projectConfig: ProjectConfig,
 ) => {
-    const { isBackBtnVisible, isDownloadBtnVisible } = useUiConfigContext();
+    const { isBackBtnVisible, isDownloadBtnVisible, userInterfaceOutputSettings } = useUiConfigContext();
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
@@ -117,6 +117,7 @@ const useNavbar = (
                         icon={AvailableIcons.faArrowDownToLine}
                         variant={ButtonVariant.primary}
                         handleOnClick={showDownloadPanel}
+                        disabled={userInterfaceOutputSettings?.length === 0}
                     />
                 ),
             });
@@ -143,6 +144,7 @@ const useNavbar = (
         zoomOut,
         isBackBtnVisible,
         isDownloadBtnVisible,
+        userInterfaceOutputSettings,
     ]);
 
     const handleDownload = async (
