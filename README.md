@@ -74,7 +74,7 @@ If you need help generating a token or would like code samples, please see our [
                 refreshTokenAction: refreshTokenAction,
                 /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
                 projectName: projectName,
-                /* userInterfaceID: string or undefined, The id of the user interface used to fetch output settings, if passed will override the default output settings */
+                /* userInterfaceID: string or ![Coverage](https://img.shields.io/badge/coverage-59.66%25-red.svg), The id of the user interface used to fetch output settings, if passed will override the default output settings */
                 userInterfaceID: userInterfaceID,
             });
         </script>
