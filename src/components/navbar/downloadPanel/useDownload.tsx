@@ -4,18 +4,17 @@ import { useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
-type StudioUIDownloadFormats = Exclude<DownloadFormats, DownloadFormats.EXPERIMENTAL_PDF>;
-
 const useDownload = (hideDownloadPanel: () => void) => {
     const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
-    const initialDownloadState: Record<StudioUIDownloadFormats, boolean> = {
+    const initialDownloadState: Record<DownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
         [DownloadFormats.MP4]: false,
         [DownloadFormats.GIF]: false,
+        [DownloadFormats.EXPERIMENTAL_PDF]: false,
     };
 
-    const [selectedOption, setSelectedOption] = useState<StudioUIDownloadFormats>(DownloadFormats.JPG);
+    const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
         return {
@@ -46,6 +45,10 @@ const useDownload = (hideDownloadPanel: () => void) => {
             {
                 label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" description="" />,
                 value: DownloadFormats.GIF,
+            },
+            {
+                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" description="" />,
+                value: DownloadFormats.EXPERIMENTAL_PDF,
             },
         ];
 
