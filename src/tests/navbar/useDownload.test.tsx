@@ -9,14 +9,14 @@ describe('useDownload', () => {
             return UiConfigContext.UiConfigContextDefaultValues;
         });
         const { result } = renderHook(() => useDownload(() => null));
-        expect(result.current.downloadOptions.length).toBe(4);
+        expect(result.current.downloadOptions.length).toBe(5);
     });
 
     test('only false download options, show the onew that are not false', () => {
         jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
             return {
                 ...UiConfigContext.UiConfigContextDefaultValues,
-                outputSettings: { mp4: false, gif: false, jpg: false },
+                outputSettings: { mp4: false, gif: false, jpg: false, pdf: false },
             };
         });
         const { result } = renderHook(() => useDownload(() => null));
