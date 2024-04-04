@@ -72,7 +72,7 @@ export const getDownloadLink = async (
 
         const httpResponse = await axios.post(
             generateExportUrl,
-            format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
+            format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : pdfBody,
             config,
         );
 
