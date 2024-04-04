@@ -70,7 +70,11 @@ export const getDownloadLink = async (
             config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
         }
 
-        const httpResponse = await axios.post(generateExportUrl, undefined, config);
+        const httpResponse = await axios.post(
+            generateExportUrl,
+            format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
+            config,
+        );
 
         const response: GenerateAnimationResponse | ApiError = httpResponse.data as
             | GenerateAnimationResponse
