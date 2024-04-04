@@ -55,7 +55,6 @@ export const getDownloadLink = async (
 
         const pdfBody = {
             layoutsToExport: [layoutId],
-            myProjectId: projectId,
             documentContent: documentResponse.parsedData ?? null,
         };
         const config: HttpHeaders = {
