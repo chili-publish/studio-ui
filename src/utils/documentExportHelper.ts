@@ -33,6 +33,11 @@ export const getDownloadLink = async (
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
         }
 
+        const pdfBody: { layoutsToExport: string[]; documentContent: unknown; engineVersion?: string } = {
+            layoutsToExport: [layoutId],
+            documentContent: documentResponse.parsedData ?? null,
+        };
+
         // TODO: we tend to use this code only on DEV, we need a better way to verify it
         if (window.location.hostname !== 'chiligrafx.com') {
             const queryString = window.location.search;
@@ -51,12 +56,10 @@ export const getDownloadLink = async (
                 generateExportUrl += `&engineVersion=${engineVersion}`;
                 if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
             }
+
+            pdfBody.engineVersion = `${engineVersion}${engineCommitSha && `-${engineCommitSha}`}`;
         }
 
-        const pdfBody = {
-            layoutsToExport: [layoutId],
-            documentContent: documentResponse.parsedData ?? null,
-        };
         const config: HttpHeaders = {
             method: 'POST',
             headers: {
