@@ -46,15 +46,24 @@ export const getDownloadLink = async (
             } else {
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
-            generateExportUrl += `&engineVersion=${engineVersion}`;
-            if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+
+            if (format !== DownloadFormats.PDF) {
+                generateExportUrl += `&engineVersion=${engineVersion}`;
+                if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+            }
         }
+
+        const pdfBody = {
+            layoutsToExport: [layoutId],
+            myProjectId: projectId,
+            documentContent: (documentResponse.data as string) ?? null,
+        };
         const config: HttpHeaders = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: (documentResponse.data as string) ?? null,
+            body: format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
         };
 
         if (token) {
