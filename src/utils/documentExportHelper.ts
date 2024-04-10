@@ -26,10 +26,17 @@ export const getDownloadLink = async (
         // Use different URL when format is one of array ['png', 'jpg'].
         if (['png', 'jpg'].includes(format)) {
             generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
+        } else if (format === DownloadFormats.PDF) {
+            generateExportUrl += `pdf`;
         } else {
             // Here we also pass additional query param `fps` with a default value of `30`.
             generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
         }
+
+        const pdfBody: { layoutsToExport: string[]; documentContent: unknown; engineVersion?: string } = {
+            layoutsToExport: [layoutId],
+            documentContent: documentResponse.parsedData ?? null,
+        };
 
         // TODO: we tend to use this code only on DEV, we need a better way to verify it
         if (window.location.hostname !== 'chiligrafx.com') {
@@ -44,22 +51,32 @@ export const getDownloadLink = async (
             } else {
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
-            generateExportUrl += `&engineVersion=${engineVersion}`;
-            if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+
+            if (format !== DownloadFormats.PDF) {
+                generateExportUrl += `&engineVersion=${engineVersion}`;
+                if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+            }
+
+            pdfBody.engineVersion = `${engineVersion}${engineCommitSha && `-${engineCommitSha}`}`;
         }
+
         const config: HttpHeaders = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: (documentResponse.data as string) ?? null,
+            body: format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
         };
 
         if (token) {
             config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
         }
 
-        const httpResponse = await axios.post(generateExportUrl, undefined, config);
+        const httpResponse = await axios.post(
+            generateExportUrl,
+            format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : pdfBody,
+            config,
+        );
 
         const response: GenerateAnimationResponse | ApiError = httpResponse.data as
             | GenerateAnimationResponse
