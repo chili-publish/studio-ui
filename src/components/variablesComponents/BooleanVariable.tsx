@@ -1,4 +1,4 @@
-import { Colors, Switch, SwitchSize } from '@chili-publish/grafx-shared-components';
+import { Colors, Switch } from '@chili-publish/grafx-shared-components';
 import { useEffect, useState } from 'react';
 import { BooleanVariable } from '@chili-publish/studio-sdk';
 import { IBooleanVariable } from './VariablesComponents.types';
@@ -29,7 +29,6 @@ function BooleanVariable(props: IBooleanVariable) {
                     setToggled(val);
                 }}
                 labelColor={Colors.SECONDARY_FONT}
-                size={SwitchSize.LARGE}
                 noLabelHeight
             />
         </BooleanVariableContainer>
