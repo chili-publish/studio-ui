@@ -398,8 +398,8 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@chili-publish/grafx-shared-components@https://cdnepgrafxstudiodev.azureedge.net/grafx-shared-components/dev-shared-components/351/grafx-shared-components.tgz":
-  version "0.60.1"
-  resolved "https://cdnepgrafxstudiodev.azureedge.net/grafx-shared-components/dev-shared-components/351/grafx-shared-components.tgz#1205757cdf2c97118090bbeff9a20f62ea13bf70"
+  version "0.61.0"
+  resolved "https://cdnepgrafxstudiodev.azureedge.net/grafx-shared-components/dev-shared-components/351/grafx-shared-components.tgz#4d895fc270983679529cc6ade5d21c2bc6ecde8f"
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
