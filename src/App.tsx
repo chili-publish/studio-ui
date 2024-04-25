@@ -8,7 +8,7 @@ import StudioSDK, {
     ConnectorInstance,
     LayoutIntent,
 } from '@chili-publish/studio-sdk';
-import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { Colors, UiThemeProvider, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
 import Navbar from './components/navbar/Navbar';
 import VariablesPanel from './components/variables/VariablesPanel';
@@ -244,37 +244,39 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     return (
         <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
             <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
-                <div className="app">
-                    <Navbar
-                        projectName={projectConfig?.projectName || currentProject?.name}
-                        goBack={projectConfig?.onUserInterfaceBack}
-                        projectConfig={projectConfig}
-                        undoStackState={{ canRedo, canUndo }}
-                        zoom={currentZoom}
-                    />
-                    <MainContentContainer>
-                        {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                        <CanvasContainer>
-                            {isMobileSize && (
-                                <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
-                            )}
-                            <div
-                                className="sui-canvas"
-                                data-id={getDataIdForSUI('canvas')}
-                                data-testid={getDataTestIdForSUI('canvas')}
-                            >
-                                <div className="chili-editor" id="chili-editor" />
-                            </div>
-                            {layoutIntent === LayoutIntent.digitalAnimated ? (
-                                <AnimationTimeline
-                                    scrubberTimeMs={scrubberTimeMs}
-                                    animationLength={animationLength}
-                                    isAnimationPlaying={animationStatus}
-                                />
-                            ) : null}
-                        </CanvasContainer>
-                    </MainContentContainer>
-                </div>
+                <UiThemeProvider theme="platform">
+                    <div className="app">
+                        <Navbar
+                            projectName={projectConfig?.projectName || currentProject?.name}
+                            goBack={projectConfig?.onUserInterfaceBack}
+                            projectConfig={projectConfig}
+                            undoStackState={{ canRedo, canUndo }}
+                            zoom={currentZoom}
+                        />
+                        <MainContentContainer>
+                            {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
+                            <CanvasContainer>
+                                {isMobileSize && (
+                                    <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                                )}
+                                <div
+                                    className="sui-canvas"
+                                    data-id={getDataIdForSUI('canvas')}
+                                    data-testid={getDataTestIdForSUI('canvas')}
+                                >
+                                    <div className="chili-editor" id="chili-editor" />
+                                </div>
+                                {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                    <AnimationTimeline
+                                        scrubberTimeMs={scrubberTimeMs}
+                                        animationLength={animationLength}
+                                        isAnimationPlaying={animationStatus}
+                                    />
+                                ) : null}
+                            </CanvasContainer>
+                        </MainContentContainer>
+                    </div>
+                </UiThemeProvider>
             </VariablePanelContextProvider>
         </UiConfigContextProvider>
     );
