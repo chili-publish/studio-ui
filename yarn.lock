@@ -397,10 +397,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-genie-assistant-sdk@^1.0.2":
-  version "1.0.2"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-genie-assistant-sdk/1.0.2/7983ef868fa71a703f5a2a118ec7c489d4805727#7983ef868fa71a703f5a2a118ec7c489d4805727"
-  integrity sha512-sI648Wam+iyFCS29NsSsIYjFSIAm2H4EyvDRi06XEq0TlDjGZC8girIocHduha7U0KGcgU6wA93Os1GTlBwAXA==
+"@chili-publish/grafx-genie-assistant-sdk@^1.0.3":
+  version "1.0.3"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-genie-assistant-sdk/1.0.3/e451462640bef8e056149fa667eca47d9e37982d#e451462640bef8e056149fa667eca47d9e37982d"
+  integrity sha512-aZmRUyU1g3afjlNZOiOGwYDQhpZPbVIO09qk6gmWywvidcE+TYIvUAAxemapFnmZI63D2oKmPJ1Zxb6a2cQp+w==
   dependencies:
     eslint "^9.1.1"
 
