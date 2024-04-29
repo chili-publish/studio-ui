@@ -21,7 +21,7 @@ import './index.css';
 
 declare global {
     interface Window {
-        StudioUI: unknown;
+        StudioUI: typeof StudioUI;
     }
 }
 

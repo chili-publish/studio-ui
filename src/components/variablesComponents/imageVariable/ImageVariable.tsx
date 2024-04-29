@@ -1,5 +1,5 @@
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
-import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -76,7 +76,7 @@ function ImageVariable(props: IImageVariable) {
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
             onClick={() => {
-                showImagePanel(variable as ImageVariable);
+                showImagePanel(variable);
             }}
             previewErrorUrl={previewErrorUrl}
         />
