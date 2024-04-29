@@ -24,11 +24,14 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
+        "@chili-publish/grafx-genie-assistant-sdk": "^1.0.2",
         "@chili-publish/grafx-shared-components": "^0.61.1",
         "@chili-publish/studio-sdk": "1.8.2",
         "axios": "^1.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-markdown": "^9.0.1",
+        "react-spinners": "^0.13.8",
         "styled-components": "^5.3.11"
     },
     "engines": {
