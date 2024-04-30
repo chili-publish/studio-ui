@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
+import { GenieAssistant, ToggleButton } from '@chili-publish/grafx-genie-assistant-sdk';
 import VariablesList from './VariablesList';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
@@ -11,6 +12,11 @@ import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles'
 interface VariablesPanelProps {
     variables: Variable[];
     isDocumentLoaded: boolean;
+}
+
+enum InputMode {
+    Form = 'Form',
+    AI = 'AI',
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -34,7 +40,7 @@ function VariablesPanel(props: VariablesPanelProps) {
 
     const showVariablesList = contentType === ContentType.VARIABLES_LIST;
 
-    return (
+    const formMode = (
         <>
             <EditButtonWrapper>
                 <Button
@@ -75,6 +81,8 @@ function VariablesPanel(props: VariablesPanelProps) {
             </Tray>
         </>
     );
+
+    return <ToggleButton enum={InputMode} firstChild={formMode} secondChild={<GenieAssistant />} />;
 }
 
 export default VariablesPanel;
