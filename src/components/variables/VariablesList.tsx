@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
-import { GenieAssistant, ToggleButton } from '@chili-publish/grafx-genie-assistant-sdk';
+import { GenieAssistant, ToggleButton, defaultOptions } from '@chili-publish/grafx-genie-assistant-sdk';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
@@ -22,10 +22,25 @@ const isListVariable = (variable: Variable): variable is ListVariable => variabl
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
+    const [templateContent, setTemplateContent] = useState('');
 
     const updateListVariableValue = async (variableId: string, value: string) => {
         await window.SDK.variable.setValue(variableId, value);
     };
+
+    useEffect(() => {
+        const getTemplateContent = () => {
+            const run = async () => {
+                const template = await window.SDK.document.getCurrentState();
+                if (template.data) {
+                    setTemplateContent(template.data);
+                }
+            };
+
+            run();
+        };
+        getTemplateContent();
+    }, []);
 
     useEffect(() => {
         if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
@@ -78,7 +93,24 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
     );
     return (
         <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
-            <ToggleButton firstChild={variableFormContent} secondChild={<GenieAssistant />} enum={InputMode} />
+            <ToggleButton
+                firstChild={variableFormContent}
+                secondChild={
+                    <GenieAssistant
+                        template={templateContent}
+                        options={{
+                            ...defaultOptions,
+                            baseURL: 'https://genie-assistant.azurewebsites.net',
+                            bot: {
+                                ...defaultOptions.bot,
+                                chatLayout: 'spacious',
+                                botId: 'studioBot',
+                            },
+                        }}
+                    />
+                }
+                enum={InputMode}
+            />
         </VariablesListWrapper>
     );
 }
