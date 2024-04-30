@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { GenieAssistant, ToggleButton } from '@chili-publish/grafx-genie-assistant-sdk';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
@@ -9,6 +10,11 @@ interface VariablesListProps {
     variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
     isDocumentLoaded: boolean;
+}
+
+enum InputMode {
+    Form = 'Form',
+    AI = 'AI',
 }
 
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
@@ -26,8 +32,8 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listVariableOpen]);
 
-    return (
-        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
+    const variableFormContent = (
+        <>
             {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
@@ -68,6 +74,11 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         </ComponentWrapper>
                     ) : null;
                 })}
+        </>
+    );
+    return (
+        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
+            <ToggleButton firstChild={variableFormContent} secondChild={<GenieAssistant />} enum={InputMode} />
         </VariablesListWrapper>
     );
 }
