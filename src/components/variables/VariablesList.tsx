@@ -31,9 +31,13 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
     useEffect(() => {
         const getTemplateContent = () => {
             const run = async () => {
-                const template = await window.SDK.document.getCurrentState();
-                if (template.data) {
-                    setTemplateContent(template.data);
+                try {
+                    const template = await window.SDK.document.getCurrentState();
+                    if (template.data) {
+                        setTemplateContent(template.data);
+                    }
+                } catch (error) {
+                    setTemplateContent('');
                 }
             };
 
