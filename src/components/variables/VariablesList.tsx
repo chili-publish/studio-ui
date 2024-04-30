@@ -22,7 +22,7 @@ const isListVariable = (variable: Variable): variable is ListVariable => variabl
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
-    const [templateContent, setTemplateContent] = useState('');
+    const [templateContent, setTemplateContent] = useState<string | unknown>('');
 
     const updateListVariableValue = async (variableId: string, value: string) => {
         await window.SDK.variable.setValue(variableId, value);
@@ -34,9 +34,11 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                 try {
                     const template = await window.SDK.document.getCurrentState();
                     if (template.data) {
-                        setTemplateContent(template.data);
+                        setTemplateContent(template.parsedData);
                     }
                 } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error('Error getting template content', error);
                     setTemplateContent('');
                 }
             };
