@@ -110,7 +110,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                             baseURL: 'https://genie-assistant.azurewebsites.net',
                             bot: {
                                 ...defaultOptions.bot,
-                                chatLayout: 'spacious',
+                                chatLayout: 'compact',
                                 botId: 'studioBot',
                             },
                         }}
