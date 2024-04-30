@@ -19,6 +19,10 @@ export default defineConfig({
     build: {
         emptyOutDir: true,
         rollupOptions: {
+            input: {
+                index: './src/main.tsx',
+                bootstrap: './src/_dev-execution/bootstrap.ts',
+            },
             output: {
                 entryFileNames: 'bundle.js',
                 chunkFileNames: 'bundle.js',
