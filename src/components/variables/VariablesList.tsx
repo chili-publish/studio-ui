@@ -99,37 +99,37 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
         </>
     );
 
-    return (
-        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
-            <ToggleButton
-                firstChild={variableFormContent}
-                secondChild={
-                    <GenieAssistant
-                        template={templateContent}
-                        options={{
-                            ...defaultOptions,
-                            baseURL: 'https://genie-assistant.azurewebsites.net',
-                            bot: {
-                                ...defaultOptions.bot,
-                                chatLayout: 'compact',
-                                botId: 'studioBot',
-                                welcomeMessage: `Hello! 🌟 I'm your GraFx Genie!\n🧞‍♂️ Ready to manage your template variables like images 🖼️, text 📝, boolean values 🔘, and lists 📋. \nTell me which variable to change, ask for a list of variables, or type 'help' for assistance. Let's get started! 😄🚀
+    const genieAssistant =
+        typeof jest !== 'undefined' ? (
+            <GenieAssistant />
+        ) : (
+            <GenieAssistant
+                template={templateContent}
+                options={{
+                    ...defaultOptions,
+                    baseURL: 'https://genie-assistant.azurewebsites.net',
+                    bot: {
+                        ...defaultOptions.bot,
+                        chatLayout: 'compact',
+                        botId: 'studioBot',
+                        welcomeMessage: `Hello! 🌟 I'm your GraFx Genie!\n🧞‍♂️ Ready to manage your template variables like images 🖼️, text 📝, boolean values 🔘, and lists 📋. \nTell me which variable to change, ask for a list of variables, or type 'help' for assistance. Let's get started! 😄🚀
                                 \n Ask me about the following variables: \n  ${variables
                                     .filter((v) => v.isVisible)
                                     .map((variable: Variable) => `- ${variable.name}`)
                                     .join('\n')}
                                 `,
-                                systemPrompt: `This is the current list of variables, ${JSON.stringify(
-                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                    // @ts-ignore
-                                    variables.filter((v) => v.isVisible).map((variable: Variable) => variable.name),
-                                )}`,
-                            },
-                        }}
-                    />
-                }
-                enum={InputMode}
+                        systemPrompt: `This is the current list of variables, ${JSON.stringify(
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            variables.filter((v) => v.isVisible).map((variable: Variable) => variable.name),
+                        )}`,
+                    },
+                }}
             />
+        );
+    return (
+        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
+            <ToggleButton firstChild={variableFormContent} secondChild={genieAssistant} enum={InputMode} />
         </VariablesListWrapper>
     );
 }
