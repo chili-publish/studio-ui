@@ -100,7 +100,10 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
     );
 
     const genieAssistant =
-        typeof jest !== 'undefined' ? (
+        // eslint-disable-next-line no-nested-ternary
+        variables.length === 0 ? (
+            <p>no vars!</p>
+        ) : typeof jest !== 'undefined' ? (
             <GenieAssistant />
         ) : (
             <GenieAssistant
@@ -121,7 +124,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         systemPrompt: `This is the current list of variables, ${JSON.stringify(
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
-                            variables.filter((v) => v.isVisible).map((variable: Variable) => variable.name),
+                            variables.filter((v) => v.isVisible),
                         )}`,
                     },
                 }}
