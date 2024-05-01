@@ -14,7 +14,7 @@ interface VariablesListProps {
 
 enum InputMode {
     Form = 'Form',
-    AI = 'AI',
+    Genie = 'Genie',
 }
 
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
@@ -112,6 +112,11 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 ...defaultOptions.bot,
                                 chatLayout: 'compact',
                                 botId: 'studioBot',
+                                systemPrompt: `This is the current list of variables, ${JSON.stringify(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore
+                                    templateContent?.variables ?? 'N/A',
+                                )}`,
                             },
                         }}
                     />
