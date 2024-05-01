@@ -397,10 +397,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-genie-assistant-sdk@^1.0.34":
-  version "1.0.34"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-genie-assistant-sdk/1.0.34/25746fa1e3796e6bcfe496f0ba85b1a7e188d13b#25746fa1e3796e6bcfe496f0ba85b1a7e188d13b"
-  integrity sha512-WUo7E2dupMOLvj2prtwr/ogtCYL+Xs6lYY5TvXhXYVBOEYhBz6KkEn4y7fWx/kyOwT4IlopjuRfmK+vtfDlmEw==
+"@chili-publish/grafx-genie-assistant-sdk@^1.0.35":
+  version "1.0.35"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-genie-assistant-sdk/1.0.35/68cb96767d9d4ce757a1b013310d1f82850d3654#68cb96767d9d4ce757a1b013310d1f82850d3654"
+  integrity sha512-XeQArNmm9nFtUtd9+htwy87vdZcxnmqh698HNMXfTYNkYejV05gsmL3BrunMSMUfcKA7QJCiSSNAPg4L/6HQIA==
   dependencies:
     react-markdown "^9.0.1 || ^8.0.0"
     react-spinners "^0.13.8 || ^0.12.0"
