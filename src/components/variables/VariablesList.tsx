@@ -98,6 +98,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                 })}
         </>
     );
+
     return (
         <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
             <ToggleButton
@@ -112,10 +113,16 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 ...defaultOptions.bot,
                                 chatLayout: 'compact',
                                 botId: 'studioBot',
+                                welcomeMessage: `Hello! 🌟 I'm your GraFx Genie!\n🧞‍♂️ Ready to manage your template variables like images 🖼️, text 📝, boolean values 🔘, and lists 📋. \nTell me which variable to change, ask for a list of variables, or type 'help' for assistance. Let's get started! 😄🚀
+                                \n Ask me about the following variables: \n  ${variables
+                                    .filter((v) => v.isVisible)
+                                    .map((variable: Variable) => `- ${variable.name}`)
+                                    .join('\n')}
+                                `,
                                 systemPrompt: `This is the current list of variables, ${JSON.stringify(
                                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                     // @ts-ignore
-                                    templateContent?.variables ?? 'N/A',
+                                    variables.filter((v) => v.isVisible).map((variable: Variable) => variable.name),
                                 )}`,
                             },
                         }}
