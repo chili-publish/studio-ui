@@ -1,18 +1,34 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import fetch from 'jest-mock-fetch';
 import '@testing-library/jest-dom';
 import { mock } from 'jest-mock-extended';
 import EditorSDK from '@chili-publish/studio-sdk';
 
 jest.mock('@chili-publish/studio-sdk');
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+window.HTMLElement.prototype.scrollIntoView = () => {
+    // do nothing
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+global.fetch = fetch;
+
 window.matchMedia =
     window.matchMedia ||
+    // eslint-disable-next-line func-names
     function () {
         return {
             matches: false,
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            addEventListener() {},
+            addEventListener() {
+                // do nothing
+            },
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            removeEventListener() {},
+            removeEventListener() {
+                // do nothing
+            },
         };
     };
 

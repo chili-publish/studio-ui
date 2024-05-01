@@ -24,13 +24,16 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-genie-assistant-sdk": "^1.0.32",
+        "@chili-publish/grafx-genie-assistant-sdk": "^1.0.34",
         "@chili-publish/grafx-shared-components": "^0.61.1",
         "@chili-publish/studio-sdk": "1.8.2",
         "axios": "^1.6.0",
+        "jest-mock-fetch": "^2.0.5",
+        "node-fetch": "^3.3.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "styled-components": "^5.3.11"
+        "styled-components": "^5.3.11",
+        "whatwg-fetch": "^3.6.20"
     },
     "engines": {
         "node": ">=18.0.0 <19.0.0"
