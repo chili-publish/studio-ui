@@ -113,7 +113,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                     baseURL: 'https://genie-assistant.azurewebsites.net',
                     bot: {
                         ...defaultOptions.bot,
-                        chatLayout: 'compact',
+                        chatLayout: 'ultracompact',
                         botId: 'studioBot',
                         welcomeMessage: `Hello! 🌟 I'm your GraFx Genie!\n🧞‍♂️ Ready to manage your template variables like images 🖼️, text 📝, boolean values 🔘, and lists 📋. \nTell me which variable to change, ask for a list of variables, or type 'help' for assistance. Let's get started! 😄🚀
                                 \n Ask me about the following variables: \n  ${variables
