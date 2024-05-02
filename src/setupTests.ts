@@ -50,3 +50,16 @@ mockSDK.connector.waitToBeReady = jest
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
 window.SDK = mockSDK;
+
+// Promise.withResolvers polyfill. Remove once Node.js introduce it's full support
+if (Promise.withResolvers === undefined) {
+    Promise.withResolvers = function () {
+        let resolve;
+        let reject;
+        const promise = new Promise((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+        return { promise, resolve, reject };
+    } as any;
+}
