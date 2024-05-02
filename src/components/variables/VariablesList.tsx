@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
-import { GenieAssistant, ToggleButton, defaultOptions } from '@chili-publish/grafx-genie-assistant-sdk';
+import { GenieAssistant, Options, ToggleButton, defaultOptions } from '@chili-publish/grafx-genie-assistant-sdk';
+import * as html2canvas from 'html2canvas';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
@@ -108,6 +109,31 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
         ) : (
             <GenieAssistant
                 template={templateContent}
+                onMessage={(
+                    message: string,
+                    options: Options,
+                    messageCount: number,
+                    addFile: (name: string, content: Blob) => void,
+                ) => {
+                    try {
+                        const toScreenshot = document.getElementById('chili-editor')?.getElementsByTagName('iframe')[0]
+                            .contentDocument?.body;
+
+                        if (!toScreenshot) {
+                            return;
+                        }
+                        html2canvas.default(toScreenshot).then((canvas) => {
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    addFile('template.png', blob);
+                                }
+                            });
+                        });
+                    } catch (error) {
+                        // eslint-disable-next-line no-console
+                        console.error('Error taking screenshot', error);
+                    }
+                }}
                 options={{
                     ...defaultOptions,
                     baseURL: 'https://genie-assistant.azurewebsites.net',
