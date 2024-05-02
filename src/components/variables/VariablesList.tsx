@@ -108,7 +108,6 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
             <GenieAssistant />
         ) : (
             <GenieAssistant
-                template={templateContent}
                 onMessage={(
                     message: string,
                     options: Options,
@@ -116,6 +115,10 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                     addFile: (name: string, content: Blob) => void,
                 ) => {
                     try {
+                        addFile(
+                            'template.json',
+                            new Blob([JSON.stringify(templateContent)], { type: 'application/json' }),
+                        );
                         const toScreenshot = document.getElementById('chili-editor')?.getElementsByTagName('iframe')[0]
                             .contentDocument?.body;
 
