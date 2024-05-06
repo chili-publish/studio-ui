@@ -108,6 +108,27 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
             <GenieAssistant />
         ) : (
             <GenieAssistant
+                onScreenshotRequested={async () => {
+                    const toScreenshot = document.getElementById('chili-editor')?.getElementsByTagName('iframe')[0]
+                        .contentDocument?.body;
+
+                    if (!toScreenshot) {
+                        return null;
+                    }
+
+                    return new Promise<Blob | null>((resolve) => {
+                        html2canvas
+                            .default(toScreenshot)
+                            .then((canvas) => {
+                                canvas.toBlob((blob) => {
+                                    resolve(blob);
+                                });
+                            })
+                            .catch(() => {
+                                resolve(null);
+                            });
+                    });
+                }}
                 onMessage={(
                     message: string,
                     options: Options,
@@ -119,22 +140,9 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                             'template.json',
                             new Blob([JSON.stringify(templateContent)], { type: 'application/json' }),
                         );
-                        const toScreenshot = document.getElementById('chili-editor')?.getElementsByTagName('iframe')[0]
-                            .contentDocument?.body;
-
-                        if (!toScreenshot) {
-                            return;
-                        }
-                        html2canvas.default(toScreenshot).then((canvas) => {
-                            canvas.toBlob((blob) => {
-                                if (blob) {
-                                    addFile('template.png', blob);
-                                }
-                            });
-                        });
                     } catch (error) {
                         // eslint-disable-next-line no-console
-                        console.error('Error taking screenshot', error);
+                        console.error('Error sending template', error);
                     }
                 }}
                 options={{
