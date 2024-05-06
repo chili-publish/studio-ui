@@ -12,7 +12,6 @@ export function ConnectorAuthenticationModal({ name, onConfirm, onCancel }: Conn
             title="Authorize connector"
             description={`${name} needs to be authorized. Click 'Authorize' to redirect and grant permissions.`}
             isVisible
-            // closeIconColor="var(--sw-gray-700)"
             anchorId="studio-ui-application"
             approveButton={{
                 label: 'Authorize',

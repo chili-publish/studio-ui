@@ -26,7 +26,6 @@ export const useConnectorAuthentication = () => {
                 __resolvers: authenticationResolvers,
                 async start() {
                     try {
-                        // console.info('Launching authentication process...');
                         const result = await executor.handler().then((res) => {
                             if (res.type === 'authentified') {
                                 return new RefreshedAuthCredendentials();
