@@ -3,7 +3,7 @@ import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import Navbar from '../../components/navbar/Navbar';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
+import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
 
 describe('Navbar', () => {
@@ -157,11 +157,12 @@ describe('Navbar', () => {
 });
 
 class ProjectConfigs {
-    static empty = {
+    static empty: ProjectConfig = {
         projectId: '00000000-0000-0000-0000-000000000000',
         projectName: '',
         uiOptions: defaultPlatformUiOptions,
         outputSettings: defaultOutputSettings,
+        graFxStudioEnvironmentApiBaseUrl: '',
         onProjectInfoRequested: async () => {
             return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
         },

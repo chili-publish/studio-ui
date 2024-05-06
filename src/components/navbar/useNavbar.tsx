@@ -157,7 +157,6 @@ const useNavbar = (
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
             const response = await axios.get(downloadURL ?? '', {
-                headers: { Authorization: `Bearer ${projectConfig?.onAuthenticationRequested()}` },
                 responseType: 'blob',
             });
 

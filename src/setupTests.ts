@@ -6,7 +6,7 @@ jest.mock('@chili-publish/studio-sdk');
 
 window.matchMedia =
     window.matchMedia ||
-    function () {
+    function matchMedia() {
         return {
             matches: false,
             // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -51,6 +51,7 @@ mockSDK.connector.waitToBeReady = jest
 
 window.SDK = mockSDK;
 
+/* eslint-disable */
 // Promise.withResolvers polyfill. Remove once Node.js introduce it's full support
 if (Promise.withResolvers === undefined) {
     Promise.withResolvers = function () {
@@ -63,3 +64,4 @@ if (Promise.withResolvers === undefined) {
         return { promise, resolve, reject };
     } as any;
 }
+/* eslint-enable */

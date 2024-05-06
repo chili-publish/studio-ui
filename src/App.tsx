@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import StudioSDK, {
     Variable,
     WellKnownConfigurationKeys,
@@ -66,6 +66,27 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         createProcess: createAuthenticationProcess,
         connectorName,
     } = useConnectorAuthentication();
+
+    useEffect(() => {
+        const appendAuthorizationHeader = async (request: InternalAxiosRequestConfig<unknown>) => {
+            if (
+                !request.url?.startsWith(projectConfig.graFxStudioEnvironmentApiBaseUrl) &&
+                !request.url?.startsWith(
+                    projectConfig.graFxStudioEnvironmentApiBaseUrl.replace('api/v1/', 'api/experimental/'),
+                )
+            ) {
+                return request;
+            }
+
+            // eslint-disable-next-line no-param-reassign
+            request.headers.Authorization = `Bearer ${authToken}`;
+            return request;
+        };
+        const subscriber = axios.interceptors.request.use(appendAuthorizationHeader);
+        return () => {
+            axios.interceptors.request.eject(subscriber);
+        };
+    }, [authToken, projectConfig.graFxStudioEnvironmentApiBaseUrl]);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
