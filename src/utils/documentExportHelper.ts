@@ -54,9 +54,10 @@ export const getDownloadLink = async (
             if (format !== DownloadFormats.PDF) {
                 generateExportUrl += `&engineVersion=${engineVersion}`;
                 if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+            } else {
+                pdfBody.engineVersion = `${engineVersion}`;
+                if (engineCommitSha) pdfBody.engineVersion += `-${engineCommitSha}`;
             }
-
-            pdfBody.engineVersion = `${engineVersion}${engineCommitSha && `-${engineCommitSha}`}`;
         }
 
         const config: HttpHeaders = {
