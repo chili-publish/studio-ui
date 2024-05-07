@@ -72,5 +72,8 @@ import { TokenManager } from './token-manager';
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.refreshToken(),
+        onConnectorAuthenticationRequested: (connectorId) => {
+            return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
+        },
     });
 })();

@@ -146,7 +146,7 @@ const startPollingOnEndpoint = async (
         if (token) {
             config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
         }
-        const httpResponse = await fetch(endpoint, config);
+        const httpResponse = await axios.get(endpoint, config);
 
         if (httpResponse?.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
@@ -154,7 +154,7 @@ const startPollingOnEndpoint = async (
             return await startPollingOnEndpoint(endpoint, token);
         }
         if (httpResponse?.status === 200) {
-            return (await httpResponse.json()) as GenerateAnimationTaskPollingResponse;
+            return httpResponse.data as GenerateAnimationTaskPollingResponse;
         }
         return null;
     } catch (err) {

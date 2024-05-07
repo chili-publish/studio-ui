@@ -21,8 +21,8 @@ export class TokenManager {
         try {
             const authToken = await this.auth0Client.getTokenSilently();
             return authToken;
-        } catch (e: any) {
-            if (e.error !== 'login_required') {
+        } catch (e) {
+            if ((e as { error: string }).error !== 'login_required') {
                 this.loginWithRedirect();
             }
             throw e;
@@ -40,8 +40,8 @@ export class TokenManager {
         try {
             const token = await this.auth0Client.getTokenSilently();
             return token;
-        } catch (e: any) {
-            if (e.error === 'invalid_grant') {
+        } catch (e) {
+            if ((e as { error: string }).error === 'invalid_grant') {
                 this.loginWithRedirect();
             }
             throw e;

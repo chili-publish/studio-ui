@@ -76,6 +76,8 @@ function ImageVariable(props: IImageVariable) {
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
             onClick={() => {
+                // TODO: Logic that checks authentication requireness should be added before opening
+                // https://chilipublishintranet.atlassian.net/browse/WRS-1734
                 showImagePanel(variable);
             }}
             previewErrorUrl={previewErrorUrl}

@@ -7,6 +7,8 @@ import StudioSDK, {
     ConnectorType,
     ConnectorInstance,
     LayoutIntent,
+    AuthRefreshTypeEnum,
+    GrafxTokenAuthCredentials,
 } from '@chili-publish/studio-sdk';
 import { Colors, UiThemeProvider, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import packageInfo from '../package.json';
@@ -20,6 +22,7 @@ import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { CanvasContainer, MainContentContainer } from './App.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
+import { ConnectorAuthenticationModal, useConnectorAuthentication } from './components/connector-authentication';
 
 declare global {
     interface Window {
@@ -57,6 +60,12 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             return data;
         }),
     );
+
+    const {
+        process: connectorAuthenticationProcess,
+        createProcess: createAuthenticationProcess,
+        connectorName,
+    } = useConnectorAuthentication();
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     axios.interceptors.response.use(
@@ -109,6 +118,38 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     useEffect(() => {
         const sdk = new StudioSDK({
+            async onAuthExpired(request) {
+                try {
+                    if (request.type === AuthRefreshTypeEnum.grafxToken) {
+                        const newToken = await projectConfig.onAuthenticationExpired();
+                        setAuthToken(newToken);
+                        return new GrafxTokenAuthCredentials(newToken);
+                    }
+
+                    // "oAuth2AuthorizationCode" Environment API Connector's authorization entity type
+                    // NOTE: We apply .toLowerCase() for both header and entity type as header came with first capital letter where entity type is fully camelCase
+                    if (
+                        request.type === AuthRefreshTypeEnum.any &&
+                        !!request.headerValue?.toLowerCase().includes('oAuth2AuthorizationCode'.toLowerCase()) &&
+                        !!projectConfig?.onConnectorAuthenticationRequested
+                    ) {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
+                        const connector = await window.SDK.connector.getById(request.connectorId);
+                        const result = await createAuthenticationProcess(async () => {
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                            const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
+                            return res;
+                        }, connector.parsedData?.name ?? '');
+                        return result;
+                    }
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error(error);
+                    return null;
+                }
+                return null;
+            },
             onVariableListChanged: (variableList: Variable[]) => {
                 setVariables(variableList);
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
@@ -245,7 +286,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
             <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
                 <UiThemeProvider theme="platform">
-                    <div className="app">
+                    <div id="studio-ui-application" className="app">
                         <Navbar
                             projectName={projectConfig?.projectName || currentProject?.name}
                             goBack={projectConfig?.onUserInterfaceBack}
@@ -275,6 +316,13 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                                 ) : null}
                             </CanvasContainer>
                         </MainContentContainer>
+                        {connectorAuthenticationProcess && (
+                            <ConnectorAuthenticationModal
+                                name={connectorName}
+                                onConfirm={() => connectorAuthenticationProcess.start()}
+                                onCancel={() => connectorAuthenticationProcess.cancel()}
+                            />
+                        )}
                     </div>
                 </UiThemeProvider>
             </VariablePanelContextProvider>
