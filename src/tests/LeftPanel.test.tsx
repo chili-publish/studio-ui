@@ -11,6 +11,15 @@ import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 
 jest.mock('@chili-publish/studio-sdk');
+jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
+    useVariableConnector: () => ({
+        selectedConnector: {
+            supportedAuthentication: {
+                browser: ['none'],
+            },
+        },
+    }),
+}));
 const mockSDK = mock<EditorSDK>();
 
 beforeEach(() => {
@@ -73,28 +82,7 @@ beforeEach(() => {
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-    mockSDK.variable.setValue = jest
-        .fn()
-        .mockImplementation()
-        .mockReturnValue(
-            Promise.resolve({
-                success: true,
-                status: 0,
-                data: '',
-                parsedData: null,
-            }),
-        );
-
     mockSDK.mediaConnector.getCapabilities = jest
-        .fn()
-        .mockImplementation()
-        .mockReturnValue(
-            Promise.resolve({
-                parsedData: { copy: false, detail: true, filtering: true, query: true, remove: false, upload: false },
-            }),
-        );
-
-    mockSDK.fontConnector.getCapabilities = jest
         .fn()
         .mockImplementation()
         .mockReturnValue(

@@ -44,9 +44,7 @@ export class StudioProjectLoader {
         }
 
         const intermediate = axios
-            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`, {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            })
+            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`)
             .then((res) => {
                 return res.data;
             });
@@ -63,7 +61,7 @@ export class StudioProjectLoader {
 
     public onProjectDocumentRequested = async (): Promise<string> => {
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
+        return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl);
     };
 
     public onProjectLoaded = (): void => {
@@ -74,7 +72,7 @@ export class StudioProjectLoader {
     };
 
     public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
-        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
+        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl);
         return this.onProjectInfoRequested();
     };
 
@@ -107,18 +105,15 @@ export class StudioProjectLoader {
         return getDownloadLink(
             extension as DownloadFormats,
             this.graFxStudioEnvironmentApiBaseUrl ?? '',
-            this.authToken ?? '',
             selectedLayoutID || '0',
             this.projectId ?? '',
         );
     };
 
-    private static fetchDocument = async (templateUrl?: string, token?: string): Promise<string> => {
+    private static fetchDocument = async (templateUrl?: string): Promise<string> => {
         const url = templateUrl;
         if (url) {
-            const fetchPromise = token
-                ? axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
-                : axios.get(url);
+            const fetchPromise = axios.get(url);
             return fetchPromise
                 .then((response) => {
                     return response;
@@ -137,7 +132,6 @@ export class StudioProjectLoader {
         generateJson: () => Promise<string>,
         docEditorLink?: string,
         templateUrl?: string,
-        token?: string,
     ) => {
         // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
@@ -160,9 +154,6 @@ export class StudioProjectLoader {
                 },
             };
 
-            if (token) {
-                config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-            }
             if (document) {
                 axios.put(url, JSON.parse(document), config).catch((err) => {
                     // eslint-disable-next-line no-console
@@ -178,12 +169,9 @@ export class StudioProjectLoader {
 
     public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
         if (this.userInterfaceID) {
-            const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            });
+            const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`);
             const userInterface = await axios.get(
                 `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`,
-                { headers: { Authorization: `Bearer ${this.authToken}` } },
             );
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
 

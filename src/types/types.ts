@@ -7,6 +7,7 @@ export interface ProjectConfig {
     projectName: string;
     uiOptions: UiOptions;
     outputSettings: OutputSettings;
+    graFxStudioEnvironmentApiBaseUrl: string;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
     onProjectLoaded: (project: Project) => void;

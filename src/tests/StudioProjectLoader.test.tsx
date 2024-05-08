@@ -45,12 +45,7 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectInfoRequested();
 
             expect(result).toEqual(mockCachedProject);
-            expect(axios.get).toHaveBeenCalledWith(
-                `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}`,
-                {
-                    headers: { Authorization: `Bearer ${mockAuthToken}` },
-                },
-            );
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}`);
         });
 
         it('should throw an error if project is not found', async () => {
@@ -85,7 +80,6 @@ describe('StudioProjectLoader', () => {
             expect(result).toEqual(JSON.stringify(mockDocument.data));
             expect(axios.get).toHaveBeenCalledWith(
                 `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}/document`,
-                { headers: { Authorization: 'Bearer mockAuthToken' } },
             );
         });
 
@@ -103,9 +97,7 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectDocumentRequested();
 
             expect(result).toEqual(JSON.stringify(mockDocument.data));
-            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
-                headers: { Authorization: 'Bearer mockAuthToken' },
-            });
+            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl);
         });
     });
 

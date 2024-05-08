@@ -49,6 +49,7 @@ export default class StudioUI {
             projectName: 'Demo',
             uiOptions: defaultUiOptions,
             outputSettings: defaultOutputSettings,
+            graFxStudioEnvironmentApiBaseUrl: '',
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
             onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
@@ -104,12 +105,14 @@ export default class StudioUI {
         editorLink?: string,
         onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
+        graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
             projectId,
             projectName,
             uiOptions,
             outputSettings,
+            graFxStudioEnvironmentApiBaseUrl,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectLoaded,
@@ -188,6 +191,7 @@ export default class StudioUI {
             editorLink,
             projectLoader.onFetchOutputSettings,
             onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
@@ -252,6 +256,7 @@ export default class StudioUI {
             undefined,
             undefined,
             onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
@@ -324,6 +329,7 @@ export default class StudioUI {
             editorLink,
             projectLoader.onFetchOutputSettings,
             onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 }

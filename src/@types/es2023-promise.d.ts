@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Remove after upgrading to TS >= 5.4
 interface PromiseWithResolvers<T> {
     promise: Promise<T>;
@@ -16,3 +17,4 @@ interface PromiseConstructor {
      */
     withResolvers<T>(): PromiseWithResolvers<T>;
 }
+/* eslint-enable */

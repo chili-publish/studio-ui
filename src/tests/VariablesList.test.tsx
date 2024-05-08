@@ -2,6 +2,16 @@ import { render, screen } from '@testing-library/react';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
 
+jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
+    useVariableConnector: () => ({
+        selectedConnector: {
+            supportedAuthentication: {
+                browser: ['none'],
+            },
+        },
+    }),
+}));
+
 describe('Variables List', () => {
     it('Hidden variables should not be shown', async () => {
         render(<VariablesList variables={variables} isDocumentLoaded />);
