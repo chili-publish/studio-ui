@@ -18,10 +18,11 @@ import {
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
+import { ConnectorAuthenticationResult } from './types/ConnectorAuthenticationResult';
 
 declare global {
     interface Window {
-        StudioUI: unknown;
+        StudioUI: typeof StudioUI;
     }
 }
 
@@ -48,6 +49,7 @@ export default class StudioUI {
             projectName: 'Demo',
             uiOptions: defaultUiOptions,
             outputSettings: defaultOutputSettings,
+            graFxStudioEnvironmentApiBaseUrl: '',
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
             onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
@@ -102,12 +104,15 @@ export default class StudioUI {
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
         onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
+        onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
+        graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
             projectId,
             projectName,
             uiOptions,
             outputSettings,
+            graFxStudioEnvironmentApiBaseUrl,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectLoaded,
@@ -119,6 +124,7 @@ export default class StudioUI {
             onProjectGetDownloadLink,
             overrideEngineUrl: editorLink,
             onFetchOutputSettings,
+            onConnectorAuthenticationRequested,
         });
     }
 
@@ -153,6 +159,7 @@ export default class StudioUI {
             refreshTokenAction,
             editorLink,
             userInterfaceID,
+            onConnectorAuthenticationRequested,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -183,6 +190,8 @@ export default class StudioUI {
             projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
@@ -218,6 +227,7 @@ export default class StudioUI {
             onProjectSave,
             uiOptions,
             outputSettings,
+            onConnectorAuthenticationRequested,
         } = config;
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -243,6 +253,10 @@ export default class StudioUI {
             onBack,
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
+            undefined,
+            undefined,
+            onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
@@ -284,6 +298,7 @@ export default class StudioUI {
             onAuthenticationExpired,
             onLogInfoRequested,
             onProjectGetDownloadLink,
+            onConnectorAuthenticationRequested,
         } = config;
 
         const projectLoader = new StudioProjectLoader(
@@ -313,6 +328,8 @@ export default class StudioUI {
             onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 }

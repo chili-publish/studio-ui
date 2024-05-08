@@ -1,5 +1,7 @@
 # Studio UI
 
+![Coverage](https://img.shields.io/badge/coverage-60.57%25-red.svg)
+
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
 
@@ -74,7 +76,6 @@ If you need help generating a token or would like code samples, please see our [
                 refreshTokenAction: refreshTokenAction,
                 /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
                 projectName: projectName,
-![Coverage](https://img.shields.io/badge/coverage-59.40%25-red.svg)
                 userInterfaceID: userInterfaceID,
             });
         </script>
@@ -127,7 +128,19 @@ yarn dev
 
 Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
 
-> To see actual template you have to modify `index.html` file with corresponding configuration
+> To see actual template you have create an `.env` file with corresponding keys
+
+```bash
+# Project configuration
+VITE_ENVIRONMENT_NAME=environmentName
+VITE_PROJECT_ID=templateId
+
+# Authentication configuraiton
+VITE_AUTH0_DOMAIN=https://login.chiligrafx-dev.com
+VITE_AUTH0_CLIENT_ID=clientId
+VITE_AUTH_AUTH0_SCOPE=scope
+VITE_AUTH_AUTH0_AUDIENCE=audience
+```
 
 ## Scripts
 

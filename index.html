@@ -9,61 +9,6 @@
     <body>
         <div id="sui-root"></div>
         <script type="module" src="./src/main.tsx"></script>
-
-        <script>
-            // We need to wait for the DOMContentLoaded otherwise the script will not find StudioUI
-            document.addEventListener('DOMContentLoaded', () => {
-                var queryString = window.location.search;
-                var urlParams = new URLSearchParams(queryString);
-                // the engineVersion should either be changed here or in the URL (PR number or main)
-                var engineVersion = urlParams.get('engine') ?? 'main';
-
-                // the engineCommitSha can be changed here or in the URL
-                var engineCommitSha = urlParams.get('engineCommitSha');
-
-                // The following will take released versions in consideration
-                const engineRegex = /^\d+\.\d+\.\d+$/;
-                const engineSource =
-                    engineRegex.test(engineVersion) || !engineCommitSha
-                        ? engineVersion
-                        : `${engineVersion}-${engineCommitSha}`;
-
-                if (!urlParams.get('engine')) {
-                    window.history.replaceState(null, '', `${window.location.href}?engine=${engineVersion}`);
-                }
-                if (!urlParams.get('engineCommitSha')) {
-                    window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
-                }
-                // use this for local dev and debug
-                var authToken = '';
-                var envName = '';
-                var projectId = '';
-                var baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
-
-                if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !authToken || !envName || !projectId) {
-                    let messageString = `Please make sure to specify the`;
-                    if (!engineCommitSha) {
-                        messageString += ` engineCommitSha`;
-                    }
-                    if (!authToken) {
-                        messageString += ` authToken`;
-                    }
-                    if (!envName) {
-                        messageString += ` envName`;
-                    }
-                    if (!projectId) {
-                        messageString += ` projectId`;
-                    }
-                    alert(messageString);
-                }
-                StudioUI.studioUILoaderConfig({
-                    selector: 'sui-root',
-                    projectId,
-                    graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
-                    authToken,
-                    editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-                });
-            });
-        </script>
+        <script type="module" src="./src/_dev-execution/bootstrap.ts"></script>
     </body>
 </html>

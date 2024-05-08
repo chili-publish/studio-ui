@@ -2,6 +2,16 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
+jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
+    useVariableConnector: () => ({
+        selectedConnector: {
+            supportedAuthentication: {
+                browser: ['none'],
+            },
+        },
+    }),
+}));
+
 describe('Variable Component', () => {
     it('Shows the image picker component for image variable', async () => {
         render(

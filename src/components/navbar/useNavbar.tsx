@@ -1,6 +1,7 @@
 import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
+import axios from 'axios';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
@@ -155,12 +156,13 @@ const useNavbar = (
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
-            const config = { headers: { Authorization: `Bearer ${projectConfig?.onAuthenticationRequested()}` } };
-            const response = await fetch(downloadURL ?? '', config);
+            const response = await axios.get(downloadURL ?? '', {
+                responseType: 'blob',
+            });
 
             if (response.status !== 200) return;
 
-            const objectUrl = window.URL.createObjectURL(await response.blob());
+            const objectUrl = window.URL.createObjectURL(response.data);
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',

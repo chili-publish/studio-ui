@@ -15,7 +15,6 @@ type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Ty
 export const getDownloadLink = async (
     format: DownloadFormats,
     baseUrl: string,
-    token: string,
     layoutId: Id,
     projectId: string,
 ): Promise<DownloadLinkResult> => {
@@ -55,9 +54,10 @@ export const getDownloadLink = async (
             if (format !== DownloadFormats.PDF) {
                 generateExportUrl += `&engineVersion=${engineVersion}`;
                 if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+            } else {
+                pdfBody.engineVersion = `${engineVersion}`;
+                if (engineCommitSha) pdfBody.engineVersion += `-${engineCommitSha}`;
             }
-
-            pdfBody.engineVersion = `${engineVersion}${engineCommitSha && `-${engineCommitSha}`}`;
         }
 
         const config: HttpHeaders = {
@@ -67,10 +67,6 @@ export const getDownloadLink = async (
             },
             body: format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
         };
-
-        if (token) {
-            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-        }
 
         const httpResponse = await axios.post(
             generateExportUrl,
@@ -94,7 +90,7 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, token);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo);
 
         if (pollingResult === null) {
             return {
@@ -129,31 +125,24 @@ export const getDownloadLink = async (
  * @param endpoint api endpoint to start polling on
  * @returns true when the endpoint call has successfully been resolved
  */
-const startPollingOnEndpoint = async (
-    endpoint: string,
-    token: string,
-): Promise<GenerateAnimationTaskPollingResponse | null> => {
+const startPollingOnEndpoint = async (endpoint: string): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
             },
             body: null,
         };
-        if (token) {
-            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-        }
-        const httpResponse = await fetch(endpoint, config);
+        const httpResponse = await axios.get(endpoint, config);
 
         if (httpResponse?.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, token);
+            return await startPollingOnEndpoint(endpoint);
         }
         if (httpResponse?.status === 200) {
-            return (await httpResponse.json()) as GenerateAnimationTaskPollingResponse;
+            return httpResponse.data as GenerateAnimationTaskPollingResponse;
         }
         return null;
     } catch (err) {
