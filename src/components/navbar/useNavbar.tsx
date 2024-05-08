@@ -19,6 +19,7 @@ const useNavbar = (
     const { isBackBtnVisible, isDownloadBtnVisible, userInterfaceOutputSettings } = useUiConfigContext();
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
+    const [hasDownloadError, setHasDownloadError] = useState(false);
 
     const hideDownloadPanel = () => {
         setIsDownloadPanelVisible(false);
@@ -153,6 +154,7 @@ const useNavbar = (
         updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
     ) => {
         try {
+            setHasDownloadError(false);
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
@@ -175,13 +177,22 @@ const useNavbar = (
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+            setHasDownloadError(true);
         } finally {
             updateDownloadState({ [extension]: false });
         }
         hideDownloadPanel();
     };
 
-    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelVisible, handleDownload };
+    return {
+        navbarItems,
+        showDownloadPanel,
+        hideDownloadPanel,
+        isDownloadPanelVisible,
+        handleDownload,
+        setHasDownloadError,
+        hasDownloadError,
+    };
 };
 
 export default useNavbar;
