@@ -25,7 +25,7 @@ import {
     SearchInputWrapper,
     EmptySearchResultContainer,
 } from './ItemBrowser.styles';
-import { ItemCache } from './ItemCache';
+import { ItemCache, PreviewResponse } from './ItemCache';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
 const TOP_BAR_BORDER_HEIGHT = '1px';
@@ -231,36 +231,36 @@ function ItemBrowser<
             }
         };
 
-        return (
-            <ChiliPreview
-                key={getKey(
-                    `${formatRelativePath(listItem.instance)}-${listItem.instance.name}-${listItem.instance.id}`,
-                    idx,
-                )}
-                dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                itemId={listItem.instance.id}
-                name={listItem.instance.name}
-                type={itemType as unknown as PreviewType}
-                path={getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance))}
-                metaData={
-                    listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || '')
-                }
-                renameItem={() => null}
-                options={[]}
-                padding="0rem"
-                footerTopMargin="0.75rem"
-                selected={selectedItems[0]?.id === listItem.instance.id}
-                backgroundColor={Colors.LIGHT_GRAY}
-                byteArray={
-                    itemType === PreviewType.COLLECTION
-                        ? undefined
-                        : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
-                }
-                onClickCard={onClick}
-                isModal={false}
-                renamingDisabled
-            />
+        const previewByteArray: () => Promise<PreviewResponse> = () =>
+            listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id));
+
+        const defaultProps = {
+            key: getKey(
+                `${formatRelativePath(listItem.instance)}-${listItem.instance.name}-${listItem.instance.id}`,
+                idx,
+            ),
+            dataId: `${getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}`,
+            dataTestId: `${getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}`,
+            itemId: listItem.instance.id,
+            name: listItem.instance.name,
+            type: itemType as unknown as PreviewType,
+            path: getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance)),
+            metaData: listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || ''),
+            renameItem: () => null,
+            options: [],
+            padding: '0',
+            footerTopMargin: '0.75rem',
+            backgroundColor: Colors.LIGHT_GRAY,
+            selected: selectedItems[0]?.id === listItem.instance.id,
+            onClickCard: onClick,
+            renamingDisabled: true,
+        };
+        return itemType === PreviewType.COLLECTION ? (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <ChiliPreview {...defaultProps} />
+        ) : (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
         );
     });
 
