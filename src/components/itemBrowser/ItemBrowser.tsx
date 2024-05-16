@@ -26,6 +26,7 @@ import {
     EmptySearchResultContainer,
 } from './ItemBrowser.styles';
 import { ItemCache } from './ItemCache';
+import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
 const TOP_BAR_BORDER_HEIGHT = '1px';
@@ -260,6 +261,7 @@ function ItemBrowser<
                 onClickCard={onClick}
                 isModal={false}
                 renamingDisabled
+                fallback={UNABLE_TO_LOAD_PANEL}
             />
         );
     });
