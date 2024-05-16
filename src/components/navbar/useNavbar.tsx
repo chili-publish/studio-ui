@@ -157,8 +157,11 @@ const useNavbar = (
             setHasDownloadError(false);
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
-            const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
-            const response = await axios.get(downloadURL ?? '', {
+            const downloadLinkData = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
+            if (downloadLinkData.status !== 200) {
+                throw new Error('Error getting download link');
+            }
+            const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
             });
 
