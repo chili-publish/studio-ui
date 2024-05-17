@@ -60,16 +60,26 @@ describe('Variable Component', () => {
         expect(screen.getByText('Long Variable 1')).toBeInTheDocument();
         expect(screen.getByDisplayValue('I just got longer')).toHaveAttribute('value', 'I just got longer');
     });
+    it('Shows the number component for number variables', () => {
+        const { getByRole, getAllByRole } = render(
+            <VariableComponent
+                key={`variable-component-${variables[5].id}`}
+                type={variables[5].type}
+                variable={variables[5]}
+                isDocumentLoaded
+            />,
+        );
+        screen.logTestingPlaygroundURL();
+        const input = getByRole('textbox', { name: /number-variable/i });
+        const stepBtns = getAllByRole('button');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveValue('13.55');
+        expect(stepBtns.length).toBe(2);
 
-    // This was commented out because variable of tye groupe is not used yet
-    // it('Shows the select component for group variable', async () => {
-    //     render(
-    //         <VariableComponent
-    //             key={`variable-component-${variables[4].id}`}
-    //             type={variables[4].type} // image variable
-    //             variable={variables[4]}
-    //         />,
-    //     );
-    //     expect(screen.getByRole('combobox')).toBeInTheDocument();
-    // });
+        fireEvent.focus(input);
+        fireEvent.change(input, { target: { value: 12.11 } });
+        fireEvent.blur(input);
+
+        expect(input).toHaveValue('12.11');
+    });
 });
