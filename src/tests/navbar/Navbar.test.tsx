@@ -10,7 +10,7 @@ describe('Navbar', () => {
     it('Should render 4 navbar items', () => {
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <UiThemeProvider theme="studio">
+                <UiThemeProvider theme="platform">
                     <Navbar
                         projectConfig={ProjectConfigs.empty}
                         zoom={100}
@@ -39,7 +39,7 @@ describe('Navbar', () => {
         };
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={null}>
-                <UiThemeProvider theme="studio">
+                <UiThemeProvider theme="platform">
                     <Navbar
                         projectConfig={config}
                         zoom={100}
@@ -72,7 +72,7 @@ describe('Navbar', () => {
         };
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={null}>
-                <UiThemeProvider theme="studio">
+                <UiThemeProvider theme="platform">
                     <Navbar
                         projectConfig={config}
                         zoom={100}
@@ -96,7 +96,7 @@ describe('Navbar', () => {
     it('Should show download panel when download button is clicked', async () => {
         const { getByRole, getByText } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <UiThemeProvider theme="studio">
+                <UiThemeProvider theme="platform">
                     <Navbar
                         projectConfig={ProjectConfigs.empty}
                         zoom={100}
@@ -122,7 +122,7 @@ describe('Navbar', () => {
     it('Shows user interface output settings options when available', async () => {
         const { getByRole, getByText } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <UiThemeProvider theme="studio">
+                <UiThemeProvider theme="platform">
                     <Navbar
                         projectConfig={ProjectConfigs.empty}
                         zoom={100}
