@@ -7,8 +7,6 @@ import {
     Icon,
     LoadingIcon,
     Menu,
-    Toast,
-    ToastVariant,
     Tray,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
@@ -23,7 +21,6 @@ import {
     DownloadDropdownTitle,
     DownloadPanelContainer,
     DropdownLabel,
-    ErrorToastWrapper,
     SpinnerContainer,
 } from './DownloadPanel.styles';
 import useDownload from './useDownload';
@@ -33,12 +30,10 @@ interface DownloadPanelProps {
     hideDownloadPanel: () => void;
     isDownloadPanelVisible: boolean;
     handleDownload: (_: DownloadFormats, __: Dispatch<Partial<Record<DownloadFormats, boolean>>>) => Promise<void>;
-    setHasDownloadError: React.Dispatch<React.SetStateAction<boolean>>;
-    hasDownloadError: boolean;
 }
 
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, setHasDownloadError, hasDownloadError } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
 
@@ -61,8 +56,6 @@ function DownloadPanel(props: DownloadPanelProps) {
         }
         return downloadOptions.find((item) => item.value === selectedOption) ?? downloadOptions[0];
     }, [downloadOptions, selectedOption, userInterfaceDownloadOptions]);
-
-    const DEFAULT_NOTIFICATION_DURATION = 5000;
 
     return (
         <>
@@ -157,18 +150,6 @@ function DownloadPanel(props: DownloadPanelProps) {
                     )}
                 </DownloadPanelContainer>
             </Menu>
-            <ErrorToastWrapper>
-                <Toast
-                    key={selectedOption}
-                    visible={hasDownloadError}
-                    time={DEFAULT_NOTIFICATION_DURATION}
-                    type={ToastVariant.NEGATIVE}
-                    content="Export failed"
-                    onClose={() => setHasDownloadError(false)}
-                    dataId={getDataIdForSUI('export-failed-toast')}
-                    dataTestId={getDataTestIdForSUI('export-failed-toast')}
-                />
-            </ErrorToastWrapper>
         </>
     );
 }

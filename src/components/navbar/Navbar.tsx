@@ -7,14 +7,13 @@ import useNavbar from './useNavbar';
 function Navbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
 
-    const {
-        navbarItems,
-        isDownloadPanelVisible,
-        hideDownloadPanel,
-        handleDownload,
-        setHasDownloadError,
-        hasDownloadError,
-    } = useNavbar(projectName, goBack, zoom, undoStackState, projectConfig);
+    const { navbarItems, isDownloadPanelVisible, hideDownloadPanel, handleDownload } = useNavbar(
+        projectName,
+        goBack,
+        zoom,
+        undoStackState,
+        projectConfig,
+    );
 
     return (
         <StyledNavbar data-id={getDataIdForSUI('navbar')} data-testid={getDataTestIdForSUI('navbar')}>
@@ -35,8 +34,6 @@ function Navbar(props: INavbar) {
                 isDownloadPanelVisible={isDownloadPanelVisible}
                 hideDownloadPanel={hideDownloadPanel}
                 handleDownload={handleDownload}
-                setHasDownloadError={setHasDownloadError}
-                hasDownloadError={hasDownloadError}
             />
         </StyledNavbar>
     );

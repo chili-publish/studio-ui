@@ -1,4 +1,4 @@
-import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ButtonVariant, ToastVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
 import { ProjectConfig } from '../../types/types';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
+import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 
 const useNavbar = (
     projectName: string | undefined,
@@ -20,6 +21,7 @@ const useNavbar = (
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
     const [hasDownloadError, setHasDownloadError] = useState(false);
+    const { addNotification } = useNotificationManager();
 
     const hideDownloadPanel = () => {
         setIsDownloadPanelVisible(false);
@@ -155,6 +157,7 @@ const useNavbar = (
     ) => {
         try {
             setHasDownloadError(false);
+
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
             const downloadLinkData = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
@@ -181,6 +184,13 @@ const useNavbar = (
             // eslint-disable-next-line no-console
             console.error(error);
             setHasDownloadError(true);
+            const toastNotification = {
+                id: 'document-export',
+                message: `Export failed`,
+                type: ToastVariant.NEGATIVE,
+            };
+
+            addNotification(toastNotification);
         } finally {
             updateDownloadState({ [extension]: false });
         }

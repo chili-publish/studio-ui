@@ -23,6 +23,7 @@ import { CanvasContainer, MainContentContainer } from './App.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { ConnectorAuthenticationModal, useConnectorAuthentication } from './components/connector-authentication';
+import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
 
 declare global {
     interface Window {
@@ -307,44 +308,48 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
             <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
                 <UiThemeProvider theme="platform">
-                    <div id="studio-ui-application" className="app">
-                        <Navbar
-                            projectName={projectConfig?.projectName || currentProject?.name}
-                            goBack={projectConfig?.onUserInterfaceBack}
-                            projectConfig={projectConfig}
-                            undoStackState={{ canRedo, canUndo }}
-                            zoom={currentZoom}
-                        />
-                        <MainContentContainer>
-                            {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                            <CanvasContainer>
-                                {isMobileSize && (
-                                    <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
-                                )}
-                                <div
-                                    className="sui-canvas"
-                                    data-id={getDataIdForSUI('canvas')}
-                                    data-testid={getDataTestIdForSUI('canvas')}
-                                >
-                                    <div className="chili-editor" id="chili-editor" />
-                                </div>
-                                {layoutIntent === LayoutIntent.digitalAnimated ? (
-                                    <AnimationTimeline
-                                        scrubberTimeMs={scrubberTimeMs}
-                                        animationLength={animationLength}
-                                        isAnimationPlaying={animationStatus}
-                                    />
-                                ) : null}
-                            </CanvasContainer>
-                        </MainContentContainer>
-                        {connectorAuthenticationProcess && (
-                            <ConnectorAuthenticationModal
-                                name={connectorName}
-                                onConfirm={() => connectorAuthenticationProcess.start()}
-                                onCancel={() => connectorAuthenticationProcess.cancel()}
+                    <NotificationManagerProvider>
+                        <div id="studio-ui-application" className="app">
+                            <Navbar
+                                projectName={projectConfig?.projectName || currentProject?.name}
+                                goBack={projectConfig?.onUserInterfaceBack}
+                                projectConfig={projectConfig}
+                                undoStackState={{ canRedo, canUndo }}
+                                zoom={currentZoom}
                             />
-                        )}
-                    </div>
+                            <MainContentContainer>
+                                {!isMobileSize && (
+                                    <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                                )}
+                                <CanvasContainer>
+                                    {isMobileSize && (
+                                        <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                                    )}
+                                    <div
+                                        className="sui-canvas"
+                                        data-id={getDataIdForSUI('canvas')}
+                                        data-testid={getDataTestIdForSUI('canvas')}
+                                    >
+                                        <div className="chili-editor" id="chili-editor" />
+                                    </div>
+                                    {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                        <AnimationTimeline
+                                            scrubberTimeMs={scrubberTimeMs}
+                                            animationLength={animationLength}
+                                            isAnimationPlaying={animationStatus}
+                                        />
+                                    ) : null}
+                                </CanvasContainer>
+                            </MainContentContainer>
+                            {connectorAuthenticationProcess && (
+                                <ConnectorAuthenticationModal
+                                    name={connectorName}
+                                    onConfirm={() => connectorAuthenticationProcess.start()}
+                                    onCancel={() => connectorAuthenticationProcess.cancel()}
+                                />
+                            )}
+                        </div>
+                    </NotificationManagerProvider>
                 </UiThemeProvider>
             </VariablePanelContextProvider>
         </UiConfigContextProvider>
