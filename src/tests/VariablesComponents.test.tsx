@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
@@ -15,12 +16,15 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 describe('Variable Component', () => {
     it('Shows the image picker component for image variable', async () => {
         render(
-            <VariableComponent
-                key={`variable-component-${variables[0].id}`}
-                type={variables[0].type} // image variable
-                variable={variables[0]}
-                isDocumentLoaded
-            />,
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[0].id}`}
+                    type={variables[0].type} // image variable
+                    variable={variables[0]}
+                    isDocumentLoaded
+                />
+                ,
+            </UiThemeProvider>,
         );
         const variable = await waitFor(() => screen.getByText('Variable1'));
         expect(variable).toBeInTheDocument();

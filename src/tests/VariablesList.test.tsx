@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
 
@@ -14,7 +15,11 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 
 describe('Variables List', () => {
     it('Hidden variables should not be shown', async () => {
-        render(<VariablesList variables={variables} isDocumentLoaded />);
+        render(
+            <UiThemeProvider theme="platform">
+                <VariablesList variables={variables} isDocumentLoaded />
+            </UiThemeProvider>,
+        );
 
         const variable1 = await screen.findByText('Variable1');
         const variable12 = await screen.findByText('Variable12');
