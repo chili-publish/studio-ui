@@ -1,4 +1,4 @@
-import { EditorResponse, ImageVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { EditorResponse, ImageVariable, NumberVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 
 export interface IVariablesComponents {
     type: VariableType;
@@ -19,4 +19,9 @@ export interface ITextVariable {
 export interface IBooleanVariable {
     handleValueChange: (value: boolean) => Promise<EditorResponse<null> | null> | null;
     variable: Variable;
+}
+
+export interface INumberVariable {
+    variable: NumberVariable;
+    handleValueChange: (value: number) => Promise<EditorResponse<null> | null> | null;
 }
