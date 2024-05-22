@@ -3,7 +3,6 @@ import useNotifications from './useNotifications';
 import { NotificationManagerContext } from './NotificationManagerContext';
 import NotificationComponent from './NotificationComponent';
 
-// const Notificaton = dynamic(() => import('./NotificationComponent'), { ssr: false });
 export function NotificationManagerProvider(props: { children: ReactNode }) {
     const { children } = props;
     const { currentNotification, notifications, addNotification, removeNotification } = useNotifications();
@@ -15,7 +14,7 @@ export function NotificationManagerProvider(props: { children: ReactNode }) {
     return (
         <NotificationManagerContext.Provider value={contextData}>
             {children}
-            <NotificationComponent />
+            <NotificationComponent currentNotification={currentNotification} removeNotification={removeNotification} />
         </NotificationManagerContext.Provider>
     );
 }

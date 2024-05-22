@@ -7,3 +7,8 @@ export interface Notification {
     duration?: number;
     type: ToastVariant;
 }
+
+export interface INotificationComponent {
+    currentNotification: Notification | null;
+    removeNotification: (msg: Notification) => void;
+}

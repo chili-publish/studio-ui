@@ -1,11 +1,11 @@
 import { Toast, ToastVariant } from '@chili-publish/grafx-shared-components';
 import { NotificationWrapper } from './Notification.styles';
-import { useNotificationManager } from './NotificationManagerContext';
+import { INotificationComponent } from './Notification.types';
 
 const DEFAULT_NOTIFICATION_DURATION = 5000;
 
-function NotificationComponent() {
-    const { currentNotification, removeNotification } = useNotificationManager();
+function NotificationComponent(props: INotificationComponent) {
+    const { currentNotification, removeNotification } = props;
     return (
         <NotificationWrapper>
             <Toast
