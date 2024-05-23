@@ -20,7 +20,8 @@ export const useVariableComponents = (currentVariableId: Id) => {
         return null;
     };
 
-    const handleValueChange = async (value: string | boolean | number) => {
+    // TODO: add number to value types after SDK numbers PR is merged
+    const handleValueChange = async (value: string | boolean) => {
         if (!currentVariableId) return null;
         return window.SDK.variable.setValue(currentVariableId, value);
     };

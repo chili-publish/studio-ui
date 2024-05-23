@@ -23,5 +23,6 @@ export interface IBooleanVariable {
 
 export interface INumberVariable {
     variable: NumberVariable;
-    handleValueChange: (value: number) => Promise<EditorResponse<null> | null> | null;
+    // TODO: change to number after SDK numbers PR is merged
+    handleValueChange: (value: string) => Promise<EditorResponse<null> | null> | null;
 }
