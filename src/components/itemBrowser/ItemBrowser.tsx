@@ -26,6 +26,7 @@ import {
     EmptySearchResultContainer,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
+import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
 const TOP_BAR_BORDER_HEIGHT = '1px';
@@ -254,6 +255,7 @@ function ItemBrowser<
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,
+            fallback: UNABLE_TO_LOAD_PANEL,
         };
         return itemType === PreviewType.COLLECTION ? (
             // eslint-disable-next-line react/jsx-props-no-spreading

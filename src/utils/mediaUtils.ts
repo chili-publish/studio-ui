@@ -21,3 +21,5 @@ export const toNavigationStack = (path: string): string[] => {
     const regex = /\\/g;
     return path.replace(regex, '/').replace(/^\/+/, '').split('/');
 };
+
+export const UNABLE_TO_LOAD_PANEL = 'https://studio-cdn.chiligrafx.com/shared/assets/unable-to-load-panel.svg';
