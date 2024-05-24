@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { getDataTestId } from '@chili-publish/grafx-shared-components';
+import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import Navbar from '../../components/navbar/Navbar';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
@@ -10,14 +10,16 @@ describe('Navbar', () => {
     it('Should render 4 navbar items', () => {
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <Navbar
-                    projectConfig={ProjectConfigs.empty}
-                    zoom={100}
-                    undoStackState={{
-                        canRedo: false,
-                        canUndo: false,
-                    }}
-                />
+                <UiThemeProvider theme="platform">
+                    <Navbar
+                        projectConfig={ProjectConfigs.empty}
+                        zoom={100}
+                        undoStackState={{
+                            canRedo: false,
+                            canUndo: false,
+                        }}
+                    />
+                </UiThemeProvider>
             </UiConfigContext.UiConfigContextProvider>,
         );
         const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
@@ -37,14 +39,16 @@ describe('Navbar', () => {
         };
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={null}>
-                <Navbar
-                    projectConfig={config}
-                    zoom={100}
-                    undoStackState={{
-                        canRedo: false,
-                        canUndo: false,
-                    }}
-                />
+                <UiThemeProvider theme="platform">
+                    <Navbar
+                        projectConfig={config}
+                        zoom={100}
+                        undoStackState={{
+                            canRedo: false,
+                            canUndo: false,
+                        }}
+                    />
+                </UiThemeProvider>
             </UiConfigContext.UiConfigContextProvider>,
         );
         const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
@@ -68,14 +72,16 @@ describe('Navbar', () => {
         };
         const { getByTestId } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={null}>
-                <Navbar
-                    projectConfig={config}
-                    zoom={100}
-                    undoStackState={{
-                        canRedo: false,
-                        canUndo: false,
-                    }}
-                />
+                <UiThemeProvider theme="platform">
+                    <Navbar
+                        projectConfig={config}
+                        zoom={100}
+                        undoStackState={{
+                            canRedo: false,
+                            canUndo: false,
+                        }}
+                    />
+                </UiThemeProvider>
             </UiConfigContext.UiConfigContextProvider>,
         );
         const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
@@ -90,14 +96,16 @@ describe('Navbar', () => {
     it('Should show download panel when download button is clicked', async () => {
         const { getByRole, getByText } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <Navbar
-                    projectConfig={ProjectConfigs.empty}
-                    zoom={100}
-                    undoStackState={{
-                        canRedo: false,
-                        canUndo: false,
-                    }}
-                />
+                <UiThemeProvider theme="platform">
+                    <Navbar
+                        projectConfig={ProjectConfigs.empty}
+                        zoom={100}
+                        undoStackState={{
+                            canRedo: false,
+                            canUndo: false,
+                        }}
+                    />
+                </UiThemeProvider>
             </UiConfigContext.UiConfigContextProvider>,
         );
         const downloadButton = getByRole('button', { name: /download/i });
@@ -114,14 +122,16 @@ describe('Navbar', () => {
     it('Shows user interface output settings options when available', async () => {
         const { getByRole, getByText } = render(
             <UiConfigContext.UiConfigContextProvider projectConfig={ProjectConfigs.empty} layoutIntent={null}>
-                <Navbar
-                    projectConfig={ProjectConfigs.empty}
-                    zoom={100}
-                    undoStackState={{
-                        canRedo: false,
-                        canUndo: false,
-                    }}
-                />
+                <UiThemeProvider theme="platform">
+                    <Navbar
+                        projectConfig={ProjectConfigs.empty}
+                        zoom={100}
+                        undoStackState={{
+                            canRedo: false,
+                            canUndo: false,
+                        }}
+                    />
+                </UiThemeProvider>
             </UiConfigContext.UiConfigContextProvider>,
         );
         jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
