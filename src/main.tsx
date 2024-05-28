@@ -27,6 +27,33 @@ declare global {
 
 export default class StudioUI {
     constructor(selector: string, projectConfig: ProjectConfig) {
+        this.loadEruda().then(() => {
+            this.initializeReactApp(selector, projectConfig);
+        }).catch(() => {
+            this.initializeReactApp(selector, projectConfig);
+        });
+    }
+
+    private loadEruda(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (window.location.hostname === 'chiligrafx-dev.com') {
+                const script = document.createElement('script');
+                script.src = "https://cdn.jsdelivr.net/npm/eruda";
+                document.body.append(script);
+                script.onload = () => {
+                    eruda.init();
+                    resolve();
+                };
+                script.onerror = () => {
+                    reject(new Error("Failed to load Eruda"));
+                };
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    private initializeReactApp(selector: string, projectConfig: ProjectConfig) {
         ReactDOM.createRoot(document.getElementById(selector || 'sui-root') as HTMLElement).render(
             <React.StrictMode>
                 <App projectConfig={projectConfig} />
