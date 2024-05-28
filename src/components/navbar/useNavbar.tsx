@@ -1,12 +1,14 @@
-import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ButtonVariant, ToastVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { Dispatch, useCallback, useMemo, useState } from 'react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
+import axios from 'axios';
 import NavbarButton from '../navbarButton/NavbarButton';
 import Zoom from '../zoom/Zoom';
 import { NavbarGroup, NavbarLabel } from './Navbar.styles';
 import { NavbarItemType } from './Navbar.types';
 import { ProjectConfig } from '../../types/types';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
+import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 
 const useNavbar = (
     projectName: string | undefined,
@@ -18,6 +20,7 @@ const useNavbar = (
     const { isBackBtnVisible, isDownloadBtnVisible, userInterfaceOutputSettings } = useUiConfigContext();
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
+    const { addNotification } = useNotificationManager();
 
     const hideDownloadPanel = () => {
         setIsDownloadPanelVisible(false);
@@ -154,13 +157,17 @@ const useNavbar = (
         try {
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
-            const { data: downloadURL } = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
-            const config = { headers: { Authorization: `Bearer ${projectConfig?.onAuthenticationRequested()}` } };
-            const response = await fetch(downloadURL ?? '', config);
+            const downloadLinkData = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
+            if (downloadLinkData.status !== 200) {
+                throw new Error('Error getting download link');
+            }
+            const response = await axios.get(downloadLinkData.data ?? '', {
+                responseType: 'blob',
+            });
 
             if (response.status !== 200) return;
 
-            const objectUrl = window.URL.createObjectURL(await response.blob());
+            const objectUrl = window.URL.createObjectURL(response.data);
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',
@@ -173,13 +180,26 @@ const useNavbar = (
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+            const toastNotification = {
+                id: 'document-export',
+                message: `Export failed`,
+                type: ToastVariant.NEGATIVE,
+            };
+
+            addNotification(toastNotification);
         } finally {
             updateDownloadState({ [extension]: false });
         }
         hideDownloadPanel();
     };
 
-    return { navbarItems, showDownloadPanel, hideDownloadPanel, isDownloadPanelVisible, handleDownload };
+    return {
+        navbarItems,
+        showDownloadPanel,
+        hideDownloadPanel,
+        isDownloadPanelVisible,
+        handleDownload,
+    };
 };
 
 export default useNavbar;

@@ -6,26 +6,32 @@
  * the React components re-renders (for any reason)
  * @param  {T} target
  */
+
+export type PreviewResponse = {
+    status: 200;
+    data: Promise<Uint8Array>;
+};
+
 export class ItemCache<T> {
     instance: T;
 
-    #preview?: Promise<Uint8Array>;
+    #preview?: Promise<PreviewResponse>;
 
     constructor(target: T) {
         this.instance = target;
     }
 
-    createOrGetDownloadPromise(call: () => Promise<Uint8Array>): Promise<Uint8Array> | undefined {
+    createOrGetDownloadPromise(call: () => Promise<Uint8Array>): Promise<PreviewResponse> {
         if (this.#preview === undefined) this.#preview = ItemCache.internalCall(call);
 
         return this.#preview;
     }
 
-    static async internalCall(call: () => Promise<Uint8Array>): Promise<Uint8Array> {
+    static async internalCall(call: () => Promise<Uint8Array>): Promise<PreviewResponse> {
         const result = await call();
 
-        if (result instanceof Uint8Array) return result;
+        if (result instanceof Uint8Array) return { status: 200, data: Promise.resolve(result) };
 
-        return new Uint8Array();
+        return { status: 200, data: Promise.resolve(new Uint8Array()) };
     }
 }

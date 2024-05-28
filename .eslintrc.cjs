@@ -40,6 +40,7 @@ module.exports = {
     rules: {
         'no-unused-vars': 'off',
         'no-use-before-define': 'off',
+        'no-underscore-dangle': ['error', { allowAfterThis: true }],
         '@typescript-eslint/no-unused-vars': ['error'],
         '@typescript-eslint/no-var-requires': 'off',
         'react-hooks/rules-of-hooks': 'error',

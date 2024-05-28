@@ -1,14 +1,17 @@
 import { ImagePicker, Label, usePreviewImage } from '@chili-publish/grafx-shared-components';
-import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { IImageVariable } from '../VariablesComponents.types';
+import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
+import { useVariableConnector } from './useVariableConnector';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
     const previewErrorUrl = process.env.PREVIEW_ERROR_URL ?? '';
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
+    const { selectedConnector } = useVariableConnector(variable);
     const { showImagePanel, connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
 
     const previewCall = async (id: string) => {
@@ -72,11 +75,23 @@ function ImageVariable(props: IImageVariable) {
             dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
             dataIntercomId={`image-picker-${variable.name}`}
             name={variable.id}
-            label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
+            label={<Label translationKey={variable.name} value={variable.name} />}
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
-            onClick={() => {
-                showImagePanel(variable as ImageVariable);
+            onClick={async () => {
+                if (!selectedConnector) {
+                    throw new Error('There is no selected connector');
+                }
+                try {
+                    if (variable.value?.connectorId && isAuthenticationRequired(selectedConnector)) {
+                        await verifyAuthentication(variable.value.connectorId);
+                    }
+                    showImagePanel(variable);
+                } catch (error) {
+                    // TODO: We should handle connector's authorization issue accordingly
+                    // eslint-disable-next-line no-console
+                    console.error(error);
+                }
             }}
             previewErrorUrl={previewErrorUrl}
         />

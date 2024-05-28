@@ -1,11 +1,13 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError } from 'axios';
+import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export interface ProjectConfig {
     projectId: string;
     projectName: string;
     uiOptions: UiOptions;
     outputSettings: OutputSettings;
+    graFxStudioEnvironmentApiBaseUrl: string;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
     onProjectLoaded: (project: Project) => void;
@@ -17,6 +19,7 @@ export interface ProjectConfig {
     onProjectGetDownloadLink: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
     overrideEngineUrl?: string;
     onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
 
 export interface DefaultStudioConfig {
@@ -32,6 +35,7 @@ export interface DefaultStudioConfig {
     refreshTokenAction: () => Promise<string | AxiosError>;
     editorLink?: string;
     userInterfaceID?: string;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {
@@ -132,4 +136,5 @@ export interface IStudioUILoaderConfig {
     onAuthenticationExpired?: () => Promise<string>;
     onLogInfoRequested?: () => void;
     onProjectGetDownloadLink?: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }

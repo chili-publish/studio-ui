@@ -110,3 +110,11 @@ export const LoadingIndicatorContainer = styled.div`
 export const Text = styled.span<{ color?: string }>`
     color: ${(props) => props.color ?? Colors.SECONDARY_FONT};
 `;
+
+export const ErrorToastWrapper = styled.div`
+    & > div {
+        left: 50%;
+        top: 0;
+        z-index: 2;
+    }
+`;
