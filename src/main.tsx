@@ -36,7 +36,8 @@ export default class StudioUI {
 
     private loadEruda(): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (window.location.hostname === 'chiligrafx-dev.com') {
+            alert('debugging')
+            // if (window.location.hostname === 'chiligrafx-dev.com') {
                 const script = document.createElement('script');
                 script.src = "https://cdn.jsdelivr.net/npm/eruda";
                 document.body.append(script);
@@ -47,9 +48,9 @@ export default class StudioUI {
                 script.onerror = () => {
                     reject(new Error("Failed to load Eruda"));
                 };
-            } else {
-                resolve();
-            }
+            // } else {
+            //     resolve();
+            // }
         });
     }
 
