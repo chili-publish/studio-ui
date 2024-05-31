@@ -91,7 +91,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
     }, []);
 
     useEffect(() => {
-        if (userInterfaceOutputSettings) {
+        if (userInterfaceOutputSettings && userInterfaceOutputSettings.length > 0) {
             setSelectedOutputSettingsId(userInterfaceOutputSettings[0].id);
             setSelectedOptionFormat(getFormatFromId(userInterfaceOutputSettings[0].id, userInterfaceOutputSettings));
         }
