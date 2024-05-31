@@ -55,12 +55,12 @@ function DownloadPanel(props: DownloadPanelProps) {
     const getSelectedValue = useMemo(() => {
         if (userInterfaceDownloadOptions) {
             return (
-                userInterfaceDownloadOptions.find((item) => item.value === selectedOptionFormat) ??
+                userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
                 userInterfaceDownloadOptions[0]
             );
         }
         return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
-    }, [downloadOptions, selectedOptionFormat, userInterfaceDownloadOptions]);
+    }, [downloadOptions, selectedOptionFormat, selectedOutputSettingsId, userInterfaceDownloadOptions]);
 
     return (
         <>

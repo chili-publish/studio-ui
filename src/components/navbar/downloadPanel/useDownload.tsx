@@ -1,8 +1,9 @@
 import { AvailableIcons, Option, useOnClickOutside } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { UserInterfaceOutputSettings } from '../../../types/types';
 
 const useDownload = (hideDownloadPanel: () => void) => {
     const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
@@ -75,7 +76,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
             gif: AvailableIcons.faGif,
             pdf: AvailableIcons.faFilePdf,
         };
-        setSelectedOptionFormat(userInterfaceOutputSettings[0].type);
         return userInterfaceOutputSettings.map((val) => {
             return {
                 label: (
@@ -86,19 +86,29 @@ const useDownload = (hideDownloadPanel: () => void) => {
         });
     }, [userInterfaceOutputSettings]);
 
-    const handleOutputFormatChange = (id: DownloadFormats) => {
+    const getFormatFromId = useCallback((id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
+        return availableOutputs.find((output) => output.id === id)?.type.toLocaleLowerCase() as DownloadFormats;
+    }, []);
+
+    useEffect(() => {
         if (userInterfaceOutputSettings) {
-            setSelectedOptionFormat(
-                userInterfaceOutputSettings
-                    .find((output) => output.id === id)
-                    ?.type.toLocaleLowerCase() as DownloadFormats,
-            );
-            setSelectedOutputSettingsId(id);
-        } else {
-            setSelectedOptionFormat(id);
-            // setSelectedOutputSettingsId();
+            setSelectedOutputSettingsId(userInterfaceOutputSettings[0].id);
+            setSelectedOptionFormat(getFormatFromId(userInterfaceOutputSettings[0].id, userInterfaceOutputSettings));
         }
-    };
+    }, [getFormatFromId, userInterfaceOutputSettings]);
+
+    const handleOutputFormatChange = useCallback(
+        (id: DownloadFormats | string) => {
+            if (userInterfaceOutputSettings) {
+                setSelectedOptionFormat(getFormatFromId(id, userInterfaceOutputSettings));
+                setSelectedOutputSettingsId(id);
+            } else {
+                setSelectedOptionFormat(id as DownloadFormats);
+                setSelectedOutputSettingsId(undefined);
+            }
+        },
+        [getFormatFromId, userInterfaceOutputSettings],
+    );
 
     return {
         downloadOptions,
@@ -106,7 +116,6 @@ const useDownload = (hideDownloadPanel: () => void) => {
         downloadPanelRef,
         downloadState,
         selectedOptionFormat,
-        setSelectedOptionFormat,
         updateDownloadState,
         handleOutputFormatChange,
         selectedOutputSettingsId,
