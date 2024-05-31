@@ -101,6 +101,7 @@ export default class StudioUI {
         onProjectGetDownloadLink: (
             extension: string,
             selectedLayoutID: string | undefined,
+            outputSettingsId: string | undefined,
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
         onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
