@@ -153,11 +153,16 @@ const useNavbar = (
     const handleDownload = async (
         extension: DownloadFormats,
         updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
+        outputSettingsId: string | undefined,
     ) => {
         try {
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
-            const downloadLinkData = await projectConfig.onProjectGetDownloadLink(extension, selectedLayoutID);
+            const downloadLinkData = await projectConfig.onProjectGetDownloadLink(
+                extension,
+                selectedLayoutID,
+                outputSettingsId,
+            );
             if (downloadLinkData.status !== 200) {
                 throw new Error('Error getting download link');
             }

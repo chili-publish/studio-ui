@@ -14,7 +14,8 @@ const useDownload = (hideDownloadPanel: () => void) => {
         [DownloadFormats.PDF]: false,
     };
 
-    const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOptionFormat, setSelectedOptionFormat] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOutputSettingsId, setSelectedOutputSettingsId] = useState<string>();
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
         return {
@@ -74,6 +75,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
             gif: AvailableIcons.faGif,
             pdf: AvailableIcons.faFilePdf,
         };
+        setSelectedOptionFormat(userInterfaceOutputSettings[0].type);
         return userInterfaceOutputSettings.map((val) => {
             return {
                 label: (
@@ -84,14 +86,30 @@ const useDownload = (hideDownloadPanel: () => void) => {
         });
     }, [userInterfaceOutputSettings]);
 
+    const handleOutputFormatChange = (id: DownloadFormats) => {
+        if (userInterfaceOutputSettings) {
+            setSelectedOptionFormat(
+                userInterfaceOutputSettings
+                    .find((output) => output.id === id)
+                    ?.type.toLocaleLowerCase() as DownloadFormats,
+            );
+            setSelectedOutputSettingsId(id);
+        } else {
+            setSelectedOptionFormat(id);
+            // setSelectedOutputSettingsId();
+        }
+    };
+
     return {
         downloadOptions,
         userInterfaceDownloadOptions,
         downloadPanelRef,
         downloadState,
-        selectedOption,
-        setSelectedOption,
+        selectedOptionFormat,
+        setSelectedOptionFormat,
         updateDownloadState,
+        handleOutputFormatChange,
+        selectedOutputSettingsId,
     };
 };
 
