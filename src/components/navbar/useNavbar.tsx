@@ -102,7 +102,7 @@ const useNavbar = (
                 ),
             },
         ];
-        if (isDownloadBtnVisible) {
+        if (isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0) {
             items.push({
                 label: 'Download',
                 content: (
