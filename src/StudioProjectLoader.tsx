@@ -101,12 +101,14 @@ export class StudioProjectLoader {
     public onProjectGetDownloadLink = async (
         extension: string,
         selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
     ): Promise<DownloadLinkResult> => {
         return getDownloadLink(
             extension as DownloadFormats,
             this.graFxStudioEnvironmentApiBaseUrl ?? '',
             selectedLayoutID || '0',
             this.projectId ?? '',
+            outputSettingsId,
         );
     };
 

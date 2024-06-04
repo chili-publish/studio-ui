@@ -1,8 +1,9 @@
 import { AvailableIcons, Option, useOnClickOutside } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { UserInterfaceOutputSettings } from '../../../types/types';
 
 const useDownload = (hideDownloadPanel: () => void) => {
     const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
@@ -14,7 +15,8 @@ const useDownload = (hideDownloadPanel: () => void) => {
         [DownloadFormats.PDF]: false,
     };
 
-    const [selectedOption, setSelectedOption] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOptionFormat, setSelectedOptionFormat] = useState<DownloadFormats>(DownloadFormats.JPG);
+    const [selectedOutputSettingsId, setSelectedOutputSettingsId] = useState<string>();
 
     const downloadStateReducer = (prev: typeof initialDownloadState, next: Partial<typeof initialDownloadState>) => {
         return {
@@ -84,14 +86,39 @@ const useDownload = (hideDownloadPanel: () => void) => {
         });
     }, [userInterfaceOutputSettings]);
 
+    const getFormatFromId = useCallback((id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
+        return availableOutputs.find((output) => output.id === id)?.type.toLocaleLowerCase() as DownloadFormats;
+    }, []);
+
+    useEffect(() => {
+        if (userInterfaceOutputSettings && userInterfaceOutputSettings.length > 0) {
+            setSelectedOutputSettingsId(userInterfaceOutputSettings[0].id);
+            setSelectedOptionFormat(getFormatFromId(userInterfaceOutputSettings[0].id, userInterfaceOutputSettings));
+        }
+    }, [getFormatFromId, userInterfaceOutputSettings]);
+
+    const handleOutputFormatChange = useCallback(
+        (id: DownloadFormats | string) => {
+            if (userInterfaceOutputSettings) {
+                setSelectedOptionFormat(getFormatFromId(id, userInterfaceOutputSettings));
+                setSelectedOutputSettingsId(id);
+            } else {
+                setSelectedOptionFormat(id as DownloadFormats);
+                setSelectedOutputSettingsId(undefined);
+            }
+        },
+        [getFormatFromId, userInterfaceOutputSettings],
+    );
+
     return {
         downloadOptions,
         userInterfaceDownloadOptions,
         downloadPanelRef,
         downloadState,
-        selectedOption,
-        setSelectedOption,
+        selectedOptionFormat,
         updateDownloadState,
+        handleOutputFormatChange,
+        selectedOutputSettingsId,
     };
 };
 

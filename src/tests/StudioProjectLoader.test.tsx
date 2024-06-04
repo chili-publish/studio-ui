@@ -239,6 +239,7 @@ describe('StudioProjectLoader', () => {
         it('should get download link', async () => {
             const mockExtension = 'pdf';
             const mockSelectedLayoutID = 'mockSelectedLayoutID';
+            const mockOutputSettingsId = 'mockOutputSettingsId';
             const mockDownloadLinkResult = {
                 status: 200,
                 error: undefined,
@@ -255,7 +256,11 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
             );
 
-            const result = await loader.onProjectGetDownloadLink(mockExtension, mockSelectedLayoutID);
+            const result = await loader.onProjectGetDownloadLink(
+                mockExtension,
+                mockSelectedLayoutID,
+                mockOutputSettingsId,
+            );
 
             expect(result).toEqual(mockDownloadLinkResult);
         });
