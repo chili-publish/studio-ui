@@ -78,6 +78,17 @@ export type UserInterfaceOutputSettings = {
     layoutIntents: string[];
 };
 
+export type UserInterface = {
+    name: string;
+    id: string;
+    default: boolean;
+    outputSettings: {
+        [index: string]: {
+            layoutIntents: string[];
+        };
+    };
+};
+
 export interface IOutputSetting {
     WatermarkText: string;
     default: boolean;
