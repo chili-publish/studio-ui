@@ -177,31 +177,20 @@ export class StudioProjectLoader {
     };
 
     public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
-        if (this.userInterfaceID) {
-            const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`);
-
-            const fetchDefaultUserInterface = async (url: string) => {
-                try {
-                    const res = await axios.get(url);
-                    if (res.status === 200) {
-                        return res.data.data.find((value: UserInterface) => value.default);
-                    }
-                    return res;
-                } catch (err) {
-                    throw new Error(`${err}`);
+        const fetchDefaultUserInterface = async (url: string) => {
+            try {
+                const res = await axios.get(url);
+                if (res.status === 200) {
+                    return res.data.data.find((value: UserInterface) => value.default);
                 }
-            };
+                return res;
+            } catch (err) {
+                throw new Error(`${err}`);
+            }
+        };
+        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`);
 
-            const userInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`)
-                .then((res) => res.data)
-                .catch(async (err) => {
-                    if (err.response && err.response.status === 404) {
-                        return fetchDefaultUserInterface(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`);
-                    }
-                    throw new Error(`${err}`);
-                });
-
+        const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
 
             Object.keys(userInterface.outputSettings).forEach((outputSettingId) => {
@@ -216,9 +205,26 @@ export class StudioProjectLoader {
                     mappedOutputSettings.push(final);
                 }
             });
-
             return mappedOutputSettings;
+        };
+
+        if (this.userInterfaceID) {
+            const userInterface = await axios
+                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`)
+                .then((res) => res.data)
+                .catch(async (err) => {
+                    if (err.response && err.response.status === 404) {
+                        return fetchDefaultUserInterface(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`);
+                    }
+                    throw new Error(`${err}`);
+                });
+
+            return mapOutPutSettingsToLayoutIntent(userInterface);
         }
-        return null;
+        const defaultUserInterface = await fetchDefaultUserInterface(
+            `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
+        );
+
+        return mapOutPutSettingsToLayoutIntent(defaultUserInterface);
     };
 }
