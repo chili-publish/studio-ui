@@ -57,7 +57,7 @@ If you need help generating a token or would like code samples, please see our [
             /* Name of the project, but can be whatever you want, is only a static indication that is displayed in the UI. */
             const projectName = 'End User view';
             /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. */
-            const refreshTokenAction = () => Promise.resolve('Nothing');
+            const refreshTokenAction = () => Promise.resolve(token);
 
             window.StudioUI.studioLoaderConfig({
                 // Div id to inject studio-ui in
