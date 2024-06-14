@@ -265,4 +265,59 @@ describe('StudioProjectLoader', () => {
             expect(result).toEqual(mockDownloadLinkResult);
         });
     });
+
+    describe('onFetchOutputSettings', () => {
+        it('should call endpoint for "default" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { data: [{ default: true, outputSettings: {} }] }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+        });
+
+        it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { outputSettings: {} }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                '1234',
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+        });
+    });
 });

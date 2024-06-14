@@ -179,7 +179,9 @@ export class StudioProjectLoader {
     public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
         const fetchDefaultUserInterface = async (url: string) => {
             try {
-                const res = await axios.get(url);
+                const res = await axios.get(url, {
+                    headers: { Authorization: `Bearer ${this.authToken}` },
+                });
                 if (res.status === 200) {
                     return res.data.data.find((value: UserInterface) => value.default);
                 }
@@ -188,7 +190,9 @@ export class StudioProjectLoader {
                 throw new Error(`${err}`);
             }
         };
-        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`);
+        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+            headers: { Authorization: `Bearer ${this.authToken}` },
+        });
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
@@ -210,7 +214,9 @@ export class StudioProjectLoader {
 
         if (this.userInterfaceID) {
             const userInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`)
+                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`, {
+                    headers: { Authorization: `Bearer ${this.authToken}` },
+                })
                 .then((res) => res.data)
                 .catch(async (err) => {
                     if (err.response && err.response.status === 404) {
