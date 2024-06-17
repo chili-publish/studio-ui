@@ -45,7 +45,12 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectInfoRequested();
 
             expect(result).toEqual(mockCachedProject);
-            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}`);
+            expect(axios.get).toHaveBeenCalledWith(
+                `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}`,
+                {
+                    headers: { Authorization: `Bearer ${mockAuthToken}` },
+                },
+            );
         });
 
         it('should throw an error if project is not found', async () => {
@@ -80,6 +85,7 @@ describe('StudioProjectLoader', () => {
             expect(result).toEqual(JSON.stringify(mockDocument.data));
             expect(axios.get).toHaveBeenCalledWith(
                 `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}/document`,
+                { headers: { Authorization: 'Bearer mockAuthToken' } },
             );
         });
 
@@ -97,7 +103,9 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectDocumentRequested();
 
             expect(result).toEqual(JSON.stringify(mockDocument.data));
-            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl);
+            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
+                headers: { Authorization: 'Bearer mockAuthToken' },
+            });
         });
     });
 
@@ -211,6 +219,21 @@ describe('StudioProjectLoader', () => {
 
             await expect(loader.onAuthenticationExpired()).rejects.toEqual(mockError);
         });
+
+        it('should throw error if refresh token is not provided', async () => {
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                undefined,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            await expect(loader.onAuthenticationExpired()).rejects.toEqual(
+                new Error('The authentication token has expired, and a method to obtain a new one is not provided.'),
+            );
+        });
     });
 
     describe('onLogInfoRequested', () => {
@@ -263,6 +286,61 @@ describe('StudioProjectLoader', () => {
             );
 
             expect(result).toEqual(mockDownloadLinkResult);
+        });
+    });
+
+    describe('onFetchOutputSettings', () => {
+        it('should call endpoint for "default" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { data: [{ default: true, outputSettings: {} }] }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+        });
+
+        it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { outputSettings: {} }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                '1234',
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
         });
     });
 });
