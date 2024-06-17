@@ -390,8 +390,8 @@ function ItemBrowser<
     );
 }
 
-function toNavigationStack(path: string): string[] {
+const toNavigationStack = (path: string): string[] => {
     return path.replaceAll('\\', '/').replace(/^\/+/, '').split('/');
-}
+};
 
 export default ItemBrowser;
