@@ -21,7 +21,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 index: './src/main.tsx',
-                bootstrap: './src/_dev-execution/bootstrap.ts',
+                // bootstrap: './src/_dev-execution/bootstrap.ts',
             },
             output: {
                 entryFileNames: 'bundle.js',
