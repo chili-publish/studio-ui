@@ -53,13 +53,6 @@ type ItemBrowserProps<T extends { id: string }> = {
 
 const SKELETONS = [...Array.from(Array(10).keys())];
 
-const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
-    if (type === PreviewType.COLLECTION)
-        return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
-
-    return path;
-};
-
 function ItemBrowser<
     T extends {
         id: string;
@@ -93,6 +86,13 @@ function ItemBrowser<
         setSearchQuery,
     } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
+
+    const getPreviewThumbnail = useCallback((type: PreviewType, path?: string): string | undefined => {
+        if (type === PreviewType.COLLECTION)
+            return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
+
+        return path;
+    }, []);
 
     const onScroll = () => {
         setNextPageToken((t) => {
