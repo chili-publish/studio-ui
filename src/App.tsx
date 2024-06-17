@@ -99,7 +99,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 return projectConfig
                     .onAuthenticationExpired()
                     .then((token) => {
-                        setAuthToken(token as string);
+                        setAuthToken(token);
                         originalRequest.headers.Authorization = `Bearer ${token}`;
                         return axios(originalRequest);
                     })
