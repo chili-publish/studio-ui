@@ -53,7 +53,7 @@ type ItemBrowserProps<T extends { id: string }> = {
 
 const SKELETONS = [...Array.from(Array(10).keys())];
 
-function ItemBrowser<
+const ItemBrowser = <
     T extends {
         id: string;
         type: MediaType;
@@ -61,7 +61,9 @@ function ItemBrowser<
         relativePath: string;
         extension: string | null;
     },
->(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
+>(
+    props: React.PropsWithChildren<ItemBrowserProps<T>>,
+) => {
     const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
@@ -388,7 +390,7 @@ function ItemBrowser<
             </ScrollbarWrapper>
         </Panel>
     );
-}
+};
 
 const toNavigationStack = (path: string): string[] => {
     return path.replaceAll('\\', '/').replace(/^\/+/, '').split('/');
