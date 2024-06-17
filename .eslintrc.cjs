@@ -68,7 +68,6 @@ module.exports = {
         'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
         'no-shadow': 'off',
         '@typescript-eslint/no-shadow': ['error'],
-        'react/function-component-definition': 0,
         radix: 0,
     },
 };

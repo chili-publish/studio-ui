@@ -53,7 +53,14 @@ type ItemBrowserProps<T extends { id: string }> = {
 
 const SKELETONS = [...Array.from(Array(10).keys())];
 
-const ItemBrowser = <
+const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
+    if (type === PreviewType.COLLECTION)
+        return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
+
+    return path;
+};
+
+function ItemBrowser<
     T extends {
         id: string;
         type: MediaType;
@@ -61,9 +68,7 @@ const ItemBrowser = <
         relativePath: string;
         extension: string | null;
     },
->(
-    props: React.PropsWithChildren<ItemBrowserProps<T>>,
-) => {
+>(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
@@ -88,13 +93,6 @@ const ItemBrowser = <
         setSearchQuery,
     } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
-
-    const getPreviewThumbnail = useCallback((type: PreviewType, path?: string): string | undefined => {
-        if (type === PreviewType.COLLECTION)
-            return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
-
-        return path;
-    }, []);
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -390,10 +388,10 @@ const ItemBrowser = <
             </ScrollbarWrapper>
         </Panel>
     );
-};
+}
 
-const toNavigationStack = (path: string): string[] => {
+function toNavigationStack(path: string): string[] {
     return path.replaceAll('\\', '/').replace(/^\/+/, '').split('/');
-};
+}
 
 export default ItemBrowser;

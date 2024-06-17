@@ -27,6 +27,7 @@ export default defineConfig({
                 entryFileNames: 'bundle.js',
                 chunkFileNames: 'bundle.js',
                 assetFileNames: 'main.[ext]',
+                format: 'iife',
             },
         },
     },
