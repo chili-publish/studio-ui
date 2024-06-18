@@ -1,9 +1,7 @@
 import { ConnectorImageVariableSource, Id } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
-import { useSubscriberContext } from '../../contexts/Subscriber';
 
 export const useVariableComponents = (currentVariableId: Id) => {
-    const { subscriber } = useSubscriberContext();
     const handleImageChange = useCallback(
         async (value: ConnectorImageVariableSource) => {
             if (currentVariableId) {
@@ -28,11 +26,9 @@ export const useVariableComponents = (currentVariableId: Id) => {
     const handleValueChange = useCallback(
         async (value: string | boolean) => {
             if (!currentVariableId) return null;
-            const res = await window.SDK.variable.setValue(currentVariableId, value);
-            subscriber?.emit('onVariableValueChanged', { id: currentVariableId, value });
-            return res;
+            return window.SDK.variable.setValue(currentVariableId, value);
         },
-        [currentVariableId, subscriber],
+        [currentVariableId],
     );
 
     return {

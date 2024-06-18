@@ -94,6 +94,9 @@ beforeEach(() => {
     mockSDK.connector.getMappings = jest.fn().mockResolvedValue({
         parsedData: null,
     });
+    mockSDK.variable.getAll = jest.fn().mockResolvedValue({
+        parsedData: null,
+    });
 
     window.SDK = mockSDK;
 

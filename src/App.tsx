@@ -176,6 +176,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 return null;
             },
             onVariableListChanged: (variableList: Variable[]) => {
+                eventSubscriber.emit('onVariableListChanged', variableList);
                 setVariables(variableList);
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
@@ -252,7 +253,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             enableAutoSaveRef.current = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [eventSubscriber]);
 
     useEffect(() => {
         if (currentProject?.template?.id) {

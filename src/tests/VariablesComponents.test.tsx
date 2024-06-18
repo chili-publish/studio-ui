@@ -18,6 +18,9 @@ describe('Variable Component', () => {
         window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
             parsedData: null,
         });
+        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
     });
     afterEach(() => {
         jest.clearAllMocks();

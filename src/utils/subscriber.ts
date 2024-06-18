@@ -1,14 +1,12 @@
-import { BooleanVariable, ConfigType, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { ConfigType } from '@chili-publish/studio-sdk';
 
 // replace second generic with particular ConfigType events properties when you wanted to subscribe to the Editor events
-type EditorEvents = Pick<ConfigType, never>;
+type EditorEvents = Pick<ConfigType, 'onVariableListChanged'>;
 
-type Events = EditorEvents & {
-    onVariableValueChanged: (payload: {
-        id: string;
-        value: ShortTextVariable['value'] | BooleanVariable['value'];
-    }) => void;
-};
+// replace with actual object type if needed
+type CustomEvents = Record<string, never>;
+
+type Events = EditorEvents & CustomEvents;
 
 export class Subscriber {
     private subscriptions: Partial<Record<keyof Events, Array<NonNullable<Events[keyof Events]>>>> = {};

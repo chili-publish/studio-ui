@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ConnectorMappingDirection, ConnectorStateType, Media } from '@chili-publish/studio-sdk';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
-import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { useVariablesChange } from '../../../core/hooks/useVariablesChange';
 
 export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: string | undefined) => {
     const { connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
-    const { subscriber } = useSubscriberContext();
 
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const [mediaConnectorState, setMediaConnectorState] = useState<ConnectorStateType.ready | null>(null);
@@ -25,6 +24,8 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
         );
         setMediaDetails(parsedData?.data[0] ?? null);
     }, [connectorId, mediaAssetId, connectorCapabilities]);
+
+    const { currentVariables } = useVariablesChange(variableIdsInMapping);
 
     useEffect(() => {
         (async () => {
@@ -64,18 +65,8 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
     }, [getCapabilitiesForConnector, connectorId, connectorCapabilities, mediaConnectorState]);
 
     useEffect(() => {
-        const handler = (event: { id: string; value: string | boolean }) => {
-            if (variableIdsInMapping.includes(event.id)) {
-                getMediaDetails();
-            }
-        };
-        subscriber?.on('onVariableValueChanged', handler);
-        return () => subscriber?.off('onVariableValueChanged', handler);
-    }, [subscriber, getMediaDetails, variableIdsInMapping]);
-
-    useEffect(() => {
         getMediaDetails();
-    }, [getMediaDetails]);
+    }, [currentVariables, getMediaDetails]);
 
     return mediaDetails;
 };
