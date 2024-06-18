@@ -15,6 +15,7 @@ type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Ty
 export const getDownloadLink = async (
     format: DownloadFormats,
     baseUrl: string,
+    token: string,
     layoutId: Id,
     projectId: string,
     outputSettingsId: string | undefined,
@@ -49,6 +50,7 @@ export const getDownloadLink = async (
         const httpResponse = await axios.post(generateExportUrl, requestBody, {
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -68,7 +70,7 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, token);
 
         if (pollingResult === null) {
             return {
@@ -103,12 +105,16 @@ export const getDownloadLink = async (
  * @param endpoint api endpoint to start polling on
  * @returns true when the endpoint call has successfully been resolved
  */
-const startPollingOnEndpoint = async (endpoint: string): Promise<GenerateAnimationTaskPollingResponse | null> => {
+const startPollingOnEndpoint = async (
+    endpoint: string,
+    token: string,
+): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
             body: null,
         };
@@ -117,7 +123,7 @@ const startPollingOnEndpoint = async (endpoint: string): Promise<GenerateAnimati
         if (httpResponse?.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint);
+            return await startPollingOnEndpoint(endpoint, token);
         }
         if (httpResponse?.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;
