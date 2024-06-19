@@ -14,6 +14,17 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 }));
 
 describe('Variable Component', () => {
+    beforeEach(() => {
+        window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     it('Shows the image picker component for image variable', async () => {
         render(
             <UiThemeProvider theme="platform">
