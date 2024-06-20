@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
+import { getDataTestIdForSUI } from '../utils/dataIds';
+import selectEvent from 'react-select-event';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -41,5 +43,28 @@ describe('Variables List', () => {
         expect(variable12).toBeInTheDocument();
         expect(shortVariable1).toBeInTheDocument();
         expect(longVariable1).not.toBeInTheDocument();
+    });
+
+    it('List variable should use "displayValue" for labels', () => {
+        const { getByTestId } = render(
+            <UiThemeProvider theme="platform">
+                <VariablesList variables={variables} isDocumentLoaded />
+            </UiThemeProvider>,
+        );
+
+        const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(
+            'grafx-drop-down__dropdown-indicator',
+        )[0];
+        expect(selectIndicator).toBeInTheDocument();
+
+        act(() => {
+            selectEvent.openMenu(selectIndicator as unknown as HTMLElement);
+        });
+
+        waitFor(() => {
+            expect(screen.getByText('List')).toBeInTheDocument();
+            expect(screen.getByText('Val 1')).toBeInTheDocument();
+            expect(screen.getByText('val 2')).toBeInTheDocument();
+        });
     });
 });

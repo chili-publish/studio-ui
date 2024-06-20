@@ -416,10 +416,10 @@
     react-datepicker "^6.9.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^1.10.1":
-  version "1.10.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.10.1/97972f6f783bc8288ff1f2ddc6da97e57e969dfa#97972f6f783bc8288ff1f2ddc6da97e57e969dfa"
-  integrity sha512-G1y9eXmg6HPwuYt3t34kXHdpJv0PndaiWEm2RT9vDaVZSfDtqiQHHMt6rMl5lugzn59I18EKoPtGEk7j4nNzTQ==
+"@chili-publish/studio-sdk@^1.10.6":
+  version "1.10.7"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.10.7/41ed5d661e00599f2309e4c9a334b6a28ca4320d#41ed5d661e00599f2309e4c9a334b6a28ca4320d"
+  integrity sha512-CKGay0H+O3YabbI98ioJVwACJJsLuUHYhhzR6ufICUGjBYjopGcXYC1bQpJxkae+NrlWZB84kZIsBjyyiqVvDg==
   dependencies:
     penpal "6.1.0"
 
@@ -1144,6 +1144,20 @@
   resolved "https://registry.yarnpkg.com/@swc/types/-/types-0.1.5.tgz#043b731d4f56a79b4897a3de1af35e75d56bc63a"
   integrity sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==
 
+"@testing-library/dom@>=7":
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-10.1.0.tgz#2d073e49771ad614da999ca48f199919e5176fb6"
+  integrity sha512-wdsYKy5zupPyLCW2Je5DLHSxSfbIp6h80WoHOQc+RPtmPGA52O9x5MJEkv92Sjonpq+poOAtUKhh1kBGAXBrNA==
+  dependencies:
+    "@babel/code-frame" "^7.10.4"
+    "@babel/runtime" "^7.12.5"
+    "@types/aria-query" "^5.0.1"
+    aria-query "5.3.0"
+    chalk "^4.1.0"
+    dom-accessibility-api "^0.5.9"
+    lz-string "^1.5.0"
+    pretty-format "^27.0.2"
+
 "@testing-library/dom@^9.0.0":
   version "9.3.3"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-9.3.3.tgz#108c23a5b0ef51121c26ae92eb3179416b0434f5"
@@ -1583,7 +1597,7 @@ aria-query@5.1.3:
   dependencies:
     deep-equal "^2.0.5"
 
-aria-query@^5.0.0, aria-query@^5.3.0:
+aria-query@5.3.0, aria-query@^5.0.0, aria-query@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-5.3.0.tgz#650c569e41ad90b51b3d7df5e5eed1c7549c103e"
   integrity sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==
@@ -4561,6 +4575,13 @@ react-onclickoutside@^6.13.0:
   version "6.13.1"
   resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.13.1.tgz#1f5e0241c08784b6e65745d91aca0d700c548a89"
   integrity sha512-LdrrxK/Yh9zbBQdFbMTXPp3dTSN9B+9YJQucdDu3JNKRrbdU+H+/TVONJoWtOwy4II8Sqf1y/DTI6w/vGPYW0w==
+
+react-select-event@^5.5.1:
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/react-select-event/-/react-select-event-5.5.1.tgz#d67e04a6a51428b1534b15ecb1b82afbe5edddcb"
+  integrity sha512-goAx28y0+iYrbqZA2FeRTreHHs/ZtSuKxtA+J5jpKT5RHPCbVZJ4MqACfPnWyFXsEec+3dP5bCrNTxIX8oYe9A==
+  dependencies:
+    "@testing-library/dom" ">=7"
 
 react-select@^5.6.1:
   version "5.8.0"
