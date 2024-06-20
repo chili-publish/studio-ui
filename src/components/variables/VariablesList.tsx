@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { DateVariable as DateVariableType, ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
+import DateVariable from '../variablesComponents/DateVariable';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -16,6 +17,7 @@ const isListVariable = (variable: Variable): variable is ListVariable => variabl
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
+    const [dateVariableOpen, setDateVariableOpen] = useState(false);
 
     const updateListVariableValue = async (variableId: string, value: string) => {
         await window.SDK.variable.setValue(variableId, value);
@@ -56,6 +58,16 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                     onMenuClose={() => setListVariableOpen(null)}
                                 />
                             </ComponentWrapper>
+                        );
+                    }
+                    const isDateVariable = variable.type === VariableType.date;
+                    if (isDateVariable && dateVariableOpen) {
+                        return (
+                            <DateVariable
+                                key={variable.id}
+                                variable={variable as DateVariableType}
+                                handleValueChange={() => console.log('some dope shit')}
+                            />
                         );
                     }
                     return !listVariableOpen ? (

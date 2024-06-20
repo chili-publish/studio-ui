@@ -1,12 +1,17 @@
 import { useMemo } from 'react';
 // import { DropDown } from '@chili-publish/grafx-shared-components';
-import { NumberVariable as NumberVariableType, VariableType } from '@chili-publish/studio-sdk';
+import {
+    DateVariable as DateVariableType,
+    NumberVariable as NumberVariableType,
+    VariableType,
+} from '@chili-publish/studio-sdk';
 import { IVariablesComponents } from './VariablesComponents.types';
 import { useVariableComponents } from './useVariablesComponents';
 import ImageVariable from './imageVariable/ImageVariable';
 import TextVariable from './TextVariable';
 import BooleanVariable from './BooleanVariable';
 import NumberVariable from './NumberVariable';
+import DateVariable from './DateVariable';
 
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable, isDocumentLoaded } = props;
@@ -34,6 +39,14 @@ function VariablesComponents(props: IVariablesComponents) {
                             variable={variable as NumberVariableType}
                             handleValueChange={handleValueChange}
                         />
+                    )
+                );
+            }
+
+            case VariableType.date: {
+                return (
+                    variable.isVisible && (
+                        <DateVariable variable={variable as DateVariableType} handleValueChange={handleValueChange} />
                     )
                 );
             }

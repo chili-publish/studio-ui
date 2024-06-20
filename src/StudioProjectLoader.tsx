@@ -188,7 +188,11 @@ export class StudioProjectLoader {
                 throw new Error(`${err}`);
             }
         };
-        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`);
+        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+            headers: {
+                Authorization: `Bearer ${this.authToken}`,
+            },
+        });
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];

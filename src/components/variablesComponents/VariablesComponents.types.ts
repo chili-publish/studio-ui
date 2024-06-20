@@ -1,4 +1,11 @@
-import { EditorResponse, ImageVariable, NumberVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import {
+    DateVariable,
+    EditorResponse,
+    ImageVariable,
+    NumberVariable,
+    Variable,
+    VariableType,
+} from '@chili-publish/studio-sdk';
 
 export interface IVariablesComponents {
     type: VariableType;
@@ -23,6 +30,11 @@ export interface IBooleanVariable {
 
 export interface INumberVariable {
     variable: NumberVariable;
+    // TODO: change to number after SDK numbers PR is merged
+    handleValueChange: (value: string) => Promise<EditorResponse<null> | null> | null;
+}
+export interface IDateVariable {
+    variable: DateVariable;
     // TODO: change to number after SDK numbers PR is merged
     handleValueChange: (value: string) => Promise<EditorResponse<null> | null> | null;
 }

@@ -95,6 +95,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         (error) => {
             const originalRequest = error.config;
             if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
+                console.log('%c⧭', 'color: #cc7033', 'i should be hererereree');
                 originalRequest.retry = true;
                 return projectConfig
                     .onAuthenticationExpired()
