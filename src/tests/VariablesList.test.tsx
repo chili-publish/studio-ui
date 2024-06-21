@@ -1,9 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
-import selectEvent from 'react-select-event';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -45,7 +45,7 @@ describe('Variables List', () => {
         expect(longVariable1).not.toBeInTheDocument();
     });
 
-    it('List variable should use "displayValue" for labels', () => {
+    it('List variable should use "displayValue" for labels', async () => {
         const { getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablesList variables={variables} isDocumentLoaded />
@@ -61,7 +61,7 @@ describe('Variables List', () => {
             selectEvent.openMenu(selectIndicator as unknown as HTMLElement);
         });
 
-        waitFor(() => {
+        await waitFor(() => {
             expect(screen.getByText('List')).toBeInTheDocument();
             expect(screen.getByText('Val 1')).toBeInTheDocument();
             expect(screen.getByText('val 2')).toBeInTheDocument();
