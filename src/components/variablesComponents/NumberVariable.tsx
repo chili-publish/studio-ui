@@ -20,22 +20,19 @@ function NumberVariable(props: INumberVariable) {
             dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
             dataIntercomId={`input-variable-${variable.name}`}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                const prevValue = String(variable.value);
-                const currentValue = event.target.value;
-                if (prevValue !== currentValue)
-                    // TODO : remove type casting when SDK numbers PR is merged
-                    handleValueChange(
-                        Number(currentValue.replace(variable.decimalSeparator, '.')) as unknown as string,
-                    );
+                const currentValue = Number(event.target.value.replace(variable.decimalSeparator, '.'));
+                const prevValue = variable.value;
+                if (prevValue !== currentValue) {
+                    handleValueChange(currentValue);
+                }
             }}
             onValueChange={(value: string) => {
-                const prevValue = String(variable.value);
-                const currentValue = value;
-                if (prevValue !== currentValue)
-                    // TODO : remove type casting when SDK numbers PR is merged
-                    handleValueChange(
-                        Number(currentValue.replace(variable.decimalSeparator, '.')) as unknown as string,
-                    );
+                const currentValue = Number(value.replace(variable.decimalSeparator, '.'));
+                const prevValue = variable.value;
+
+                if (prevValue !== currentValue) {
+                    handleValueChange(currentValue);
+                }
             }}
             disabled={variable.isReadonly}
         />
