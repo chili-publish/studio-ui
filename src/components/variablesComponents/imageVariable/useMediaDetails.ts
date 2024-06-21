@@ -48,8 +48,10 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             const mappings = await window.SDK.connector.getMappings(connectorId);
             const variableIds = mappings.parsedData
                 ?.filter((m) => m.direction === ConnectorMappingDirection.engineToConnector)
-                .filter((m) => m.value.startsWith('var.'))
-                .map((m) => m.value.replace('var.', ''));
+                // TODO: Remove type casting in context of https://chilipublishintranet.atlassian.net/browse/WRS-1821
+                .filter((m) => String(m.value).startsWith('var.'))
+                // TODO: Remove type casting in context of https://chilipublishintranet.atlassian.net/browse/WRS-1821
+                .map((m) => String(m.value).replace('var.', ''));
             setVariableIdsInMapping(variableIds ?? []);
         })();
     }, [connectorId, mediaConnectorState]);
