@@ -22,9 +22,8 @@ export const useVariableComponents = (currentVariableId: Id) => {
         return null;
     }, [currentVariableId]);
 
-    // TODO: add number to value types after SDK numbers PR is merged
     const handleValueChange = useCallback(
-        async (value: string | boolean) => {
+        async (value: string | boolean | number) => {
             if (!currentVariableId) return null;
             return window.SDK.variable.setValue(currentVariableId, value);
         },
