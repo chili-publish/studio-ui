@@ -21,7 +21,7 @@ export class StudioProjectLoader {
 
     private authToken: string;
 
-    private refreshTokenAction: () => Promise<string | AxiosError>;
+    private refreshTokenAction?: () => Promise<string | AxiosError>;
 
     private cachedProject: Project | undefined;
 
@@ -31,7 +31,7 @@ export class StudioProjectLoader {
         projectId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
-        refreshTokenAction: () => Promise<string | AxiosError>,
+        refreshTokenAction?: () => Promise<string | AxiosError>,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
         userInterfaceID?: string,
@@ -51,7 +51,9 @@ export class StudioProjectLoader {
         }
 
         const intermediate = axios
-            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`)
+            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`, {
+                headers: { Authorization: `Bearer ${this.authToken}` },
+            })
             .then((res) => {
                 return res.data;
             });
@@ -68,18 +70,18 @@ export class StudioProjectLoader {
 
     public onProjectDocumentRequested = async (): Promise<string> => {
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl);
+        return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
     };
 
     public onProjectLoaded = (): void => {
         window.SDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
-            this.graFxStudioEnvironmentApiBaseUrl ?? '',
+            this.graFxStudioEnvironmentApiBaseUrl,
         );
     };
 
     public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
-        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl);
+        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
         return this.onProjectInfoRequested();
     };
 
@@ -88,6 +90,9 @@ export class StudioProjectLoader {
     };
 
     public onAuthenticationExpired = async (): Promise<string> => {
+        if (!this.refreshTokenAction) {
+            throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
+        }
         const result = await this.refreshTokenAction();
         if (result instanceof Error) {
             throw result;
@@ -112,17 +117,18 @@ export class StudioProjectLoader {
     ): Promise<DownloadLinkResult> => {
         return getDownloadLink(
             extension as DownloadFormats,
-            this.graFxStudioEnvironmentApiBaseUrl ?? '',
+            this.graFxStudioEnvironmentApiBaseUrl,
+            this.authToken,
             selectedLayoutID || '0',
-            this.projectId ?? '',
+            this.projectId,
             outputSettingsId,
         );
     };
 
-    private static fetchDocument = async (templateUrl?: string): Promise<string> => {
+    private static fetchDocument = async (templateUrl: string, token: string): Promise<string> => {
         const url = templateUrl;
         if (url) {
-            const fetchPromise = axios.get(url);
+            const fetchPromise = axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
             return fetchPromise
                 .then((response) => {
                     return response;
@@ -139,8 +145,9 @@ export class StudioProjectLoader {
 
     private saveDocument = async (
         generateJson: () => Promise<string>,
-        docEditorLink?: string,
-        templateUrl?: string,
+        docEditorLink: string | undefined,
+        templateUrl: string | undefined,
+        token: string,
     ) => {
         // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
@@ -149,7 +156,6 @@ export class StudioProjectLoader {
             (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null) ||
             fallbackDownloadUrl;
 
-        if (!url) return;
         try {
             const document = await generateJson().then((res) => {
                 if (res) {
@@ -160,6 +166,7 @@ export class StudioProjectLoader {
             const config: HttpHeaders = {
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             };
 
@@ -179,7 +186,9 @@ export class StudioProjectLoader {
     public onFetchOutputSettings = async (): Promise<UserInterfaceOutputSettings[] | null> => {
         const fetchDefaultUserInterface = async (url: string) => {
             try {
-                const res = await axios.get(url);
+                const res = await axios.get(url, {
+                    headers: { Authorization: `Bearer ${this.authToken}` },
+                });
                 if (res.status === 200) {
                     return res.data.data.find((value: UserInterface) => value.default);
                 }
@@ -189,9 +198,7 @@ export class StudioProjectLoader {
             }
         };
         const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-            headers: {
-                Authorization: `Bearer ${this.authToken}`,
-            },
+            headers: { Authorization: `Bearer ${this.authToken}` },
         });
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
@@ -214,7 +221,9 @@ export class StudioProjectLoader {
 
         if (this.userInterfaceID) {
             const userInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`)
+                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${this.userInterfaceID}`, {
+                    headers: { Authorization: `Bearer ${this.authToken}` },
+                })
                 .then((res) => res.data)
                 .catch(async (err) => {
                     if (err.response && err.response.status === 404) {

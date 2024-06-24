@@ -36,7 +36,7 @@ export interface DefaultStudioConfig {
     uiOptions?: UiOptions;
     outputSettings?: OutputSettings;
     projectName: string;
-    refreshTokenAction: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
     editorLink?: string;
     userInterfaceID?: string;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
@@ -136,7 +136,7 @@ export interface IStudioUILoaderConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName: string;
-    refreshTokenAction: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
     outputSettings?: OutputSettings;

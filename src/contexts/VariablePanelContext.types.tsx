@@ -13,7 +13,7 @@ export interface IConnectors {
 }
 
 export interface ICapabilities {
-    [index: string]: MediaConnectorCapabilities;
+    [index: string]: MediaConnectorCapabilities | undefined;
 }
 
 export interface IVariablePanelContext {

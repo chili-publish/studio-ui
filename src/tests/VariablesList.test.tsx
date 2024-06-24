@@ -14,6 +14,17 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 }));
 
 describe('Variables List', () => {
+    beforeEach(() => {
+        window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     it('Hidden variables should not be shown', async () => {
         render(
             <UiThemeProvider theme="platform">

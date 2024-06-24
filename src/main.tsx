@@ -143,10 +143,12 @@ export default class StudioUI {
      * @param config.refreshTokenAction - Callback to refresh the authentication token.
      * @param config.projectName - The name of the project to load.
      * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
-     * @param config.onBack - Callback when the user clicks the back button.
+     * @param config.onConnectorAuthenticationRequested - Callback to authenticate in custom connectors
      * @returns
      */
-    static studioLoaderConfig(config: StudioConfig) {
+    static studioLoaderConfig(
+        config: Omit<StudioConfig, 'onProjectInfoRequested' | 'onProjectDocumentRequested' | 'onProjectSave'>,
+    ) {
         const {
             selector,
             projectDownloadUrl,
@@ -154,12 +156,12 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            projectName,
+            editorLink,
             uiOptions,
             outputSettings,
-            projectName,
-            refreshTokenAction,
-            editorLink,
             userInterfaceID,
+            refreshTokenAction,
             onConnectorAuthenticationRequested,
         } = config;
         const projectLoader = new StudioProjectLoader(
