@@ -11,6 +11,7 @@ export interface IVariablesComponents {
     type: VariableType;
     variable: Variable;
     isDocumentLoaded: boolean;
+    onCalendarOpen?: () => void;
 }
 
 export interface IImageVariable {
@@ -35,6 +36,9 @@ export interface INumberVariable {
 }
 export interface IDateVariable {
     variable: DateVariable;
-    // TODO: change to number after SDK numbers PR is merged
-    handleValueChange: (value: string) => Promise<EditorResponse<null> | null> | null;
+    handleValueChange?: (value: string) => Promise<EditorResponse<null> | null> | null;
+    setDate?: (value: string) => void;
+    onCalendarOpen?: () => void;
+    inline?: boolean;
+    selected?: Date | null;
 }

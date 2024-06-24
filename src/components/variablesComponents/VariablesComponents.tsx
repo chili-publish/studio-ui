@@ -14,7 +14,7 @@ import NumberVariable from './NumberVariable';
 import DateVariable from './DateVariable';
 
 function VariablesComponents(props: IVariablesComponents) {
-    const { type, variable, isDocumentLoaded } = props;
+    const { type, variable, isDocumentLoaded, onCalendarOpen } = props;
     const { handleValueChange, handleImageRemove } = useVariableComponents(variable.id);
 
     const RenderComponents = useMemo(() => {
@@ -46,7 +46,11 @@ function VariablesComponents(props: IVariablesComponents) {
             case VariableType.date: {
                 return (
                     variable.isVisible && (
-                        <DateVariable variable={variable as DateVariableType} handleValueChange={handleValueChange} />
+                        <DateVariable
+                            variable={variable as DateVariableType}
+                            handleValueChange={handleValueChange}
+                            onCalendarOpen={onCalendarOpen}
+                        />
                     )
                 );
             }
@@ -57,7 +61,7 @@ function VariablesComponents(props: IVariablesComponents) {
             default:
                 return null;
         }
-    }, [handleImageRemove, handleValueChange, type, variable, isDocumentLoaded]);
+    }, [type, handleValueChange, variable, isDocumentLoaded, handleImageRemove, onCalendarOpen]);
 
     return <div style={{ width: '100%' }}>{RenderComponents}</div>;
 }

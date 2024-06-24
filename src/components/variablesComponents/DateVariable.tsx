@@ -1,32 +1,39 @@
 import { CustomDatePicker, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { useMemo } from 'react';
 import { IDateVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import useDateVariable from './useDateVariable';
 
 function DateVariable(props: IDateVariable) {
-    const { handleValueChange, variable } = props;
+    const { handleValueChange, variable, onCalendarOpen, inline, selected, setDate } = props;
     const { minDate, maxDate } = useDateVariable(variable);
-    const ismobild = useMobileSize();
+    const isMobileSize = useMobileSize();
 
-    console.log('%c⧭ ismobild', 'color: #86bf60', ismobild);
+    const getSelectedDate = useMemo(() => {
+        if (isMobileSize && selected) return selected;
+        if (variable.value) return new Date(variable.value);
+        return null;
+    }, [isMobileSize, selected, variable.value]);
     return (
         <CustomDatePicker
             name={variable.name}
-            label={variable.name}
+            label={isMobileSize ? '' : variable.name}
             onChange={(date) => {
                 if (date) {
-                    handleValueChange(new Date(date).toISOString().split('T')[0]);
+                    handleValueChange?.(new Date(date).toISOString().split('T')[0]);
+                    setDate?.(new Date(date).toISOString().split('T')[0]);
                 } else {
-                    handleValueChange('');
+                    handleValueChange?.('');
                 }
             }}
-            selected={variable.value ? new Date(variable.value) : null}
+            selected={getSelectedDate}
             dataId={getDataIdForSUI(`${variable.id}-variable-date-picker`)}
             dataTestId={getDataTestIdForSUI(`${variable.id}-variable-date-picker`)}
             placeholder="Select date"
             minDate={minDate}
             maxDate={maxDate}
-            withPortal={ismobild}
+            onCalendarOpen={() => isMobileSize && onCalendarOpen?.()}
+            inline={inline}
         />
     );
 }
