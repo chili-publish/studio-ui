@@ -108,7 +108,6 @@ describe('Variable Component', () => {
                 />
             </UiThemeProvider>,
         );
-        screen.logTestingPlaygroundURL();
         const dateInput = getByRole('textbox') as HTMLInputElement;
         expect(dateInput).toBeInTheDocument();
         expect(dateInput.value).toBe('30/07/2024');
