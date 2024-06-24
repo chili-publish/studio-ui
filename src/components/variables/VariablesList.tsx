@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
 import { DateVariable as DateVariableType, ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { Option, useMobileSize, Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
+import { css } from 'styled-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import {
+    ComponentWrapper,
+    DatePickerWrapper,
+    VariablesListWrapper,
+    VariablesPanelTitle,
+} from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
 import DateVariable from '../variablesComponents/DateVariable';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -15,11 +24,13 @@ interface VariablesListProps {
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
 
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
+    const { contentType, showVariablesPanel, showDatePicker } = useVariablePanelContext();
+
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
-    const [dateVariableOpen, setDateVariableOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
-    const updateListVariableValue = async (variableId: string, value: string) => {
+    const updateVariableValue = async (variableId: string, value: string) => {
         await window.SDK.variable.setValue(variableId, value);
     };
 
@@ -37,7 +48,11 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
 
                     const isListVariabledDisplayed =
                         !listVariableOpen || (listVariableOpen && variable.id === listVariableOpen.id);
-                    if (isListVariable(variable) && isListVariabledDisplayed) {
+                    if (
+                        isListVariable(variable) &&
+                        isListVariabledDisplayed &&
+                        contentType !== ContentType.DATE_VARIABLE_PICKER
+                    ) {
                         const variableItem = listVariableOpen || variable;
                         const options = variableItem.items.map((item) => ({ label: item, value: item }));
                         const selectedValue = variableItem.selected
@@ -53,29 +68,56 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                     label={variable.name}
                                     selectedValue={selectedValue || ''}
                                     options={options}
-                                    onChange={(val) => updateListVariableValue(variable.id, val)}
+                                    onChange={(val) => updateVariableValue(variable.id, val)}
                                     onMenuOpen={() => setListVariableOpen(variable)}
                                     onMenuClose={() => setListVariableOpen(null)}
                                 />
                             </ComponentWrapper>
                         );
                     }
-                    const isDateVariable = variable.type === VariableType.date;
-                    if (isDateVariable && dateVariableOpen) {
+                    const isDateVariableOpen =
+                        variable.type === VariableType.date && contentType === ContentType.DATE_VARIABLE_PICKER;
+                    if (isDateVariableOpen && !listVariableOpen && isMobileSize) {
                         return (
-                            <DateVariable
-                                key={variable.id}
-                                variable={variable as DateVariableType}
-                                handleValueChange={() => console.log('some dope shit')}
-                            />
+                            <>
+                                <DatePickerWrapper>
+                                    <DateVariable
+                                        key={variable.id}
+                                        variable={variable as DateVariableType}
+                                        inline
+                                        selected={selectedDate}
+                                        setDate={(val) => {
+                                            setSelectedDate(new Date(val));
+                                        }}
+                                    />
+                                </DatePickerWrapper>
+                                <Button
+                                    dataId={getDataIdForSUI(`date-confirm-btn`)}
+                                    dataTestId={getDataTestIdForSUI(`date-confirm-btn`)}
+                                    onClick={() => {
+                                        if (selectedDate) {
+                                            updateVariableValue(variable.id, selectedDate?.toISOString().split('T')[0]);
+                                            showVariablesPanel();
+                                        }
+                                    }}
+                                    variant={ButtonVariant.primary}
+                                    label="Confirm"
+                                    styles={css`
+                                        width: 100%;
+                                    `}
+                                />
+                            </>
                         );
                     }
-                    return !listVariableOpen ? (
+                    return !listVariableOpen && contentType !== ContentType.DATE_VARIABLE_PICKER ? (
                         <ComponentWrapper key={`variable-component-${variable.id}`}>
                             <VariablesComponents
                                 type={variable.type}
                                 variable={variable}
                                 isDocumentLoaded={isDocumentLoaded}
+                                onCalendarOpen={() => {
+                                    showDatePicker();
+                                }}
                             />
                         </ComponentWrapper>
                     ) : null;
