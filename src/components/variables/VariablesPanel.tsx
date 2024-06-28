@@ -1,12 +1,20 @@
-import { useState } from 'react';
-import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
+import { useMemo, useState } from 'react';
+import {
+    AvailableIcons,
+    Button,
+    ButtonVariant,
+    FontSizes,
+    Icon,
+    Tray,
+    Colors,
+} from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import VariablesList from './VariablesList';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import { EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -33,6 +41,36 @@ function VariablesPanel(props: VariablesPanelProps) {
     };
 
     const showVariablesList = contentType === ContentType.VARIABLES_LIST;
+    const showDateVariable = contentType === ContentType.DATE_VARIABLE_PICKER;
+
+    const renderTrayHeader = useMemo(() => {
+        if (showVariablesList) return <VariablesPanelTitle>Customize</VariablesPanelTitle>;
+        if (showDateVariable)
+            return (
+                <DatePickerTrayTitle>
+                    <Button
+                        type="button"
+                        variant={ButtonVariant.tertiary}
+                        onClick={() => {
+                            showVariablesPanel();
+                        }}
+                        icon={
+                            <Icon
+                                key="go-back-to-variable-list"
+                                icon={AvailableIcons.faArrowLeft}
+                                color={Colors.PRIMARY_FONT}
+                            />
+                        }
+                        styles={css`
+                            padding: 0 0.5rem 0 0;
+                        `}
+                    />
+                    <VariablesPanelTitle margin="0">Select date</VariablesPanelTitle>
+                </DatePickerTrayTitle>
+            );
+
+        return imagePanelTitle;
+    }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel]);
 
     return (
         <>
@@ -55,7 +93,7 @@ function VariablesPanel(props: VariablesPanelProps) {
             <Tray
                 isOpen={isVariablesPanelVisible}
                 close={closeVariablePanel}
-                title={showVariablesList ? <VariablesPanelTitle>Customize</VariablesPanelTitle> : imagePanelTitle}
+                title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
@@ -63,7 +101,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                 `}
                 hideCloseButton={mobileOptionsListOpen}
             >
-                {showVariablesList ? (
+                {showVariablesList || showDateVariable ? (
                     <VariablesList
                         variables={variables}
                         onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}

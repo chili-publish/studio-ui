@@ -8,6 +8,7 @@ import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from '
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
+    showDatePicker: () => undefined,
     showImagePanel: () => undefined,
     contentType: ContentType.VARIABLES_LIST,
     currentVariableId: '',
@@ -106,6 +107,7 @@ export function VariablePanelContextProvider({
     const data = useMemo(
         () => ({
             showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
+            showDatePicker: () => setContentType(ContentType.DATE_VARIABLE_PICKER),
             showImagePanel: (variable: ImageVariable) => {
                 setCurrentVariableId(variable.id);
                 setCurrentVariableConnectorId(variable.value?.connectorId ?? '');

@@ -84,7 +84,6 @@ describe('Variable Component', () => {
                 isDocumentLoaded
             />,
         );
-        screen.logTestingPlaygroundURL();
         const input = getByRole('textbox', { name: /number-variable/i });
         const stepBtns = getAllByRole('button');
         expect(input).toBeInTheDocument();
@@ -96,5 +95,21 @@ describe('Variable Component', () => {
         fireEvent.blur(input);
 
         expect(input).toHaveValue('12.11');
+    });
+
+    it('Shows the date component for date variables', () => {
+        const { getByRole } = render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[6].id}`}
+                    type={variables[6].type}
+                    variable={variables[6]}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+        );
+        const dateInput = getByRole('textbox') as HTMLInputElement;
+        expect(dateInput).toBeInTheDocument();
+        expect(dateInput.value).toBe('30/07/2024');
     });
 });
