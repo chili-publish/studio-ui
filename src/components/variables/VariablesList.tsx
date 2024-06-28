@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { DateVariable as DateVariableType, ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { Option, useMobileSize, Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import {
     ComponentWrapper,
@@ -54,9 +55,15 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         contentType !== ContentType.DATE_VARIABLE_PICKER
                     ) {
                         const variableItem = listVariableOpen || variable;
-                        const options = variableItem.items.map((item) => ({ label: item, value: item }));
+                        const options = variableItem.items.map((item) => ({
+                            label: item.displayValue || item.value,
+                            value: item.value,
+                        }));
                         const selectedValue = variableItem.selected
-                            ? { label: variableItem.selected, value: variableItem.selected }
+                            ? {
+                                  label: variableItem.selected.displayValue || variableItem.selected.value,
+                                  value: variableItem.selected.value,
+                              }
                             : ('' as unknown as Option);
                         return (
                             <ComponentWrapper

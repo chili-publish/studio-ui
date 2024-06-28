@@ -143,6 +143,9 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     useEffect(() => {
         const sdk = new StudioSDK({
+            enableNextSubscribers: {
+                onVariableListChanged: true,
+            },
             async onAuthExpired(request) {
                 try {
                     if (request.type === AuthRefreshTypeEnum.grafxToken) {

@@ -8,6 +8,7 @@ import {
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 export const variables: Variable[] = [
     <ImageVariable>(<unknown>{
@@ -85,5 +86,17 @@ export const variables: Variable[] = [
         isVisible: true,
         parentId: '2',
         value: '2024-07-30',
+    },
+    <ListVariable>{
+        id: '10',
+        name: 'List',
+        label: 'Test List',
+        type: VariableType.list,
+        occurrences: 0,
+        isVisible: true,
+        parentId: '7',
+        items: [{ value: 'val 1', displayValue: 'Val 1' }, { value: 'val 2' }],
+        isReadonly: false,
+        isRequired: false,
     },
 ];
