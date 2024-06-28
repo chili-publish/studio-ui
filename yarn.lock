@@ -402,9 +402,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/382/grafx-shared-components.tgz":
-  version "0.67.2"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/382/grafx-shared-components.tgz#2dd9d61ae233b4cccb1f42a41cbcc28bef2a0592"
+"@chili-publish/grafx-shared-components@^0.68.0":
+  version "0.68.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.68.0/13c7ea6aaf42b0ae46e0963c684eb5d66526009c#13c7ea6aaf42b0ae46e0963c684eb5d66526009c"
+  integrity sha512-ZrDx8Pr2jFkdFrG2aphmtju/jcwlPygx1zSYeJz6Itcw5YJPwgiKctjXFAN92vtAqVtMfFK6nw3dpW59KAxAzQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -412,7 +413,7 @@
     "@fortawesome/pro-solid-svg-icons" "^6.4.0"
     "@fortawesome/react-fontawesome" "^0.2.0"
     date-fns "^3.6.0"
-    react-datepicker "^6.9.0"
+    react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
 "@chili-publish/studio-sdk@^1.11.0":
@@ -4522,10 +4523,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-datepicker@^6.9.0:
-  version "6.9.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-6.9.0.tgz#0ad234dad81d567ae64cad79697bbad69c95490b"
-  integrity sha512-QTxuzeem7BUfVFWv+g5WuvzT0c5BPo+XTCNbMTZKSZQLU+cMMwSUHwspaxuIcDlwNcOH0tiJ+bh1fJ2yxOGYWA==
+react-datepicker@^7.1.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-7.2.0.tgz#2d430caebb5c8b0fb988286d004aa2676ace665f"
+  integrity sha512-Hhs1Fk6/ZqpGGg9QX/JjzvgEJoSFKYCAvRVdBbjxvOjflsXutFprAl/E0ZOm1J+/b/jQqU03WMTTNLcw5nXcuw==
   dependencies:
     "@floating-ui/react" "^0.26.2"
     clsx "^2.1.0"
