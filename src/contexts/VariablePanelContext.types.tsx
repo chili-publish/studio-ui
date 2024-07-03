@@ -1,4 +1,10 @@
-import { MediaConnectorCapabilities, ConnectorInstance, ImageVariable, Media } from '@chili-publish/studio-sdk';
+import {
+    MediaConnectorCapabilities,
+    ConnectorInstance,
+    ImageVariable,
+    Media,
+    DateVariable,
+} from '@chili-publish/studio-sdk';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
@@ -18,7 +24,7 @@ export interface ICapabilities {
 
 export interface IVariablePanelContext {
     showVariablesPanel: () => void;
-    showDatePicker: () => void;
+    showDatePicker: (_: DateVariable) => void;
     showImagePanel: (_: ImageVariable) => void;
     contentType: ContentType;
     currentVariableId: string;

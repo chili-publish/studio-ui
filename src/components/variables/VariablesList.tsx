@@ -25,7 +25,7 @@ interface VariablesListProps {
 const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
 
 function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
-    const { contentType, showVariablesPanel, showDatePicker } = useVariablePanelContext();
+    const { contentType, showVariablesPanel, showDatePicker, currentVariableId } = useVariablePanelContext();
 
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
@@ -83,7 +83,9 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         );
                     }
                     const isDateVariableOpen =
-                        variable.type === VariableType.date && contentType === ContentType.DATE_VARIABLE_PICKER;
+                        variable.type === VariableType.date &&
+                        contentType === ContentType.DATE_VARIABLE_PICKER &&
+                        currentVariableId === variable.id;
                     if (isDateVariableOpen && !listVariableOpen && isMobileSize) {
                         return (
                             <>
@@ -105,6 +107,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                         if (selectedDate) {
                                             updateVariableValue(variable.id, selectedDate?.toISOString().split('T')[0]);
                                             showVariablesPanel();
+                                            setSelectedDate(null);
                                         }
                                     }}
                                     variant={ButtonVariant.primary}
@@ -123,7 +126,8 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 variable={variable}
                                 isDocumentLoaded={isDocumentLoaded}
                                 onCalendarOpen={() => {
-                                    showDatePicker();
+                                    if (variable.type === VariableType.date)
+                                        showDatePicker(variable as DateVariableType);
                                 }}
                             />
                         </ComponentWrapper>
