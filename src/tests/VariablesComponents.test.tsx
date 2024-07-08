@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { act } from 'react-dom/test-utils';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
@@ -97,19 +99,41 @@ describe('Variable Component', () => {
         expect(input).toHaveValue('12.11');
     });
 
-    it('Shows the date component for date variables', () => {
-        const { getByRole } = render(
-            <UiThemeProvider theme="platform">
-                <VariableComponent
-                    key={`variable-component-${variables[6].id}`}
-                    type={variables[6].type}
-                    variable={variables[6]}
-                    isDocumentLoaded
-                />
-            </UiThemeProvider>,
-        );
-        const dateInput = getByRole('textbox') as HTMLInputElement;
-        expect(dateInput).toBeInTheDocument();
-        expect(dateInput.value).toBe('30/07/2024');
+    describe('Shows date component for date date variable', () => {
+        it('Correctly renders the date component for date variables', () => {
+            const { getByRole } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            expect(dateInput).toBeInTheDocument();
+            expect(dateInput.value).toBe('30/07/2024');
+        });
+        it('Calls the onchange function when date is changed with correct params', async () => {
+            const user = userEvent.setup();
+            const { getByRole, getByText } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.click(dateInput));
+
+            await act(() => user.click(getByText('28'))); // the day 28 in the calendar
+
+            expect(window.SDK.variable.setValue).toHaveBeenCalled();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+        });
     });
 });
