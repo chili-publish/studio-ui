@@ -135,5 +135,46 @@ describe('Variable Component', () => {
             expect(window.SDK.variable.setValue).toHaveBeenCalled();
             expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
         });
+
+        it('Can set date to null by clearing the input field', async () => {
+            const user = userEvent.setup();
+            const { getByRole } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.clear(dateInput));
+            await act(() => fireEvent.blur(dateInput));
+            expect(await screen.queryByText('30/07/2024')).toBeNull();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '');
+        });
+        it('Select the correct date after clearing the input', async () => {
+            // Regression test after QA found the selected date is 1 day before what user selects
+            const user = userEvent.setup();
+            const { getByRole, getByText } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.clear(dateInput));
+            await act(() => fireEvent.blur(dateInput));
+            await act(() => user.click(dateInput));
+            await act(() => user.click(getByText('28'))); // the day 28 in the calendar
+
+            expect(window.SDK.variable.setValue).toHaveBeenCalled();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+        });
     });
 });
