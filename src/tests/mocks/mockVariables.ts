@@ -1,4 +1,5 @@
 import {
+    DateVariable,
     GroupVariable,
     ImageVariable,
     LongTextVariable,
@@ -75,6 +76,16 @@ export const variables: Variable[] = [
         stepSize: 1,
         isReadonly: false,
         isRequired: false,
+    },
+    <DateVariable>{
+        id: 'date-variable',
+        name: 'Date Variable 1',
+        label: 'Date Variable 1',
+        type: VariableType.date,
+        occurrences: 0,
+        isVisible: true,
+        parentId: '2',
+        value: '2024-07-30',
     },
     <ListVariable>{
         id: '10',
