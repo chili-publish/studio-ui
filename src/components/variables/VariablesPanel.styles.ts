@@ -42,7 +42,7 @@ export const DatePickerWrapper = styled.div`
         }
         &__month {
             padding-bottom: 0.625rem !important;
-            min-height: 16.5rem;
+            min-height: 17.25rem;
         }
     }
 `;
