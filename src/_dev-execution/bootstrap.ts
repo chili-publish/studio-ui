@@ -75,7 +75,5 @@ import { TokenManager } from './token-manager';
         onConnectorAuthenticationRequested: (connectorId) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
-        // userInterfaceID: '1b8eb88a-0c8d-4cec-a4d9-18a2d8359b89',
-        // userInterfaceID: '5573f307-c200-4759-9b14-de70e1ee03d7',
     });
 })();
