@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { Variable, VariableType } from '@chili-publish/studio-sdk';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
@@ -37,9 +38,15 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         !listVariableOpen || (listVariableOpen && variable.id === listVariableOpen.id);
                     if (isListVariable(variable) && isListVariabledDisplayed) {
                         const variableItem = listVariableOpen || variable;
-                        const options = variableItem.items.map((item) => ({ label: item, value: item }));
+                        const options = variableItem.items.map((item) => ({
+                            label: item.displayValue || item.value,
+                            value: item.value,
+                        }));
                         const selectedValue = variableItem.selected
-                            ? { label: variableItem.selected, value: variableItem.selected }
+                            ? {
+                                  label: variableItem.selected.displayValue || variableItem.selected.value,
+                                  value: variableItem.selected.value,
+                              }
                             : ('' as unknown as Option);
                         return (
                             <ComponentWrapper
