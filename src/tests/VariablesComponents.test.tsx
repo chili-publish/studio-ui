@@ -15,6 +15,11 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
     }),
 }));
 
+Object.defineProperty(navigator, 'language', {
+    value: 'en-GB',
+    configurable: true,
+});
+
 describe('Variable Component', () => {
     beforeEach(() => {
         window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
