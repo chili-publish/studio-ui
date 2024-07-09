@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "@chili-publish/grafx-shared-components": "^0.69.0",
-        "@chili-publish/studio-sdk": "^1.11.6",
+        "@chili-publish/studio-sdk": "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz",
         "axios": "^1.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
