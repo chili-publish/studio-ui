@@ -39,6 +39,7 @@ function DateVariable(props: IDateVariable) {
             maxDate={maxDate}
             onCalendarOpen={() => isMobileSize && onCalendarOpen?.()}
             inline={inline}
+            useLocale
         />
     );
 }
