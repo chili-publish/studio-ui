@@ -402,19 +402,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/388/grafx-shared-components.tgz":
-  version "0.69.0"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/388/grafx-shared-components.tgz#ad568f5235e0eaa01fb4529e26f97a4de78e5330"
-  dependencies:
-    "@fortawesome/fontawesome-svg-core" "^6.4.0"
-    "@fortawesome/pro-light-svg-icons" "^6.4.0"
-    "@fortawesome/pro-regular-svg-icons" "^6.4.0"
-    "@fortawesome/pro-solid-svg-icons" "^6.4.0"
-    "@fortawesome/react-fontawesome" "^0.2.0"
-    date-fns "^3.6.0"
-    react-datepicker "^7.1.0"
-    react-select "^5.6.1"
-
 "@chili-publish/studio-sdk@^1.11.6":
   version "1.11.6"
   resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.11.6/0e38037e00bcca9f247d3481343bb2c7dc336cc3#0e38037e00bcca9f247d3481343bb2c7dc336cc3"
