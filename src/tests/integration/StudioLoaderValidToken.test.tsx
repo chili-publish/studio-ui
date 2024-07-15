@@ -1,7 +1,5 @@
-import '@tests/shared.util/sdk.mock';
 import { connectorSourceUrl, onVariableListChangedCallback } from '@tests/shared.util/sdk.mock';
 import axios from 'axios';
-import StudioUI from '../../main';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
@@ -9,6 +7,7 @@ import { mockProject } from '@mocks/mockProject';
 import { mockVariables } from '@mocks/mockVariables';
 
 import { ImageVariable } from '@chili-publish/studio-sdk';
+import StudioUI from '../../main';
 
 const environmentBaseURL = 'environmentBaseURL';
 const projectID = 'projectId';
@@ -41,7 +40,7 @@ describe('StudioLoader integration - valid auth token', () => {
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
             authToken: token,
-            projectName: projectName,
+            projectName,
             refreshTokenAction: () => Promise.resolve(''),
         };
 

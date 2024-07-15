@@ -1,11 +1,10 @@
-import '@tests/shared.util/sdk.mock';
 import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
-import StudioUI from '../../main';
 import { act, render, waitFor, screen } from '@testing-library/react';
 import axios from 'axios';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
+import StudioUI from '../../main';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
@@ -30,7 +29,7 @@ describe('StudioLoader integration - expired auth token with provided refreshTok
             // trigger auth token expired for project info endpoint, which will be handled by the axios interceptor
             if (url === outputSettingsurl && params?.headers?.Authorization === `Bearer ${token}`) {
                 onError?.({
-                    url: url,
+                    url,
                     config: {
                         retry: false,
                         headers: {},
