@@ -17,7 +17,12 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "typeRoots": ["./src/@types", "./node_modules/@types"],
-        "outDir": "dist"
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "@mocks/*": ["__mocks__/*"],
+            "@tests/*": ["./src/tests/*"]
+        }
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "build"] // *** The files to not type check ***
