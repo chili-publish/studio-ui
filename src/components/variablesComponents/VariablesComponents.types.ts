@@ -1,9 +1,17 @@
-import { EditorResponse, ImageVariable, NumberVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import {
+    DateVariable,
+    EditorResponse,
+    ImageVariable,
+    NumberVariable,
+    Variable,
+    VariableType,
+} from '@chili-publish/studio-sdk';
 
 export interface IVariablesComponents {
     type: VariableType;
     variable: Variable;
     isDocumentLoaded: boolean;
+    onCalendarOpen?: () => void;
 }
 
 export interface IImageVariable {
@@ -23,6 +31,13 @@ export interface IBooleanVariable {
 
 export interface INumberVariable {
     variable: NumberVariable;
-    // TODO: change to number after SDK numbers PR is merged
-    handleValueChange: (value: string) => Promise<EditorResponse<null> | null> | null;
+    handleValueChange: (value: number) => Promise<EditorResponse<null> | null> | null;
+}
+export interface IDateVariable {
+    variable: DateVariable;
+    handleValueChange?: (value: string) => Promise<EditorResponse<null> | null> | null;
+    setDate?: (value: string) => void;
+    onCalendarOpen?: () => void;
+    inline?: boolean;
+    selected?: Date | null;
 }

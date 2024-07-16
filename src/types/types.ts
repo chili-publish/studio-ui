@@ -16,7 +16,11 @@ export interface ProjectConfig {
     onAuthenticationExpired: () => Promise<string>;
     onUserInterfaceBack: () => void;
     onLogInfoRequested: () => unknown;
-    onProjectGetDownloadLink: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+    onProjectGetDownloadLink: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
     overrideEngineUrl?: string;
     onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
@@ -32,7 +36,7 @@ export interface DefaultStudioConfig {
     uiOptions?: UiOptions;
     outputSettings?: OutputSettings;
     projectName: string;
-    refreshTokenAction: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
     editorLink?: string;
     userInterfaceID?: string;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
@@ -72,6 +76,17 @@ export type UserInterfaceOutputSettings = {
     description: string;
     type: DownloadFormats;
     layoutIntents: string[];
+};
+
+export type UserInterface = {
+    name: string;
+    id: string;
+    default: boolean;
+    outputSettings: {
+        [index: string]: {
+            layoutIntents: string[];
+        };
+    };
 };
 
 export interface IOutputSetting {
@@ -121,7 +136,7 @@ export interface IStudioUILoaderConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName: string;
-    refreshTokenAction: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
     outputSettings?: OutputSettings;
@@ -135,6 +150,10 @@ export interface IStudioUILoaderConfig {
     onAuthenticationRequested?: () => string;
     onAuthenticationExpired?: () => Promise<string>;
     onLogInfoRequested?: () => void;
-    onProjectGetDownloadLink?: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+    onProjectGetDownloadLink?: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }

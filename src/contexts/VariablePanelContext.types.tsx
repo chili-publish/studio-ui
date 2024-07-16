@@ -1,9 +1,16 @@
-import { MediaConnectorCapabilities, ConnectorInstance, ImageVariable, Media } from '@chili-publish/studio-sdk';
+import {
+    MediaConnectorCapabilities,
+    ConnectorInstance,
+    ImageVariable,
+    Media,
+    DateVariable,
+} from '@chili-publish/studio-sdk';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
     VARIABLES_LIST = 'variables_list',
     IMAGE_PANEL = 'image_panel',
+    DATE_VARIABLE_PICKER = 'date_variable_picker',
 }
 
 export interface IConnectors {
@@ -12,11 +19,12 @@ export interface IConnectors {
 }
 
 export interface ICapabilities {
-    [index: string]: MediaConnectorCapabilities;
+    [index: string]: MediaConnectorCapabilities | undefined;
 }
 
 export interface IVariablePanelContext {
     showVariablesPanel: () => void;
+    showDatePicker: (_: DateVariable) => void;
     showImagePanel: (_: ImageVariable) => void;
     contentType: ContentType;
     currentVariableId: string;

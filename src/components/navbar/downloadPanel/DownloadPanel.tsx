@@ -29,7 +29,11 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
     isDownloadPanelVisible: boolean;
-    handleDownload: (_: DownloadFormats, __: Dispatch<Partial<Record<DownloadFormats, boolean>>>) => Promise<void>;
+    handleDownload: (
+        _: DownloadFormats,
+        __: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
+        outputSettingsId: string | undefined,
+    ) => Promise<void>;
 }
 
 function DownloadPanel(props: DownloadPanelProps) {
@@ -42,20 +46,21 @@ function DownloadPanel(props: DownloadPanelProps) {
         userInterfaceDownloadOptions,
         downloadPanelRef,
         downloadState,
-        selectedOption,
-        setSelectedOption,
+        selectedOptionFormat,
         updateDownloadState,
+        handleOutputFormatChange,
+        selectedOutputSettingsId,
     } = useDownload(hideDownloadPanel);
 
     const getSelectedValue = useMemo(() => {
         if (userInterfaceDownloadOptions) {
             return (
-                userInterfaceDownloadOptions.find((item) => item.value === selectedOption) ??
+                userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
                 userInterfaceDownloadOptions[0]
             );
         }
-        return downloadOptions.find((item) => item.value === selectedOption) ?? downloadOptions[0];
-    }, [downloadOptions, selectedOption, userInterfaceDownloadOptions]);
+        return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
+    }, [downloadOptions, selectedOptionFormat, selectedOutputSettingsId, userInterfaceDownloadOptions]);
 
     return (
         <>
@@ -78,14 +83,14 @@ function DownloadPanel(props: DownloadPanelProps) {
                         label="Output"
                         selectedValue={getSelectedValue}
                         options={userInterfaceDownloadOptions ?? downloadOptions}
-                        onChange={(val) => setSelectedOption(val as typeof selectedOption)}
+                        onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
                         onMenuClose={() => setMobileDropdownOpen(false)}
                     />
                 </Content>
                 {!mobileDropdownOpen ? (
                     <ButtonWrapper>
-                        {downloadState[selectedOption] ? (
+                        {downloadState[selectedOptionFormat] ? (
                             <SpinnerContainer mobile>
                                 <LoadingIcon color={Colors.PRIMARY_WHITE} />
                             </SpinnerContainer>
@@ -94,11 +99,11 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 dataId={getDataIdForSUI(`download-btn`)}
                                 dataTestId={getDataTestIdForSUI(`download-btn`)}
                                 onClick={() => {
-                                    handleDownload(selectedOption, updateDownloadState);
+                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
                                 label="Download"
-                                icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
+                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     width: 100%;
                                 `}
@@ -124,10 +129,12 @@ function DownloadPanel(props: DownloadPanelProps) {
                             options={userInterfaceDownloadOptions ?? downloadOptions}
                             isSearchable={false}
                             width="16.25rem"
-                            onChange={(option) => setSelectedOption(option?.value as typeof selectedOption)}
+                            onChange={(option) =>
+                                handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
+                            }
                         />
                     </DesktopDropdownContainer>
-                    {downloadState[selectedOption] ? (
+                    {downloadState[selectedOptionFormat] ? (
                         <SpinnerContainer>
                             <LoadingIcon color={Colors.PRIMARY_WHITE} />
                         </SpinnerContainer>
@@ -137,11 +144,11 @@ function DownloadPanel(props: DownloadPanelProps) {
                             dataTestId={getDataTestIdForSUI(`download-btn`)}
                             dataIntercomId="Download selected output"
                             onClick={() => {
-                                handleDownload(selectedOption, updateDownloadState);
+                                handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                             }}
                             variant={ButtonVariant.primary}
                             label="Download"
-                            icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
+                            icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                             styles={css`
                                 margin: 1.25rem auto 1.25rem;
                                 width: 16.25rem;

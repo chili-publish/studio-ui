@@ -1,4 +1,5 @@
 import {
+    DateVariable,
     GroupVariable,
     ImageVariable,
     LongTextVariable,
@@ -7,6 +8,7 @@ import {
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 export const variables: Variable[] = [
     <ImageVariable>(<unknown>{
@@ -72,6 +74,28 @@ export const variables: Variable[] = [
         thousandsSeparator: '',
         showStepper: true,
         stepSize: 1,
+        isReadonly: false,
+        isRequired: false,
+    },
+    <DateVariable>{
+        id: 'date-variable',
+        name: 'Date Variable 1',
+        label: 'Date Variable 1',
+        type: VariableType.date,
+        occurrences: 0,
+        isVisible: true,
+        parentId: '2',
+        value: '2024-07-30',
+    },
+    <ListVariable>{
+        id: '10',
+        name: 'List',
+        label: 'Test List',
+        type: VariableType.list,
+        occurrences: 0,
+        isVisible: true,
+        parentId: '7',
+        items: [{ value: 'val 1', displayValue: 'Val 1' }, { value: 'val 2' }],
         isReadonly: false,
         isRequired: false,
     },

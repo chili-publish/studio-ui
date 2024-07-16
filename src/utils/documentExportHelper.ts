@@ -15,34 +15,20 @@ type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Ty
 export const getDownloadLink = async (
     format: DownloadFormats,
     baseUrl: string,
+    token: string,
     layoutId: Id,
     projectId: string,
+    outputSettingsId: string | undefined,
 ): Promise<DownloadLinkResult> => {
     try {
         const documentResponse = await window.SDK.document.getCurrentState();
-        let generateExportUrl = `${baseUrl}/output/`;
+        const generateExportUrl = `${baseUrl}/output/${format}`;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        let engineVersion = urlParams.get('engine');
+        const engineCommitSha = urlParams.get('engineCommitSha');
 
-        // Use different URL when format is one of array ['png', 'jpg'].
-        if (['png', 'jpg'].includes(format)) {
-            generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
-        } else if (format === DownloadFormats.PDF) {
-            generateExportUrl += `pdf`;
-        } else {
-            // Here we also pass additional query param `fps` with a default value of `30`.
-            generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
-        }
-
-        const pdfBody: { layoutsToExport: string[]; documentContent: unknown; engineVersion?: string } = {
-            layoutsToExport: [layoutId],
-            documentContent: documentResponse.parsedData ?? null,
-        };
-
-        // TODO: we tend to use this code only on DEV, we need a better way to verify it
         if (window.location.hostname !== 'chiligrafx.com') {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            let engineVersion = urlParams.get('engine');
-            const engineCommitSha = urlParams.get('engineCommitSha');
             if (engineVersion) {
                 if (/^\d+$/.test(engineVersion)) {
                     engineVersion = `prs/${engineVersion}`;
@@ -50,29 +36,23 @@ export const getDownloadLink = async (
             } else {
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
-
-            if (format !== DownloadFormats.PDF) {
-                generateExportUrl += `&engineVersion=${engineVersion}`;
-                if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
-            } else {
-                pdfBody.engineVersion = `${engineVersion}`;
-                if (engineCommitSha) pdfBody.engineVersion += `-${engineCommitSha}`;
-            }
+            if (engineCommitSha) engineVersion += `-${engineCommitSha}`;
         }
 
-        const config: HttpHeaders = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : JSON.stringify(pdfBody),
+        const body = documentResponse.data as string;
+        const requestBody = {
+            outputSettingsId,
+            layoutsToExport: [layoutId],
+            engineVersion,
+            documentContent: JSON.parse(body),
         };
 
-        const httpResponse = await axios.post(
-            generateExportUrl,
-            format !== DownloadFormats.PDF ? (documentResponse.data as string) ?? null : pdfBody,
-            config,
-        );
+        const httpResponse = await axios.post(generateExportUrl, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
         const response: GenerateAnimationResponse | ApiError = httpResponse.data as
             | GenerateAnimationResponse
@@ -90,7 +70,7 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, token);
 
         if (pollingResult === null) {
             return {
@@ -125,12 +105,16 @@ export const getDownloadLink = async (
  * @param endpoint api endpoint to start polling on
  * @returns true when the endpoint call has successfully been resolved
  */
-const startPollingOnEndpoint = async (endpoint: string): Promise<GenerateAnimationTaskPollingResponse | null> => {
+const startPollingOnEndpoint = async (
+    endpoint: string,
+    token: string,
+): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
             body: null,
         };
@@ -139,7 +123,7 @@ const startPollingOnEndpoint = async (endpoint: string): Promise<GenerateAnimati
         if (httpResponse?.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint);
+            return await startPollingOnEndpoint(endpoint, token);
         }
         if (httpResponse?.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;

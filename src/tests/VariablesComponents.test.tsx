@@ -1,4 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { act } from 'react-dom/test-utils';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
@@ -12,15 +15,34 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
     }),
 }));
 
+Object.defineProperty(navigator, 'language', {
+    value: 'en-GB',
+    configurable: true,
+});
+
 describe('Variable Component', () => {
+    beforeEach(() => {
+        window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+            parsedData: null,
+        });
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     it('Shows the image picker component for image variable', async () => {
         render(
-            <VariableComponent
-                key={`variable-component-${variables[0].id}`}
-                type={variables[0].type} // image variable
-                variable={variables[0]}
-                isDocumentLoaded
-            />,
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[0].id}`}
+                    type={variables[0].type} // image variable
+                    variable={variables[0]}
+                    isDocumentLoaded
+                />
+                ,
+            </UiThemeProvider>,
         );
         const variable = await waitFor(() => screen.getByText('Variable1'));
         expect(variable).toBeInTheDocument();
@@ -69,7 +91,6 @@ describe('Variable Component', () => {
                 isDocumentLoaded
             />,
         );
-        screen.logTestingPlaygroundURL();
         const input = getByRole('textbox', { name: /number-variable/i });
         const stepBtns = getAllByRole('button');
         expect(input).toBeInTheDocument();
@@ -81,5 +102,84 @@ describe('Variable Component', () => {
         fireEvent.blur(input);
 
         expect(input).toHaveValue('12.11');
+    });
+
+    describe('Shows date component for date date variable', () => {
+        it('Correctly renders the date component for date variables', () => {
+            const { getByRole } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            expect(dateInput).toBeInTheDocument();
+            expect(dateInput.value).toBe('30/07/2024');
+        });
+        it('Calls the onchange function when date is changed with correct params', async () => {
+            const user = userEvent.setup();
+            const { getByRole, getByText } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.click(dateInput));
+
+            await act(() => user.click(getByText('28'))); // the day 28 in the calendar
+
+            expect(window.SDK.variable.setValue).toHaveBeenCalled();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+        });
+
+        it('Can set date to null by clearing the input field', async () => {
+            const user = userEvent.setup();
+            const { getByRole } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.clear(dateInput));
+            await act(() => fireEvent.blur(dateInput));
+            expect(await screen.queryByText('30/07/2024')).toBeNull();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '');
+        });
+        it('Select the correct date after clearing the input', async () => {
+            // Regression test after QA found the selected date is 1 day before what user selects
+            const user = userEvent.setup();
+            const { getByRole, getByText } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={variables[6]}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.clear(dateInput));
+            await act(() => fireEvent.blur(dateInput));
+            await act(() => user.click(dateInput));
+            await act(() => user.click(getByText('28'))); // the day 28 in the calendar
+
+            expect(window.SDK.variable.setValue).toHaveBeenCalled();
+            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+        });
     });
 });

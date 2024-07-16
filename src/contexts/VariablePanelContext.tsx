@@ -1,5 +1,5 @@
 import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publish/grafx-shared-components';
-import { ImageVariable, Media } from '@chili-publish/studio-sdk';
+import { DateVariable, ImageVariable, Media } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
@@ -8,6 +8,7 @@ import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from '
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
+    showDatePicker: () => undefined,
     showImagePanel: () => undefined,
     contentType: ContentType.VARIABLES_LIST,
     currentVariableId: '',
@@ -106,6 +107,10 @@ export function VariablePanelContextProvider({
     const data = useMemo(
         () => ({
             showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
+            showDatePicker: (variable: DateVariable) => {
+                setContentType(ContentType.DATE_VARIABLE_PICKER);
+                setCurrentVariableId(variable.id);
+            },
             showImagePanel: (variable: ImageVariable) => {
                 setCurrentVariableId(variable.id);
                 setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
