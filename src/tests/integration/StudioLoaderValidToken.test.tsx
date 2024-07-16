@@ -28,6 +28,8 @@ describe('StudioLoader integration - valid auth token', () => {
             if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
             if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
             if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
+
+            return Promise.resolve({ data: {} });
         });
     });
 

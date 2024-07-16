@@ -203,6 +203,7 @@ export class StudioProjectLoader {
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
+            if (!userInterface.outputSettings) return mappedOutputSettings;
 
             Object.keys(userInterface.outputSettings).forEach((outputSettingId) => {
                 const matchedOutputSetting = outputSettings.data.data.find(
