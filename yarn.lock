@@ -417,8 +417,8 @@
     react-select "^5.6.1"
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz":
-  version "1.11.7"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz#aee2bd50fa8ea533990d8550276432c9076d61c1"
+  version "1.12.0"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz#52c00414f06153a3a44b4fb3ce55a23d8844f77b"
   dependencies:
     penpal "6.1.0"
 
