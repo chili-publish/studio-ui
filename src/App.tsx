@@ -156,15 +156,9 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             async onAuthExpired(request) {
                 try {
                     if (request.type === AuthRefreshTypeEnum.grafxToken) {
-                        try {
-                            const newToken = await projectConfig.onAuthenticationExpired();
-                            setAuthToken(newToken);
-                            return new GrafxTokenAuthCredentials(newToken);
-                        } catch (err) {
-                            // eslint-disable-next-line no-console
-                            console.error(`[${App.name}] Axios error`, err);
-                            return null;
-                        }
+                        const newToken = await projectConfig.onAuthenticationExpired();
+                        setAuthToken(newToken);
+                        return new GrafxTokenAuthCredentials(newToken);
                     }
 
                     // "oAuth2AuthorizationCode" Environment API Connector's authorization entity type

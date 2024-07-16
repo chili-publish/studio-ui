@@ -86,7 +86,6 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         await waitFor(() =>
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                '[App] Axios error',
                 expect.objectContaining(
                     new Error(
                         'The authentication token has expired, and a method to obtain a new one is not provided.',
