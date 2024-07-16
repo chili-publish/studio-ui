@@ -15,9 +15,8 @@ const token = 'auth-token';
 const refreshToken = 'refresh-token';
 
 jest.mock('axios');
-
 describe('StudioLoader integration - expired auth token', () => {
-    it('Should correctly refresh the token', async () => {
+    it('Should correctly refresh the token when refreshToken action is provided', async () => {
         let onError: jest.Func;
 
         (axios.interceptors.response.use as jest.Mock).mockImplementation((_, onRejected) => {

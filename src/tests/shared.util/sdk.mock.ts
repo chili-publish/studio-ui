@@ -15,8 +15,10 @@ jest.mock('@chili-publish/studio-sdk', () => {
         /* eslint-disable */
         default: function (config: ConfigType) {
             onVariableListChangedCallback = config.onVariableListChanged;
+            const sdk = new originalModule.default(config);
             /* eslint-enable */
             return {
+                ...sdk,
                 loadEditor: () => '',
                 configuration: { setValue: jest.fn() },
                 connector: {
