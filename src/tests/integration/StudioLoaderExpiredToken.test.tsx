@@ -12,7 +12,7 @@ const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document
 const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const outputSettingsurl = `${environmentBaseURL}/output/settings`;
 const token = 'auth-token';
-const refreshToken = 'refresh-token';
+const refreshTokenData = 'refresh-token-data';
 
 jest.mock('axios');
 describe('StudioLoader integration - expired auth token', () => {
@@ -54,7 +54,7 @@ describe('StudioLoader integration - expired auth token', () => {
             return Promise.resolve({});
         });
 
-        const refreshTokenFn = jest.fn().mockResolvedValue(refreshToken);
+        const refreshTokenFn = jest.fn().mockResolvedValue(refreshTokenData);
         const config = {
             selector: 'sui-root',
             projectDownloadUrl,
@@ -73,7 +73,7 @@ describe('StudioLoader integration - expired auth token', () => {
 
         await waitFor(() => {
             expect(axios.get).toHaveBeenCalledWith(outputSettingsurl, {
-                headers: { Authorization: `Bearer ${refreshToken}` },
+                headers: { Authorization: `Bearer ${refreshTokenData}` },
             });
         });
 
