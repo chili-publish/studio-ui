@@ -9,6 +9,9 @@ module.exports = {
             version: 'detect',
         },
         'import/resolver': {
+            typescript: {
+                project: '.',
+            },
             node: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 moduleDirectory: ['node_modules', 'src/', '_modules/'],

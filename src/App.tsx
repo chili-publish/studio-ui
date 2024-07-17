@@ -118,9 +118,16 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     );
 
     useEffect(() => {
-        projectConfig.onProjectInfoRequested(projectConfig.projectId).then((project) => {
-            setCurrentProject(project);
-        });
+        projectConfig
+            .onProjectInfoRequested(projectConfig.projectId)
+            .then((project) => {
+                setCurrentProject(project);
+            })
+            .catch((err: Error) => {
+                // eslint-disable-next-line no-console
+                console.error(`[${App.name}] Error`, err);
+                return err;
+            });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
     const zoomToPage = async () => {
