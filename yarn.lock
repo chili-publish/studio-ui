@@ -418,7 +418,7 @@
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz":
   version "1.12.0"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz#52c00414f06153a3a44b4fb3ce55a23d8844f77b"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/478/studio-sdk.tgz#d03b0ffffba6ae7d39ff4b2d942697e3c8692bde"
   dependencies:
     penpal "6.1.0"
 
