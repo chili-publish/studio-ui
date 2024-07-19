@@ -24,7 +24,7 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-shared-components": "^0.69.2",
+        "@chili-publish/grafx-shared-components": "^0.70.0",
         "@chili-publish/studio-sdk": "^1.12.2",
         "axios": "^1.6.0",
         "react": "^18.2.0",
@@ -32,7 +32,7 @@
         "styled-components": "^5.3.11"
     },
     "engines": {
-        "node": ">=18.0.0 <19.0.0"
+        "node": ">=20.0.0 <21.0.0"
     },
     "devDependencies": {
         "@auth0/auth0-spa-js": "^2.1.3",
