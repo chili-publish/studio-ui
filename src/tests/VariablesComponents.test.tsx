@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
+import { DateVariable } from '@chili-publish/studio-sdk';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 
@@ -180,6 +181,25 @@ describe('Variable Component', () => {
 
             expect(window.SDK.variable.setValue).toHaveBeenCalled();
             expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+        });
+        it('Correctly shows the excluded dates', async () => {
+            const user = userEvent.setup();
+            const { getByRole, getByText } = render(
+                <UiThemeProvider theme="platform">
+                    <VariableComponent
+                        key={`variable-component-${variables[6].id}`}
+                        type={variables[6].type}
+                        variable={{ ...variables[6], excludedDays: ['monday', 'friday'] } as DateVariable}
+                        isDocumentLoaded
+                    />
+                </UiThemeProvider>,
+            );
+            const dateInput = getByRole('textbox') as HTMLInputElement;
+            await act(() => user.click(dateInput));
+            expect(getByText(/mo/i)).toHaveStyle({ color: '#b3b3b3' }); // Monday should be greyed out
+            expect(getByText(/fr/i)).toHaveStyle({ color: '#b3b3b3' }); // Friday should be greyed out
+            expect(getByText(/22/i)).toHaveAttribute('aria-disabled', 'true'); // a Monday date
+            expect(getByText(/26/i)).toHaveAttribute('aria-disabled', 'true'); // a Friday date
         });
     });
 });
