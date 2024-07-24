@@ -2,16 +2,19 @@ import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
+const FILTER_HEIGHT = '2.5rem';
+const NAVIGATION_HEIGHT = '2.5rem';
+const NAVIGATION_MARGIN_BOTTOM = '1rem';
+const NAVIGATION_MARGIN_TOP = '0.5rem';
+
 export const ResourcesContainer = styled.div`
+    width: 100%;
     display: grid;
     grid-template-columns: 7.5rem 7.5rem;
     gap: 1.3rem;
     ${mobileMediaQuery} {
         grid-template-columns: minmax(7.5rem, 1fr) minmax(7.5rem, 1fr);
         gap: 1rem;
-        max-height: 500px;
-        overflow: scroll;
-        height: auto;
     }
 `;
 
@@ -85,12 +88,12 @@ export const LoadPageContainer = styled.div`
 
 export const BreadCrumbsWrapper = styled.div`
     width: 15.625rem;
-    height: 2.5rem;
+    height: ${NAVIGATION_HEIGHT};
+    margin-bottom: ${NAVIGATION_MARGIN_BOTTOM};
+    margin-top: ${NAVIGATION_MARGIN_TOP};
     overflow: visible;
     white-space: nowrap;
     display: flex;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
     & .grafx-drop-down__control {
         &:hover {
             border: 1px solid transparent !important;
@@ -101,8 +104,22 @@ export const BreadCrumbsWrapper = styled.div`
     }
 `;
 
+export const ScrollbarContainer = styled.div.attrs(
+    (props: { filteringEnabled?: boolean; navigationEnabled?: boolean }) => {
+        const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_TOP} + ${NAVIGATION_MARGIN_BOTTOM})`;
+        const height = `calc(100% - ${props.filteringEnabled ? FILTER_HEIGHT : '0px'} - ${
+            props.navigationEnabled ? navigationBarTotalHeight : '0px'
+        })`;
+        return { ...props, height };
+    },
+)`
+    width: 100%;
+    height: ${(props) => props.height};
+    overflow: scroll;
+`;
 export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
     width: ${(props) => (props.isMobile ? '100%' : '16.25rem')};
+    height: ${FILTER_HEIGHT};
     ${(props) =>
         props.hasSearchQuery &&
         `

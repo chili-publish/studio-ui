@@ -21,5 +21,6 @@ export const VariablesListContainer = styled.div<{ hidden: boolean }>`
 
 export const ImagePanelContainer = styled.div<{ hidden: boolean }>`
     padding: 0 0 0 1.25rem;
+    height: 100%;
     ${({ hidden }) => hidden && 'display: none;'};
 `;

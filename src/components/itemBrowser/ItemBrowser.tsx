@@ -24,22 +24,10 @@ import {
     ResourcesContainer,
     SearchInputWrapper,
     EmptySearchResultContainer,
+    ScrollbarContainer,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
 import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
-
-const TOP_BAR_HEIGHT_REM = '4rem';
-const TOP_BAR_BORDER_HEIGHT = '1px';
-const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-const BREADCRUMBS_HEIGHT_REM = '3.5rem';
-
-const leftPanelHeight = `
-    calc(100vh
-        - ${TOP_BAR_HEIGHT_REM}
-        - ${TOP_BAR_BORDER_HEIGHT}
-        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
-        - ${BREADCRUMBS_HEIGHT_REM}
-    )`;
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -69,7 +57,7 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
-    const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
@@ -276,6 +264,8 @@ function ItemBrowser<
 
     // eslint-disable-next-line no-nested-ternary
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
+    const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
+    const navigationEnabled = !searchQuery;
 
     const handleSearch = (keyword: string) => {
         setSearchQuery(keyword);
@@ -290,8 +280,9 @@ function ItemBrowser<
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
             isModal={false}
             padding="0"
+            height="100%"
         >
-            {connectorCapabilities[connectorId]?.filtering && (
+            {filteringEnabled ? (
                 <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
                     <Input
                         type="text"
@@ -335,8 +326,8 @@ function ItemBrowser<
                         isHighlightOnClick
                     />
                 </SearchInputWrapper>
-            )}
-            {!searchQuery && (
+            ) : null}
+            {navigationEnabled ? (
                 <BreadCrumbsWrapper>
                     <BreadCrumb
                         href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
@@ -356,36 +347,38 @@ function ItemBrowser<
                         }}
                     />
                 </BreadCrumbsWrapper>
-            )}
-            <ScrollbarWrapper height={height ?? leftPanelHeight} scrollbarWidth="0">
-                {elements.length === 0 && !isLoading && searchQuery && (
-                    <EmptySearchResultContainer>
-                        No search results found. Maybe try another keyword?
-                    </EmptySearchResultContainer>
-                )}
-                <ResourcesContainer
-                    data-id={getDataIdForSUI('resources-container')}
-                    data-testid={getDataTestIdForSUI('resources-container')}
-                >
-                    {elements}
-                    {isLoading &&
-                        SKELETONS.map((el) => (
-                            <ChiliPreview
-                                key={el}
-                                itemId={el.toString()}
-                                variant={PreviewCardVariant.GRID}
-                                padding="0"
-                                type={PreviewType.COLLECTION}
-                                isSkeleton
-                                onClickCard={() => null}
-                                renamingDisabled
-                            />
-                        ))}
-                    <LoadPageContainer>
-                        <div ref={infiniteScrollingRef} />
-                    </LoadPageContainer>
-                </ResourcesContainer>
-            </ScrollbarWrapper>
+            ) : null}
+            <ScrollbarContainer filteringEnabled={filteringEnabled} navigationEnabled={navigationEnabled}>
+                <ScrollbarWrapper height="auto" scrollbarWidth="0">
+                    {elements.length === 0 && !isLoading && searchQuery && (
+                        <EmptySearchResultContainer>
+                            No search results found. Maybe try another keyword?
+                        </EmptySearchResultContainer>
+                    )}
+                    <ResourcesContainer
+                        data-id={getDataIdForSUI('resources-container')}
+                        data-testid={getDataTestIdForSUI('resources-container')}
+                    >
+                        {elements}
+                        {isLoading &&
+                            SKELETONS.map((el) => (
+                                <ChiliPreview
+                                    key={el}
+                                    itemId={el.toString()}
+                                    variant={PreviewCardVariant.GRID}
+                                    padding="0"
+                                    type={PreviewType.COLLECTION}
+                                    isSkeleton
+                                    onClickCard={() => null}
+                                    renamingDisabled
+                                />
+                            ))}
+                        <LoadPageContainer>
+                            <div ref={infiniteScrollingRef} />
+                        </LoadPageContainer>
+                    </ResourcesContainer>
+                </ScrollbarWrapper>
+            </ScrollbarContainer>
         </Panel>
     );
 }
