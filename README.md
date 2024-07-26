@@ -1,6 +1,6 @@
 # Studio UI
 
-![Coverage](https://img.shields.io/badge/coverage-66.28%25-red.svg)
+![Coverage](https://img.shields.io/badge/coverage-70.41%25-red.svg)
 
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
@@ -89,7 +89,7 @@ for a more advanced example, and extra information about building an integration
 
 ### Tools setup
 
--   [Node v18](https://nodejs.org/en) LTS
+-   [Node 20](https://nodejs.org/en) LTS
     > node -v # to check existing node version
 -   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed (yarn `major version 1` though)
     > yarn -v # to check existing yarn version

@@ -168,7 +168,7 @@ describe('Image Panel', () => {
     });
 
     test('Media asset folder navigation works', async () => {
-        const { getAllByTestId, getAllByRole, getByText } = render(
+        const { getAllByTestId, getByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors}>
                     <LeftPanel variables={variables} isDocumentLoaded />
@@ -179,7 +179,8 @@ describe('Image Panel', () => {
         await act(async () => {
             imagePicker.click();
         });
-        const image = getAllByRole('img', { name: /grafx/i })[0];
+
+        const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
 
         await act(async () => {
             image.click();
