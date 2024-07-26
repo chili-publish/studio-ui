@@ -212,7 +212,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                 }}
                 options={{
                     ...defaultOptions,
-                    baseURL: 'https://genie-assistant.azurewebsites.net',
+                    baseURL: 'https://grafx-genie-hvbvf4abh9bffhd9.westeurope-01.azurewebsites.net',
                     bot: {
                         ...defaultOptions.bot,
                         chatLayout: 'ultracompact',
