@@ -20,7 +20,7 @@ If you need help generating a token or would like code samples, please see our [
 
 > Important to note that projects are context based, if you look at the projects on the GraFx platform you are quite literally looking at _YOUR USER_ or \_YOUR USER_APPLICATION projects. That mean that another context doesn't have access to the projects. This means that the integration context doesn't have access to the projects you create on your account in GraFx Platform.
 
-### Perquisites
+### Prerequisites
 
 -   A working (preferably new) project
 -   Some way to serve an html file (webserver like nginx, mamp, apache, ...)
