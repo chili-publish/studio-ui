@@ -20,16 +20,15 @@ function NumberVariable(props: INumberVariable) {
             dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
             dataIntercomId={`input-variable-${variable.name}`}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                const currentValue = Number(event.target.value.replace(variable.decimalSeparator, '.'));
+                const currentValue = parseFloat(event.target.value.replace(',', '.'));
                 const prevValue = variable.value;
                 if (prevValue !== currentValue) {
                     handleValueChange(currentValue);
                 }
             }}
             onValueChange={(value: string) => {
-                const currentValue = Number(value.replace(variable.decimalSeparator, '.'));
+                const currentValue = parseFloat(value.replace(',', '.'));
                 const prevValue = variable.value;
-
                 if (prevValue !== currentValue) {
                     handleValueChange(currentValue);
                 }
