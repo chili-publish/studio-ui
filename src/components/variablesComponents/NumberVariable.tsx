@@ -14,7 +14,7 @@ function NumberVariable(props: INumberVariable) {
             max={variable.maxValue}
             precision={variable.numberOfDecimals}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
-            value={`${variable.value}`.replace('.', variable.decimalSeparator)}
+            value={`${variable.value}`}
             step={variable.showStepper ? variable.stepSize : undefined}
             dataId={getDataIdForSUI(`input-number-${variable.id}`)}
             dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
