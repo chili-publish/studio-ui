@@ -1,6 +1,6 @@
 import {
     AvailableIcons,
-    BreadCrumb,
+    BreadCrumbDeprecated,
     PreviewCard as ChiliPreview,
     Colors,
     Icon,
@@ -338,7 +338,7 @@ function ItemBrowser<
             )}
             {!searchQuery && (
                 <BreadCrumbsWrapper>
-                    <BreadCrumb
+                    <BreadCrumbDeprecated
                         href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                         color={Colors.SECONDARY_FONT}
                         activeColor={Colors.PRIMARY_FONT}
