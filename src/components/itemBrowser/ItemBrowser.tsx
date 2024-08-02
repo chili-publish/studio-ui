@@ -1,6 +1,6 @@
 import {
     AvailableIcons,
-    BreadCrumb,
+    BreadCrumbDeprecated as BreadCrumb,
     PreviewCard as ChiliPreview,
     Colors,
     Icon,
@@ -18,15 +18,15 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 import {
     BreadCrumbsWrapper,
+    EmptySearchResultContainer,
     LoadPageContainer,
     ResourcesContainer,
     SearchInputWrapper,
-    EmptySearchResultContainer,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
-import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 
 const TOP_BAR_HEIGHT_REM = '4rem';
 const TOP_BAR_BORDER_HEIGHT = '1px';
