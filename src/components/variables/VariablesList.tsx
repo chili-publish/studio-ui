@@ -75,7 +75,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                     label={variable.name}
                                     selectedValue={selectedValue || ''}
                                     options={options}
-                                    placeholder={variable.placeholder}
+                                    placeholder={variable.placeholder || undefined}
                                     onChange={(val) => updateVariableValue(variable.id, val)}
                                     onMenuOpen={() => setListVariableOpen(variable)}
                                     onMenuClose={() => setListVariableOpen(null)}
