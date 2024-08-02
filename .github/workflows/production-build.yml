@@ -17,6 +17,14 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
+            - name: bump version
+              uses: phips28/gh-action-bump-version@master
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+              with:
+                commit-message: 'Release CI: bumps version to {{version}} [skip ci]'
+                version-type:  'patch'      
             - name: install dependencies
               run: |
                   yarn install
@@ -53,3 +61,32 @@ jobs:
               with:
                   inlineScript: |
                       az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_PRD_CONNECTION_STRING }}" --overwrite true
+    
+    bump-version:
+        needs: build
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [20]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.PACKAGE_SECRET }}
+            - name: Use Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: bump version
+              uses: phips28/gh-action-bump-version@master
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+              with:
+                  commit-message: 'CI: bumps version to {{version}} [skip ci]'
+                  version-type:  'preminor'
+
+
+    
