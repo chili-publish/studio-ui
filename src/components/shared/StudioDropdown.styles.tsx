@@ -64,3 +64,6 @@ export const Label = styled.div<{ marginBottom?: string }>`
     line-height: 1.33;
     margin-bottom: ${(props) => props.marginBottom ?? '0'};
 `;
+export const MobilePlaceholderWrapper = styled.span`
+    color: ${Colors.LIGHT_GRAY_600};
+`;

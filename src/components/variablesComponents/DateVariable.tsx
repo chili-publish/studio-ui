@@ -34,7 +34,7 @@ function DateVariable(props: IDateVariable) {
             selected={getSelectedDate}
             dataId={getDataIdForSUI(`${variable.id}-variable-date-picker`)}
             dataTestId={getDataTestIdForSUI(`${variable.id}-variable-date-picker`)}
-            placeholder="Select date"
+            placeholder={variable.placeholder || 'Select date'}
             minDate={minDate}
             maxDate={maxDate}
             onCalendarOpen={() => isMobileSize && onCalendarOpen?.()}

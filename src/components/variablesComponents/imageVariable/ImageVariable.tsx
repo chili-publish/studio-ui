@@ -40,7 +40,7 @@ function ImageVariable(props: IImageVariable) {
             dataIntercomId={`image-picker-${variable.name}`}
             id={variable.id}
             label={<Label translationKey={variable.name} value={variable.name} />}
-            placeholder="Select image"
+            placeholder={variable.placeholder || 'Select image'}
             errorMsg="Something went wrong. Please try again"
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}

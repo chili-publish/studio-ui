@@ -402,10 +402,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.71.2":
-  version "0.71.2"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.71.2/ddbcdc253ff68980129d5d2523ccb34a96650f50#ddbcdc253ff68980129d5d2523ccb34a96650f50"
-  integrity sha512-Cfgu5gF+hEgTjkQ3vtqsBfStYIQiWvDU1G25s4IRIB0MMkvCOgg3GSui+Rtu3yRVYa/IgKjiOhYx/cI6/cbFbg==
+"@chili-publish/grafx-shared-components@^0.72.5":
+  version "0.72.5"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.72.5/fdad8a30a715d9afcb8309188afce252b3a5a7c7#fdad8a30a715d9afcb8309188afce252b3a5a7c7"
+  integrity sha512-9uihuRnxxqm5nP8PEfMdTQzmrwM4q1RuaZMZTHRijE5LJ9Hkr5sZZB8F7DjCBW+bRpNLXBoLVs9kKHAWmP3IGA==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -416,10 +416,10 @@
     react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^1.12.2":
-  version "1.12.2"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.12.2/0e00e8ae64540dac327e6428c163c8f53859628b#0e00e8ae64540dac327e6428c163c8f53859628b"
-  integrity sha512-SQIv5YW+XKxUw4djppBbRm4VFF23ZAw+AIrM2gW6gxQMM06L2ZvlB2BMClVWO/tK0YtD/4IdM2Xmu2KktSvlqA==
+"@chili-publish/studio-sdk@^1.12.3-rc.3":
+  version "1.12.3-rc.3"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.12.3-rc.3/6acd7ed1aaa56fe639d82205bf31c0ef2da90509#6acd7ed1aaa56fe639d82205bf31c0ef2da90509"
+  integrity sha512-LztZKWNlWoQMZdopSaj2gxPIQb5Eqbz4IItZwFU5BT+SyOH4T+Vf6CL36D2JBX6m6+ngr8oz7yFCVFDD/TwPUw==
   dependencies:
     penpal "6.1.0"
 
