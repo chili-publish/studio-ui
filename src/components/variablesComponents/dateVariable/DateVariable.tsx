@@ -1,9 +1,9 @@
 import { CustomDatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { IDateVariable } from './VariablesComponents.types';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import useDateVariable from './useDateVariable';
-import { HelpTextWrapper } from './VariablesComponents.styles';
+import { IDateVariable } from '../VariablesComponents.types';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import useDateVariable from '../useDateVariable';
+import { HelpTextWrapper } from '../VariablesComponents.styles';
 
 function DateVariable(props: IDateVariable) {
     const { handleValueChange, variable, onCalendarOpen, inline, selected, setDate, isOpenOnMobile } = props;
