@@ -50,6 +50,7 @@ function VariablesComponents(props: IVariablesComponents) {
                             variable={variable as DateVariableType}
                             handleValueChange={handleValueChange}
                             onCalendarOpen={onCalendarOpen}
+                            isOpenOnMobile={false}
                         />
                     )
                 );

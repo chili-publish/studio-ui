@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { Option, useMobileSize, Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
+import { Option, useMobileSize, Button, ButtonVariant, InputLabel } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
@@ -15,6 +15,7 @@ import DateVariable from '../variablesComponents/DateVariable';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -70,15 +71,20 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 key={`variable-component-${variable.id}`}
                                 data-intercom-target={`dropdown-variable-${variable.name}`}
                             >
-                                <StudioDropdown
-                                    dataId={variable.id}
-                                    label={variable.name}
-                                    selectedValue={selectedValue || ''}
-                                    options={options}
-                                    onChange={(val) => updateVariableValue(variable.id, val)}
-                                    onMenuOpen={() => setListVariableOpen(variable)}
-                                    onMenuClose={() => setListVariableOpen(null)}
-                                />
+                                <HelpTextWrapper>
+                                    <StudioDropdown
+                                        dataId={variable.id}
+                                        label={variable.name}
+                                        selectedValue={selectedValue || ''}
+                                        options={options}
+                                        onChange={(val) => updateVariableValue(variable.id, val)}
+                                        onMenuOpen={() => setListVariableOpen(variable)}
+                                        onMenuClose={() => setListVariableOpen(null)}
+                                    />
+                                    {variable.helpText && !listVariableOpen ? (
+                                        <InputLabel labelFor={variable.id} label={variable.helpText} />
+                                    ) : null}
+                                </HelpTextWrapper>
                             </ComponentWrapper>
                         );
                     }
@@ -98,6 +104,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                         setDate={(val) => {
                                             setSelectedDate(new Date(val));
                                         }}
+                                        isOpenOnMobile
                                     />
                                 </DatePickerWrapper>
                                 <Button

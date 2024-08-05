@@ -13,3 +13,13 @@ export const BooleanVariableContainer = styled.div`
     display: flex;
     align-items: center;
 `;
+
+export const HelpTextWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+    > div:nth-child(2) {
+        margin-bottom: 0;
+    }
+`;
