@@ -46,7 +46,7 @@ function StudioDropdown({
     if (!isMobileSize) {
         return (
             <>
-                {label && <Label marginBottom="0.75rem">{label}</Label>}
+                {label && <Label marginBottom="0.5rem">{label}</Label>}
                 <DropDown
                     dataId={getDataIdForSUI(`dropdown-${dataId}`)}
                     dataTestId={getDataTestIdForSUI(`dropdown-${dataId}`)}
