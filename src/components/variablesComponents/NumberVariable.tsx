@@ -14,22 +14,21 @@ function NumberVariable(props: INumberVariable) {
             max={variable.maxValue}
             precision={variable.numberOfDecimals}
             label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
-            value={`${variable.value}`.replace('.', variable.decimalSeparator)}
+            value={`${variable.value}`}
             step={variable.showStepper ? variable.stepSize : undefined}
             dataId={getDataIdForSUI(`input-number-${variable.id}`)}
             dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
             dataIntercomId={`input-variable-${variable.name}`}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                const currentValue = Number(event.target.value.replace(variable.decimalSeparator, '.'));
+                const currentValue = parseFloat(event.target.value.replace(',', '.'));
                 const prevValue = variable.value;
                 if (prevValue !== currentValue) {
                     handleValueChange(currentValue);
                 }
             }}
             onValueChange={(value: string) => {
-                const currentValue = Number(value.replace(variable.decimalSeparator, '.'));
+                const currentValue = parseFloat(value.replace(',', '.'));
                 const prevValue = variable.value;
-
                 if (prevValue !== currentValue) {
                     handleValueChange(currentValue);
                 }
