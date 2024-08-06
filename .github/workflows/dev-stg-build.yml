@@ -163,3 +163,5 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
               with:
                   commit-message: 'CI: bumps version to {{version}} [skip ci]'
+                  version-type:  'prerelease'
+
