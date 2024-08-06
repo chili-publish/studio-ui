@@ -348,8 +348,12 @@ function ItemBrowser<
                     />
                 </BreadCrumbsWrapper>
             ) : null}
-            <ScrollbarContainer filteringEnabled={filteringEnabled} navigationEnabled={navigationEnabled}>
-                <ScrollbarWrapper height="auto" scrollbarWidth="0">
+            <ScrollbarContainer
+                filteringEnabled={filteringEnabled}
+                hasSearchQuery={!!searchQuery}
+                navigationEnabled={navigationEnabled}
+            >
+                <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
                         <EmptySearchResultContainer>
                             No search results found. Maybe try another keyword?

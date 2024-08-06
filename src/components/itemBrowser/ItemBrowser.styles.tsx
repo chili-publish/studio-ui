@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
 const FILTER_HEIGHT = '2.5rem';
+const FILTER_MARGIN_BOTTOM = '1rem';
+
 const NAVIGATION_HEIGHT = '2.5rem';
 const NAVIGATION_MARGIN_BOTTOM = '1rem';
 const NAVIGATION_MARGIN_TOP = '0.5rem';
@@ -105,9 +107,10 @@ export const BreadCrumbsWrapper = styled.div`
 `;
 
 export const ScrollbarContainer = styled.div.attrs(
-    (props: { filteringEnabled?: boolean; navigationEnabled?: boolean }) => {
+    (props: { filteringEnabled?: boolean; navigationEnabled?: boolean; hasSearchQuery?: boolean }) => {
         const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_TOP} + ${NAVIGATION_MARGIN_BOTTOM})`;
-        const height = `calc(100% - ${props.filteringEnabled ? FILTER_HEIGHT : '0px'} - ${
+        const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
+        const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
             props.navigationEnabled ? navigationBarTotalHeight : '0px'
         })`;
         return { ...props, height };
@@ -115,7 +118,11 @@ export const ScrollbarContainer = styled.div.attrs(
 )`
     width: 100%;
     height: ${(props) => props.height};
-    overflow: scroll;
+    @media (hover: none), (hover: on-demand) {
+        > div {
+            overflow-y: auto;
+        }
+    }
 `;
 export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
     width: ${(props) => (props.isMobile ? '100%' : '16.25rem')};
@@ -123,7 +130,7 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
     ${(props) =>
         props.hasSearchQuery &&
         `
-        margin-bottom: 1rem;
+        margin-bottom: ${FILTER_MARGIN_BOTTOM};
     `};
 `;
 

@@ -1,12 +1,12 @@
 import { Colors } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const LeftPanelContainer = styled.div`
+export const LeftPanelContainer = styled.div<{ overflowScroll: boolean }>`
     min-width: 18.75rem;
     width: 18.75rem;
     background-color: ${Colors.PRIMARY_WHITE};
     border-right: 2px solid ${Colors.PRIMARY_DROPDOWN_BACKGROUND};
-    overflow: scroll;
+    ${(props) => props.overflowScroll && 'overflow: scroll'};
     padding-left: 0;
 
     &::-webkit-scrollbar {
