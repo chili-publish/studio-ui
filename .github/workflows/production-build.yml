@@ -30,20 +30,23 @@ jobs:
               run: yarn ci-lint
             - name: run tests
               run: yarn cover
-            - name: build code
-              run: yarn build
-            - name: Bump version
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Bump version locally
               run: |
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
                   git fetch origin
                   git checkout -b main origin/main
                   npm version patch
+
+            - name: build code
+              run: yarn build
+            - name: Commit version changes
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
                   git add package.json yarn.lock
                   git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main      
+                  git push origin main
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
@@ -96,7 +99,7 @@ jobs:
                   npm version preminor
                   git add package.json yarn.lock
                   git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main      
+                  git push origin main
 
 
     
