@@ -64,15 +64,17 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 data-intercom-target={`dropdown-variable-${variable.name}`}
                             >
                                 <HelpTextWrapper>
-                                    <StudioDropdown
-                                        dataId={variable.id}
-                                        label={variable.name}
-                                        selectedValue={selectedValue || ''}
-                                        options={options}
-                                        onChange={(val) => updateVariableValue(variable.id, val)}
-                                        onMenuOpen={() => setListVariableOpen(variable)}
-                                        onMenuClose={() => setListVariableOpen(null)}
-                                    />
+                                    <div>
+                                        <StudioDropdown
+                                            dataId={variable.id}
+                                            label={variable.name}
+                                            selectedValue={selectedValue || ''}
+                                            options={options}
+                                            onChange={(val) => updateVariableValue(variable.id, val)}
+                                            onMenuOpen={() => setListVariableOpen(variable)}
+                                            onMenuClose={() => setListVariableOpen(null)}
+                                        />
+                                    </div>
                                     {variable.helpText && !listVariableOpen ? (
                                         <InputLabel labelFor={variable.id} label={variable.helpText} />
                                     ) : null}
