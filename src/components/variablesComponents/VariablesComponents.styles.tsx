@@ -19,6 +19,7 @@ export const HelpTextWrapper = styled.div`
     flex-direction: column;
     gap: 0.25rem;
     width: 100%;
+    white-space: pre-wrap;
     > div:nth-child(2) {
         margin-bottom: 0;
     }
