@@ -14,7 +14,12 @@ import VariablesList from './VariablesList';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import {
+    DatePickerTrayTitle,
+    EditButtonWrapper,
+    VariablesContainer,
+    VariablesPanelTitle,
+} from './VariablesPanel.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -101,15 +106,17 @@ function VariablesPanel(props: VariablesPanelProps) {
                 `}
                 hideCloseButton={mobileOptionsListOpen}
             >
-                {showVariablesList || showDateVariable ? (
-                    <VariablesList
-                        variables={variables}
-                        onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
-                        isDocumentLoaded={isDocumentLoaded}
-                    />
-                ) : (
-                    <ImagePanel height={imagePanelHeight} />
-                )}
+                <VariablesContainer>
+                    {showVariablesList || showDateVariable ? (
+                        <VariablesList
+                            variables={variables}
+                            onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
+                            isDocumentLoaded={isDocumentLoaded}
+                        />
+                    ) : (
+                        <ImagePanel height={imagePanelHeight} />
+                    )}
+                </VariablesContainer>
             </Tray>
         </>
     );

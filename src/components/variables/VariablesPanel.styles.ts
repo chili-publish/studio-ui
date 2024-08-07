@@ -7,6 +7,10 @@ export const EditButtonWrapper = styled.div`
     bottom: 6.5rem;
 `;
 
+export const VariablesContainer = styled.div`
+    position: relative;
+    height: 100%;
+`;
 export const VariablesPanelTitle = styled.h2<{ margin?: string }>`
     font-size: ${FontSizes.heading2};
     font-weight: 500;
