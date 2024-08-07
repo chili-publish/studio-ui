@@ -1,9 +1,9 @@
-import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
-import { act, render, waitFor } from '@testing-library/react';
-import axios from 'axios';
-import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { act, render, waitFor } from '@testing-library/react';
+import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
+import axios from 'axios';
 import StudioUI from '../../main';
 
 const environmentBaseURL = 'http://abc.com';
@@ -144,7 +144,7 @@ describe('StudioLoader integration - expired auth token', () => {
         );
         await waitFor(() =>
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                '[App] Error',
+                '[MainContent] Error',
                 expect.objectContaining(new Error('Project not found.')),
             ),
         );
