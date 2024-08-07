@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vite';
 import EnvironmentPlugin from 'vite-plugin-environment';
 
 // https://vitejs.dev/config/
@@ -11,6 +11,7 @@ export default ({ mode }) => {
         },
         base: './',
         optimizeDeps: {
+            // To debug linked version of '@chili-publish/grafx-shared-components', exclude it from this array
             include: ['@chili-publish/grafx-shared-components', '@chili-publish/studio-sdk'],
         },
         resolve: {
