@@ -1,6 +1,6 @@
 import {
     AvailableIcons,
-    BreadCrumb,
+    BreadCrumbDeprecated as BreadCrumb,
     PreviewCard as ChiliPreview,
     Colors,
     Icon,
@@ -20,10 +20,10 @@ import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import {
     BreadCrumbsWrapper,
+    EmptySearchResultContainer,
     LoadPageContainer,
     ResourcesContainer,
     SearchInputWrapper,
-    EmptySearchResultContainer,
     ScrollbarContainer,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
