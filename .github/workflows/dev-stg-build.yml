@@ -156,11 +156,15 @@ jobs:
               working-directory: coverage
             - name: run readmeUpdater
               run: yarn make-badges
-            - name: bump version
-              uses: phips28/gh-action-bump-version@master
+            - name: Bump version
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-              with:
-                  commit-message: 'CI: bumps version to {{version}} [skip ci]'
-                  version-type: 'prerelease'
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git fetch origin
+                  git checkout -b main origin/main
+                  npm version prepatch
+                  git add .
+                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+                  git push origin main
