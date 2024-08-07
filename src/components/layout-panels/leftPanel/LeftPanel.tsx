@@ -14,10 +14,15 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
 
     return (
-        <LeftPanelContainer id="left-panel" data-intercom-target="Customize panel">
+        <LeftPanelContainer
+            id="left-panel"
+            data-intercom-target="Customize panel"
+            overflowScroll={contentType !== ContentType.IMAGE_PANEL}
+        >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>
+
             <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
                 <ImagePanel />
             </ImagePanelContainer>
