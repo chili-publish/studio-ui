@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { IDateVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import useDateVariable from './useDateVariable';
+import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function DateVariable(props: IDateVariable) {
     const { handleValueChange, variable, onCalendarOpen, inline, selected, setDate } = props;
@@ -14,6 +15,9 @@ function DateVariable(props: IDateVariable) {
         if (variable.value) return new Date(variable.value);
         return null;
     }, [isMobileSize, selected, variable.value]);
+
+    const placeholder = getVariablePlaceholder(variable);
+
     return (
         <CustomDatePicker
             name={variable.name}
@@ -34,7 +38,7 @@ function DateVariable(props: IDateVariable) {
             selected={getSelectedDate}
             dataId={getDataIdForSUI(`${variable.id}-variable-date-picker`)}
             dataTestId={getDataTestIdForSUI(`${variable.id}-variable-date-picker`)}
-            placeholder={variable.placeholder || 'Select date'}
+            placeholder={placeholder}
             minDate={minDate}
             maxDate={maxDate}
             onCalendarOpen={() => isMobileSize && onCalendarOpen?.()}

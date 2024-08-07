@@ -3,6 +3,7 @@ import { Label, Input } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { ITextVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function TextVariable(props: ITextVariable) {
     const { handleValueChange, variable } = props;
@@ -10,6 +11,7 @@ function TextVariable(props: ITextVariable) {
     const [variableValue, setVariableValue] = useState(
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
     );
+    const placeholder = getVariablePlaceholder(variable);
 
     useEffect(() => {
         setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
@@ -26,7 +28,7 @@ function TextVariable(props: ITextVariable) {
             dataTestId={getDataTestIdForSUI(`input-${variable.id}`)}
             dataIntercomId={`input-variable-${variable.name}`}
             value={variableValue}
-            placeholder={variable.placeholder || ''}
+            placeholder={placeholder}
             onChange={handleVariableChange}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                 const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;

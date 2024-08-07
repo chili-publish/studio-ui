@@ -7,9 +7,11 @@ import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/c
 import { useVariableConnector } from './useVariableConnector';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { useMediaDetails } from './useMediaDetails';
+import { getVariablePlaceholder } from '../variablePlaceholder.util';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
+    const placeholder = getVariablePlaceholder(variable);
 
     const { selectedConnector } = useVariableConnector(variable);
     const { showImagePanel } = useVariablePanelContext();
@@ -40,7 +42,7 @@ function ImageVariable(props: IImageVariable) {
             dataIntercomId={`image-picker-${variable.name}`}
             id={variable.id}
             label={<Label translationKey={variable.name} value={variable.name} />}
-            placeholder={variable.placeholder || 'Select image'}
+            placeholder={placeholder}
             errorMsg="Something went wrong. Please try again"
             previewImage={previewImage}
             onRemove={() => handleImageRemove()}
