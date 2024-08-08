@@ -29,6 +29,7 @@ export const MobileDropdownOptionContainer = styled.div`
 
     svg {
         color: ${Colors.SECONDARY_FONT};
+        min-width: 1.125rem;
     }
 `;
 
@@ -66,4 +67,8 @@ export const Label = styled.div<{ marginBottom?: string }>`
 `;
 export const MobilePlaceholderWrapper = styled.span`
     color: ${Colors.LIGHT_GRAY_600};
+    font-style: italic;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 `;
