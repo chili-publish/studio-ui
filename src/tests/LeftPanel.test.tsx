@@ -155,8 +155,10 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const folder = getAllByRole('img', { name: /grafx/i })[0];
-        expect(folder).toBeInTheDocument();
+        await waitFor(() => {
+            const folder = getAllByRole('img', { name: /grafx/i })[0];
+            expect(folder).toBeInTheDocument();
+        });
 
         const container = getByTestId(getDataTestIdForSUI('resources-container'));
         // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
