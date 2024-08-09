@@ -11,7 +11,7 @@ import ImageVariable from './imageVariable/ImageVariable';
 import TextVariable from './TextVariable';
 import BooleanVariable from './BooleanVariable';
 import NumberVariable from './NumberVariable';
-import DateVariable from './DateVariable';
+import DateVariable from './dateVariable/DateVariable';
 
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable, isDocumentLoaded, onCalendarOpen } = props;
@@ -50,6 +50,7 @@ function VariablesComponents(props: IVariablesComponents) {
                             variable={variable as DateVariableType}
                             handleValueChange={handleValueChange}
                             onCalendarOpen={onCalendarOpen}
+                            isOpenOnMobile={false}
                         />
                     )
                 );

@@ -1,6 +1,5 @@
 import {
     AvailableIcons,
-    BreadCrumbDeprecated as BreadCrumb,
     PreviewCard as ChiliPreview,
     Colors,
     Icon,
@@ -11,6 +10,7 @@ import {
     ScrollbarWrapper,
     useInfiniteScrolling,
     useMobileSize,
+    BreadCrumbDeprecated,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -329,7 +329,7 @@ function ItemBrowser<
             ) : null}
             {navigationEnabled ? (
                 <BreadCrumbsWrapper>
-                    <BreadCrumb
+                    <BreadCrumbDeprecated
                         href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                         color={Colors.SECONDARY_FONT}
                         activeColor={Colors.PRIMARY_FONT}

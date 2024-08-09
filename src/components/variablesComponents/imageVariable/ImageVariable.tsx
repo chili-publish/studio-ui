@@ -1,4 +1,4 @@
-import { ImagePicker, Label } from '@chili-publish/grafx-shared-components';
+import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -7,9 +7,12 @@ import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/c
 import { useVariableConnector } from './useVariableConnector';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { useMediaDetails } from './useMediaDetails';
+import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { getVariablePlaceholder } from '../variablePlaceholder.util';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, handleImageRemove } = props;
+    const placeholder = getVariablePlaceholder(variable);
 
     const { selectedConnector } = useVariableConnector(variable);
     const { showImagePanel } = useVariablePanelContext();
@@ -34,32 +37,35 @@ function ImageVariable(props: IImageVariable) {
     }, [mediaDetails, previewImageUrl]);
 
     return (
-        <ImagePicker
-            dataId={getDataIdForSUI(`img-picker-${variable.id}`)}
-            dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
-            dataIntercomId={`image-picker-${variable.name}`}
-            id={variable.id}
-            label={<Label translationKey={variable.name} value={variable.name} />}
-            placeholder="Select image"
-            errorMsg="Something went wrong. Please try again"
-            previewImage={previewImage}
-            onRemove={() => handleImageRemove()}
-            onBrowse={async () => {
-                if (!selectedConnector) {
-                    throw new Error('There is no selected connector');
-                }
-                try {
-                    if (variable.value?.connectorId && isAuthenticationRequired(selectedConnector)) {
-                        await verifyAuthentication(variable.value.connectorId);
+        <HelpTextWrapper>
+            <ImagePicker
+                dataId={getDataIdForSUI(`img-picker-${variable.id}`)}
+                dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
+                dataIntercomId={`image-picker-${variable.name}`}
+                id={variable.id}
+                label={<Label translationKey={variable.name} value={variable.name} />}
+                placeholder={placeholder}
+                errorMsg="Something went wrong. Please try again"
+                previewImage={previewImage}
+                onRemove={() => handleImageRemove()}
+                onBrowse={async () => {
+                    if (!selectedConnector) {
+                        throw new Error('There is no selected connector');
                     }
-                    showImagePanel(variable);
-                } catch (error) {
-                    // TODO: We should handle connector's authorization issue accordingly
-                    // eslint-disable-next-line no-console
-                    console.error(error);
-                }
-            }}
-        />
+                    try {
+                        if (variable.value?.connectorId && isAuthenticationRequired(selectedConnector)) {
+                            await verifyAuthentication(variable.value.connectorId);
+                        }
+                        showImagePanel(variable);
+                    } catch (error) {
+                        // TODO: We should handle connector's authorization issue accordingly
+                        // eslint-disable-next-line no-console
+                        console.error(error);
+                    }
+                }}
+            />
+            {variable.helpText ? <InputLabel labelFor={variable.id} label={variable.helpText} /> : null}
+        </HelpTextWrapper>
     );
 }
 
