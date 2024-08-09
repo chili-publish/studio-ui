@@ -173,4 +173,4 @@ jobs:
               run: |
                   git add .
                   git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags 
+                  git push origin main --follow-tags
