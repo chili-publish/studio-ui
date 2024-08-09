@@ -14,6 +14,7 @@ export const useConnectorAuthentication = () => {
     > | null>(null);
     const [executor, setExecutor] = useState<Executor | null>(null);
     const [connectorName, setConnectorName] = useState<string>('');
+    const [result, setResult] = useState<ConnectorAuthenticationResult | null>(null);
 
     const resetProcess = useCallback(() => {
         setAuthenticationResolvers(null);
@@ -25,17 +26,23 @@ export const useConnectorAuthentication = () => {
             return {
                 __resolvers: authenticationResolvers,
                 async start() {
+                    setResult(null);
                     try {
-                        const result = await executor.handler().then((res) => {
+                        const executorResult = await executor.handler().then((res) => {
+                            setResult(res);
                             if (res.type === 'authentified') {
                                 return new RefreshedAuthCredendentials();
                             }
                             // eslint-disable-next-line no-console
                             console.warn(`There is a "${res.type}" issue with authentifying of the connector`);
+                            if (res.type === 'error') {
+                                // eslint-disable-next-line no-console
+                                console.error(res.error);
+                            }
 
                             return null;
                         });
-                        this.__resolvers.resolve(result);
+                        this.__resolvers.resolve(executorResult);
                     } catch (error) {
                         this.__resolvers.reject(error);
                     } finally {
@@ -61,13 +68,14 @@ export const useConnectorAuthentication = () => {
             reject: authenticationAwaiter.reject,
         });
         setConnectorName(name);
-        const result = await authenticationAwaiter.promise;
-        return result;
+        const promiseResult = await authenticationAwaiter.promise;
+        return promiseResult;
     };
 
     return {
         createProcess,
         process,
         connectorName,
+        result,
     };
 };
