@@ -31,22 +31,3 @@ export const DatePickerTrayTitle = styled.div`
     justify-content: center;
     align-items: center;
 `;
-
-export const DatePickerWrapper = styled.div`
-    .react-datepicker {
-        box-shadow: none !important;
-        border: none !important;
-        background: white !important;
-        display: flex;
-        justify-content: center;
-
-        &__header {
-            background: white !important;
-            padding-top: 0;
-        }
-        &__month {
-            padding-bottom: 0.625rem !important;
-            min-height: 17.25rem;
-        }
-    }
-`;

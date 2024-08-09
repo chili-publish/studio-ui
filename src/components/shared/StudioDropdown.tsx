@@ -7,6 +7,7 @@ import {
     DropdownContainer,
     MobileDropdownOptionContent,
     MobileDropdownValue,
+    MobilePlaceholderWrapper,
 } from './StudioDropdown.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
@@ -16,6 +17,7 @@ interface StudioDropdownProps {
     selectedValue?: Option;
     options: Option[];
     width?: string;
+    placeholder?: string;
     onChange?: (_: string) => void;
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
@@ -26,6 +28,7 @@ function StudioDropdown({
     selectedValue,
     options,
     width,
+    placeholder,
     onChange,
     onMenuOpen,
     onMenuClose,
@@ -46,7 +49,7 @@ function StudioDropdown({
     if (!isMobileSize) {
         return (
             <>
-                {label && <Label marginBottom="0.75rem">{label}</Label>}
+                {label && <Label marginBottom="0.5rem">{label}</Label>}
                 <DropDown
                     dataId={getDataIdForSUI(`dropdown-${dataId}`)}
                     dataTestId={getDataTestIdForSUI(`dropdown-${dataId}`)}
@@ -55,6 +58,7 @@ function StudioDropdown({
                     onChange={(val) => onChange?.(val?.value?.toString() || '')}
                     width={width || '100%'}
                     isSearchable={false}
+                    placeholder={placeholder}
                 />
             </>
         );
@@ -83,7 +87,14 @@ function StudioDropdown({
             <DropdownContainer onClick={() => openMobileDropdown()}>
                 {label && <Label>{label}</Label>}
                 <MobileDropdownOptionContainer>
-                    <MobileDropdownValue>{selectedValue?.label}</MobileDropdownValue>
+                    <MobileDropdownValue>
+                        {selectedValue?.label ? (
+                            // eslint-disable-next-line react/jsx-no-useless-fragment
+                            <>{selectedValue.label}</>
+                        ) : (
+                            <MobilePlaceholderWrapper>{placeholder}</MobilePlaceholderWrapper>
+                        )}
+                    </MobileDropdownValue>
                     <Icon icon={AvailableIcons.faChevronDown} />
                 </MobileDropdownOptionContainer>
             </DropdownContainer>

@@ -1,4 +1,4 @@
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
 import { ImagePicker } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
@@ -46,6 +46,16 @@ describe('"ImageVariable" component ', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
+
+    it('should display help text', () => {
+        (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
+        const helpText = 'helpText info';
+        const imageVariable = { ...variables[0], helpText };
+        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+
+        expect(screen.getByText(helpText)).toBeInTheDocument();
+    });
+
     it('should produce "undefined" preview image if not media details are available', () => {
         (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
         const imageVariable = variables[0];
@@ -298,5 +308,44 @@ describe('"ImageVariable" component ', () => {
         });
 
         await waitFor(() => expect(showImagePanel).toHaveBeenCalledWith(imageVariable));
+    });
+
+    it('should display the configured placeholder', async () => {
+        const handleRemoveFn = jest.fn();
+        const showImagePanel = jest.fn();
+
+        const PLACEHOLDER = 'Placeholder text';
+        const imageVariable = { ...variables[0], placeholder: PLACEHOLDER };
+
+        window.SDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
+
+        render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemoveFn} />);
+
+        expect(ImagePicker).toHaveBeenCalledWith(
+            {
+                dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
+                dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
+                dataIntercomId: `image-picker-${imageVariable.name}`,
+                id: imageVariable.id,
+                label: expect.objectContaining({
+                    props: {
+                        translationKey: imageVariable.name,
+                        value: imageVariable.name,
+                    },
+                }),
+                placeholder: PLACEHOLDER,
+                errorMsg: 'Something went wrong. Please try again',
+                previewImage: {
+                    id: 'mediaId',
+                    name: 'mediaName',
+                    format: 'png',
+                    url: 'http://image-url.com',
+                },
+                onRemove: expect.any(Function),
+                onBrowse: expect.any(Function),
+            },
+            {},
+        );
     });
 });
