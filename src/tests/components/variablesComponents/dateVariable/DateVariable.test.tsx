@@ -2,7 +2,7 @@ import { DateVariable as DateVariableType } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import DateVariable from '../../../../components/variablesComponents/DateVariable';
+import DateVariable from '../../../../components/variablesComponents/dateVariable/DateVariable';
 
 describe('DateVariable', () => {
     it('should display the configured placeholder', () => {

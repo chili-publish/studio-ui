@@ -1,4 +1,5 @@
 import {
+    BooleanVariable,
     DateVariable,
     GroupVariable,
     ImageVariable,
@@ -96,6 +97,19 @@ export const variables: Variable[] = [
         isVisible: true,
         parentId: '7',
         items: [{ value: 'val 1', displayValue: 'Val 1' }, { value: 'val 2' }],
+        isReadonly: false,
+        isRequired: false,
+    },
+
+    <BooleanVariable>{
+        id: 'boolean-var-id',
+        name: 'boolean var',
+        label: 'Test boolean',
+        type: VariableType.boolean,
+        value: true,
+        occurrences: 0,
+        isVisible: true,
+        parentId: '7',
         isReadonly: false,
         isRequired: false,
     },

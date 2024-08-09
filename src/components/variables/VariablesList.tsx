@@ -1,20 +1,14 @@
 import { useEffect, useState } from 'react';
 import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { Option, useMobileSize, Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
+import { Option, useMobileSize, InputLabel } from '@chili-publish/grafx-shared-components';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import {
-    ComponentWrapper,
-    DatePickerWrapper,
-    VariablesListWrapper,
-    VariablesPanelTitle,
-} from './VariablesPanel.styles';
+import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
 import StudioDropdown from '../shared/StudioDropdown';
-import DateVariable from '../variablesComponents/DateVariable';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
+import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
 import { getVariablePlaceholder } from '../variablesComponents/variablePlaceholder.util';
 
 interface VariablesListProps {
@@ -30,7 +24,6 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
 
     const isMobileSize = useMobileSize();
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
-    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     const updateVariableValue = async (variableId: string, value: string) => {
         await window.SDK.variable.setValue(variableId, value);
@@ -73,16 +66,23 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                 key={`variable-component-${variable.id}`}
                                 data-intercom-target={`dropdown-variable-${variable.name}`}
                             >
-                                <StudioDropdown
-                                    dataId={variable.id}
-                                    label={variable.name}
-                                    selectedValue={selectedValue || ''}
-                                    options={options}
-                                    placeholder={placeholder}
-                                    onChange={(val) => updateVariableValue(variable.id, val)}
-                                    onMenuOpen={() => setListVariableOpen(variable)}
-                                    onMenuClose={() => setListVariableOpen(null)}
-                                />
+                                <HelpTextWrapper>
+                                    <div>
+                                        <StudioDropdown
+                                            dataId={variable.id}
+                                            label={variable.name}
+                                            selectedValue={selectedValue || ''}
+                                            options={options}
+                                            placeholder={placeholder}
+                                            onChange={(val) => updateVariableValue(variable.id, val)}
+                                            onMenuOpen={() => setListVariableOpen(variable)}
+                                            onMenuClose={() => setListVariableOpen(null)}
+                                        />
+                                    </div>
+                                    {variable.helpText && !listVariableOpen ? (
+                                        <InputLabel labelFor={variable.id} label={variable.helpText} />
+                                    ) : null}
+                                </HelpTextWrapper>
                             </ComponentWrapper>
                         );
                     }
@@ -92,35 +92,11 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                         currentVariableId === variable.id;
                     if (isDateVariableOpen && !listVariableOpen && isMobileSize) {
                         return (
-                            <>
-                                <DatePickerWrapper>
-                                    <DateVariable
-                                        key={variable.id}
-                                        variable={variable as DateVariableType}
-                                        inline
-                                        selected={selectedDate}
-                                        setDate={(val) => {
-                                            setSelectedDate(new Date(val));
-                                        }}
-                                    />
-                                </DatePickerWrapper>
-                                <Button
-                                    dataId={getDataIdForSUI(`date-confirm-btn`)}
-                                    dataTestId={getDataTestIdForSUI(`date-confirm-btn`)}
-                                    onClick={() => {
-                                        if (selectedDate) {
-                                            updateVariableValue(variable.id, selectedDate?.toISOString().split('T')[0]);
-                                            showVariablesPanel();
-                                            setSelectedDate(null);
-                                        }
-                                    }}
-                                    variant={ButtonVariant.primary}
-                                    label="Confirm"
-                                    styles={css`
-                                        width: 100%;
-                                    `}
-                                />
-                            </>
+                            <DateVariableMobile
+                                key={variable.id}
+                                variable={variable as DateVariableType}
+                                onDateSelected={() => showVariablesPanel()}
+                            />
                         );
                     }
                     return !listVariableOpen && contentType !== ContentType.DATE_VARIABLE_PICKER ? (

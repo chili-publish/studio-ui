@@ -1,4 +1,4 @@
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
 import { ImagePicker } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
@@ -46,6 +46,16 @@ describe('"ImageVariable" component ', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
+
+    it('should display help text', () => {
+        (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
+        const helpText = 'helpText info';
+        const imageVariable = { ...variables[0], helpText };
+        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+
+        expect(screen.getByText(helpText)).toBeInTheDocument();
+    });
+
     it('should produce "undefined" preview image if not media details are available', () => {
         (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
         const imageVariable = variables[0];

@@ -40,4 +40,6 @@ export interface IDateVariable {
     onCalendarOpen?: () => void;
     inline?: boolean;
     selected?: Date | null;
+
+    isOpenOnMobile?: boolean;
 }
