@@ -309,4 +309,43 @@ describe('"ImageVariable" component ', () => {
 
         await waitFor(() => expect(showImagePanel).toHaveBeenCalledWith(imageVariable));
     });
+
+    it('should display the configured placeholder', async () => {
+        const handleRemoveFn = jest.fn();
+        const showImagePanel = jest.fn();
+
+        const PLACEHOLDER = 'Placeholder text';
+        const imageVariable = { ...variables[0], placeholder: PLACEHOLDER };
+
+        window.SDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
+
+        render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemoveFn} />);
+
+        expect(ImagePicker).toHaveBeenCalledWith(
+            {
+                dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
+                dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
+                dataIntercomId: `image-picker-${imageVariable.name}`,
+                id: imageVariable.id,
+                label: expect.objectContaining({
+                    props: {
+                        translationKey: imageVariable.name,
+                        value: imageVariable.name,
+                    },
+                }),
+                placeholder: PLACEHOLDER,
+                errorMsg: 'Something went wrong. Please try again',
+                previewImage: {
+                    id: 'mediaId',
+                    name: 'mediaName',
+                    format: 'png',
+                    url: 'http://image-url.com',
+                },
+                onRemove: expect.any(Function),
+                onBrowse: expect.any(Function),
+            },
+            {},
+        );
+    });
 });

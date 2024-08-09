@@ -9,6 +9,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
+import { getVariablePlaceholder } from '../variablesComponents/variablePlaceholder.util';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -58,6 +59,8 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                   value: variableItem.selected.value,
                               }
                             : ('' as unknown as Option);
+                        const placeholder = getVariablePlaceholder(variable);
+
                         return (
                             <ComponentWrapper
                                 key={`variable-component-${variable.id}`}
@@ -70,6 +73,7 @@ function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }
                                             label={variable.name}
                                             selectedValue={selectedValue || ''}
                                             options={options}
+                                            placeholder={placeholder}
                                             onChange={(val) => updateVariableValue(variable.id, val)}
                                             onMenuOpen={() => setListVariableOpen(variable)}
                                             onMenuClose={() => setListVariableOpen(null)}

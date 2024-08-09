@@ -4,6 +4,7 @@ import { IDateVariable } from '../VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import useDateVariable from '../useDateVariable';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { getVariablePlaceholder } from '../variablePlaceholder.util';
 
 function DateVariable(props: IDateVariable) {
     const { handleValueChange, variable, onCalendarOpen, inline, selected, setDate, isOpenOnMobile } = props;
@@ -15,6 +16,9 @@ function DateVariable(props: IDateVariable) {
         if (variable.value) return new Date(variable.value);
         return null;
     }, [isMobileSize, selected, variable.value]);
+
+    const placeholder = getVariablePlaceholder(variable);
+
     return (
         <HelpTextWrapper>
             <CustomDatePicker
@@ -36,7 +40,7 @@ function DateVariable(props: IDateVariable) {
                 selected={getSelectedDate}
                 dataId={getDataIdForSUI(`${variable.id}-variable-date-picker`)}
                 dataTestId={getDataTestIdForSUI(`${variable.id}-variable-date-picker`)}
-                placeholder="Select date"
+                placeholder={placeholder}
                 minDate={minDate}
                 maxDate={maxDate}
                 onCalendarOpen={() => isMobileSize && onCalendarOpen?.()}

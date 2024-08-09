@@ -1,6 +1,5 @@
 import {
     AvailableIcons,
-    BreadCrumbDeprecated,
     PreviewCard as ChiliPreview,
     Colors,
     Icon,
@@ -11,6 +10,7 @@ import {
     ScrollbarWrapper,
     useInfiniteScrolling,
     useMobileSize,
+    BreadCrumbDeprecated,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
