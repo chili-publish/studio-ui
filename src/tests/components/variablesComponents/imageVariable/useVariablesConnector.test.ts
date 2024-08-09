@@ -40,8 +40,10 @@ describe('"useVariablesConnector" hook', () => {
             expect(axios.get).toHaveBeenCalledWith('http://deploy.com/media-connector');
         });
 
-        expect(result.current.selectedConnector).toEqual({
-            id: 'remote-connector-1',
+        await waitFor(() => {
+            expect(result.current.selectedConnector).toEqual({
+                id: 'remote-connector-1',
+            });
         });
     });
 });
