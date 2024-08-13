@@ -8,18 +8,19 @@ import { DatePickerWrapper } from '../VariablesComponents.styles';
 
 interface DateVariableMobileProps {
     variable: DateVariableType;
-    onDateSelected: () => void;
+    onDateSelected: (_: DateVariableType) => void;
 }
 function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProps) {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     const handleDateSelection = useCallback(async () => {
         if (selectedDate) {
-            await window.SDK.variable.setValue(variable.id, selectedDate?.toISOString().split('T')[0]);
-            onDateSelected();
+            const formattedDate = selectedDate?.toISOString().split('T')[0];
+            await window.SDK.variable.setValue(variable.id, formattedDate);
+            onDateSelected({ ...variable, value: formattedDate });
             setSelectedDate(null);
         }
-    }, [selectedDate, onDateSelected, variable.id]);
+    }, [selectedDate, onDateSelected, variable]);
 
     return (
         <>

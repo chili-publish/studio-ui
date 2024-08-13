@@ -1,11 +1,11 @@
-import { Label, Input, InputLabel } from '@chili-publish/grafx-shared-components';
+import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
 import { INumberVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 
 function NumberVariable(props: INumberVariable) {
-    const { handleValueChange, variable } = props;
+    const { variable, validationError, onValueChange } = props;
 
     return (
         <HelpTextWrapper>
@@ -24,20 +24,21 @@ function NumberVariable(props: INumberVariable) {
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                     const currentValue = parseFloat(event.target.value.replace(',', '.'));
                     const prevValue = variable.value;
-                    if (prevValue !== currentValue) {
-                        handleValueChange(currentValue);
-                    }
+                    onValueChange(currentValue, { changed: prevValue !== currentValue });
                 }}
                 onValueChange={(value: string) => {
                     const currentValue = parseFloat(value.replace(',', '.'));
                     const prevValue = variable.value;
-                    if (prevValue !== currentValue) {
-                        handleValueChange(currentValue);
-                    }
+                    onValueChange(currentValue, { changed: prevValue !== currentValue });
                 }}
                 disabled={variable.isReadonly}
+                required={variable.isRequired}
+                validation={validationError ? ValidationTypes.ERROR : undefined}
+                validationErrorMessage={validationError}
             />
-            {variable.helpText ? <InputLabel labelFor={variable.id} label={variable.helpText} /> : null}
+            {variable.helpText && !validationError ? (
+                <InputLabel labelFor={variable.id} label={variable.helpText} />
+            ) : null}
         </HelpTextWrapper>
     );
 }

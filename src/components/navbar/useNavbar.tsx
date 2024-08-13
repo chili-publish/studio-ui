@@ -9,6 +9,7 @@ import { NavbarItemType } from './Navbar.types';
 import { ProjectConfig } from '../../types/types';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
 const useNavbar = (
     projectName: string | undefined,
@@ -18,6 +19,7 @@ const useNavbar = (
     projectConfig: ProjectConfig,
 ) => {
     const { isBackBtnVisible, isDownloadBtnVisible, userInterfaceOutputSettings } = useUiConfigContext();
+    const { validateVariables } = useVariablePanelContext();
     const isMobile = useMobileSize();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
     const { addNotification } = useNotificationManager();
@@ -155,6 +157,15 @@ const useNavbar = (
         updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
         outputSettingsId: string | undefined,
     ) => {
+        const hasErrors = validateVariables();
+        if (hasErrors) {
+            addNotification({
+                id: 'variable-validation',
+                message: `Fill all required fields to download.`,
+                type: ToastVariant.NEGATIVE,
+            });
+            return;
+        }
         try {
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;

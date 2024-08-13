@@ -10,16 +10,11 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import VariablesList from './VariablesList';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import {
-    DatePickerTrayTitle,
-    EditButtonWrapper,
-    VariablesContainer,
-    VariablesPanelTitle,
-} from './VariablesPanel.styles';
+import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import MobileVariablesList from './MobileVariablesList';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -35,18 +30,19 @@ const imagePanelHeight = `
         - ${BREADCRUMBS_HEIGHT_REM}
     )`;
 
-function VariablesPanel(props: VariablesPanelProps) {
+function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isDocumentLoaded } = props;
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
-    const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
+    const [listVariableOpen, setMobileOptionsListOpen] = useState(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
 
     const showVariablesList = contentType === ContentType.VARIABLES_LIST;
     const showDateVariable = contentType === ContentType.DATE_VARIABLE_PICKER;
+    const showImageBrowsePanel = contentType === ContentType.IMAGE_PANEL;
 
     const renderTrayHeader = useMemo(() => {
         if (showVariablesList) return <VariablesPanelTitle>Customize</VariablesPanelTitle>;
@@ -100,26 +96,19 @@ function VariablesPanel(props: VariablesPanelProps) {
                 close={closeVariablePanel}
                 title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}
-                styles={css`
-                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
-                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
-                `}
-                hideCloseButton={mobileOptionsListOpen}
+                hideCloseButton={listVariableOpen}
             >
-                <VariablesContainer>
-                    {showVariablesList || showDateVariable ? (
-                        <VariablesList
-                            variables={variables}
-                            onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
-                            isDocumentLoaded={isDocumentLoaded}
-                        />
-                    ) : (
-                        <ImagePanel height={imagePanelHeight} />
-                    )}
-                </VariablesContainer>
+                {!showImageBrowsePanel && (
+                    <MobileVariablesList
+                        variables={variables}
+                        isDocumentLoaded={isDocumentLoaded}
+                        onMobileOptionListToggle={setMobileOptionsListOpen}
+                    />
+                )}
+                {showImageBrowsePanel && <ImagePanel height={imagePanelHeight} />}
             </Tray>
         </>
     );
 }
 
-export default VariablesPanel;
+export default MobileVariablesPanel;

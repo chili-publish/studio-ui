@@ -1,15 +1,22 @@
 import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publish/grafx-shared-components';
-import { DateVariable, ImageVariable, Media } from '@chili-publish/studio-sdk';
+import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
+import { useVariableValidation } from './useVariableValidation';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
     showDatePicker: () => undefined,
     showImagePanel: () => undefined,
+    showMobileListOptions: () => undefined,
+    variablesValidation: {},
+    validateVariables: () => false,
+    validateVariable: () => undefined,
+    getVariableError: () => '',
     contentType: ContentType.VARIABLES_LIST,
     currentVariableId: '',
     currentVariableConnectorId: '',
@@ -36,9 +43,11 @@ export const useVariablePanelContext = () => {
 export function VariablePanelContextProvider({
     children,
     connectors,
+    variables,
 }: {
     children: ReactNode;
     connectors: IConnectors;
+    variables: Variable[];
 }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
@@ -49,6 +58,8 @@ export function VariablePanelContextProvider({
     const [searchQuery, setSearchQuery] = useState('');
 
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
+
+    const variableValidationData = useVariableValidation(variables);
 
     const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
         if (!connectorId) throw new Error('ConnectorId is not defined');
@@ -66,13 +77,20 @@ export function VariablePanelContextProvider({
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
-            await handleImageChange({
+            const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
-            });
+            };
+            await handleImageChange(imgSrc);
+            const variable: ImageVariable | undefined = variables.find((item) => item.id === currentVariableId);
+            if (variable)
+                variableValidationData.validateVariable({
+                    ...variable,
+                    value: { ...variable.value, ...imgSrc },
+                } as ImageVariable);
             setContentType(ContentType.VARIABLES_LIST);
         },
-        [currentVariableConnectorId, handleImageChange],
+        [currentVariableConnectorId, handleImageChange, currentVariableId, variableValidationData, variables],
     );
 
     const imagePanelTitle = useMemo(
@@ -116,6 +134,10 @@ export function VariablePanelContextProvider({
                 setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
                 setContentType(ContentType.IMAGE_PANEL);
             },
+            showMobileListOptions: (variable: ListVariable) => {
+                setCurrentVariableId(variable.id);
+                setContentType(ContentType.MOBILE_LIST_VARIABLE_OPEN);
+            },
             contentType,
             currentVariableId,
             currentVariableConnectorId,
@@ -132,6 +154,7 @@ export function VariablePanelContextProvider({
             connectorCapabilities,
             connectors,
             getCapabilitiesForConnector,
+            ...variableValidationData,
         }),
         [
             contentType,
@@ -146,6 +169,7 @@ export function VariablePanelContextProvider({
             connectorCapabilities,
             connectors,
             getCapabilitiesForConnector,
+            variableValidationData,
         ],
     );
 

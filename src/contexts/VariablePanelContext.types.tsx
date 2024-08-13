@@ -4,7 +4,9 @@ import {
     ImageVariable,
     Media,
     DateVariable,
+    Variable,
 } from '@chili-publish/studio-sdk';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
@@ -22,10 +24,17 @@ export interface ICapabilities {
     [index: string]: MediaConnectorCapabilities | undefined;
 }
 
+export interface VariableValidation {
+    [variableId: string]: {
+        errorMsg: string;
+    };
+}
+
 export interface IVariablePanelContext {
     showVariablesPanel: () => void;
     showDatePicker: (_: DateVariable) => void;
     showImagePanel: (_: ImageVariable) => void;
+    showMobileListOptions: (_: ListVariable) => void;
     contentType: ContentType;
     currentVariableId: string;
     currentVariableConnectorId: string;
@@ -42,4 +51,9 @@ export interface IVariablePanelContext {
     setSearchKeyWord: Dispatch<SetStateAction<string>>;
     searchQuery: string;
     setSearchQuery: Dispatch<SetStateAction<string>>;
+
+    variablesValidation: VariableValidation;
+    validateVariables: () => boolean;
+    validateVariable: (_: Variable) => void;
+    getVariableError: (_: Variable) => string;
 }
