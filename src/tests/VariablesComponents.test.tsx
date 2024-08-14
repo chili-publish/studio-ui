@@ -119,7 +119,7 @@ describe('Variable Component', () => {
             );
             const dateInput = getByRole('textbox') as HTMLInputElement;
             expect(dateInput).toBeInTheDocument();
-            expect(dateInput.value).toBe('30/07/2024');
+            expect(dateInput.value).toBe('07/30/2024');
         });
         it('Calls the onchange function when date is changed with correct params', async () => {
             const user = userEvent.setup();

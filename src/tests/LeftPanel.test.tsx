@@ -117,7 +117,7 @@ describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const { getAllByTestId, getByText, getByRole } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -145,7 +145,7 @@ describe('Image Panel', () => {
     test('Media assets are correctly fetched', async () => {
         const { getByText, getByTestId, getAllByTestId, getAllByRole, getAllByText } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -170,7 +170,7 @@ describe('Image Panel', () => {
     test('Media asset folder navigation works', async () => {
         const { getAllByTestId, getByText } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -193,7 +193,7 @@ describe('Image Panel', () => {
     test.skip('Image Picker updates image after asset is selected', async () => {
         const { getAllByTestId, getByRole } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -230,7 +230,7 @@ describe('Image Panel', () => {
 
         const { getAllByTestId, getAllByRole } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -251,7 +251,7 @@ describe('Image Panel', () => {
     test('Render search input when filtering is supported', async () => {
         const { getAllByTestId, getAllByRole, getByTestId } = render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors}>
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
