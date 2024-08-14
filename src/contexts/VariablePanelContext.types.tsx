@@ -6,7 +6,6 @@ import {
     DateVariable,
     Variable,
 } from '@chili-publish/studio-sdk';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
@@ -34,7 +33,6 @@ export interface IVariablePanelContext {
     showVariablesPanel: () => void;
     showDatePicker: (_: DateVariable) => void;
     showImagePanel: (_: ImageVariable) => void;
-    showMobileListOptions: (_: ListVariable) => void;
     contentType: ContentType;
     currentVariableId: string;
     currentVariableConnectorId: string;

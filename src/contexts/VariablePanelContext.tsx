@@ -2,7 +2,6 @@ import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publ
 import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
@@ -12,7 +11,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
     showDatePicker: () => undefined,
     showImagePanel: () => undefined,
-    showMobileListOptions: () => undefined,
     variablesValidation: {},
     validateVariables: () => false,
     validateVariable: () => undefined,
@@ -133,10 +131,6 @@ export function VariablePanelContextProvider({
                 setCurrentVariableId(variable.id);
                 setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
                 setContentType(ContentType.IMAGE_PANEL);
-            },
-            showMobileListOptions: (variable: ListVariable) => {
-                setCurrentVariableId(variable.id);
-                setContentType(ContentType.MOBILE_LIST_VARIABLE_OPEN);
             },
             contentType,
             currentVariableId,
