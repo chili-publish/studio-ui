@@ -33,23 +33,23 @@ const useDownload = (hideDownloadPanel: () => void) => {
     const downloadOptions: Option[] = useMemo(() => {
         const allOptions = [
             {
-                label: <DropdownOption icon={AvailableIcons.faImage} text="JPG" description="" />,
+                label: <DropdownOption iconData={AvailableIcons.faImage} text="JPG" description="" />,
                 value: DownloadFormats.JPG,
             },
             {
-                label: <DropdownOption icon={AvailableIcons.faImage} text="PNG" description="" />,
+                label: <DropdownOption iconData={AvailableIcons.faImage} text="PNG" description="" />,
                 value: DownloadFormats.PNG,
             },
             {
-                label: <DropdownOption icon={AvailableIcons.faFileVideo} text="MP4 " description="" />,
+                label: <DropdownOption iconData={AvailableIcons.faFileVideo} text="MP4 " description="" />,
                 value: DownloadFormats.MP4,
             },
             {
-                label: <DropdownOption icon={AvailableIcons.faGif} text="GIF" description="" />,
+                label: <DropdownOption iconData={AvailableIcons.faGif} text="GIF" description="" />,
                 value: DownloadFormats.GIF,
             },
             {
-                label: <DropdownOption icon={AvailableIcons.faFilePdf} text="PDF" description="" />,
+                label: <DropdownOption iconData={AvailableIcons.faFilePdf} text="PDF" description="" />,
                 value: DownloadFormats.PDF,
             },
         ];
@@ -77,9 +77,10 @@ const useDownload = (hideDownloadPanel: () => void) => {
             pdf: AvailableIcons.faFilePdf,
         };
         return userInterfaceOutputSettings.map((val) => {
+            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
             return {
                 label: (
-                    <DropdownOption icon={outputTypesIcons[val.type]} text={val.name} description={val.description} />
+                    <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
                 ),
                 value: val.id,
             };

@@ -9,18 +9,18 @@ import {
 } from './DownloadPanel.styles';
 
 interface DropdownOptionProps {
-    icon: keyof typeof AvailableIcons;
+    iconData: keyof typeof AvailableIcons;
     text: string;
     description: string;
     isExperimental?: boolean;
 }
 
 function DropdownOption(props: DropdownOptionProps) {
-    const { icon, text, description, isExperimental } = props;
+    const { iconData, text, description, isExperimental } = props;
 
     return (
         <DropdownOptionLabel>
-            <Icon icon={icon} />
+            <Icon icon={iconData} />
             <Container>
                 <DropdownOptionText>{text}</DropdownOptionText>
                 <DropdownOptionDescription>{description}</DropdownOptionDescription>
