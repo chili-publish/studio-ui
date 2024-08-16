@@ -100,10 +100,6 @@ function VariablesPanel(props: VariablesPanelProps) {
                 close={closeVariablePanel}
                 title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}
-                styles={css`
-                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
-                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
-                `}
                 hideCloseButton={mobileOptionsListOpen}
             >
                 <VariablesContainer>

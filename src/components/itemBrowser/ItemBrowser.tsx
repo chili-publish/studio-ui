@@ -10,7 +10,8 @@ import {
     ScrollbarWrapper,
     useInfiniteScrolling,
     useMobileSize,
-    BreadCrumbDeprecated,
+    BreadCrumb,
+    Option,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -258,6 +259,18 @@ function ItemBrowser<
         return breadcrumbStack?.join('\\') ?? '';
     }, [breadcrumbStack]);
 
+    const updateNavigationStack = useCallback(
+        (selected: Option) => {
+            const pathIndex = selected.value as number;
+
+            const newNavigationStack = navigationStack?.splice(0, pathIndex);
+            const newBreadcrumbStack = breadcrumbStack?.splice(0, pathIndex);
+            setNavigationStack(newNavigationStack);
+            setBreadcrumbStack(newBreadcrumbStack);
+        },
+        [navigationStack, breadcrumbStack],
+    );
+
     if (!isPanelOpen) {
         return null;
     }
@@ -329,22 +342,11 @@ function ItemBrowser<
             ) : null}
             {navigationEnabled ? (
                 <BreadCrumbsWrapper>
-                    <BreadCrumbDeprecated
-                        href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                        color={Colors.SECONDARY_FONT}
-                        activeColor={Colors.PRIMARY_FONT}
-                        onClick={(breadCrumb: string) => {
-                            const newNavigationStack = navigationStack?.splice(
-                                0,
-                                navigationStack.indexOf(breadCrumb) + 1,
-                            );
-                            const newBreadcrumbStack = breadcrumbStack?.splice(
-                                0,
-                                breadcrumbStack.indexOf(breadCrumb) + 1,
-                            );
-                            setNavigationStack(newNavigationStack);
-                            setBreadcrumbStack(newBreadcrumbStack);
-                        }}
+                    <BreadCrumb
+                        dataId={getDataIdForSUI('toolbar-breadcrumb')}
+                        dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
+                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        onClick={updateNavigationStack}
                     />
                 </BreadCrumbsWrapper>
             ) : null}
