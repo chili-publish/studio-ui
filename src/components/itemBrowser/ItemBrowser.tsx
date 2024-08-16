@@ -33,7 +33,6 @@ import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
     connectorId: string;
-    height?: string;
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
@@ -278,7 +277,7 @@ function ItemBrowser<
     // eslint-disable-next-line no-nested-ternary
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
     const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
-    const navigationEnabled = !searchQuery;
+    const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 
     const handleSearch = (keyword: string) => {
         setSearchQuery(keyword);
@@ -353,7 +352,7 @@ function ItemBrowser<
             <ScrollbarContainer
                 filteringEnabled={filteringEnabled}
                 hasSearchQuery={!!searchQuery}
-                navigationEnabled={navigationEnabled}
+                navigationBreadcrumbsEnabled={navigationEnabled}
             >
                 <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
