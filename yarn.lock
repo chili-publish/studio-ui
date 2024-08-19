@@ -416,10 +416,10 @@
     react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^1.14.0-rc.5":
-  version "1.14.0-rc.5"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.14.0-rc.5/1d47c480d08c400e55109b4b4c5adb8c06f43d5a#1d47c480d08c400e55109b4b4c5adb8c06f43d5a"
-  integrity sha512-4M7k+0nxDDqIUjZNQG+aoUHlghFvN+72WC0cWrn9wk/TTEhPQ5BFPEbrfLzu2LJTRUG8ENtRSMfvc+Wf7/bqtQ==
+"@chili-publish/studio-sdk@^1.14.0":
+  version "1.14.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.14.0/9297d2ca55da0b87d4510f4387525d9f3d7fd7b2#9297d2ca55da0b87d4510f4387525d9f3d7fd7b2"
+  integrity sha512-8AnHA7Pxls1DDkX82jqzSjSy3bHwjVvZ3sJrvdpLqaglWPZDuiuQwiRsm9/pFxNP6yqyUzfrKsCppBtrjfXrXA==
   dependencies:
     penpal "6.1.0"
 
