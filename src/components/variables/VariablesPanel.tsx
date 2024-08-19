@@ -104,6 +104,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
                     overflow: ${showVariablesList ? 'auto' : 'hidden'};
+                    ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
