@@ -4,6 +4,10 @@ import EditorSDK from '@chili-publish/studio-sdk';
 
 jest.mock('@chili-publish/studio-sdk');
 
+const ResizeObserver = require('resize-observer-polyfill');
+
+global.ResizeObserver = ResizeObserver;
+
 window.matchMedia =
     window.matchMedia ||
     function matchMedia() {

@@ -24,8 +24,8 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-shared-components": "^0.74.1",
-        "@chili-publish/studio-sdk": "^1.13.0",
+        "@chili-publish/grafx-shared-components": "^0.75.3",
+        "@chili-publish/studio-sdk": "^1.14.0-rc.5",
         "axios": "^1.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -70,7 +70,8 @@
         "ts-jest": "^29.1.0",
         "typescript": "*",
         "vite": "^4.3.9",
-        "vite-plugin-environment": "^1.1.3"
+        "vite-plugin-environment": "^1.1.3",
+        "resize-observer-polyfill": "^1.5.1"
     },
     "husky": {
         "hooks": {

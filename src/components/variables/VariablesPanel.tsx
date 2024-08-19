@@ -27,12 +27,10 @@ interface VariablesPanelProps {
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-const BREADCRUMBS_HEIGHT_REM = '3.5rem';
 
 const imagePanelHeight = `
     calc(100%
         - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
-        - ${BREADCRUMBS_HEIGHT_REM}
     )`;
 
 function VariablesPanel(props: VariablesPanelProps) {
@@ -77,6 +75,8 @@ function VariablesPanel(props: VariablesPanelProps) {
         return imagePanelTitle;
     }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel]);
 
+    const showImagePanel = !(showVariablesList || showDateVariable);
+
     return (
         <>
             <EditButtonWrapper>
@@ -100,13 +100,14 @@ function VariablesPanel(props: VariablesPanelProps) {
                 close={closeVariablePanel}
                 title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}
-                styles={css`
-                    height: ${contentType === ContentType.IMAGE_PANEL ? '100%' : 'auto'};
-                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
-                `}
                 hideCloseButton={mobileOptionsListOpen}
+                styles={css`
+                    height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
+                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
+                    ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
+                `}
             >
-                <VariablesContainer>
+                <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
                     {showVariablesList || showDateVariable ? (
                         <VariablesList
                             variables={variables}
@@ -114,7 +115,7 @@ function VariablesPanel(props: VariablesPanelProps) {
                             isDocumentLoaded={isDocumentLoaded}
                         />
                     ) : (
-                        <ImagePanel height={imagePanelHeight} />
+                        <ImagePanel />
                     )}
                 </VariablesContainer>
             </Tray>

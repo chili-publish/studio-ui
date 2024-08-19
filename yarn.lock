@@ -402,10 +402,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.74.1":
-  version "0.74.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.74.1/875c738db3bba92a74aa1b4dd92f64e7fb5db6d5#875c738db3bba92a74aa1b4dd92f64e7fb5db6d5"
-  integrity sha512-f1plG8Y6qt5pDZnLJFX3CLvu4Fev/vGHMmHmRH/wTP9CEIR0ZPUx9z8iYmqyBieBbVe1zFkEBmsgwbwXrbpUBg==
+"@chili-publish/grafx-shared-components@^0.75.3":
+  version "0.75.3"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.75.3/03c5c7e89a3b318d4f5b3000c7fbb9d645c71c1f#03c5c7e89a3b318d4f5b3000c7fbb9d645c71c1f"
+  integrity sha512-SOqF5H4QGNo4caBmBqIM2R9BybVA5Kp36LfFc/Sl9qiAVZv7A3Uw/YAqIb9zn9doiR6lX0wZ98bDJ2RCWoD70A==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
@@ -416,10 +416,10 @@
     react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^1.13.0":
-  version "1.13.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.13.0/b5a0095b575297adb24b54bc237d2c385c1e8df6#b5a0095b575297adb24b54bc237d2c385c1e8df6"
-  integrity sha512-Y2vqmoQhBZHth6r1HpxfXZtYSPFJQIPP7snIQd8eN2QE9y5L/ygaLltl1C8825AQizzQmXcv5d1wzIjPLvdzRQ==
+"@chili-publish/studio-sdk@^1.14.0-rc.5":
+  version "1.14.0-rc.5"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.14.0-rc.5/1d47c480d08c400e55109b4b4c5adb8c06f43d5a#1d47c480d08c400e55109b4b4c5adb8c06f43d5a"
+  integrity sha512-4M7k+0nxDDqIUjZNQG+aoUHlghFvN+72WC0cWrn9wk/TTEhPQ5BFPEbrfLzu2LJTRUG8ENtRSMfvc+Wf7/bqtQ==
   dependencies:
     penpal "6.1.0"
 
@@ -4707,6 +4707,11 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==
+
+resize-observer-polyfill@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
+  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-cwd@^3.0.0:
   version "3.0.0"

@@ -3,7 +3,7 @@ import { convertToPreviewType } from '../../utils/mediaUtils';
 import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
-function ImagePanel({ height }: { height?: string }) {
+function ImagePanel() {
     const { handleUpdateImage, currentVariableConnectorId } = useVariablePanelContext();
     const previewCall = (id: string): Promise<Uint8Array> =>
         window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
@@ -20,7 +20,6 @@ function ImagePanel({ height }: { height?: string }) {
                 if (assets.length > 0) handleUpdateImage(assets[0]);
             }}
             convertToPreviewType={convertToPreviewType}
-            height={height}
         />
     );
 }

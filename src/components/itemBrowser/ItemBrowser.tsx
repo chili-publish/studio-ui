@@ -10,7 +10,8 @@ import {
     ScrollbarWrapper,
     useInfiniteScrolling,
     useMobileSize,
-    BreadCrumbDeprecated,
+    BreadCrumb,
+    Option,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,7 +33,6 @@ import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
     connectorId: string;
-    height?: string;
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
@@ -258,6 +258,18 @@ function ItemBrowser<
         return breadcrumbStack?.join('\\') ?? '';
     }, [breadcrumbStack]);
 
+    const updateNavigationStack = useCallback(
+        (selected: Option) => {
+            const pathIndex = selected.value as number;
+
+            const newNavigationStack = navigationStack?.splice(0, pathIndex);
+            const newBreadcrumbStack = breadcrumbStack?.splice(0, pathIndex);
+            setNavigationStack(newNavigationStack);
+            setBreadcrumbStack(newBreadcrumbStack);
+        },
+        [navigationStack, breadcrumbStack],
+    );
+
     if (!isPanelOpen) {
         return null;
     }
@@ -265,7 +277,7 @@ function ItemBrowser<
     // eslint-disable-next-line no-nested-ternary
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
     const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
-    const navigationEnabled = !searchQuery;
+    const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 
     const handleSearch = (keyword: string) => {
         setSearchQuery(keyword);
@@ -329,29 +341,18 @@ function ItemBrowser<
             ) : null}
             {navigationEnabled ? (
                 <BreadCrumbsWrapper>
-                    <BreadCrumbDeprecated
-                        href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                        color={Colors.SECONDARY_FONT}
-                        activeColor={Colors.PRIMARY_FONT}
-                        onClick={(breadCrumb: string) => {
-                            const newNavigationStack = navigationStack?.splice(
-                                0,
-                                navigationStack.indexOf(breadCrumb) + 1,
-                            );
-                            const newBreadcrumbStack = breadcrumbStack?.splice(
-                                0,
-                                breadcrumbStack.indexOf(breadCrumb) + 1,
-                            );
-                            setNavigationStack(newNavigationStack);
-                            setBreadcrumbStack(newBreadcrumbStack);
-                        }}
+                    <BreadCrumb
+                        dataId={getDataIdForSUI('toolbar-breadcrumb')}
+                        dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
+                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        onClick={updateNavigationStack}
                     />
                 </BreadCrumbsWrapper>
             ) : null}
             <ScrollbarContainer
                 filteringEnabled={filteringEnabled}
                 hasSearchQuery={!!searchQuery}
-                navigationEnabled={navigationEnabled}
+                navigationBreadcrumbsEnabled={navigationEnabled}
             >
                 <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
