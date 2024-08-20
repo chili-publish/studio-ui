@@ -13,7 +13,12 @@ import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import {
+    DatePickerTrayTitle,
+    EditButtonWrapper,
+    VariablesPanelTitle,
+    VariablesContainer,
+} from './VariablesPanel.styles';
 import MobileVariablesList from './MobileVariablesList';
 
 interface VariablesPanelProps {
