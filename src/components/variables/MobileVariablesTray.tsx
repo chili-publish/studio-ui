@@ -13,7 +13,7 @@ import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import { DatePickerTrayTitle, EditButtonWrapper, VariablesPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import MobileVariablesList from './MobileVariablesList';
 
 interface VariablesPanelProps {
@@ -22,12 +22,10 @@ interface VariablesPanelProps {
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-const BREADCRUMBS_HEIGHT_REM = '3.5rem';
 
 const imagePanelHeight = `
     calc(100%
         - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
-        - ${BREADCRUMBS_HEIGHT_REM}
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
@@ -35,7 +33,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
-    const [listVariableOpen, setMobileOptionsListOpen] = useState(false);
+    const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
     const closeVariablePanel = () => {
         setIsVariablesPanelVisible(false);
     };
@@ -73,6 +71,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         return imagePanelTitle;
     }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel]);
 
+    const showImagePanel = !(showVariablesList || showDateVariable);
+
     return (
         <>
             <EditButtonWrapper>
@@ -96,16 +96,23 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 close={closeVariablePanel}
                 title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}
-                hideCloseButton={listVariableOpen}
+                hideCloseButton={mobileOptionsListOpen}
+                styles={css`
+                    height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
+                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
+                    ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
+                `}
             >
-                {!showImageBrowsePanel && (
-                    <MobileVariablesList
-                        variables={variables}
-                        isDocumentLoaded={isDocumentLoaded}
-                        onMobileOptionListToggle={setMobileOptionsListOpen}
-                    />
-                )}
-                {showImageBrowsePanel && <ImagePanel height={imagePanelHeight} />}
+                <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
+                    {!showImageBrowsePanel && (
+                        <MobileVariablesList
+                            variables={variables}
+                            isDocumentLoaded={isDocumentLoaded}
+                            onMobileOptionListToggle={setMobileOptionsListOpen}
+                        />
+                    )}
+                    {showImageBrowsePanel && <ImagePanel />}
+                </VariablesContainer>
             </Tray>
         </>
     );
