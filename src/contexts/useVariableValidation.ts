@@ -10,6 +10,7 @@ export const useVariableValidation = (variables: Variable[]) => {
         let hasErrors = false;
         setVariablesValidation((prev) =>
             variables.reduce((acc, current) => {
+                if (!current.isVisible) return acc;
                 const errMsg = getVariableErrMsg(current);
                 if (errMsg) hasErrors = true;
 
@@ -29,6 +30,7 @@ export const useVariableValidation = (variables: Variable[]) => {
         let hasErrors = false;
         setVariablesValidation((prev) =>
             variables.reduce((acc, current) => {
+                if (!current.isVisible) return acc;
                 if (!!prev[current.id] && prev[current.id].isTouched) {
                     const errMsg = getVariableErrMsg(current);
                     if (errMsg) hasErrors = true;
