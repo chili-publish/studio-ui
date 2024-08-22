@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
@@ -11,7 +11,7 @@ interface VariablesListProps {
 }
 
 function VariablesList({ variables, isDocumentLoaded }: VariablesListProps) {
-    const { contentType, showDatePicker } = useVariablePanelContext();
+    const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
 
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
@@ -19,6 +19,10 @@ function VariablesList({ variables, isDocumentLoaded }: VariablesListProps) {
         },
         [showDatePicker],
     );
+
+    useEffect(() => {
+        validateUpdatedVariables();
+    }, [variables, validateUpdatedVariables]);
 
     return (
         <VariablesListWrapper>

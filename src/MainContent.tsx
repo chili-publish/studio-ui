@@ -56,6 +56,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
     const { subscriber: eventSubscriber } = useSubscriberContext();
+
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 

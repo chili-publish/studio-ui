@@ -18,7 +18,8 @@ interface VariablesListProps {
 }
 
 function MobileVariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
-    const { contentType, showVariablesPanel, showDatePicker, currentVariableId } = useVariablePanelContext();
+    const { contentType, showVariablesPanel, showDatePicker, currentVariableId, validateUpdatedVariables } =
+        useVariablePanelContext();
     const { variablesValidation, validateVariable } = useVariablePanelContext();
 
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
@@ -27,6 +28,10 @@ function MobileVariablesList({ variables, onMobileOptionListToggle, isDocumentLo
         if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listVariableOpen]);
+
+    useEffect(() => {
+        validateUpdatedVariables();
+    }, [variables, validateUpdatedVariables]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {

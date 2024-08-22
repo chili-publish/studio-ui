@@ -26,7 +26,12 @@ export interface ICapabilities {
 export interface VariableValidation {
     [variableId: string]: {
         errorMsg: string;
+        isTouched?: boolean;
     };
+}
+
+export interface VariableValidationOptions {
+    validateUpdatedVariables: boolean;
 }
 
 export interface IVariablePanelContext {
@@ -51,7 +56,8 @@ export interface IVariablePanelContext {
     setSearchQuery: Dispatch<SetStateAction<string>>;
 
     variablesValidation: VariableValidation;
-    validateVariables: () => boolean;
+    validateVariables: (_?: VariableValidationOptions) => boolean;
+    validateUpdatedVariables: () => boolean;
     validateVariable: (_: Variable) => void;
     getVariableError: (_: Variable) => string;
 }

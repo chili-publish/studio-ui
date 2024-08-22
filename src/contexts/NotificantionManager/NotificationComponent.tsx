@@ -2,7 +2,7 @@ import { Toast, ToastVariant } from '@chili-publish/grafx-shared-components';
 import { NotificationWrapper } from './Notification.styles';
 import { INotificationComponent } from './Notification.types';
 
-const DEFAULT_NOTIFICATION_DURATION = 50000;
+const DEFAULT_NOTIFICATION_DURATION = 5000;
 
 function NotificationComponent(props: INotificationComponent) {
     const { currentNotification, removeNotification } = props;

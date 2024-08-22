@@ -13,6 +13,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showImagePanel: () => undefined,
     variablesValidation: {},
     validateVariables: () => false,
+    validateUpdatedVariables: () => false,
     validateVariable: () => undefined,
     getVariableError: () => '',
     contentType: ContentType.VARIABLES_LIST,

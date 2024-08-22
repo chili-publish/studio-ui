@@ -8,7 +8,7 @@ export const useVariableValidation = (variables: Variable[]) => {
 
     const validateVariables = useCallback(() => {
         let hasErrors = false;
-        setVariablesValidation(
+        setVariablesValidation((prev) =>
             variables.reduce((acc, current) => {
                 const errMsg = getVariableErrMsg(current);
                 if (errMsg) hasErrors = true;
@@ -17,8 +17,33 @@ export const useVariableValidation = (variables: Variable[]) => {
                     ...acc,
                     [current.id]: {
                         errorMsg: errMsg,
+                        isTouched: prev[current.id]?.isTouched,
                     },
                 };
+            }, {}),
+        );
+        return hasErrors;
+    }, [variables]);
+
+    const validateUpdatedVariables = useCallback(() => {
+        let hasErrors = false;
+        setVariablesValidation((prev) =>
+            variables.reduce((acc, current) => {
+                if (!!prev[current.id] && prev[current.id].isTouched) {
+                    const errMsg = getVariableErrMsg(current);
+                    if (errMsg) hasErrors = true;
+
+                    const currentConfig = prev[current.id];
+
+                    return {
+                        ...acc,
+                        [current.id]: {
+                            ...(currentConfig || {}),
+                            errorMsg: errMsg,
+                        },
+                    };
+                }
+                return { ...acc, [current.id]: prev[current.id] };
             }, {}),
         );
         return hasErrors;
@@ -29,6 +54,7 @@ export const useVariableValidation = (variables: Variable[]) => {
             ...prev,
             [variable.id]: {
                 errorMsg: getVariableErrMsg(variable),
+                isTouched: true,
             },
         }));
     }, []);
@@ -47,6 +73,7 @@ export const useVariableValidation = (variables: Variable[]) => {
         variablesValidation,
         validateVariable,
         validateVariables,
+        validateUpdatedVariables,
         getVariableError,
     };
 };
