@@ -11,7 +11,7 @@ describe('TextVariable', () => {
         const textVariable = { ...variable, placeholder: PLACEHOLDER } as LongTextVariable;
         render(
             <UiThemeProvider theme="platform">
-                <TextVariable variable={textVariable} handleValueChange={jest.fn()} />;
+                <TextVariable variable={textVariable} onValueChange={jest.fn()} />;
             </UiThemeProvider>,
         );
 

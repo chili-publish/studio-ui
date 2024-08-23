@@ -4,22 +4,22 @@ import styled from 'styled-components';
 export const DropdownContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 `;
-export const MobileDropdownOptionContainer = styled.div`
+export const MobileDropdownOptionContainer = styled.div<{ hasError?: boolean }>`
     display: flex;
     padding: 0 0.75rem;
     justify-content: space-between;
     align-items: center;
     background-color: ${Colors.LIGHT_GRAY};
-    border: 1px solid transparent;
+    border: ${(props) => (props.hasError ? `1px solid ${Colors.RED_WARNING}` : '1px solid transparent')};
     font-size: ${FontSizes.regular};
     line-height: 1.29;
     height: 2.5rem;
     border-radius: 0.25rem;
     &:hover {
         box-shadow: none;
-        border-color: ${Colors.PRIMARY_FONT};
+        border-color: ${(props) =>
+            props.hasError ? `1px solid ${Colors.RED_WARNING}` : `1px solid ${Colors.PRIMARY_FONT}`};
         cursor: pointer;
 
         svg {

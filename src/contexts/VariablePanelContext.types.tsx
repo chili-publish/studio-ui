@@ -4,6 +4,7 @@ import {
     ImageVariable,
     Media,
     DateVariable,
+    Variable,
 } from '@chili-publish/studio-sdk';
 import { Dispatch, SetStateAction } from 'react';
 
@@ -20,6 +21,17 @@ export interface IConnectors {
 
 export interface ICapabilities {
     [index: string]: MediaConnectorCapabilities | undefined;
+}
+
+export interface VariableValidation {
+    [variableId: string]: {
+        errorMsg: string;
+        isTouched?: boolean;
+    };
+}
+
+export interface VariableValidationOptions {
+    validateUpdatedVariables: boolean;
 }
 
 export interface IVariablePanelContext {
@@ -42,4 +54,10 @@ export interface IVariablePanelContext {
     setSearchKeyWord: Dispatch<SetStateAction<string>>;
     searchQuery: string;
     setSearchQuery: Dispatch<SetStateAction<string>>;
+
+    variablesValidation: VariableValidation;
+    validateVariables: (_?: VariableValidationOptions) => boolean;
+    validateUpdatedVariables: () => boolean;
+    validateVariable: (_: Variable) => void;
+    getVariableError: (_: Variable) => string;
 }

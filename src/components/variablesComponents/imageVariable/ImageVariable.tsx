@@ -11,7 +11,7 @@ import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 
 function ImageVariable(props: IImageVariable) {
-    const { variable, handleImageRemove } = props;
+    const { variable, validationError, handleImageRemove } = props;
     const placeholder = getVariablePlaceholder(variable);
 
     const { selectedConnector } = useVariableConnector(variable);
@@ -44,10 +44,11 @@ function ImageVariable(props: IImageVariable) {
                 dataIntercomId={`image-picker-${variable.name}`}
                 id={variable.id}
                 label={<Label translationKey={variable.name} value={variable.name} />}
+                required={variable.isRequired}
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                onRemove={() => handleImageRemove()}
+                onRemove={handleImageRemove}
                 onBrowse={async () => {
                     if (!selectedConnector) {
                         throw new Error('There is no selected connector');
@@ -63,8 +64,11 @@ function ImageVariable(props: IImageVariable) {
                         console.error(error);
                     }
                 }}
+                validationErrorMessage={validationError}
             />
-            {variable.helpText ? <InputLabel labelFor={variable.id} label={variable.helpText} /> : null}
+            {variable.helpText && !validationError ? (
+                <InputLabel labelFor={variable.id} label={variable.helpText} />
+            ) : null}
         </HelpTextWrapper>
     );
 }

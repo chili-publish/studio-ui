@@ -13,7 +13,6 @@ import {
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import { Dispatch, useMemo, useState } from 'react';
-import StudioDropdown from '../../shared/StudioDropdown';
 import {
     ButtonWrapper,
     Content,
@@ -25,6 +24,7 @@ import {
 } from './DownloadPanel.styles';
 import useDownload from './useDownload';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
@@ -78,7 +78,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 hideCloseButton={mobileDropdownOpen}
             >
                 <Content borderTop={!mobileDropdownOpen}>
-                    <StudioDropdown
+                    <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"
                         selectedValue={getSelectedValue}
