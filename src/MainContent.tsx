@@ -21,12 +21,12 @@ import {
 } from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import Navbar from './components/navbar/Navbar';
-import VariablesPanel from './components/variables/VariablesPanel';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { Project, ProjectConfig } from './types/types';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import MobileVariablesTray from './components/variables/MobileVariablesTray';
 
 declare global {
     interface Window {
@@ -56,6 +56,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
     const { subscriber: eventSubscriber } = useSubscriberContext();
+
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
 
@@ -281,7 +282,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     return (
         <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
-            <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }}>
+            <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }} variables={variables}>
                 <div id="studio-ui-application" className="app">
                     <Navbar
                         projectName={projectConfig?.projectName || currentProject?.name}
@@ -294,7 +295,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                         {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                         <CanvasContainer>
                             {isMobileSize && (
-                                <VariablesPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                                <MobileVariablesTray variables={variables} isDocumentLoaded={isDocumentLoaded} />
                             )}
                             <div
                                 className="sui-canvas"

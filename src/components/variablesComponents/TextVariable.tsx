@@ -1,5 +1,5 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Label, Input, InputLabel } from '@chili-publish/grafx-shared-components';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { ITextVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -7,7 +7,7 @@ import { HelpTextWrapper } from './VariablesComponents.styles';
 import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function TextVariable(props: ITextVariable) {
-    const { handleValueChange, variable } = props;
+    const { variable, validationError, onValueChange } = props;
 
     const [variableValue, setVariableValue] = useState(
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
@@ -31,17 +31,23 @@ function TextVariable(props: ITextVariable) {
                 dataIntercomId={`input-variable-${variable.name}`}
                 value={variableValue}
                 placeholder={placeholder}
+                required={variable.isRequired}
                 onChange={handleVariableChange}
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                     const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
                     const newValue = event.target.value;
-                    if (oldValue !== newValue) handleValueChange(newValue);
+                    onValueChange(newValue, { changed: oldValue !== newValue });
                 }}
                 name={variable.id}
                 label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
+                validation={validationError ? ValidationTypes.ERROR : undefined}
+                validationErrorMessage={validationError}
             />
-            {variable.helpText ? <InputLabel labelFor={variable.id} label={variable.helpText} /> : null}
+            {variable.helpText && !validationError ? (
+                <InputLabel labelFor={variable.id} label={variable.helpText} />
+            ) : null}
         </HelpTextWrapper>
     );
 }
-export default TextVariable;
+const TextVarComponent = React.memo(TextVariable);
+export default TextVarComponent;

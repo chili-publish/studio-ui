@@ -21,7 +21,7 @@ describe('Variable help text', () => {
         const helpText = 'helpText info';
         const variable = variables.find((item) => item.id === 'number-variable') as NumberVariableType;
         const numberVariable = { ...variable, helpText };
-        render(<NumberVariable variable={numberVariable} handleValueChange={jest.fn()} />);
+        render(<NumberVariable variable={numberVariable} onValueChange={jest.fn()} />);
 
         expect(screen.getByText(helpText)).toBeInTheDocument();
     });
@@ -32,7 +32,7 @@ describe('Variable help text', () => {
         const dateVariable = { ...variable, helpText };
         render(
             <UiThemeProvider theme="platform">
-                <DateVariable variable={dateVariable} handleValueChange={jest.fn()} />
+                <DateVariable variable={dateVariable} onValueChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -58,7 +58,7 @@ describe('Variable help text', () => {
         const textVariable = { ...variable, helpText };
         render(
             <UiThemeProvider theme="platform">
-                <TextVariable variable={textVariable} handleValueChange={jest.fn()} />
+                <TextVariable variable={textVariable} onValueChange={jest.fn()} />
             </UiThemeProvider>,
         );
 

@@ -6,22 +6,25 @@ import {
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 export interface IVariablesComponents {
     type: VariableType;
     variable: Variable;
     isDocumentLoaded: boolean;
-    onCalendarOpen?: () => void;
+    onCalendarOpen?: (_: DateVariable) => void;
 }
 
 export interface IImageVariable {
     variable: ImageVariable;
-    handleImageRemove: () => Promise<EditorResponse<null> | null>;
+    validationError?: string;
+    handleImageRemove: () => void;
 }
 
 export interface ITextVariable {
-    handleValueChange: (value: string | boolean) => Promise<EditorResponse<null> | null> | null;
     variable: Variable;
+    validationError?: string;
+    onValueChange: (value: string, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
 }
 
 export interface IBooleanVariable {
@@ -31,15 +34,24 @@ export interface IBooleanVariable {
 
 export interface INumberVariable {
     variable: NumberVariable;
-    handleValueChange: (value: number) => Promise<EditorResponse<null> | null> | null;
+    validationError?: string;
+    onValueChange: (value: number, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
 }
 export interface IDateVariable {
     variable: DateVariable;
-    handleValueChange?: (value: string) => Promise<EditorResponse<null> | null> | null;
+    validationError?: string;
+    onValueChange?: (value: string, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
+    onBlur?: (value: string | null | undefined) => void;
     setDate?: (value: string) => void;
-    onCalendarOpen?: () => void;
+    onCalendarOpen?: (_: DateVariable) => void;
     inline?: boolean;
     selected?: Date | null;
 
     isOpenOnMobile?: boolean;
+}
+
+export interface IListVariable {
+    variable: ListVariable;
+    validationError?: string;
+    onChange: (_: ListVariable) => void;
 }

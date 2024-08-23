@@ -33,6 +33,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
                 variable: {
+                    setValue: jest.fn(),
                     getAll: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: mockVariables })),
                 },
                 layout: {

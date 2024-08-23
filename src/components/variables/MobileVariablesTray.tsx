@@ -10,16 +10,16 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
-import VariablesList from './VariablesList';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
 import {
     DatePickerTrayTitle,
     EditButtonWrapper,
-    VariablesContainer,
     VariablesPanelTitle,
+    VariablesContainer,
 } from './VariablesPanel.styles';
+import MobileVariablesList from './MobileVariablesList';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -33,7 +33,7 @@ const imagePanelHeight = `
         - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
     )`;
 
-function VariablesPanel(props: VariablesPanelProps) {
+function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isDocumentLoaded } = props;
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
@@ -45,6 +45,7 @@ function VariablesPanel(props: VariablesPanelProps) {
 
     const showVariablesList = contentType === ContentType.VARIABLES_LIST;
     const showDateVariable = contentType === ContentType.DATE_VARIABLE_PICKER;
+    const showImageBrowsePanel = contentType === ContentType.IMAGE_PANEL;
 
     const renderTrayHeader = useMemo(() => {
         if (showVariablesList) return <VariablesPanelTitle>Customize</VariablesPanelTitle>;
@@ -108,19 +109,18 @@ function VariablesPanel(props: VariablesPanelProps) {
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
-                    {showVariablesList || showDateVariable ? (
-                        <VariablesList
+                    {!showImageBrowsePanel && (
+                        <MobileVariablesList
                             variables={variables}
-                            onMobileOptionListToggle={(state) => setMobileOptionsListOpen(state)}
                             isDocumentLoaded={isDocumentLoaded}
+                            onMobileOptionListToggle={setMobileOptionsListOpen}
                         />
-                    ) : (
-                        <ImagePanel />
                     )}
+                    {showImageBrowsePanel && <ImagePanel />}
                 </VariablesContainer>
             </Tray>
         </>
     );
 }
 
-export default VariablesPanel;
+export default MobileVariablesPanel;
