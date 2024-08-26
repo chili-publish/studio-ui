@@ -123,7 +123,7 @@ function ItemBrowser<
                         collection: `/${navigationStack?.join('/') ?? ''}`,
                         pageToken: nextPageToken.token ? nextPageToken.token : '',
                         pageSize: 15,
-                        ...(connectorCapabilities?.filtering && { filter: [searchQuery] }),
+                        ...(connectorCapabilities[connectorId]?.filtering && { filter: [searchQuery] }),
                     },
                     {},
                 );

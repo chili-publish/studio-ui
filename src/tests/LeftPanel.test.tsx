@@ -241,10 +241,14 @@ describe('Image Panel', () => {
         await act(async () => {
             imagePicker.click();
         });
-        const image = getAllByRole('img', { name: /grafx/i })[0];
+        let image: HTMLElement;
+        await waitFor(() => {
+            [image] = getAllByRole('img', { name: /grafx/i });
+            expect(image).toBeInTheDocument();
+        });
 
         await act(async () => {
-            image.click();
+            image?.click();
         });
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
@@ -262,10 +266,14 @@ describe('Image Panel', () => {
         await act(async () => {
             imagePicker.click();
         });
-        const image = getAllByRole('img', { name: /grafx/i })[0];
+        let image: HTMLElement;
+        await waitFor(() => {
+            [image] = getAllByRole('img', { name: /grafx/i });
+            expect(image).toBeInTheDocument();
+        });
 
         await act(async () => {
-            image.click();
+            image?.click();
         });
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
