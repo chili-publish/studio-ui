@@ -3,13 +3,13 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { render, waitFor, screen } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
+import userEvent from '@testing-library/user-event';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
 import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
-import userEvent from '@testing-library/user-event';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
