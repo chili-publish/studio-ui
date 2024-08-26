@@ -9,6 +9,7 @@ import { mockAssets } from './mocks/mockAssets';
 import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -255,6 +256,7 @@ describe('Image Panel', () => {
         expect(input).toBeNull();
     });
     test('Render search input when filtering is supported', async () => {
+        const user = userEvent.setup();
         const { getAllByTestId, getAllByRole, getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -263,9 +265,9 @@ describe('Image Panel', () => {
             </UiThemeProvider>,
         );
         const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
-        await act(async () => {
-            imagePicker.click();
-        });
+
+        await user.click(imagePicker);
+
         let image: HTMLElement;
         await waitFor(() => {
             [image] = getAllByRole('img', { name: /grafx/i });
