@@ -1,11 +1,6 @@
-import {
-    MediaConnectorCapabilities,
-    ConnectorInstance,
-    ImageVariable,
-    Media,
-    DateVariable,
-    Variable,
-} from '@chili-publish/studio-sdk';
+import { MediaConnectorCapabilities, ImageVariable, Media, DateVariable, Variable } from '@chili-publish/studio-sdk';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
+
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {

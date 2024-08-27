@@ -6,10 +6,13 @@ import { isAuthenticationRequired, verifyAuthentication, getRemoteMediaConnector
 
 jest.mock('axios');
 
+const GRAFX_ENV_API = 'http://env-1.com/';
+
 describe('utils connectors', () => {
     const mockSDK = mock<EditorSDK>();
+    mockSDK.next.connector = {} as any;
 
-    mockSDK.connector.getById = jest.fn().mockResolvedValue({
+    mockSDK.next.connector.getById = jest.fn().mockResolvedValue({
         parsedData: {
             source: { url: 'http://deploy.com/media-connector' },
         },
@@ -29,18 +32,18 @@ describe('utils connectors', () => {
     });
 
     it('should handle "getRemoteMediaConnector" correctly', async () => {
-        const connector = await getRemoteMediaConnector('connector-1');
+        const connector = await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1');
 
         expect(connector).toEqual({
             id: 'remote-connector-1',
         });
 
-        (window.SDK.connector.getById as jest.Mock).mockResolvedValueOnce({
+        (window.SDK.next.connector.getById as jest.Mock).mockResolvedValueOnce({
             parsedData: null,
         });
 
         expect(async () => {
-            await getRemoteMediaConnector('connector-1');
+            await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1');
         }).rejects.toThrow('Connector is not found by connector-1');
     });
 
