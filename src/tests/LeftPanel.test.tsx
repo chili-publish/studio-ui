@@ -3,6 +3,7 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { render, waitFor, screen } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
+import userEvent from '@testing-library/user-event';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { mockAssets } from './mocks/mockAssets';
@@ -155,8 +156,10 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        const folder = getAllByRole('img', { name: /grafx/i })[0];
-        expect(folder).toBeInTheDocument();
+        await waitFor(() => {
+            const folder = getAllByRole('img', { name: /grafx/i })[0];
+            expect(folder).toBeInTheDocument();
+        });
 
         const container = getByTestId(getDataTestIdForSUI('resources-container'));
         // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
@@ -239,16 +242,21 @@ describe('Image Panel', () => {
         await act(async () => {
             imagePicker.click();
         });
-        const image = getAllByRole('img', { name: /grafx/i })[0];
+        let image: HTMLElement;
+        await waitFor(() => {
+            [image] = getAllByRole('img', { name: /grafx/i });
+            expect(image).toBeInTheDocument();
+        });
 
         await act(async () => {
-            image.click();
+            image?.click();
         });
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
         expect(input).toBeNull();
     });
     test('Render search input when filtering is supported', async () => {
+        const user = userEvent.setup();
         const { getAllByTestId, getAllByRole, getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -257,13 +265,17 @@ describe('Image Panel', () => {
             </UiThemeProvider>,
         );
         const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
-        await act(async () => {
-            imagePicker.click();
+
+        await user.click(imagePicker);
+
+        let image: HTMLElement;
+        await waitFor(() => {
+            [image] = getAllByRole('img', { name: /grafx/i });
+            expect(image).toBeInTheDocument();
         });
-        const image = getAllByRole('img', { name: /grafx/i })[0];
 
         await act(async () => {
-            image.click();
+            image?.click();
         });
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));

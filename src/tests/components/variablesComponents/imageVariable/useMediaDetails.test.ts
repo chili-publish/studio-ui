@@ -222,6 +222,7 @@ describe('"useMediaDetails" hook', () => {
             connectorCapabilities: {
                 'grafx-media': {
                     query: true,
+                    filtering: true,
                 },
             },
             getCapabilitiesForConnector: jest.fn(),
@@ -261,6 +262,7 @@ describe('"useMediaDetails" hook', () => {
             connectorCapabilities: {
                 'grafx-media': {
                     query: true,
+                    filtering: true,
                 },
             },
             getCapabilitiesForConnector: jest.fn(),
@@ -283,6 +285,36 @@ describe('"useMediaDetails" hook', () => {
         );
 
         expect(window.SDK.mediaConnector.query).toHaveBeenCalledTimes(2);
+
+        await act(() => {
+            expect(result.current).toEqual({
+                id: 'media',
+                name: 'name',
+            });
+        });
+    });
+
+    it('should request media details without filter query and return value', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
+        const mockValue = {
+            connectorCapabilities: {
+                'grafx-media': {
+                    query: true,
+                    filtering: false,
+                },
+            },
+            getCapabilitiesForConnector: jest.fn(),
+        };
+        (useVariablePanelContext as jest.Mock).mockReturnValue(mockValue);
+        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+
+        const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
+        mockSubscriber.emit('onVariableListChanged', [variableChange]);
+
+        await waitFor(() => expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {}, {}));
 
         await act(() => {
             expect(result.current).toEqual({

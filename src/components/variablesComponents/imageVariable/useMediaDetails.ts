@@ -17,9 +17,11 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
 
         const { parsedData } = await window.SDK.mediaConnector.query(
             connectorId,
-            {
-                filter: [mediaAssetId],
-            },
+            connectorCapabilities[connectorId]?.filtering
+                ? {
+                      filter: [mediaAssetId],
+                  }
+                : {},
             {},
         );
         setMediaDetails(parsedData?.data[0] ?? null);
