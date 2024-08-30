@@ -182,7 +182,6 @@ describe('Image Panel', () => {
         await act(async () => {
             await imagePicker.click();
         });
-        screen.logTestingPlaygroundURL();
         const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
 
         await act(async () => {
