@@ -180,9 +180,8 @@ describe('Image Panel', () => {
         );
         const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
-
         const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
 
         await act(async () => {
