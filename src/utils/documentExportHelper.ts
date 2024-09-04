@@ -17,7 +17,7 @@ export const getDownloadLink = async (
     baseUrl: string,
     token: string,
     layoutId: Id,
-    projectId: string,
+    projectId: Id,
     outputSettingsId: string | undefined,
 ): Promise<DownloadLinkResult> => {
     try {
@@ -45,6 +45,7 @@ export const getDownloadLink = async (
             layoutsToExport: [layoutId],
             engineVersion,
             documentContent: JSON.parse(body),
+            projectId,
         };
 
         const httpResponse = await axios.post(generateExportUrl, requestBody, {
