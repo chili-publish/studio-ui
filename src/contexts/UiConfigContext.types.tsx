@@ -6,4 +6,5 @@ export interface IUiConfigContext {
     userInterfaceOutputSettings: UserInterfaceOutputSettings[] | null;
     isDownloadBtnVisible: boolean;
     isBackBtnVisible: boolean;
+    graFxStudioEnvironmentApiBaseUrl: string;
 }

@@ -2,6 +2,7 @@ import { mock } from 'jest-mock-extended';
 import EditorSDK, { ImageVariable } from '@chili-publish/studio-sdk';
 import { renderHook, waitFor } from '@testing-library/react';
 import axios from 'axios';
+import { ConnectorRegistrationSource } from '@chili-publish/studio-sdk/lib/src/next';
 import { variables as mockVariables } from '../../../mocks/mockVariables';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
 
@@ -10,9 +11,12 @@ jest.mock('axios');
 describe('"useVariablesConnector" hook', () => {
     beforeEach(() => {
         const mockSDK = mock<EditorSDK>();
-        mockSDK.connector.getById = jest.fn().mockResolvedValue({
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        mockSDK.next.connector = {} as any;
+
+        mockSDK.next.connector.getById = jest.fn().mockResolvedValue({
             parsedData: {
-                source: { url: 'http://deploy.com/media-connector' },
+                source: { url: 'http://deploy.com/media-connector', source: ConnectorRegistrationSource.url },
             },
         });
         window.SDK = mockSDK;
@@ -33,7 +37,7 @@ describe('"useVariablesConnector" hook', () => {
         const { result } = renderHook(() => useVariableConnector(currentImageVariable));
 
         await waitFor(() => {
-            expect(window.SDK.connector.getById).toHaveBeenCalledWith(currentImageVariable.value?.connectorId);
+            expect(window.SDK.next.connector.getById).toHaveBeenCalledWith(currentImageVariable.value?.connectorId);
         });
 
         await waitFor(() => {
