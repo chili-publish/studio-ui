@@ -29,6 +29,19 @@ jest.mock('@chili-publish/studio-sdk', () => {
                         .mockImplementation(() => Promise.resolve({ success: true, parsedData: [] })),
                     getMappings: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: [] })),
                 },
+                next: {
+                    ...sdk.next,
+                    connector: {
+                        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: connectorSourceUrl } } }),
+                        getState: jest
+                            .fn()
+                            .mockImplementation(() => Promise.resolve({ parsedData: { type: 'ready' } })),
+                        getAllByType: jest
+                            .fn()
+                            .mockImplementation(() => Promise.resolve({ success: true, parsedData: [] })),
+                        getMappings: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: [] })),
+                    },
+                },
                 document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },

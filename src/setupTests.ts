@@ -3,6 +3,7 @@ import { mock } from 'jest-mock-extended';
 import EditorSDK from '@chili-publish/studio-sdk';
 
 jest.mock('@chili-publish/studio-sdk');
+jest.mock('@chili-publish/studio-sdk/lib/src/next');
 
 const ResizeObserver = require('resize-observer-polyfill');
 

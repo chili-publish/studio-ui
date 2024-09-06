@@ -1,11 +1,41 @@
 import axios from 'axios';
+import {
+    ConnectorGrafxRegistration,
+    ConnectorLocalRegistration,
+    ConnectorRegistrationSource,
+    ConnectorUrlRegistration,
+} from '@chili-publish/studio-sdk/lib/src/next';
 import { MediaRemoteConnector } from './ApiTypes';
 
+const isConnectorUrlRegistration = (
+    connector: ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration,
+): connector is ConnectorUrlRegistration => {
+    return connector.source === ConnectorRegistrationSource.url;
+};
+
+const isConnectorLocalRegistration = (
+    connector: ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration,
+): connector is ConnectorLocalRegistration => {
+    return connector.source === ConnectorRegistrationSource.local;
+};
+
 // NOTE: Works for Grafx only connectors so far
-export async function getRemoteMediaConnector(connectorId: string): Promise<MediaRemoteConnector> {
-    const { parsedData: engineConnector } = await window.SDK.connector.getById(connectorId);
+export async function getRemoteMediaConnector(
+    graFxStudioEnvironmentApiBaseUrl: string,
+    connectorId: string,
+): Promise<MediaRemoteConnector> {
+    const { parsedData: engineConnector } = await window.SDK.next.connector.getById(connectorId);
     if (engineConnector) {
-        const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url);
+        if (
+            isConnectorUrlRegistration(engineConnector.source) ||
+            isConnectorLocalRegistration(engineConnector.source)
+        ) {
+            const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url);
+            return res.data;
+        }
+        const res = await axios.get<MediaRemoteConnector>(
+            `${graFxStudioEnvironmentApiBaseUrl}/connectors/${engineConnector.source.id}`,
+        );
         return res.data;
     }
     throw new Error(`Connector is not found by ${connectorId}`);

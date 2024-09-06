@@ -31,10 +31,12 @@ jest.mock('@chili-publish/studio-sdk', () => {
             return {
                 loadEditor: () => '',
                 configuration: { setValue: jest.fn() },
-                connector: {
-                    getAllByType: jest
-                        .fn()
-                        .mockImplementation(() => Promise.resolve({ success: true, parsedData: [] })),
+                next: {
+                    connector: {
+                        getAllByType: jest
+                            .fn()
+                            .mockImplementation(() => Promise.resolve({ success: true, parsedData: [] })),
+                    },
                 },
                 layout: {
                     getSelected: jest
