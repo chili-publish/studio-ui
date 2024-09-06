@@ -144,7 +144,7 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
-        const { getByText, getByTestId, getAllByTestId, getAllByRole, getAllByText } = render(
+        const { getByText, getByTestId, getAllByTestId, getAllByText, findByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
@@ -156,8 +156,8 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
 
-        await waitFor(() => {
-            const folder = getAllByRole('img', { name: /grafx/i })[0];
+        await waitFor(async () => {
+            const folder = await findByTestId(getDataTestId('preview-container-grafx'));
             expect(folder).toBeInTheDocument();
         });
 
@@ -180,9 +180,8 @@ describe('Image Panel', () => {
         );
         const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
-
         const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
 
         await act(async () => {
