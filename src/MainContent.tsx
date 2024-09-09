@@ -244,9 +244,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     useEffect(() => {
         const setHandTool = async () => {
-            if (fetchedDocument) {
-                await window.SDK.tool.setHand();
-            }
+            await window.SDK.tool.setHand();
         };
         const loadDocument = async () => {
             if (authToken) {
