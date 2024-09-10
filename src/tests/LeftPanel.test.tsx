@@ -171,7 +171,7 @@ describe('Image Panel', () => {
     });
 
     test('Media asset folder navigation works', async () => {
-        const { getAllByTestId, getByText } = render(
+        const { getAllByTestId, getByText, findByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
@@ -182,7 +182,10 @@ describe('Image Panel', () => {
         await act(async () => {
             await imagePicker.click();
         });
-        const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
+        let image: HTMLElement;
+        await waitFor(async () => {
+            image = await findByTestId(getDataTestId('preview-container-grafx'));
+        });
 
         await act(async () => {
             image.click();
@@ -230,7 +233,7 @@ describe('Image Panel', () => {
                 }),
             );
 
-        const { getAllByTestId, getAllByRole } = render(
+        const { getAllByTestId, findByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
@@ -242,8 +245,8 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
+        await waitFor(async () => {
+            image = await findByTestId(getDataTestId('preview-container-grafx'));
             expect(image).toBeInTheDocument();
         });
 
@@ -256,7 +259,7 @@ describe('Image Panel', () => {
     });
     test('Render search input when filtering is supported', async () => {
         const user = userEvent.setup();
-        const { getAllByTestId, getAllByRole, getByTestId } = render(
+        const { getAllByTestId, findByTestId, getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
@@ -268,11 +271,10 @@ describe('Image Panel', () => {
         await user.click(imagePicker);
 
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
+        await waitFor(async () => {
+            image = await findByTestId(getDataTestId('preview-container-grafx'));
             expect(image).toBeInTheDocument();
         });
-
         await act(async () => {
             image?.click();
         });
