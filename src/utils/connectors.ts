@@ -3,7 +3,7 @@ import { MediaRemoteConnector } from './ApiTypes';
 
 // NOTE: Works for Grafx only connectors so far
 export async function getRemoteMediaConnector(connectorId: string): Promise<MediaRemoteConnector> {
-    const { parsedData: engineConnector } = await window.SDK.next.connector.getById(connectorId);
+    const { parsedData: engineConnector } = await window.SDK.connector.getById(connectorId);
     if (engineConnector) {
         const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url);
         return res.data;
