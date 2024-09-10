@@ -36,8 +36,9 @@ export const MobileDropdownOptionContainer = styled.div<{ hasError?: boolean }>`
 export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
     display: flex;
     align-items: center;
-    height: 3rem;
-    padding: 0 1rem;
+    min-height: 3rem;
+    word-break: break-word;
+    padding: 0.5rem 0.75rem;
     font-size: ${FontSizes.regular};
     ${({ selected }) => selected && `background-color: ${Colors.LIGHT_GRAY_200};`};
 `;
@@ -47,10 +48,16 @@ export const MobileDropdownOptionContent = styled.div`
     justify-content: space-between;
     align-items: center;
     width: 100%;
+
+    > svg {
+        width: ${FontSizes.icon} !important;
+        min-width: ${FontSizes.icon} !important;
+        height: ${FontSizes.icon} !important;
+    }
 `;
 
 export const MobileDropdownValue = styled.div`
-    display: flex;
+    display: inline-block;
     gap: 0.5rem;
     justify-content: space-between;
     align-items: center;
