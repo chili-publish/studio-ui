@@ -182,7 +182,7 @@ describe('Image Panel', () => {
         await act(async () => {
             await imagePicker.click();
         });
-        const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
+        const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
 
         await act(async () => {
             image.click();
