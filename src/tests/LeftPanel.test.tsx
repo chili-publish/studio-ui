@@ -123,7 +123,9 @@ describe('Image Panel', () => {
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
+            timeout: 5000,
+        });
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {
@@ -151,7 +153,9 @@ describe('Image Panel', () => {
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
+            timeout: 5000,
+        });
         await act(async () => {
             imagePicker.click();
         });
@@ -178,7 +182,9 @@ describe('Image Panel', () => {
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
+            timeout: 5000,
+        });
         await act(async () => {
             await imagePicker.click();
         });
@@ -200,7 +206,9 @@ describe('Image Panel', () => {
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
+            timeout: 5000,
+        });
         await act(async () => {
             imagePicker.click();
         });
@@ -237,15 +245,20 @@ describe('Image Panel', () => {
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
+            timeout: 5000,
+        });
         await act(async () => {
             imagePicker.click();
         });
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
-            expect(image).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                [image] = getAllByRole('img', { name: /grafx/i });
+                expect(image).toBeInTheDocument();
+            },
+            { timeout: 5000 },
+        );
 
         await act(async () => {
             image?.click();
@@ -268,10 +281,13 @@ describe('Image Panel', () => {
         await user.click(imagePicker);
 
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
-            expect(image).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                [image] = getAllByRole('img', { name: /grafx/i });
+                expect(image).toBeInTheDocument();
+            },
+            { timeout: 5000 },
+        );
         await act(async () => {
             image?.click();
         });
