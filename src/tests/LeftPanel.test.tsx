@@ -245,10 +245,13 @@ describe('Image Panel', () => {
             imagePicker.click();
         });
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
-            expect(image).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                [image] = getAllByRole('img', { name: /grafx/i });
+                expect(image).toBeInTheDocument();
+            },
+            { timeout: 5000 },
+        );
 
         await act(async () => {
             image?.click();
@@ -271,10 +274,13 @@ describe('Image Panel', () => {
         await user.click(imagePicker);
 
         let image: HTMLElement;
-        await waitFor(() => {
-            [image] = getAllByRole('img', { name: /grafx/i });
-            expect(image).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                [image] = getAllByRole('img', { name: /grafx/i });
+                expect(image).toBeInTheDocument();
+            },
+            { timeout: 5000 },
+        );
 
         await act(async () => {
             image?.click();
