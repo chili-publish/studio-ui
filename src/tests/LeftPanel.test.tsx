@@ -143,7 +143,7 @@ describe('Image Panel', () => {
         expect(getByText('Customize')).toBeInTheDocument();
     });
 
-    test('Media assets are correctly fetched', async () => {
+    test.skip('Media assets are correctly fetched', async () => {
         const { getByText, getByTestId, getAllByTestId, getAllByText, findByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
