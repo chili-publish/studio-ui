@@ -7,7 +7,7 @@ const FILTER_MARGIN_BOTTOM = '1rem';
 
 const NAVIGATION_HEIGHT = '2.5rem';
 const SCROLLABLE_PANEL_MARGIN_TOP = '1rem';
-const NAVIGATION_MARGIN_TOP = '0.5rem';
+const NAVIGATION_MARGIN_BOTTOM = '0.5rem';
 
 export const ResourcesContainer = styled.div`
     width: 100%;
@@ -91,7 +91,7 @@ export const LoadPageContainer = styled.div`
 export const BreadCrumbsWrapper = styled.div`
     width: 15.625rem;
     height: ${NAVIGATION_HEIGHT};
-    margin-top: ${NAVIGATION_MARGIN_TOP};
+    margin-bottom: ${NAVIGATION_MARGIN_BOTTOM};
     overflow: visible;
     white-space: nowrap;
     display: flex;
@@ -107,7 +107,7 @@ export const BreadCrumbsWrapper = styled.div`
 
 export const ScrollbarContainer = styled.div.attrs(
     (props: { filteringEnabled?: boolean; navigationBreadcrumbsEnabled?: boolean; hasSearchQuery?: boolean }) => {
-        const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_TOP})`;
+        const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_BOTTOM})`;
         const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
 
         const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
