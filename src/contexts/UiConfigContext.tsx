@@ -8,6 +8,7 @@ export const UiConfigContextDefaultValues: IUiConfigContext = {
     userInterfaceOutputSettings: null,
     isDownloadBtnVisible: defaultUiOptions.widgets.backButton?.visible || false,
     isBackBtnVisible: defaultUiOptions.widgets.downloadButton?.visible || false,
+    graFxStudioEnvironmentApiBaseUrl: '',
 };
 
 export const UiConfigContext = createContext<IUiConfigContext>(UiConfigContextDefaultValues);
@@ -42,11 +43,17 @@ export function UiConfigContextProvider({
         () => ({
             uiOptions: projectConfig.uiOptions,
             outputSettings: projectConfig.outputSettings,
+            graFxStudioEnvironmentApiBaseUrl: projectConfig.graFxStudioEnvironmentApiBaseUrl,
             userInterfaceOutputSettings,
             isDownloadBtnVisible: projectConfig.uiOptions.widgets?.downloadButton?.visible ?? false,
             isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible ?? false,
         }),
-        [projectConfig.outputSettings, projectConfig.uiOptions, userInterfaceOutputSettings],
+        [
+            projectConfig.outputSettings,
+            projectConfig.uiOptions,
+            projectConfig.graFxStudioEnvironmentApiBaseUrl,
+            userInterfaceOutputSettings,
+        ],
     );
 
     return <UiConfigContext.Provider value={data}>{children}</UiConfigContext.Provider>;

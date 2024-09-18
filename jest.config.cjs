@@ -1,7 +1,10 @@
+const esModules = ['@chili-publish/studio-sdk/lib/src/next'].join('|');
+
 module.exports = {
     roots: ['<rootDir>'],
     testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
     transform: {
+        [`(${esModules}).+\\.js$`]: 'babel-jest',
         '^.+\\.(ts|tsx)$': 'ts-jest',
     },
     preset: 'ts-jest',
@@ -21,4 +24,5 @@ module.exports = {
         'default',
         ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', outputName: 'junit.xml' }],
     ],
+    transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
 };

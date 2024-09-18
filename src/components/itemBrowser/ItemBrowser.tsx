@@ -294,6 +294,16 @@ function ItemBrowser<
             padding="0"
             height="100%"
         >
+            {navigationEnabled ? (
+                <BreadCrumbsWrapper>
+                    <BreadCrumb
+                        dataId={getDataIdForSUI('toolbar-breadcrumb')}
+                        dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
+                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        onClick={updateNavigationStack}
+                    />
+                </BreadCrumbsWrapper>
+            ) : null}
             {filteringEnabled ? (
                 <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
                     <Input
@@ -338,16 +348,6 @@ function ItemBrowser<
                         isHighlightOnClick
                     />
                 </SearchInputWrapper>
-            ) : null}
-            {navigationEnabled ? (
-                <BreadCrumbsWrapper>
-                    <BreadCrumb
-                        dataId={getDataIdForSUI('toolbar-breadcrumb')}
-                        dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
-                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                        onClick={updateNavigationStack}
-                    />
-                </BreadCrumbsWrapper>
             ) : null}
             <ScrollbarContainer
                 filteringEnabled={filteringEnabled}

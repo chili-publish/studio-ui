@@ -1,7 +1,6 @@
 import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
-    ConnectorInstance,
     ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
@@ -9,6 +8,7 @@ import StudioSDK, {
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import React, { useEffect, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
@@ -137,7 +137,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                     ) {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
-                        const connector = await window.SDK.connector.getById(request.connectorId);
+                        const connector = await window.SDK.next.connector.getById(request.connectorId);
                         const result = await createAuthenticationProcess(async () => {
                             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                             const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
@@ -257,13 +257,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             await window.SDK.document.load(fetchedDocument).then((res) => {
                 setIsDocumentLoaded(res.success);
             });
-            window.SDK.connector.getAllByType(ConnectorType.media).then(async (res) => {
+            window.SDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
                 if (res.success && res.parsedData) {
                     setMediaConnectors(res.parsedData);
                 }
             });
 
-            window.SDK.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+            window.SDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
                 if (res.success && res.parsedData) {
                     setFontsConnectors(res.parsedData);
                 }
