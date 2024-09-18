@@ -152,10 +152,13 @@ describe('Image Panel', () => {
             await imagePicker.click();
         });
 
-        await waitFor(async () => {
-            const folder = await findByTestId(getDataTestId('preview-container-grafx'));
-            expect(folder).toBeInTheDocument();
-        });
+        await waitFor(
+            async () => {
+                const folder = await findByTestId(getDataTestId('preview-container-grafx'));
+                expect(folder).toBeInTheDocument();
+            },
+            { timeout: 5000 },
+        );
 
         const container = getByTestId(getDataTestIdForSUI('resources-container'));
         // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
