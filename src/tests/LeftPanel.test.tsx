@@ -149,6 +149,7 @@ describe('Image Panel', () => {
         await act(async () => {
             await user.click(imagePicker[0]);
         });
+        screen.debug();
         screen.logTestingPlaygroundURL();
         // const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
         // expect(folder).toBeInTheDocument();
