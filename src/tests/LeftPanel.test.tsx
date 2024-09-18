@@ -137,7 +137,6 @@ describe('Image Panel', () => {
 
     test('Media assets are correctly fetched', async () => {
         const user = userEvent.setup();
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { getByText, getByTestId, getAllByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -149,18 +148,16 @@ describe('Image Panel', () => {
         await act(async () => {
             await user.click(imagePicker[0]);
         });
-        screen.debug();
-        screen.logTestingPlaygroundURL();
-        // const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
-        // expect(folder).toBeInTheDocument();
+        const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
+        expect(folder).toBeInTheDocument();
 
-        // const container = getByTestId(getDataTestIdForSUI('resources-container'));
-        // // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
-        // expect(container.childNodes).toHaveLength(3);
+        const container = getByTestId(getDataTestIdForSUI('resources-container'));
+        // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
+        expect(container.childNodes).toHaveLength(3);
 
-        // expect(getAllByText(/grafx/i)).not.toHaveLength(0);
-        // expect(getByText('ProductShot')).toBeInTheDocument();
-        // expect(getByText('grafx')).toBeInTheDocument();
+        expect(getAllByText(/grafx/i)).not.toHaveLength(0);
+        expect(getByText('ProductShot')).toBeInTheDocument();
+        expect(getByText('grafx')).toBeInTheDocument();
     });
 
     test('Media asset folder navigation works', async () => {
