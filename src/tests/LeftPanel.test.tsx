@@ -136,6 +136,7 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
+        const user = userEvent.setup();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { getByText, getByTestId, getAllByText } = render(
             <UiThemeProvider theme="platform">
@@ -146,9 +147,8 @@ describe('Image Panel', () => {
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker[0].click();
+            await user.click(imagePicker[0]);
         });
-        screen.debug();
         screen.logTestingPlaygroundURL();
         // const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
         // expect(folder).toBeInTheDocument();
