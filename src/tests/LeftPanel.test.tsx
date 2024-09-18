@@ -1,6 +1,6 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK from '@chili-publish/studio-sdk';
-import { render, waitFor, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -112,20 +112,18 @@ afterEach(() => {
 });
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
-        const { getAllByTestId, getByText, getByRole } = render(
+        const { getByText, getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
-            timeout: 5000,
-        });
-        expect(imagePicker).toBeInTheDocument();
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
+        expect(imagePicker[0]).toBeInTheDocument();
 
         await act(async () => {
-            await imagePicker.click();
+            await imagePicker[0].click();
         });
 
         const goBackButton = getByRole('button');
@@ -138,27 +136,20 @@ describe('Image Panel', () => {
     });
 
     test('Media assets are correctly fetched', async () => {
-        const { getByText, getByTestId, getAllByTestId, getAllByText, findByTestId } = render(
+        const { getByText, getByTestId, getAllByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
-            timeout: 5000,
-        });
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker.click();
+            await imagePicker[0].click();
         });
 
-        await waitFor(
-            async () => {
-                const folder = await findByTestId(getDataTestId('preview-container-grafx'));
-                expect(folder).toBeInTheDocument();
-            },
-            { timeout: 5000 },
-        );
+        const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
+        expect(folder).toBeInTheDocument();
 
         const container = getByTestId(getDataTestIdForSUI('resources-container'));
         // includes one the placeholder element used for getting next page (2 elements returned by the API and 1 placeholder div)
@@ -170,20 +161,17 @@ describe('Image Panel', () => {
     });
 
     test('Media asset folder navigation works', async () => {
-        const { getAllByTestId, getByText } = render(
+        const { getByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
-            timeout: 5000,
-        });
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker.click();
+            await imagePicker[0].click();
         });
-        screen.logTestingPlaygroundURL();
         const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
         await act(async () => {
             await image.click();
@@ -194,18 +182,16 @@ describe('Image Panel', () => {
     });
 
     test.skip('Image Picker updates image after asset is selected', async () => {
-        const { getAllByTestId, getByRole } = render(
+        const { getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
-            timeout: 5000,
-        });
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker.click();
+            await imagePicker[0].click();
         });
         const image = getByRole('img', { name: mockAssets[1].name });
 
@@ -233,30 +219,23 @@ describe('Image Panel', () => {
                 }),
             );
 
-        const { getAllByTestId, getAllByRole } = render(
+        render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0], {
-            timeout: 5000,
-        });
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker.click();
+            await imagePicker[0].click();
         });
-        let image: HTMLElement;
-        await waitFor(
-            () => {
-                [image] = getAllByRole('img', { name: /grafx/i });
-                expect(image).toBeInTheDocument();
-            },
-            { timeout: 5000 },
-        );
+
+        const image = await screen.findAllByRole('img', { name: /grafx/i });
+        expect(image[0]).toBeInTheDocument();
 
         await act(async () => {
-            await image?.click();
+            await image[0].click();
         });
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
@@ -264,29 +243,24 @@ describe('Image Panel', () => {
     });
     test('Render search input when filtering is supported', async () => {
         const user = userEvent.setup();
-        const { getAllByTestId, getAllByRole, getByTestId } = render(
+        const { getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
-        const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
+        const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
 
         await act(async () => {
-            await user.click(imagePicker);
+            await user.click(imagePicker[0]);
         });
 
-        let image: HTMLElement;
-        await waitFor(
-            () => {
-                [image] = getAllByRole('img', { name: /grafx/i });
-                expect(image).toBeInTheDocument();
-            },
-            { timeout: 5000 },
-        );
+        const image = await screen.findAllByRole('img', { name: /grafx/i });
+        expect(image[0]).toBeInTheDocument();
+
         await act(async () => {
-            await image?.click();
+            await image[0].click();
         });
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
