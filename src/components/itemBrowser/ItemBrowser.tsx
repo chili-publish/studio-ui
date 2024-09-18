@@ -127,9 +127,6 @@ function ItemBrowser<
                     },
                     {},
                 );
-
-                // eslint-disable-next-line no-console
-                console.log('%c⧭ debug', 'color: #408059', data);
                 // parse the token used if we need to fetch the next page
                 if (data.success && data.parsedData && data.parsedData.data) {
                     if (!ignore) {
