@@ -128,14 +128,10 @@ describe('Image Panel', () => {
             await imagePicker.click();
         });
 
-        // const imagePanel = await getByText(/home/i);
-        // expect(imagePanel).toBeInTheDocument();
-
         const goBackButton = getByRole('button');
         expect(goBackButton).toBeInTheDocument();
-        screen.logTestingPlaygroundURL();
         await act(async () => {
-            goBackButton.click();
+            await goBackButton.click();
         });
 
         expect(getByText('Customize')).toBeInTheDocument();
@@ -153,7 +149,7 @@ describe('Image Panel', () => {
             timeout: 5000,
         });
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
 
         await waitFor(async () => {
@@ -187,7 +183,7 @@ describe('Image Panel', () => {
         screen.logTestingPlaygroundURL();
         const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
         await act(async () => {
-            image.click();
+            await image.click();
         });
 
         const breadCrumb = getByText('Home');
@@ -206,16 +202,16 @@ describe('Image Panel', () => {
             timeout: 5000,
         });
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
         const image = getByRole('img', { name: mockAssets[1].name });
 
         await act(async () => {
-            image.click();
+            await image.click();
         });
 
-        expect(window.SDK.variable.setImageVariableConnector).toBeCalledTimes(1);
-        expect(window.SDK.variable.setValue).toBeCalledTimes(1);
+        expect(window.SDK.variable.setImageVariableConnector).toHaveBeenCalledTimes(1);
+        expect(window.SDK.variable.setValue).toHaveBeenCalledTimes(1);
     });
     test('Do not render search input when filtering is not supported', async () => {
         mockSDK.mediaConnector.getCapabilities = jest
@@ -245,7 +241,7 @@ describe('Image Panel', () => {
             timeout: 5000,
         });
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
         let image: HTMLElement;
         await waitFor(
@@ -257,7 +253,7 @@ describe('Image Panel', () => {
         );
 
         await act(async () => {
-            image?.click();
+            await image?.click();
         });
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
@@ -274,7 +270,9 @@ describe('Image Panel', () => {
         );
         const imagePicker = await waitFor(() => getAllByTestId(getDataTestId('image-picker-content'))[0]);
 
-        await user.click(imagePicker);
+        await act(async () => {
+            await user.click(imagePicker);
+        });
 
         let image: HTMLElement;
         await waitFor(
@@ -285,7 +283,7 @@ describe('Image Panel', () => {
             { timeout: 5000 },
         );
         await act(async () => {
-            image?.click();
+            await image?.click();
         });
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
