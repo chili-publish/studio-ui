@@ -244,10 +244,9 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     useEffect(() => {
         const setHandTool = async () => {
-            if (fetchedDocument) {
-                await window.SDK.tool.setHand();
-            }
+            await window.SDK.tool.setHand();
         };
+        setHandTool();
         const loadDocument = async () => {
             if (authToken) {
                 await window.SDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
@@ -272,8 +271,6 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
             const layoutIntentData = (await window.SDK.layout.getSelected()).parsedData?.intent.value || null;
             setLayoutIntent(layoutIntentData);
-
-            setHandTool();
             zoomToPage();
         };
 
