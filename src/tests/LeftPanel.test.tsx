@@ -112,6 +112,7 @@ afterEach(() => {
 });
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
+        const user = userEvent.setup();
         const { getByText, getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -123,13 +124,13 @@ describe('Image Panel', () => {
         expect(imagePicker[0]).toBeInTheDocument();
 
         await act(async () => {
-            await imagePicker[0].click();
+            await user.click(imagePicker[0]);
         });
 
         const goBackButton = getByRole('button');
         expect(goBackButton).toBeInTheDocument();
         await act(async () => {
-            await goBackButton.click();
+            await user.click(goBackButton);
         });
 
         expect(getByText('Customize')).toBeInTheDocument();
@@ -161,6 +162,7 @@ describe('Image Panel', () => {
     });
 
     test('Media asset folder navigation works', async () => {
+        const user = userEvent.setup();
         const { getByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -170,11 +172,11 @@ describe('Image Panel', () => {
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker[0].click();
+            await user.click(imagePicker[0]);
         });
         const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
         await act(async () => {
-            await image.click();
+            await user.click(image);
         });
 
         const breadCrumb = getByText('Home');
@@ -182,6 +184,7 @@ describe('Image Panel', () => {
     });
 
     test.skip('Image Picker updates image after asset is selected', async () => {
+        const user = userEvent.setup();
         const { getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -191,18 +194,19 @@ describe('Image Panel', () => {
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker[0].click();
+            await user.click(imagePicker[0]);
         });
         const image = getByRole('img', { name: mockAssets[1].name });
 
         await act(async () => {
-            await image.click();
+            await user.click(image);
         });
 
         expect(window.SDK.variable.setImageVariableConnector).toHaveBeenCalledTimes(1);
         expect(window.SDK.variable.setValue).toHaveBeenCalledTimes(1);
     });
     test('Do not render search input when filtering is not supported', async () => {
+        const user = userEvent.setup();
         mockSDK.mediaConnector.getCapabilities = jest
             .fn()
             .mockImplementation()
@@ -228,14 +232,14 @@ describe('Image Panel', () => {
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
-            await imagePicker[0].click();
+            await user.click(imagePicker[0]);
         });
 
         const image = await screen.findAllByRole('img', { name: /grafx/i });
         expect(image[0]).toBeInTheDocument();
 
         await act(async () => {
-            await image[0].click();
+            await user.click(image[0]);
         });
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
@@ -260,7 +264,7 @@ describe('Image Panel', () => {
         expect(image[0]).toBeInTheDocument();
 
         await act(async () => {
-            await image[0].click();
+            await user.click(image[0]);
         });
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
