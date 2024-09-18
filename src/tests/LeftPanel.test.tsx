@@ -29,18 +29,14 @@ beforeEach(() => {
         .fn()
         .mockImplementation()
         .mockReturnValue(
-            new Promise((resolve) => {
-                const stringData = JSON.stringify({ pageSize: 2, data: mockAssets });
-                // eslint-disable-next-line no-promise-executor-return
-                return resolve({
-                    success: true,
-                    status: 0,
-                    data: stringData,
-                    parsedData: {
-                        pageSize: 2,
-                        data: mockAssets,
-                    },
-                });
+            Promise.resolve({
+                success: true,
+                status: 0,
+                data: JSON.stringify({ pageSize: 2, data: mockAssets }),
+                parsedData: {
+                    pageSize: 2,
+                    data: mockAssets,
+                },
             }),
         );
 
@@ -129,7 +125,7 @@ describe('Image Panel', () => {
         expect(imagePicker).toBeInTheDocument();
 
         await act(async () => {
-            imagePicker.click();
+            await imagePicker.click();
         });
 
         // const imagePanel = await getByText(/home/i);
@@ -137,7 +133,7 @@ describe('Image Panel', () => {
 
         const goBackButton = getByRole('button');
         expect(goBackButton).toBeInTheDocument();
-
+        screen.logTestingPlaygroundURL();
         await act(async () => {
             goBackButton.click();
         });
@@ -188,8 +184,8 @@ describe('Image Panel', () => {
         await act(async () => {
             await imagePicker.click();
         });
+        screen.logTestingPlaygroundURL();
         const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
-
         await act(async () => {
             image.click();
         });
