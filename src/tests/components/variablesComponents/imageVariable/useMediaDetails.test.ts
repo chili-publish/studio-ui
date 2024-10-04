@@ -274,7 +274,9 @@ describe('"useMediaDetails" hook', () => {
         await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
-        mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        await act(() => {
+            mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        });
 
         await waitFor(() =>
             expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith(
