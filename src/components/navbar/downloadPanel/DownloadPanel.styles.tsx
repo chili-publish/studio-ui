@@ -1,19 +1,22 @@
-import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
-
-export const DownloadPanelContainer = styled.div`
-    background-color: ${Colors.LIGHT_GRAY_50};
-    box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
-    border: solid 1px ${Colors.PRIMARY_WHITE};
-    border-radius: 0.25rem;
-`;
 
 export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-size: ${FontSizes.heading2};
     font-weight: bold;
     color: ${Colors.PRIMARY_FONT};
-    border-bottom: 1px solid ${Colors.LIGHT_GRAY_100};
+`;
+
+export const DownloadPanelContainer = styled.div<{ styles: ITheme['panel'] }>`
+    background-color: ${({ styles }) => styles.backgroundColor};
+    box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
+    border: solid 1px ${({ styles }) => styles.borderColor};
+    border-radius: 0.25rem;
+    ${DownloadDropdownTitle} {
+        color: ${({ styles }) => styles.color};
+        border-bottom: 1px solid ${({ styles }) => styles.borderColor};
+    }
 `;
 
 export const DesktopDropdownContainer = styled.div`
@@ -21,6 +24,7 @@ export const DesktopDropdownContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-top: 1rem;
 `;
 export const DropdownLabel = styled.span`
     font-size: ${FontSizes.label};
@@ -37,22 +41,24 @@ export const DropdownOptionLabel = styled.div`
     flex: 1;
 `;
 
-export const Container = styled.div`
+export const DropdownOptionText = styled.span`
+    font-size: ${FontSizes.regular};
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
     display: flex;
     flex: 1;
     flex-direction: column;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-`;
-
-export const DropdownOptionText = styled.span`
-    font-size: ${FontSizes.regular};
-    color: ${Colors.PRIMARY_FONT};
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    ${DropdownOptionText} {
+        color: ${({ dropdownStyles }) => `${dropdownStyles.menuOption.color} !important`};
+    }
 `;
 
 export const DropdownOptionDescription = styled.span`

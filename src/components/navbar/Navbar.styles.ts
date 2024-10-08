@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
-export const StyledNavbar = styled.nav`
+export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode'] }>`
     box-sizing: border-box;
     height: 4rem;
     padding: 0.75rem 1rem;
-    background-color: ${Colors.PRIMARY_WHITE};
-    border-bottom: 2px solid ${Colors.PRIMARY_DROPDOWN_BACKGROUND};
-    color: ${Colors.SECONDARY_FONT};
+    background-color: ${(props) => props.panelTheme.backgroundColor};
+    border-bottom: 2px solid ${(props) => props.panelTheme.borderColor};
+    color: ${({ mode }) => (mode === 'light' ? Colors.SECONDARY_FONT : Colors.SECONDARY_TEXT)};
 
     ul {
         display: flex;

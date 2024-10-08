@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ITheme } from '@chili-publish/grafx-shared-components';
 import App from './App';
 import {
     DownloadLinkResult,
@@ -48,6 +49,7 @@ export default class StudioUI {
             projectId: 'demo',
             projectName: 'Demo',
             uiOptions: defaultUiOptions,
+            uiTheme: 'light',
             outputSettings: defaultOutputSettings,
             graFxStudioEnvironmentApiBaseUrl: '',
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
@@ -89,6 +91,7 @@ export default class StudioUI {
         projectId: string,
         projectName: string,
         uiOptions: UiOptions,
+        uiTheme: ITheme['mode'] | 'system',
         outputSettings: OutputSettings,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
         onProjectDocumentRequested: (projectId: string) => Promise<string>,
@@ -112,6 +115,7 @@ export default class StudioUI {
             projectId,
             projectName,
             uiOptions,
+            uiTheme,
             outputSettings,
             graFxStudioEnvironmentApiBaseUrl,
             onProjectInfoRequested,
@@ -159,6 +163,7 @@ export default class StudioUI {
             projectName,
             editorLink,
             uiOptions,
+            uiTheme,
             outputSettings,
             userInterfaceID,
             refreshTokenAction,
@@ -181,6 +186,7 @@ export default class StudioUI {
             projectId,
             projectName,
             uiOptions ?? defaultPlatformUiOptions,
+            uiTheme ?? 'light',
             outputSettings ?? defaultOutputSettings,
             projectLoader.onProjectInfoRequested,
             projectLoader.onProjectDocumentRequested,
@@ -229,6 +235,7 @@ export default class StudioUI {
             onProjectDocumentRequested,
             onProjectSave,
             uiOptions,
+            uiTheme,
             outputSettings,
             onConnectorAuthenticationRequested,
         } = config;
@@ -246,6 +253,7 @@ export default class StudioUI {
             projectId,
             projectName,
             uiOptions || defaultUiOptions,
+            uiTheme || 'light',
             outputSettings || defaultOutputSettings,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -290,6 +298,7 @@ export default class StudioUI {
             projectName,
             editorLink,
             uiOptions,
+            uiTheme,
             outputSettings,
             userInterfaceID,
             refreshTokenAction,
@@ -319,6 +328,7 @@ export default class StudioUI {
             projectId,
             projectName,
             uiOptions ?? defaultPlatformUiOptions,
+            uiTheme || 'light',
             outputSettings ?? defaultOutputSettings,
             onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
             onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,

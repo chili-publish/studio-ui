@@ -9,6 +9,7 @@ import {
     Menu,
     Tray,
     useMobileSize,
+    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
@@ -19,7 +20,6 @@ import {
     DesktopDropdownContainer,
     DownloadDropdownTitle,
     DownloadPanelContainer,
-    DropdownLabel,
     SpinnerContainer,
 } from './DownloadPanel.styles';
 import useDownload from './useDownload';
@@ -40,6 +40,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+    const { panel } = useTheme();
 
     const {
         downloadOptions,
@@ -112,17 +113,18 @@ function DownloadPanel(props: DownloadPanelProps) {
                     </ButtonWrapper>
                 ) : null}
             </Tray>
+
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
                 position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
             >
-                <DownloadPanelContainer ref={downloadPanelRef}>
+                <DownloadPanelContainer ref={downloadPanelRef} styles={panel}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
-                        <DropdownLabel>Output</DropdownLabel>
                         <DropDown
+                            label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={getSelectedValue}

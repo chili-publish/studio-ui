@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
+import { Button, ButtonVariant, useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { DateVariable as DateVariableType } from '@chili-publish/studio-sdk';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -12,6 +12,7 @@ interface DateVariableMobileProps {
 }
 function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProps) {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
+    const theme = useTheme();
 
     const handleDateSelection = useCallback(async () => {
         if (selectedDate) {
@@ -24,7 +25,7 @@ function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProp
 
     return (
         <>
-            <DatePickerWrapper>
+            <DatePickerWrapper styles={theme}>
                 <DateVariable
                     key={variable.id}
                     variable={variable as DateVariableType}
