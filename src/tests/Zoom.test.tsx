@@ -1,8 +1,8 @@
 import { render, fireEvent } from '@testing-library/react';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
-import Zoom from '../components/zoom/Zoom';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import Zoom from '../components/zoom/Zoom';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
