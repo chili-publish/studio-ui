@@ -51,12 +51,14 @@ describe('Variable Component', () => {
 
     it('Shows the input component for short text and long text variables', () => {
         let container = render(
-            <VariableComponent
-                key={`variable-component-${variables[2].id}`}
-                type={variables[2].type} // short text variable
-                variable={variables[2]}
-                isDocumentLoaded
-            />,
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[2].id}`}
+                    type={variables[2].type} // short text variable
+                    variable={variables[2]}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
         );
         const input = container.container.getElementsByTagName('input')[0];
         fireEvent.focus(input);
@@ -67,12 +69,14 @@ describe('Variable Component', () => {
         expect(screen.getByDisplayValue('I just got updated')).toHaveAttribute('value', 'I just got updated');
 
         container = render(
-            <VariableComponent
-                key={`variable-component-${variables[3].id}`}
-                type={variables[3].type} // short text variable
-                variable={variables[3]}
-                isDocumentLoaded
-            />,
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[3].id}`}
+                    type={variables[3].type} // short text variable
+                    variable={variables[3]}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
         );
 
         const inputLong = container.container.getElementsByTagName('input')[0];
@@ -85,12 +89,14 @@ describe('Variable Component', () => {
     });
     it('Shows the number component for number variables', () => {
         const { getByRole, getAllByRole } = render(
-            <VariableComponent
-                key={`variable-component-${variables[5].id}`}
-                type={variables[5].type}
-                variable={variables[5]}
-                isDocumentLoaded
-            />,
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${variables[5].id}`}
+                    type={variables[5].type}
+                    variable={variables[5]}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
         );
         const input = getByRole('textbox', { name: /number-variable/i });
         const stepBtns = getAllByRole('button');
