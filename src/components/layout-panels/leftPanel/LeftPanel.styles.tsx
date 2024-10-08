@@ -23,5 +23,4 @@ export const ImagePanelContainer = styled.div<{ hidden: boolean }>`
     padding: 0 0 0 1.25rem;
     height: 100%;
     ${({ hidden }) => hidden && 'display: none;'};
-    padding-bottom: 3rem;
 `;
