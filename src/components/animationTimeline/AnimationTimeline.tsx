@@ -1,4 +1,4 @@
-import { Timeline } from '@chili-publish/grafx-shared-components';
+import { Timeline, useTheme } from '@chili-publish/grafx-shared-components';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 
@@ -9,6 +9,7 @@ interface IAnimationTimeline {
 }
 function AnimationTimeline(props: IAnimationTimeline) {
     const { scrubberTimeMs, animationLength, isAnimationPlaying } = props;
+    const theme = useTheme();
 
     const handlePlay = async () => {
         await window.SDK.animation.play();
@@ -23,7 +24,7 @@ function AnimationTimeline(props: IAnimationTimeline) {
     };
 
     return (
-        <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')}>
+        <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')} themeStyles={theme}>
             {animationLength > 0 && (
                 <Timeline
                     animationLength={animationLength}

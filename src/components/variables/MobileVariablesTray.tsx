@@ -6,7 +6,7 @@ import {
     FontSizes,
     Icon,
     Tray,
-    Colors,
+    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
@@ -36,6 +36,7 @@ const imagePanelHeight = `
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isDocumentLoaded } = props;
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
+    const { panel, mode } = useTheme();
 
     const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
     const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
@@ -48,33 +49,29 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const showImageBrowsePanel = contentType === ContentType.IMAGE_PANEL;
 
     const renderTrayHeader = useMemo(() => {
-        if (showVariablesList) return <VariablesPanelTitle>Customize</VariablesPanelTitle>;
+        if (showVariablesList) return <VariablesPanelTitle panelTheme={panel}>Customize</VariablesPanelTitle>;
         if (showDateVariable)
             return (
-                <DatePickerTrayTitle>
+                <DatePickerTrayTitle themeMode={mode}>
                     <Button
                         type="button"
                         variant={ButtonVariant.tertiary}
                         onClick={() => {
                             showVariablesPanel();
                         }}
-                        icon={
-                            <Icon
-                                key="go-back-to-variable-list"
-                                icon={AvailableIcons.faArrowLeft}
-                                color={Colors.PRIMARY_FONT}
-                            />
-                        }
+                        icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
                         styles={css`
                             padding: 0 0.5rem 0 0;
                         `}
                     />
-                    <VariablesPanelTitle margin="0">Select date</VariablesPanelTitle>
+                    <VariablesPanelTitle panelTheme={panel} margin="0">
+                        Select date
+                    </VariablesPanelTitle>
                 </DatePickerTrayTitle>
             );
 
         return imagePanelTitle;
-    }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel]);
+    }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel, mode, panel]);
 
     const showImagePanel = !(showVariablesList || showDateVariable);
 

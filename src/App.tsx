@@ -1,6 +1,6 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
 import { SubscriberContextProvider } from './contexts/Subscriber';
@@ -12,6 +12,14 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
     // TODO: Consider to define global object instead
     const [eventSubscriber] = useState(new Subscriber());
+
+    const uiThemeMode = useMemo(() => {
+        if (projectConfig.uiTheme === 'system') {
+            const isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)');
+            return isDarkTheme ? 'dark' : 'light';
+        }
+        return projectConfig.uiTheme;
+    }, [projectConfig.uiTheme]);
 
     useEffect(() => {
         const appendAuthorizationHeader = async (request: InternalAxiosRequestConfig<unknown>) => {
@@ -71,7 +79,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     return (
         <SubscriberContextProvider subscriber={eventSubscriber}>
-            <UiThemeProvider theme="platform">
+            <UiThemeProvider theme="platform" mode={uiThemeMode}>
                 <NotificationManagerProvider>
                     <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
                 </NotificationManagerProvider>

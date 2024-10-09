@@ -1,7 +1,6 @@
 import {
     AvailableIcons,
     PreviewCard as ChiliPreview,
-    Colors,
     Icon,
     Input,
     Panel,
@@ -12,6 +11,8 @@ import {
     useMobileSize,
     BreadCrumb,
     Option,
+    ThemeColors,
+    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -66,6 +67,7 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
+    const { mode } = useTheme();
 
     const {
         connectorCapabilities,
@@ -239,7 +241,7 @@ function ItemBrowser<
             options: [],
             padding: '0',
             footerTopMargin: '0.75rem',
-            backgroundColor: Colors.LIGHT_GRAY,
+            backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,
@@ -290,9 +292,9 @@ function ItemBrowser<
             title={panelTitle}
             dataId={getDataIdForSUI('widget-media-panel')}
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
-            isModal={false}
             padding="0"
             height="100%"
+            headerBorderColor="transparent"
         >
             {navigationEnabled ? (
                 <BreadCrumbsWrapper>
@@ -317,7 +319,6 @@ function ItemBrowser<
                         leftIcon={{
                             icon: (
                                 <Icon
-                                    editorComponent
                                     dataId={getDataIdForSUI('media-panel-search-icon')}
                                     dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
                                     icon={AvailableIcons.faMagnifyingGlass}

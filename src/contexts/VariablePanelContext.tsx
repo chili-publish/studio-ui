@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, Colors, Icon } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon, useTheme } from '@chili-publish/grafx-shared-components';
 import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
@@ -59,6 +59,7 @@ export function VariablePanelContextProvider({
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
 
     const variableValidationData = useVariableValidation(variables);
+    const { mode } = useTheme();
 
     const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
         if (!connectorId) throw new Error('ConnectorId is not defined');
@@ -94,7 +95,7 @@ export function VariablePanelContextProvider({
 
     const imagePanelTitle = useMemo(
         () => (
-            <NavigationWrapper>
+            <NavigationWrapper themeMode={mode}>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -104,13 +105,7 @@ export function VariablePanelContextProvider({
                         setSearchKeyWord('');
                         setSearchQuery('');
                     }}
-                    icon={
-                        <Icon
-                            key={navigationStack.length}
-                            icon={AvailableIcons.faArrowLeft}
-                            color={Colors.PRIMARY_FONT}
-                        />
-                    }
+                    icon={<Icon key={navigationStack.length} icon={AvailableIcons.faArrowLeft} />}
                     styles={css`
                         padding: 0;
                     `}
@@ -118,7 +113,7 @@ export function VariablePanelContextProvider({
                 <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack],
+        [navigationStack, mode],
     );
 
     const data = useMemo(

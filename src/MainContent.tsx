@@ -1,4 +1,4 @@
-import { Colors, useDebounce, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
     ConnectorType,
@@ -59,6 +59,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     const enableAutoSaveRef = useRef(false);
     const isMobileSize = useMobileSize();
+
+    const { canvas } = useTheme();
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -187,7 +189,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
             },
-            studioStyling: { uiBackgroundColorHex: Colors.LIGHT_GRAY },
+            studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
                 shortcutOptions: {

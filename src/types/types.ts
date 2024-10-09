@@ -1,11 +1,13 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError } from 'axios';
+import { ITheme } from '@chili-publish/grafx-shared-components';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export interface ProjectConfig {
     projectId: string;
     projectName: string;
     uiOptions: UiOptions;
+    uiTheme: ITheme['mode'] | 'system';
     outputSettings: OutputSettings;
     graFxStudioEnvironmentApiBaseUrl: string;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
@@ -34,6 +36,7 @@ export interface DefaultStudioConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     uiOptions?: UiOptions;
+    uiTheme?: ITheme['mode'] | 'system';
     outputSettings?: OutputSettings;
     projectName: string;
     refreshTokenAction?: () => Promise<string | AxiosError>;
@@ -138,6 +141,7 @@ export interface IStudioUILoaderConfig {
     projectName: string;
     refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
+    uiTheme?: ITheme['mode'] | 'system';
     userInterfaceID?: string;
     outputSettings?: OutputSettings;
     editorLink?: string;
