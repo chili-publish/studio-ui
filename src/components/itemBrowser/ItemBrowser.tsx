@@ -11,7 +11,7 @@ import {
     useMobileSize,
     BreadCrumb,
     Option,
-    ColorsData,
+    ThemeColors,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
@@ -241,7 +241,7 @@ function ItemBrowser<
             options: [],
             padding: '0',
             footerTopMargin: '0.75rem',
-            backgroundColor: mode === 'light' ? ColorsData.light.GRAY_100 : undefined,
+            backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,

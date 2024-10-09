@@ -1,4 +1,4 @@
-import { Colors, ColorsData, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { Colors, ThemeColors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
@@ -42,7 +42,7 @@ export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
     & svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-        ${({ themeMode }) => themeMode === 'light' && `color: ${ColorsData.light.PRIMARY_FONT} !important`};
+        ${({ themeMode }) => themeMode === 'light' && `color: ${ThemeColors.light.PRIMARY_FONT} !important`};
     }
 
     & svg.close-icon,
