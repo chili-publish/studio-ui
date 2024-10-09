@@ -1,14 +1,15 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { StyledNavbar, NavbarItem } from './Navbar.styles';
-import { INavbar } from './Navbar.types';
-import DownloadPanel from './downloadPanel/DownloadPanel';
-import useNavbar from './useNavbar';
-import useDownloadPanel from './useDownloadPanel';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { NavbarItem, StyledNavbar } from '../Navbar.styles';
+import DownloadPanel from '../downloadPanel/DownloadPanel';
+import useNavbar from '../useNavbar';
+import { INavbar } from '../Navbar.types';
+import useDownloadPanel from '../useDownloadPanel';
 
-function Navbar(props: INavbar) {
+function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
 
+    const { panel, mode } = useTheme();
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
         useDownloadPanel(projectConfig);
 
@@ -19,21 +20,18 @@ function Navbar(props: INavbar) {
         onBackClick: goBack,
         onDownloadPanelOpen: showDownloadPanel,
     });
-
-    const { panel, mode } = useTheme();
-
     return (
         <StyledNavbar
-            data-id={getDataIdForSUI('navbar')}
-            data-testid={getDataTestIdForSUI('navbar')}
+            data-id={getDataIdForSUI('studio-navbar')}
+            data-testid={getDataTestIdForSUI('studio-navbar')}
             panelTheme={panel}
             mode={mode}
         >
             <ul>
                 {navbarItems.map((item) => (
                     <NavbarItem
-                        data-id={getDataIdForSUI(`navbar-item-${item.label}`)}
-                        data-testid={getDataTestIdForSUI(`navbar-item-${item.label}`)}
+                        data-id={getDataIdForSUI(`studio-navbar-item-${item.label}`)}
+                        data-testid={getDataTestIdForSUI(`studio-navbar-item-${item.label}`)}
                         aria-label={item.label}
                         key={item.label}
                         hideOnMobile={item.hideOnMobile}
@@ -51,4 +49,4 @@ function Navbar(props: INavbar) {
     );
 }
 
-export default Navbar;
+export default StudioNavbar;
