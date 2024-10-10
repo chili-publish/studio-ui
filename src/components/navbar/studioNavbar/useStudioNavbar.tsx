@@ -43,7 +43,7 @@ const useStudioNavbar = ({ projectName, zoom, undoStackState, onBackClick, onDow
             downloadNavbarItem,
             zoomNavbarItem,
         ];
-        return items.filter((item) => !!item);
+        return items.filter((item) => !!item) as NavbarItemType[];
     }, [
         undoRedoNavbarItem,
         downloadNavbarItem,

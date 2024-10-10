@@ -20,7 +20,7 @@ const useNavbar = ({ projectName, zoom, undoStackState, onBackClick, onDownloadP
 
     const navbarItems = useMemo((): NavbarItemType[] => {
         const items = [backBtnItem, undoRedoNavbarItem, downloadNavbarItem, zoomNavbarItem];
-        return items.filter((item) => !!item);
+        return items.filter((item) => !!item) as NavbarItemType[];
     }, [backBtnItem, undoRedoNavbarItem, downloadNavbarItem, zoomNavbarItem]);
 
     return {

@@ -2,7 +2,7 @@ import styled, { CSSProp } from 'styled-components';
 import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
-export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; height: string }>`
+export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; height?: string }>`
     box-sizing: border-box;
     height: ${(props) => props.height || '4rem'};
     padding: 0.75rem 1rem;
