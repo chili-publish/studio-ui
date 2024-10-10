@@ -1,14 +1,14 @@
-import styled from 'styled-components';
-import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import styled, { CSSProp } from 'styled-components';
+import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
-export const StyledNavbar = styled.nav`
+export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; height?: string }>`
     box-sizing: border-box;
-    height: 4rem;
+    height: ${(props) => props.height || '4rem'};
     padding: 0.75rem 1rem;
-    background-color: ${Colors.PRIMARY_WHITE};
-    border-bottom: 2px solid ${Colors.PRIMARY_DROPDOWN_BACKGROUND};
-    color: ${Colors.SECONDARY_FONT};
+    background-color: ${(props) => props.panelTheme.backgroundColor};
+    border-bottom: 2px solid ${(props) => props.panelTheme.borderColor};
+    color: ${({ mode }) => (mode === 'light' ? Colors.SECONDARY_FONT : Colors.SECONDARY_TEXT)};
 
     ul {
         display: flex;
@@ -23,18 +23,14 @@ export const StyledNavbar = styled.nav`
     }
 `;
 
-export const NavbarItem = styled.li<{ hideOnMobile?: boolean }>`
+export const NavbarItem = styled.li<{ hideOnMobile?: boolean; styles?: CSSProp }>`
     & svg {
         height: 1.125rem;
     }
-
-    &:nth-child(2) {
-        margin-left: auto;
-    }
-
     ${mobileMediaQuery} {
         display: ${(props) => (props.hideOnMobile ? 'none !important' : 'list-item')};
     }
+    ${(props) => props.styles && props.styles};
 `;
 
 export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`

@@ -1,4 +1,5 @@
 import { Variable } from '@chili-publish/studio-sdk';
+import { useTheme } from '@chili-publish/grafx-shared-components';
 import { ImagePanelContainer, LeftPanelContainer, VariablesListContainer } from './LeftPanel.styles';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
@@ -12,12 +13,14 @@ interface LeftPanelProps {
 
 function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
+    const { panel } = useTheme();
 
     return (
         <LeftPanelContainer
             id="left-panel"
             data-intercom-target="Customize panel"
             overflowScroll={contentType !== ContentType.IMAGE_PANEL}
+            panelTheme={panel}
         >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />

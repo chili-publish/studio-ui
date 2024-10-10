@@ -21,7 +21,11 @@ describe('Variable help text', () => {
         const helpText = 'helpText info';
         const variable = variables.find((item) => item.id === 'number-variable') as NumberVariableType;
         const numberVariable = { ...variable, helpText };
-        render(<NumberVariable variable={numberVariable} onValueChange={jest.fn()} />);
+        render(
+            <UiThemeProvider theme="platform">
+                <NumberVariable variable={numberVariable} onValueChange={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(screen.getByText(helpText)).toBeInTheDocument();
     });

@@ -1,6 +1,7 @@
 import { render, fireEvent } from '@testing-library/react';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import Zoom from '../components/zoom/Zoom';
 
 beforeEach(() => {
@@ -30,7 +31,9 @@ describe('Zoom', () => {
             zoomValue *= 0.875;
         });
         const { getByTestId, rerender, getByLabelText } = render(
-            <Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />,
+            <UiThemeProvider theme="platform">
+                <Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />
+            </UiThemeProvider>,
         );
         const zoomComponent = getByTestId('zoom');
         const zoomIn = zoomComponent.children[2];
@@ -40,7 +43,11 @@ describe('Zoom', () => {
 
         fireEvent.click(zoomIn);
         expect(handleZoomIn).toBeCalled();
-        rerender(<Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />);
+        rerender(
+            <UiThemeProvider theme="platform">
+                <Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />
+            </UiThemeProvider>,
+        );
 
         expect(zoomLevel).toHaveTextContent('114.19999999999999%');
     });
@@ -53,7 +60,9 @@ describe('Zoom', () => {
             zoomValue *= 0.875;
         });
         const { getByTestId, rerender, getByLabelText } = render(
-            <Zoom zoom={300} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />,
+            <UiThemeProvider theme="platform">
+                <Zoom zoom={300} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />
+            </UiThemeProvider>,
         );
         const zoomComponent = getByTestId('zoom');
         const zoomIn = zoomComponent.children[0];
@@ -63,7 +72,11 @@ describe('Zoom', () => {
 
         fireEvent.click(zoomIn);
 
-        rerender(<Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />);
+        rerender(
+            <UiThemeProvider theme="platform">
+                <Zoom zoom={zoomValue} zoomIn={handleZoomIn} zoomOut={handleZoomOut} />
+            </UiThemeProvider>,
+        );
 
         expect(zoomLevel).toHaveTextContent('87.5%');
     });

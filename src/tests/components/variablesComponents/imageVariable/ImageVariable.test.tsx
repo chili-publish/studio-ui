@@ -1,5 +1,5 @@
 import { render, waitFor, fireEvent, screen } from '@testing-library/react';
-import { ImagePicker } from '@chili-publish/grafx-shared-components';
+import { ImagePicker, UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
 import { variables } from '../../../mocks/mockVariables';
@@ -51,7 +51,11 @@ describe('"ImageVariable" component ', () => {
         (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
         const helpText = 'helpText info';
         const imageVariable = { ...variables[0], helpText };
-        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(screen.getByText(helpText)).toBeInTheDocument();
     });
@@ -59,7 +63,11 @@ describe('"ImageVariable" component ', () => {
     it('should produce "undefined" preview image if not media details are available', () => {
         (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
         const imageVariable = variables[0];
-        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             {
@@ -86,7 +94,11 @@ describe('"ImageVariable" component ', () => {
     it('should produce "undefined" preview image if not previewImageUrl is available', () => {
         (usePreviewImageUrl as jest.Mock).mockReturnValueOnce(null);
         const imageVariable = variables[0];
-        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             {
@@ -112,7 +124,11 @@ describe('"ImageVariable" component ', () => {
 
     it('should produce full preview image if both previewImageUrl and mediaDetails are available', () => {
         const imageVariable = variables[0];
-        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             {
@@ -144,7 +160,11 @@ describe('"ImageVariable" component ', () => {
     it('should handle "remove" event correctly', () => {
         const handleRemove = jest.fn();
         const imageVariable = variables[0];
-        const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemove} />);
+        const { container } = render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={handleRemove} />
+            </UiThemeProvider>,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             {
@@ -184,7 +204,11 @@ describe('"ImageVariable" component ', () => {
         const showImagePanel = jest.fn();
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
         const imageVariable = variables[0];
-        const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        const { container } = render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             {

@@ -1,4 +1,4 @@
-import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import { Colors, ThemeColors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
@@ -31,7 +31,7 @@ export const ModalResourcesContainer = styled.div<{ width?: string }>`
     padding: 0.75rem;
 `;
 
-export const NavigationWrapper = styled.div`
+export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
     display: flex;
     align-items: center;
     text-overflow: ellipsis;
@@ -42,10 +42,7 @@ export const NavigationWrapper = styled.div`
     & svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-    }
-
-    & svg path {
-        color: ${Colors.PRIMARY_FONT};
+        ${({ themeMode }) => themeMode === 'light' && `color: ${ThemeColors.light.PRIMARY_FONT} !important`};
     }
 
     & svg.close-icon,
@@ -75,7 +72,6 @@ export const NavigationTitle = styled.div`
     overflow: hidden;
     font-weight: 500;
     text-overflow: ellipsis;
-    color: ${Colors.PRIMARY_FONT};
     font-size: ${FontSizes.header};
 `;
 
@@ -112,7 +108,7 @@ export const ScrollbarContainer = styled.div.attrs(
 
         const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
             props.navigationBreadcrumbsEnabled ? navigationBarTotalHeight : '0px'
-        } - ${SCROLLABLE_PANEL_MARGIN_TOP})`;
+        } - ${SCROLLABLE_PANEL_MARGIN_TOP} - 0.5rem)`;
 
         return { ...props, height };
     },
