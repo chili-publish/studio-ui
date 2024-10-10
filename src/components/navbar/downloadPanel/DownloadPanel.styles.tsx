@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
-    font-size: ${FontSizes.heading2};
     font-weight: bold;
     color: ${Colors.PRIMARY_FONT};
 `;
@@ -16,6 +15,7 @@ export const DownloadPanelContainer = styled.div<{ styles: ITheme['panel'] }>`
     ${DownloadDropdownTitle} {
         color: ${({ styles }) => styles.color};
         border-bottom: 1px solid ${({ styles }) => styles.borderColor};
+        font-size: ${({ styles }) => styles.title.fontSize};
     }
 `;
 
@@ -42,8 +42,16 @@ export const DropdownOptionLabel = styled.div`
 `;
 
 export const DropdownOptionText = styled.span`
-    font-size: ${FontSizes.regular};
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+export const DropdownOptionDescription = styled.span`
+    font-size: ${FontSizes.label};
+    color: ${Colors.DARK_GRAY_500};
+    font-weight: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -57,18 +65,12 @@ export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
     overflow: hidden;
     white-space: nowrap;
     ${DropdownOptionText} {
+        font-size: ${({ dropdownStyles }) => `${dropdownStyles.fontSize}`};
         color: ${({ dropdownStyles }) => `${dropdownStyles.menuOption.color} !important`};
     }
-`;
-
-export const DropdownOptionDescription = styled.span`
-    font-size: ${FontSizes.label};
-    color: ${Colors.DARK_GRAY_500};
-    font-weight: normal;
-    line-height: 1.5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    ${DropdownOptionDescription} {
+        font-size: ${({ dropdownStyles }) => `${dropdownStyles.optionInfoFontSize}`};
+    }
 `;
 
 export const ButtonWrapper = styled.div`

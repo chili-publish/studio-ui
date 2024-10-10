@@ -23,7 +23,6 @@ const useNavbarModeToggle = () => {
                     height="2rem"
                 />
             ),
-            hideOnMobile: true,
         }),
         [selectedMode],
     );

@@ -30,7 +30,6 @@ const useUserInterfaceSelector = () => {
                     width="10.875rem"
                 />
             ),
-            hideOnMobile: true,
         }),
         [options, selectedUserInterface, onUserInterfaceChange],
     );
