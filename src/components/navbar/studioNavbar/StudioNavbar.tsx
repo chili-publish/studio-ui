@@ -22,8 +22,8 @@ function StudioNavbar(props: INavbar) {
     });
     return (
         <StyledNavbar
-            data-id={getDataIdForSUI('studio-navbar')}
-            data-testid={getDataTestIdForSUI('studio-navbar')}
+            data-id={getDataIdForSUI('navbar')}
+            data-testid={getDataTestIdForSUI('navbar')}
             height="3rem"
             panelTheme={panel}
             mode={mode}
