@@ -1,5 +1,5 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
@@ -9,6 +9,7 @@ export interface ProjectConfig {
     uiOptions: UiOptions;
     uiTheme: ITheme['mode'] | 'system';
     outputSettings: OutputSettings;
+    userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
@@ -24,7 +25,8 @@ export interface ProjectConfig {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     overrideEngineUrl?: string;
-    onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>;
+    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceOutputSettings[] | null>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
 
@@ -89,6 +91,14 @@ export type UserInterface = {
         [index: string]: {
             layoutIntents: string[];
         };
+    };
+};
+
+export type PaginatedResponse<T> = {
+    data: T[];
+    pageSize: number;
+    links?: {
+        nextPage: string;
     };
 };
 

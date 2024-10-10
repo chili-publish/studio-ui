@@ -16,37 +16,35 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
         })();
     }, [undoStackState.canRedo]);
 
-    const navbarItems = useMemo(
-        () => [
-            {
-                label: 'Actions',
-                content: (
-                    <NavbarGroup withGap>
-                        <NavbarButton
-                            dataId="undo-btn"
-                            ariaLabel="Undo"
-                            icon={AvailableIcons.faArrowTurnDownLeft}
-                            flipIconY
-                            disabled={!undoStackState.canUndo}
-                            handleOnClick={handleUndo}
-                        />
-                        <NavbarButton
-                            dataId="redo-btn"
-                            ariaLabel="Redo"
-                            icon={AvailableIcons.faArrowTurnDownRight}
-                            flipIconY
-                            disabled={!undoStackState.canRedo}
-                            handleOnClick={handleRedo}
-                        />
-                    </NavbarGroup>
-                ),
-            },
-        ],
+    const navbarItem = useMemo(
+        () => ({
+            label: 'Actions',
+            content: (
+                <NavbarGroup withGap>
+                    <NavbarButton
+                        dataId="undo-btn"
+                        ariaLabel="Undo"
+                        icon={AvailableIcons.faArrowTurnDownLeft}
+                        flipIconY
+                        disabled={!undoStackState.canUndo}
+                        handleOnClick={handleUndo}
+                    />
+                    <NavbarButton
+                        dataId="redo-btn"
+                        ariaLabel="Redo"
+                        icon={AvailableIcons.faArrowTurnDownRight}
+                        flipIconY
+                        disabled={!undoStackState.canRedo}
+                        handleOnClick={handleRedo}
+                    />
+                </NavbarGroup>
+            ),
+        }),
         [undoStackState.canUndo, undoStackState.canRedo, handleUndo, handleRedo],
     );
 
     return {
-        undoRedoNavbarItems: navbarItems,
+        undoRedoNavbarItem: navbarItem,
     };
 };
 

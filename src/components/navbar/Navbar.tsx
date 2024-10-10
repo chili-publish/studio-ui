@@ -37,6 +37,7 @@ function Navbar(props: INavbar) {
                         aria-label={item.label}
                         key={item.label}
                         hideOnMobile={item.hideOnMobile}
+                        styles={item.styles}
                     >
                         {item.content}
                     </NavbarItem>

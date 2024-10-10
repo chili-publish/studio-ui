@@ -2,9 +2,9 @@ import { useTheme } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { NavbarItem, StyledNavbar } from '../Navbar.styles';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
-import useNavbar from '../useNavbar';
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
+import useStudioNavbar from './useStudioNavbar';
 
 function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
@@ -13,7 +13,7 @@ function StudioNavbar(props: INavbar) {
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
         useDownloadPanel(projectConfig);
 
-    const { navbarItems } = useNavbar({
+    const { navbarItems } = useStudioNavbar({
         projectName,
         zoom,
         undoStackState,
@@ -24,6 +24,7 @@ function StudioNavbar(props: INavbar) {
         <StyledNavbar
             data-id={getDataIdForSUI('studio-navbar')}
             data-testid={getDataTestIdForSUI('studio-navbar')}
+            height="3rem"
             panelTheme={panel}
             mode={mode}
         >
@@ -35,6 +36,7 @@ function StudioNavbar(props: INavbar) {
                         aria-label={item.label}
                         key={item.label}
                         hideOnMobile={item.hideOnMobile}
+                        styles={item.styles}
                     >
                         {item.content}
                     </NavbarItem>

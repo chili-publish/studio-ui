@@ -13,14 +13,15 @@ interface INavbar {
     onDownloadPanelOpen: () => void;
 }
 const useNavbar = ({ projectName, zoom, undoStackState, onBackClick, onDownloadPanelOpen }: INavbar) => {
-    const { backBtnItems } = useNavbarBackBtn(projectName, onBackClick);
-    const { downloadNavbarItems } = useNavbarDownloadBtn(onDownloadPanelOpen);
-    const { undoRedoNavbarItems } = useNavbarUndoRedoItems(undoStackState);
-    const { zoomNavbarItems } = useNavbarZoom(zoom);
+    const { backBtnItem } = useNavbarBackBtn(projectName, onBackClick);
+    const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen);
+    const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
+    const { zoomNavbarItem } = useNavbarZoom(zoom);
 
     const navbarItems = useMemo((): NavbarItemType[] => {
-        return [...backBtnItems, ...undoRedoNavbarItems, ...downloadNavbarItems, ...zoomNavbarItems];
-    }, [backBtnItems, undoRedoNavbarItems, downloadNavbarItems, zoomNavbarItems]);
+        const items = [backBtnItem, undoRedoNavbarItem, downloadNavbarItem, zoomNavbarItem];
+        return items.filter((item) => !!item);
+    }, [backBtnItem, undoRedoNavbarItem, downloadNavbarItem, zoomNavbarItem]);
 
     return {
         navbarItems,

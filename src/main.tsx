@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AxiosResponse } from 'axios';
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import App from './App';
 import {
@@ -15,6 +16,8 @@ import {
     defaultUiOptions,
     IStudioUILoaderConfig,
     UserInterfaceOutputSettings,
+    UserInterface,
+    PaginatedResponse,
 } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -90,6 +93,7 @@ export default class StudioUI {
         selector: string,
         projectId: string,
         projectName: string,
+        userInterfaceID: string | undefined,
         uiOptions: UiOptions,
         uiTheme: ITheme['mode'] | 'system',
         outputSettings: OutputSettings,
@@ -108,12 +112,15 @@ export default class StudioUI {
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
         onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
         graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions,
             uiTheme,
             outputSettings,
@@ -129,6 +136,7 @@ export default class StudioUI {
             onProjectGetDownloadLink,
             overrideEngineUrl: editorLink,
             onFetchOutputSettings,
+            onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
         });
     }
@@ -185,6 +193,7 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions ?? defaultPlatformUiOptions,
             uiTheme ?? 'light',
             outputSettings ?? defaultOutputSettings,
@@ -199,6 +208,7 @@ export default class StudioUI {
             projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );
@@ -252,6 +262,7 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            undefined,
             uiOptions || defaultUiOptions,
             uiTheme || 'light',
             outputSettings || defaultOutputSettings,
@@ -266,6 +277,7 @@ export default class StudioUI {
             projectLoader.onProjectGetDownloadLink,
             undefined,
             undefined,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );
@@ -327,6 +339,7 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions ?? defaultPlatformUiOptions,
             uiTheme || 'light',
             outputSettings ?? defaultOutputSettings,
@@ -341,6 +354,7 @@ export default class StudioUI {
             onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );

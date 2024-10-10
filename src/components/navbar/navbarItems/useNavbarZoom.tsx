@@ -16,19 +16,17 @@ const useNavbarZoom = (zoom: number) => {
         })();
     }, [zoom]);
 
-    const navbarItems = useMemo(
-        () => [
-            {
-                label: 'Zoom',
-                content: <Zoom zoom={zoom} zoomIn={zoomIn} zoomOut={zoomOut} />,
-                hideOnMobile: true,
-            },
-        ],
+    const navbarItem = useMemo(
+        () => ({
+            label: 'Zoom',
+            content: <Zoom zoom={zoom} zoomIn={zoomIn} zoomOut={zoomOut} />,
+            hideOnMobile: true,
+        }),
         [zoom, zoomIn, zoomOut],
     );
 
     return {
-        zoomNavbarItems: navbarItems,
+        zoomNavbarItem: navbarItem,
     };
 };
 
