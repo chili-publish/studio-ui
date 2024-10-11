@@ -1,3 +1,4 @@
+import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const MainContentContainer = styled.div`
@@ -8,4 +9,8 @@ export const MainContentContainer = styled.div`
 
 export const CanvasContainer = styled.div`
     width: 100%;
+`;
+
+export const Container = styled.div<{ canvas: ITheme['canvas'] }>`
+    background-color: ${({ canvas }) => canvas.backgroundColor};
 `;
