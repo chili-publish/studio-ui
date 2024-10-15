@@ -47,6 +47,8 @@ describe('StudioLoader integration - expired auth token', () => {
             }
             if (url === `${environmentBaseURL}/user-interfaces`)
                 return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: mockUserInterface });
             if (url === outputSettingsurl) return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
             if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
             if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
@@ -114,6 +116,8 @@ describe('StudioLoader integration - expired auth token', () => {
             }
             if (url === `${environmentBaseURL}/user-interfaces`)
                 return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: mockUserInterface });
             if (url === outputSettingsurl) return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
             if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
             if (url === connectorSourceUrl) return Promise.resolve({ data: {} });

@@ -114,6 +114,8 @@ describe('Required text variable', () => {
         (axios.get as jest.Mock).mockImplementation((url) => {
             if (url === `${environmentBaseURL}/user-interfaces`)
                 return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: mockUserInterface });
             if (url === `${environmentBaseURL}/output/settings`)
                 return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
             if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
