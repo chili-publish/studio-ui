@@ -1,3 +1,4 @@
+import { useTheme } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { StyledNavbar, NavbarItem } from './Navbar.styles';
 import { INavbar } from './Navbar.types';
@@ -15,8 +16,15 @@ function Navbar(props: INavbar) {
         projectConfig,
     );
 
+    const { panel, mode } = useTheme();
+
     return (
-        <StyledNavbar data-id={getDataIdForSUI('navbar')} data-testid={getDataTestIdForSUI('navbar')}>
+        <StyledNavbar
+            data-id={getDataIdForSUI('navbar')}
+            data-testid={getDataTestIdForSUI('navbar')}
+            panelTheme={panel}
+            mode={mode}
+        >
             <ul>
                 {navbarItems.map((item) => (
                     <NavbarItem

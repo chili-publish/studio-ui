@@ -1,3 +1,4 @@
+import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const VariableContainer = styled.div`
@@ -25,16 +26,16 @@ export const HelpTextWrapper = styled.div`
     }
 `;
 
-export const DatePickerWrapper = styled.div`
+export const DatePickerWrapper = styled.div<{ styles: ITheme }>`
     .react-datepicker {
         box-shadow: none !important;
         border: none !important;
-        background: white !important;
+        background-color: ${({ styles }) => styles.tray.backgroundColor} !important;
         display: flex;
         justify-content: center;
 
         &__header {
-            background: white !important;
+            background-color: ${({ styles }) => styles.tray.backgroundColor} !important;
             padding-top: 0;
         }
         &__month {

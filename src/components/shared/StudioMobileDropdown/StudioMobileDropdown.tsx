@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, InputLabel, Option } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InputLabel, Option, useTheme } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
 import {
     DropdownContainer,
@@ -37,6 +37,7 @@ function StudioMobileDropdown({
     onMenuClose,
 }: StudioMobileDropdownProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
+    const { dropdown } = useTheme();
 
     const openMobileDropdown = useCallback(() => {
         setIsDropdownOpen(true);
@@ -58,6 +59,7 @@ function StudioMobileDropdown({
                         onChange(option.value as string);
                         closeMobileDropdown();
                     }}
+                    dropdownStyles={dropdown}
                 >
                     <MobileDropdownOptionContent>
                         {option.label}
@@ -69,7 +71,7 @@ function StudioMobileDropdown({
     ) : (
         <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
-            <MobileDropdownOptionContainer hasError={!!validationError}>
+            <MobileDropdownOptionContainer hasError={!!validationError} dropdownStyles={dropdown}>
                 <MobileDropdownValue>
                     {selectedValue?.label ? (
                         // eslint-disable-next-line react/jsx-no-useless-fragment
