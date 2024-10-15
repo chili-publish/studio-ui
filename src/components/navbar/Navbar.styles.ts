@@ -2,9 +2,9 @@ import styled, { CSSProp } from 'styled-components';
 import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
-export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; height?: string }>`
+export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; styles?: CSSProp }>`
     box-sizing: border-box;
-    height: ${(props) => props.height || '4rem'};
+    height: 4rem;
     padding: 0.75rem 1rem;
     background-color: ${(props) => props.panelTheme.backgroundColor};
     border-bottom: 2px solid ${(props) => props.panelTheme.borderColor};
@@ -19,8 +19,8 @@ export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: IThe
         margin-block-start: 0;
         margin-block-end: 0;
         padding-inline-start: 0;
-        gap: 1rem;
     }
+    ${(props) => props.styles && props.styles};
 `;
 
 export const NavbarItem = styled.li<{ hideOnMobile?: boolean; styles?: CSSProp }>`

@@ -1,4 +1,5 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
+import { css } from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { NavbarItem, StyledNavbar } from '../Navbar.styles';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
@@ -25,9 +26,15 @@ function StudioNavbar(props: INavbar) {
             id="sui-navbar"
             data-id={getDataIdForSUI('navbar')}
             data-testid={getDataTestIdForSUI('navbar')}
-            height="3rem"
             panelTheme={panel}
             mode={mode}
+            styles={css`
+                height: 3rem;
+                padding: 0 0.5rem;
+                ul {
+                    gap: 0.5rem;
+                }
+            `}
         >
             <ul>
                 {navbarItems.map((item) => (

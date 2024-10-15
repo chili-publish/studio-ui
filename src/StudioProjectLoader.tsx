@@ -8,6 +8,7 @@ import {
     Project,
     UserInterface,
     UserInterfaceOutputSettings,
+    UserInterfaceWithOutputSettings,
 } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
 
@@ -186,7 +187,7 @@ export class StudioProjectLoader {
 
     public onFetchOutputSettings = async (
         userInterfaceId = this.userInterfaceID,
-    ): Promise<UserInterfaceOutputSettings[] | null> => {
+    ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
             try {
                 const res = await this.onFetchUserInterfaces();
@@ -222,7 +223,7 @@ export class StudioProjectLoader {
         };
 
         if (userInterfaceId) {
-            const userInterfaceData = await axios
+            const userInterfaceData: UserInterface = await axios
                 .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterfaceId}`, {
                     headers: { Authorization: `Bearer ${this.authToken}` },
                 })
@@ -233,12 +234,19 @@ export class StudioProjectLoader {
                     }
                     throw new Error(`${err}`);
                 });
-
-            return mapOutPutSettingsToLayoutIntent(userInterfaceData);
+            return {
+                userInterface: { id: userInterfaceData?.id, name: userInterfaceData?.name },
+                outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
+            };
         }
         const defaultUserInterface = await fetchDefaultUserInterface();
 
-        return defaultUserInterface ? mapOutPutSettingsToLayoutIntent(defaultUserInterface) : null;
+        return defaultUserInterface
+            ? {
+                  userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
+                  outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
+              }
+            : null;
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

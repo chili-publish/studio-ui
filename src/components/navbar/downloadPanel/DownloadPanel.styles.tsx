@@ -95,12 +95,12 @@ export const ExperimentalPill = styled.span`
     padding: 0 0.75rem;
 `;
 
-export const SpinnerContainer = styled.div<{ mobile?: boolean }>`
-    width: ${(props) => (props.mobile ? '100%' : '16.25rem')};
-    height: 2.5rem;
+export const BtnContainer = styled.div<{ mobile?: boolean }>`
+    padding: ${(props) => (props.mobile ? '0' : '0 1.25rem;')};
+`;
+export const SpinnerContainer = styled(BtnContainer)`
     margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto 1.25rem;')};
-    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
-    border-radius: 0.25rem;
+    padding: ${(props) => (props.mobile ? '0' : '0 1.25rem;')};
     display: flex;
     justify-content: center;
     align-items: center;

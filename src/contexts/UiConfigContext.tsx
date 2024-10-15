@@ -4,6 +4,7 @@ import {
     ProjectConfig,
     UserInterface,
     UserInterfaceOutputSettings,
+    UserInterfaceWithOutputSettings,
     defaultOutputSettings,
     defaultUiOptions,
 } from '../types/types';
@@ -49,10 +50,12 @@ export function UiConfigContextProvider({
             if (projectConfig.onFetchOutputSettings) {
                 projectConfig
                     .onFetchOutputSettings(userInterfaceId)
-                    .then((res: UserInterfaceOutputSettings[] | null) => {
+                    .then((res: UserInterfaceWithOutputSettings | null) => {
                         setUserInterfaceOutputSettings(
-                            res?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ?? null,
+                            res?.outputSettings?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ??
+                                null,
                         );
+                        setSelectedUserInterfaceId(res?.userInterface?.id || null);
                     });
             }
         },

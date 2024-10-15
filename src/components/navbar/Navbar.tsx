@@ -1,4 +1,5 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
+import { css } from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { StyledNavbar, NavbarItem } from './Navbar.styles';
 import { INavbar } from './Navbar.types';
@@ -28,6 +29,11 @@ function Navbar(props: INavbar) {
             data-testid={getDataTestIdForSUI('navbar')}
             panelTheme={panel}
             mode={mode}
+            styles={css`
+                ul {
+                    gap: 1rem;
+                }
+            `}
         >
             <ul>
                 {navbarItems.map((item) => (

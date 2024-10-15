@@ -15,9 +15,9 @@ import {
     defaultPlatformUiOptions,
     defaultUiOptions,
     IStudioUILoaderConfig,
-    UserInterfaceOutputSettings,
     UserInterface,
     PaginatedResponse,
+    UserInterfaceWithOutputSettings,
 } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -111,7 +111,7 @@ export default class StudioUI {
             outputSettingsId: string | undefined,
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
-        onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
+        onFetchOutputSettings?: () => Promise<UserInterfaceWithOutputSettings | null>,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,

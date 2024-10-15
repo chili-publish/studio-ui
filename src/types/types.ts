@@ -25,7 +25,7 @@ export interface ProjectConfig {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     overrideEngineUrl?: string;
-    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceOutputSettings[] | null>;
+    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
@@ -81,6 +81,14 @@ export type UserInterfaceOutputSettings = {
     description: string;
     type: DownloadFormats;
     layoutIntents: string[];
+};
+
+export type UserInterfaceWithOutputSettings = {
+    outputSettings: UserInterfaceOutputSettings[];
+    userInterface: {
+        id: string;
+        name: string;
+    };
 };
 
 export type UserInterface = {

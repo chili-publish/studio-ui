@@ -5,7 +5,6 @@ import {
     Colors,
     DropDown,
     Icon,
-    LoadingIcon,
     Menu,
     Tray,
     useMobileSize,
@@ -15,6 +14,7 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { css } from 'styled-components';
 import { Dispatch, useMemo, useState } from 'react';
 import {
+    BtnContainer,
     ButtonWrapper,
     Content,
     DesktopDropdownContainer,
@@ -93,7 +93,16 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <ButtonWrapper>
                         {downloadState[selectedOptionFormat] ? (
                             <SpinnerContainer mobile>
-                                <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                                <Button
+                                    loading
+                                    styles={css`
+                                        width: 100%;
+                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        &:hover {
+                                            background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        }
+                                    `}
+                                />
                             </SpinnerContainer>
                         ) : (
                             <Button
@@ -138,24 +147,35 @@ function DownloadPanel(props: DownloadPanelProps) {
                     </DesktopDropdownContainer>
                     {downloadState[selectedOptionFormat] ? (
                         <SpinnerContainer>
-                            <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                            <Button
+                                loading
+                                styles={css`
+                                    width: 100%;
+                                    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                    &:hover {
+                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                    }
+                                `}
+                            />
                         </SpinnerContainer>
                     ) : (
-                        <Button
-                            dataId={getDataIdForSUI(`download-btn`)}
-                            dataTestId={getDataTestIdForSUI(`download-btn`)}
-                            dataIntercomId="Download selected output"
-                            onClick={() => {
-                                handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
-                            }}
-                            variant={ButtonVariant.primary}
-                            label="Download"
-                            icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
-                            styles={css`
-                                margin: 1.25rem auto 1.25rem;
-                                width: 16.25rem;
-                            `}
-                        />
+                        <BtnContainer>
+                            <Button
+                                dataId={getDataIdForSUI(`download-btn`)}
+                                dataTestId={getDataTestIdForSUI(`download-btn`)}
+                                dataIntercomId="Download selected output"
+                                onClick={() => {
+                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
+                                }}
+                                variant={ButtonVariant.primary}
+                                label="Download"
+                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
+                                styles={css`
+                                    margin: 1.25rem auto 1.25rem;
+                                    width: 100%;
+                                `}
+                            />
+                        </BtnContainer>
                     )}
                 </DownloadPanelContainer>
             </Menu>
