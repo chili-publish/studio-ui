@@ -13,12 +13,12 @@ import {
     PaginatedResponse,
     ProjectConfig,
     UserInterface,
-    UserInterfaceOutputSettings,
+    UserInterfaceWithOutputSettings,
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import StudioNavbar from '../../components/navbar/studioNavbar/StudioNavbar';
 
-type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceOutputSettings[] | null>;
+type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutputSettings | null>;
 
 const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig => ({
     projectId: '1111-111-0000-0000-1111',
@@ -88,7 +88,12 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
 describe('StudioNavbar', () => {
     const user = userEvent.setup();
     it('should be able to select an user interface', async () => {
-        const fetchOutputSettings = jest.fn(() => Promise.resolve([]));
+        const fetchOutputSettings = jest.fn(() =>
+            Promise.resolve({
+                userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
+                outputSettings: [],
+            }),
+        );
         renderTemplate(fetchOutputSettings);
 
         const selectIndicator = within(screen.getByTestId(getDataTestIdForSUI(`dropdown-user-interface`))).getByRole(

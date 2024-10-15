@@ -78,7 +78,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 `}
                 hideCloseButton={mobileDropdownOpen}
             >
-                <Content borderTop={!mobileDropdownOpen}>
+                <Content borderTop={!mobileDropdownOpen} panel={panel}>
                     <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"

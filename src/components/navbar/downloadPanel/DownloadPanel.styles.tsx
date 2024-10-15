@@ -77,9 +77,9 @@ export const ButtonWrapper = styled.div`
     margin-top: 1rem;
 `;
 
-export const Content = styled.div<{ borderTop?: boolean }>`
+export const Content = styled.div<{ borderTop?: boolean; panel: ITheme['panel'] }>`
     padding-top: 1rem;
-    border-top: ${(props) => (props.borderTop ? `1px solid ${Colors.LIGHT_GRAY_100}` : 'none')};
+    border-top: ${({ borderTop, panel }) => (borderTop ? `1px solid ${panel.borderColor}` : 'none')};
 `;
 
 export const ExperimentalPill = styled.span`
