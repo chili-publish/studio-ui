@@ -1,9 +1,9 @@
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const MainContentContainer = styled.div`
+export const MainContentContainer = styled.div<{ navbarHeight?: string }>`
     display: flex;
-    height: calc(100vh - 4rem);
+    height: ${(props) => `calc(100vh - ${props.navbarHeight || 0})`};
     width: 100%;
 `;
 

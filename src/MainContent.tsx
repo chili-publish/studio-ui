@@ -293,7 +293,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                 zoom={currentZoom}
                             />
                         </UiThemeProvider>
-                        <MainContentContainer>
+                        <MainContentContainer navbarHeight="3rem">
                             {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                             <CanvasContainer>
                                 {isMobileSize && (

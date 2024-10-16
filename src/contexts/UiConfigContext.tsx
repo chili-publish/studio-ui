@@ -63,10 +63,6 @@ export function UiConfigContextProvider({
     );
 
     useEffect(() => {
-        fetchOutputSettings();
-    }, [fetchOutputSettings]);
-
-    useEffect(() => {
         if (!selectedUserInterfaceId) return;
         fetchOutputSettings(selectedUserInterfaceId);
     }, [selectedUserInterfaceId, fetchOutputSettings]);
