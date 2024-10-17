@@ -1,9 +1,12 @@
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const MainContentContainer = styled.div<{ navbarHeight?: string }>`
+const SANDBOX_NAVBAR_HEIGHT = '3rem';
+const NAVBAR_HEIGHT = '4rem';
+
+export const MainContentContainer = styled.div<{ sandboxMode?: boolean }>`
     display: flex;
-    height: ${(props) => `calc(100vh - ${props.navbarHeight || 0})`};
+    height: ${(props) => `calc(100vh - ${props.sandboxMode ? SANDBOX_NAVBAR_HEIGHT : NAVBAR_HEIGHT})`};
     width: 100%;
 `;
 

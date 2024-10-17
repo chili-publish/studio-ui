@@ -16,6 +16,7 @@ function StudioNavbar(props: INavbar) {
 
     const { navbarItems } = useStudioNavbar({
         projectName,
+        projectConfig,
         zoom,
         undoStackState,
         onBackClick: goBack,

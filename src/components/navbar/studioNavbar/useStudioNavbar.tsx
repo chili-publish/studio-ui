@@ -7,20 +7,29 @@ import { NavbarGroup, NavbarLabel } from '../Navbar.styles';
 import useNavbarMenu from '../navbarItems/useNavbarMenu';
 import useNavbarModeToggle from '../navbarItems/useNavbarModeToggle';
 import useUserInterfaceSelector from '../navbarItems/useUserInterfaceSelector';
+import { ProjectConfig } from '../../../types/types';
 
 interface INavbar {
     projectName: string | undefined;
+    projectConfig: ProjectConfig;
     zoom: number;
     undoStackState: { canRedo: boolean; canUndo: boolean };
     onBackClick: (() => void) | undefined;
     onDownloadPanelOpen: () => void;
 }
-const useStudioNavbar = ({ projectName, zoom, undoStackState, onBackClick, onDownloadPanelOpen }: INavbar) => {
+const useStudioNavbar = ({
+    projectName,
+    projectConfig,
+    zoom,
+    undoStackState,
+    onBackClick,
+    onDownloadPanelOpen,
+}: INavbar) => {
     const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
     const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen);
     const { zoomNavbarItem } = useNavbarZoom(zoom);
     const { menuNavbarItem } = useNavbarMenu(onBackClick);
-    const { modeToggleNavbarItem } = useNavbarModeToggle();
+    const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
 
     const navbarItems = useMemo((): NavbarItemType[] => {

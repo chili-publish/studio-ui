@@ -11,6 +11,8 @@ export interface ProjectConfig {
     outputSettings: OutputSettings;
     userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
+    sandboxMode: boolean;
+    onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
     onProjectLoaded: (project: Project) => void;
@@ -41,6 +43,8 @@ export interface DefaultStudioConfig {
     uiTheme?: ITheme['mode'] | 'system';
     outputSettings?: OutputSettings;
     projectName: string;
+    sandboxMode?: boolean;
+    onSandboxModeToggle?: () => void;
     refreshTokenAction?: () => Promise<string | AxiosError>;
     editorLink?: string;
     userInterfaceID?: string;
@@ -165,6 +169,8 @@ export interface IStudioUILoaderConfig {
     editorLink?: string;
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
+    sandboxMode?: boolean;
+    onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId: string) => Promise<string>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;

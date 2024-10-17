@@ -27,6 +27,7 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     outputSettings: defaultOutputSettings,
     graFxStudioEnvironmentApiBaseUrl: '',
     uiTheme: 'dark',
+    sandboxMode: true,
     onProjectInfoRequested: async () => {
         return { name: '', id: '', template: { id: '1111-111-0000-0000-1111' } };
     },
