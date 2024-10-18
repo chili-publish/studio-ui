@@ -1,45 +1,47 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { StyledNavbar, NavbarItem } from './Navbar.styles';
-import { INavbar } from './Navbar.types';
-import DownloadPanel from './downloadPanel/DownloadPanel';
-import useNavbar from './useNavbar';
-import useDownloadPanel from './useDownloadPanel';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { NavbarItem, StyledNavbar } from '../Navbar.styles';
+import DownloadPanel from '../downloadPanel/DownloadPanel';
+import { INavbar } from '../Navbar.types';
+import useDownloadPanel from '../useDownloadPanel';
+import useStudioNavbar from './useStudioNavbar';
 
-function Navbar(props: INavbar) {
+function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
 
+    const { panel, mode } = useTheme();
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
         useDownloadPanel(projectConfig);
 
-    const { navbarItems } = useNavbar({
+    const { navbarItems } = useStudioNavbar({
         projectName,
+        projectConfig,
         zoom,
         undoStackState,
         onBackClick: goBack,
         onDownloadPanelOpen: showDownloadPanel,
     });
-
-    const { panel, mode } = useTheme();
-
     return (
         <StyledNavbar
+            id="sui-navbar"
             data-id={getDataIdForSUI('navbar')}
             data-testid={getDataTestIdForSUI('navbar')}
             panelTheme={panel}
             mode={mode}
             styles={css`
+                height: 3rem;
+                padding: 0 0.5rem;
                 ul {
-                    gap: 1rem;
+                    gap: 0.5rem;
                 }
             `}
         >
             <ul>
                 {navbarItems.map((item) => (
                     <NavbarItem
-                        data-id={getDataIdForSUI(`navbar-item-${item.label}`)}
-                        data-testid={getDataTestIdForSUI(`navbar-item-${item.label}`)}
+                        data-id={getDataIdForSUI(`studio-navbar-item-${item.label}`)}
+                        data-testid={getDataTestIdForSUI(`studio-navbar-item-${item.label}`)}
                         aria-label={item.label}
                         key={item.label}
                         hideOnMobile={item.hideOnMobile}
@@ -58,4 +60,4 @@ function Navbar(props: INavbar) {
     );
 }
 
-export default Navbar;
+export default StudioNavbar;

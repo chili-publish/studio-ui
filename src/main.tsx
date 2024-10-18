@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AxiosResponse } from 'axios';
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import App from './App';
 import {
@@ -14,7 +15,9 @@ import {
     defaultPlatformUiOptions,
     defaultUiOptions,
     IStudioUILoaderConfig,
-    UserInterfaceOutputSettings,
+    UserInterface,
+    PaginatedResponse,
+    UserInterfaceWithOutputSettings,
 } from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -52,6 +55,8 @@ export default class StudioUI {
             uiTheme: 'light',
             outputSettings: defaultOutputSettings,
             graFxStudioEnvironmentApiBaseUrl: '',
+            sandboxMode: false,
+            onSandboxModeToggle: () => null,
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
             onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
@@ -90,9 +95,12 @@ export default class StudioUI {
         selector: string,
         projectId: string,
         projectName: string,
+        userInterfaceID: string | undefined,
         uiOptions: UiOptions,
         uiTheme: ITheme['mode'] | 'system',
         outputSettings: OutputSettings,
+        sandboxMode: boolean,
+        onSandboxModeToggle: (() => void) | undefined,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
         onProjectDocumentRequested: (projectId: string) => Promise<string>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
@@ -107,17 +115,22 @@ export default class StudioUI {
             outputSettingsId: string | undefined,
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
-        onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>,
+        onFetchOutputSettings?: () => Promise<UserInterfaceWithOutputSettings | null>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
         graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions,
             uiTheme,
             outputSettings,
             graFxStudioEnvironmentApiBaseUrl,
+            sandboxMode,
+            onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectLoaded,
@@ -129,6 +142,7 @@ export default class StudioUI {
             onProjectGetDownloadLink,
             overrideEngineUrl: editorLink,
             onFetchOutputSettings,
+            onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
         });
     }
@@ -166,6 +180,8 @@ export default class StudioUI {
             uiTheme,
             outputSettings,
             userInterfaceID,
+            sandboxMode,
+            onSandboxModeToggle,
             refreshTokenAction,
             onConnectorAuthenticationRequested,
         } = config;
@@ -185,9 +201,12 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions ?? defaultPlatformUiOptions,
             uiTheme ?? 'light',
             outputSettings ?? defaultOutputSettings,
+            sandboxMode || false,
+            onSandboxModeToggle,
             projectLoader.onProjectInfoRequested,
             projectLoader.onProjectDocumentRequested,
             projectLoader.onProjectSave,
@@ -199,6 +218,7 @@ export default class StudioUI {
             projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );
@@ -230,6 +250,8 @@ export default class StudioUI {
             projectName,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode,
+            onSandboxModeToggle,
             refreshTokenAction,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -252,9 +274,12 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            undefined,
             uiOptions || defaultUiOptions,
             uiTheme || 'light',
             outputSettings || defaultOutputSettings,
+            sandboxMode || false,
+            onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectSave,
@@ -266,6 +291,7 @@ export default class StudioUI {
             projectLoader.onProjectGetDownloadLink,
             undefined,
             undefined,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );
@@ -301,6 +327,8 @@ export default class StudioUI {
             uiTheme,
             outputSettings,
             userInterfaceID,
+            sandboxMode,
+            onSandboxModeToggle,
             refreshTokenAction,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -327,9 +355,12 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions ?? defaultPlatformUiOptions,
             uiTheme || 'light',
             outputSettings ?? defaultOutputSettings,
+            sandboxMode || false,
+            onSandboxModeToggle,
             onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
             onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
             onProjectSave ?? projectLoader.onProjectSave,
@@ -341,6 +372,7 @@ export default class StudioUI {
             onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             editorLink,
             projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
         );

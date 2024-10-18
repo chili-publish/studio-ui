@@ -1,6 +1,13 @@
-import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { IUiConfigContext } from './UiConfigContext.types';
-import { ProjectConfig, UserInterfaceOutputSettings, defaultOutputSettings, defaultUiOptions } from '../types/types';
+import {
+    ProjectConfig,
+    UserInterface,
+    UserInterfaceOutputSettings,
+    UserInterfaceWithOutputSettings,
+    defaultOutputSettings,
+    defaultUiOptions,
+} from '../types/types';
 
 export const UiConfigContextDefaultValues: IUiConfigContext = {
     uiOptions: defaultUiOptions,
@@ -9,6 +16,10 @@ export const UiConfigContextDefaultValues: IUiConfigContext = {
     isDownloadBtnVisible: defaultUiOptions.widgets.backButton?.visible || false,
     isBackBtnVisible: defaultUiOptions.widgets.downloadButton?.visible || false,
     graFxStudioEnvironmentApiBaseUrl: '',
+
+    userInterfaces: [],
+    selectedUserInterfaceId: '',
+    onUserInterfaceChange: () => null,
 };
 
 export const UiConfigContext = createContext<IUiConfigContext>(UiConfigContextDefaultValues);
@@ -26,21 +37,48 @@ export function UiConfigContextProvider({
     projectConfig: ProjectConfig;
     layoutIntent: string | null;
 }) {
+    const [selectedUserInterfaceId, setSelectedUserInterfaceId] = useState<string | null>(
+        projectConfig.userInterfaceID || null,
+    );
+    const [userInterfaces, setUserInterfaces] = useState<UserInterface[]>([]);
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
     >(null);
 
+    const fetchOutputSettings = useCallback(
+        async (userInterfaceId?: string) => {
+            if (projectConfig.onFetchOutputSettings) {
+                projectConfig
+                    .onFetchOutputSettings(userInterfaceId)
+                    .then((res: UserInterfaceWithOutputSettings | null) => {
+                        setUserInterfaceOutputSettings(
+                            res?.outputSettings?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ??
+                                null,
+                        );
+                        setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                    });
+            }
+        },
+        [layoutIntent, projectConfig],
+    );
+
     useEffect(() => {
-        if (projectConfig.onFetchOutputSettings) {
-            projectConfig.onFetchOutputSettings().then((res: UserInterfaceOutputSettings[] | null) => {
-                setUserInterfaceOutputSettings(
-                    res?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ?? null,
-                );
+        fetchOutputSettings(selectedUserInterfaceId || undefined);
+    }, [selectedUserInterfaceId, fetchOutputSettings]);
+
+    useEffect(() => {
+        if (projectConfig.onFetchUserInterfaces) {
+            projectConfig.onFetchUserInterfaces().then((res) => {
+                setUserInterfaces(res?.data?.data || []);
             });
         }
-    }, [projectConfig, layoutIntent]);
+    }, [projectConfig]);
+
     const data = useMemo(
         () => ({
+            userInterfaces,
+            selectedUserInterfaceId,
+            onUserInterfaceChange: setSelectedUserInterfaceId,
             uiOptions: projectConfig.uiOptions,
             outputSettings: projectConfig.outputSettings,
             graFxStudioEnvironmentApiBaseUrl: projectConfig.graFxStudioEnvironmentApiBaseUrl,
@@ -49,6 +87,8 @@ export function UiConfigContextProvider({
             isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible ?? false,
         }),
         [
+            userInterfaces,
+            selectedUserInterfaceId,
             projectConfig.outputSettings,
             projectConfig.uiOptions,
             projectConfig.graFxStudioEnvironmentApiBaseUrl,

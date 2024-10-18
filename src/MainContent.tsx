@@ -1,4 +1,4 @@
-import { useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
+import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
     ConnectorType,
@@ -20,13 +20,14 @@ import {
     useConnectorAuthenticationResult,
 } from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
-import Navbar from './components/navbar/Navbar';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { Project, ProjectConfig } from './types/types';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
+import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
+import Navbar from './components/navbar/Navbar';
 
 declare global {
     interface Window {
@@ -159,7 +160,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                 setVariables(variableList);
                 // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
                 // we are using ref to keep track if the `onVariablesListChanged` was called second time.
-                if (enableAutoSaveRef.current === true) {
+                if (enableAutoSaveRef.current === true && !projectConfig.sandboxMode) {
                     saveDocumentDebounced();
                 }
 
@@ -284,14 +285,27 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                 <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }} variables={variables}>
                     <div id="studio-ui-application" className="app">
-                        <Navbar
-                            projectName={projectConfig?.projectName || currentProject?.name}
-                            goBack={projectConfig?.onUserInterfaceBack}
-                            projectConfig={projectConfig}
-                            undoStackState={{ canRedo, canUndo }}
-                            zoom={currentZoom}
-                        />
-                        <MainContentContainer>
+                        {projectConfig.sandboxMode ? (
+                            <UiThemeProvider theme="studio" mode="dark">
+                                <StudioNavbar
+                                    projectName={projectConfig?.projectName || currentProject?.name}
+                                    goBack={projectConfig?.onUserInterfaceBack}
+                                    projectConfig={projectConfig}
+                                    undoStackState={{ canRedo, canUndo }}
+                                    zoom={currentZoom}
+                                />
+                            </UiThemeProvider>
+                        ) : (
+                            <Navbar
+                                projectName={projectConfig?.projectName || currentProject?.name}
+                                goBack={projectConfig?.onUserInterfaceBack}
+                                projectConfig={projectConfig}
+                                undoStackState={{ canRedo, canUndo }}
+                                zoom={currentZoom}
+                            />
+                        )}
+
+                        <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
                             {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                             <CanvasContainer>
                                 {isMobileSize && (

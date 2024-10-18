@@ -1,5 +1,5 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
@@ -9,7 +9,10 @@ export interface ProjectConfig {
     uiOptions: UiOptions;
     uiTheme: ITheme['mode'] | 'system';
     outputSettings: OutputSettings;
+    userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
+    sandboxMode: boolean;
+    onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
     onProjectLoaded: (project: Project) => void;
@@ -24,7 +27,8 @@ export interface ProjectConfig {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     overrideEngineUrl?: string;
-    onFetchOutputSettings?: () => Promise<UserInterfaceOutputSettings[] | null>;
+    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
 
@@ -39,6 +43,8 @@ export interface DefaultStudioConfig {
     uiTheme?: ITheme['mode'] | 'system';
     outputSettings?: OutputSettings;
     projectName: string;
+    sandboxMode?: boolean;
+    onSandboxModeToggle?: () => void;
     refreshTokenAction?: () => Promise<string | AxiosError>;
     editorLink?: string;
     userInterfaceID?: string;
@@ -81,6 +87,14 @@ export type UserInterfaceOutputSettings = {
     layoutIntents: string[];
 };
 
+export type UserInterfaceWithOutputSettings = {
+    outputSettings: UserInterfaceOutputSettings[];
+    userInterface: {
+        id: string;
+        name: string;
+    };
+};
+
 export type UserInterface = {
     name: string;
     id: string;
@@ -89,6 +103,14 @@ export type UserInterface = {
         [index: string]: {
             layoutIntents: string[];
         };
+    };
+};
+
+export type PaginatedResponse<T> = {
+    data: T[];
+    pageSize: number;
+    links?: {
+        nextPage: string;
     };
 };
 
@@ -147,6 +169,8 @@ export interface IStudioUILoaderConfig {
     editorLink?: string;
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
+    sandboxMode?: boolean;
+    onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId: string) => Promise<string>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
