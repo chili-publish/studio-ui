@@ -36,7 +36,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig) => {
         }
         try {
             updateDownloadState({ [extension]: true });
-            const selectedLayoutID = (await window.SDK.layout.getSelected()).parsedData?.id;
+            const selectedLayoutID = (await window.StudioUISDK.layout.getSelected()).parsedData?.id;
             const downloadLinkData = await projectConfig.onProjectGetDownloadLink(
                 extension,
                 selectedLayoutID,

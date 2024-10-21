@@ -31,7 +31,7 @@ import Navbar from './components/navbar/Navbar';
 
 declare global {
     interface Window {
-        SDK: StudioSDK;
+        StudioUISDK: StudioSDK;
     }
 }
 
@@ -65,7 +65,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
-            const { data } = await window.SDK.document.getCurrentState();
+            const { data } = await window.StudioUISDK.document.getCurrentState();
 
             if (!data) {
                 throw new Error('Document data is empty');
@@ -106,7 +106,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             height: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().height),
         };
 
-        await window.SDK.canvas.zoomToPage(
+        await window.StudioUISDK.canvas.zoomToPage(
             zoomParams.pageId,
             zoomParams.left,
             zoomParams.top,
@@ -140,7 +140,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                     ) {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
-                        const connector = await window.SDK.next.connector.getById(request.connectorId);
+                        const connector = await window.StudioUISDK.next.connector.getById(request.connectorId);
                         const result = await createAuthenticationProcess(async () => {
                             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                             const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
@@ -176,7 +176,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             },
             onSelectedLayoutIdChanged: async () => {
                 zoomToPage();
-                const layoutIntentData = (await window.SDK.layout.getSelected()).parsedData?.intent.value ?? null;
+                const layoutIntentData =
+                    (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value ?? null;
                 setLayoutIntent(layoutIntentData);
             },
             onScrubberPositionChanged: (animationPlayback) => {
@@ -210,8 +211,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
         });
 
         // Connect to ths SDK
-        window.SDK = sdk;
-        window.SDK.loadEditor();
+        window.StudioUISDK = sdk;
+        window.StudioUISDK.loadEditor();
 
         // loadEditor is a synchronous call after which we are sure
         // the connection to the engine is established
@@ -238,7 +239,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     useEffect(() => {
         if (currentProject?.template?.id) {
-            window.SDK.configuration.setValue(
+            window.StudioUISDK.configuration.setValue(
                 WellKnownConfigurationKeys.GraFxStudioTemplateId,
                 currentProject.template.id,
             );
@@ -247,32 +248,35 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     useEffect(() => {
         const setHandTool = async () => {
-            await window.SDK.tool.setHand();
+            await window.StudioUISDK.tool.setHand();
         };
         setHandTool();
         const loadDocument = async () => {
             if (authToken) {
-                await window.SDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+                await window.StudioUISDK.configuration.setValue(
+                    WellKnownConfigurationKeys.GraFxStudioAuthToken,
+                    authToken,
+                );
             }
 
             if (!fetchedDocument) return;
 
-            await window.SDK.document.load(fetchedDocument).then((res) => {
+            await window.StudioUISDK.document.load(fetchedDocument).then((res) => {
                 setIsDocumentLoaded(res.success);
             });
-            window.SDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
+            window.StudioUISDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
                 if (res.success && res.parsedData) {
                     setMediaConnectors(res.parsedData);
                 }
             });
 
-            window.SDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+            window.StudioUISDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
                 if (res.success && res.parsedData) {
                     setFontsConnectors(res.parsedData);
                 }
             });
 
-            const layoutIntentData = (await window.SDK.layout.getSelected()).parsedData?.intent.value || null;
+            const layoutIntentData = (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
             setLayoutIntent(layoutIntentData);
             zoomToPage();
         };

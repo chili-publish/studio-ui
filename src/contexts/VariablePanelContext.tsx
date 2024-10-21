@@ -63,7 +63,7 @@ export function VariablePanelContextProvider({
 
     const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
         if (!connectorId) throw new Error('ConnectorId is not defined');
-        const res = await window.SDK.mediaConnector.getCapabilities(connectorId);
+        const res = await window.StudioUISDK.mediaConnector.getCapabilities(connectorId);
         if (!res.parsedData) throw new Error('Connector capabilities are not defined');
         setConnectorCapabilities((prev) => {
             const t = {

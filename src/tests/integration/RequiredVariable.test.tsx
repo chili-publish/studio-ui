@@ -64,10 +64,10 @@ const variableRequiredTest = async (variable: Variable) => {
     await act(async () => {
         if (variable.type === VariableType.list) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (window.SDK as any).next.subscriber.onVariableListChanged(variablesStr);
+            await (window.StudioUISDK as any).next.subscriber.onVariableListChanged(variablesStr);
         } else {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (window.SDK as any).subscriber.onVariableListChanged(variablesStr);
+            await (window.StudioUISDK as any).subscriber.onVariableListChanged(variablesStr);
         }
     });
 
@@ -134,7 +134,7 @@ describe('Required text variable', () => {
 
         await act(async () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (window.SDK as any).subscriber.onVariableListChanged(variablesStr);
+            await (window.StudioUISDK as any).subscriber.onVariableListChanged(variablesStr);
         });
 
         await waitFor(() => {

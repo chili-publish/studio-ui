@@ -6,7 +6,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
         async (value: ConnectorImageVariableSource) => {
             if (currentVariableId) {
                 const assetId = value.resolved?.mediaId ?? value.assetId ?? null;
-                const result = await window.SDK.variable.setValue(currentVariableId, assetId);
+                const result = await window.StudioUISDK.variable.setValue(currentVariableId, assetId);
                 return result;
             }
             return null;
@@ -16,7 +16,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
 
     const handleImageRemove = useCallback(async () => {
         if (currentVariableId) {
-            const result = await window.SDK.variable.setValue(currentVariableId, null);
+            const result = await window.StudioUISDK.variable.setValue(currentVariableId, null);
             return result;
         }
         return null;
@@ -25,7 +25,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
     const handleValueChange = useCallback(
         async (value: string | boolean | number) => {
             if (!currentVariableId) return null;
-            return window.SDK.variable.setValue(currentVariableId, value);
+            return window.StudioUISDK.variable.setValue(currentVariableId, value);
         },
         [currentVariableId],
     );

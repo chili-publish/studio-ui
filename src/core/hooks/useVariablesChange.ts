@@ -14,7 +14,7 @@ export function useVariablesChange(variableIds: Array<string>) {
 
     useEffect(() => {
         (async () => {
-            const { parsedData: documentVariables } = await window.SDK.variable.getAll();
+            const { parsedData: documentVariables } = await window.StudioUISDK.variable.getAll();
             if (!documentVariables || variableIds.length === 0) {
                 return;
             }

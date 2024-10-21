@@ -6,7 +6,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 function ImagePanel() {
     const { handleUpdateImage, currentVariableConnectorId } = useVariablePanelContext();
     const previewCall = (id: string): Promise<Uint8Array> =>
-        window.SDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
+        window.StudioUISDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
 
     if (!currentVariableConnectorId) return null;
 
@@ -14,7 +14,7 @@ function ImagePanel() {
         <ItemBrowser<Media>
             isPanelOpen
             connectorId={currentVariableConnectorId}
-            queryCall={window.SDK.mediaConnector.query}
+            queryCall={window.StudioUISDK.mediaConnector.query}
             previewCall={previewCall}
             onSelect={(assets) => {
                 if (assets.length > 0) handleUpdateImage(assets[0]);
