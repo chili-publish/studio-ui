@@ -45,7 +45,7 @@ export const getDownloadLink = async (
             layoutsToExport: [layoutId],
             engineVersion,
             documentContent: JSON.parse(body),
-            projectId,
+            ...(projectId && { projectId }),
         };
 
         const httpResponse = await axios.post(generateExportUrl, requestBody, {
