@@ -32,6 +32,7 @@ import Navbar from './components/navbar/Navbar';
 declare global {
     interface Window {
         StudioUISDK: StudioSDK;
+        SDK: StudioSDK;
     }
 }
 
@@ -212,6 +213,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
         // Connect to ths SDK
         window.StudioUISDK = sdk;
+        window.SDK = sdk;
         window.StudioUISDK.loadEditor();
 
         // loadEditor is a synchronous call after which we are sure
