@@ -1,7 +1,7 @@
-import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
-import { ProjectConfig } from '../../types/types';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
+import { ProjectConfig } from '../../types/types';
 
 describe('ShortcutProvider', () => {
     it('triggers the sandbox toggle shortcut', async () => {
