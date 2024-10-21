@@ -59,7 +59,7 @@ const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
                     background-color: #2f2f2f;
                     position: absolute;
                     right: 0;
-                    top: -6px;
+                    top: -7px;
                 }
             `,
         }),

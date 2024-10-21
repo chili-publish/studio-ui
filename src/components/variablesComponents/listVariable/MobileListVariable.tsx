@@ -38,7 +38,7 @@ function MobileListVariable({
 
     const updateVariableValue = async (value: string) => {
         onItemSelected({ ...variable, selected: { value } });
-        await window.SDK.variable.setValue(variable.id, value);
+        await window.StudioUISDK.variable.setValue(variable.id, value);
     };
 
     return (

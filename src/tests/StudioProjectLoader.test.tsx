@@ -119,11 +119,11 @@ describe('StudioProjectLoader', () => {
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            window.SDK.configuration.setValue = jest.fn();
+            window.StudioUISDK.configuration.setValue = jest.fn();
 
             loader.onProjectLoaded();
 
-            expect(window.SDK.configuration.setValue).toHaveBeenCalledWith(
+            expect(window.StudioUISDK.configuration.setValue).toHaveBeenCalledWith(
                 WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
                 mockGraFxStudioEnvironmentApiBaseUrl,
             );

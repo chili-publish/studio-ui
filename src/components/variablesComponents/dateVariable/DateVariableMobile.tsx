@@ -17,7 +17,7 @@ function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProp
     const handleDateSelection = useCallback(async () => {
         if (selectedDate) {
             const formattedDate = selectedDate?.toISOString().split('T')[0];
-            await window.SDK.variable.setValue(variable.id, formattedDate);
+            await window.StudioUISDK.variable.setValue(variable.id, formattedDate);
             onDateSelected({ ...variable, value: formattedDate });
             setSelectedDate(null);
         }

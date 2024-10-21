@@ -95,7 +95,7 @@ beforeEach(() => {
         parsedData: null,
     });
 
-    window.SDK = mockSDK;
+    window.StudioUISDK = mockSDK;
 
     window.IntersectionObserver = jest.fn(
         () =>
@@ -202,8 +202,8 @@ describe('Image Panel', () => {
             await user.click(image);
         });
 
-        expect(window.SDK.variable.setImageVariableConnector).toHaveBeenCalledTimes(1);
-        expect(window.SDK.variable.setValue).toHaveBeenCalledTimes(1);
+        expect(window.StudioUISDK.variable.setImageVariableConnector).toHaveBeenCalledTimes(1);
+        expect(window.StudioUISDK.variable.setValue).toHaveBeenCalledTimes(1);
     });
     test('Do not render search input when filtering is not supported', async () => {
         const user = userEvent.setup();

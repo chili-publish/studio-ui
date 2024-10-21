@@ -19,7 +19,7 @@ beforeEach(() => {
             }),
         );
 
-    window.SDK = mockSDK;
+    window.StudioUISDK = mockSDK;
 });
 describe('Zoom', () => {
     it('should increment the zoom level on `faPlus` click', () => {

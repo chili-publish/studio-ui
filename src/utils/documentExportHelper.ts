@@ -21,7 +21,7 @@ export const getDownloadLink = async (
     outputSettingsId: string | undefined,
 ): Promise<DownloadLinkResult> => {
     try {
-        const documentResponse = await window.SDK.document.getCurrentState();
+        const documentResponse = await window.StudioUISDK.document.getCurrentState();
         const generateExportUrl = `${baseUrl}/output/${format}`;
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);

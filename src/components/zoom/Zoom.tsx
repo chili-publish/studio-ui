@@ -35,11 +35,11 @@ function Zoom(props: IZoom) {
     }, [zoom]);
 
     // const zoomIn = async () => {
-    //     await window.SDK.canvas.setZoomPercentage(currentZoom * 1.142);
+    //     await window.StudioUISDK.canvas.setZoomPercentage(currentZoom * 1.142);
     // };
 
     // const zoomOut = async () => {
-    //     await window.SDK.canvas.setZoomPercentage(currentZoom * 0.875);
+    //     await window.StudioUISDK.canvas.setZoomPercentage(currentZoom * 0.875);
     // };
 
     return (

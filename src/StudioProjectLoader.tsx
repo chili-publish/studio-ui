@@ -76,7 +76,7 @@ export class StudioProjectLoader {
     };
 
     public onProjectLoaded = (): void => {
-        window.SDK.configuration.setValue(
+        window.StudioUISDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
             this.graFxStudioEnvironmentApiBaseUrl,
         );

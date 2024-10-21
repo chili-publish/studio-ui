@@ -23,10 +23,10 @@ Object.defineProperty(navigator, 'language', {
 
 describe('Variable Component', () => {
     beforeEach(() => {
-        window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
             parsedData: null,
         });
-        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
             parsedData: null,
         });
     });
@@ -144,8 +144,8 @@ describe('Variable Component', () => {
 
             await act(() => user.click(getByText('28'))); // the day 28 in the calendar
 
-            expect(window.SDK.variable.setValue).toHaveBeenCalled();
-            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+            expect(window.StudioUISDK.variable.setValue).toHaveBeenCalled();
+            expect(window.StudioUISDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
         });
 
         it('Can set date to null by clearing the input field', async () => {
@@ -164,7 +164,7 @@ describe('Variable Component', () => {
             await act(() => user.clear(dateInput));
             await act(() => fireEvent.blur(dateInput));
             expect(await screen.queryByText('30/07/2024')).toBeNull();
-            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '');
+            expect(window.StudioUISDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '');
         });
         it('Select the correct date after clearing the input', async () => {
             // Regression test after QA found the selected date is 1 day before what user selects
@@ -185,8 +185,8 @@ describe('Variable Component', () => {
             await act(() => user.click(dateInput));
             await act(() => user.click(getByText('28'))); // the day 28 in the calendar
 
-            expect(window.SDK.variable.setValue).toHaveBeenCalled();
-            expect(window.SDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
+            expect(window.StudioUISDK.variable.setValue).toHaveBeenCalled();
+            expect(window.StudioUISDK.variable.setValue).toHaveBeenCalledWith(variables[6].id, '2024-07-28');
         });
         it('Correctly shows the excluded dates', async () => {
             const user = userEvent.setup();

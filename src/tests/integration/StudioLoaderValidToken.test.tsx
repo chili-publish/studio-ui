@@ -63,7 +63,11 @@ describe('StudioLoader integration - valid auth token', () => {
             expect(screen.getByText('Variable1')).toBeInTheDocument();
         });
         await waitFor(() => {
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith(imgVariable.value?.connectorId, {}, {});
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
+                imgVariable.value?.connectorId,
+                {},
+                {},
+            );
         });
     });
 });
