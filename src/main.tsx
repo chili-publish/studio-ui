@@ -189,6 +189,7 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode || false,
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
@@ -267,6 +268,7 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode || false,
             refreshTokenAction,
         );
 
@@ -345,6 +347,7 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode || false,
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,

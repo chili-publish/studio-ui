@@ -19,6 +19,7 @@ export const getDownloadLink = async (
     layoutId: Id,
     projectId: Id,
     outputSettingsId: string | undefined,
+    isSandboxMode: boolean,
 ): Promise<DownloadLinkResult> => {
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
@@ -45,7 +46,7 @@ export const getDownloadLink = async (
             layoutsToExport: [layoutId],
             engineVersion,
             documentContent: JSON.parse(body),
-            ...(projectId && { projectId }),
+            ...(isSandboxMode ? { templateId: projectId } : { projectId }),
         };
 
         const httpResponse = await axios.post(generateExportUrl, requestBody, {
