@@ -1,4 +1,4 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
+import { useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { NavbarItem, StyledNavbar } from '../Navbar.styles';
@@ -6,10 +6,14 @@ import DownloadPanel from '../downloadPanel/DownloadPanel';
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
+import { useState } from 'react';
 
 function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTrayOpen, setIsTrayOpen] = useState(false);
 
+    const isMobileSize = useMobileSize();
     const { panel, mode } = useTheme();
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
         useDownloadPanel(projectConfig);
@@ -51,6 +55,21 @@ function StudioNavbar(props: INavbar) {
                     </NavbarItem>
                 ))}
             </ul>
+
+            {isModalOpen ? <TableModal onClose={() => setIsModalOpen(false)} /> : null}
+            {isTrayOpen ? <TableTray onClose={() => setIsTrayOpen(false)} /> : null}
+
+            <Button
+                label="Test table"
+                onClick={() => {
+                    if (isMobileSize) {
+                        setIsTrayOpen(true);
+                    } else {
+                        setIsModalOpen(true);
+                    }
+                }}
+            />
+
             <DownloadPanel
                 isDownloadPanelVisible={isDownloadPanelVisible}
                 hideDownloadPanel={hideDownloadPanel}

@@ -1,4 +1,4 @@
-import { CustomDatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { DatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
 import { IDateVariable } from '../VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -37,7 +37,7 @@ function DateVariable(props: IDateVariable) {
     };
     return (
         <HelpTextWrapper>
-            <CustomDatePicker
+            <DatePicker
                 name={variable.name}
                 label={isOpenOnMobile ? '' : variable.name}
                 required={variable.isRequired}
