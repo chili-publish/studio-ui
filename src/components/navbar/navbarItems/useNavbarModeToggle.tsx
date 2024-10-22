@@ -24,7 +24,7 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
         () => ({
             label: 'Toggle',
             content: (
-                <Toggle onChange={onToggle} checked={selectedMode} options={options} width="9.5rem" height="1.75rem" />
+                <Toggle onChange={onToggle} checked={selectedMode} options={options} width="9.5rem" height="2rem" />
             ),
         }),
         [selectedMode, onToggle],

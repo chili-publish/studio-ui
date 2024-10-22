@@ -30,6 +30,7 @@ function StudioNavbar(props: INavbar) {
             panelTheme={panel}
             mode={mode}
             styles={css`
+                box-sizing: content-box;
                 height: ${STUDIO_NAVBAR_HEIGHT};
                 padding: 0 0.5rem;
                 ul {
