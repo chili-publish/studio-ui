@@ -23,6 +23,8 @@ export class StudioProjectLoader {
 
     private authToken: string;
 
+    private sandboxMode: boolean;
+
     private refreshTokenAction?: () => Promise<string | AxiosError>;
 
     private cachedProject: Project | undefined;
@@ -33,6 +35,7 @@ export class StudioProjectLoader {
         projectId: string,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
+        sandboxMode: boolean,
         refreshTokenAction?: () => Promise<string | AxiosError>,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
@@ -41,6 +44,7 @@ export class StudioProjectLoader {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
         this.projectId = projectId;
+        this.sandboxMode = sandboxMode;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.authToken = authToken;
         this.refreshTokenAction = refreshTokenAction;
@@ -124,6 +128,7 @@ export class StudioProjectLoader {
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,
+            this.sandboxMode,
         );
     };
 

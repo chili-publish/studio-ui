@@ -12,7 +12,8 @@ export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: IThe
     background-color: ${(props) => props.panelTheme.backgroundColor};
     border-bottom: 2px solid ${(props) => props.panelTheme.borderColor};
     color: ${({ mode }) => (mode === 'light' ? Colors.SECONDARY_FONT : Colors.SECONDARY_TEXT)};
-
+    position: relative;
+    z-index: 2;
     ul {
         display: flex;
         list-style-type: none;

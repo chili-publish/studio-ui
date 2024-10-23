@@ -8,6 +8,8 @@ export const MainContentContainer = styled.div<{ sandboxMode?: boolean }>`
     display: flex;
     height: ${(props) => `calc(100vh - ${props.sandboxMode ? SANDBOX_NAVBAR_HEIGHT : NAVBAR_HEIGHT})`};
     width: 100%;
+    z-index: 1;
+    position: relative;
 `;
 
 export const CanvasContainer = styled.div`
