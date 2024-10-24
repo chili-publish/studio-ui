@@ -1,5 +1,6 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { css } from 'styled-components';
 import { ProjectConfig } from '../../../types/types';
 
 type Mode = 'design' | 'run';
@@ -26,6 +27,9 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
             content: (
                 <Toggle onChange={onToggle} checked={selectedMode} options={options} width="9.5rem" height="2rem" />
             ),
+            styles: css`
+                padding-left: 0.125rem;
+            `,
         }),
         [selectedMode, onToggle],
     );
