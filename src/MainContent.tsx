@@ -28,6 +28,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Navbar from './components/navbar/Navbar';
+import { APP_WRAPPER_ID } from './utils/constants';
 
 declare global {
     interface Window {
@@ -290,7 +291,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
         <Container canvas={canvas}>
             <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                 <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }} variables={variables}>
-                    <div id="studio-ui-application" className="app">
+                    <div id={APP_WRAPPER_ID} className="app">
                         {projectConfig.sandboxMode ? (
                             <UiThemeProvider theme="studio" mode="dark">
                                 <StudioNavbar
