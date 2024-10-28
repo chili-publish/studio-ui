@@ -12,6 +12,7 @@ import DateVariable from '../../../components/variablesComponents/dateVariable/D
 import TextVariable from '../../../components/variablesComponents/TextVariable';
 import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
+import { APP_WRAPPER } from '../../shared.util/app';
 
 describe('Variable help text', () => {
     afterEach(() => {
@@ -38,6 +39,7 @@ describe('Variable help text', () => {
             <UiThemeProvider theme="platform">
                 <DateVariable variable={dateVariable} onValueChange={jest.fn()} />
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         expect(screen.getByText(helpText)).toBeInTheDocument();

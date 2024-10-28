@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils';
 import { DateVariable } from '@chili-publish/studio-sdk';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
+import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -113,7 +114,7 @@ describe('Variable Component', () => {
 
     describe('Shows date component for date date variable', () => {
         it('Correctly renders the date component for date variables', () => {
-            const { getByRole } = render(
+            render(
                 <UiThemeProvider theme="platform">
                     <VariableComponent
                         key={`variable-component-${variables[6].id}`}
@@ -122,8 +123,9 @@ describe('Variable Component', () => {
                         isDocumentLoaded
                     />
                 </UiThemeProvider>,
+                { container: document.body.appendChild(APP_WRAPPER) },
             );
-            const dateInput = getByRole('textbox') as HTMLInputElement;
+            const dateInput = screen.getByRole('textbox') as HTMLInputElement;
             expect(dateInput).toBeInTheDocument();
             expect(dateInput.value).toBe('07/30/2024');
         });
@@ -138,6 +140,7 @@ describe('Variable Component', () => {
                         isDocumentLoaded
                     />
                 </UiThemeProvider>,
+                { container: document.body.appendChild(APP_WRAPPER) },
             );
             const dateInput = getByRole('textbox') as HTMLInputElement;
             await act(() => user.click(dateInput));
@@ -159,6 +162,7 @@ describe('Variable Component', () => {
                         isDocumentLoaded
                     />
                 </UiThemeProvider>,
+                { container: document.body.appendChild(APP_WRAPPER) },
             );
             const dateInput = getByRole('textbox') as HTMLInputElement;
             await act(() => user.clear(dateInput));
@@ -178,6 +182,7 @@ describe('Variable Component', () => {
                         isDocumentLoaded
                     />
                 </UiThemeProvider>,
+                { container: document.body.appendChild(APP_WRAPPER) },
             );
             const dateInput = getByRole('textbox') as HTMLInputElement;
             await act(() => user.clear(dateInput));
@@ -199,6 +204,7 @@ describe('Variable Component', () => {
                         isDocumentLoaded
                     />
                 </UiThemeProvider>,
+                { container: document.body.appendChild(APP_WRAPPER) },
             );
             const dateInput = getByRole('textbox') as HTMLInputElement;
             await act(() => user.click(dateInput));
