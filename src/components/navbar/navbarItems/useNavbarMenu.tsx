@@ -1,6 +1,7 @@
 import { AvailableIcons, ContextMenu, GraFxIcon, useTheme } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,6 +45,7 @@ const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
                         menuItems={menuItems}
                         position={{ top: 40, left: 8 } as unknown as DOMRect}
                         ignoreOnClickParentId="menu-toggle"
+                        anchorId={APP_WRAPPER_ID}
                     />
                 </span>
             ),
