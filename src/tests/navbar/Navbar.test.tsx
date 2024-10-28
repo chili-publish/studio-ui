@@ -6,6 +6,7 @@ import Navbar from '../../components/navbar/Navbar';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
+import { APP_WRAPPER_ID } from '../../utils/constants';
 
 describe('Navbar', () => {
     let prjConfig: ProjectConfig;
@@ -27,16 +28,18 @@ describe('Navbar', () => {
                 projectConfig={prjConfig}
                 layoutIntent={LayoutIntent.digitalAnimated}
             >
-                <UiThemeProvider theme="platform">
-                    <Navbar
-                        projectConfig={prjConfig}
-                        zoom={100}
-                        undoStackState={{
-                            canRedo: false,
-                            canUndo: false,
-                        }}
-                    />
-                </UiThemeProvider>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <Navbar
+                            projectConfig={prjConfig}
+                            zoom={100}
+                            undoStackState={{
+                                canRedo: false,
+                                canUndo: false,
+                            }}
+                        />
+                    </UiThemeProvider>
+                </div>
             </UiConfigContext.UiConfigContextProvider>,
         );
         await waitFor(() => {
@@ -126,16 +129,18 @@ describe('Navbar', () => {
                 projectConfig={prjConfig}
                 layoutIntent={LayoutIntent.digitalAnimated}
             >
-                <UiThemeProvider theme="platform">
-                    <Navbar
-                        projectConfig={prjConfig}
-                        zoom={100}
-                        undoStackState={{
-                            canRedo: false,
-                            canUndo: false,
-                        }}
-                    />
-                </UiThemeProvider>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <Navbar
+                            projectConfig={prjConfig}
+                            zoom={100}
+                            undoStackState={{
+                                canRedo: false,
+                                canUndo: false,
+                            }}
+                        />
+                    </UiThemeProvider>
+                </div>
             </UiConfigContext.UiConfigContextProvider>,
         );
 
@@ -185,16 +190,18 @@ describe('Navbar', () => {
                 projectConfig={prjConfig}
                 layoutIntent={LayoutIntent.digitalAnimated}
             >
-                <UiThemeProvider theme="platform">
-                    <Navbar
-                        projectConfig={prjConfig}
-                        zoom={100}
-                        undoStackState={{
-                            canRedo: false,
-                            canUndo: false,
-                        }}
-                    />
-                </UiThemeProvider>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <Navbar
+                            projectConfig={prjConfig}
+                            zoom={100}
+                            undoStackState={{
+                                canRedo: false,
+                                canUndo: false,
+                            }}
+                        />
+                    </UiThemeProvider>
+                </div>
             </UiConfigContext.UiConfigContextProvider>,
         );
 
