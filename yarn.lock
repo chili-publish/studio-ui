@@ -1227,7 +1227,7 @@
 
 "@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/432/grafx-shared-components.tgz":
   version "0.83.0"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/432/grafx-shared-components.tgz#0bb103d5a71967078bc09c124f26ea555bb66eae"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/432/grafx-shared-components.tgz#911c2cb0e942a856bca691de87207f719cd51e0a"
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
