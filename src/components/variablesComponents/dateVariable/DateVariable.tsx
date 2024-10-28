@@ -5,6 +5,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import useDateVariable from '../useDateVariable';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 function DateVariable(props: IDateVariable) {
     const {
@@ -35,9 +36,11 @@ function DateVariable(props: IDateVariable) {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
+
     return (
         <HelpTextWrapper>
             <DatePicker
+                anchorId={APP_WRAPPER_ID}
                 name={variable.name}
                 label={isOpenOnMobile ? '' : variable.name}
                 required={variable.isRequired}

@@ -10,6 +10,7 @@ import { mockAssets } from './mocks/mockAssets';
 import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -119,6 +120,7 @@ describe('Image Panel', () => {
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         expect(imagePicker[0]).toBeInTheDocument();
@@ -144,6 +146,7 @@ describe('Image Panel', () => {
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
@@ -169,6 +172,7 @@ describe('Image Panel', () => {
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
@@ -229,6 +233,7 @@ describe('Image Panel', () => {
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
@@ -253,6 +258,7 @@ describe('Image Panel', () => {
                     <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
 

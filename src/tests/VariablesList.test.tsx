@@ -4,6 +4,7 @@ import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -32,6 +33,7 @@ describe('Variables List', () => {
             <UiThemeProvider theme="platform">
                 <VariablesList variables={variables} isDocumentLoaded />
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const variable1 = await screen.findByText('Variable1');
@@ -50,6 +52,7 @@ describe('Variables List', () => {
             <UiThemeProvider theme="platform">
                 <VariablesList variables={variables} isDocumentLoaded />
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(
