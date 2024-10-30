@@ -26,114 +26,120 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
     const { zoomIn, zoomOut } = useZoom(zoom);
     const { panel } = useTheme();
 
-    const fileMenuOptions: ContextMenuItem = {
-        label: { key: 'file', value: 'File' },
-        hasSeparator: true,
-        children: [
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Save" translationKey="save" />
-                        <div>{getShortcut('save')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Save as" translationKey="save" />
-                        <div>{getShortcut('saveAs')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: <Label value="Rename" translationKey="rename" />,
-                isDisabled: true,
-                onClick: () => null,
-            },
-        ],
-    };
+    const fileMenuOptions: ContextMenuItem = useMemo(
+        () => ({
+            label: { key: 'file', value: 'File' },
+            hasSeparator: true,
+            children: [
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Save" translationKey="save" />
+                            <div>{getShortcut('save')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Save as" translationKey="save" />
+                            <div>{getShortcut('saveAs')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: <Label value="Rename" translationKey="rename" />,
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+            ],
+        }),
+        [],
+    );
 
-    const editMenuOptions: ContextMenuItem = {
-        label: <Label value="Edit" translationKey="edit" />,
-        children: [
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Undo" translationKey="undo" />
-                        <div>{getShortcut('undo')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: !undoStackState.canUndo,
-                onClick: handleUndo,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Redo" translationKey="redo" />
-                        <div>{getShortcut('redo')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: !undoStackState.canRedo,
-                onClick: handleRedo,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Cut" translationKey="cut" />
-                        <div>{getShortcut('cut')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                hasSeparator: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Copy" translationKey="copy" />
-                        <div>{getShortcut('copy')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Paste" translationKey="paste" />
-                        <div>{getShortcut('paste')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Duplicate" translationKey="duplicate" />
-                        <div>{getShortcut('duplicate')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Delete" translationKey="delete" />
-                        <div>⌫</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-        ],
-    };
+    const editMenuOptions: ContextMenuItem = useMemo(
+        () => ({
+            label: <Label value="Edit" translationKey="edit" />,
+            children: [
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Undo" translationKey="undo" />
+                            <div>{getShortcut('undo')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: !undoStackState.canUndo,
+                    onClick: handleUndo,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Redo" translationKey="redo" />
+                            <div>{getShortcut('redo')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: !undoStackState.canRedo,
+                    onClick: handleRedo,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Cut" translationKey="cut" />
+                            <div>{getShortcut('cut')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    hasSeparator: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Copy" translationKey="copy" />
+                            <div>{getShortcut('copy')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Paste" translationKey="paste" />
+                            <div>{getShortcut('paste')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Duplicate" translationKey="duplicate" />
+                            <div>{getShortcut('duplicate')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Delete" translationKey="delete" />
+                            <div>⌫</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+            ],
+        }),
+        [handleUndo, handleRedo, undoStackState],
+    );
 
     const frameMenuOptions: ContextMenuItem = {
         label: <Label value="Frames" translationKey="frames" />,
@@ -200,6 +206,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                         <div>{getShortcut('zoomToPage')}</div>
                     </MenuOption>
                 ),
+                isDisabled: true,
                 onClick: () => null,
             },
             {
@@ -209,6 +216,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                         <div>{getShortcut('zoomTo100')}</div>
                     </MenuOption>
                 ),
+                isDisabled: true,
                 onClick: () => null,
             },
         ],

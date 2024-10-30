@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
