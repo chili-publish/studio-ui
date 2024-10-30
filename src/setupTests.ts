@@ -54,7 +54,7 @@ mockSDK.connector.waitToBeReady = jest
     .mockImplementation()
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-window.SDK = mockSDK;
+window.StudioUISDK = mockSDK;
 
 /* eslint-disable */
 // Promise.withResolvers polyfill. Remove once Node.js introduce it's full support

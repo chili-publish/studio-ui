@@ -24,7 +24,7 @@ export async function getRemoteMediaConnector(
     graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
 ): Promise<MediaRemoteConnector> {
-    const { parsedData: engineConnector } = await window.SDK.next.connector.getById(connectorId);
+    const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (engineConnector) {
         if (
             isConnectorUrlRegistration(engineConnector.source) ||
@@ -50,7 +50,7 @@ export function isAuthenticationRequired(connector: MediaRemoteConnector) {
 // If connector is authorized or don't required user authentication this request just return results
 export async function verifyAuthentication(connectorId: string) {
     try {
-        await window.SDK.mediaConnector.query(connectorId, {});
+        await window.StudioUISDK.mediaConnector.query(connectorId, {});
     } catch (error) {
         throw new Error(`Unauthorized: ${(error as Error).message}`);
     }

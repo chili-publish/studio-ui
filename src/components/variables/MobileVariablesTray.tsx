@@ -20,6 +20,7 @@ import {
     VariablesContainer,
 } from './VariablesPanel.styles';
 import MobileVariablesList from './MobileVariablesList';
+import { APP_WRAPPER_ID } from '../../utils/constants';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -95,6 +96,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
             </EditButtonWrapper>
             <Tray
                 isOpen={isVariablesPanelVisible}
+                anchorId={APP_WRAPPER_ID}
                 close={closeVariablePanel}
                 title={renderTrayHeader}
                 onTrayHidden={showVariablesPanel}

@@ -15,7 +15,7 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             return;
         }
 
-        const { parsedData } = await window.SDK.mediaConnector.query(
+        const { parsedData } = await window.StudioUISDK.mediaConnector.query(
             connectorId,
             connectorCapabilities[connectorId]?.filtering
                 ? {
@@ -34,9 +34,9 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             if (!connectorId) {
                 return;
             }
-            const connectorState = await window.SDK.connector.getState(connectorId);
+            const connectorState = await window.StudioUISDK.connector.getState(connectorId);
             if (connectorState.parsedData?.type !== 'ready') {
-                await window.SDK.connector.waitToBeReady(connectorId);
+                await window.StudioUISDK.connector.waitToBeReady(connectorId);
             }
             setMediaConnectorState(ConnectorStateType.ready);
         })();
@@ -47,7 +47,7 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             if (!connectorId || mediaConnectorState === null) {
                 return;
             }
-            const mappings = await window.SDK.connector.getMappings(connectorId);
+            const mappings = await window.StudioUISDK.connector.getMappings(connectorId);
             const variableIds = mappings.parsedData
                 ?.filter((m) => m.direction === ConnectorMappingDirection.engineToConnector)
                 .filter((m) => typeof m.value === 'string' && m.value.startsWith('var.'))

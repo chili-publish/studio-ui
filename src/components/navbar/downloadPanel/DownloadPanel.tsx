@@ -25,6 +25,7 @@ import {
 import useDownload from './useDownload';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
@@ -67,6 +68,7 @@ function DownloadPanel(props: DownloadPanelProps) {
         <>
             <Tray
                 isOpen={!!isMobileSize && isDownloadPanelVisible}
+                anchorId={APP_WRAPPER_ID}
                 close={() => {
                     hideDownloadPanel();
                     setMobileDropdownOpen(false);
@@ -128,6 +130,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 onClose={() => undefined}
                 position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
+                anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef} styles={panel}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>

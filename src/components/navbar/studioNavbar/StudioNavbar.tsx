@@ -2,7 +2,7 @@ import { Button, useMobileSize, useTheme } from '@chili-publish/grafx-shared-com
 import { css } from 'styled-components';
 import { useState } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import { NavbarItem, StyledNavbar } from '../Navbar.styles';
+import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
@@ -36,8 +36,10 @@ function StudioNavbar(props: INavbar) {
             panelTheme={panel}
             mode={mode}
             styles={css`
-                height: 3rem;
-                padding: 0 0.5rem;
+                box-sizing: content-box;
+                height: ${STUDIO_NAVBAR_HEIGHT};
+                padding: 0;
+                padding-right: 0.5rem;
                 ul {
                     gap: 0.5rem;
                 }

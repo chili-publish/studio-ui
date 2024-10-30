@@ -1,9 +1,11 @@
-import { AvailableIcons, ContextMenu, GraFxIcon } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ContextMenu, GraFxIcon, useTheme } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { panel } = useTheme();
 
     const menuItems = useMemo(
         () => [
@@ -43,27 +45,22 @@ const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
                         menuItems={menuItems}
                         position={{ top: 40, left: 8 } as unknown as DOMRect}
                         ignoreOnClickParentId="menu-toggle"
+                        anchorId={APP_WRAPPER_ID}
                     />
                 </span>
             ),
             hideOnMobile: true,
             styles: css`
+                display: flex;
+                align-items: center;
                 margin: auto 0;
-                padding: 0 0.5rem 0 0;
+                padding: 0 0.5rem;
                 position: relative;
-                ::after {
-                    display: block;
-                    content: '';
-                    width: 0.125rem;
-                    height: 3rem;
-                    background-color: #2f2f2f;
-                    position: absolute;
-                    right: 0;
-                    top: -6px;
-                }
+                height: 100%;
+                border-right: 2px solid ${panel.borderColor};
             `,
         }),
-        [isMenuOpen, menuItems],
+        [isMenuOpen, menuItems, panel.borderColor],
     );
 
     return {

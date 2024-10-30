@@ -4,6 +4,7 @@ import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
 import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -17,10 +18,10 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 
 describe('Variables List', () => {
     beforeEach(() => {
-        window.SDK.connector.getMappings = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
             parsedData: null,
         });
-        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
             parsedData: null,
         });
     });
@@ -32,6 +33,7 @@ describe('Variables List', () => {
             <UiThemeProvider theme="platform">
                 <VariablesList variables={variables} isDocumentLoaded />
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const variable1 = await screen.findByText('Variable1');
@@ -50,6 +52,7 @@ describe('Variables List', () => {
             <UiThemeProvider theme="platform">
                 <VariablesList variables={variables} isDocumentLoaded />
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(

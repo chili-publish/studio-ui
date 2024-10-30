@@ -21,7 +21,7 @@ jest.mock('../../../../contexts/Subscriber', () => ({
 
 describe('"useMediaDetails" hook', () => {
     beforeEach(() => {
-        window.SDK.mediaConnector.query = jest.fn().mockResolvedValue({
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValue({
             parsedData: {
                 data: [
                     {
@@ -31,12 +31,12 @@ describe('"useMediaDetails" hook', () => {
                 ],
             },
         });
-        window.SDK.connector.getState = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getState = jest.fn().mockResolvedValue({
             parsedData: {
                 type: 'ready',
             },
         });
-        window.SDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
             parsedData: [
                 {
                     value: 'var.7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2',
@@ -52,7 +52,7 @@ describe('"useMediaDetails" hook', () => {
                 },
             ],
         });
-        window.SDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
             parsedData: [
                 {
                     id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2',
@@ -71,27 +71,27 @@ describe('"useMediaDetails" hook', () => {
     it('should not request getState if no connector is provided', async () => {
         const { result } = renderHook(() => useMediaDetails(undefined, 'media'));
 
-        await waitFor(() => expect(window.SDK.variable.getAll).toHaveBeenCalled());
-        expect(window.SDK.connector.getState).not.toHaveBeenCalledWith('grafx-media');
+        await waitFor(() => expect(window.StudioUISDK.variable.getAll).toHaveBeenCalled());
+        expect(window.StudioUISDK.connector.getState).not.toHaveBeenCalledWith('grafx-media');
 
         expect(result.current).toEqual(null);
     });
 
     it('should wait for connectors readiness', async () => {
-        window.SDK.connector.getState = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getState = jest.fn().mockResolvedValue({
             parsedData: {
                 type: 'loading',
             },
         });
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        expect(window.SDK.connector.waitToBeReady).toHaveBeenCalledWith('grafx-media');
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        expect(window.StudioUISDK.connector.waitToBeReady).toHaveBeenCalledWith('grafx-media');
         expect(result.current).toEqual(null);
     });
 
     it('should request connector capabilities', async () => {
-        window.SDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
             parsedData: [],
         });
         const getCapabilitiesForConnector = jest.fn();
@@ -101,19 +101,19 @@ describe('"useMediaDetails" hook', () => {
         });
         const { result } = renderHook(() => useMediaDetails('grafx-media', undefined));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
-        expect(window.SDK.connector.waitToBeReady).not.toHaveBeenCalledWith('grafx-media');
+        expect(window.StudioUISDK.connector.waitToBeReady).not.toHaveBeenCalledWith('grafx-media');
 
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() => expect(getCapabilitiesForConnector).toHaveBeenCalledWith('grafx-media'));
 
-        expect(window.SDK.mediaConnector.query).not.toHaveBeenCalled();
+        expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
         expect(result.current).toEqual(null);
     });
 
     it('should not request connector capabilities', async () => {
-        window.SDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
             parsedData: null,
         });
         const getCapabilitiesForConnector = jest.fn();
@@ -125,12 +125,12 @@ describe('"useMediaDetails" hook', () => {
         });
         const { result } = renderHook(() => useMediaDetails('grafx-media', undefined));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         expect(getCapabilitiesForConnector).not.toHaveBeenCalledWith('grafx-media');
-        expect(window.SDK.mediaConnector.query).not.toHaveBeenCalled();
+        expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
         expect(result.current).toEqual(null);
     });
 
@@ -149,14 +149,14 @@ describe('"useMediaDetails" hook', () => {
         });
         renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
         await act(() => {
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledTimes(1);
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -175,14 +175,14 @@ describe('"useMediaDetails" hook', () => {
         });
         renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
         await act(() => {
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledTimes(1);
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -201,14 +201,14 @@ describe('"useMediaDetails" hook', () => {
         });
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
         await act(() => {
-            expect(window.SDK.mediaConnector.query).not.toHaveBeenCalled();
+            expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
             expect(result.current).toEqual(null);
         });
     });
@@ -227,26 +227,26 @@ describe('"useMediaDetails" hook', () => {
             },
             getCapabilitiesForConnector: jest.fn(),
         });
-        window.SDK.mediaConnector.query = jest.fn().mockResolvedValue({
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValue({
             parsedData: null,
         });
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
         await waitFor(() =>
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith(
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
                 'grafx-media',
                 { filter: ['media-asset-id'] },
                 {},
             ),
         );
 
-        expect(window.SDK.mediaConnector.query).toHaveBeenCalledTimes(2);
+        expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
 
         await act(() => {
             expect(result.current).toEqual(null);
@@ -270,8 +270,8 @@ describe('"useMediaDetails" hook', () => {
         (useVariablePanelContext as jest.Mock).mockReturnValue(mockValue);
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
-        await waitFor(() => expect(window.SDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.SDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         await act(() => {
@@ -279,14 +279,14 @@ describe('"useMediaDetails" hook', () => {
         });
 
         await waitFor(() =>
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith(
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
                 'grafx-media',
                 { filter: ['media-asset-id'] },
                 {},
             ),
         );
 
-        expect(window.SDK.mediaConnector.query).toHaveBeenCalledTimes(2);
+        expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
 
         await act(() => {
             expect(result.current).toEqual({
@@ -316,7 +316,9 @@ describe('"useMediaDetails" hook', () => {
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
-        await waitFor(() => expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {}, {}));
+        await waitFor(() =>
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {}, {}),
+        );
 
         await act(() => {
             expect(result.current).toEqual({

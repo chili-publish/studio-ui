@@ -52,7 +52,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         let authResult: string;
         await act(async () => {
-            authResult = await (window.SDK as any).subscriber.onAuthExpired('{"type":"grafxToken"}');
+            authResult = await (window.StudioUISDK as any).subscriber.onAuthExpired('{"type":"grafxToken"}');
         });
 
         await waitFor(() => {
@@ -83,7 +83,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         let authResult: string;
         await act(async () => {
-            authResult = await (window.SDK as any).subscriber.onAuthExpired('{"type":"grafxToken"}');
+            authResult = await (window.StudioUISDK as any).subscriber.onAuthExpired('{"type":"grafxToken"}');
         });
 
         await waitFor(() =>

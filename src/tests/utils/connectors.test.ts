@@ -19,7 +19,7 @@ describe('utils connectors', () => {
     });
     mockSDK.mediaConnector.query = jest.fn();
 
-    window.SDK = mockSDK;
+    window.StudioUISDK = mockSDK;
 
     (axios.get as jest.Mock).mockResolvedValue({
         data: {
@@ -38,7 +38,7 @@ describe('utils connectors', () => {
             id: 'remote-connector-1',
         });
 
-        (window.SDK.next.connector.getById as jest.Mock).mockResolvedValueOnce({
+        (window.StudioUISDK.next.connector.getById as jest.Mock).mockResolvedValueOnce({
             parsedData: null,
         });
 

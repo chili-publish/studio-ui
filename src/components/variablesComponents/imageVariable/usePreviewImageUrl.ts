@@ -9,15 +9,15 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
                 return null;
             }
             const downloadCall = () => {
-                return window.SDK.mediaConnector.download(connectorId, id, MediaDownloadType.thumbnail, {});
+                return window.StudioUISDK.mediaConnector.download(connectorId, id, MediaDownloadType.thumbnail, {});
             };
             try {
                 const res = await downloadCall();
                 return res;
             } catch (e) {
-                const mediaConnectorState = await window.SDK.connector.getState(connectorId);
+                const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
-                    await window.SDK.connector.waitToBeReady(connectorId);
+                    await window.StudioUISDK.connector.waitToBeReady(connectorId);
                     return downloadCall();
                 }
                 return null;

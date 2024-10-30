@@ -13,7 +13,7 @@ export const UiConfigContextDefaultValues: IUiConfigContext = {
     uiOptions: defaultUiOptions,
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
-    isDownloadBtnVisible: defaultUiOptions.widgets.backButton?.visible || false,
+    isDownloadBtnVisible: false,
     isBackBtnVisible: defaultUiOptions.widgets.downloadButton?.visible || false,
     graFxStudioEnvironmentApiBaseUrl: '',
 
@@ -43,7 +43,7 @@ export function UiConfigContextProvider({
     const [userInterfaces, setUserInterfaces] = useState<UserInterface[]>([]);
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
-    >(null);
+    >([]);
 
     const fetchOutputSettings = useCallback(
         async (userInterfaceId?: string) => {

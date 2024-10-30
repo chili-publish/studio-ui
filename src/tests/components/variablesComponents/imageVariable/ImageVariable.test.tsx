@@ -248,7 +248,7 @@ describe('"ImageVariable" component ', () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
             selectedConnector: { supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] } },
         });
-        window.SDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         const showImagePanel = jest.fn();
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
         const imageVariable = variables[0];
@@ -283,7 +283,7 @@ describe('"ImageVariable" component ', () => {
         container.querySelector<HTMLButtonElement>('#browse')?.click();
 
         act(() => {
-            expect(window.SDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {});
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {});
         });
 
         await waitFor(() => expect(showImagePanel).toHaveBeenCalledWith(imageVariable));
@@ -293,7 +293,7 @@ describe('"ImageVariable" component ', () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
             selectedConnector: { supportedAuthentication: { browser: [] } },
         });
-        window.SDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         const showImagePanel = jest.fn();
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
         const imageVariable = variables[0];
@@ -328,7 +328,7 @@ describe('"ImageVariable" component ', () => {
         container.querySelector<HTMLButtonElement>('#browse')?.click();
 
         act(() => {
-            expect(window.SDK.mediaConnector.query).not.toHaveBeenCalledWith('grafx-media', {});
+            expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalledWith('grafx-media', {});
         });
 
         await waitFor(() => expect(showImagePanel).toHaveBeenCalledWith(imageVariable));
@@ -341,7 +341,7 @@ describe('"ImageVariable" component ', () => {
         const PLACEHOLDER = 'Placeholder text';
         const imageVariable = { ...variables[0], placeholder: PLACEHOLDER };
 
-        window.SDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
 
         render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemoveFn} />);

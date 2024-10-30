@@ -12,15 +12,15 @@ function AnimationTimeline(props: IAnimationTimeline) {
     const theme = useTheme();
 
     const handlePlay = async () => {
-        await window.SDK.animation.play();
+        await window.StudioUISDK.animation.play();
     };
 
     const handlePause = async () => {
-        await window.SDK.animation.pause();
+        await window.StudioUISDK.animation.pause();
     };
 
     const handleSetScrubberPosition = async (milliseconds: number) => {
-        await window.SDK.animation.setScrubberPosition(milliseconds);
+        await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
     };
 
     return (

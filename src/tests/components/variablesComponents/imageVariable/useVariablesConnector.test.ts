@@ -19,7 +19,7 @@ describe('"useVariablesConnector" hook', () => {
                 source: { url: 'http://deploy.com/media-connector', source: ConnectorRegistrationSource.url },
             },
         });
-        window.SDK = mockSDK;
+        window.StudioUISDK = mockSDK;
 
         (axios.get as jest.Mock).mockResolvedValue({
             data: {
@@ -37,7 +37,9 @@ describe('"useVariablesConnector" hook', () => {
         const { result } = renderHook(() => useVariableConnector(currentImageVariable));
 
         await waitFor(() => {
-            expect(window.SDK.next.connector.getById).toHaveBeenCalledWith(currentImageVariable.value?.connectorId);
+            expect(window.StudioUISDK.next.connector.getById).toHaveBeenCalledWith(
+                currentImageVariable.value?.connectorId,
+            );
         });
 
         await waitFor(() => {
