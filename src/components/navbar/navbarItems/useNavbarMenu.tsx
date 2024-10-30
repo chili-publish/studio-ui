@@ -73,7 +73,10 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                         </MenuOption>
                     ),
                     isDisabled: !undoStackState.canUndo,
-                    onClick: handleUndo,
+                    onClick: () => {
+                        handleUndo();
+                        closeMenu();
+                    },
                 },
                 {
                     label: (
@@ -83,7 +86,10 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                         </MenuOption>
                     ),
                     isDisabled: !undoStackState.canRedo,
-                    onClick: handleRedo,
+                    onClick: () => {
+                        handleRedo();
+                        closeMenu();
+                    },
                 },
                 {
                     label: (
@@ -141,86 +147,92 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
         [handleUndo, handleRedo, undoStackState],
     );
 
-    const frameMenuOptions: ContextMenuItem = {
-        label: <Label value="Frames" translationKey="frames" />,
-        children: [
-            {
-                label: <Label value="Bring to front" translationKey="bringToFront" />,
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: <Label value="Bring forward" translationKey="bringForward" />,
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: <Label value="Send backward" translationKey="sendBackward" />,
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: <Label value="Send to back" translationKey="sendToBack" />,
-                isDisabled: true,
-                onClick: () => null,
-            },
-        ],
-    };
+    const frameMenuOptions: ContextMenuItem = useMemo(
+        () => ({
+            label: <Label value="Frames" translationKey="frames" />,
+            children: [
+                {
+                    label: <Label value="Bring to front" translationKey="bringToFront" />,
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: <Label value="Bring forward" translationKey="bringForward" />,
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: <Label value="Send backward" translationKey="sendBackward" />,
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: <Label value="Send to back" translationKey="sendToBack" />,
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+            ],
+        }),
+        [],
+    );
 
-    const viewMenuOptions: ContextMenuItem = {
-        label: <Label value="View" translationKey="view" />,
-        children: [
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Preview mode" translationKey="previewMode" />
-                        <div>W</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Zoom in" translationKey="zoomIn" />
-                        <div>{getShortcut('zoomIn')}</div>
-                    </MenuOption>
-                ),
-                hasSeparator: true,
-                onClick: zoomIn,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Zoom out" translationKey="zoomOut" />
-                        <div>{getShortcut('zoomOut')}</div>
-                    </MenuOption>
-                ),
-                onClick: zoomOut,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Zoom to page" translationKey="zoomToPage" />
-                        <div>{getShortcut('zoomToPage')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Zoom to 100%" translationKey="zoomTo100" />
-                        <div>{getShortcut('zoomTo100')}</div>
-                    </MenuOption>
-                ),
-                isDisabled: true,
-                onClick: () => null,
-            },
-        ],
-    };
+    const viewMenuOptions: ContextMenuItem = useMemo(
+        () => ({
+            label: <Label value="View" translationKey="view" />,
+            children: [
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Preview mode" translationKey="previewMode" />
+                            <div>W</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Zoom in" translationKey="zoomIn" />
+                            <div>{getShortcut('zoomIn')}</div>
+                        </MenuOption>
+                    ),
+                    hasSeparator: true,
+                    onClick: zoomIn,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Zoom out" translationKey="zoomOut" />
+                            <div>{getShortcut('zoomOut')}</div>
+                        </MenuOption>
+                    ),
+                    onClick: zoomOut,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Zoom to page" translationKey="zoomToPage" />
+                            <div>{getShortcut('zoomToPage')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+                {
+                    label: (
+                        <MenuOption>
+                            <Label value="Zoom to 100%" translationKey="zoomTo100" />
+                            <div>{getShortcut('zoomTo100')}</div>
+                        </MenuOption>
+                    ),
+                    isDisabled: true,
+                    onClick: () => null,
+                },
+            ],
+        }),
+        [zoomIn, zoomOut],
+    );
 
     const menuItems = useMemo(
         () => [

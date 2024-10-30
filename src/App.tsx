@@ -7,7 +7,6 @@ import { SubscriberContextProvider } from './contexts/Subscriber';
 import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
-import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
@@ -82,9 +81,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         <SubscriberContextProvider subscriber={eventSubscriber}>
             <UiThemeProvider theme="platform" mode={uiThemeMode}>
                 <NotificationManagerProvider>
-                    <ShortcutProvider projectConfig={projectConfig}>
-                        <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
-                    </ShortcutProvider>
+                    <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
                 </NotificationManagerProvider>
             </UiThemeProvider>
         </SubscriberContextProvider>

@@ -1,4 +1,4 @@
-import { isMac } from './ShortcutProvider';
+export const isMac = /Macintosh/.test(navigator.userAgent);
 
 const shiftKeySymbol = isMac ? '⇧' : 'Shift';
 const commandKeySymbol = isMac ? '⌘' : 'Ctrl';
