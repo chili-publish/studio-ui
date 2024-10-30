@@ -10,9 +10,9 @@ import { useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { MenuOption } from '../Navbar.styles';
-import { getShortcut } from './shortcuts';
-import useUndoRedo from './useUndoRedo';
-import useZoom from './useZoom';
+import { getShortcut } from '../../../contexts/ShortcutManager/shortcuts';
+import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
+import useZoom from '../../../contexts/ShortcutManager/useZoom';
 
 interface NavbarMenuProps {
     zoom: number;

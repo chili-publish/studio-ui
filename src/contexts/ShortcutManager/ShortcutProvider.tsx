@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
 import { ProjectConfig } from '../../types/types';
+import { getShortcut } from './shortcuts';
 
 export const isMac = /Macintosh/.test(navigator.userAgent);
 
@@ -12,7 +13,13 @@ function ShortcutProvider({ projectConfig, children }: { projectConfig: ProjectC
     }, [commandKey]);
 
     const shortcuts = useMemo(
-        () => [{ keys: 'm', action: () => projectConfig?.onSandboxModeToggle?.() }],
+        () => [
+            { keys: 'm', action: () => projectConfig?.onSandboxModeToggle?.() },
+            { keys: getShortcut('undo'), action: () => projectConfig?.onSandboxModeToggle?.() },
+            { keys: getShortcut('redo'), action: () => projectConfig?.onSandboxModeToggle?.() },
+            { keys: getShortcut('zoomIn'), action: () => projectConfig?.onSandboxModeToggle?.() },
+            { keys: getShortcut('zoomOut'), action: () => projectConfig?.onSandboxModeToggle?.() },
+        ],
         [projectConfig],
     );
 

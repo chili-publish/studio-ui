@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
-import useUndoRedo from './useUndoRedo';
+import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 
 const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boolean }) => {
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);

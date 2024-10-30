@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import Zoom from '../../zoom/Zoom';
-import useZoom from './useZoom';
+import useZoom from '../../../contexts/ShortcutManager/useZoom';
 
 const useNavbarZoom = (zoom: number) => {
     const { zoomIn, zoomOut } = useZoom(zoom);

@@ -1,4 +1,4 @@
-import { isMac } from '../../../contexts/ShortcutManager/ShortcutProvider';
+import { isMac } from './ShortcutProvider';
 
 const shiftKeySymbol = isMac ? '⇧' : 'Shift';
 const commandKeySymbol = isMac ? '⌘' : 'Ctrl';
