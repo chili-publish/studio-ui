@@ -1,18 +1,54 @@
-import { AvailableIcons, ContextMenu, GraFxIcon, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, ContextMenu, ContextMenuItem, GraFxIcon, Label, useTheme } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { MenuOption } from '../Navbar.styles';
+import { getShortcut } from './shortcuts';
 
 const useNavbarMenu = (onBackClick: (() => void) | undefined) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { panel } = useTheme();
 
+    const fileMenuOptions: ContextMenuItem = {
+        label: { key: 'file', value: 'File' },
+        hasSeparator: true,
+        children: [
+            {
+                label: (
+                    <MenuOption>
+                        <Label value='Save' translationKey="save" />
+                        <div>{getShortcut('save')}</div>
+                    </MenuOption>
+                ),
+                isDisabled: true,
+                onClick: ()  => null
+            },
+            {
+                label: (
+                    <MenuOption>
+                        <Label value='Save as' translationKey="save" />
+                        <div>{getShortcut('saveAs')}</div>
+                    </MenuOption>
+                ),
+                isDisabled: true,
+                onClick: ()  => null
+
+            },
+            {
+                label: <Label value='Rename' translationKey="rename" />,
+                isDisabled: true,
+                onClick: ()  => null
+            },
+        ],
+    };
+    
     const menuItems = useMemo(
         () => [
             {
                 label: { key: 'backToTemplates', value: 'Back to templates' },
                 onClick: onBackClick,
             },
+            fileMenuOptions
         ],
         [onBackClick],
     );
