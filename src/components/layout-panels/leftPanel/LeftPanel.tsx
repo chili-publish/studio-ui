@@ -5,13 +5,15 @@ import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
+import DataSource from '../../dataSource/DataSource';
 
 interface LeftPanelProps {
     variables: Variable[];
+    isSandboxMode: boolean;
     isDocumentLoaded: boolean;
 }
 
-function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
+function LeftPanel({ variables, isSandboxMode, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { panel } = useTheme();
 
@@ -23,6 +25,7 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
             panelTheme={panel}
         >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
+                {isDocumentLoaded && isSandboxMode ? <DataSource /> : null}
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>
 
