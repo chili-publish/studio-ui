@@ -1,7 +1,6 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
 
-import axios from 'axios';
 import { TokenManager } from './token-manager';
 
 (async () => {
@@ -65,17 +64,6 @@ import { TokenManager } from './token-manager';
     } else {
         authToken = await tokenManager.getAccessToken();
     }
-
-    const onProjectInfoRequested = async () => {
-        return {
-            id: '',
-            name: '',
-            template: {
-                id: '',
-            },
-        };
-    };
-
     window.StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
         projectId,
@@ -83,21 +71,9 @@ import { TokenManager } from './token-manager';
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-        sandboxMode: true,
-        uiTheme: 'dark',
         refreshTokenAction: () => tokenManager.refreshToken(),
         onConnectorAuthenticationRequested: (connectorId) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
-        onProjectDocumentRequested: async () => {
-            const doc = await axios.get(
-                `https://cp-qeb-191.cpstaging.online/grafx/api/v1/environment/cp-qeb-191/templates/${projectId}/download`,
-                {
-                    headers: { Authorization: `Bearer ${authToken}` },
-                },
-            );
-            return doc.data || '';
-        },
-        onProjectInfoRequested,
     });
 })();
