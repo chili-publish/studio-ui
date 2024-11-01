@@ -2,6 +2,7 @@ import { RefreshedAuthCredendentials } from '@chili-publish/studio-sdk';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { useConnectorAuthentication } from '../../../components/connector-authentication';
+import * as ConnectorAuthResultHook from '../../../components/connector-authentication/useConnectorAuthenticationResult';
 
 describe('useConnectorAuthentication hook', () => {
     beforeEach(() => {
@@ -41,6 +42,11 @@ describe('useConnectorAuthentication hook', () => {
     });
 
     it('should perform process correclty for different connectors', async () => {
+        const showAuthNotificationFn = jest.fn();
+        jest.spyOn(ConnectorAuthResultHook, 'useConnectorAuthenticationResult').mockImplementation(() => ({
+            showAuthNotification: showAuthNotificationFn,
+        }));
+
         const executor1 = jest.fn().mockResolvedValueOnce({ type: 'error' });
         const executor2 = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
 
@@ -81,19 +87,26 @@ describe('useConnectorAuthentication hook', () => {
             await result.current.process?.('connectorId1')?.start();
         });
 
-        expect(result.current.authenticationFlows.length).toEqual(2);
+        expect(result.current.authenticationFlows.length).toEqual(0);
 
         expect(processResultConnector1).toEqual(null);
-        expect(result.current.authenticationFlows[0].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[0].executor).toBeNull();
-
-        expect(result.current.authenticationFlows[1].result).toEqual({ type: 'authentified' });
+        expect(showAuthNotificationFn).toHaveBeenCalledWith({
+            connectorName: 'connectorName1',
+            result: { type: 'error' },
+        });
         expect(processResultConnector2).toEqual(new RefreshedAuthCredendentials());
-        expect(result.current.authenticationFlows[1].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[1].executor).toBeNull();
+        expect(showAuthNotificationFn).toHaveBeenCalledWith({
+            connectorName: 'connectorName2',
+            result: { type: 'authentified' },
+        });
     });
 
     it('should perform process correclty for none-authentified type', async () => {
+        const showAuthNotificationFn = jest.fn();
+        jest.spyOn(ConnectorAuthResultHook, 'useConnectorAuthenticationResult').mockImplementation(() => ({
+            showAuthNotification: showAuthNotificationFn,
+        }));
+
         const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
         const { result } = renderHook(() => useConnectorAuthentication());
 
@@ -115,14 +128,20 @@ describe('useConnectorAuthentication hook', () => {
             await result.current.process?.('connectorId')?.start();
         });
 
-        expect(result.current.authenticationFlows.length).toEqual(1);
-        expect(result.current.authenticationFlows[0].result).toEqual({ type: 'authentified' });
         expect(processResult).toEqual(new RefreshedAuthCredendentials());
-        expect(result.current.authenticationFlows[0].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[0].executor).toBeNull();
+        expect(result.current.authenticationFlows.length).toBe(0);
+        expect(showAuthNotificationFn).toHaveBeenCalledWith({
+            connectorName: 'connectorName',
+            result: { type: 'authentified' },
+        });
     });
 
     it('should perform process correclty when process return error state', async () => {
+        const showAuthNotificationFn = jest.fn();
+        jest.spyOn(ConnectorAuthResultHook, 'useConnectorAuthenticationResult').mockImplementation(() => ({
+            showAuthNotification: showAuthNotificationFn,
+        }));
+
         const executor = jest.fn().mockResolvedValue({ type: 'error', error: '[Error]: Occured' });
         const { result } = renderHook(() => useConnectorAuthentication());
 
@@ -145,13 +164,20 @@ describe('useConnectorAuthentication hook', () => {
         });
 
         expect(processResult).toEqual(null);
-        expect(result.current.authenticationFlows[0].result).toEqual({ type: 'error', error: '[Error]: Occured' });
-        expect(result.current.authenticationFlows[0].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[0].executor).toBeNull();
+        expect(result.current.authenticationFlows.length).toBe(0);
         expect(window.console.error).toHaveBeenCalledWith('[Error]: Occured');
+        expect(showAuthNotificationFn).toHaveBeenCalledWith({
+            connectorName: 'connectorName',
+            result: { type: 'error', error: '[Error]: Occured' },
+        });
     });
 
     it('should perform process correclty when process return timeout', async () => {
+        const showAuthNotificationFn = jest.fn();
+        jest.spyOn(ConnectorAuthResultHook, 'useConnectorAuthenticationResult').mockImplementation(() => ({
+            showAuthNotification: showAuthNotificationFn,
+        }));
+
         const executor = jest.fn().mockResolvedValue({ type: 'timeout' });
         const { result } = renderHook(() => useConnectorAuthentication());
 
@@ -174,10 +200,13 @@ describe('useConnectorAuthentication hook', () => {
         });
 
         expect(processResult).toEqual(null);
-        expect(result.current.authenticationFlows[0].result).toEqual({ type: 'timeout' });
-        expect(result.current.authenticationFlows[0].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[0].executor).toBeNull();
+        expect(result.current.authenticationFlows.length).toBe(0);
         expect(window.console.error).not.toHaveBeenCalled();
+
+        expect(showAuthNotificationFn).toHaveBeenCalledWith({
+            connectorName: 'connectorName',
+            result: { type: 'timeout' },
+        });
     });
 
     it('should perform process correclty when process rejected', async () => {
@@ -203,9 +232,7 @@ describe('useConnectorAuthentication hook', () => {
         });
 
         expect(processResult).toEqual({ message: 'TestError' });
-        expect(result.current.authenticationFlows[0].result).toBeNull();
-        expect(result.current.authenticationFlows[0].authenticationResolvers).toBeNull();
-        expect(result.current.authenticationFlows[0].executor).toBeNull();
+        expect(result.current.authenticationFlows.length).toBe(0);
     });
 
     it('should perform process correclty when canceling', async () => {

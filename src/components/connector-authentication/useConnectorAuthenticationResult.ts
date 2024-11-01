@@ -1,7 +1,7 @@
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
-import { ConnectorAuthenticationResult } from '../../types/ConnectorAuthenticationResult';
+import { ConnectorAuthResult } from './types';
 
 const authorizationFailedToast = (connectorName: string) => ({
     id: 'connector-authorization-failed',
@@ -15,17 +15,23 @@ const authorizationFailedTimeoutToast = (connectorName: string) => ({
     type: ToastVariant.NEGATIVE,
 });
 
-export const useConnectorAuthenticationResult = (
-    connectorName: string,
-    result: ConnectorAuthenticationResult | null,
-) => {
+export const useConnectorAuthenticationResult = () => {
     const { addNotification } = useNotificationManager();
 
-    useEffect(() => {
-        if (result?.type === 'error') {
-            addNotification(authorizationFailedToast(connectorName));
-        } else if (result?.type === 'timeout') {
-            addNotification(authorizationFailedTimeoutToast(connectorName));
-        }
-    }, [result, connectorName, addNotification]);
+    const showAuthNotification = useCallback(
+        (authResult: ConnectorAuthResult) => {
+            if (!authResult) return;
+
+            if (authResult.result?.type === 'error') {
+                addNotification(authorizationFailedToast(authResult.connectorName));
+            } else if (authResult.result?.type === 'timeout') {
+                addNotification(authorizationFailedTimeoutToast(authResult.connectorName));
+            }
+        },
+        [addNotification],
+    );
+
+    return {
+        showAuthNotification,
+    };
 };

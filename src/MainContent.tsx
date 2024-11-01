@@ -14,12 +14,7 @@ import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
-import {
-    ConnectorAuthenticationFlow,
-    ConnectorAuthenticationModal,
-    useConnectorAuthentication,
-    useConnectorAuthenticationResult,
-} from './components/connector-authentication';
+import { ConnectorAuthenticationModal, useConnectorAuthentication } from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
@@ -42,23 +37,6 @@ interface MainContentProps {
     projectConfig: ProjectConfig;
     authToken: string;
     updateToken: (newValue: string) => void;
-}
-
-interface AuthenticationFlowModalProps {
-    authenticationFlow: ConnectorAuthenticationFlow;
-    onConfirm: () => void;
-    onCancel: () => void;
-}
-function AuthenticationFlowModal({ authenticationFlow, onConfirm, onCancel }: AuthenticationFlowModalProps) {
-    useConnectorAuthenticationResult(authenticationFlow.connectorName, authenticationFlow.result);
-
-    return (
-        <ConnectorAuthenticationModal
-            name={authenticationFlow.connectorName}
-            onConfirm={onConfirm}
-            onCancel={onCancel}
-        />
-    );
 }
 
 function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: MainContentProps) {
@@ -361,9 +339,9 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                         </MainContentContainer>
                         {authenticationFlows.length &&
                             authenticationFlows.map((authFlow) => (
-                                <AuthenticationFlowModal
+                                <ConnectorAuthenticationModal
                                     key={authFlow.connectorId}
-                                    authenticationFlow={authFlow}
+                                    name={authFlow.connectorName}
                                     onConfirm={() => connectorAuthenticationProcess(authFlow.connectorId)?.start()}
                                     onCancel={() => connectorAuthenticationProcess(authFlow.connectorId)?.cancel()}
                                 />

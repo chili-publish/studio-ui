@@ -1,6 +1,7 @@
 import { RefreshedAuthCredendentials } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 import { ConnectorAuthenticationResult } from '../../types/ConnectorAuthenticationResult';
+import { useConnectorAuthenticationResult } from './useConnectorAuthenticationResult';
 
 interface Executor {
     handler: () => Promise<ConnectorAuthenticationResult>;
@@ -11,18 +12,14 @@ export type ConnectorAuthenticationFlow = {
     connectorName: string;
     authenticationResolvers: Omit<PromiseWithResolvers<RefreshedAuthCredendentials | null>, 'promise'> | null;
     executor: Executor | null;
-    result: ConnectorAuthenticationResult | null;
 };
 
 export const useConnectorAuthentication = () => {
     const [authenticationFlows, setAuthenticationFlows] = useState<ConnectorAuthenticationFlow[]>([]);
+    const { showAuthNotification } = useConnectorAuthenticationResult();
 
     const resetProcess = useCallback((id: string) => {
-        setAuthenticationFlows((prev) =>
-            prev.map((item) =>
-                item.connectorId === id ? { ...item, authenticationResolvers: null, executor: null } : item,
-            ),
-        );
+        setAuthenticationFlows((prev) => prev.filter((item) => item.connectorId !== id));
     }, []);
 
     const process = useCallback(
@@ -34,14 +31,12 @@ export const useConnectorAuthentication = () => {
                 return {
                     __resolvers: authenticationProcess.authenticationResolvers,
                     async start() {
-                        setAuthenticationFlows((prev) =>
-                            prev.map((item) => (item.connectorId === id ? { ...item, result: null } : item)),
-                        );
                         try {
                             const executorResult = await authenticationProcess.executor?.handler().then((res) => {
-                                setAuthenticationFlows((prev) =>
-                                    prev.map((item) => (item.connectorId === id ? { ...item, result: res } : item)),
-                                );
+                                showAuthNotification({
+                                    result: res,
+                                    connectorName: authenticationProcess.connectorName,
+                                });
 
                                 if (res.type === 'authentified') {
                                     return new RefreshedAuthCredendentials();
@@ -64,14 +59,13 @@ export const useConnectorAuthentication = () => {
                     },
                     async cancel() {
                         this.__resolvers.resolve(null);
-                        setAuthenticationFlows((prev) => prev.filter((item) => item.connectorId !== id));
                         resetProcess(id);
                     },
                 };
             }
             return null;
         },
-        [authenticationFlows, resetProcess],
+        [authenticationFlows, resetProcess, showAuthNotification],
     );
 
     const createProcess = async (authorizationExecutor: Executor['handler'], name: string, id: string) => {
