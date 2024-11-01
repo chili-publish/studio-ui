@@ -1,68 +1,48 @@
 import { RefreshedAuthCredendentials } from '@chili-publish/studio-sdk';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ConnectorAuthenticationResult } from '../../types/ConnectorAuthenticationResult';
 
 interface Executor {
     handler: () => Promise<ConnectorAuthenticationResult>;
 }
 
-type AuthenticationData = {
-    [connectorId: string]: {
-        connectorName: string;
-        authenticationResolvers: Omit<
-            // eslint-disable-next-line no-undef
-            PromiseWithResolvers<RefreshedAuthCredendentials | null>,
-            'promise'
-        > | null;
-        executor: Executor;
-        result: ConnectorAuthenticationResult | null;
-    };
+export type ConnectorAuthenticationFlow = {
+    connectorId: string;
+    connectorName: string;
+    authenticationResolvers: Omit<PromiseWithResolvers<RefreshedAuthCredendentials | null>, 'promise'> | null;
+    executor: Executor | null;
+    result: ConnectorAuthenticationResult | null;
 };
 
 export const useConnectorAuthentication = () => {
-    /*const [authenticationResolvers, setAuthenticationResolvers] = useState<Omit<
-        // eslint-disable-next-line no-undef
-        PromiseWithResolvers<RefreshedAuthCredendentials | null>,
-        'promise'
-    > | null>(null);
-    const [executor, setExecutor] = useState<Executor | null>(null);
-    const [connectorName, setConnectorName] = useState<string>('');
-    const [result, setResult] = useState<ConnectorAuthenticationResult | null>(null);*/
-
-    const [authentication, setAuthentication] = useState<AuthenticationData>();
+    const [authenticationFlows, setAuthenticationFlows] = useState<ConnectorAuthenticationFlow[]>([]);
 
     const resetProcess = useCallback((id: string) => {
-        setAuthentication((prev) => {
-            delete prev?.[id];
-            return { ...prev };
-        });
+        setAuthenticationFlows((prev) =>
+            prev.map((item) =>
+                item.connectorId === id ? { ...item, authenticationResolvers: null, executor: null } : item,
+            ),
+        );
     }, []);
 
-    const getAuthenticationProcess = useCallback(
+    const process = useCallback(
         (id: string) => {
-            const authenticationProcess = authentication?.[id];
+            const authenticationProcess = authenticationFlows.find((item) => item.connectorId === id);
             if (!authenticationProcess) return null;
 
             if (authenticationProcess.authenticationResolvers && authenticationProcess.executor) {
                 return {
                     __resolvers: authenticationProcess.authenticationResolvers,
                     async start() {
-                        setAuthentication(
-                            (prev) =>
-                                ({ ...prev, [id]: { ...(prev?.[id] || {}), result: null } } as AuthenticationData),
+                        setAuthenticationFlows((prev) =>
+                            prev.map((item) => (item.connectorId === id ? { ...item, result: null } : item)),
                         );
-                        // setResult(null);
                         try {
-                            const executorResult = await authenticationProcess.executor.handler().then((res) => {
-                                setAuthentication(
-                                    (prev) =>
-                                        ({
-                                            ...prev,
-                                            [id]: { ...(prev?.[id] || {}), result: res },
-                                        } as AuthenticationData),
+                            const executorResult = await authenticationProcess.executor?.handler().then((res) => {
+                                setAuthenticationFlows((prev) =>
+                                    prev.map((item) => (item.connectorId === id ? { ...item, result: res } : item)),
                                 );
 
-                                // setResult(res);
                                 if (res.type === 'authentified') {
                                     return new RefreshedAuthCredendentials();
                                 }
@@ -75,7 +55,7 @@ export const useConnectorAuthentication = () => {
 
                                 return null;
                             });
-                            this.__resolvers.resolve(executorResult);
+                            this.__resolvers.resolve(executorResult || null);
                         } catch (error) {
                             this.__resolvers.reject(error);
                         } finally {
@@ -83,31 +63,23 @@ export const useConnectorAuthentication = () => {
                         }
                     },
                     async cancel() {
-                        console.log('here', id);
                         this.__resolvers.resolve(null);
+                        setAuthenticationFlows((prev) => prev.filter((item) => item.connectorId !== id));
                         resetProcess(id);
                     },
                 };
             }
             return null;
         },
-        [authentication, resetProcess],
+        [authenticationFlows, resetProcess],
     );
 
     const createProcess = async (authorizationExecutor: Executor['handler'], name: string, id: string) => {
         const authenticationAwaiter = Promise.withResolvers<RefreshedAuthCredendentials | null>();
-        /*setExecutor({
-            handler: authorizationExecutor,
-        });
-        setAuthenticationResolvers({
-            resolve: authenticationAwaiter.resolve,
-            reject: authenticationAwaiter.reject,
-        });
-        setConnectorName(name);*/
 
-        setAuthentication((prev) => ({
+        setAuthenticationFlows((prev) => [
             ...prev,
-            [id]: {
+            {
                 executor: {
                     handler: authorizationExecutor,
                 },
@@ -116,18 +88,17 @@ export const useConnectorAuthentication = () => {
                     reject: authenticationAwaiter.reject,
                 },
                 connectorName: name,
+                connectorId: id,
                 result: null,
             },
-        }));
+        ]);
         const promiseResult = await authenticationAwaiter.promise;
         return promiseResult;
     };
 
     return {
-        authentication,
+        authenticationFlows,
         createProcess,
-        getAuthenticationProcess,
-        //connectorName,
-        //result,
+        process,
     };
 };

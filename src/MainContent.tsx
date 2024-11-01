@@ -15,6 +15,7 @@ import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import {
+    ConnectorAuthenticationFlow,
     ConnectorAuthenticationModal,
     useConnectorAuthentication,
     useConnectorAuthenticationResult,
@@ -41,6 +42,23 @@ interface MainContentProps {
     projectConfig: ProjectConfig;
     authToken: string;
     updateToken: (newValue: string) => void;
+}
+
+interface AuthenticationFlowModalProps {
+    authenticationFlow: ConnectorAuthenticationFlow;
+    onConfirm: () => void;
+    onCancel: () => void;
+}
+function AuthenticationFlowModal({ authenticationFlow, onConfirm, onCancel }: AuthenticationFlowModalProps) {
+    useConnectorAuthenticationResult(authenticationFlow.connectorName, authenticationFlow.result);
+
+    return (
+        <ConnectorAuthenticationModal
+            name={authenticationFlow.connectorName}
+            onConfirm={onConfirm}
+            onCancel={onCancel}
+        />
+    );
 }
 
 function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: MainContentProps) {
@@ -78,14 +96,10 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     );
 
     const {
-        // result: connectorAuthResult,
-        authentication: authenticationFlows,
-        getAuthenticationProcess: connectorAuthenticationProcess,
+        authenticationFlows,
+        process: connectorAuthenticationProcess,
         createProcess: createAuthenticationProcess,
-        //connectorName,
     } = useConnectorAuthentication();
-
-    // useConnectorAuthenticationResult(connectorAuthResult);
 
     useEffect(() => {
         projectConfig
@@ -144,7 +158,6 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
                         const connector = await window.StudioUISDK.next.connector.getById(request.connectorId);
-                        console.log('here---', connector);
                         const result = await createAuthenticationProcess(
                             async () => {
                                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -154,7 +167,6 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                             connector.parsedData?.name ?? '',
                             remoteConnectorId,
                         );
-                        console.log('res', result);
                         return result;
                     }
                 } catch (error) {
@@ -294,7 +306,6 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
         loadDocument();
     }, [authToken, fetchedDocument]);
 
-    console.log('authenticationFlows', authenticationFlows);
     return (
         <Container canvas={canvas}>
             <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
@@ -348,12 +359,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                 ) : null}
                             </CanvasContainer>
                         </MainContentContainer>
-                        {authenticationFlows &&
-                            Object.entries(authenticationFlows).map(([connectorId, authFlow]) => (
-                                <ConnectorAuthenticationModal
-                                    name={authFlow.connectorName}
-                                    onConfirm={() => connectorAuthenticationProcess(connectorId)?.start()}
-                                    onCancel={() => connectorAuthenticationProcess(connectorId)?.cancel()}
+                        {authenticationFlows.length &&
+                            authenticationFlows.map((authFlow) => (
+                                <AuthenticationFlowModal
+                                    key={authFlow.connectorId}
+                                    authenticationFlow={authFlow}
+                                    onConfirm={() => connectorAuthenticationProcess(authFlow.connectorId)?.start()}
+                                    onCancel={() => connectorAuthenticationProcess(authFlow.connectorId)?.cancel()}
                                 />
                             ))}
                     </div>
