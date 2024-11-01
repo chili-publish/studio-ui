@@ -23,7 +23,7 @@ describe('"usePreviewImageUrl" hook', () => {
 
     it('should not call "download" if no connector is provided', () => {
         window.StudioUISDK.mediaConnector.download = jest.fn().mockResolvedValueOnce(new Uint8Array());
-        const { result } = renderHook(() => usePreviewImageUrl(undefined, 'media-asset-id'));
+        const { result } = renderHook(() => usePreviewImageUrl(undefined, 'media-asset-id', undefined));
 
         act(() => {
             expect(window.StudioUISDK.mediaConnector.download).not.toHaveBeenCalled();
@@ -38,7 +38,7 @@ describe('"usePreviewImageUrl" hook', () => {
                 type: 'ready',
             },
         });
-        const { result } = renderHook(() => usePreviewImageUrl('grafx-media', 'media-asset-id'));
+        const { result } = renderHook(() => usePreviewImageUrl('grafx-media', 'media-asset-id', undefined));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
@@ -59,7 +59,7 @@ describe('"usePreviewImageUrl" hook', () => {
                 type: 'loading',
             },
         });
-        const { result } = renderHook(() => usePreviewImageUrl('grafx-media', 'media-asset-id'));
+        const { result } = renderHook(() => usePreviewImageUrl('grafx-media', 'media-asset-id', undefined));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
