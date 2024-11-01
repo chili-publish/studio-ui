@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, Input, Label, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, Input, Label, LoadingIcon, useTheme } from '@chili-publish/grafx-shared-components';
 import { useCallback, useEffect, useState } from 'react';
 import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
 import { PanelTitle } from '../shared/Panel.styles';
@@ -8,9 +8,11 @@ function DataSource() {
     const { panel } = useTheme();
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
     const [firstRowInfo, setFirstRowInfo] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const getDataConnectorFirstRow = useCallback(async () => {
         if (!dataConnector) return;
+        setIsLoading(true);
         try {
             const pageInfoResponse = await window.StudioUISDK.dataConnector.getPage(dataConnector.id, { limit: 1 });
 
@@ -19,6 +21,8 @@ function DataSource() {
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     }, [dataConnector]);
 
@@ -41,6 +45,7 @@ function DataSource() {
             <Input
                 type="text"
                 readOnly
+                disabled={isLoading}
                 dataId={getDataIdForSUI(`data-source-input`)}
                 dataTestId={getDataTestIdForSUI(`data-source-input`)}
                 dataIntercomId="data-source-input"
@@ -51,7 +56,9 @@ function DataSource() {
                 onClick={getDataConnectorFirstRow}
                 rightIcon={{
                     label: '',
-                    icon: (
+                    icon: isLoading ? (
+                        <LoadingIcon />
+                    ) : (
                         <Icon
                             dataId={getDataIdForSUI('data-source-input-icon')}
                             dataTestId={getDataTestIdForSUI('data-source-input-icon')}
