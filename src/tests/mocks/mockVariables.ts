@@ -40,7 +40,7 @@ export const variables: Variable[] = [
     <ShortTextVariable>{
         id: 'shortVariable 1',
         name: 'Short Variable 1',
-        label: 'Short Variable1',
+        label: 'Short Variable 1',
         type: VariableType.shortText,
         value: 'I am short text',
         occurrences: 22,
@@ -91,7 +91,7 @@ export const variables: Variable[] = [
     <ListVariable>{
         id: '10',
         name: 'List',
-        label: 'Test List',
+        label: 'List',
         type: VariableType.list,
         occurrences: 0,
         isVisible: true,
@@ -112,5 +112,14 @@ export const variables: Variable[] = [
         parentId: '7',
         isReadonly: false,
         isRequired: false,
+    },
+    <ShortTextVariable>{
+        id: 'shortVariable-without-label',
+        name: 'Short Var name',
+        type: VariableType.shortText,
+        value: 'I am short text',
+        occurrences: 22,
+        parentId: '2',
+        isVisible: true,
     },
 ];

@@ -36,10 +36,10 @@ describe('Variables List', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
-        const variable1 = await screen.findByText('Variable1');
-        const variable12 = await screen.findByText('Variable12');
-        const shortVariable1 = screen.getByText('Short Variable 1');
-        const longVariable1 = screen.queryByText('Long Variable 1');
+        const variable1 = await screen.findByText(variables[0].label);
+        const variable12 = await screen.findByText(variables[1].label);
+        const shortVariable1 = screen.getByText(variables[2].label);
+        const longVariable1 = screen.queryByText(variables[3].label);
 
         expect(variable1).toBeInTheDocument();
         expect(variable12).toBeInTheDocument();
