@@ -78,13 +78,14 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     );
 
     const {
-        result: connectorAuthResult,
-        process: connectorAuthenticationProcess,
+        // result: connectorAuthResult,
+        authentication: authenticationFlows,
+        getAuthenticationProcess: connectorAuthenticationProcess,
         createProcess: createAuthenticationProcess,
-        connectorName,
+        //connectorName,
     } = useConnectorAuthentication();
 
-    useConnectorAuthenticationResult(connectorAuthResult);
+    // useConnectorAuthenticationResult(connectorAuthResult);
 
     useEffect(() => {
         projectConfig
@@ -143,11 +144,17 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
                         const connector = await window.StudioUISDK.next.connector.getById(request.connectorId);
-                        const result = await createAuthenticationProcess(async () => {
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                            const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
-                            return res;
-                        }, connector.parsedData?.name ?? '');
+                        console.log('here---', connector);
+                        const result = await createAuthenticationProcess(
+                            async () => {
+                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
+                                return res;
+                            },
+                            connector.parsedData?.name ?? '',
+                            remoteConnectorId,
+                        );
+                        console.log('res', result);
                         return result;
                     }
                 } catch (error) {
@@ -287,6 +294,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
         loadDocument();
     }, [authToken, fetchedDocument]);
 
+    console.log('authenticationFlows', authenticationFlows);
     return (
         <Container canvas={canvas}>
             <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
@@ -340,13 +348,14 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                 ) : null}
                             </CanvasContainer>
                         </MainContentContainer>
-                        {connectorAuthenticationProcess && (
-                            <ConnectorAuthenticationModal
-                                name={connectorName}
-                                onConfirm={() => connectorAuthenticationProcess.start()}
-                                onCancel={() => connectorAuthenticationProcess.cancel()}
-                            />
-                        )}
+                        {authenticationFlows &&
+                            Object.entries(authenticationFlows).map(([connectorId, authFlow]) => (
+                                <ConnectorAuthenticationModal
+                                    name={authFlow.connectorName}
+                                    onConfirm={() => connectorAuthenticationProcess(connectorId)?.start()}
+                                    onCancel={() => connectorAuthenticationProcess(connectorId)?.cancel()}
+                                />
+                            ))}
                     </div>
                 </VariablePanelContextProvider>
             </UiConfigContextProvider>

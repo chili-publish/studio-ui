@@ -13,6 +13,7 @@ function DataSource() {
         if (!dataConnector) return;
         try {
             const pageInfoResponse = await window.StudioUISDK.dataConnector.getPage(dataConnector.id, { limit: 1 });
+
             const firstRowData = pageInfoResponse.parsedData?.data?.[0];
             setFirstRowInfo(firstRowData ? Object.values(firstRowData).join('|') : '');
         } catch (error) {
