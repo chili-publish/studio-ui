@@ -15,7 +15,7 @@ export const variables: Variable[] = [
     <ImageVariable>(<unknown>{
         id: 'variable1',
         name: 'Variable1',
-        label: 'First Variable',
+        label: 'Variable1',
         type: VariableType.image,
         occurrences: 2,
         isVisible: true,

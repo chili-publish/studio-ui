@@ -3,7 +3,7 @@ import { ImageVariable, ShortTextVariable, Variable, VariableType } from '@chili
 export const mockVariables: Variable[] = [<ImageVariable>(<unknown>{
         id: '0',
         name: 'Variable1',
-        label: 'First Variable',
+        label: 'Variable1',
         type: VariableType.image,
         occurrences: 2,
         isVisible: true,
