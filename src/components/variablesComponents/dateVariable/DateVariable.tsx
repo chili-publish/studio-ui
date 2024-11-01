@@ -42,7 +42,7 @@ function DateVariable(props: IDateVariable) {
             <DatePicker
                 anchorId={APP_WRAPPER_ID}
                 name={variable.name}
-                label={isOpenOnMobile ? '' : variable.name}
+                label={isOpenOnMobile ? '' : variable.label ?? variable.name}
                 required={variable.isRequired}
                 onChange={(date) => {
                     if (date) {

@@ -44,7 +44,9 @@ function ImageVariable(props: IImageVariable) {
                 dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
                 dataIntercomId={`image-picker-${variable.name}`}
                 id={variable.id}
-                label={<Label translationKey={variable.name} value={variable.name} />}
+                label={
+                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
+                }
                 required={variable.isRequired}
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"

@@ -34,7 +34,7 @@ function ListVariable(props: IListVariable) {
                 <div>
                     <StudioDropdown
                         dataId={variable.id}
-                        label={variable.name}
+                        label={variable.label ?? variable.name}
                         selectedValue={selectedValue || ''}
                         options={options}
                         placeholder={placeholder}
