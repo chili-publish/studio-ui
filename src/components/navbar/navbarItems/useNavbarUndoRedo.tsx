@@ -1,20 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
+import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 
 const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boolean }) => {
-    const handleUndo = useCallback(() => {
-        (async () => {
-            if (undoStackState.canUndo) await window.StudioUISDK.undoManager.undo();
-        })();
-    }, [undoStackState.canUndo]);
-
-    const handleRedo = useCallback(() => {
-        (async () => {
-            if (undoStackState.canRedo) await window.StudioUISDK.undoManager.redo();
-        })();
-    }, [undoStackState.canRedo]);
+    const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
 
     const navbarItem = useMemo(
         () => ({
