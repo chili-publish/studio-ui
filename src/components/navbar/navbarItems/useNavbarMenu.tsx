@@ -253,6 +253,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 ),
                 onClick: () => null,
                 hasSeparator: true,
+                isDisabled: true,
             },
         ],
         [onBackClick, fileMenuOptions, editMenuOptions, frameMenuOptions, viewMenuOptions],
