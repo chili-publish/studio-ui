@@ -74,7 +74,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     );
 
     const {
-        pendingAuthentication,
+        pendingAuthentications,
         process: connectorAuthenticationProcess,
         createProcess: createAuthenticationProcess,
     } = useConnectorAuthentication();
@@ -331,8 +331,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                 ) : null}
                             </CanvasContainer>
                         </MainContentContainer>
-                        {pendingAuthentication.length &&
-                            pendingAuthentication.map((authFlow) => (
+                        {pendingAuthentications.length &&
+                            pendingAuthentications.map((authFlow) => (
                                 <ConnectorAuthenticationModal
                                     key={authFlow.connectorId}
                                     name={authFlow.connectorName}

@@ -18,7 +18,7 @@ describe('useConnectorAuthentication hook', () => {
 
     it('should create with default values', () => {
         const { result } = renderHook(() => useConnectorAuthentication());
-        expect(result.current.pendingAuthentication.length).toEqual(0);
+        expect(result.current.pendingAuthentications.length).toEqual(0);
     });
 
     it('should create "process" correctly', async () => {
@@ -29,7 +29,7 @@ describe('useConnectorAuthentication hook', () => {
             result.current.createProcess(executor, 'connectorName', 'connectorId');
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         expect(result.current.process('connectorId')).toEqual({
             __resolvers: {
@@ -76,8 +76,8 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName1');
-        await waitFor(() => result.current.pendingAuthentication[1].connectorName === 'connectorName2');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName1');
+        await waitFor(() => result.current.pendingAuthentications[1].connectorName === 'connectorName2');
 
         await act(async () => {
             await result.current.process?.('connectorId2')?.start();
@@ -87,7 +87,7 @@ describe('useConnectorAuthentication hook', () => {
             await result.current.process?.('connectorId1')?.start();
         });
 
-        expect(result.current.pendingAuthentication.length).toEqual(0);
+        expect(result.current.pendingAuthentications.length).toEqual(0);
 
         expect(processResultConnector1).toEqual(null);
         expect(showAuthNotificationFn).toHaveBeenCalledWith({
@@ -122,14 +122,14 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
             await result.current.process?.('connectorId')?.start();
         });
 
         expect(processResult).toEqual(new RefreshedAuthCredendentials());
-        expect(result.current.pendingAuthentication.length).toBe(0);
+        expect(result.current.pendingAuthentications.length).toBe(0);
         expect(showAuthNotificationFn).toHaveBeenCalledWith({
             connectorName: 'connectorName',
             result: { type: 'authentified' },
@@ -157,14 +157,14 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
             await result.current.process?.('connectorId')?.start();
         });
 
         expect(processResult).toEqual(null);
-        expect(result.current.pendingAuthentication.length).toBe(0);
+        expect(result.current.pendingAuthentications.length).toBe(0);
         expect(window.console.error).toHaveBeenCalledWith('[Error]: Occured');
         expect(showAuthNotificationFn).toHaveBeenCalledWith({
             connectorName: 'connectorName',
@@ -193,14 +193,14 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
             await result.current.process?.('connectorId')?.start();
         });
 
         expect(processResult).toEqual(null);
-        expect(result.current.pendingAuthentication.length).toBe(0);
+        expect(result.current.pendingAuthentications.length).toBe(0);
         expect(window.console.error).not.toHaveBeenCalled();
 
         expect(showAuthNotificationFn).toHaveBeenCalledWith({
@@ -225,14 +225,14 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
             await result.current.process?.('connectorId')?.start();
         });
 
         expect(processResult).toEqual({ message: 'TestError' });
-        expect(result.current.pendingAuthentication.length).toBe(0);
+        expect(result.current.pendingAuthentications.length).toBe(0);
     });
 
     it('should perform process correclty when canceling', async () => {
@@ -251,7 +251,7 @@ describe('useConnectorAuthentication hook', () => {
             );
         });
 
-        await waitFor(() => result.current.pendingAuthentication[0].connectorName === 'connectorName');
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
             await result.current.process?.('connectorId')?.cancel();
@@ -259,6 +259,6 @@ describe('useConnectorAuthentication hook', () => {
 
         expect(executor).not.toHaveBeenCalled();
         expect(processResult).toEqual(null);
-        expect(result.current.pendingAuthentication.length).toBe(0);
+        expect(result.current.pendingAuthentications.length).toBe(0);
     });
 });

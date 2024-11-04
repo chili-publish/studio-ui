@@ -7,7 +7,7 @@ interface Executor {
     handler: () => Promise<ConnectorAuthenticationResult>;
 }
 
-export type ConnectorAuthenticationFlow = {
+export type ConnectorPendingAuthentication = {
     connectorId: string;
     connectorName: string;
     authenticationResolvers: Omit<PromiseWithResolvers<RefreshedAuthCredendentials | null>, 'promise'> | null;
@@ -15,16 +15,16 @@ export type ConnectorAuthenticationFlow = {
 };
 
 export const useConnectorAuthentication = () => {
-    const [pendingAuthentication, setpendingAuthentication] = useState<ConnectorAuthenticationFlow[]>([]);
+    const [pendingAuthentications, setPendingAuthentications] = useState<ConnectorPendingAuthentication[]>([]);
     const { showAuthNotification } = useConnectorAuthenticationResult();
 
     const resetProcess = useCallback((id: string) => {
-        setpendingAuthentication((prev) => prev.filter((item) => item.connectorId !== id));
+        setPendingAuthentications((prev) => prev.filter((item) => item.connectorId !== id));
     }, []);
 
     const process = useCallback(
         (id: string) => {
-            const authenticationProcess = pendingAuthentication.find((item) => item.connectorId === id);
+            const authenticationProcess = pendingAuthentications.find((item) => item.connectorId === id);
             if (!authenticationProcess) return null;
 
             if (authenticationProcess.authenticationResolvers && authenticationProcess.executor) {
@@ -65,13 +65,13 @@ export const useConnectorAuthentication = () => {
             }
             return null;
         },
-        [pendingAuthentication, resetProcess, showAuthNotification],
+        [pendingAuthentications, resetProcess, showAuthNotification],
     );
 
     const createProcess = async (authorizationExecutor: Executor['handler'], name: string, id: string) => {
         const authenticationAwaiter = Promise.withResolvers<RefreshedAuthCredendentials | null>();
 
-        setpendingAuthentication((prev) => [
+        setPendingAuthentications((prev) => [
             ...prev,
             {
                 executor: {
@@ -91,7 +91,7 @@ export const useConnectorAuthentication = () => {
     };
 
     return {
-        pendingAuthentication,
+        pendingAuthentications,
         createProcess,
         process,
     };
