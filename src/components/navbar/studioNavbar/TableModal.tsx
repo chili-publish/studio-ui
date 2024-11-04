@@ -1,5 +1,4 @@
 import { ModalLayout, ModalSize, Table } from '@chili-publish/grafx-shared-components';
-import { LARGE_DATASET } from './data';
 import { MODAL_ID, ModalStyle, TableWrapper } from './TableModal.styles';
 
 interface TableModalProps {
@@ -14,7 +13,7 @@ function TableModal({ onClose }: TableModalProps) {
                 <ModalLayout.Title>Data source</ModalLayout.Title>
                 <ModalLayout.Body>
                     <TableWrapper>
-                        <Table rows={LARGE_DATASET} />
+                        <Table rows={[]} />
                     </TableWrapper>
                 </ModalLayout.Body>
             </ModalLayout.Container>

@@ -45,7 +45,7 @@ const useStudioNavbar = ({
 
         const items = [
             menuNavbarItem,
-            // modeToggleNavbarItem,
+            modeToggleNavbarItem,
             userInterfaceDropdownNavbarItem,
             projectNameItem,
             undoRedoNavbarItem,
