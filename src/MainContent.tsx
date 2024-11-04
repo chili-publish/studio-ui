@@ -310,13 +310,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                         )}
 
                         <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
-                            {!isMobileSize && (
-                                <LeftPanel
-                                    variables={variables}
-                                    isSandboxMode={projectConfig.sandboxMode}
-                                    isDocumentLoaded={isDocumentLoaded}
-                                />
-                            )}
+                            {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
                             <CanvasContainer>
                                 {isMobileSize && (
                                     <MobileVariablesTray variables={variables} isDocumentLoaded={isDocumentLoaded} />

@@ -6,16 +6,17 @@ import VariablesList from '../../variables/VariablesList';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import DataSource from '../../dataSource/DataSource';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 
 interface LeftPanelProps {
     variables: Variable[];
-    isSandboxMode: boolean;
     isDocumentLoaded: boolean;
 }
 
-function LeftPanel({ variables, isSandboxMode, isDocumentLoaded }: LeftPanelProps) {
+function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { panel } = useTheme();
+    const { featureFlags } = useFeatureFlagContext();
 
     return (
         <LeftPanelContainer
@@ -25,7 +26,7 @@ function LeftPanel({ variables, isSandboxMode, isDocumentLoaded }: LeftPanelProp
             panelTheme={panel}
         >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                {isDocumentLoaded && isSandboxMode ? <DataSource /> : null}
+                {isDocumentLoaded && featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>
 

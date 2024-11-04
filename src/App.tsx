@@ -8,6 +8,7 @@ import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
+import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
@@ -83,7 +84,13 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             <UiThemeProvider theme="platform" mode={uiThemeMode}>
                 <NotificationManagerProvider>
                     <ShortcutProvider projectConfig={projectConfig}>
-                        <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
+                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                            <MainContent
+                                authToken={authToken}
+                                updateToken={setAuthToken}
+                                projectConfig={projectConfig}
+                            />
+                        </FeatureFlagProvider>
                     </ShortcutProvider>
                 </NotificationManagerProvider>
             </UiThemeProvider>

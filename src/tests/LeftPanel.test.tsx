@@ -117,7 +117,7 @@ describe('Image Panel', () => {
         const { getByText, getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -143,7 +143,7 @@ describe('Image Panel', () => {
         const { getByText, getByTestId, getAllByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -169,7 +169,7 @@ describe('Image Panel', () => {
         const { getByText } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -192,7 +192,7 @@ describe('Image Panel', () => {
         const { getByRole } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
         );
@@ -230,7 +230,7 @@ describe('Image Panel', () => {
         render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -255,7 +255,7 @@ describe('Image Panel', () => {
         const { getByTestId } = render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded isSandboxMode={false} />
+                    <LeftPanel variables={variables} isDocumentLoaded />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },

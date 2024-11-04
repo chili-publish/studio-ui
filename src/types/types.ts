@@ -3,6 +3,8 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
+export type FeatureFlagsType = Record<string, boolean>;
+
 export interface ProjectConfig {
     projectId: string;
     projectName: string;
@@ -12,6 +14,7 @@ export interface ProjectConfig {
     userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     sandboxMode: boolean;
+    featureFlags?: FeatureFlagsType;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId: string) => Promise<string>;
@@ -39,6 +42,7 @@ export interface DefaultStudioConfig {
     projectId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
+    featureFlags?: FeatureFlagsType;
     uiOptions?: UiOptions;
     uiTheme?: ITheme['mode'] | 'system';
     outputSettings?: OutputSettings;
@@ -170,6 +174,7 @@ export interface IStudioUILoaderConfig {
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
     sandboxMode?: boolean;
+    featureFlags?: Record<string, boolean>;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId: string) => Promise<string>;
