@@ -70,7 +70,6 @@ import { TokenManager } from './token-manager';
         projectName: 'Dev Run',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
-        sandboxMode: true,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.refreshToken(),
         onConnectorAuthenticationRequested: (connectorId) => {
