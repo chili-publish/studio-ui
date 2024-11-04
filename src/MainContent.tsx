@@ -14,7 +14,11 @@ import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
-import { ConnectorAuthenticationModal, useConnectorAuthentication } from './components/connector-authentication';
+import {
+    ConnectorAuthenticationModal,
+    useConnectorAuthentication,
+    useConnectorAuthenticationResult,
+} from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
@@ -75,9 +79,12 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
 
     const {
         pendingAuthentications,
+        authResults,
         process: connectorAuthenticationProcess,
         createProcess: createAuthenticationProcess,
     } = useConnectorAuthentication();
+
+    useConnectorAuthenticationResult(authResults);
 
     useEffect(() => {
         projectConfig

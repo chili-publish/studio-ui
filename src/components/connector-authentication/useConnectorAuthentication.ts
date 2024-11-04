@@ -1,7 +1,7 @@
 import { RefreshedAuthCredendentials } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 import { ConnectorAuthenticationResult } from '../../types/ConnectorAuthenticationResult';
-import { useConnectorAuthenticationResult } from './useConnectorAuthenticationResult';
+import { ConnectorAuthResult } from './types';
 
 interface Executor {
     handler: () => Promise<ConnectorAuthenticationResult>;
@@ -16,8 +16,7 @@ export type ConnectorPendingAuthentication = {
 
 export const useConnectorAuthentication = () => {
     const [pendingAuthentications, setPendingAuthentications] = useState<ConnectorPendingAuthentication[]>([]);
-    const { showAuthNotification } = useConnectorAuthenticationResult();
-
+    const [authResults, setAuthResults] = useState<ConnectorAuthResult[]>([]);
     const resetProcess = useCallback((id: string) => {
         setPendingAuthentications((prev) => prev.filter((item) => item.connectorId !== id));
     }, []);
@@ -33,10 +32,13 @@ export const useConnectorAuthentication = () => {
                     async start() {
                         try {
                             const executorResult = await authenticationProcess.executor?.handler().then((res) => {
-                                showAuthNotification({
-                                    result: res,
-                                    connectorName: authenticationProcess.connectorName,
-                                });
+                                setAuthResults((prev) => [
+                                    ...prev,
+                                    {
+                                        result: res,
+                                        connectorName: authenticationProcess.connectorName,
+                                    },
+                                ]);
 
                                 if (res.type === 'authentified') {
                                     return new RefreshedAuthCredendentials();
@@ -65,7 +67,7 @@ export const useConnectorAuthentication = () => {
             }
             return null;
         },
-        [pendingAuthentications, resetProcess, showAuthNotification],
+        [pendingAuthentications, resetProcess],
     );
 
     const createProcess = async (authorizationExecutor: Executor['handler'], name: string, id: string) => {
@@ -91,6 +93,7 @@ export const useConnectorAuthentication = () => {
     };
 
     return {
+        authResults,
         pendingAuthentications,
         createProcess,
         process,
