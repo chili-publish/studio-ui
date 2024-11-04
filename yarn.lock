@@ -1225,6 +1225,20 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@chili-publish/grafx-shared-components@^0.85.0":
+  version "0.85.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.85.0/bb3e25296d85249bdeecbcf8e2517de84f1e3aa3#bb3e25296d85249bdeecbcf8e2517de84f1e3aa3"
+  integrity sha512-A0nFVoq697zIQSXr2lHwgKyCI7yMulz/LSQuKAoUHn42Z3cKfn7LAiTRneNgtyeNvEa2E1h2z1vvAf6xGx9H0g==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.4.0"
+    "@fortawesome/pro-light-svg-icons" "^6.4.0"
+    "@fortawesome/pro-regular-svg-icons" "^6.4.0"
+    "@fortawesome/pro-solid-svg-icons" "^6.4.0"
+    "@fortawesome/react-fontawesome" "^0.2.0"
+    date-fns "^3.6.0"
+    react-datepicker "^7.1.0"
+    react-select "^5.6.1"
+
 "@chili-publish/studio-sdk@^1.15.0-rc.6":
   version "1.15.0-rc.6"
   resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.15.0-rc.6/b251811d416c5b5e9a9a8e7fdafaa64dfd59879a#b251811d416c5b5e9a9a8e7fdafaa64dfd59879a"
