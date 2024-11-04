@@ -9,7 +9,7 @@ import StudioSDK, {
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -29,6 +29,7 @@ import MobileVariablesTray from './components/variables/MobileVariablesTray';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Navbar from './components/navbar/Navbar';
 import { APP_WRAPPER_ID } from './utils/constants';
+import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 
 declare global {
     interface Window {
@@ -58,6 +59,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
+    const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
 
     const enableAutoSaveRef = useRef(false);
@@ -186,9 +188,9 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
                 setScrubberTimeMs(animationPlayback?.currentAnimationTimeMs || 0);
             },
-            onUndoStackStateChanged: (undoStackState) => {
-                setCanUndo(undoStackState.canUndo);
-                setCanRedo(undoStackState.canRedo);
+            onUndoStackStateChanged: (undoStackStateValue) => {
+                setCanUndo(undoStackStateValue.canUndo);
+                setCanRedo(undoStackStateValue.canRedo);
             },
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
@@ -288,63 +290,73 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     }, [authToken, fetchedDocument]);
 
     return (
-        <Container canvas={canvas}>
-            <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
-                <VariablePanelContextProvider connectors={{ mediaConnectors, fontsConnectors }} variables={variables}>
-                    <div id={APP_WRAPPER_ID} className="app">
-                        {projectConfig.sandboxMode ? (
-                            <UiThemeProvider theme="studio" mode="dark">
-                                <StudioNavbar
+        <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
+            <Container canvas={canvas}>
+                <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
+                    <VariablePanelContextProvider
+                        connectors={{ mediaConnectors, fontsConnectors }}
+                        variables={variables}
+                    >
+                        <div id={APP_WRAPPER_ID} className="app">
+                            {projectConfig.sandboxMode ? (
+                                <UiThemeProvider theme="studio" mode="dark">
+                                    <StudioNavbar
+                                        projectName={projectConfig?.projectName || currentProject?.name}
+                                        goBack={projectConfig?.onUserInterfaceBack}
+                                        projectConfig={projectConfig}
+                                        undoStackState={undoStackState}
+                                        zoom={currentZoom}
+                                    />
+                                </UiThemeProvider>
+                            ) : (
+                                <Navbar
                                     projectName={projectConfig?.projectName || currentProject?.name}
                                     goBack={projectConfig?.onUserInterfaceBack}
                                     projectConfig={projectConfig}
-                                    undoStackState={{ canRedo, canUndo }}
+                                    undoStackState={undoStackState}
                                     zoom={currentZoom}
                                 />
-                            </UiThemeProvider>
-                        ) : (
-                            <Navbar
-                                projectName={projectConfig?.projectName || currentProject?.name}
-                                goBack={projectConfig?.onUserInterfaceBack}
-                                projectConfig={projectConfig}
-                                undoStackState={{ canRedo, canUndo }}
-                                zoom={currentZoom}
-                            />
-                        )}
+                            )}
 
-                        <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
-                            {!isMobileSize && <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />}
-                            <CanvasContainer>
-                                {isMobileSize && (
-                                    <MobileVariablesTray variables={variables} isDocumentLoaded={isDocumentLoaded} />
+                            <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
+                                {!isMobileSize && (
+                                    <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                 )}
-                                <div
-                                    className="sui-canvas"
-                                    data-id={getDataIdForSUI('canvas')}
-                                    data-testid={getDataTestIdForSUI('canvas')}
-                                >
-                                    <div className="chili-editor" id="chili-editor" />
-                                </div>
-                                {layoutIntent === LayoutIntent.digitalAnimated ? (
-                                    <AnimationTimeline
-                                        scrubberTimeMs={scrubberTimeMs}
-                                        animationLength={animationLength}
-                                        isAnimationPlaying={animationStatus}
-                                    />
-                                ) : null}
-                            </CanvasContainer>
-                        </MainContentContainer>
-                        {connectorAuthenticationProcess && (
-                            <ConnectorAuthenticationModal
-                                name={connectorName}
-                                onConfirm={() => connectorAuthenticationProcess.start()}
-                                onCancel={() => connectorAuthenticationProcess.cancel()}
-                            />
-                        )}
-                    </div>
-                </VariablePanelContextProvider>
-            </UiConfigContextProvider>
-        </Container>
+                                <CanvasContainer>
+                                    {isMobileSize && (
+                                        <MobileVariablesTray
+                                            variables={variables}
+                                            isDocumentLoaded={isDocumentLoaded}
+                                        />
+                                    )}
+                                    <div
+                                        className="sui-canvas"
+                                        data-id={getDataIdForSUI('canvas')}
+                                        data-testid={getDataTestIdForSUI('canvas')}
+                                    >
+                                        <div className="chili-editor" id="chili-editor" />
+                                    </div>
+                                    {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                        <AnimationTimeline
+                                            scrubberTimeMs={scrubberTimeMs}
+                                            animationLength={animationLength}
+                                            isAnimationPlaying={animationStatus}
+                                        />
+                                    ) : null}
+                                </CanvasContainer>
+                            </MainContentContainer>
+                            {connectorAuthenticationProcess && (
+                                <ConnectorAuthenticationModal
+                                    name={connectorName}
+                                    onConfirm={() => connectorAuthenticationProcess.start()}
+                                    onCancel={() => connectorAuthenticationProcess.cancel()}
+                                />
+                            )}
+                        </div>
+                    </VariablePanelContextProvider>
+                </UiConfigContextProvider>
+            </Container>
+        </ShortcutProvider>
     );
 }
 
