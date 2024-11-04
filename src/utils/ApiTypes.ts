@@ -19,7 +19,16 @@ export enum AssetTypeToString {
 // It partially describe the API Connector Entity
 // https://main.cpstaging.online/grafx/swagger/index.html?urls.primaryName=experimental#/Connectors/get_api_experimental_environment__environment__connectors__connectorId_
 export type MediaRemoteConnector = {
+    id: string;
+    name: string;
+    description: string;
+    iconUrl: string | null;
+    scriptSource: 'external' | 'defaultMedia';
+    type: 'media';
+    default: boolean;
+    enabled: boolean;
     supportedAuthentication: {
         browser: Array<'oAuth2AuthorizationCode' | 'none'>;
     };
+    ownerType: string;
 };

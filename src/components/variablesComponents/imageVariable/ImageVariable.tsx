@@ -15,13 +15,14 @@ function ImageVariable(props: IImageVariable) {
     const placeholder = getVariablePlaceholder(variable);
 
     const { selectedConnector } = useVariableConnector(variable);
+
     const { showImagePanel } = useVariablePanelContext();
 
     const mediaAssetId = useMemo(() => {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const previewImageUrl = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
+    const previewImageUrl = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId, selectedConnector);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
 
     const previewImage = useMemo(() => {
