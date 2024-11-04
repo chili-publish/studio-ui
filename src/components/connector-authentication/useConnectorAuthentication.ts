@@ -37,6 +37,7 @@ export const useConnectorAuthentication = () => {
                                     {
                                         result: res,
                                         connectorName: authenticationProcess.connectorName,
+                                        connectorId: authenticationProcess.connectorId,
                                     },
                                 ]);
 
@@ -85,7 +86,6 @@ export const useConnectorAuthentication = () => {
                 },
                 connectorName: name,
                 connectorId: id,
-                result: null,
             },
         ]);
         const promiseResult = await authenticationAwaiter.promise;

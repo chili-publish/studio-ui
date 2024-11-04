@@ -91,10 +91,12 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName1',
+                        connectorId: 'connectorId1',
                         result: { type: 'error' },
                     },
                     {
                         connectorName: 'connectorName2',
+                        connectorId: 'connectorId2',
                         result: { type: 'authentified' },
                     },
                 ]),
@@ -131,6 +133,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
+                        connectorId: 'connectorId',
                         result: { type: 'authentified' },
                     },
                 ]),
@@ -168,6 +171,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
+                        connectorId: 'connectorId',
                         result: { type: 'error', error: '[Error]: Occured' },
                     },
                 ]),
@@ -206,6 +210,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
+                        connectorId: 'connectorId',
                         result: { type: 'timeout' },
                     },
                 ]),
