@@ -15,16 +15,16 @@ export type ConnectorAuthenticationFlow = {
 };
 
 export const useConnectorAuthentication = () => {
-    const [authenticationFlows, setAuthenticationFlows] = useState<ConnectorAuthenticationFlow[]>([]);
+    const [pendingAuthentication, setpendingAuthentication] = useState<ConnectorAuthenticationFlow[]>([]);
     const { showAuthNotification } = useConnectorAuthenticationResult();
 
     const resetProcess = useCallback((id: string) => {
-        setAuthenticationFlows((prev) => prev.filter((item) => item.connectorId !== id));
+        setpendingAuthentication((prev) => prev.filter((item) => item.connectorId !== id));
     }, []);
 
     const process = useCallback(
         (id: string) => {
-            const authenticationProcess = authenticationFlows.find((item) => item.connectorId === id);
+            const authenticationProcess = pendingAuthentication.find((item) => item.connectorId === id);
             if (!authenticationProcess) return null;
 
             if (authenticationProcess.authenticationResolvers && authenticationProcess.executor) {
@@ -65,13 +65,13 @@ export const useConnectorAuthentication = () => {
             }
             return null;
         },
-        [authenticationFlows, resetProcess, showAuthNotification],
+        [pendingAuthentication, resetProcess, showAuthNotification],
     );
 
     const createProcess = async (authorizationExecutor: Executor['handler'], name: string, id: string) => {
         const authenticationAwaiter = Promise.withResolvers<RefreshedAuthCredendentials | null>();
 
-        setAuthenticationFlows((prev) => [
+        setpendingAuthentication((prev) => [
             ...prev,
             {
                 executor: {
@@ -91,7 +91,7 @@ export const useConnectorAuthentication = () => {
     };
 
     return {
-        authenticationFlows,
+        pendingAuthentication,
         createProcess,
         process,
     };

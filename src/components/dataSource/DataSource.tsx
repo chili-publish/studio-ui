@@ -7,7 +7,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 function DataSource() {
     const { panel } = useTheme();
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
-    const [firstRowInfo, setFirstRowInfo] = useState('');
+    const [currentRow, setCurrentRow] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const getDataConnectorFirstRow = useCallback(async () => {
@@ -16,7 +16,7 @@ function DataSource() {
         try {
             const pageInfoResponse = await window.StudioUISDK.dataConnector.getPage(dataConnector.id, { limit: 15 });
             const firstRowData = pageInfoResponse.parsedData?.data?.[0];
-            setFirstRowInfo(firstRowData ? Object.values(firstRowData).join('|') : '');
+            setCurrentRow(firstRowData ? Object.values(firstRowData).join('|') : '');
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
@@ -49,7 +49,7 @@ function DataSource() {
                 dataTestId={getDataTestIdForSUI(`data-source-input`)}
                 dataIntercomId="data-source-input"
                 name="data-source-input"
-                value={firstRowInfo}
+                value={currentRow}
                 placeholder="Select data row"
                 label={<Label translationKey="dataRow" value="Data row" />}
                 onClick={getDataConnectorFirstRow}
