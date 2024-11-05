@@ -1,44 +1,32 @@
-import { AvailableIcons, Icon, Input, Label, LoadingIcon, useTheme } from '@chili-publish/grafx-shared-components';
-import { useCallback, useEffect, useState } from 'react';
-import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
+import {
+    AvailableIcons,
+    GraFxIcon,
+    Icon,
+    Input,
+    Label,
+    LoadingIcon,
+    useTheme,
+} from '@chili-publish/grafx-shared-components';
 import { PanelTitle } from '../shared/Panel.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { RowInfoContainer } from './DataSource.styles';
+import useDataSource from './useDataSource';
+import { Text } from '../../styles/Main.styles';
 
 function DataSource() {
-    const { panel } = useTheme();
-    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
-    const [currentRow, setCurrentRow] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const { panel, icon, mode } = useTheme();
+    const {
+        currentRow,
+        currentRowIndex,
+        isLoading,
+        isPrevDisabled,
+        isNextDisabled,
+        loadDataRow,
+        getPreviousRow,
+        getNextRow,
+    } = useDataSource();
 
-    const getDataConnectorFirstRow = useCallback(async () => {
-        if (!dataConnector) return;
-        setIsLoading(true);
-        try {
-            const pageInfoResponse = await window.StudioUISDK.dataConnector.getPage(dataConnector.id, { limit: 15 });
-            const firstRowData = pageInfoResponse.parsedData?.data?.[0];
-            setCurrentRow(firstRowData ? Object.values(firstRowData).join('|') : '');
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [dataConnector]);
-
-    useEffect(() => {
-        const getDataConnector = async () => {
-            const dataConnectorsResponse = await window.StudioUISDK.connector.getAllByType(ConnectorType.data);
-            const defaultDataConnector = dataConnectorsResponse.parsedData?.[0] || null;
-            setDataConnector(defaultDataConnector);
-        };
-        getDataConnector();
-    }, []);
-
-    useEffect(() => {
-        if (dataConnector) getDataConnectorFirstRow();
-    }, [dataConnector, getDataConnectorFirstRow]);
-
-    return dataConnector ? (
+    return currentRow ? (
         <>
             <PanelTitle panelTheme={panel}>Data source</PanelTitle>
             <Input
@@ -52,7 +40,7 @@ function DataSource() {
                 value={currentRow}
                 placeholder="Select data row"
                 label={<Label translationKey="dataRow" value="Data row" />}
-                onClick={getDataConnectorFirstRow}
+                onClick={loadDataRow}
                 rightIcon={{
                     label: '',
                     icon: isLoading ? (
@@ -67,6 +55,17 @@ function DataSource() {
                     onClick: () => null,
                 }}
             />
+
+            <RowInfoContainer iconStyle={icon}>
+                <GraFxIcon
+                    id="prev-icon"
+                    icon={AvailableIcons.faArrowLeft}
+                    onClick={getPreviousRow}
+                    disabled={isPrevDisabled}
+                />
+                <Text mode={mode}>{`Row ${currentRowIndex + 1}`}</Text>
+                <GraFxIcon icon={AvailableIcons.faArrowRight} onClick={getNextRow} disabled={isNextDisabled} />
+            </RowInfoContainer>
         </>
     ) : null;
 }

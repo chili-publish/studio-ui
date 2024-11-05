@@ -1,8 +1,7 @@
-import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon, useTheme } from '@chili-publish/grafx-shared-components';
 import { useEffect, useState } from 'react';
 import { ZoomButtonProps, ZoomTypeEnum } from './Zoom.types';
-import { ZoomValue } from './Zoom.styles';
-import { NavbarGroup } from '../navbar/Navbar.styles';
+import { NavbarGroup, NavbarText } from '../navbar/Navbar.styles';
 
 function ZoomButton(props: ZoomButtonProps) {
     const { type, handleOnClick } = props;
@@ -27,6 +26,7 @@ interface IZoom {
 }
 function Zoom(props: IZoom) {
     const { zoom, zoomIn, zoomOut } = props;
+    const { mode } = useTheme();
 
     const [currentZoom, setCurrentZoom] = useState(zoom);
 
@@ -45,7 +45,9 @@ function Zoom(props: IZoom) {
     return (
         <NavbarGroup withGap data-testid="zoom">
             <ZoomButton type={ZoomTypeEnum.DECREMENT} handleOnClick={zoomOut} />
-            <ZoomValue aria-label="zoom level">{currentZoom}%</ZoomValue>
+            <NavbarText aria-label="zoom level" mode={mode}>
+                {currentZoom}%
+            </NavbarText>
             <ZoomButton handleOnClick={zoomIn} />
         </NavbarGroup>
     );
