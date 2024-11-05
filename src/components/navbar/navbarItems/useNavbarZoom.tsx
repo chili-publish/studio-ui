@@ -1,20 +1,9 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import Zoom from '../../zoom/Zoom';
+import useZoom from '../../../contexts/ShortcutManager/useZoom';
 
 const useNavbarZoom = (zoom: number) => {
-    const zoomIn = useCallback(async () => {
-        (async () => {
-            // 1.142 is the same value used in the engine to zoom in
-            await window.StudioUISDK.canvas.setZoomPercentage(zoom * 1.142);
-        })();
-    }, [zoom]);
-
-    const zoomOut = useCallback(async () => {
-        (async () => {
-            // 0.875 is the same value used in the engine to zoom out
-            await window.StudioUISDK.canvas.setZoomPercentage(zoom * 0.875);
-        })();
-    }, [zoom]);
+    const { zoomIn, zoomOut } = useZoom(zoom);
 
     const navbarItem = useMemo(
         () => ({

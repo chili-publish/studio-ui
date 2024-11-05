@@ -7,7 +7,6 @@ import { SubscriberContextProvider } from './contexts/Subscriber';
 import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
-import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
@@ -83,15 +82,9 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         <SubscriberContextProvider subscriber={eventSubscriber}>
             <UiThemeProvider theme="platform" mode={uiThemeMode}>
                 <NotificationManagerProvider>
-                    <ShortcutProvider projectConfig={projectConfig}>
-                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                            <MainContent
-                                authToken={authToken}
-                                updateToken={setAuthToken}
-                                projectConfig={projectConfig}
-                            />
-                        </FeatureFlagProvider>
-                    </ShortcutProvider>
+                    <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                        <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
+                    </FeatureFlagProvider>
                 </NotificationManagerProvider>
             </UiThemeProvider>
         </SubscriberContextProvider>

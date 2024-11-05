@@ -52,3 +52,8 @@ export const NavbarGroup = styled.div<{ withGap?: boolean }>`
     justify-content: center;
     ${(props) => props.withGap && 'gap: 4px'};
 `;
+
+export const MenuOption = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
