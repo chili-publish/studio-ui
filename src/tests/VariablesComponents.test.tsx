@@ -213,64 +213,66 @@ describe('Variable Component', () => {
             expect(getByText(/22/i)).toHaveAttribute('aria-disabled', 'true'); // a Monday date
             expect(getByText(/26/i)).toHaveAttribute('aria-disabled', 'true'); // a Friday date
         });
-        it('Uses the name of the variable as a label when label does not exist', async () => {
-            const varWithoutLabel = variables.find(
-                (item) => item.id === 'shortVariable-without-label',
-            ) as ShortTextVariable;
-            render(
-                <UiThemeProvider theme="platform">
-                    <VariableComponent
-                        key={`variable-component-${varWithoutLabel.id}`}
-                        type={varWithoutLabel.type}
-                        variable={varWithoutLabel}
-                        isDocumentLoaded
-                    />
-                </UiThemeProvider>,
-                { container: document.body.appendChild(APP_WRAPPER) },
-            );
+    });
+    it('Uses the name of the variable as a label when label does not exist', async () => {
+        const varWithoutLabel = variables.find(
+            (item) => item.id === 'shortVariable-without-label',
+        ) as ShortTextVariable;
+        render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${varWithoutLabel.id}`}
+                    type={varWithoutLabel.type}
+                    variable={varWithoutLabel}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
 
-            const variable = await waitFor(() => screen.getByText(varWithoutLabel.name));
-            expect(variable).toBeInTheDocument();
-        });
-        it('Uses the variable label when available', async () => {
-            const varWithoutLabel = variables.find(
-                (item) => item.id === 'shortVariable-without-label',
-            ) as ShortTextVariable;
+        const variable = await waitFor(() => screen.getByText(varWithoutLabel.name));
+        expect(variable).toBeInTheDocument();
+    });
+    // TODO: remove skip when label ff is removed
+    it.skip('Uses the variable label when available', async () => {
+        const varWithoutLabel = variables.find(
+            (item) => item.id === 'shortVariable-without-label',
+        ) as ShortTextVariable;
 
-            render(
-                <UiThemeProvider theme="platform">
-                    <VariableComponent
-                        key={`variable-component-${varWithoutLabel.id}`}
-                        type={varWithoutLabel.type}
-                        variable={{ ...varWithoutLabel, label: 'Var label' }}
-                        isDocumentLoaded
-                    />
-                </UiThemeProvider>,
-                { container: document.body.appendChild(APP_WRAPPER) },
-            );
+        render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${varWithoutLabel.id}`}
+                    type={varWithoutLabel.type}
+                    variable={{ ...varWithoutLabel, label: 'Var label' }}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
 
-            const variable = await waitFor(() => screen.getByText('Var label'));
-            expect(variable).toBeInTheDocument();
-        });
-        it('Uses the variable label when available and empty', async () => {
-            const varWithoutLabel = variables.find(
-                (item) => item.id === 'shortVariable-without-label',
-            ) as ShortTextVariable;
+        const variable = await waitFor(() => screen.getByText('Var label'));
+        expect(variable).toBeInTheDocument();
+    });
+    // TODO: remove skip when label ff is removed
+    it.skip('Uses the variable label when available and empty', async () => {
+        const varWithoutLabel = variables.find(
+            (item) => item.id === 'shortVariable-without-label',
+        ) as ShortTextVariable;
 
-            render(
-                <UiThemeProvider theme="platform">
-                    <VariableComponent
-                        key={`variable-component-${varWithoutLabel.id}`}
-                        type={varWithoutLabel.type}
-                        variable={{ ...varWithoutLabel, label: '' }}
-                        isDocumentLoaded
-                    />
-                </UiThemeProvider>,
-                { container: document.body.appendChild(APP_WRAPPER) },
-            );
+        render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${varWithoutLabel.id}`}
+                    type={varWithoutLabel.type}
+                    variable={{ ...varWithoutLabel, label: '' }}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
 
-            const variableName = screen.queryByText(varWithoutLabel.name);
-            expect(variableName).toBeNull();
-        });
+        const variableName = screen.queryByText(varWithoutLabel.name);
+        expect(variableName).toBeNull();
     });
 });
