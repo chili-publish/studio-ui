@@ -66,6 +66,8 @@ function DataSourceInput({
             <RowInfoContainer iconStyle={icon}>
                 <GraFxIcon
                     id="prev-icon"
+                    dataId={getDataIdForSUI('data-row-prev')}
+                    dataTestId={getDataTestIdForSUI('data-row-prev')}
                     icon={AvailableIcons.faArrowLeft}
                     onClick={onPrevClick}
                     disabled={isPrevDisabled}
@@ -73,6 +75,8 @@ function DataSourceInput({
                 <Text mode={mode}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
                 <GraFxIcon
                     id="next-icon"
+                    dataId={getDataIdForSUI('data-row-next')}
+                    dataTestId={getDataTestIdForSUI('data-row-next')}
                     icon={AvailableIcons.faArrowRight}
                     onClick={onNextClick}
                     disabled={isNextDisabled}
