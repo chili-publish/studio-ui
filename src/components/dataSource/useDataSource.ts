@@ -1,16 +1,16 @@
 import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
-import { DataItem } from '@chili-publish/studio-sdk/lib/src/types/DataConnectorTypes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const useDataSource = () => {
+type Item = {[key: string]: string | number | boolean | Date | null};
+const useDataSource = (isDocumentLoaded: boolean) => {
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
-    const [dataRows, setDataRows] = useState<DataItem[]>([]);
+    const [dataRows, setDataRows] = useState<Item[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const getDataRows = useCallback(async () => {
+    const loadDataRows = useCallback(async () => {
         if (!dataConnector) return;
         setIsLoading(true);
 
@@ -20,7 +20,6 @@ const useDataSource = () => {
                 continuationToken,
             });
             const rowItems = pageInfoResponse.parsedData?.data || [];
-
             setDataRows((prevData) => [...prevData, ...rowItems]);
             setContinuationToken(pageInfoResponse.parsedData?.continuationToken || null);
         } catch (error) {
@@ -42,44 +41,48 @@ const useDataSource = () => {
         [currentRowIndex, dataRows, isLoading, continuationToken],
     );
 
-    const loadDataRow = useCallback(async () => {
-        if (!currentRow) getDataRows();
-    }, [currentRow, getDataRows]);
-
     const getPreviousRow = useCallback(() => {
         setCurrentRowIndex((prev) => (prev > 0 ? prev - 1 : prev));
     }, []);
 
     const getNextRow = useCallback(async () => {
         if (continuationToken && currentRowIndex + 1 === dataRows.length) {
-            await getDataRows();
+            await loadDataRows();
         }
         setCurrentRowIndex((prev) => (currentRowIndex < dataRows.length ? prev + 1 : prev));
-    }, [currentRowIndex, dataRows, continuationToken, getDataRows]);
+    }, [currentRowIndex, dataRows, continuationToken, loadDataRows]);
+
+    const updateSelectedRow = useCallback((index: number) => {
+        if (index >= 0) setCurrentRowIndex(index);
+    }, []);
 
     useEffect(() => {
+        if (!isDocumentLoaded) return;
         const getDataConnector = async () => {
             const dataConnectorsResponse = await window.StudioUISDK.connector.getAllByType(ConnectorType.data);
             const defaultDataConnector = dataConnectorsResponse.parsedData?.[0] || null;
             setDataConnector(defaultDataConnector);
         };
         getDataConnector();
-    }, []);
+    }, [isDocumentLoaded]);
 
     useEffect(() => {
-        if (dataConnector) getDataRows();
+        if (dataConnector) loadDataRows();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataConnector]);
 
     return {
         currentRow,
         currentRowIndex,
-        loadDataRow,
+        updateSelectedRow,
+        loadDataRows,
         getPreviousRow,
         getNextRow,
+        dataRows,
         isLoading,
         isPrevDisabled,
         isNextDisabled,
+        hasMoreRows: !!continuationToken,
     };
 };
 

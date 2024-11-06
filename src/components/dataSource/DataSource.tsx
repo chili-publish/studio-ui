@@ -1,73 +1,71 @@
-import {
-    AvailableIcons,
-    GraFxIcon,
-    Icon,
-    Input,
-    Label,
-    LoadingIcon,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
-import { PanelTitle } from '../shared/Panel.styles';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { RowInfoContainer } from './DataSource.styles';
 import useDataSource from './useDataSource';
-import { Text } from '../../styles/Main.styles';
+import DataSourceModal from './DataSourceModal';
+import DataSourceInput from './DataSourceInput';
+import { useCallback, useState } from 'react';
 
-function DataSource() {
-    const { panel, icon, mode } = useTheme();
+interface DataSourceProps {
+    isDocumentLoaded: boolean;
+}
+function DataSource({ isDocumentLoaded }: DataSourceProps) {
+    const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
+
     const {
         currentRow,
         currentRowIndex,
+        updateSelectedRow,
         isLoading,
+        dataRows,
+        hasMoreRows,
         isPrevDisabled,
         isNextDisabled,
-        loadDataRow,
+        loadDataRows,
         getPreviousRow,
         getNextRow,
-    } = useDataSource();
+    } = useDataSource(isDocumentLoaded);
 
-    return currentRow ? (
+    const onDataSourceModalClose = useCallback(() => {
+        setIsDataSourceModalOpen(false);
+    }, []);
+
+    const onSelectedRowConfirmed = useCallback((index: number) => {
+        updateSelectedRow(index);
+        setIsDataSourceModalOpen(false);
+    }, []);
+
+    const onInputClick = useCallback(() => {
+        if (!currentRow) {
+            loadDataRows();
+        } else {
+            setIsDataSourceModalOpen(true);
+        }
+    }, [currentRow]);
+
+    return (
         <>
-            <PanelTitle panelTheme={panel}>Data source</PanelTitle>
-            <Input
-                type="text"
-                readOnly
-                disabled={isLoading}
-                dataId={getDataIdForSUI(`data-source-input`)}
-                dataTestId={getDataTestIdForSUI(`data-source-input`)}
-                dataIntercomId="data-source-input"
-                name="data-source-input"
-                value={currentRow}
-                placeholder="Select data row"
-                label={<Label translationKey="dataRow" value="Data row" />}
-                onClick={loadDataRow}
-                rightIcon={{
-                    label: '',
-                    icon: isLoading ? (
-                        <LoadingIcon />
-                    ) : (
-                        <Icon
-                            dataId={getDataIdForSUI('data-source-input-icon')}
-                            dataTestId={getDataTestIdForSUI('data-source-input-icon')}
-                            icon={AvailableIcons.faTable}
-                        />
-                    ),
-                    onClick: () => null,
-                }}
+            <DataSourceInput
+                currentRow={currentRow}
+                currentRowIndex={currentRowIndex}
+                dataIsLoading={isLoading}
+                isPrevDisabled={isPrevDisabled}
+                isNextDisabled={isNextDisabled}
+                onInputClick={onInputClick}
+                onPrevClick={getPreviousRow}
+                onNextClick={getNextRow}
             />
-
-            <RowInfoContainer iconStyle={icon}>
-                <GraFxIcon
-                    id="prev-icon"
-                    icon={AvailableIcons.faArrowLeft}
-                    onClick={getPreviousRow}
-                    disabled={isPrevDisabled}
+            {isDataSourceModalOpen ? (
+                <DataSourceModal
+                    data={dataRows}
+                    selectedRow={currentRowIndex}
+                    onSelectedRowChanged={updateSelectedRow}
+                    onSelectedRowConfirmed={onSelectedRowConfirmed}
+                    dataIsLoading={isLoading}
+                    hasMoreData={hasMoreRows}
+                    onNextPageRequested={loadDataRows}
+                    onClose={onDataSourceModalClose}
                 />
-                <Text mode={mode}>{`Row ${currentRowIndex + 1}`}</Text>
-                <GraFxIcon icon={AvailableIcons.faArrowRight} onClick={getNextRow} disabled={isNextDisabled} />
-            </RowInfoContainer>
+            ) : null}
         </>
-    ) : null;
+    );
 }
 
 export default DataSource;

@@ -10,11 +10,24 @@ export const ModalStyle = createGlobalStyle`
     }
     &[data-id='gsc-modal-body'] {
         overflow: auto !important;
+        padding-bottom: 2.5rem !important;
+    }
+    th {
+        position: sticky;
+        top: 0; 
     }
 `;
 
 export const TableWrapper = styled.span`
-    table {
-        margin-bottom: 2.5rem;
-    }
+    width: 100%;
+    display: contents;
+    padding-right: 2rem;
+    margin-bottom: 2.5rem;
+`;
+
+export const LoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    aling-items: center;
+    margin-top: 1rem;
 `;

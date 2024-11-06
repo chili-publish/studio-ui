@@ -26,7 +26,7 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
             panelTheme={panel}
         >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                {isDocumentLoaded && featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
+                {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource isDocumentLoaded={isDocumentLoaded} /> : null}
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>
 
