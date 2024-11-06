@@ -11,7 +11,7 @@ interface TableModalProps {
     onClose: () => void;
 
     selectedRow: number;
-    onSelectedRowConfirmed: (_: number) => void;
+    onSelectedRowChanged: (_: number) => void;
 }
 
 function DataSourceModal({
@@ -21,7 +21,7 @@ function DataSourceModal({
     onNextPageRequested,
     onClose,
     selectedRow,
-    onSelectedRowConfirmed,
+    onSelectedRowChanged,
 }: TableModalProps) {
     return (
         <>
@@ -36,7 +36,7 @@ function DataSourceModal({
                             dataIsLoading={dataIsLoading}
                             selectedRow={selectedRow}
                             onNextPageRequested={onNextPageRequested}
-                            onSelectedRowChanged={onSelectedRowConfirmed}
+                            onSelectedRowChanged={onSelectedRowChanged}
                         />
                     </TableWrapper>
                 </ModalLayout.Body>

@@ -1,7 +1,7 @@
 import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-type Item = {[key: string]: string | number | boolean | Date | null};
+type Item = { [key: string]: string | number | boolean | Date | null };
 const useDataSource = (isDocumentLoaded: boolean) => {
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
     const [dataRows, setDataRows] = useState<Item[]>([]);
@@ -83,6 +83,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
         isPrevDisabled,
         isNextDisabled,
         hasMoreRows: !!continuationToken,
+        hasDataConnector: !!dataConnector,
     };
 };
 

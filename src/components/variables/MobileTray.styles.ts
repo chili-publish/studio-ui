@@ -1,5 +1,4 @@
-import styled, { css } from 'styled-components';
-import { createGlobalStyle } from 'styled-components';
+import styled, { css, createGlobalStyle } from 'styled-components';
 
 export const dataSourceTrayStyles = css`
     display: flex;

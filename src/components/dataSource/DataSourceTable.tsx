@@ -1,6 +1,6 @@
 import { DataItem } from '@chili-publish/studio-sdk/lib/src/types/DataConnectorTypes';
-import { LoadingContainer } from './DataSourceModal.styles';
 import { LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
+import { LoadingContainer } from './DataSourceModal.styles';
 
 interface DataSourceTableProps {
     data: DataItem[];
@@ -27,11 +27,7 @@ function DataSourceTable({
 
     return (
         <>
-            <Table
-                defaultSelectedRow={selectedRow}
-                rows={data}
-                onSelectedRowChanged={onSelectedRowChanged}
-            />
+            <Table defaultSelectedRow={selectedRow} rows={data as any} onSelectedRowChanged={onSelectedRowChanged} />
             {dataIsLoading && data.length !== 0 && (
                 <LoadingContainer>
                     <LoadingIcon />

@@ -7,7 +7,6 @@ import {
     LoadingIcon,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
-import { PanelTitle } from '../shared/Panel.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { RowInfoContainer } from './DataSource.styles';
 import { Text } from '../../styles/Main.styles';
@@ -34,11 +33,9 @@ function DataSourceInput({
     onPrevClick,
     onNextClick,
 }: DataSourceInputProps) {
-    const { panel, icon, mode } = useTheme();
-
+    const { icon, mode } = useTheme();
     return (
         <>
-            <PanelTitle panelTheme={panel}>Data source</PanelTitle>
             <Input
                 type="text"
                 readOnly
@@ -73,7 +70,7 @@ function DataSourceInput({
                     onClick={onPrevClick}
                     disabled={isPrevDisabled}
                 />
-                <Text mode={mode}>{`Row ${currentRowIndex + 1}`}</Text>
+                <Text mode={mode}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
                 <GraFxIcon
                     id="next-icon"
                     icon={AvailableIcons.faArrowRight}

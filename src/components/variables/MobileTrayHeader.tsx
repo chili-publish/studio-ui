@@ -1,16 +1,20 @@
-import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { DatePickerTrayTitle, VariablesPanelTitle } from './VariablesPanel.styles';
 import { AvailableIcons, Button, ButtonVariant, Icon, useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
-const MobileTrayHeader = () => {
+interface MobileTrayHeaderProps {
+    hasDataConnector: boolean;
+}
+function MobileTrayHeader({ hasDataConnector }: MobileTrayHeaderProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
     const { panel, mode } = useTheme();
 
-    if (contentType === ContentType.DATA_SOURCE_TABLE) return <>Data source</>;
+    if (contentType === ContentType.DATA_SOURCE_TABLE || hasDataConnector)
+        return <TrayPanelTitle panelTheme={panel}>Data source</TrayPanelTitle>;
     if (contentType === ContentType.VARIABLES_LIST)
-        return <VariablesPanelTitle panelTheme={panel}>Customize</VariablesPanelTitle>;
+        return <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>;
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle themeMode={mode}>
@@ -25,13 +29,13 @@ const MobileTrayHeader = () => {
                         padding: 0 0.5rem 0 0;
                     `}
                 />
-                <VariablesPanelTitle panelTheme={panel} margin="0">
+                <TrayPanelTitle panelTheme={panel} margin="0">
                     Select date
-                </VariablesPanelTitle>
+                </TrayPanelTitle>
             </DatePickerTrayTitle>
         );
 
     return imagePanelTitle;
-};
+}
 
 export default MobileTrayHeader;

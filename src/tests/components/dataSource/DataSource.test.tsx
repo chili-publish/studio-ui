@@ -18,7 +18,7 @@ describe('DataSource test', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <DataSource />
+                <DataSource isDocumentLoaded />
             </UiThemeProvider>,
         );
 
@@ -38,7 +38,7 @@ describe('DataSource test', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <DataSource />
+                <DataSource isDocumentLoaded />
             </UiThemeProvider>,
         );
 

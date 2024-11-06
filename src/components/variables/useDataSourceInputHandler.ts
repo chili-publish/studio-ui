@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 interface DataSourceInputHandlerProps {
-    currentRow: any;
+    currentRow: string;
     onDataRowsLoad: () => void;
     onRowConfirmed: (_: number) => void;
     onDataSourcePanelOpen: () => void;
@@ -15,10 +15,13 @@ const useDataSourceInputHandler = ({
     onDataSourcePanelOpen,
     onDataSourcePanelClose,
 }: DataSourceInputHandlerProps) => {
-    const onSelectedRowConfirmed = useCallback((index: number) => {
-        onRowConfirmed(index);
-        onDataSourcePanelClose();
-    }, []);
+    const onSelectedRowChanged = useCallback(
+        (index: number) => {
+            onRowConfirmed(index);
+            onDataSourcePanelClose();
+        },
+        [onRowConfirmed, onDataSourcePanelClose],
+    );
 
     const onInputClick = useCallback(() => {
         if (!currentRow) {
@@ -29,7 +32,7 @@ const useDataSourceInputHandler = ({
     }, [currentRow, onDataRowsLoad, onDataSourcePanelOpen]);
 
     return {
-        onSelectedRowConfirmed,
+        onSelectedRowChanged,
         onInputClick,
     };
 };

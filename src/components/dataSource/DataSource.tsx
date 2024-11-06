@@ -1,12 +1,15 @@
+import { useCallback, useState } from 'react';
+import { useTheme } from '@chili-publish/grafx-shared-components';
 import useDataSource from './useDataSource';
 import DataSourceModal from './DataSourceModal';
 import DataSourceInput from './DataSourceInput';
-import { useCallback, useState } from 'react';
+import { PanelTitle } from '../shared/Panel.styles';
 
 interface DataSourceProps {
     isDocumentLoaded: boolean;
 }
 function DataSource({ isDocumentLoaded }: DataSourceProps) {
+    const { panel } = useTheme();
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
 
     const {
@@ -21,16 +24,20 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         loadDataRows,
         getPreviousRow,
         getNextRow,
+        hasDataConnector,
     } = useDataSource(isDocumentLoaded);
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);
     }, []);
 
-    const onSelectedRowConfirmed = useCallback((index: number) => {
-        updateSelectedRow(index);
-        setIsDataSourceModalOpen(false);
-    }, []);
+    const onSelectedRowChanged = useCallback(
+        (index: number) => {
+            updateSelectedRow(index);
+            setIsDataSourceModalOpen(false);
+        },
+        [updateSelectedRow],
+    );
 
     const onInputClick = useCallback(() => {
         if (!currentRow) {
@@ -38,10 +45,12 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         } else {
             setIsDataSourceModalOpen(true);
         }
-    }, [currentRow]);
+    }, [currentRow, loadDataRows]);
 
+    if (!hasDataConnector) return null;
     return (
         <>
+            <PanelTitle panelTheme={panel}>Data source</PanelTitle>
             <DataSourceInput
                 currentRow={currentRow}
                 currentRowIndex={currentRowIndex}
@@ -56,8 +65,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
                 <DataSourceModal
                     data={dataRows}
                     selectedRow={currentRowIndex}
-                    onSelectedRowChanged={updateSelectedRow}
-                    onSelectedRowConfirmed={onSelectedRowConfirmed}
+                    onSelectedRowChanged={onSelectedRowChanged}
                     dataIsLoading={isLoading}
                     hasMoreData={hasMoreRows}
                     onNextPageRequested={loadDataRows}
