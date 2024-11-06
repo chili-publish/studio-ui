@@ -42,7 +42,9 @@ function DateVariable(props: IDateVariable) {
             <DatePicker
                 anchorId={APP_WRAPPER_ID}
                 name={variable.name}
-                label={isOpenOnMobile ? '' : variable.label ?? variable.name}
+                label={isOpenOnMobile ? '' : variable.name}
+                // TODO: uncomment when Label FF is removed from WRS
+                // label={isOpenOnMobile ? '' : variable.label ?? variable.name}
                 required={variable.isRequired}
                 onChange={(date) => {
                     if (date) {

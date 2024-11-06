@@ -23,7 +23,9 @@ function BooleanVariable(props: IBooleanVariable) {
                     id={variable.id}
                     label={{
                         key: 'visible',
-                        value: variable.label ?? variable.name,
+                        value: variable.name,
+                        // TODO: uncomment when Label FF is removed from WRS
+                        // value: variable.label ?? variable.name,
                     }}
                     onChange={(val: boolean) => {
                         handleValueChange(val);

@@ -34,7 +34,9 @@ function ListVariable(props: IListVariable) {
                 <div>
                     <StudioDropdown
                         dataId={variable.id}
-                        label={variable.label ?? variable.name}
+                        label={variable.name}
+                        // TODO: uncomment when Label FF is removed from WRS
+                        // label={variable.label ?? variable.name}
                         selectedValue={selectedValue || ''}
                         options={options}
                         placeholder={placeholder}

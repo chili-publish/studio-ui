@@ -45,7 +45,9 @@ function ImageVariable(props: IImageVariable) {
                 dataIntercomId={`image-picker-${variable.name}`}
                 id={variable.id}
                 label={
-                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
+                    <Label translationKey={variable.name} value={variable.name} />
+                    // TODO: uncomment when Label FF is removed from WRS
+                    // <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}

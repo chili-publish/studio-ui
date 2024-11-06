@@ -15,12 +15,15 @@ function NumberVariable(props: INumberVariable) {
                 min={variable.minValue}
                 max={variable.maxValue}
                 precision={variable.numberOfDecimals}
-                label={
-                    <Label
-                        translationKey={variable?.label ?? variable?.name ?? ''}
-                        value={variable?.label ?? variable?.name ?? ''}
-                    />
-                }
+                label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
+                // TODO: uncomment when Label FF is removed from WRS
+                // label={
+                //     <Label
+                //         translationKey={variable?.label ?? variable?.name ?? ''}
+                //         value={variable?.label ?? variable?.name ?? ''}
+                //     />
+                // }
+
                 value={`${variable.value}`}
                 step={variable.showStepper ? variable.stepSize : undefined}
                 dataId={getDataIdForSUI(`input-number-${variable.id}`)}
