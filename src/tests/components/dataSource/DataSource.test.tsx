@@ -1,4 +1,4 @@
-import { screen, render, act } from '@testing-library/react';
+import { screen, render, act, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import userEvent from '@testing-library/user-event';
 import DataSource from '../../../components/dataSource/DataSource';
@@ -27,6 +27,23 @@ describe('DataSource test', () => {
         );
 
         expect(await screen.findByDisplayValue('1|Joe|15')).toBeInTheDocument();
+    });
+
+    it('Data source row should be hidden is data connector is not available', async () => {
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
+        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
+            parsedData: [],
+        });
+
+        render(
+            <UiThemeProvider theme="platform">
+                <DataSource isDocumentLoaded />
+            </UiThemeProvider>,
+        );
+
+        await waitFor(() => {
+            expect(screen.queryByText('Data source')).not.toBeInTheDocument();
+        });
     });
 
     it('Should display data connector placeholder when no page is available', async () => {
@@ -107,7 +124,7 @@ describe('DataSource test', () => {
         expect(await screen.findByDisplayValue('2|John|18')).toBeInTheDocument();
     });
 
-    it('Should bload next data rows page when avilable', async () => {
+    it('Should load next data rows page when available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest
             .fn()
             .mockResolvedValueOnce({

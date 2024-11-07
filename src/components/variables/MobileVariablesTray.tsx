@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
     AvailableIcons,
     Button,
@@ -23,6 +23,7 @@ import useDataSource from '../dataSource/useDataSource';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import MobileTrayHeader from './MobileTrayHeader';
 import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -69,9 +70,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         onDataSourcePanelClose: showVariablesPanel,
     });
 
-    const closeTray = () => {
-        setIsTrayVisible(false);
-    };
+    const closeTray = () => setIsTrayVisible(false);
 
     const isVariablesListOpen = contentType === ContentType.VARIABLES_LIST;
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
@@ -87,10 +86,16 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const showImagePanel = !(isVariablesListOpen || isDateVariablePanelOpen);
 
+    const onTrayHidden = useCallback(() => {
+        showVariablesPanel();
+        setIsTrayVisible(false);
+    }, [showVariablesPanel]);
+
     return (
         <>
             <EditButtonWrapper>
                 <Button
+                    dataTestId={getDataTestIdForSUI('mobile-variables')}
                     variant={ButtonVariant.primary}
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                     onClick={() => setIsTrayVisible(true)}
@@ -110,8 +115,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 isOpen={isTrayVisible}
                 anchorId={APP_WRAPPER_ID}
                 close={closeTray}
-                title={<MobileTrayHeader hasDataConnector={hasDataConnector} />}
-                onTrayHidden={showVariablesPanel}
+                title={<MobileTrayHeader hasDataConnector={hasDataConnector} mobileListOpen={mobileOptionsListOpen} />}
+                onTrayHidden={onTrayHidden}
                 hideCloseButton={mobileOptionsListOpen}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
@@ -135,7 +140,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     ) : null}
                     {(isVariablesListOpen || isDateVariablePanelOpen) && (
                         <>
-                            {hasDataConnector ? <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle> : null}
+                            {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
+                                <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>
+                            ) : null}
                             <MobileVariablesList
                                 variables={variables}
                                 isDocumentLoaded={isDocumentLoaded}

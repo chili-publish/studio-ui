@@ -119,7 +119,9 @@ export function VariablePanelContextProvider({
 
     const data = useMemo(
         () => ({
-            showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
+            showVariablesPanel: () => {
+                setContentType(ContentType.VARIABLES_LIST);
+            },
             showDatePicker: (variable: DateVariable) => {
                 setContentType(ContentType.DATE_VARIABLE_PICKER);
                 setCurrentVariableId(variable.id);
