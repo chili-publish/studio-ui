@@ -27,6 +27,7 @@ function DataSourceTable({
 
     return (
         <>
+            {/* any should be fixed once all data connector data types are supported */}
             <Table defaultSelectedRow={selectedRow} rows={data as any} onSelectedRowChanged={onSelectedRowChanged} />
             {dataIsLoading && data.length !== 0 && (
                 <LoadingContainer>
