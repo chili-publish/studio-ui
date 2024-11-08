@@ -12,10 +12,6 @@ export const ModalStyle = createGlobalStyle`
         overflow: auto !important;
         padding-bottom: 2.5rem !important;
     }
-    th {
-        position: sticky;
-        top: 0; 
-    }
 `;
 
 export const TableWrapper = styled.span`
