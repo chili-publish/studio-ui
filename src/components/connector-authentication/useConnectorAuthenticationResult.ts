@@ -1,28 +1,35 @@
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
-import { ConnectorAuthenticationResult } from '../../types/ConnectorAuthenticationResult';
+import { ConnectorAuthResult } from './types';
 
-const authorizationFailedToast = {
-    id: 'connector-authorization-failed',
-    message: `Authorization failed`,
+const authorizationFailedToast = (connector: ConnectorAuthResult) => ({
+    id: `connector-authorization-failed-${connector.connectorId}`,
+    message: `Authorization failed for ${connector.connectorName}.`,
     type: ToastVariant.NEGATIVE,
-};
+});
 
-const authorizationFailedTimeoutToast = {
-    id: 'connector-authorization-failed-timeout',
-    message: `Authorization failed (timeout)`,
+const authorizationFailedTimeoutToast = (connector: ConnectorAuthResult) => ({
+    id: `connector-authorization-failed-timeout-${connector.connectorId}`,
+    message: `Authorization failed (timeout) for ${connector.connectorName}.`,
     type: ToastVariant.NEGATIVE,
-};
+});
 
-export const useConnectorAuthenticationResult = (result: ConnectorAuthenticationResult | null) => {
+export const useConnectorAuthenticationResult = (authResult: ConnectorAuthResult[]) => {
+    const [displayedNotifications, setDisplayedNotifications] = useState<ConnectorAuthResult[]>([]);
+
     const { addNotification } = useNotificationManager();
 
     useEffect(() => {
-        if (result?.type === 'error') {
-            addNotification(authorizationFailedToast);
-        } else if (result?.type === 'timeout') {
-            addNotification(authorizationFailedTimeoutToast);
-        }
-    }, [result, addNotification]);
+        authResult
+            .filter((authNotification) => !displayedNotifications.some((item) => item === authNotification))
+            .forEach((notification) => {
+                if (notification.result?.type === 'error') {
+                    addNotification(authorizationFailedToast(notification));
+                } else if (notification.result?.type === 'timeout') {
+                    addNotification(authorizationFailedTimeoutToast(notification));
+                }
+                setDisplayedNotifications((prev) => [...prev, notification]);
+            });
+    }, [authResult, addNotification, displayedNotifications]);
 };

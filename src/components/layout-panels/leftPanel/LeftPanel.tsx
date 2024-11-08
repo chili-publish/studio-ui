@@ -5,6 +5,8 @@ import ImagePanel from '../../imagePanel/ImagePanel';
 import VariablesList from '../../variables/VariablesList';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
+import DataSource from '../../dataSource/DataSource';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -14,6 +16,7 @@ interface LeftPanelProps {
 function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { panel } = useTheme();
+    const { featureFlags } = useFeatureFlagContext();
 
     return (
         <LeftPanelContainer
@@ -23,6 +26,7 @@ function LeftPanel({ variables, isDocumentLoaded }: LeftPanelProps) {
             panelTheme={panel}
         >
             <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
+                {isDocumentLoaded && featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
                 <VariablesList variables={variables} isDocumentLoaded={isDocumentLoaded} />
             </VariablesListContainer>
 
