@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
     AvailableIcons,
     Button,
@@ -13,14 +13,17 @@ import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import ImagePanel from '../imagePanel/ImagePanel';
-import {
-    DatePickerTrayTitle,
-    EditButtonWrapper,
-    VariablesPanelTitle,
-    VariablesContainer,
-} from './VariablesPanel.styles';
+import { EditButtonWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import MobileVariablesList from './MobileVariablesList';
 import { APP_WRAPPER_ID } from '../../utils/constants';
+import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
+import DataSourceTable from '../dataSource/DataSourceTable';
+import DataSourceInput from '../dataSource/DataSourceInput';
+import useDataSource from '../dataSource/useDataSource';
+import useDataSourceInputHandler from './useDataSourceInputHandler';
+import MobileTrayHeader from './MobileTrayHeader';
+import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -36,53 +39,66 @@ const imagePanelHeight = `
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isDocumentLoaded } = props;
-    const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
-    const { panel, mode } = useTheme();
+    const { panel } = useTheme();
 
-    const [isVariablesPanelVisible, setIsVariablesPanelVisible] = useState<boolean>(false);
+    const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
+    const { featureFlags } = useFeatureFlagContext();
+
+    const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
     const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
-    const closeVariablePanel = () => {
-        setIsVariablesPanelVisible(false);
-    };
 
-    const showVariablesList = contentType === ContentType.VARIABLES_LIST;
-    const showDateVariable = contentType === ContentType.DATE_VARIABLE_PICKER;
-    const showImageBrowsePanel = contentType === ContentType.IMAGE_PANEL;
+    const {
+        currentRow,
+        currentRowIndex,
+        updateSelectedRow,
+        isLoading,
+        dataRows,
+        hasMoreRows,
+        isPrevDisabled,
+        isNextDisabled,
+        loadDataRows,
+        getPreviousRow,
+        getNextRow,
+        hasDataConnector,
+    } = useDataSource(isDocumentLoaded);
 
-    const renderTrayHeader = useMemo(() => {
-        if (showVariablesList) return <VariablesPanelTitle panelTheme={panel}>Customize</VariablesPanelTitle>;
-        if (showDateVariable)
-            return (
-                <DatePickerTrayTitle themeMode={mode}>
-                    <Button
-                        type="button"
-                        variant={ButtonVariant.tertiary}
-                        onClick={() => {
-                            showVariablesPanel();
-                        }}
-                        icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
-                        styles={css`
-                            padding: 0 0.5rem 0 0;
-                        `}
-                    />
-                    <VariablesPanelTitle panelTheme={panel} margin="0">
-                        Select date
-                    </VariablesPanelTitle>
-                </DatePickerTrayTitle>
-            );
+    const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
+        onDataRowsLoad: loadDataRows,
+        onRowConfirmed: updateSelectedRow,
+        currentRow,
+        onDataSourcePanelOpen: showDataSourcePanel,
+        onDataSourcePanelClose: showVariablesPanel,
+    });
 
-        return imagePanelTitle;
-    }, [imagePanelTitle, showDateVariable, showVariablesList, showVariablesPanel, mode, panel]);
+    const closeTray = () => setIsTrayVisible(false);
 
-    const showImagePanel = !(showVariablesList || showDateVariable);
+    const isVariablesListOpen = contentType === ContentType.VARIABLES_LIST;
+    const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
+    const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
+    const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
+
+    const isDataSourceInputShown =
+        hasDataConnector &&
+        contentType !== ContentType.DATA_SOURCE_TABLE &&
+        contentType !== ContentType.DATE_VARIABLE_PICKER &&
+        contentType !== ContentType.IMAGE_PANEL &&
+        !mobileOptionsListOpen;
+
+    const showImagePanel = !(isVariablesListOpen || isDateVariablePanelOpen);
+
+    const onTrayHidden = useCallback(() => {
+        showVariablesPanel();
+        setIsTrayVisible(false);
+    }, [showVariablesPanel]);
 
     return (
         <>
             <EditButtonWrapper>
                 <Button
+                    dataTestId={getDataTestIdForSUI('mobile-variables')}
                     variant={ButtonVariant.primary}
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
-                    onClick={() => setIsVariablesPanelVisible(true)}
+                    onClick={() => setIsTrayVisible(true)}
                     styles={css`
                         padding: 0.9375rem;
                         font-size: ${FontSizes.regular};
@@ -94,29 +110,60 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     `}
                 />
             </EditButtonWrapper>
+            {isDataSourcePanelOpen ? <TrayStyle /> : null}
             <Tray
-                isOpen={isVariablesPanelVisible}
+                isOpen={isTrayVisible}
                 anchorId={APP_WRAPPER_ID}
-                close={closeVariablePanel}
-                title={renderTrayHeader}
-                onTrayHidden={showVariablesPanel}
+                close={closeTray}
+                title={<MobileTrayHeader hasDataConnector={hasDataConnector} mobileListOpen={mobileOptionsListOpen} />}
+                onTrayHidden={onTrayHidden}
                 hideCloseButton={mobileOptionsListOpen}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
-                    overflow: ${showVariablesList ? 'auto' : 'hidden'};
+                    overflow: ${isVariablesListOpen ? 'auto' : 'hidden'};
                     ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
+                    ${isDataSourcePanelOpen && dataSourceTrayStyles}
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
-                    {!showImageBrowsePanel && (
-                        <MobileVariablesList
-                            variables={variables}
-                            isDocumentLoaded={isDocumentLoaded}
-                            onMobileOptionListToggle={setMobileOptionsListOpen}
+                    {isDataSourceInputShown && featureFlags?.STUDIO_DATA_SOURCE ? (
+                        <DataSourceInput
+                            currentRow={currentRow}
+                            currentRowIndex={currentRowIndex}
+                            dataIsLoading={isLoading}
+                            isPrevDisabled={isPrevDisabled}
+                            isNextDisabled={isNextDisabled}
+                            onInputClick={onInputClick}
+                            onPrevClick={getPreviousRow}
+                            onNextClick={getNextRow}
                         />
+                    ) : null}
+                    {(isVariablesListOpen || isDateVariablePanelOpen) && (
+                        <>
+                            {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
+                                <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>
+                            ) : null}
+                            <MobileVariablesList
+                                variables={variables}
+                                isDocumentLoaded={isDocumentLoaded}
+                                onMobileOptionListToggle={setMobileOptionsListOpen}
+                            />
+                        </>
                     )}
-                    {showImageBrowsePanel && <ImagePanel />}
+                    {isImageBrowsePanelOpen && <ImagePanel />}
                 </VariablesContainer>
+                {isDataSourcePanelOpen && (
+                    <DataSourceTableWrapper>
+                        <DataSourceTable
+                            data={dataRows}
+                            hasMoreData={hasMoreRows}
+                            dataIsLoading={isLoading}
+                            selectedRow={currentRowIndex}
+                            onNextPageRequested={loadDataRows}
+                            onSelectedRowChanged={onSelectedRowChanged}
+                        />
+                    </DataSourceTableWrapper>
+                )}
             </Tray>
         </>
     );

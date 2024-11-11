@@ -11,6 +11,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     showVariablesPanel: () => undefined,
     showDatePicker: () => undefined,
     showImagePanel: () => undefined,
+    showDataSourcePanel: () => undefined,
     variablesValidation: {},
     validateVariables: () => false,
     validateUpdatedVariables: () => false,
@@ -118,7 +119,9 @@ export function VariablePanelContextProvider({
 
     const data = useMemo(
         () => ({
-            showVariablesPanel: () => setContentType(ContentType.VARIABLES_LIST),
+            showVariablesPanel: () => {
+                setContentType(ContentType.VARIABLES_LIST);
+            },
             showDatePicker: (variable: DateVariable) => {
                 setContentType(ContentType.DATE_VARIABLE_PICKER);
                 setCurrentVariableId(variable.id);
@@ -127,6 +130,9 @@ export function VariablePanelContextProvider({
                 setCurrentVariableId(variable.id);
                 setCurrentVariableConnectorId(variable.value?.connectorId ?? '');
                 setContentType(ContentType.IMAGE_PANEL);
+            },
+            showDataSourcePanel: () => {
+                setContentType(ContentType.DATA_SOURCE_TABLE);
             },
             contentType,
             currentVariableId,

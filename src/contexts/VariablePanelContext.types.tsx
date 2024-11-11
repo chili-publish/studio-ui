@@ -7,6 +7,7 @@ export const enum ContentType {
     VARIABLES_LIST = 'variables_list',
     IMAGE_PANEL = 'image_panel',
     DATE_VARIABLE_PICKER = 'date_variable_picker',
+    DATA_SOURCE_TABLE = 'data_source_table',
 }
 
 export interface IConnectors {
@@ -33,6 +34,7 @@ export interface IVariablePanelContext {
     showVariablesPanel: () => void;
     showDatePicker: (_: DateVariable) => void;
     showImagePanel: (_: ImageVariable) => void;
+    showDataSourcePanel: () => void;
     contentType: ContentType;
     currentVariableId: string;
     currentVariableConnectorId: string;
