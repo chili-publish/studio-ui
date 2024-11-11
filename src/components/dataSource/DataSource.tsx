@@ -40,6 +40,8 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
     );
 
     const onInputClick = useCallback(() => {
+        // eslint-disable-next-line no-console
+        console.log('oninput click', currentRow);
         if (!currentRow) {
             loadDataRows();
         } else {
