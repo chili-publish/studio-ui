@@ -28,7 +28,7 @@ const useStudioNavbar = ({
     const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
     const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen);
     const { zoomNavbarItem } = useNavbarZoom(zoom);
-    const { menuNavbarItem } = useNavbarMenu(onBackClick);
+    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick });
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
 

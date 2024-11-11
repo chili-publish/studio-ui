@@ -1,19 +1,65 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
 import { ProjectConfig } from '../../types/types';
+import { isMac } from './shortcuts';
+import useUndoRedo from './useUndoRedo';
+import useZoom from './useZoom';
 
-export const isMac = /Macintosh/.test(navigator.userAgent);
-
-function ShortcutProvider({ projectConfig, children }: { projectConfig: ProjectConfig; children: React.ReactNode }) {
+interface ShortcutProviderProps {
+    projectConfig: ProjectConfig;
+    zoom: number;
+    undoStackState: { canUndo: boolean; canRedo: boolean };
+    children: React.ReactNode;
+}
+function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: ShortcutProviderProps) {
     const commandKey = isMac ? 'metaKey' : 'ctrlKey';
     const iframe = useGetIframeAsync()?.contentWindow;
+
     const modifierKeys = useCallback((): (keyof KeyboardEvent)[] => {
         return [commandKey, 'shiftKey', 'altKey'];
     }, [commandKey]);
 
+    const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
+    const { zoomIn, zoomOut } = useZoom(zoom);
+
     const shortcuts = useMemo(
-        () => [{ keys: 'm', action: () => projectConfig?.onSandboxModeToggle?.() }],
-        [projectConfig],
+        () => [
+            {
+                keys: 'm',
+                action: () => {
+                    projectConfig?.onSandboxModeToggle?.();
+                },
+            },
+            {
+                keys: `${commandKey} z`,
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (undoStackState.canUndo) handleUndo();
+                },
+            },
+            {
+                keys: `${commandKey} shiftKey z`,
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (undoStackState.canRedo) handleRedo();
+                },
+            },
+            {
+                keys: [`${commandKey} =`, `${commandKey} +`, `equal`, `add`],
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (zoom) zoomIn();
+                },
+            },
+            {
+                keys: `${commandKey} -`,
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (zoom) zoomOut();
+                },
+            },
+        ],
+        [projectConfig, undoStackState, handleUndo, handleRedo, zoom, zoomIn, zoomOut, commandKey],
     );
 
     const compareShortcuts = (shortcut: string | string[], pressedKeys: string) => {
@@ -40,7 +86,7 @@ function ShortcutProvider({ projectConfig, children }: { projectConfig: ProjectC
             const pressedKeysString = pressedKeys.join(' ').toLowerCase();
 
             // loop through the shortcuts and execute the action if found
-            shortcuts.find((value) => compareShortcuts(value.keys, pressedKeysString))?.action();
+            shortcuts.find((value) => compareShortcuts(value.keys, pressedKeysString))?.action(event);
         },
         [modifierKeys, shortcuts],
     );

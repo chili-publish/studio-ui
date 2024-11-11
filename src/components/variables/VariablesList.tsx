@@ -2,9 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useTheme } from '@chili-publish/grafx-shared-components';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
+import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { PanelTitle } from '../shared/Panel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -27,7 +28,7 @@ function VariablesList({ variables, isDocumentLoaded }: VariablesListProps) {
 
     return (
         <VariablesListWrapper>
-            <VariablesPanelTitle panelTheme={panel}>Customize</VariablesPanelTitle>
+            <PanelTitle panelTheme={panel}>Customize</PanelTitle>
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     if (!variable.isVisible) return null;
