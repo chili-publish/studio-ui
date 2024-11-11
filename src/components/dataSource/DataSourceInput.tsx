@@ -1,6 +1,7 @@
 import {
     AvailableIcons,
-    GraFxIcon,
+    Button,
+    ButtonVariant,
     Icon,
     Input,
     Label,
@@ -64,22 +65,22 @@ function DataSourceInput({
             />
 
             <RowInfoContainer iconStyle={icon}>
-                <GraFxIcon
-                    id="prev-icon"
-                    dataId={getDataIdForSUI('data-row-prev')}
-                    dataTestId={getDataTestIdForSUI('data-row-prev')}
-                    icon={AvailableIcons.faArrowLeft}
+                <Button
+                    variant={ButtonVariant.tertiary}
                     onClick={onPrevClick}
                     disabled={isPrevDisabled}
+                    dataId={getDataIdForSUI('data-row-prev')}
+                    dataTestId={getDataTestIdForSUI('data-row-prev')}
+                    icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
                 />
                 <Text mode={mode}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
-                <GraFxIcon
-                    id="next-icon"
-                    dataId={getDataIdForSUI('data-row-next')}
-                    dataTestId={getDataTestIdForSUI('data-row-next')}
-                    icon={AvailableIcons.faArrowRight}
+                <Button
+                    variant={ButtonVariant.tertiary}
                     onClick={onNextClick}
                     disabled={isNextDisabled}
+                    dataId={getDataIdForSUI('data-row-next')}
+                    dataTestId={getDataTestIdForSUI('data-row-next')}
+                    icon={<Icon icon={AvailableIcons.faArrowRight} key="data-source-navigation-arrow-right" />}
                 />
             </RowInfoContainer>
         </>

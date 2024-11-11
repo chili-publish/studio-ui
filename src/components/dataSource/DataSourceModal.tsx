@@ -1,7 +1,7 @@
 import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
-import { DataItem } from '@chili-publish/studio-sdk/lib/src/types/DataConnectorTypes';
 import { MODAL_ID, ModalStyle, TableWrapper } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
+import { DataItem } from './DataSource.types';
 
 interface TableModalProps {
     data: DataItem[];

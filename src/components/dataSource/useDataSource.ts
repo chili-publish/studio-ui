@@ -1,10 +1,10 @@
 import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { DataItem } from './DataSource.types';
 
-type Item = { [key: string]: string | number | boolean | Date | null };
 const useDataSource = (isDocumentLoaded: boolean) => {
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
-    const [dataRows, setDataRows] = useState<Item[]>([]);
+    const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
@@ -19,8 +19,10 @@ const useDataSource = (isDocumentLoaded: boolean) => {
                 limit: 15,
                 continuationToken,
             });
+
+            // TODO: for now only string | number are supported, extend  the type when more data types will be included
             const rowItems = pageInfoResponse.parsedData?.data || [];
-            setDataRows((prevData) => [...prevData, ...rowItems]);
+            setDataRows((prevData) => [...prevData, ...rowItems] as DataItem[]);
             setContinuationToken(pageInfoResponse.parsedData?.continuationToken || null);
         } catch (error) {
             // eslint-disable-next-line no-console

@@ -14,10 +14,9 @@ export const ModalStyle = createGlobalStyle`
     }
 `;
 
-export const TableWrapper = styled.span`
+export const TableWrapper = styled.div`
     width: 100%;
     display: contents;
-    padding-right: 2rem;
     margin-bottom: 2.5rem;
 `;
 
