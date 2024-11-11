@@ -1,6 +1,6 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { IImageVariable } from '../VariablesComponents.types';

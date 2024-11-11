@@ -1,7 +1,7 @@
 import { InputLabel, Switch } from '@chili-publish/grafx-shared-components';
 import { useEffect, useState } from 'react';
 import type { BooleanVariable } from '@chili-publish/studio-sdk';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { IBooleanVariable } from './VariablesComponents.types';
 import { BooleanVariableContainer, HelpTextWrapper } from './VariablesComponents.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';

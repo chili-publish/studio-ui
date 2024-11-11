@@ -1,6 +1,6 @@
 import { DatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { IDateVariable } from '../VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import useDateVariable from '../useDateVariable';

@@ -1,5 +1,5 @@
 import { Option, InputLabel } from '@chili-publish/grafx-shared-components';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { IListVariable } from '../VariablesComponents.types';

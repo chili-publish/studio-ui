@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { ITextVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';

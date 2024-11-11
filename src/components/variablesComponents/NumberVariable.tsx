@@ -1,6 +1,6 @@
 import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
-import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
+import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { INumberVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
