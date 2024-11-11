@@ -2,6 +2,7 @@ import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { MODAL_ID, ModalStyle, TableWrapper } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
 import { DataItem } from './DataSource.types';
+import { APP_WRAPPER_ID } from '../../utils/constants';
 
 interface TableModalProps {
     data: DataItem[];
@@ -26,7 +27,14 @@ function DataSourceModal({
     return (
         <>
             <ModalStyle />
-            <ModalLayout.Container id={MODAL_ID} size={ModalSize.L} isVisible isResizable onClose={onClose}>
+            <ModalLayout.Container
+                id={MODAL_ID}
+                anchorId={APP_WRAPPER_ID}
+                size={ModalSize.L}
+                isVisible
+                isResizable
+                onClose={onClose}
+            >
                 <ModalLayout.Title>Data source</ModalLayout.Title>
                 <ModalLayout.Body>
                     <TableWrapper>
