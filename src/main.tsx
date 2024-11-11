@@ -1,34 +1,28 @@
+import { ITheme } from '@chili-publish/grafx-shared-components';
+import { AxiosResponse } from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { AxiosResponse } from 'axios';
-import { ITheme } from '@chili-publish/grafx-shared-components';
 import App from './App';
-import {
-    DownloadLinkResult,
-    OutputSettings,
-    Project,
-    ProjectConfig,
-    StudioConfig,
-    UiOptions,
-    defaultBackFn,
-    defaultOutputSettings,
-    defaultPlatformUiOptions,
-    defaultUiOptions,
-    IStudioUILoaderConfig,
-    UserInterface,
-    PaginatedResponse,
-    UserInterfaceWithOutputSettings,
-} from './types/types';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
 import { ConnectorAuthenticationResult } from './types/ConnectorAuthenticationResult';
-
-declare global {
-    interface Window {
-        StudioUI: typeof StudioUI;
-    }
-}
+import {
+    defaultBackFn,
+    defaultOutputSettings,
+    defaultPlatformUiOptions,
+    defaultUiOptions,
+    DownloadLinkResult,
+    IStudioUILoaderConfig,
+    OutputSettings,
+    PaginatedResponse,
+    Project,
+    ProjectConfig,
+    StudioConfig,
+    UiOptions,
+    UserInterface,
+    UserInterfaceWithOutputSettings,
+} from './types/types';
 
 export default class StudioUI {
     constructor(selector: string, projectConfig: ProjectConfig) {
@@ -389,6 +383,3 @@ export default class StudioUI {
         );
     }
 }
-
-// Make this class accessible on window
-window.StudioUI = StudioUI;
