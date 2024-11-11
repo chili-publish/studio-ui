@@ -1,6 +1,7 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
 
+import StudioUI from '../main';
 import { TokenManager } from './token-manager';
 
 (async () => {
@@ -64,7 +65,7 @@ import { TokenManager } from './token-manager';
     } else {
         authToken = await tokenManager.getAccessToken();
     }
-    window.StudioUI.studioUILoaderConfig({
+    StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
         projectId,
         projectName: 'Dev Run',

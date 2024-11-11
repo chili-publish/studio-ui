@@ -9,7 +9,9 @@
     "license": "MIT",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "tsc && npm run build:iife && npm run build:module",
+        "build:iife": "OUTPUT_FORMAT=iife vite build",
+        "build:module": "OUTPUT_FORMAT=module vite build",
         "preview": "vite preview",
         "testw": "jest --watch --silent",
         "test": "jest",
