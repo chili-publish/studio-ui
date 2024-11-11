@@ -1,7 +1,9 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { APP_WRAPPER } from '@tests/shared.util/app';
 import DataSource from '../../../components/dataSource/DataSource';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 const tableData = [
     { id: '1', name: 'Joe', age: 15 },
@@ -40,8 +42,11 @@ describe('DataSourceModal test', () => {
     it('Should open modal with data rows on click on data source row', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
+                <div id={APP_WRAPPER_ID}>
+                    <DataSource isDocumentLoaded />
+                </div>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const dataSourceRow = await screen.findByDisplayValue('1|Joe|15');
@@ -83,10 +88,12 @@ describe('DataSourceModal test', () => {
     it('Should be able to navigate with arrow key in the data source table', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
+                <div id={APP_WRAPPER_ID}>
+                    <DataSource isDocumentLoaded />
+                </div>
             </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
         );
-
         const dataSourceRow = await screen.findByDisplayValue('1|Joe|15');
         expect(dataSourceRow).toBeInTheDocument();
 
