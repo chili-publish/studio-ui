@@ -24,12 +24,6 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 
-declare global {
-    interface Window {
-        StudioUI: typeof StudioUI;
-    }
-}
-
 export default class StudioUI {
     constructor(selector: string, projectConfig: ProjectConfig) {
         ReactDOM.createRoot(document.getElementById(selector || 'sui-root') as HTMLElement).render(
