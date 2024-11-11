@@ -1,6 +1,6 @@
 # Studio UI
 
-![Coverage](https://img.shields.io/badge/coverage-75.05%25-red.svg)
+![Coverage](https://img.shields.io/badge/coverage-77.76%25-red.svg)
 
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
@@ -40,8 +40,17 @@ If you need help generating a token or would like code samples, please see our [
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
-        <!-- script to inject latest studio ui -->
+        <!-- 1. ES5 approach script to inject latest studio ui -->
         <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
+
+        <!-- OR -->
+
+        <!-- 2. ES Modules approach (recommended one) script to inject latest studio ui -->
+        <script type="module">
+            import('https://studio-cdn.chiligrafx.com/studio-ui/latest/es-module/bundle.js').then((module) => {
+                window.StudioUI = module.default;
+            });
+        </script>
 
         <!-- custom logic -->
         <script>

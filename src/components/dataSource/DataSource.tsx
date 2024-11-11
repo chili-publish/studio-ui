@@ -1,74 +1,79 @@
-import { AvailableIcons, Icon, Input, Label, LoadingIcon, useTheme } from '@chili-publish/grafx-shared-components';
-import { useCallback, useEffect, useState } from 'react';
-import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
+import { useCallback, useState } from 'react';
+import { useTheme } from '@chili-publish/grafx-shared-components';
+import useDataSource from './useDataSource';
+import DataSourceModal from './DataSourceModal';
+import DataSourceInput from './DataSourceInput';
 import { PanelTitle } from '../shared/Panel.styles';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
-function DataSource() {
+interface DataSourceProps {
+    isDocumentLoaded: boolean;
+}
+function DataSource({ isDocumentLoaded }: DataSourceProps) {
     const { panel } = useTheme();
-    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
-    const [currentRow, setCurrentRow] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
 
-    const getDataConnectorFirstRow = useCallback(async () => {
-        if (!dataConnector) return;
-        setIsLoading(true);
-        try {
-            const pageInfoResponse = await window.StudioUISDK.dataConnector.getPage(dataConnector.id, { limit: 15 });
-            const firstRowData = pageInfoResponse.parsedData?.data?.[0];
-            setCurrentRow(firstRowData ? Object.values(firstRowData).join('|') : '');
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [dataConnector]);
+    const {
+        currentRow,
+        currentRowIndex,
+        updateSelectedRow,
+        isLoading,
+        dataRows,
+        hasMoreRows,
+        isPrevDisabled,
+        isNextDisabled,
+        loadDataRows,
+        getPreviousRow,
+        getNextRow,
+        hasDataConnector,
+    } = useDataSource(isDocumentLoaded);
 
-    useEffect(() => {
-        const getDataConnector = async () => {
-            const dataConnectorsResponse = await window.StudioUISDK.connector.getAllByType(ConnectorType.data);
-            const defaultDataConnector = dataConnectorsResponse.parsedData?.[0] || null;
-            setDataConnector(defaultDataConnector);
-        };
-        getDataConnector();
+    const onDataSourceModalClose = useCallback(() => {
+        setIsDataSourceModalOpen(false);
     }, []);
 
-    useEffect(() => {
-        if (dataConnector) getDataConnectorFirstRow();
-    }, [dataConnector, getDataConnectorFirstRow]);
+    const onSelectedRowChanged = useCallback(
+        (index: number) => {
+            updateSelectedRow(index);
+            setIsDataSourceModalOpen(false);
+        },
+        [updateSelectedRow],
+    );
 
-    return dataConnector ? (
+    const onInputClick = useCallback(() => {
+        if (!currentRow) {
+            loadDataRows();
+        } else {
+            setIsDataSourceModalOpen(true);
+        }
+    }, [currentRow, loadDataRows]);
+
+    if (!hasDataConnector) return null;
+    return (
         <>
             <PanelTitle panelTheme={panel}>Data source</PanelTitle>
-            <Input
-                type="text"
-                readOnly
-                disabled={isLoading}
-                dataId={getDataIdForSUI(`data-source-input`)}
-                dataTestId={getDataTestIdForSUI(`data-source-input`)}
-                dataIntercomId="data-source-input"
-                name="data-source-input"
-                value={currentRow}
-                placeholder="Select data row"
-                label={<Label translationKey="dataRow" value="Data row" />}
-                onClick={getDataConnectorFirstRow}
-                rightIcon={{
-                    label: '',
-                    icon: isLoading ? (
-                        <LoadingIcon />
-                    ) : (
-                        <Icon
-                            dataId={getDataIdForSUI('data-source-input-icon')}
-                            dataTestId={getDataTestIdForSUI('data-source-input-icon')}
-                            icon={AvailableIcons.faTable}
-                        />
-                    ),
-                    onClick: () => null,
-                }}
+            <DataSourceInput
+                currentRow={currentRow}
+                currentRowIndex={currentRowIndex}
+                dataIsLoading={isLoading}
+                isPrevDisabled={isPrevDisabled}
+                isNextDisabled={isNextDisabled}
+                onInputClick={onInputClick}
+                onPrevClick={getPreviousRow}
+                onNextClick={getNextRow}
             />
+            {isDataSourceModalOpen ? (
+                <DataSourceModal
+                    data={dataRows}
+                    selectedRow={currentRowIndex}
+                    onSelectedRowChanged={onSelectedRowChanged}
+                    dataIsLoading={isLoading}
+                    hasMoreData={hasMoreRows}
+                    onNextPageRequested={loadDataRows}
+                    onClose={onDataSourceModalClose}
+                />
+            ) : null}
         </>
-    ) : null;
+    );
 }
 
 export default DataSource;

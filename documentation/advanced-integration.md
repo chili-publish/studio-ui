@@ -50,8 +50,17 @@ Create a new html file, you can call it whatever you want, but in our case we ca
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
-        <!-- script to inject latest studio ui -->
+        <!-- 1. ES5 approach script to inject latest studio ui -->
         <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
+
+        <!-- OR -->
+
+        <!-- 2. ES Modules approach (recommended one) script to inject latest studio ui -->
+        <script type="module">
+            import('https://studio-cdn.chiligrafx.com/studio-ui/latest/es-module/bundle.js').then((module) => {
+                window.StudioUI = module.default;
+            });
+        </script>
 
         <!-- custom logic in seperate js file -->
         <script srs="./integration.js"></script>
