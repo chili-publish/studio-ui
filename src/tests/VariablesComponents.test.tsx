@@ -6,6 +6,7 @@ import { DateVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
+import * as FeatureFlagContext from '../contexts/FeatureFlagProvider';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -22,6 +23,11 @@ Object.defineProperty(navigator, 'language', {
     configurable: true,
 });
 
+jest.spyOn(FeatureFlagContext, 'useFeatureFlagContext').mockImplementation(() => {
+    return {
+        featureFlags: { STUDIO_LABEL_PROPERTY_ENABLED: true },
+    };
+});
 describe('Variable Component', () => {
     beforeEach(() => {
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
@@ -214,27 +220,7 @@ describe('Variable Component', () => {
             expect(getByText(/26/i)).toHaveAttribute('aria-disabled', 'true'); // a Friday date
         });
     });
-    it('Uses the name of the variable as a label when label does not exist', async () => {
-        const varWithoutLabel = variables.find(
-            (item) => item.id === 'shortVariable-without-label',
-        ) as ShortTextVariable;
-        render(
-            <UiThemeProvider theme="platform">
-                <VariableComponent
-                    key={`variable-component-${varWithoutLabel.id}`}
-                    type={varWithoutLabel.type}
-                    variable={varWithoutLabel}
-                    isDocumentLoaded
-                />
-            </UiThemeProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
-        );
-
-        const variable = await waitFor(() => screen.getByText(varWithoutLabel.name));
-        expect(variable).toBeInTheDocument();
-    });
-    // TODO: remove skip when label ff is removed
-    it.skip('Uses the variable label when available', async () => {
+    it('Uses the variable label when available', async () => {
         const varWithoutLabel = variables.find(
             (item) => item.id === 'shortVariable-without-label',
         ) as ShortTextVariable;
@@ -254,12 +240,10 @@ describe('Variable Component', () => {
         const variable = await waitFor(() => screen.getByText('Var label'));
         expect(variable).toBeInTheDocument();
     });
-    // TODO: remove skip when label ff is removed
-    it.skip('Uses the variable label when available and empty', async () => {
+    it('Uses the variable label when available and empty', async () => {
         const varWithoutLabel = variables.find(
             (item) => item.id === 'shortVariable-without-label',
         ) as ShortTextVariable;
-
         render(
             <UiThemeProvider theme="platform">
                 <VariableComponent
