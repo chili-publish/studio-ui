@@ -1,4 +1,5 @@
 import { Option, InputLabel } from '@chili-publish/grafx-shared-components';
+import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
 import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { IListVariable } from '../VariablesComponents.types';
@@ -7,6 +8,7 @@ import StudioDropdown from '../../shared/StudioDropdown';
 
 function ListVariable(props: IListVariable) {
     const { variable, validationError, onChange } = props;
+    const { featureFlags } = useFeatureFlagContext();
 
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
@@ -34,9 +36,7 @@ function ListVariable(props: IListVariable) {
                 <div>
                     <StudioDropdown
                         dataId={variable.id}
-                        label={variable.name}
-                        // TODO: uncomment when Label FF is removed from WRS
-                        // label={variable.label ?? variable.name}
+                        label={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
                         selectedValue={selectedValue || ''}
                         options={options}
                         placeholder={placeholder}

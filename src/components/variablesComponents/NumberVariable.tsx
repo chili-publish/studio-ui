@@ -1,11 +1,13 @@
 import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
+import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
 import { INumberVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 
 function NumberVariable(props: INumberVariable) {
     const { variable, validationError, onValueChange } = props;
+    const { featureFlags } = useFeatureFlagContext();
 
     return (
         <HelpTextWrapper>
@@ -15,15 +17,12 @@ function NumberVariable(props: INumberVariable) {
                 min={variable.minValue}
                 max={variable.maxValue}
                 precision={variable.numberOfDecimals}
-                label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
-                // TODO: uncomment when Label FF is removed from WRS
-                // label={
-                //     <Label
-                //         translationKey={variable?.label ?? variable?.name ?? ''}
-                //         value={variable?.label ?? variable?.name ?? ''}
-                //     />
-                // }
-
+                label={
+                    <Label
+                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                    />
+                }
                 value={`${variable.value}`}
                 step={variable.showStepper ? variable.stepSize : undefined}
                 dataId={getDataIdForSUI(`input-number-${variable.id}`)}

@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
 import { ITextVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
@@ -8,6 +9,7 @@ import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function TextVariable(props: ITextVariable) {
     const { variable, validationError, onValueChange } = props;
+    const { featureFlags } = useFeatureFlagContext();
 
     const [variableValue, setVariableValue] = useState(
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
@@ -39,14 +41,12 @@ function TextVariable(props: ITextVariable) {
                     onValueChange(newValue, { changed: oldValue !== newValue });
                 }}
                 name={variable.id}
-                label={<Label translationKey={variable?.name ?? ''} value={variable?.name ?? ''} />}
-                // TODO: uncomment when Label FF is removed from WRS
-                // label={
-                //     <Label
-                //         translationKey={variable?.label ?? variable?.name ?? ''}
-                //         value={variable?.label ?? variable?.name ?? ''}
-                //     />
-                // }
+                label={
+                    <Label
+                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                    />
+                }
                 validation={validationError ? ValidationTypes.ERROR : undefined}
                 validationErrorMessage={validationError}
             />
