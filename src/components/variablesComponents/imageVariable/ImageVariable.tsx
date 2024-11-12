@@ -1,5 +1,6 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { IImageVariable } from '../VariablesComponents.types';
@@ -12,6 +13,8 @@ import { getVariablePlaceholder } from '../variablePlaceholder.util';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove } = props;
+    const { featureFlags } = useFeatureFlagContext();
+
     const placeholder = getVariablePlaceholder(variable);
 
     const { selectedConnector } = useVariableConnector(variable);
@@ -44,7 +47,12 @@ function ImageVariable(props: IImageVariable) {
                 dataTestId={getDataTestIdForSUI(`img-picker-${variable.id}`)}
                 dataIntercomId={`image-picker-${variable.name}`}
                 id={variable.id}
-                label={<Label translationKey={variable.name} value={variable.name} />}
+                label={
+                    <Label
+                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                    />
+                }
                 required={variable.isRequired}
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"

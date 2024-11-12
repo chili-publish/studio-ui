@@ -2,10 +2,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
-import { DateVariable } from '@chili-publish/studio-sdk';
+import { DateVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
+import * as FeatureFlagContext from '../contexts/FeatureFlagProvider';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -22,6 +23,11 @@ Object.defineProperty(navigator, 'language', {
     configurable: true,
 });
 
+jest.spyOn(FeatureFlagContext, 'useFeatureFlagContext').mockImplementation(() => {
+    return {
+        featureFlags: { STUDIO_LABEL_PROPERTY_ENABLED: true },
+    };
+});
 describe('Variable Component', () => {
     beforeEach(() => {
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
@@ -46,7 +52,7 @@ describe('Variable Component', () => {
                 ,
             </UiThemeProvider>,
         );
-        const variable = await waitFor(() => screen.getByText('Variable1'));
+        const variable = await waitFor(() => screen.getByText(variables[0].label));
         expect(variable).toBeInTheDocument();
     });
 
@@ -213,5 +219,44 @@ describe('Variable Component', () => {
             expect(getByText(/22/i)).toHaveAttribute('aria-disabled', 'true'); // a Monday date
             expect(getByText(/26/i)).toHaveAttribute('aria-disabled', 'true'); // a Friday date
         });
+    });
+    it('Uses the variable label when available', async () => {
+        const varWithoutLabel = variables.find(
+            (item) => item.id === 'shortVariable-without-label',
+        ) as ShortTextVariable;
+
+        render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${varWithoutLabel.id}`}
+                    type={varWithoutLabel.type}
+                    variable={{ ...varWithoutLabel, label: 'Var label' }}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const variable = await waitFor(() => screen.getByText('Var label'));
+        expect(variable).toBeInTheDocument();
+    });
+    it('Uses the variable label when available and empty', async () => {
+        const varWithoutLabel = variables.find(
+            (item) => item.id === 'shortVariable-without-label',
+        ) as ShortTextVariable;
+        render(
+            <UiThemeProvider theme="platform">
+                <VariableComponent
+                    key={`variable-component-${varWithoutLabel.id}`}
+                    type={varWithoutLabel.type}
+                    variable={{ ...varWithoutLabel, label: '' }}
+                    isDocumentLoaded
+                />
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const variableName = screen.queryByText(varWithoutLabel.name);
+        expect(variableName).toBeNull();
     });
 });

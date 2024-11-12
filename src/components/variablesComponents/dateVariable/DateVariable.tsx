@@ -1,5 +1,6 @@
 import { DatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { IDateVariable } from '../VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import useDateVariable from '../useDateVariable';
@@ -19,6 +20,8 @@ function DateVariable(props: IDateVariable) {
         validationError,
         onBlur,
     } = props;
+
+    const { featureFlags } = useFeatureFlagContext();
     const { minDate, maxDate } = useDateVariable(variable);
     const isMobileSize = useMobileSize();
 
@@ -37,12 +40,18 @@ function DateVariable(props: IDateVariable) {
         return `${year}-${month}-${day}`;
     };
 
+    const variableLabel = useMemo(() => {
+        if (isOpenOnMobile) return '';
+        if (featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED) return variable.label;
+        return variable.name;
+    }, [featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED, isOpenOnMobile, variable.label, variable.name]);
+
     return (
         <HelpTextWrapper>
             <DatePicker
                 anchorId={APP_WRAPPER_ID}
                 name={variable.name}
-                label={isOpenOnMobile ? '' : variable.name}
+                label={variableLabel}
                 required={variable.isRequired}
                 onChange={(date) => {
                     if (date) {
