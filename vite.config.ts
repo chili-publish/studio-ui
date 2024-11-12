@@ -5,7 +5,7 @@ import EnvironmentPlugin from 'vite-plugin-environment';
 // https://vitejs.dev/config/
 export default ({ mode }) => {
     const outputFormat = process.env.OUTPUT_FORMAT;
-    if (outputFormat !== 'iife' && outputFormat !== 'module') {
+    if (mode !== 'development' && outputFormat !== 'iife' && outputFormat !== 'module') {
         process.exit(1);
     }
     return defineConfig({
