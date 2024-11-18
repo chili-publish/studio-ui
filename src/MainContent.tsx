@@ -331,6 +331,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                     {isMobileSize && (
                                         <MobileVariablesTray
                                             variables={variables}
+                                            isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                             isDocumentLoaded={isDocumentLoaded}
                                         />
                                     )}
