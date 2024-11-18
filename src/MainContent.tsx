@@ -30,6 +30,7 @@ import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Navbar from './components/navbar/Navbar';
 import { APP_WRAPPER_ID } from './utils/constants';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
+import { SuiCanvas } from './MainContent.styles';
 
 declare global {
     interface Window {
@@ -333,13 +334,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                             isDocumentLoaded={isDocumentLoaded}
                                         />
                                     )}
-                                    <div
-                                        className="sui-canvas"
+                                    <SuiCanvas
+                                        hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                         data-id={getDataIdForSUI('canvas')}
                                         data-testid={getDataTestIdForSUI('canvas')}
                                     >
                                         <div className="chili-editor" id="chili-editor" />
-                                    </div>
+                                    </SuiCanvas>
                                     {layoutIntent === LayoutIntent.digitalAnimated ? (
                                         <AnimationTimeline
                                             scrubberTimeMs={scrubberTimeMs}
