@@ -1,5 +1,5 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
