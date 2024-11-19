@@ -51,7 +51,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 console.log('successful request', response);
                 return response;
             },
-            (error) => {
+            async (error) => {
                 const originalRequest = error.config;
                 // eslint-disable-next-line no-console
                 console.log('failed request', error.response?.status, originalRequest.retry, projectConfig);
