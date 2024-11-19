@@ -96,10 +96,15 @@ export class StudioProjectLoader {
     };
 
     public onAuthenticationExpired = async (): Promise<string> => {
+        // eslint-disable-next-line no-console
+        console.log('onAuthenticationExpired 1', this.refreshTokenAction);
+
         if (!this.refreshTokenAction) {
             throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
         }
         const result = await this.refreshTokenAction();
+        // eslint-disable-next-line no-console
+        console.log('onAuthenticationExpired 2', result);
         if (result instanceof Error) {
             throw result;
         }
@@ -194,15 +199,12 @@ export class StudioProjectLoader {
         userInterfaceId = this.userInterfaceID,
     ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
-            try {
-                const res = await this.onFetchUserInterfaces();
-                if (res.status === 200) {
-                    return res.data.data.find((value: UserInterface) => value.default);
-                }
-                throw new Error(`Default user interface not found`);
-            } catch (err) {
-                throw new Error(`${err}`);
+            const res = await this.onFetchUserInterfaces();
+
+            if (res.status === 200) {
+                return res.data.data.find((value: UserInterface) => value.default);
             }
+            throw new Error(`Default user interface not found`);
         };
         const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
             headers: { Authorization: `Bearer ${this.authToken}` },
@@ -256,16 +258,12 @@ export class StudioProjectLoader {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>> => {
-        try {
-            const res = await axios.get<PaginatedResponse<UserInterface>>(
-                `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
-                {
-                    headers: { Authorization: `Bearer ${this.authToken}` },
-                },
-            );
-            return res;
-        } catch (err) {
-            throw new Error(`${err}`);
-        }
+        const res = await axios.get<PaginatedResponse<UserInterface>>(
+            `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
+            {
+                headers: { Authorization: `Bearer ${this.authToken}ferfr` },
+            },
+        );
+        return res;
     };
 }

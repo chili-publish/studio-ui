@@ -54,13 +54,18 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     return projectConfig
                         .onAuthenticationExpired()
                         .then((token) => {
+                            // eslint-disable-next-line no-console
+                            console.log('result token is', token);
                             setAuthToken(token);
                             originalRequest.headers.Authorization = `Bearer ${token}`;
+
+                            // eslint-disable-next-line no-console
+                            console.log('original req', originalRequest);
                             return axios(originalRequest);
                         })
                         .catch((err: AxiosError) => {
                             // eslint-disable-next-line no-console
-                            console.error(`[${App.name}] Axios error`, err);
+                            console.error(`[${App.name}] Auth Axios error`, err);
                             return err;
                         });
                 }
