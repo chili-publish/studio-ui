@@ -46,7 +46,11 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     useEffect(() => {
         const subscriber = axios.interceptors.response.use(
-            (response) => response,
+            (response) => {
+                // eslint-disable-next-line no-console
+                console.log('successful request');
+                return response;
+            },
             (error) => {
                 const originalRequest = error.config;
                 // eslint-disable-next-line no-console
