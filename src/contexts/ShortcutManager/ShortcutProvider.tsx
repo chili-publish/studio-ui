@@ -75,6 +75,10 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
+            const formElements = ['INPUT', 'TEXTAREA', 'SELECT', 'OPTION'];
+            if (formElements.includes((event.target as HTMLElement).tagName)) {
+                return;
+            }
             const pressedKeys = [];
             modifierKeys().forEach((modifier) => {
                 if (event[modifier]) {
