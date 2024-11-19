@@ -23,6 +23,7 @@ const isConnectorLocalRegistration = (
 export async function getRemoteMediaConnector(
     graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
+    authToken: string,
 ): Promise<MediaRemoteConnector> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (engineConnector) {
@@ -30,11 +31,14 @@ export async function getRemoteMediaConnector(
             isConnectorUrlRegistration(engineConnector.source) ||
             isConnectorLocalRegistration(engineConnector.source)
         ) {
-            const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url);
+            const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url, {
+                headers: { Authorization: `Bearer ${authToken}` },
+            });
             return res.data;
         }
         const res = await axios.get<MediaRemoteConnector>(
             `${graFxStudioEnvironmentApiBaseUrl}/connectors/${engineConnector.source.id}`,
+            { headers: { Authorization: `Bearer ${authToken}` } },
         );
         return res.data;
     }

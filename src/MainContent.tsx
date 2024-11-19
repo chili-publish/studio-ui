@@ -31,6 +31,7 @@ import Navbar from './components/navbar/Navbar';
 import { APP_WRAPPER_ID } from './utils/constants';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { SuiCanvas } from './MainContent.styles';
+import { useAuthToken } from './contexts/AuthTokenProvider';
 
 declare global {
     interface Window {
@@ -42,11 +43,10 @@ declare global {
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
     projectConfig: ProjectConfig;
-    authToken: string;
     updateToken: (newValue: string) => void;
 }
 
-function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: MainContentProps) {
+function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentProps) {
     const [fetchedDocument, setFetchedDocument] = useState('');
     const [variables, setVariables] = useState<Variable[]>([]);
     const [canUndo, setCanUndo] = useState(false);
@@ -68,6 +68,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const isMobileSize = useMobileSize();
 
     const { canvas } = useTheme();
+
+    const { authToken } = useAuthToken();
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {

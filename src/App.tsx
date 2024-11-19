@@ -8,6 +8,7 @@ import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
+import { AuthTokenProvider } from './contexts/AuthTokenProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
@@ -22,57 +23,25 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         return projectConfig.uiTheme;
     }, [projectConfig.uiTheme]);
 
-    useEffect(() => {
-        const appendAuthorizationHeader = async (request: InternalAxiosRequestConfig<unknown>) => {
-            if (
-                (!request.url?.startsWith(projectConfig.graFxStudioEnvironmentApiBaseUrl) &&
-                    !request.url?.startsWith(
-                        projectConfig.graFxStudioEnvironmentApiBaseUrl.replace('api/v1/', 'api/experimental/'),
-                    )) ||
-                !!request.headers.Authorization
-            ) {
-                return request;
-            }
-
-            // eslint-disable-next-line no-param-reassign
-            request.headers.Authorization = `Bearer ${authToken}`;
-            return request;
-        };
-        const subscriber = axios.interceptors.request.use(appendAuthorizationHeader);
-        return () => {
-            axios.interceptors.request.eject(subscriber);
-        };
-    }, [authToken, projectConfig.graFxStudioEnvironmentApiBaseUrl]);
-
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     useEffect(() => {
         const subscriber = axios.interceptors.response.use(
-            (response) => {
-                // eslint-disable-next-line no-console
-                console.log('successful request', response);
-                return response;
-            },
+            (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-                // eslint-disable-next-line no-console
-                console.log('failed request', error.response?.status, originalRequest.retry, projectConfig);
+
                 if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
                     originalRequest.retry = true;
                     return projectConfig
                         .onAuthenticationExpired()
                         .then((token) => {
-                            // eslint-disable-next-line no-console
-                            console.log('result token is', token);
                             setAuthToken(token);
                             originalRequest.headers.Authorization = `Bearer ${token}`;
-
-                            // eslint-disable-next-line no-console
-                            console.log('original req', originalRequest);
                             return axios(originalRequest);
                         })
                         .catch((err: AxiosError) => {
                             // eslint-disable-next-line no-console
-                            console.error(`[${App.name}] Auth Axios error`, err);
+                            console.error(`[${App.name}] Axios error`, err);
                             return err;
                         });
                 }
@@ -80,8 +49,6 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 return Promise.reject(error);
             },
         );
-        // eslint-disable-next-line no-console
-        console.log('projectConfig', projectConfig, subscriber);
         return () => {
             axios.interceptors.response.eject(subscriber);
         };
@@ -97,7 +64,9 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             <UiThemeProvider theme="platform" mode={uiThemeMode}>
                 <NotificationManagerProvider>
                     <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                        <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
+                        <AuthTokenProvider authToken={authToken}>
+                            <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                        </AuthTokenProvider>
                     </FeatureFlagProvider>
                 </NotificationManagerProvider>
             </UiThemeProvider>

@@ -32,7 +32,7 @@ describe('utils connectors', () => {
     });
 
     it('should handle "getRemoteMediaConnector" correctly', async () => {
-        const connector = await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1');
+        const connector = await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1', 'token');
 
         expect(connector).toEqual({
             id: 'remote-connector-1',
@@ -43,7 +43,7 @@ describe('utils connectors', () => {
         });
 
         expect(async () => {
-            await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1');
+            await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1', 'token');
         }).rejects.toThrow('Connector is not found by connector-1');
     });
 

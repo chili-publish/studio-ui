@@ -96,15 +96,10 @@ export class StudioProjectLoader {
     };
 
     public onAuthenticationExpired = async (): Promise<string> => {
-        // eslint-disable-next-line no-console
-        console.log('onAuthenticationExpired 1', this.refreshTokenAction);
-
         if (!this.refreshTokenAction) {
             throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
         }
         const result = await this.refreshTokenAction();
-        // eslint-disable-next-line no-console
-        console.log('onAuthenticationExpired 2', result);
         if (result instanceof Error) {
             throw result;
         }
