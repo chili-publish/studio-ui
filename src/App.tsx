@@ -25,10 +25,11 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     useEffect(() => {
         const appendAuthorizationHeader = async (request: InternalAxiosRequestConfig<unknown>) => {
             if (
-                !request.url?.startsWith(projectConfig.graFxStudioEnvironmentApiBaseUrl) &&
-                !request.url?.startsWith(
-                    projectConfig.graFxStudioEnvironmentApiBaseUrl.replace('api/v1/', 'api/experimental/'),
-                )
+                (!request.url?.startsWith(projectConfig.graFxStudioEnvironmentApiBaseUrl) &&
+                    !request.url?.startsWith(
+                        projectConfig.graFxStudioEnvironmentApiBaseUrl.replace('api/v1/', 'api/experimental/'),
+                    )) ||
+                !!request.headers.Authorization
             ) {
                 return request;
             }
