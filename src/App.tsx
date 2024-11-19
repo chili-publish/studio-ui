@@ -75,6 +75,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 return Promise.reject(error);
             },
         );
+        // eslint-disable-next-line no-console
+        console.log('projectConfig', projectConfig, subscriber);
         return () => {
             axios.interceptors.response.eject(subscriber);
         };
