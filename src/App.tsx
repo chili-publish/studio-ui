@@ -49,6 +49,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             (response) => response,
             (error) => {
                 const originalRequest = error.config;
+                // eslint-disable-next-line no-console
+                console.log('failed request', error.response?.status, originalRequest.retry, projectConfig);
                 if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
                     originalRequest.retry = true;
                     return projectConfig
