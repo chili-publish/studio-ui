@@ -48,7 +48,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         const subscriber = axios.interceptors.response.use(
             (response) => {
                 // eslint-disable-next-line no-console
-                console.log('successful request');
+                console.log('successful request', response);
                 return response;
             },
             (error) => {
