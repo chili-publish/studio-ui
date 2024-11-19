@@ -39,6 +39,7 @@ declare global {
     }
 }
 
+const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
     projectConfig: ProjectConfig;
     authToken: string;
@@ -103,12 +104,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
     const zoomToPage = async () => {
+        const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
             pageId: null,
             left: 0,
             top: 0,
-            width: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().width),
-            height: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().height),
+            width: iframe?.width,
+            height: iframe?.height,
         };
 
         await window.StudioUISDK.canvas.zoomToPage(
@@ -125,6 +127,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             return;
         }
         const sdk = new StudioSDK({
+            editorId: EDITOR_ID,
             enableNextSubscribers: {
                 onVariableListChanged: true,
             },
@@ -340,7 +343,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                                         data-id={getDataIdForSUI('canvas')}
                                         data-testid={getDataTestIdForSUI('canvas')}
                                     >
-                                        <div className="chili-editor" id="chili-editor" />
+                                        <div className="chili-editor" id={EDITOR_ID} />
                                     </SuiCanvas>
                                     {layoutIntent === LayoutIntent.digitalAnimated ? (
                                         <AnimationTimeline
