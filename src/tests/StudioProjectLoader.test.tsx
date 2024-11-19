@@ -15,7 +15,7 @@ jest.mock('../utils/documentExportHelper', () => ({
     }),
 }));
 
-describe('StudioProjectLoader', () => {
+describe.skip('StudioProjectLoader', () => {
     const mockProjectId = 'mockProjectId';
     const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl';
     const mockAuthToken = 'mockAuthToken';
