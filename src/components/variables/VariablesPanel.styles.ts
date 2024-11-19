@@ -1,10 +1,10 @@
 import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const EditButtonWrapper = styled.div`
+export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean }>`
     position: fixed;
     left: 2rem;
-    bottom: 6.5rem;
+    bottom: ${({ isTimelineDisplayed }) => (isTimelineDisplayed ? '6.5rem' : '2.5rem')};
 `;
 
 export const VariablesContainer = styled.div<{ height?: string }>`

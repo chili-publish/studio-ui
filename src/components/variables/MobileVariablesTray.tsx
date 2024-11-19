@@ -27,6 +27,7 @@ import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface VariablesPanelProps {
     variables: Variable[];
+    isTimelineDisplayed?: boolean;
     isDocumentLoaded: boolean;
 }
 
@@ -38,7 +39,7 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isDocumentLoaded } = props;
+    const { variables, isDocumentLoaded, isTimelineDisplayed } = props;
     const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -93,7 +94,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     return (
         <>
-            <EditButtonWrapper>
+            <EditButtonWrapper isTimelineDisplayed={isTimelineDisplayed}>
                 <Button
                     dataTestId={getDataTestIdForSUI('mobile-variables')}
                     variant={ButtonVariant.primary}
