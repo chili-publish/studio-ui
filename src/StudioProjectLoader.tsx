@@ -207,7 +207,7 @@ export class StudioProjectLoader {
             throw new Error(`Default user interface not found`);
         };
         const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-            headers: { Authorization: `Bearer ${this.authToken}` },
+            headers: { Authorization: `Bearer ${this.authToken}fff` },
         });
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
@@ -261,7 +261,7 @@ export class StudioProjectLoader {
         const res = await axios.get<PaginatedResponse<UserInterface>>(
             `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
             {
-                headers: { Authorization: `Bearer ${this.authToken}ferfr` },
+                headers: { Authorization: `Bearer ${this.authToken}` },
             },
         );
         return res;
