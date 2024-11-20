@@ -1,5 +1,5 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, startTransition, useCallback, useMemo } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
