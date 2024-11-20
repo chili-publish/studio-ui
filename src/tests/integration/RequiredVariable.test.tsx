@@ -132,7 +132,6 @@ describe('Required text variable', () => {
             StudioUI.studioLoaderConfig(config);
         });
 
-        console.log(window.StudioUISDK);
         await act(async () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (window.StudioUISDK as any).subscriber.onVariableListChanged(variablesStr);
