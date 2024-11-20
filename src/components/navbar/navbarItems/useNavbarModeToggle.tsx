@@ -18,6 +18,8 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
 
             await cleanRunningTasks();
 
+            // eslint-disable-next-line no-console
+            console.log('toggle', projectConfig?.onSandboxModeToggle);
             startTransition(() => projectConfig?.onSandboxModeToggle?.());
         },
         [projectConfig, cleanRunningTasks, updateSelectedMode],
