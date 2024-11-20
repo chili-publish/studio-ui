@@ -22,14 +22,14 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
-    const { cleanRunningTasks } = useAppContext();
+    const { selectedMode, cleanRunningTasks } = useAppContext();
 
     const shortcuts = useMemo(
         () => [
             {
                 keys: 'm',
                 action: async () => {
-                    await cleanRunningTasks();
+                    if (selectedMode === 'run') await cleanRunningTasks();
                     projectConfig?.onSandboxModeToggle?.();
                 },
             },
@@ -62,7 +62,18 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 },
             },
         ],
-        [projectConfig, undoStackState, handleUndo, handleRedo, zoom, zoomIn, zoomOut, commandKey, cleanRunningTasks],
+        [
+            projectConfig,
+            undoStackState,
+            handleUndo,
+            handleRedo,
+            zoom,
+            zoomIn,
+            zoomOut,
+            commandKey,
+            selectedMode,
+            cleanRunningTasks,
+        ],
     );
 
     const compareShortcuts = (shortcut: string | string[], pressedKeys: string) => {

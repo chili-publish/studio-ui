@@ -21,7 +21,7 @@ export const useVariableConnector = (variable: ImageVariable) => {
                 setSelectedConnector(remoteMediaConnector);
             }
         })();
-    }, [graFxStudioEnvironmentApiBaseUrl, variable.value?.connectorId]);
+    }, [graFxStudioEnvironmentApiBaseUrl, authToken, variable.value?.connectorId]);
 
     return {
         selectedConnector,

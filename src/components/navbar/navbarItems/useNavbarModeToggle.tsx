@@ -1,10 +1,8 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
-
-type Mode = 'design' | 'run';
 
 const options: ToggleOption[] = [
     { id: 'design', label: 'Design' },
@@ -12,18 +10,17 @@ const options: ToggleOption[] = [
 ];
 
 const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
-    const [selectedMode, setSelectedMode] = useState<Mode>('run');
-    const { cleanRunningTasks } = useAppContext();
+    const { selectedMode, updateSelectedMode, cleanRunningTasks } = useAppContext();
 
     const onToggle = useCallback(
         async (ev: ChangeEvent<HTMLInputElement>) => {
-            setSelectedMode(ev.target.value as Mode);
+            updateSelectedMode(ev.target.value);
 
             await cleanRunningTasks();
 
             projectConfig?.onSandboxModeToggle?.();
         },
-        [projectConfig, cleanRunningTasks],
+        [projectConfig, updateSelectedMode, cleanRunningTasks],
     );
 
     const navbarItem = useMemo(
