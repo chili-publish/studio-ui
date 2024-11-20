@@ -12,6 +12,8 @@ function BooleanVariable(props: IBooleanVariable) {
     const [toggled, setToggled] = useState((variable as BooleanVariable).value);
 
     useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log('is toggles', variable);
         setToggled((variable as BooleanVariable).value);
     }, [variable]);
 

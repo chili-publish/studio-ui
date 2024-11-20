@@ -22,7 +22,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
-    const { isDocumentLoaded, cleanRunningTasks } = useAppContext();
+    const { isDocumentLoaded, selectedMode, cleanRunningTasks } = useAppContext();
 
     const shortcuts = useMemo(
         () => [
@@ -30,7 +30,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 keys: 'm',
                 action: async () => {
                     if (!isDocumentLoaded) return;
-                    await cleanRunningTasks();
+                    if (selectedMode === 'run') await cleanRunningTasks();
                     startTransition(() => projectConfig?.onSandboxModeToggle?.());
                 },
             },
@@ -64,6 +64,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
             },
         ],
         [
+            selectedMode,
             isDocumentLoaded,
             projectConfig,
             undoStackState,
