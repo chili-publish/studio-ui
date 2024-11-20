@@ -20,12 +20,20 @@ export const useAppContext = () => {
     return useContext(AppContext);
 };
 
-function AppProvider({ isDocumentLoaded, children }: { isDocumentLoaded: boolean; children: ReactNode }) {
+function AppProvider({
+    isDocumentLoaded,
+    isAnimationPlaying,
+    children,
+}: {
+    isDocumentLoaded: boolean;
+    isAnimationPlaying: boolean;
+    children: ReactNode;
+}) {
     const [selectedMode, setSelectedMode] = useState<Mode>('run');
 
     const cleanRunningTasks = useCallback(async () => {
-        await window.StudioUISDK.animation.pause();
-    }, []);
+        if (isAnimationPlaying) await window.StudioUISDK.animation.pause();
+    }, [isAnimationPlaying]);
 
     const updateSelectedMode = useCallback((val: string) => {
         setSelectedMode(val as Mode);
