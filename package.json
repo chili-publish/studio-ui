@@ -26,7 +26,7 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-shared-components": "^0.85.4",
+        "@chili-publish/grafx-shared-components": "^0.85.6",
         "@chili-publish/studio-sdk": "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/535/studio-sdk.tgz",
         "axios": "^1.6.0",
         "react": "^18.2.0",
