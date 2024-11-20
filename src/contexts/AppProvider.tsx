@@ -3,12 +3,14 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 type Mode = 'design' | 'run';
 
 interface IAppContext {
+    isDocumentLoaded: boolean;
     selectedMode: Mode;
     updateSelectedMode: (_: string) => void;
     cleanRunningTasks: () => Promise<void>;
 }
 
 const AppContext = createContext<IAppContext>({
+    isDocumentLoaded: false,
     selectedMode: 'run',
     updateSelectedMode: () => null,
     cleanRunningTasks: () => Promise.resolve(),
@@ -18,7 +20,7 @@ export const useAppContext = () => {
     return useContext(AppContext);
 };
 
-function AppProvider({ children }: { children: ReactNode }) {
+function AppProvider({ isDocumentLoaded, children }: { isDocumentLoaded: boolean; children: ReactNode }) {
     const [selectedMode, setSelectedMode] = useState<Mode>('run');
 
     const cleanRunningTasks = useCallback(async () => {
@@ -31,11 +33,12 @@ function AppProvider({ children }: { children: ReactNode }) {
 
     const data = useMemo(
         () => ({
+            isDocumentLoaded,
             selectedMode,
             updateSelectedMode,
             cleanRunningTasks,
         }),
-        [selectedMode, updateSelectedMode, cleanRunningTasks],
+        [isDocumentLoaded, selectedMode, updateSelectedMode, cleanRunningTasks],
     );
 
     return <AppContext.Provider value={data}>{children}</AppContext.Provider>;

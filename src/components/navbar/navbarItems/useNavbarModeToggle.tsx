@@ -10,7 +10,7 @@ const options: ToggleOption[] = [
 ];
 
 const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
-    const { selectedMode, updateSelectedMode, cleanRunningTasks } = useAppContext();
+    const { isDocumentLoaded, selectedMode, updateSelectedMode, cleanRunningTasks } = useAppContext();
 
     const onToggle = useCallback(
         async (ev: ChangeEvent<HTMLInputElement>) => {
@@ -27,13 +27,20 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
         () => ({
             label: 'Toggle',
             content: (
-                <Toggle onChange={onToggle} checked={selectedMode} options={options} width="9.5rem" height="2rem" />
+                <Toggle
+                    disabled={!isDocumentLoaded}
+                    onChange={onToggle}
+                    checked={selectedMode}
+                    options={options}
+                    width="9.5rem"
+                    height="2rem"
+                />
             ),
             styles: css`
                 padding-left: 0.125rem;
             `,
         }),
-        [selectedMode, onToggle],
+        [isDocumentLoaded, selectedMode, onToggle],
     );
 
     return {

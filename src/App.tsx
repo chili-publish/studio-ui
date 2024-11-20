@@ -62,17 +62,15 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     return (
         <SubscriberContextProvider subscriber={eventSubscriber}>
-            <AppProvider>
-                <UiThemeProvider theme="platform" mode={uiThemeMode}>
-                    <NotificationManagerProvider>
-                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                            <AuthTokenProvider authToken={authToken}>
-                                <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
-                            </AuthTokenProvider>
-                        </FeatureFlagProvider>
-                    </NotificationManagerProvider>
-                </UiThemeProvider>
-            </AppProvider>
+            <UiThemeProvider theme="platform" mode={uiThemeMode}>
+                <NotificationManagerProvider>
+                    <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                        <AuthTokenProvider authToken={authToken}>
+                            <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                        </AuthTokenProvider>
+                    </FeatureFlagProvider>
+                </NotificationManagerProvider>
+            </UiThemeProvider>
         </SubscriberContextProvider>
     );
 }
