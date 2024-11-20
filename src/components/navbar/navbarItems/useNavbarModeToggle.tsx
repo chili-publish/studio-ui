@@ -1,5 +1,5 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, startTransition, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
@@ -14,6 +14,8 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
 
     const onToggle = useCallback(
         async (ev: ChangeEvent<HTMLInputElement>) => {
+            ev.stopPropagation();
+            ev.preventDefault();
             // eslint-disable-next-line no-console
             console.log('onclick', projectConfig?.onSandboxModeToggle);
             updateSelectedMode(ev.target.value);
@@ -22,7 +24,7 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
 
             // eslint-disable-next-line no-console
             console.log('toggle', projectConfig?.onSandboxModeToggle);
-            // startTransition(() => projectConfig?.onSandboxModeToggle?.());
+            startTransition(() => projectConfig?.onSandboxModeToggle?.());
         },
         [projectConfig, cleanRunningTasks, updateSelectedMode],
     );
