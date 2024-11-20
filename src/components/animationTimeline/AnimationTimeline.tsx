@@ -1,5 +1,5 @@
 import { Timeline, useTheme } from '@chili-publish/grafx-shared-components';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 
