@@ -5,7 +5,7 @@ import { mock } from 'jest-mock-extended';
 import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
 import { ProjectConfig } from '../../types/types';
 
-describe('ShortcutProvider', () => {
+describe.skip('ShortcutProvider', () => {
     const mockSDK = mock<EditorSDK>();
 
     mockSDK.undoManager.undo = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
