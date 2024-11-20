@@ -304,7 +304,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [authToken, fetchedDocument]);
 
     return (
-        <AppProvider isDocumentLoaded={isDocumentLoaded}>
+        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container canvas={canvas}>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
