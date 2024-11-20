@@ -1,4 +1,5 @@
 import { Timeline, useTheme } from '@chili-publish/grafx-shared-components';
+import { useCallback, useEffect } from 'react';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 
@@ -15,13 +16,19 @@ function AnimationTimeline(props: IAnimationTimeline) {
         await window.StudioUISDK.animation.play();
     };
 
-    const handlePause = async () => {
+    const handlePause = useCallback(async () => {
         await window.StudioUISDK.animation.pause();
-    };
+    }, []);
 
     const handleSetScrubberPosition = async (milliseconds: number) => {
         await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
     };
+
+    useEffect(() => {
+        return () => {
+            handlePause();
+        };
+    }, [handlePause]);
 
     return (
         <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')} themeStyles={theme}>
