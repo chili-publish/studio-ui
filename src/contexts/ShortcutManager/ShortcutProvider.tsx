@@ -29,8 +29,6 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
             {
                 keys: 'm',
                 action: async () => {
-                    // eslint-disable-next-line no-console
-                    console.log('click');
                     if (!isDocumentLoaded) return;
 
                     document.removeEventListener('keydown', handleKeyDown);
