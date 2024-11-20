@@ -9,7 +9,6 @@ import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { AuthTokenProvider } from './contexts/AuthTokenProvider';
-import AppProvider from './contexts/AppProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
