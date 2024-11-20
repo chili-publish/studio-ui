@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { startTransition, useCallback, useEffect, useMemo } from 'react';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
 import { ProjectConfig } from '../../types/types';
 import { isMac } from './shortcuts';
@@ -30,7 +30,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 keys: 'm',
                 action: async () => {
                     if (selectedMode === 'run') await cleanRunningTasks();
-                    projectConfig?.onSandboxModeToggle?.();
+                    startTransition(() => projectConfig?.onSandboxModeToggle?.());
                 },
             },
             {

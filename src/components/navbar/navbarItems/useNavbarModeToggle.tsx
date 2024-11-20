@@ -1,5 +1,5 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, startTransition, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
@@ -18,7 +18,7 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
 
             await cleanRunningTasks();
 
-            projectConfig?.onSandboxModeToggle?.();
+            startTransition(() => projectConfig?.onSandboxModeToggle?.());
         },
         [projectConfig, updateSelectedMode, cleanRunningTasks],
     );
