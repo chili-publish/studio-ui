@@ -32,6 +32,10 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                     // eslint-disable-next-line no-console
                     console.log('click');
                     if (!isDocumentLoaded) return;
+
+                    document.removeEventListener('keydown', handleKeyDown);
+                    iframe?.removeEventListener('keydown', handleKeyDown);
+
                     if (selectedMode === 'run') await cleanRunningTasks();
                     startTransition(() => projectConfig?.onSandboxModeToggle?.());
                 },
@@ -119,15 +123,11 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
             iframe?.addEventListener('keydown', handleKeyDown);
         };
 
-        const removeShortcutListeners = () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            iframe?.removeEventListener('keydown', handleKeyDown);
-        };
-
         addShortcutListeners();
 
         return () => {
-            removeShortcutListeners();
+            document.removeEventListener('keydown', handleKeyDown);
+            iframe?.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleKeyDown, iframe]);
 
