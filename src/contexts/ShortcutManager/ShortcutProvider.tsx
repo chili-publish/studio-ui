@@ -4,6 +4,7 @@ import { ProjectConfig } from '../../types/types';
 import { isMac } from './shortcuts';
 import useUndoRedo from './useUndoRedo';
 import useZoom from './useZoom';
+import { useAppContext } from '../AppProvider';
 
 interface ShortcutProviderProps {
     projectConfig: ProjectConfig;
@@ -21,12 +22,14 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
+    const { cleanRunningTasks } = useAppContext();
 
     const shortcuts = useMemo(
         () => [
             {
                 keys: 'm',
-                action: () => {
+                action: async () => {
+                    await cleanRunningTasks();
                     projectConfig?.onSandboxModeToggle?.();
                 },
             },
@@ -59,7 +62,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 },
             },
         ],
-        [projectConfig, undoStackState, handleUndo, handleRedo, zoom, zoomIn, zoomOut, commandKey],
+        [projectConfig, undoStackState, handleUndo, handleRedo, zoom, zoomIn, zoomOut, commandKey, cleanRunningTasks],
     );
 
     const compareShortcuts = (shortcut: string | string[], pressedKeys: string) => {

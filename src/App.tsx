@@ -8,6 +8,7 @@ import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
+import AppProvider from './contexts/AppProvider';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
@@ -80,13 +81,19 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     return (
         <SubscriberContextProvider subscriber={eventSubscriber}>
-            <UiThemeProvider theme="platform" mode={uiThemeMode}>
-                <NotificationManagerProvider>
-                    <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                        <MainContent authToken={authToken} updateToken={setAuthToken} projectConfig={projectConfig} />
-                    </FeatureFlagProvider>
-                </NotificationManagerProvider>
-            </UiThemeProvider>
+            <AppProvider>
+                <UiThemeProvider theme="platform" mode={uiThemeMode}>
+                    <NotificationManagerProvider>
+                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                            <MainContent
+                                authToken={authToken}
+                                updateToken={setAuthToken}
+                                projectConfig={projectConfig}
+                            />
+                        </FeatureFlagProvider>
+                    </NotificationManagerProvider>
+                </UiThemeProvider>
+            </AppProvider>
         </SubscriberContextProvider>
     );
 }
