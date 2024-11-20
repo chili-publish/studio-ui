@@ -9,7 +9,7 @@ import StudioSDK, {
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -187,10 +187,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                 }
             },
             onSelectedLayoutIdChanged: async () => {
-                zoomToPage();
                 const layoutIntentData =
                     (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value ?? null;
                 setLayoutIntent(layoutIntentData);
+
+                startTransition(() => {
+                    zoomToPage();
+                });
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
