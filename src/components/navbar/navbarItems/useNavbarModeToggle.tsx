@@ -16,14 +16,11 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
         async (ev: ChangeEvent<HTMLInputElement>) => {
             ev.stopPropagation();
             ev.preventDefault();
-            // eslint-disable-next-line no-console
-            console.log('onclick', projectConfig?.onSandboxModeToggle);
+
             updateSelectedMode(ev.target.value);
 
             await cleanRunningTasks();
 
-            // eslint-disable-next-line no-console
-            console.log('toggle', projectConfig?.onSandboxModeToggle);
             startTransition(() => projectConfig?.onSandboxModeToggle?.());
         },
         [projectConfig, cleanRunningTasks, updateSelectedMode],
