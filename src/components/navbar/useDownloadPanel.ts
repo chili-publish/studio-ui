@@ -5,8 +5,10 @@ import { Dispatch, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { useAuthToken } from '../../contexts/AuthTokenProvider';
 
 const useDownloadPanel = (projectConfig: ProjectConfig) => {
+    const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
     const { validateVariables } = useVariablePanelContext();
@@ -47,6 +49,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig) => {
             }
             const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
+                headers: { Authorization: `Bearer ${authToken}` },
             });
 
             if (response.status !== 200) return;

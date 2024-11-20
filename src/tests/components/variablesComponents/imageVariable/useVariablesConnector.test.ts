@@ -43,7 +43,9 @@ describe('"useVariablesConnector" hook', () => {
         });
 
         await waitFor(() => {
-            expect(axios.get).toHaveBeenCalledWith('http://deploy.com/media-connector');
+            expect(axios.get).toHaveBeenCalledWith('http://deploy.com/media-connector', {
+                headers: { Authorization: 'Bearer ' },
+            });
         });
 
         expect(result.current.selectedConnector).toEqual({
