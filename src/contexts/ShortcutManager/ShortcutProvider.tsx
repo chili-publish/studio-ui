@@ -13,7 +13,7 @@ interface ShortcutProviderProps {
 }
 function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: ShortcutProviderProps) {
     const commandKey = isMac ? 'metaKey' : 'ctrlKey';
-    const iframe = useGetIframeAsync()?.contentWindow;
+    const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
 
     const modifierKeys = useCallback((): (keyof KeyboardEvent)[] => {
         return [commandKey, 'shiftKey', 'altKey'];
