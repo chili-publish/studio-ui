@@ -40,7 +40,8 @@ export default class StudioUI {
     destroy() {
         if (this.root) {
             // eslint-disable-next-line no-console
-            console.warn('Destroying studio component...');
+            console.warn('Destroying studio ui component...', window.StudioUISDK.connection);
+            if (window.StudioUISDK.connection) window.StudioUISDK.connection.destroy();
             this.root.unmount();
             this.root = undefined;
         }

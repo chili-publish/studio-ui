@@ -24,12 +24,6 @@ function AnimationTimeline(props: IAnimationTimeline) {
         await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
     };
 
-    useEffect(() => {
-        return () => {
-            handlePause();
-        };
-    }, [handlePause]);
-
     return (
         <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')} themeStyles={theme}>
             {animationLength > 0 && (
