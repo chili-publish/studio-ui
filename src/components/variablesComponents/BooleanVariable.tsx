@@ -12,8 +12,6 @@ function BooleanVariable(props: IBooleanVariable) {
     const [toggled, setToggled] = useState((variable as BooleanVariable).value);
 
     useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.log('is toggles', variable);
         setToggled((variable as BooleanVariable).value);
     }, [variable]);
 
@@ -30,8 +28,6 @@ function BooleanVariable(props: IBooleanVariable) {
                         value: featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name,
                     }}
                     onChange={(val: boolean) => {
-                        // eslint-disable-next-line no-console
-                        console.log('on boolean var change', val);
                         handleValueChange(val);
                         setToggled(val);
                     }}

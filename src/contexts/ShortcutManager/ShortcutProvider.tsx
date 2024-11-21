@@ -127,8 +127,6 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
         addShortcutListeners();
 
         return () => {
-            // eslint-disable-next-line no-console
-            console.log('unmount');
             document.removeEventListener('keydown', handleKeyDown);
             iframe?.removeEventListener('keydown', handleKeyDown);
         };
