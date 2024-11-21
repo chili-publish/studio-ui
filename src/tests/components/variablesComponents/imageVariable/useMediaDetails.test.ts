@@ -1,9 +1,9 @@
+import { ConnectorMappingDirection, Variable } from '@chili-publish/studio-sdk';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import { ConnectorMappingDirection, Variable } from '@chili-publish/studio-sdk';
 import { useMediaDetails } from '../../../../components/variablesComponents/imageVariable/useMediaDetails';
-import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
 import { useSubscriberContext } from '../../../../contexts/Subscriber';
+import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
 import { Subscriber } from '../../../../utils/subscriber';
 
 jest.mock('../../../../contexts/VariablePanelContext', () => ({
@@ -155,7 +155,7 @@ describe('"useMediaDetails" hook', () => {
         const variableChange = { id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
-        await act(() => {
+        await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -181,7 +181,7 @@ describe('"useMediaDetails" hook', () => {
         const variableChange = { id: '2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
-        await act(() => {
+        await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -207,7 +207,7 @@ describe('"useMediaDetails" hook', () => {
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
-        await act(() => {
+        await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
             expect(result.current).toEqual(null);
         });
@@ -248,7 +248,7 @@ describe('"useMediaDetails" hook', () => {
 
         expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
 
-        await act(() => {
+        await waitFor(() => {
             expect(result.current).toEqual(null);
         });
     });
@@ -288,7 +288,7 @@ describe('"useMediaDetails" hook', () => {
 
         expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
 
-        await act(() => {
+        await waitFor(() => {
             expect(result.current).toEqual({
                 id: 'media',
                 name: 'name',
@@ -320,7 +320,7 @@ describe('"useMediaDetails" hook', () => {
             expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {}, {}),
         );
 
-        await act(() => {
+        await waitFor(() => {
             expect(result.current).toEqual({
                 id: 'media',
                 name: 'name',

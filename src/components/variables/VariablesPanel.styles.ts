@@ -12,7 +12,7 @@ export const VariablesContainer = styled.div<{ height?: string }>`
     height: ${(props) => props.height ?? '100%'};
 `;
 export const TrayPanelTitle = styled.h2<{ margin?: string; panelTheme: ITheme['panel'] }>`
-    font-size: ${FontSizes.heading2};
+    font-size: ${FontSizes.header};
     font-weight: 500;
     ${(props) => props.margin && `margin: ${props.margin};`};
     color: ${(props) => props.panelTheme.color};
