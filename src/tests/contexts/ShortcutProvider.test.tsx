@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
 import { ProjectConfig } from '../../types/types';
+import AppProvider from '../../contexts/AppProvider';
 
 describe('ShortcutProvider', () => {
     const mockSDK = mock<EditorSDK>();
@@ -21,13 +22,15 @@ describe('ShortcutProvider', () => {
         const onSandboxModeToggleFn = jest.fn();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                zoom={100}
-                undoStackState={{ canRedo: true, canUndo: true }}
-            >
-                <h1>This is a test</h1>
-            </ShortcutProvider>,
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={100}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
         );
         expect(onSandboxModeToggleFn).not.toHaveBeenCalled();
         await user.keyboard('m');
@@ -38,13 +41,15 @@ describe('ShortcutProvider', () => {
         const onSandboxModeToggleFn = jest.fn();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                zoom={100}
-                undoStackState={{ canRedo: true, canUndo: true }}
-            >
-                <h1>This is a test</h1>
-            </ShortcutProvider>,
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={100}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
         );
         expect(mockSDK.undoManager.undo).not.toHaveBeenCalled();
         fireEvent.keyDown(screen.getByText('This is a test'), { key: 'z', ctrlKey: true });
@@ -54,13 +59,15 @@ describe('ShortcutProvider', () => {
     it('triggers redo shortcut', async () => {
         const projectConfig = {} as unknown as ProjectConfig;
         render(
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                zoom={100}
-                undoStackState={{ canRedo: true, canUndo: true }}
-            >
-                <h1>This is a test</h1>
-            </ShortcutProvider>,
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={100}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
         );
         expect(mockSDK.undoManager.redo).not.toHaveBeenCalled();
         fireEvent.keyDown(screen.getByText('This is a test'), { ctrlKey: true, shiftKey: true, key: 'Z' });
@@ -71,13 +78,15 @@ describe('ShortcutProvider', () => {
         const projectConfig = {} as unknown as ProjectConfig;
         const zoom = 150;
         render(
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                zoom={zoom}
-                undoStackState={{ canRedo: true, canUndo: true }}
-            >
-                <h1>This is a test</h1>
-            </ShortcutProvider>,
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={zoom}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
         );
         fireEvent.keyDown(screen.getByText('This is a test'), { key: '+', ctrlKey: true });
         expect(mockSDK.canvas.setZoomPercentage).toHaveBeenCalledWith(zoom * 1.142);
@@ -87,13 +96,15 @@ describe('ShortcutProvider', () => {
         const projectConfig = {} as unknown as ProjectConfig;
         const zoom = 120;
         render(
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                zoom={zoom}
-                undoStackState={{ canRedo: true, canUndo: true }}
-            >
-                <h1>This is a test</h1>
-            </ShortcutProvider>,
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={zoom}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
         );
         fireEvent.keyDown(screen.getByText('This is a test'), { key: '-', ctrlKey: true });
         expect(mockSDK.canvas.setZoomPercentage).toHaveBeenCalledWith(zoom * 0.875);

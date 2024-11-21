@@ -32,6 +32,7 @@ import { APP_WRAPPER_ID } from './utils/constants';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { SuiCanvas } from './MainContent.styles';
 import { useAuthToken } from './contexts/AuthTokenProvider';
+import AppProvider from './contexts/AppProvider';
 
 declare global {
     interface Window {
@@ -303,76 +304,82 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [authToken, fetchedDocument]);
 
     return (
-        <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
-            <Container canvas={canvas}>
-                <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
-                    <VariablePanelContextProvider
-                        connectors={{ mediaConnectors, fontsConnectors }}
-                        variables={variables}
-                    >
-                        <div id={APP_WRAPPER_ID} className="app">
-                            {projectConfig.sandboxMode ? (
-                                <UiThemeProvider theme="studio" mode="dark">
-                                    <StudioNavbar
+        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
+            <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
+                <Container canvas={canvas}>
+                    <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
+                        <VariablePanelContextProvider
+                            connectors={{ mediaConnectors, fontsConnectors }}
+                            variables={variables}
+                        >
+                            <div id={APP_WRAPPER_ID} className="app">
+                                {projectConfig.sandboxMode ? (
+                                    <UiThemeProvider theme="studio" mode="dark">
+                                        <StudioNavbar
+                                            projectName={projectConfig?.projectName || currentProject?.name}
+                                            goBack={projectConfig?.onUserInterfaceBack}
+                                            projectConfig={projectConfig}
+                                            undoStackState={undoStackState}
+                                            zoom={currentZoom}
+                                        />
+                                    </UiThemeProvider>
+                                ) : (
+                                    <Navbar
                                         projectName={projectConfig?.projectName || currentProject?.name}
                                         goBack={projectConfig?.onUserInterfaceBack}
                                         projectConfig={projectConfig}
                                         undoStackState={undoStackState}
                                         zoom={currentZoom}
                                     />
-                                </UiThemeProvider>
-                            ) : (
-                                <Navbar
-                                    projectName={projectConfig?.projectName || currentProject?.name}
-                                    goBack={projectConfig?.onUserInterfaceBack}
-                                    projectConfig={projectConfig}
-                                    undoStackState={undoStackState}
-                                    zoom={currentZoom}
-                                />
-                            )}
-
-                            <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
-                                {!isMobileSize && (
-                                    <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                 )}
-                                <CanvasContainer>
-                                    {isMobileSize && (
-                                        <MobileVariablesTray
-                                            variables={variables}
-                                            isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
-                                            isDocumentLoaded={isDocumentLoaded}
-                                        />
+
+                                <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
+                                    {!isMobileSize && (
+                                        <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                     )}
-                                    <SuiCanvas
-                                        hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
-                                        data-id={getDataIdForSUI('canvas')}
-                                        data-testid={getDataTestIdForSUI('canvas')}
-                                    >
-                                        <div className="chili-editor" id={EDITOR_ID} />
-                                    </SuiCanvas>
-                                    {layoutIntent === LayoutIntent.digitalAnimated ? (
-                                        <AnimationTimeline
-                                            scrubberTimeMs={scrubberTimeMs}
-                                            animationLength={animationLength}
-                                            isAnimationPlaying={animationStatus}
+                                    <CanvasContainer>
+                                        {isMobileSize && (
+                                            <MobileVariablesTray
+                                                variables={variables}
+                                                isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
+                                                isDocumentLoaded={isDocumentLoaded}
+                                            />
+                                        )}
+                                        <SuiCanvas
+                                            hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            data-id={getDataIdForSUI('canvas')}
+                                            data-testid={getDataTestIdForSUI('canvas')}
+                                        >
+                                            <div className="chili-editor" id={EDITOR_ID} />
+                                        </SuiCanvas>
+                                        {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                            <AnimationTimeline
+                                                scrubberTimeMs={scrubberTimeMs}
+                                                animationLength={animationLength}
+                                                isAnimationPlaying={animationStatus}
+                                            />
+                                        ) : null}
+                                    </CanvasContainer>
+                                </MainContentContainer>
+                                {pendingAuthentications.length &&
+                                    pendingAuthentications.map((authFlow) => (
+                                        <ConnectorAuthenticationModal
+                                            key={authFlow.connectorId}
+                                            name={authFlow.connectorName}
+                                            onConfirm={() =>
+                                                connectorAuthenticationProcess(authFlow.connectorId)?.start()
+                                            }
+                                            onCancel={() =>
+                                                connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
+                                            }
                                         />
-                                    ) : null}
-                                </CanvasContainer>
-                            </MainContentContainer>
-                            {pendingAuthentications.length &&
-                                pendingAuthentications.map((authFlow) => (
-                                    <ConnectorAuthenticationModal
-                                        key={authFlow.connectorId}
-                                        name={authFlow.connectorName}
-                                        onConfirm={() => connectorAuthenticationProcess(authFlow.connectorId)?.start()}
-                                        onCancel={() => connectorAuthenticationProcess(authFlow.connectorId)?.cancel()}
-                                    />
-                                ))}
-                        </div>
-                    </VariablePanelContextProvider>
-                </UiConfigContextProvider>
-            </Container>
-        </ShortcutProvider>
+                                    ))}
+                            </div>
+                        </VariablePanelContextProvider>
+                    </UiConfigContextProvider>
+                </Container>
+            </ShortcutProvider>
+        </AppProvider>
     );
 }
 
