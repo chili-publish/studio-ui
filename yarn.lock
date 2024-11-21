@@ -1225,10 +1225,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.85.4":
-  version "0.85.4"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.85.4/f4519cc0af29a890251232df7f1d3772a29b1d69#f4519cc0af29a890251232df7f1d3772a29b1d69"
-  integrity sha512-p22W3O3wpV9n2BUF0g1FvYfZLA7AroYYc2wJmLDoHKxLU1WT5ONrVEnpA5M9QibIk+D5gLRgBn3npktd6HQalQ==
+"@chili-publish/grafx-shared-components@^0.85.8":
+  version "0.85.8"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.85.8/a80a7e0e1d1480d63fd4784b1094450b88cfb34b#a80a7e0e1d1480d63fd4784b1094450b88cfb34b"
+  integrity sha512-D0jGklG3BrL9T7bgu/8psEr+4MgfEVHLsLzlRSajfimcWeeTlWskboyAYi923EAj5WVXgY8rAOTsitar6G+eLg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.4.0"
     "@fortawesome/pro-light-svg-icons" "^6.4.0"
