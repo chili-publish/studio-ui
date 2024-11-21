@@ -25,7 +25,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
     const handleValueChange = useCallback(
         async (value: string | boolean | number) => {
             // eslint-disable-next-line no-console
-            console.log('variable', currentVariableId, value);
+            console.log('variable!!', currentVariableId, value);
             if (!currentVariableId) return null;
             return window.StudioUISDK.variable.setValue(currentVariableId, value);
         },
