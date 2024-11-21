@@ -1239,12 +1239,6 @@
     react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/536/studio-sdk.tgz":
-  version "1.17.0-rc.3"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/536/studio-sdk.tgz#2875a5814a3b3ad8f353be0de4edb8e31c245f5d"
-  dependencies:
-    penpal "6.1.0"
-
 "@emotion/babel-plugin@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.11.0.tgz#c2d872b6a7767a9d176d007f5b31f7d504bb5d6c"
