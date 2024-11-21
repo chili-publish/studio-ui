@@ -19,6 +19,10 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
 
             updateSelectedMode(ev.target.value);
 
+            // eslint-disable-next-line no-console
+            console.log('window.StudioUISDK.connection', window.StudioUISDK.connection);
+            await window.StudioUISDK.connection?.destroy();
+
             await cleanRunningTasks();
 
             startTransition(() => projectConfig?.onSandboxModeToggle?.());
