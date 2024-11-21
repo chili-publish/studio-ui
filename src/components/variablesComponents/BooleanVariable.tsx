@@ -22,7 +22,7 @@ function BooleanVariable(props: IBooleanVariable) {
                     dataId={getDataIdForSUI(`switch-${variable.id}`)}
                     dataTestId={getDataTestIdForSUI(`switch-${variable.id}`)}
                     isChecked={toggled}
-                    id={variable.id}
+                    id={`ui-${variable.id}`}
                     label={{
                         key: 'visible',
                         value: featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name,

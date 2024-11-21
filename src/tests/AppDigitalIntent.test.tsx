@@ -48,6 +48,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
+                animation: { pause: jest.fn() },
             };
         },
     };

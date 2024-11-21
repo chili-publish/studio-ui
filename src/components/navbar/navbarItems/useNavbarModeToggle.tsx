@@ -1,9 +1,8 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, startTransition, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
+import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
-
-type Mode = 'design' | 'run';
 
 const options: ToggleOption[] = [
     { id: 'design', label: 'Design' },
@@ -11,27 +10,40 @@ const options: ToggleOption[] = [
 ];
 
 const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
-    const [selectedMode, setSelectedMode] = useState<Mode>('run');
+    const { selectedMode, isDocumentLoaded, updateSelectedMode, cleanRunningTasks } = useAppContext();
 
     const onToggle = useCallback(
-        (ev: ChangeEvent<HTMLInputElement>) => {
-            setSelectedMode(ev.target.value as Mode);
-            projectConfig?.onSandboxModeToggle?.();
+        async (ev: ChangeEvent<HTMLInputElement>) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            updateSelectedMode(ev.target.value);
+
+            await cleanRunningTasks();
+
+            startTransition(() => projectConfig?.onSandboxModeToggle?.());
         },
-        [projectConfig],
+        [projectConfig, cleanRunningTasks, updateSelectedMode],
     );
 
     const navbarItem = useMemo(
         () => ({
             label: 'Toggle',
             content: (
-                <Toggle onChange={onToggle} checked={selectedMode} options={options} width="9.5rem" height="2rem" />
+                <Toggle
+                    disabled={!isDocumentLoaded}
+                    onChange={onToggle}
+                    checked={selectedMode}
+                    options={options}
+                    width="9.5rem"
+                    height="2rem"
+                />
             ),
             styles: css`
                 padding-left: 0.125rem;
             `,
         }),
-        [selectedMode, onToggle],
+        [isDocumentLoaded, selectedMode, onToggle],
     );
 
     return {
