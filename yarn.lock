@@ -1239,10 +1239,10 @@
     react-datepicker "^7.1.0"
     react-select "^5.6.1"
 
-"@chili-publish/studio-sdk@^1.16.0-rc.12":
-  version "1.16.0-rc.13"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.16.0-rc.13/45815146954b714c3111978785fe872754fd1fe9#45815146954b714c3111978785fe872754fd1fe9"
-  integrity sha512-n3+Ztx04pS1kRcgxO2sRL54ysmZ3V73C7k0uGbCXWZCJTWCR1PEvUHOroRVN1KEhPhI9nu7jgflJtUDPUKmKOg==
+"@chili-publish/studio-sdk@^1.17.1":
+  version "1.17.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.17.1/eaade95cc79062feb2fa3cb13a39e82fbe67501a#eaade95cc79062feb2fa3cb13a39e82fbe67501a"
+  integrity sha512-sc0ksgZZ8AXEbS+CNY9x3r/0q27zCYx0Vj3XEOCYJOSe3kMYy4h/oZF2AeXAc6JbQl4DW/c55bX5IO8QffNIMA==
   dependencies:
     penpal "6.1.0"
 
