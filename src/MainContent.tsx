@@ -209,6 +209,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
             },
+            onPageSizeChanged: () => {
+                zoomToPage();
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
