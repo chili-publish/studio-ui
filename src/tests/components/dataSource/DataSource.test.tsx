@@ -20,6 +20,8 @@ describe('DataSource test', () => {
             ],
         });
 
+        window.StudioUISDK.dataSource.setDataRow = jest.fn();
+
         render(
             <UiThemeProvider theme="platform">
                 <DataSource isDocumentLoaded />

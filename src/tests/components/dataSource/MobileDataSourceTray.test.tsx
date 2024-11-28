@@ -39,6 +39,8 @@ describe('MobileDataSource test', () => {
                 },
             ],
         });
+
+        window.StudioUISDK.dataSource.setDataRow = jest.fn();
     });
 
     afterEach(() => {
