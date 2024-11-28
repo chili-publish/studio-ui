@@ -1,13 +1,13 @@
-import { render, waitFor, fireEvent, screen } from '@testing-library/react';
 import { ImagePicker, UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
-import { variables } from '../../../mocks/mockVariables';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
 import { useMediaDetails } from '../../../../components/variablesComponents/imageVariable/useMediaDetails';
 import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
-import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
+import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
+import { variables } from '../../../mocks/mockVariables';
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: jest.fn().mockReturnValue({ selectedConnector: null }),
@@ -42,6 +42,14 @@ jest.mock('@chili-publish/grafx-shared-components', () => {
     };
 });
 
+jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
+    useFeatureFlagContext: () => ({
+        featureFlags: {
+            STUDIO_LABEL_PROPERTY_ENABLED: true,
+        },
+    }),
+}));
+
 describe('"ImageVariable" component ', () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -70,23 +78,17 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: undefined,
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
     });
@@ -101,23 +103,17 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: undefined,
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
     });
@@ -131,17 +127,11 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: {
@@ -152,7 +142,7 @@ describe('"ImageVariable" component ', () => {
                 },
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
     });
@@ -167,17 +157,11 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: {
@@ -188,7 +172,7 @@ describe('"ImageVariable" component ', () => {
                 },
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
 
@@ -211,17 +195,11 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: {
@@ -232,7 +210,7 @@ describe('"ImageVariable" component ', () => {
                 },
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
 
@@ -255,17 +233,11 @@ describe('"ImageVariable" component ', () => {
         const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: {
@@ -276,7 +248,7 @@ describe('"ImageVariable" component ', () => {
                 },
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
 
@@ -300,17 +272,11 @@ describe('"ImageVariable" component ', () => {
         const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
+            expect.objectContaining({
                 dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
                 dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
-                label: expect.objectContaining({
-                    props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
-                    },
-                }),
                 placeholder: 'Select image',
                 errorMsg: 'Something went wrong. Please try again',
                 previewImage: {
@@ -321,7 +287,7 @@ describe('"ImageVariable" component ', () => {
                 },
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
-            },
+            }),
             {},
         );
 
@@ -347,28 +313,47 @@ describe('"ImageVariable" component ', () => {
         render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemoveFn} />);
 
         expect(ImagePicker).toHaveBeenCalledWith(
-            {
-                dataId: getDataIdForSUI(`img-picker-${imageVariable.id}`),
-                dataTestId: getDataTestIdForSUI(`img-picker-${imageVariable.id}`),
-                dataIntercomId: `image-picker-${imageVariable.name}`,
-                id: imageVariable.id,
+            expect.objectContaining({
+                placeholder: PLACEHOLDER,
+            }),
+            {},
+        );
+    });
+
+    it('should display label as variable name', () => {
+        const imageVariable = { ...variables[0], label: '' };
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
+        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+
+        expect(ImagePicker).toHaveBeenCalledWith(
+            expect.objectContaining({
                 label: expect.objectContaining({
                     props: {
                         translationKey: imageVariable.name,
                         value: imageVariable.name,
                     },
                 }),
-                placeholder: PLACEHOLDER,
-                errorMsg: 'Something went wrong. Please try again',
-                previewImage: {
-                    id: 'mediaId',
-                    name: 'mediaName',
-                    format: 'png',
-                    url: 'http://image-url.com',
-                },
-                onRemove: expect.any(Function),
-                onBrowse: expect.any(Function),
-            },
+            }),
+            {},
+        );
+    });
+
+    it('should display label as variable label', () => {
+        const imageVariable = { ...variables[0] };
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
+        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+
+        expect(ImagePicker).toHaveBeenCalledWith(
+            expect.objectContaining({
+                label: expect.objectContaining({
+                    props: {
+                        translationKey: imageVariable.label,
+                        value: imageVariable.label,
+                    },
+                }),
+            }),
             {},
         );
     });

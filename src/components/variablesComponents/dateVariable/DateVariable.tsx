@@ -1,12 +1,12 @@
 import { DatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
-import { IDateVariable } from '../VariablesComponents.types';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import useDateVariable from '../useDateVariable';
-import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { IDateVariable } from '../VariablesComponents.types';
 
 function DateVariable(props: IDateVariable) {
     const {
@@ -42,8 +42,7 @@ function DateVariable(props: IDateVariable) {
 
     const variableLabel = useMemo(() => {
         if (isOpenOnMobile) return '';
-        if (featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED) return variable.label;
-        return variable.name;
+        return featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label || variable.name : variable.name;
     }, [featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED, isOpenOnMobile, variable.label, variable.name]);
 
     return (

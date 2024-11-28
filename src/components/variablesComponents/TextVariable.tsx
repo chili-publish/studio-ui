@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Label, Input, InputLabel, ValidationTypes } from '@chili-publish/grafx-shared-components';
+import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
-import { ITextVariable } from './VariablesComponents.types';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
+import { ITextVariable } from './VariablesComponents.types';
 import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function TextVariable(props: ITextVariable) {
@@ -43,8 +43,16 @@ function TextVariable(props: ITextVariable) {
                 name={variable.id}
                 label={
                     <Label
-                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
-                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        translationKey={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
+                                ? variable.label || variable.name
+                                : variable.name
+                        }
+                        value={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
+                                ? variable.label || variable.name
+                                : variable.name
+                        }
                     />
                 }
                 validation={validationError ? ValidationTypes.ERROR : undefined}
