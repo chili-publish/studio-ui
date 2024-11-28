@@ -49,7 +49,7 @@ describe('DataSourceModal test', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
-        const dataSourceRow = await screen.findByDisplayValue('1|Joe|15');
+        const dataSourceRow = await screen.findByDisplayValue('1 | Joe | 15');
         expect(dataSourceRow).toBeInTheDocument();
 
         await act(async () => {
@@ -77,12 +77,12 @@ describe('DataSourceModal test', () => {
             });
         });
 
-        expect(screen.getByDisplayValue('1|Joe|15')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
         await act(async () => {
             await user.click(screen.getByText('Mary'));
         });
         expect(screen.queryByRole('table')).not.toBeInTheDocument();
-        expect(screen.getByDisplayValue('3|Mary|17')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('3 | Mary | 17')).toBeInTheDocument();
     });
 
     it('Should be able to navigate with arrow key in the data source table', async () => {
@@ -94,7 +94,7 @@ describe('DataSourceModal test', () => {
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
-        const dataSourceRow = await screen.findByDisplayValue('1|Joe|15');
+        const dataSourceRow = await screen.findByDisplayValue('1 | Joe | 15');
         expect(dataSourceRow).toBeInTheDocument();
 
         await act(async () => {
@@ -111,12 +111,12 @@ describe('DataSourceModal test', () => {
         });
 
         expect(screen.getByText('Row 1')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('1|Joe|15')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
         await act(async () => {
             await user.keyboard('[Enter]');
         });
         expect(screen.queryByRole('table')).not.toBeInTheDocument();
         expect(screen.getByText('Row 2')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('2|John|18')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
     });
 });
