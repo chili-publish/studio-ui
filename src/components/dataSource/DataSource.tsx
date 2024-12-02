@@ -39,13 +39,18 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         [updateSelectedRow],
     );
 
-    const onInputClick = useCallback(() => {
-        if (!currentRow) {
-            loadDataRows();
-        } else {
-            setIsDataSourceModalOpen(true);
-        }
-    }, [currentRow, loadDataRows]);
+    const onInputClick = useCallback(
+        (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+            // input value needs to be truncated when datatable is open
+            event.currentTarget.blur();
+            if (!currentRow) {
+                loadDataRows();
+            } else {
+                setIsDataSourceModalOpen(true);
+            }
+        },
+        [currentRow, loadDataRows],
+    );
 
     if (!hasDataConnector) return null;
     return (
