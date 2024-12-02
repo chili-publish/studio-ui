@@ -43,7 +43,7 @@ describe('DateVariable', () => {
         expect(screen.getByPlaceholderText('Select date')).toBeInTheDocument();
     });
 
-    it('should display label as variable name', () => {
+    it('should display label as variable name even if the label is empty string', () => {
         const dateVariable = variables.find((item) => item.id === 'date-variable') as DateVariableType;
         render(
             <UiThemeProvider theme="platform">
@@ -53,8 +53,9 @@ describe('DateVariable', () => {
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
-
-        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(dateVariable.name);
+        const variableLabel = screen.queryByTestId(getDataTestId('input-label'));
+        // the label is empty string won't be rendered
+        expect(variableLabel).toBeNull();
     });
 
     it('should display label as variable label', () => {
@@ -68,5 +69,18 @@ describe('DateVariable', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(dateVariable.label);
+    });
+    it('should display name as variable name if label does not exist in the object', () => {
+        const dateVariable = variables.find((item) => item.id === 'date-variable') as DateVariableType;
+        delete (dateVariable as unknown as { [key: string]: string }).label;
+        render(
+            <UiThemeProvider theme="platform">
+                <div id={APP_WRAPPER_ID}>
+                    <DateVariable variable={{ ...dateVariable }} />
+                </div>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(dateVariable.name);
     });
 });
