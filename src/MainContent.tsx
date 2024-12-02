@@ -5,6 +5,7 @@ import StudioSDK, {
     DocumentType,
     GrafxTokenAuthCredentials,
     LayoutIntent,
+    Page,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
@@ -33,6 +34,7 @@ import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { SuiCanvas } from './MainContent.styles';
 import { useAuthToken } from './contexts/AuthTokenProvider';
 import AppProvider from './contexts/AppProvider';
+import Pages from './components/pagesPanel/Pages';
 
 declare global {
     interface Window {
@@ -61,6 +63,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
+
+    const [pages, setPages] = useState<Page[]>([]);
+    const [activePageId, setActivePageId] = useState<string | null>(null);
+    const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
 
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
@@ -209,6 +215,18 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
             },
+            onPageSnapshotInvalidated: (invalidatedPageId) => {
+                setPagesToRefresh((prev) => {
+                    return prev.includes(String(invalidatedPageId)) ? prev : [...prev, String(invalidatedPageId)];
+                });
+            },
+            onPagesChanged: (changedPages) => {
+                const visiblePages = changedPages?.filter((i) => i.isVisible);
+                setPages(visiblePages);
+            },
+            onSelectedPageIdChanged: (pageId) => {
+                setActivePageId(pageId);
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
@@ -346,6 +364,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             />
                                         )}
                                         <SuiCanvas
+                                            // intent prop to calculate pages container
+                                            hasMultiplePages={layoutIntent === LayoutIntent.print}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
@@ -357,6 +377,14 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 scrubberTimeMs={scrubberTimeMs}
                                                 animationLength={animationLength}
                                                 isAnimationPlaying={animationStatus}
+                                            />
+                                        ) : null}
+                                        {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                            <Pages
+                                                pages={pages}
+                                                activePageId={activePageId}
+                                                pagesToRefresh={pagesToRefresh}
+                                                setPagesToRefresh={setPagesToRefresh}
                                             />
                                         ) : null}
                                     </CanvasContainer>
