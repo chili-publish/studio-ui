@@ -320,7 +320,7 @@ describe('"ImageVariable" component ', () => {
         );
     });
 
-    it('should display label as variable name', () => {
+    it('should display label as variable label if label is empty string', () => {
         const imageVariable = { ...variables[0], label: '' };
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
@@ -330,8 +330,8 @@ describe('"ImageVariable" component ', () => {
             expect.objectContaining({
                 label: expect.objectContaining({
                     props: {
-                        translationKey: imageVariable.name,
-                        value: imageVariable.name,
+                        translationKey: imageVariable.label,
+                        value: imageVariable.label,
                     },
                 }),
             }),
@@ -351,6 +351,25 @@ describe('"ImageVariable" component ', () => {
                     props: {
                         translationKey: imageVariable.label,
                         value: imageVariable.label,
+                    },
+                }),
+            }),
+            {},
+        );
+    });
+    it('should display variable name as variable label if label does not exist', () => {
+        const imageVariable = { ...variables[0] };
+        delete (imageVariable as unknown as { [key: string]: string }).label;
+        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
+        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+
+        expect(ImagePicker).toHaveBeenCalledWith(
+            expect.objectContaining({
+                label: expect.objectContaining({
+                    props: {
+                        translationKey: imageVariable.name,
+                        value: imageVariable.name,
                     },
                 }),
             }),
