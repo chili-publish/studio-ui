@@ -13,7 +13,7 @@ jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
 }));
 
 describe('BooleanVariable', () => {
-    it('should display label as variable name', () => {
+    it('should display label as variable label if label is empty', () => {
         const booleanVar = {
             ...(variables.find((item) => item.id === 'boolean-var-id') as Type),
         };
@@ -23,7 +23,9 @@ describe('BooleanVariable', () => {
             </UiThemeProvider>,
         );
 
-        expect(screen.getByText(booleanVar.name)).toBeInTheDocument();
+        const variableLabel = screen.queryByText(booleanVar.label);
+        // the label is empty string won't be rendered
+        expect(variableLabel).toBeNull();
     });
 
     it('should display label as variable label', () => {
@@ -37,5 +39,19 @@ describe('BooleanVariable', () => {
         );
 
         expect(screen.getByText(booleanVar.label)).toBeInTheDocument();
+    });
+    it('should display label as variable name if label does not exist', () => {
+        const booleanVar = {
+            ...(variables.find((item) => item.id === 'boolean-var-id') as Type),
+        };
+        delete (booleanVar as unknown as { [key: string]: string }).label;
+
+        render(
+            <UiThemeProvider theme="platform">
+                <BooleanVariable variable={{ ...booleanVar }} handleValueChange={jest.fn()} />;
+            </UiThemeProvider>,
+        );
+
+        expect(screen.getByText(booleanVar.name)).toBeInTheDocument();
     });
 });
