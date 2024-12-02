@@ -240,7 +240,7 @@ describe('Variable Component', () => {
         const variable = await waitFor(() => screen.getByText('Var label'));
         expect(variable).toBeInTheDocument();
     });
-    it('Uses the variable label when available and empty', async () => {
+    it('Uses the variable label if available and fall back to variable name if not', async () => {
         const varWithoutLabel = variables.find(
             (item) => item.id === 'shortVariable-without-label',
         ) as ShortTextVariable;
@@ -257,6 +257,6 @@ describe('Variable Component', () => {
         );
 
         const variableName = screen.queryByText(varWithoutLabel.name);
-        expect(variableName).toBeNull();
+        expect(variableName?.textContent).toBe(varWithoutLabel.name);
     });
 });
