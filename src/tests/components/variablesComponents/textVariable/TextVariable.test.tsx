@@ -26,7 +26,7 @@ describe('TextVariable', () => {
         expect(screen.getByPlaceholderText(PLACEHOLDER)).toBeInTheDocument();
     });
 
-    it('should display label as variable name', () => {
+    it('should display label as variable label if label exist and empty', () => {
         const variable = variables.find((item) => item.id === 'longVariable1');
         const textVariable = { ...variable, label: '' } as LongTextVariable;
         render(
@@ -35,7 +35,7 @@ describe('TextVariable', () => {
             </UiThemeProvider>,
         );
 
-        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(textVariable.name);
+        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(textVariable.label);
     });
 
     it('should display label as variable label', () => {
@@ -48,5 +48,19 @@ describe('TextVariable', () => {
         );
 
         expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(textVariable.label);
+    });
+
+    it('should display name as variable label if label does not exist', () => {
+        const variable = variables.find((item) => item.id === 'longVariable1');
+        const textVariable = { ...variable } as LongTextVariable;
+        delete (textVariable as unknown as { [key: string]: string }).label;
+
+        render(
+            <UiThemeProvider theme="platform">
+                <TextVariable variable={textVariable} onValueChange={jest.fn()} />;
+            </UiThemeProvider>,
+        );
+
+        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(textVariable.name);
     });
 });
