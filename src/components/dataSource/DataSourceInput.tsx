@@ -61,7 +61,8 @@ function DataSourceInput({
                             icon={AvailableIcons.faTable}
                         />
                     ),
-                    onClick: onInputClick,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onClick: onInputClick as any,
                 }}
             />
 
