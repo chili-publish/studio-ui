@@ -11,6 +11,7 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
+import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -223,10 +224,11 @@ export class StudioProjectLoader {
             });
             return mappedOutputSettings;
         };
-
-        if (userInterfaceId) {
+        // userInterfaceID from projectConfig or session-stored userInterfaceId
+        const userInterface = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
+        if (userInterface) {
             const userInterfaceData: UserInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterfaceId}`, {
+                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
                     headers: { Authorization: `Bearer ${this.authToken}` },
                 })
                 .then((res) => res.data)

@@ -14,7 +14,6 @@ const useUserInterfaceSelector = () => {
     const validUserInterfaceForTemplate = userInterfaces.find(
         (item) => item.id === sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY),
     )?.id;
-
     const selectedUserInterface =
         validUserInterfaceForTemplate || selectedUserInterfaceId || userInterfaces.find((item) => item.default)?.id;
 
