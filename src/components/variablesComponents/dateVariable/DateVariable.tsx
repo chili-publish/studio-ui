@@ -42,7 +42,7 @@ function DateVariable(props: IDateVariable) {
 
     const variableLabel = useMemo(() => {
         if (isOpenOnMobile) return '';
-        if (featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED) return variable.label;
+        if (featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label) return variable.label;
         return variable.name;
     }, [featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED, isOpenOnMobile, variable.label, variable.name]);
 

@@ -25,7 +25,10 @@ function BooleanVariable(props: IBooleanVariable) {
                     id={`ui-${variable.id}`}
                     label={{
                         key: 'visible',
-                        value: featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name,
+                        value:
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name,
                     }}
                     onChange={(val: boolean) => {
                         handleValueChange(val);

@@ -49,8 +49,16 @@ function ImageVariable(props: IImageVariable) {
                 id={variable.id}
                 label={
                     <Label
-                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
-                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        translationKey={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
+                        value={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
                     />
                 }
                 required={variable.isRequired}

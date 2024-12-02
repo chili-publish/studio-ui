@@ -19,8 +19,16 @@ function NumberVariable(props: INumberVariable) {
                 precision={variable.numberOfDecimals}
                 label={
                     <Label
-                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
-                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        translationKey={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
+                        value={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
                     />
                 }
                 value={`${variable.value}`}

@@ -43,8 +43,16 @@ function TextVariable(props: ITextVariable) {
                 name={variable.id}
                 label={
                     <Label
-                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
-                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        translationKey={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
+                        value={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED && variable.label
+                                ? variable.label
+                                : variable.name
+                        }
                     />
                 }
                 validation={validationError ? ValidationTypes.ERROR : undefined}
