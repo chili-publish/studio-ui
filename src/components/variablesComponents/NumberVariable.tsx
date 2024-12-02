@@ -21,12 +21,12 @@ function NumberVariable(props: INumberVariable) {
                     <Label
                         translationKey={
                             featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label || variable.name
+                                ? variable.label ?? variable.name
                                 : variable.name
                         }
                         value={
                             featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label || variable.name
+                                ? variable.label ?? variable.name
                                 : variable.name
                         }
                     />

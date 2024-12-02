@@ -26,7 +26,7 @@ function BooleanVariable(props: IBooleanVariable) {
                     label={{
                         key: 'visible',
                         value: featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                            ? variable.label || variable.name
+                            ? variable.label ?? variable.name
                             : variable.name,
                     }}
                     onChange={(val: boolean) => {

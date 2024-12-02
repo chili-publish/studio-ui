@@ -38,7 +38,7 @@ function ListVariable(props: IListVariable) {
                         dataId={variable.id}
                         label={
                             featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label || variable.name
+                                ? variable.label ?? variable.name
                                 : variable.name
                         }
                         selectedValue={selectedValue || ''}
