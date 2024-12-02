@@ -13,7 +13,7 @@ jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
 }));
 
 describe('ListVariable', () => {
-    it('should display label as variable name', () => {
+    it('should display label as variable name if label is empty', () => {
         const variable = variables.find((item) => item.id === '10');
         const listVariable = { ...variable, label: '' } as Type;
         render(
@@ -21,8 +21,9 @@ describe('ListVariable', () => {
                 <ListVariable variable={listVariable} onChange={jest.fn()} />;
             </UiThemeProvider>,
         );
-
-        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(listVariable.name);
+        const variableLabel = screen.queryByTestId(getDataTestId('input-label'));
+        // the label is empty string won't be rendered
+        expect(variableLabel).toBeNull();
     });
 
     it('should display label as variable label', () => {
@@ -35,5 +36,19 @@ describe('ListVariable', () => {
         );
 
         expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(listVariable.label);
+    });
+
+    it('should display label as variable name if label does not exist', () => {
+        const variable = variables.find((item) => item.id === '10');
+        const listVariable = { ...variable } as Type;
+        delete (listVariable as unknown as { [key: string]: string }).label;
+
+        render(
+            <UiThemeProvider theme="platform">
+                <ListVariable variable={listVariable} onChange={jest.fn()} />;
+            </UiThemeProvider>,
+        );
+
+        expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(listVariable.name);
     });
 });
