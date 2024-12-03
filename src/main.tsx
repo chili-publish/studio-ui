@@ -110,7 +110,7 @@ export default class StudioUI {
         featureFlags: Record<string, boolean> | undefined,
         onSandboxModeToggle: (() => void) | undefined,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectDocumentRequested: (projectId: string) => Promise<string>,
+        onProjectDocumentRequested: (projectId: string) => Promise<string | null>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,

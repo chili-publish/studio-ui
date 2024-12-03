@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
     DownloadLinkResult,
     HttpHeaders,
@@ -75,7 +75,7 @@ export class StudioProjectLoader {
         return this.cachedProject;
     };
 
-    public onProjectDocumentRequested = async (): Promise<string> => {
+    public onProjectDocumentRequested = async (): Promise<string | null> => {
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
         return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
     };
@@ -133,22 +133,19 @@ export class StudioProjectLoader {
         );
     };
 
-    private static fetchDocument = async (templateUrl: string, token: string): Promise<string> => {
+    private static fetchDocument = async (templateUrl: string, token: string): Promise<string | null> => {
         const url = templateUrl;
         if (url) {
             const fetchPromise = axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
             return fetchPromise
-                .then((response) => {
-                    return response;
-                })
                 .then((res) => {
                     return JSON.stringify(res.data);
                 })
                 .catch(() => {
-                    return '{}';
+                    return null;
                 });
         }
-        return '{}';
+        return null;
     };
 
     private saveDocument = async (
