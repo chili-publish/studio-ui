@@ -15,7 +15,7 @@ export const variables: Variable[] = [
     <ImageVariable>(<unknown>{
         id: 'variable1',
         name: 'Variable1',
-        label: 'Variable1',
+        label: 'Variable1 Label',
         type: VariableType.image,
         occurrences: 2,
         isVisible: true,
@@ -50,7 +50,7 @@ export const variables: Variable[] = [
     <LongTextVariable>{
         id: 'longVariable1',
         name: 'Long Variable 1',
-        label: 'Long Variable 1',
+        label: 'Long Variable 1 Label',
         type: VariableType.longText,
         value: 'I am long text',
         occurrences: 52,
@@ -65,7 +65,7 @@ export const variables: Variable[] = [
     <NumberVariable>{
         id: 'number-variable',
         name: 'Number Variable 1',
-        label: 'Number Variable 1',
+        label: 'Number Variable 1 Label',
         type: VariableType.number,
         value: 13.55,
         occurrences: 1,
@@ -81,7 +81,7 @@ export const variables: Variable[] = [
     <DateVariable>{
         id: 'date-variable',
         name: 'Date Variable 1',
-        label: 'Date Variable 1',
+        label: 'Date Variable 1 Label',
         type: VariableType.date,
         occurrences: 0,
         isVisible: true,
@@ -91,7 +91,7 @@ export const variables: Variable[] = [
     <ListVariable>{
         id: '10',
         name: 'List',
-        label: 'List',
+        label: 'List label',
         type: VariableType.list,
         occurrences: 0,
         isVisible: true,
