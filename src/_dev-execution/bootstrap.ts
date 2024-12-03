@@ -77,6 +77,7 @@ import { TokenManager } from './token-manager';
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
         featureFlags: {
+            STUDIO_LABEL_PROPERTY_ENABLED: true,
             STUDIO_DATA_SOURCE: true,
         },
     });

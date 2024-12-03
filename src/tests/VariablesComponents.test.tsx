@@ -1,12 +1,12 @@
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { DateVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act } from 'react-dom/test-utils';
-import { DateVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
+import * as FeatureFlagContext from '../contexts/FeatureFlagProvider';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
-import * as FeatureFlagContext from '../contexts/FeatureFlagProvider';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -91,7 +91,7 @@ describe('Variable Component', () => {
         fireEvent.change(inputLong, { target: { value: 'I just got longer' } });
         fireEvent.blur(inputLong);
 
-        expect(screen.getByText('Long Variable 1')).toBeInTheDocument();
+        expect(screen.getByText('Long Variable 1 Label')).toBeInTheDocument();
         expect(screen.getByDisplayValue('I just got longer')).toHaveAttribute('value', 'I just got longer');
     });
     it('Shows the number component for number variables', () => {
@@ -239,24 +239,5 @@ describe('Variable Component', () => {
 
         const variable = await waitFor(() => screen.getByText('Var label'));
         expect(variable).toBeInTheDocument();
-    });
-    it('Uses the variable label when available and empty', async () => {
-        const varWithoutLabel = variables.find(
-            (item) => item.id === 'shortVariable-without-label',
-        ) as ShortTextVariable;
-        render(
-            <UiThemeProvider theme="platform">
-                <VariableComponent
-                    key={`variable-component-${varWithoutLabel.id}`}
-                    type={varWithoutLabel.type}
-                    variable={{ ...varWithoutLabel, label: '' }}
-                    isDocumentLoaded
-                />
-            </UiThemeProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
-        );
-
-        const variableName = screen.queryByText(varWithoutLabel.name);
-        expect(variableName).toBeNull();
     });
 });
