@@ -1,7 +1,7 @@
-import axios, { AxiosError } from 'axios';
 import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { Project } from '../types/types';
+import axios, { AxiosError } from 'axios';
 import { StudioProjectLoader } from '../StudioProjectLoader';
+import { Project } from '../types/types';
 
 jest.mock('axios');
 
@@ -107,6 +107,26 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectDocumentRequested();
 
             expect(result).toEqual(JSON.stringify(mockDocument.data));
+            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
+                headers: { Authorization: 'Bearer mockAuthToken' },
+            });
+        });
+
+        it('should return "null" in case of error', async () => {
+            (axios.get as jest.Mock).mockRejectedValueOnce({});
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            const result = await loader.onProjectDocumentRequested();
+
+            expect(result).toBeNull();
             expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
                 headers: { Authorization: 'Bearer mockAuthToken' },
             });

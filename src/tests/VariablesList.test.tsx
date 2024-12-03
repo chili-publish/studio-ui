@@ -1,9 +1,9 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
-import { variables } from './mocks/mockVariables';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -36,10 +36,10 @@ describe('Variables List', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
-        const variable1 = await screen.findByText(variables[0].label);
-        const variable12 = await screen.findByText(variables[1].label);
-        const shortVariable1 = screen.getByText(variables[2].label);
-        const longVariable1 = screen.queryByText(variables[3].label);
+        const variable1 = await screen.findByText(variables[0].name);
+        const variable12 = await screen.findByText(variables[1].name);
+        const shortVariable1 = screen.getByText(variables[2].name);
+        const longVariable1 = screen.queryByText(variables[3].name);
 
         expect(variable1).toBeInTheDocument();
         expect(variable12).toBeInTheDocument();
