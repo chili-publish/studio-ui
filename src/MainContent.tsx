@@ -20,19 +20,19 @@ import {
     useConnectorAuthenticationResult,
 } from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import Navbar from './components/navbar/Navbar';
+import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
+import MobileVariablesTray from './components/variables/MobileVariablesTray';
+import AppProvider from './contexts/AppProvider';
+import { useAuthToken } from './contexts/AuthTokenProvider';
+import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
-import { Project, ProjectConfig } from './types/types';
-import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import MobileVariablesTray from './components/variables/MobileVariablesTray';
-import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
-import Navbar from './components/navbar/Navbar';
-import { APP_WRAPPER_ID } from './utils/constants';
-import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { SuiCanvas } from './MainContent.styles';
-import { useAuthToken } from './contexts/AuthTokenProvider';
-import AppProvider from './contexts/AppProvider';
+import { Project, ProjectConfig } from './types/types';
+import { APP_WRAPPER_ID } from './utils/constants';
+import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
 declare global {
     interface Window {
@@ -48,7 +48,7 @@ interface MainContentProps {
 }
 
 function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentProps) {
-    const [fetchedDocument, setFetchedDocument] = useState('');
+    const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
     const [variables, setVariables] = useState<Variable[]>([]);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
@@ -266,18 +266,19 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [currentProject?.template?.id]);
 
     useEffect(() => {
-        const setHandTool = async () => {
-            await window.StudioUISDK.tool.setHand();
-        };
-        setHandTool();
-        const loadDocument = async () => {
-            if (authToken) {
-                await window.StudioUISDK.configuration.setValue(
-                    WellKnownConfigurationKeys.GraFxStudioAuthToken,
-                    authToken,
-                );
-            }
+        (async () => {
+            await window.StudioUISDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+        })();
+    }, [authToken]);
 
+    useEffect(() => {
+        (async () => {
+            await window.StudioUISDK.tool.setHand();
+        })();
+    }, []);
+
+    useEffect(() => {
+        const loadDocument = async () => {
             if (!fetchedDocument) return;
 
             await window.StudioUISDK.document.load(fetchedDocument).then((res) => {
@@ -301,7 +302,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         };
 
         loadDocument();
-    }, [authToken, fetchedDocument]);
+    }, [fetchedDocument]);
 
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
