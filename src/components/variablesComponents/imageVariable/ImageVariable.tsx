@@ -2,14 +2,14 @@ import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-comp
 import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import { IImageVariable } from '../VariablesComponents.types';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
-import { useVariableConnector } from './useVariableConnector';
-import { usePreviewImageUrl } from './usePreviewImageUrl';
-import { useMediaDetails } from './useMediaDetails';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { IImageVariable } from '../VariablesComponents.types';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
+import { useMediaDetails } from './useMediaDetails';
+import { usePreviewImageUrl } from './usePreviewImageUrl';
+import { useVariableConnector } from './useVariableConnector';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove } = props;
@@ -49,8 +49,16 @@ function ImageVariable(props: IImageVariable) {
                 id={variable.id}
                 label={
                     <Label
-                        translationKey={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
-                        value={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        translationKey={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
+                                ? variable.label ?? variable.name
+                                : variable.name
+                        }
+                        value={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
+                                ? variable.label ?? variable.name
+                                : variable.name
+                        }
                     />
                 }
                 required={variable.isRequired}
