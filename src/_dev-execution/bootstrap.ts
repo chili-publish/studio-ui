@@ -78,6 +78,7 @@ import { TokenManager } from './token-manager';
         },
         featureFlags: {
             STUDIO_LABEL_PROPERTY_ENABLED: true,
+            STUDIO_DATA_SOURCE: true,
         },
     });
 })();

@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import {
     AvailableIcons,
     Button,
@@ -9,21 +8,22 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
+import { useCallback, useState } from 'react';
 import { css } from 'styled-components';
+import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import ImagePanel from '../imagePanel/ImagePanel';
-import { EditButtonWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
-import MobileVariablesList from './MobileVariablesList';
 import { APP_WRAPPER_ID } from '../../utils/constants';
-import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
-import DataSourceTable from '../dataSource/DataSourceTable';
-import DataSourceInput from '../dataSource/DataSourceInput';
-import useDataSource from '../dataSource/useDataSource';
-import useDataSourceInputHandler from './useDataSourceInputHandler';
-import MobileTrayHeader from './MobileTrayHeader';
-import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
+import DataSourceInput from '../dataSource/DataSourceInput';
+import DataSourceTable from '../dataSource/DataSourceTable';
+import useDataSource from '../dataSource/useDataSource';
+import ImagePanel from '../imagePanel/ImagePanel';
+import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
+import MobileTrayHeader from './MobileTrayHeader';
+import MobileVariablesList from './MobileVariablesList';
+import useDataSourceInputHandler from './useDataSourceInputHandler';
+import { EditButtonWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -49,7 +49,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
 
     const {
-        currentRow,
+        currentInputRow,
         currentRowIndex,
         updateSelectedRow,
         isLoading,
@@ -66,7 +66,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         onDataRowsLoad: loadDataRows,
         onRowConfirmed: updateSelectedRow,
-        currentRow,
+        currentRow: currentInputRow,
         onDataSourcePanelOpen: showDataSourcePanel,
         onDataSourcePanelClose: showVariablesPanel,
     });
@@ -129,7 +129,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
                     {isDataSourceInputShown && featureFlags?.STUDIO_DATA_SOURCE ? (
                         <DataSourceInput
-                            currentRow={currentRow}
+                            currentRow={currentInputRow}
                             currentRowIndex={currentRowIndex}
                             dataIsLoading={isLoading}
                             isPrevDisabled={isPrevDisabled}
