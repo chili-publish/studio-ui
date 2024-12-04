@@ -1,6 +1,6 @@
 import { LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
+import { DataItem } from '@chili-publish/studio-sdk';
 import { LoadingContainer } from './DataSourceModal.styles';
-import { DataItem } from './DataSource.types';
 
 interface DataSourceTableProps {
     data: DataItem[];
@@ -27,8 +27,13 @@ function DataSourceTable({
 
     return (
         <>
-            <Table defaultSelectedRow={selectedRow} rows={data} onSelectedRowChanged={onSelectedRowChanged} />
-            {dataIsLoading && data.length !== 0 && (
+            <Table
+                defaultSelectedRow={selectedRow}
+                // Type casting is necessary since currently table supports only string and number
+                rows={data as Record<string, string | number>[]}
+                onSelectedRowChanged={onSelectedRowChanged}
+            />
+            {dataIsLoading && (
                 <LoadingContainer>
                     <LoadingIcon />
                 </LoadingContainer>
