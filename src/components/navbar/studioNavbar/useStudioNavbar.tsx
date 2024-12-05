@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTheme } from '@chili-publish/grafx-shared-components';
 import useNavbarDownloadBtn from '../navbarItems/useNavbarDownloadBtn';
 import useNavbarUndoRedoItems from '../navbarItems/useNavbarUndoRedo';
@@ -9,6 +9,7 @@ import useNavbarMenu from '../navbarItems/useNavbarMenu';
 import useNavbarModeToggle from '../navbarItems/useNavbarModeToggle';
 import useUserInterfaceSelector from '../navbarItems/useUserInterfaceSelector';
 import { ProjectConfig } from '../../../types/types';
+import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 
 interface INavbar {
     projectName: string | undefined;
@@ -26,10 +27,18 @@ const useStudioNavbar = ({
     onBackClick,
     onDownloadPanelOpen,
 }: INavbar) => {
+    const handleOnBack = useCallback(() => {
+        if (onBackClick) {
+            sessionStorage.removeItem(SESSION_USER_INTEFACE_ID_KEY);
+            return onBackClick?.();
+        }
+        return undefined;
+    }, [onBackClick]);
+    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick: handleOnBack });
+
     const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
     const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen);
     const { zoomNavbarItem } = useNavbarZoom(zoom);
-    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick });
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
     const { mode } = useTheme();

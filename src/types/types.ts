@@ -1,6 +1,6 @@
+import { ITheme } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
-import { ITheme } from '@chili-publish/grafx-shared-components';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export type FeatureFlagsType = Record<string, boolean>;
@@ -17,7 +17,7 @@ export interface ProjectConfig {
     featureFlags?: FeatureFlagsType;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
-    onProjectDocumentRequested: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested: (projectId: string) => Promise<string | null>;
     onProjectLoaded: (project: Project) => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
@@ -57,7 +57,7 @@ export interface DefaultStudioConfig {
 
 export interface StudioConfig extends DefaultStudioConfig {
     onProjectInfoRequested: () => Promise<Project>;
-    onProjectDocumentRequested: () => Promise<string>;
+    onProjectDocumentRequested: () => Promise<string | null>;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
 }
 
@@ -177,7 +177,7 @@ export interface IStudioUILoaderConfig {
     featureFlags?: Record<string, boolean>;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId: string) => Promise<Project>;
-    onProjectDocumentRequested?: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested?: (projectId: string) => Promise<string | null>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
     onProjectLoaded?: (project: Project) => void;
     onAuthenticationRequested?: () => string;

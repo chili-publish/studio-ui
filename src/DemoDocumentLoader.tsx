@@ -6,7 +6,7 @@ export class DemoDocumentLoader {
 
     onProjectInfoRequested: (projectId: string) => Promise<Project>;
 
-    onProjectDocumentRequested: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested: (projectId: string) => Promise<string | null>;
 
     onProjectLoaded: (project: Project) => void;
 
