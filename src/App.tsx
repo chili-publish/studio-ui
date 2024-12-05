@@ -2,6 +2,7 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import './App.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
 import { SubscriberContextProvider } from './contexts/Subscriber';
 import MainContent from './MainContent';
