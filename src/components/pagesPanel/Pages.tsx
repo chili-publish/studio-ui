@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Page } from '@chili-publish/studio-sdk';
-import { PreviewCard, PreviewCardVariant, PreviewType, useTheme } from '@chili-publish/grafx-shared-components';
+import {
+    PreviewCard,
+    PreviewCardVariant,
+    PreviewType,
+    useMobileSize,
+    useTheme,
+} from '@chili-publish/grafx-shared-components';
 import { ScrollableContainer, Card, Container } from './Pages.styles';
 import { PREVIEW_FALLBACK } from '../../utils/constants';
 import { PageSnapshot } from '../../types/types';
@@ -16,6 +22,7 @@ interface PagesProps {
 function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: PagesProps) {
     const theme = useTheme();
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
+    const isMobileSize = useMobileSize();
 
     const handleSelectPage = async (pageId: string) => {
         await window.StudioUISDK.page.select(pageId);
@@ -74,7 +81,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
 
     return (
         <Container themeStyles={theme}>
-            <ScrollableContainer>
+            <ScrollableContainer isMobileSize={isMobileSize}>
                 {!!pages?.length &&
                     pages.map((item, index) => (
                         <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>

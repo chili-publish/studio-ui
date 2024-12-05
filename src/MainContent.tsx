@@ -364,6 +364,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             <MobileVariablesTray
                                                 variables={variables}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
+                                                isPagesPanelDisplayed={
+                                                    layoutIntent === LayoutIntent.print && pages?.length > 1
+                                                }
                                                 isDocumentLoaded={isDocumentLoaded}
                                             />
                                         )}
