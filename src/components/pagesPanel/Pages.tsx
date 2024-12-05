@@ -28,20 +28,21 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         await window.StudioUISDK.page.select(pageId);
     };
 
-    const getPagesSnapshot = useCallback(async (p: Page[]) => {
-        const snapArray = p.map((page) =>
-            window.SDK.page.getSnapshot(page.id).then((snapshot) => ({
-                id: page.id,
+    const getPagesSnapshot = useCallback(async (ids: string[]) => {
+        const snapArray = ids.map((id) =>
+            window.SDK.page.getSnapshot(id).then((snapshot) => ({
+                id,
                 snapshot: snapshot as unknown as Uint8Array,
             })),
         );
         const awaitedArray = await Promise.all(snapArray);
         setPageSnapshots(awaitedArray);
+        return awaitedArray as PageSnapshot[];
     }, []);
 
     useEffect(() => {
         if (pages?.length && !pageSnapshots.length) {
-            getPagesSnapshot(pages);
+            getPagesSnapshot(pages.map((i) => i.id));
         }
     }, [pages, pageSnapshots, getPagesSnapshot]);
 
@@ -49,18 +50,14 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         if (!pagesToRefresh.length) return;
 
         const updateSnapshots = async () => {
-            const updatedSnapshots = await Promise.all(
-                pagesToRefresh.map(async (pageId) => {
-                    const newSnap = (await window.SDK.page.getSnapshot(pageId)) as unknown as Uint8Array;
-                    return { pageId, snapshot: newSnap };
-                }),
-            );
+            const snapshotsArray = await getPagesSnapshot(pagesToRefresh);
+            const updatedSnapshots = await Promise.all(snapshotsArray);
 
             // Update state once with all new snapshots
             setPageSnapshots((prevSnapshots) => {
                 const newSnapshots = [...prevSnapshots];
-                updatedSnapshots.forEach(({ pageId, snapshot }) => {
-                    const idx = newSnapshots.findIndex((item) => item.id === pageId);
+                updatedSnapshots.forEach(({ id, snapshot }) => {
+                    const idx = newSnapshots.findIndex((item) => item.id === id);
                     if (idx !== -1) {
                         newSnapshots[idx] = { ...newSnapshots[idx], snapshot };
                     }
@@ -77,7 +74,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         return () => {
             clearTimeout(timeoutId);
         };
-    }, [pagesToRefresh, setPagesToRefresh]);
+    }, [pagesToRefresh, setPagesToRefresh, getPagesSnapshot]);
 
     return (
         <Container themeStyles={theme}>
