@@ -1,28 +1,24 @@
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const Container = styled.div<{ themeStyles: ITheme }>`
+export const Container = styled.div<{ themeStyles: ITheme; isMobileSize: boolean }>`
     box-sizing: border-box;
     display: flex;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 100%;
+    justify-content: center;
+    max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.875rem)' : '100%')};
     height: 7.5rem;
-
-    background: ${({ themeStyles }) => themeStyles.timeline.wrapper.backgroundColor};
+    background: ${({ themeStyles }) => themeStyles.panel.backgroundColor};
     border-top: 2px solid ${({ themeStyles }) => themeStyles.panel.borderColor};
 `;
-export const ScrollableContainer = styled.div<{ isMobileSize: boolean }>`
+export const ScrollableContainer = styled.div`
     display: flex;
     height: 100%;
     padding: 0 0.625rem;
     align-items: center;
     overflow-x: auto;
+    width: auto;
     white-space: nowrap;
-    max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.75rem)' : '100%')};
     overflow-y: hidden;
-    white-space: nowrap;
-    scrollbar-width: thin;
 `;
 export const Card = styled.div<{ themeStyles: ITheme; selected?: boolean }>`
     box-sizing: border-box;
