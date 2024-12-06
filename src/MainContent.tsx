@@ -5,6 +5,7 @@ import StudioSDK, {
     DocumentType,
     GrafxTokenAuthCredentials,
     LayoutIntent,
+    Page,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
@@ -30,6 +31,7 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { SuiCanvas } from './MainContent.styles';
+import Pages from './components/pagesPanel/Pages';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
@@ -61,6 +63,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
+
+    const [pages, setPages] = useState<Page[]>([]);
+    const [activePageId, setActivePageId] = useState<string | null>(null);
+    const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
 
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
@@ -209,6 +215,18 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
             },
+            onPageSnapshotInvalidated: (invalidatedPageId) => {
+                setPagesToRefresh((prev) => {
+                    return prev.includes(String(invalidatedPageId)) ? prev : [...prev, String(invalidatedPageId)];
+                });
+            },
+            onPagesChanged: (changedPages) => {
+                const visiblePages = changedPages?.filter((i) => i.isVisible);
+                setPages(visiblePages);
+            },
+            onSelectedPageIdChanged: (pageId) => {
+                setActivePageId(pageId);
+            },
             onPageSizeChanged: () => {
                 zoomToPage();
             },
@@ -346,10 +364,15 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             <MobileVariablesTray
                                                 variables={variables}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
+                                                isPagesPanelDisplayed={
+                                                    layoutIntent === LayoutIntent.print && pages?.length > 1
+                                                }
                                                 isDocumentLoaded={isDocumentLoaded}
                                             />
                                         )}
                                         <SuiCanvas
+                                            // intent prop to calculate pages container
+                                            hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
@@ -361,6 +384,14 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 scrubberTimeMs={scrubberTimeMs}
                                                 animationLength={animationLength}
                                                 isAnimationPlaying={animationStatus}
+                                            />
+                                        ) : null}
+                                        {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                            <Pages
+                                                pages={pages}
+                                                activePageId={activePageId}
+                                                pagesToRefresh={pagesToRefresh}
+                                                setPagesToRefresh={setPagesToRefresh}
                                             />
                                         ) : null}
                                     </CanvasContainer>

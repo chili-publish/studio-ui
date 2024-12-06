@@ -1,10 +1,14 @@
 import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean }>`
+export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean; isPagesPanelDisplayed?: boolean }>`
     position: fixed;
-    left: 2rem;
-    bottom: ${({ isTimelineDisplayed }) => (isTimelineDisplayed ? '6.5rem' : '2.5rem')};
+    left: 1rem;
+    bottom: ${({ isTimelineDisplayed, isPagesPanelDisplayed }) => {
+        if (isTimelineDisplayed) return '6.5rem';
+        if (isPagesPanelDisplayed) return '8.5rem';
+        return '2.5rem';
+    }};
 `;
 
 export const VariablesContainer = styled.div<{ height?: string }>`

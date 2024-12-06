@@ -190,3 +190,8 @@ export interface IStudioUILoaderConfig {
     ) => Promise<DownloadLinkResult>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
 }
+
+export type PageSnapshot = {
+    id: string;
+    snapshot: Uint8Array;
+};

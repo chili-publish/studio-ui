@@ -28,6 +28,7 @@ import { EditButtonWrapper, TrayPanelTitle, VariablesContainer } from './Variabl
 interface VariablesPanelProps {
     variables: Variable[];
     isTimelineDisplayed?: boolean;
+    isPagesPanelDisplayed?: boolean;
     isDocumentLoaded: boolean;
 }
 
@@ -39,7 +40,7 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isDocumentLoaded, isTimelineDisplayed } = props;
+    const { variables, isDocumentLoaded, isTimelineDisplayed, isPagesPanelDisplayed } = props;
     const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -94,7 +95,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     return (
         <>
-            <EditButtonWrapper isTimelineDisplayed={isTimelineDisplayed}>
+            <EditButtonWrapper isTimelineDisplayed={isTimelineDisplayed} isPagesPanelDisplayed={isPagesPanelDisplayed}>
                 <Button
                     dataTestId={getDataTestIdForSUI('mobile-variables')}
                     variant={ButtonVariant.primary}
