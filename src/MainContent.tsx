@@ -372,7 +372,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                         )}
                                         <SuiCanvas
                                             // intent prop to calculate pages container
-                                            hasMultiplePages={layoutIntent === LayoutIntent.print}
+                                            hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}

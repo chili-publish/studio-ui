@@ -4,6 +4,7 @@ import {
     PreviewCard,
     PreviewCardVariant,
     PreviewType,
+    ScrollbarWrapper,
     useMobileSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
@@ -77,36 +78,38 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
     }, [pagesToRefresh, setPagesToRefresh, getPagesSnapshot]);
 
     return (
-        <Container themeStyles={theme}>
-            <ScrollableContainer isMobileSize={isMobileSize}>
-                {!!pages?.length &&
-                    pages.map((item, index) => (
-                        <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>
-                            <Card themeStyles={theme} selected={item.id === activePageId} key={`card-${item.id}`}>
-                                <PreviewCard
-                                    key={`${item.id}-preview-card`}
-                                    path={
-                                        pageSnapshots[index] &&
-                                        URL.createObjectURL(
-                                            new Blob([pageSnapshots[index].snapshot.buffer], { type: 'image/png' }),
-                                        )
-                                    }
-                                    type={PreviewType.IMAGE}
-                                    itemId={item.id}
-                                    fallback={PREVIEW_FALLBACK}
-                                    padding="0"
-                                    options={[]}
-                                    renamingDisabled
-                                    variant={PreviewCardVariant.LIST}
-                                    selected={item.id === activePageId}
-                                    onClickCard={() => {
-                                        handleSelectPage(item.id);
-                                    }}
-                                />
-                            </Card>
-                        </PreviewCardBadge>
-                    ))}
-            </ScrollableContainer>
+        <Container themeStyles={theme} isMobileSize={isMobileSize}>
+            <ScrollbarWrapper invertScrollbarColors>
+                <ScrollableContainer>
+                    {!!pages?.length &&
+                        pages.map((item, index) => (
+                            <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>
+                                <Card themeStyles={theme} selected={item.id === activePageId} key={`card-${item.id}`}>
+                                    <PreviewCard
+                                        key={`${item.id}-preview-card`}
+                                        path={
+                                            pageSnapshots[index] &&
+                                            URL.createObjectURL(
+                                                new Blob([pageSnapshots[index].snapshot.buffer], { type: 'image/png' }),
+                                            )
+                                        }
+                                        type={PreviewType.IMAGE}
+                                        itemId={item.id}
+                                        fallback={PREVIEW_FALLBACK}
+                                        padding="0"
+                                        options={[]}
+                                        renamingDisabled
+                                        variant={PreviewCardVariant.LIST}
+                                        selected={item.id === activePageId}
+                                        onClickCard={() => {
+                                            handleSelectPage(item.id);
+                                        }}
+                                    />
+                                </Card>
+                            </PreviewCardBadge>
+                        ))}
+                </ScrollableContainer>
+            </ScrollbarWrapper>
         </Container>
     );
 }
