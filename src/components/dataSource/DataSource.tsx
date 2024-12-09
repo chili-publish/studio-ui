@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import useDataSource from './useDataSource';
-import DataSourceModal from './DataSourceModal';
-import DataSourceInput from './DataSourceInput';
+import { useCallback, useState } from 'react';
 import { PanelTitle } from '../shared/Panel.styles';
+import DataSourceInput from './DataSourceInput';
+import DataSourceModal from './DataSourceModal';
+import useDataSource from './useDataSource';
 
 interface DataSourceProps {
     isDocumentLoaded: boolean;
@@ -13,7 +13,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
 
     const {
-        currentRow,
+        currentInputRow,
         currentRowIndex,
         updateSelectedRow,
         isLoading,
@@ -39,20 +39,25 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         [updateSelectedRow],
     );
 
-    const onInputClick = useCallback(() => {
-        if (!currentRow) {
-            loadDataRows();
-        } else {
-            setIsDataSourceModalOpen(true);
-        }
-    }, [currentRow, loadDataRows]);
+    const onInputClick = useCallback(
+        (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+            // input value needs to be truncated when datatable is open
+            event.currentTarget.blur();
+            if (!currentInputRow) {
+                loadDataRows();
+            } else {
+                setIsDataSourceModalOpen(true);
+            }
+        },
+        [currentInputRow, loadDataRows],
+    );
 
     if (!hasDataConnector) return null;
     return (
         <>
             <PanelTitle panelTheme={panel}>Data source</PanelTitle>
             <DataSourceInput
-                currentRow={currentRow}
+                currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}
                 dataIsLoading={isLoading}
                 isPrevDisabled={isPrevDisabled}

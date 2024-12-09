@@ -9,7 +9,7 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { RowInfoContainer } from './DataSource.styles';
+import { DATA_SOURCE_ID, DataSourceInputStyle, RowInfoContainer } from './DataSource.styles';
 import { Text } from '../../styles/Main.styles';
 
 interface DataSourceInputProps {
@@ -20,7 +20,7 @@ interface DataSourceInputProps {
     isNextDisabled: boolean;
     isPrevDisabled: boolean;
 
-    onInputClick: () => void;
+    onInputClick: (_: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => void;
     onPrevClick: () => void;
     onNextClick: () => void;
 }
@@ -37,11 +37,12 @@ function DataSourceInput({
     const { icon, mode } = useTheme();
     return (
         <>
+            <DataSourceInputStyle disabled={dataIsLoading} iconStyle={icon} />
             <Input
                 type="text"
                 readOnly
                 disabled={dataIsLoading}
-                dataId={getDataIdForSUI(`data-source-input`)}
+                dataId={DATA_SOURCE_ID}
                 dataTestId={getDataTestIdForSUI(`data-source-input`)}
                 dataIntercomId="data-source-input"
                 name="data-source-input"
@@ -60,7 +61,8 @@ function DataSourceInput({
                             icon={AvailableIcons.faTable}
                         />
                     ),
-                    onClick: onInputClick,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onClick: onInputClick as any,
                 }}
             />
 

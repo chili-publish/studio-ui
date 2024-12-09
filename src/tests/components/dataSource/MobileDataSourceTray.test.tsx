@@ -2,10 +2,10 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
-import { getDataTestIdForSUI } from '../../../utils/dataIds';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { getDataTestIdForSUI } from '../../../utils/dataIds';
 
 const dataRows = [
     { id: '1', name: 'Joe', age: 15 },
@@ -39,6 +39,8 @@ describe('MobileDataSource test', () => {
                 },
             ],
         });
+
+        window.StudioUISDK.dataSource.setDataRow = jest.fn();
     });
 
     afterEach(() => {
@@ -61,7 +63,7 @@ describe('MobileDataSource test', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByDisplayValue('1|Joe|15')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
             expect(screen.getByText('Row 1')).toBeInTheDocument();
         });
     });
@@ -94,12 +96,12 @@ describe('MobileDataSource test', () => {
         });
 
         await waitFor(() => {
-            const dataSourceRow = screen.getByDisplayValue('1|Joe|15');
+            const dataSourceRow = screen.getByDisplayValue('1 | Joe | 15');
             expect(dataSourceRow).toBeInTheDocument();
         });
 
         await act(async () => {
-            await user.click(screen.getByDisplayValue('1|Joe|15'));
+            await user.click(screen.getByDisplayValue('1 | Joe | 15'));
         });
 
         await waitFor(() => {
@@ -132,7 +134,7 @@ describe('MobileDataSource test', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByDisplayValue('3|Mary|17')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('3 | Mary | 17')).toBeInTheDocument();
         });
     });
 });
