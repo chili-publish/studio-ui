@@ -56,14 +56,16 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
 
             // Update state once with all new snapshots
             setPageSnapshots((prevSnapshots) => {
-                const newSnapshots = [...prevSnapshots];
+                const filteredSnapshots = prevSnapshots.filter((snap) => {
+                    return pages.find((p) => p.id === snap.id);
+                });
                 updatedSnapshots.forEach(({ id, snapshot }) => {
-                    const idx = newSnapshots.findIndex((item) => item.id === id);
+                    const idx = filteredSnapshots.findIndex((item) => item.id === id);
                     if (idx !== -1) {
-                        newSnapshots[idx] = { ...newSnapshots[idx], snapshot };
+                        filteredSnapshots[idx] = { ...filteredSnapshots[idx], snapshot };
                     }
                 });
-                return newSnapshots;
+                return filteredSnapshots;
             });
 
             setPagesToRefresh([]);
