@@ -26,9 +26,9 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@babel/preset-env": "^7.25.3",
         "@chili-publish/grafx-shared-components": "^0.88.7",
-        "@chili-publish/studio-sdk": "^1.17.2-rc.1",
+        "@chili-publish/studio-sdk": "^1.17.2-rc.2",
+        "@babel/preset-env": "^7.25.3",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",
         "@fortawesome/pro-regular-svg-icons": "^6.7.1",
