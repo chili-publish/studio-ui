@@ -34,7 +34,6 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
     const onSelectedRowChanged = useCallback(
         (index: number) => {
             updateSelectedRow(index);
-            setIsDataSourceModalOpen(false);
         },
         [updateSelectedRow],
     );

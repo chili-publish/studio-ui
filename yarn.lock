@@ -1307,10 +1307,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.88.7":
-  version "0.88.7"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.88.7/45252dbd33710f882c1aaf10261388490fc1d74c#45252dbd33710f882c1aaf10261388490fc1d74c"
-  integrity sha512-zTI0QC4UevhkkHvKnfpSFjGYpb7fwd3Fd340CmRJ1zCTWqjmpgijgLy/guotXlGqlXMabEwf4dlaqu8Sg+J4Ew==
+"@chili-publish/grafx-shared-components@^0.88.9":
+  version "0.88.9"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.88.9/cb5b638a3af435c9cb18db5146d32b555d83b5dd#cb5b638a3af435c9cb18db5146d32b555d83b5dd"
+  integrity sha512-e8FcZS3MCArXQxai60/6+IP7mg2OMArxVv7OgBDa1zgqnOFyGfFsbIjx71G01yMML6nJhN9lLqoUsM+Sbtlh8Q==
 
 "@chili-publish/studio-sdk@^1.17.2-rc.1":
   version "1.17.2-rc.1"

@@ -33,6 +33,7 @@ function DataSourceModal({
                 size={ModalSize.L}
                 isVisible
                 isResizable
+                isDraggable
                 onClose={onClose}
             >
                 <ModalLayout.Title>Data source</ModalLayout.Title>
