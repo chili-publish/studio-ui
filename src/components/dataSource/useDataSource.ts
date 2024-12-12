@@ -1,4 +1,5 @@
-import { ConnectorInstance, ConnectorType, DataItem } from '@chili-publish/studio-sdk';
+import { DataItem } from '@chili-publish/studio-sdk';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SDKError } from '../../types/SDKError';
 
@@ -63,8 +64,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     useEffect(() => {
         if (!isDocumentLoaded) return;
         const getDataConnector = async () => {
-            const dataConnectorsResponse = await window.StudioUISDK.connector.getAllByType(ConnectorType.data);
-            const defaultDataConnector = dataConnectorsResponse.parsedData?.[0] || null;
+            const { parsedData: defaultDataConnector } = await window.StudioUISDK.dataSource.getDataSource();
             setDataConnector(defaultDataConnector);
         };
         getDataConnector();
