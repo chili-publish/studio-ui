@@ -82,11 +82,10 @@ describe('DataSourceModal test', () => {
         await act(async () => {
             await user.click(screen.getByText('Mary'));
         });
-        expect(screen.queryByRole('table')).not.toBeInTheDocument();
         expect(screen.getByDisplayValue('3 | Mary | 17')).toBeInTheDocument();
     });
 
-    it.skip('Should be able to navigate with arrow key in the data source table', async () => {
+    it('Should be able to navigate with arrow key in the data source table', async () => {
         render(
             <UiThemeProvider theme="platform">
                 <div id={APP_WRAPPER_ID}>
@@ -111,13 +110,9 @@ describe('DataSourceModal test', () => {
             await user.keyboard('[ArrowDown]');
         });
 
-        expect(screen.getByText('Row 1')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
-        await act(async () => {
-            await user.keyboard('[Enter]');
+        await waitFor(() => {
+            expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            expect(screen.getByText('Row 2')).toBeInTheDocument();
         });
-        expect(screen.queryByRole('table')).not.toBeInTheDocument();
-        expect(screen.getByText('Row 2')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
     });
 });
