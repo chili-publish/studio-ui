@@ -1,5 +1,6 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { StyledNavbar, NavbarItem } from './Navbar.styles';
 import { INavbar } from './Navbar.types';
@@ -9,6 +10,7 @@ import useDownloadPanel from './useDownloadPanel';
 
 function Navbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+    const { uiOptions } = useUiConfigContext();
 
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
         useDownloadPanel(projectConfig);
@@ -22,7 +24,7 @@ function Navbar(props: INavbar) {
     });
 
     const { panel, mode } = useTheme();
-
+    if (uiOptions.widgets.navBar && !uiOptions.widgets.navBar.visible) return null;
     return (
         <StyledNavbar
             data-id={getDataIdForSUI('navbar')}

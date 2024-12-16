@@ -78,6 +78,12 @@ export interface UiOptions {
             visible?: boolean;
             event?: () => void;
         };
+        navBar?: {
+            visible?: boolean;
+        };
+        bottomBar?: {
+            visible?: boolean;
+        };
     };
 }
 
