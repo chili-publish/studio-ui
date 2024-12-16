@@ -24,7 +24,7 @@ function Navbar(props: INavbar) {
     });
 
     const { panel, mode } = useTheme();
-    if (uiOptions.widgets.navBar && !uiOptions.widgets.navBar.visible) return null;
+    if (uiOptions.widgets.navBar?.visible === false) return null;
     return (
         <StyledNavbar
             data-id={getDataIdForSUI('navbar')}

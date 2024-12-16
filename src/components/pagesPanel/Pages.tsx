@@ -12,6 +12,7 @@ import { ScrollableContainer, Card, Container } from './Pages.styles';
 import { PREVIEW_FALLBACK } from '../../utils/constants';
 import { PageSnapshot } from '../../types/types';
 import { PreviewCardBadge } from './PreviewCardBadge';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 interface PagesProps {
     pages: Page[];
@@ -22,6 +23,8 @@ interface PagesProps {
 
 function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: PagesProps) {
     const theme = useTheme();
+    const { uiOptions } = useUiConfigContext();
+
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
     const isMobileSize = useMobileSize();
 
@@ -78,6 +81,8 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
             clearTimeout(timeoutId);
         };
     }, [pagesToRefresh, setPagesToRefresh, getPagesSnapshot]);
+
+    if (uiOptions.widgets.bottomBar?.visible === false) return null;
 
     return (
         <Container themeStyles={theme} isMobileSize={isMobileSize}>
