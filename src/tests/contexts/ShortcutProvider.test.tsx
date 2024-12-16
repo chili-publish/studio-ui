@@ -15,8 +15,9 @@ describe('ShortcutProvider', () => {
 
     mockSDK.canvas.setZoomPercentage = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
 
-    window.StudioUISDK = mockSDK;
+    mockSDK.page.select = jest.fn();
 
+    window.StudioUISDK = mockSDK;
     it('triggers the sandbox toggle shortcut', async () => {
         const user = userEvent.setup();
         const onSandboxModeToggleFn = jest.fn();
@@ -27,6 +28,11 @@ describe('ShortcutProvider', () => {
                     projectConfig={projectConfig}
                     zoom={100}
                     undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
                 >
                     <h1>This is a test</h1>
                 </ShortcutProvider>
@@ -46,6 +52,11 @@ describe('ShortcutProvider', () => {
                     projectConfig={projectConfig}
                     zoom={100}
                     undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
                 >
                     <h1>This is a test</h1>
                 </ShortcutProvider>
@@ -64,6 +75,11 @@ describe('ShortcutProvider', () => {
                     projectConfig={projectConfig}
                     zoom={100}
                     undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
                 >
                     <h1>This is a test</h1>
                 </ShortcutProvider>
@@ -83,6 +99,11 @@ describe('ShortcutProvider', () => {
                     projectConfig={projectConfig}
                     zoom={zoom}
                     undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
                 >
                     <h1>This is a test</h1>
                 </ShortcutProvider>
@@ -101,6 +122,11 @@ describe('ShortcutProvider', () => {
                     projectConfig={projectConfig}
                     zoom={zoom}
                     undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
                 >
                     <h1>This is a test</h1>
                 </ShortcutProvider>
@@ -108,5 +134,30 @@ describe('ShortcutProvider', () => {
         );
         fireEvent.keyDown(screen.getByText('This is a test'), { key: '-', ctrlKey: true });
         expect(mockSDK.canvas.setZoomPercentage).toHaveBeenCalledWith(zoom * 0.875);
+    });
+    it('triggers change page on arrow key press hortcut', async () => {
+        const projectConfig = {} as unknown as ProjectConfig;
+        const user = userEvent.setup();
+
+        render(
+            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <ShortcutProvider
+                    projectConfig={projectConfig}
+                    zoom={100}
+                    undoStackState={{ canRedo: true, canUndo: true }}
+                    pages={[
+                        { id: '0', number: 0 },
+                        { id: '1', number: 1 },
+                    ]}
+                    activePageId="0"
+                >
+                    <h1>This is a test</h1>
+                </ShortcutProvider>
+            </AppProvider>,
+        );
+        await user.keyboard('[ArrowRight]');
+        expect(mockSDK.page.select).toHaveBeenCalledWith('1');
+        await user.keyboard('[ArrowLeft]');
+        expect(mockSDK.page.select).toHaveBeenCalledWith('0');
     });
 });

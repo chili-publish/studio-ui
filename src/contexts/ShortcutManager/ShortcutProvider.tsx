@@ -1,18 +1,29 @@
 import { startTransition, useCallback, useEffect, useMemo } from 'react';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
+import { Page } from '@chili-publish/studio-sdk';
 import { ProjectConfig } from '../../types/types';
 import { isMac } from './shortcuts';
 import useUndoRedo from './useUndoRedo';
 import useZoom from './useZoom';
 import { useAppContext } from '../AppProvider';
+import { useSelectPage } from './useSelectPage';
 
 interface ShortcutProviderProps {
     projectConfig: ProjectConfig;
     zoom: number;
     undoStackState: { canUndo: boolean; canRedo: boolean };
     children: React.ReactNode;
+    pages: Page[];
+    activePageId: string | null;
 }
-function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: ShortcutProviderProps) {
+function ShortcutProvider({
+    projectConfig,
+    undoStackState,
+    zoom,
+    children,
+    pages,
+    activePageId,
+}: ShortcutProviderProps) {
     const commandKey = isMac ? 'metaKey' : 'ctrlKey';
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
 
@@ -23,6 +34,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
     const { isDocumentLoaded, selectedMode, updateSelectedMode, cleanRunningTasks } = useAppContext();
+    const { selectedPageIndex, handleOnArrowKeyDown } = useSelectPage({ pages, activePageId });
 
     const shortcuts = useMemo(
         () => [
@@ -68,6 +80,24 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                     if (zoom) zoomOut();
                 },
             },
+            {
+                keys: `ArrowLeft`,
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (selectedPageIndex >= 0) {
+                        handleOnArrowKeyDown(e);
+                    }
+                },
+            },
+            {
+                keys: `ArrowRight`,
+                action: (e: KeyboardEvent) => {
+                    e.preventDefault();
+                    if (selectedPageIndex >= 0) {
+                        handleOnArrowKeyDown(e);
+                    }
+                },
+            },
         ],
         [
             selectedMode,
@@ -82,6 +112,8 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
             zoomOut,
             commandKey,
             cleanRunningTasks,
+            selectedPageIndex,
+            handleOnArrowKeyDown,
         ],
     );
 

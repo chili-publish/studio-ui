@@ -9,7 +9,7 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { ScrollableContainer, Card, Container } from './Pages.styles';
-import { PREVIEW_FALLBACK } from '../../utils/constants';
+import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
 import { PageSnapshot } from '../../types/types';
 import { PreviewCardBadge } from './PreviewCardBadge';
 
@@ -81,8 +81,13 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
 
     return (
         <Container themeStyles={theme} isMobileSize={isMobileSize}>
-            <ScrollbarWrapper invertScrollbarColors>
-                <ScrollableContainer>
+            <ScrollbarWrapper
+                height={`calc(${PAGES_CONTAINER_HEIGHT} - ${BORDER_SIZE})`}
+                enableOverflowX
+                enableOverflowY={false}
+                scrollbarHeight={!isMobileSize ? '0.875rem' : '0'}
+            >
+                <ScrollableContainer isMobileSize={isMobileSize}>
                     {!!pages?.length &&
                         pages.map((item, index) => (
                             <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>
