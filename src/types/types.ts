@@ -33,6 +33,7 @@ export interface ProjectConfig {
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
 }
 
 export interface DefaultStudioConfig {
@@ -195,6 +196,7 @@ export interface IStudioUILoaderConfig {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
 }
 
 export type PageSnapshot = {

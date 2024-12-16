@@ -127,6 +127,7 @@ export default class StudioUI {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
+        customElement?: HTMLElement | string,
         graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
@@ -153,6 +154,7 @@ export default class StudioUI {
             onFetchOutputSettings,
             onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
+            customElement,
         });
     }
 
@@ -194,6 +196,7 @@ export default class StudioUI {
             onSandboxModeToggle,
             refreshTokenAction,
             onConnectorAuthenticationRequested,
+            customElement,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -233,6 +236,7 @@ export default class StudioUI {
             projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             graFxStudioEnvironmentApiBaseUrl,
+            customElement,
         );
     }
 
@@ -355,6 +359,7 @@ export default class StudioUI {
             onLogInfoRequested,
             onProjectGetDownloadLink,
             onConnectorAuthenticationRequested,
+            customElement,
         } = config;
 
         const projectLoader = new StudioProjectLoader(
@@ -392,6 +397,7 @@ export default class StudioUI {
             projectLoader.onFetchOutputSettings,
             projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
+            customElement,
             graFxStudioEnvironmentApiBaseUrl,
         );
     }

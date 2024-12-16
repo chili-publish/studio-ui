@@ -35,6 +35,7 @@ import Pages from './components/pagesPanel/Pages';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 
 declare global {
     interface Window {
@@ -369,6 +370,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 }
                                                 isDocumentLoaded={isDocumentLoaded}
                                             />
+                                        )}
+                                        {projectConfig.customElement && (
+                                            <HtmlRenderer content={projectConfig.customElement} />
                                         )}
                                         <SuiCanvas
                                             // intent prop to calculate pages container
