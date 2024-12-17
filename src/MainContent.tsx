@@ -102,9 +102,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     useConnectorAuthenticationResult(authResults);
 
-    if (projectConfig.onSetMultiLayout) {
-        projectConfig.onSetMultiLayout(setMultiLayoutMode);
-    }
+    useEffect(() => {
+        if (projectConfig.onSetMultiLayout) {
+            projectConfig.onSetMultiLayout(setMultiLayoutMode);
+        }
+    }, [projectConfig, projectConfig.onSetMultiLayout]);
     useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
