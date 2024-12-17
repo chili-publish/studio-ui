@@ -55,6 +55,8 @@ export interface DefaultStudioConfig {
     editorLink?: string;
     userInterfaceID?: string;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {

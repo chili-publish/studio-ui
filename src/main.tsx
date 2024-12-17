@@ -199,6 +199,7 @@ export default class StudioUI {
             refreshTokenAction,
             onConnectorAuthenticationRequested,
             customElement,
+            onSetMultiLayout,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -237,8 +238,9 @@ export default class StudioUI {
             projectLoader.onFetchOutputSettings,
             projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
-            graFxStudioEnvironmentApiBaseUrl,
             customElement,
+            onSetMultiLayout,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
