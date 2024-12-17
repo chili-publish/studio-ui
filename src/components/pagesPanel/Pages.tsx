@@ -12,6 +12,7 @@ import { ScrollableContainer, Card, Container } from './Pages.styles';
 import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
 import { PageSnapshot } from '../../types/types';
 import { PreviewCardBadge } from './PreviewCardBadge';
+import { useAttachArrowKeysListener } from './useAttachArrowKeysListener';
 
 interface PagesProps {
     pages: Page[];
@@ -25,10 +26,6 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
     const isMobileSize = useMobileSize();
 
-    const handleSelectPage = async (pageId: string) => {
-        await window.StudioUISDK.page.select(pageId);
-    };
-
     const getPagesSnapshot = useCallback(async (ids: string[]) => {
         const snapArray = ids.map((id) =>
             window.SDK.page.getSnapshot(id).then((snapshot) => ({
@@ -40,6 +37,8 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         setPageSnapshots(awaitedArray);
         return awaitedArray as PageSnapshot[];
     }, []);
+
+    const { handleSelectPage } = useAttachArrowKeysListener({ pages, activePageId });
 
     useEffect(() => {
         if (pages?.length && !pageSnapshots.length) {

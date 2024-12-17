@@ -327,13 +327,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
-            <ShortcutProvider
-                projectConfig={projectConfig}
-                undoStackState={undoStackState}
-                zoom={currentZoom}
-                pages={pages}
-                activePageId={activePageId}
-            >
+            <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container canvas={canvas}>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                         <VariablePanelContextProvider
