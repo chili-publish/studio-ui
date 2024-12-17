@@ -13,7 +13,7 @@ export const LeftPanelContainer = styled.div<{ overflowScroll: boolean; panelThe
 
 export const VariablesListContainer = styled.div<{ hidden: boolean }>`
     padding: 0 0 0 1.25rem;
-    width: calc(18.75rem - 1.25rem - ${SCROLL_SIZE});
+    width: calc(18.75rem - 1.5625rem - ${SCROLL_SIZE});
     ${({ hidden }) => hidden && 'display: none;'};
 `;
 

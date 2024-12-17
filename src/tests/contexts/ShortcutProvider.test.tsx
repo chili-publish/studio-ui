@@ -16,6 +16,7 @@ describe('ShortcutProvider', () => {
     mockSDK.canvas.setZoomPercentage = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
 
     window.StudioUISDK = mockSDK;
+
     it('triggers the sandbox toggle shortcut', async () => {
         const user = userEvent.setup();
         const onSandboxModeToggleFn = jest.fn();

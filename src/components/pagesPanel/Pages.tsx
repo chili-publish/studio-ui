@@ -38,6 +38,12 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         return awaitedArray as PageSnapshot[];
     }, []);
 
+    /**
+     * by attaching listeners here and not in ShortcutProvider.tsx,
+     * 'pages' prop that gets populated via 'onPagesChanged' subscriber,
+     * will not trigger rerenders of ShortcutProvider's children,
+     * causing multiple query refectch in useMediaDetails
+     */
     const { handleSelectPage } = useAttachArrowKeysListener({ pages, activePageId });
 
     useEffect(() => {
