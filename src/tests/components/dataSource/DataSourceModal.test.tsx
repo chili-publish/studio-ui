@@ -107,15 +107,16 @@ describe('DataSourceModal test', () => {
             expect(dataRowsTable).toBeInTheDocument();
         });
 
+        expect(screen.getByText('Row 1')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+
         await act(async () => {
             await user.keyboard('[ArrowDown]');
         });
-
-        expect(screen.getByText('Row 1')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
         await act(async () => {
             await user.keyboard('[Enter]');
         });
+
         expect(screen.queryByRole('table')).not.toBeInTheDocument();
         expect(screen.getByText('Row 2')).toBeInTheDocument();
         expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
