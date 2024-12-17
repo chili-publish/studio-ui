@@ -65,7 +65,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
-    const [multiLayoutMode, setMultiLayoutMode] = useState(true);
+    const [multiLayoutMode, setMultiLayoutMode] = useState(false);
 
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
@@ -363,7 +363,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     />
                                 )}
 
-                                <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
+                                <MainContentContainer
+                                    sandboxMode={projectConfig.sandboxMode}
+                                    fullHeight={projectConfig.uiOptions.widgets.navBar?.visible === false}
+                                >
                                     {!isMobileSize && (
                                         <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                     )}
@@ -381,7 +384,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                         {projectConfig.customElement && (
                                             <HtmlRenderer
                                                 content={projectConfig.customElement}
-                                                // isVisible={projectConfig.multiLayout}
                                                 isVisible={multiLayoutMode}
                                             />
                                         )}
@@ -389,9 +391,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             // intent prop to calculate pages container
                                             hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            isBottomBarHidden={
+                                                projectConfig.uiOptions.widgets.bottomBar?.visible === false
+                                            }
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
-                                            // isVisible={projectConfig.multiLayout}
                                             isVisible={!multiLayoutMode}
                                         >
                                             <div className="chili-editor" id={EDITOR_ID} />

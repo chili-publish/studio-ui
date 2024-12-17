@@ -14,12 +14,13 @@ export const SuiCanvas = styled.div<{
     hasAnimationTimeline?: boolean;
     hasMultiplePages?: boolean;
     isVisible?: boolean;
+    isBottomBarHidden?: boolean;
 }>`
-    height: ${({ hasAnimationTimeline, hasMultiplePages }) => {
-        if (hasAnimationTimeline) {
+    height: ${({ hasAnimationTimeline, hasMultiplePages, isBottomBarHidden }) => {
+        if (hasAnimationTimeline && !isBottomBarHidden) {
             return 'calc(100% - 5rem)';
         }
-        if (hasMultiplePages) {
+        if (hasMultiplePages && !isBottomBarHidden) {
             return 'calc(100% - 7.5rem)';
         }
         return '100%';
