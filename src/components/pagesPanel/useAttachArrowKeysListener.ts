@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Page[]; activePageId: string | null }) => {
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
 
-    const [selectedPageIndex, setSelectedPageIndex] = useState<number>(pages.findIndex((i) => i.id === activePageId));
+    const [selectedPageIndex, setSelectedPageIndex] = useState<number>(-1);
 
     const handleSelectPage = async (pageId: string) => {
         await window.StudioUISDK.page.select(pageId);
@@ -55,6 +55,11 @@ export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Pag
             iframe?.removeEventListener('keydown', handleOnArrowKeyDown);
         };
     }, [handleOnArrowKeyDown, iframe]);
+
+    useEffect(() => {
+        if (!pages.length || !activePageId) return;
+        setSelectedPageIndex(pages.findIndex((i) => i.id === activePageId));
+    }, [pages, activePageId]);
 
     return { handleSelectPage };
 };
