@@ -128,6 +128,7 @@ export default class StudioUI {
         onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
         customElement?: HTMLElement | string,
+        onSetMultiLayout?: () => void,
         graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
@@ -155,6 +156,7 @@ export default class StudioUI {
             onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             customElement,
+            onSetMultiLayout,
         });
     }
 
@@ -360,6 +362,7 @@ export default class StudioUI {
             onProjectGetDownloadLink,
             onConnectorAuthenticationRequested,
             customElement,
+            onSetMultiLayout,
         } = config;
 
         const projectLoader = new StudioProjectLoader(
@@ -398,6 +401,7 @@ export default class StudioUI {
             projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
             customElement,
+            onSetMultiLayout,
             graFxStudioEnvironmentApiBaseUrl,
         );
     }

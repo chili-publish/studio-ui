@@ -10,7 +10,11 @@ export const CanvasContainer = styled.div`
     width: 100%;
 `;
 
-export const SuiCanvas = styled.div<{ hasAnimationTimeline?: boolean; hasMultiplePages?: boolean }>`
+export const SuiCanvas = styled.div<{
+    hasAnimationTimeline?: boolean;
+    hasMultiplePages?: boolean;
+    isVisible?: boolean;
+}>`
     height: ${({ hasAnimationTimeline, hasMultiplePages }) => {
         if (hasAnimationTimeline) {
             return 'calc(100% - 5rem)';
@@ -19,6 +23,7 @@ export const SuiCanvas = styled.div<{ hasAnimationTimeline?: boolean; hasMultipl
             return 'calc(100% - 7.5rem)';
         }
         return '100%';
-    }}}
+    }};
     width: 100%;
+    display: ${(props) => (props.isVisible ? 'block' : 'none')};
 `;

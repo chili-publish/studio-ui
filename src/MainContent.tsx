@@ -65,6 +65,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
+    const [multiLayoutMode, setMultiLayoutMode] = useState(true);
+
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
     const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
@@ -100,6 +102,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     useConnectorAuthenticationResult(authResults);
 
+    if (projectConfig.onSetMultiLayout) {
+        projectConfig.onSetMultiLayout(setMultiLayoutMode);
+    }
     useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
@@ -372,7 +377,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             />
                                         )}
                                         {projectConfig.customElement && (
-                                            <HtmlRenderer content={projectConfig.customElement} />
+                                            <HtmlRenderer
+                                                content={projectConfig.customElement}
+                                                // isVisible={projectConfig.multiLayout}
+                                                isVisible={multiLayoutMode}
+                                            />
                                         )}
                                         <SuiCanvas
                                             // intent prop to calculate pages container
@@ -380,6 +389,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
+                                            // isVisible={projectConfig.multiLayout}
+                                            isVisible={!multiLayoutMode}
                                         >
                                             <div className="chili-editor" id={EDITOR_ID} />
                                         </SuiCanvas>

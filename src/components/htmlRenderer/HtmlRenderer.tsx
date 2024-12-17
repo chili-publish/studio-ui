@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { Container } from './HtmlRenderer.style';
 
 interface IContent {
     content: string | HTMLElement | DocumentFragment;
+    isVisible?: boolean;
 }
 function HtmlRenderer(props: IContent) {
-    const { content } = props;
+    const { content, isVisible } = props;
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -24,7 +26,7 @@ function HtmlRenderer(props: IContent) {
         }
     }, [content]);
 
-    return <div ref={containerRef} />;
+    return <Container ref={containerRef} isVisible={isVisible} />;
 }
 
 export default HtmlRenderer;

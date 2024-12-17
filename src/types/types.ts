@@ -34,6 +34,7 @@ export interface ProjectConfig {
     onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
+    onSetMultiLayout?: (fn: any) => void;
 }
 
 export interface DefaultStudioConfig {
@@ -197,6 +198,7 @@ export interface IStudioUILoaderConfig {
     ) => Promise<DownloadLinkResult>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
+    onSetMultiLayout?: (fn: any) => void;
 }
 
 export type PageSnapshot = {

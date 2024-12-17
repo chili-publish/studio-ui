@@ -59,12 +59,28 @@ import { TokenManager } from './token-manager';
         return;
     }
 
+    const element = document.createElement('div');
+    element.innerHTML = `<h1>Rendered from HTMLElement</h1>
+                         <p>This is a test paragraph.</p>`;
+
     let authToken = '';
     if (import.meta.env.VITE_TOKEN) {
         authToken = import.meta.env.VITE_TOKEN;
     } else {
         authToken = await tokenManager.getAccessToken();
     }
+
+    let ToggleSetMultiLayout: (arg0: boolean) => void;
+    let togg = false;
+    const button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'im a button';
+    button.id = 'myToggleBtn';
+    button.onclick = () => {
+        ToggleSetMultiLayout(togg);
+        togg = !togg;
+    };
+    document.body.append(button);
     StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
         projectId,
@@ -80,5 +96,24 @@ import { TokenManager } from './token-manager';
             STUDIO_LABEL_PROPERTY_ENABLED: true,
             STUDIO_DATA_SOURCE: true,
         },
+        uiOptions: {
+            widgets: {
+                backButton: { visible: true },
+                navBar: { visible: false },
+                bottomBar: { visible: false },
+            },
+        },
+        customElement: '<h1>Rendered from HTMLElement</h1>',
+        onSetMultiLayout: (fn) => {
+            ToggleSetMultiLayout = fn; // Capture setMultiLayout function
+        },
     });
+
+    // setTimeout(() => {
+    //     ToggleSetMultiLayout(false);
+    // }, 5000);
+
+    // setTimeout(() => {
+    //     ToggleSetMultiLayout(true);
+    // }, 10000);
 })();
