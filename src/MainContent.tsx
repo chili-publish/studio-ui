@@ -365,7 +365,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
                                 <MainContentContainer
                                     sandboxMode={projectConfig.sandboxMode}
-                                    fullHeight={projectConfig.uiOptions.widgets.navBar?.visible === false}
+                                    fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
                                 >
                                     {!isMobileSize && (
                                         <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
@@ -392,7 +392,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
                                             isBottomBarHidden={
-                                                projectConfig.uiOptions.widgets.bottomBar?.visible === false
+                                                projectConfig.uiOptions.widgets?.bottomBar?.visible === false
                                             }
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}

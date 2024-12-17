@@ -26,7 +26,7 @@ function AnimationTimeline(props: IAnimationTimeline) {
         await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
     };
 
-    if (uiOptions.widgets.bottomBar?.visible === false) return null;
+    if (uiOptions.widgets?.bottomBar?.visible === false) return null;
     return (
         <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')} themeStyles={theme}>
             {animationLength > 0 && (

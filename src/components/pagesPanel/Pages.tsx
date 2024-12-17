@@ -82,7 +82,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         };
     }, [pagesToRefresh, setPagesToRefresh, getPagesSnapshot]);
 
-    if (uiOptions.widgets.bottomBar?.visible === false) return null;
+    if (uiOptions.widgets?.bottomBar?.visible === false) return null;
 
     return (
         <Container themeStyles={theme} isMobileSize={isMobileSize}>
