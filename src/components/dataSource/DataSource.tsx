@@ -67,6 +67,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
             />
             {isDataSourceModalOpen ? (
                 <DataSourceModal
+                    isOpen={isDataSourceModalOpen}
                     data={dataRows}
                     selectedRow={currentRowIndex}
                     onSelectedRowChanged={onSelectedRowChanged}
