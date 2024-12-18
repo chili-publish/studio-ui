@@ -33,6 +33,8 @@ export interface ProjectConfig {
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 export interface DefaultStudioConfig {
@@ -53,6 +55,8 @@ export interface DefaultStudioConfig {
     editorLink?: string;
     userInterfaceID?: string;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {
@@ -77,6 +81,12 @@ export interface UiOptions {
         backButton?: {
             visible?: boolean;
             event?: () => void;
+        };
+        navBar?: {
+            visible?: boolean;
+        };
+        bottomBar?: {
+            visible?: boolean;
         };
     };
 }
@@ -189,6 +199,8 @@ export interface IStudioUILoaderConfig {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 export type PageSnapshot = {

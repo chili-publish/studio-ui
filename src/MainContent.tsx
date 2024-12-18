@@ -10,7 +10,7 @@ import StudioSDK, {
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -35,6 +35,7 @@ import Pages from './components/pagesPanel/Pages';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 
 declare global {
     interface Window {
@@ -63,6 +64,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
+
+    const [multiLayoutMode, setMultiLayoutMode] = useState(false);
 
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
@@ -100,6 +103,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     useConnectorAuthenticationResult(authResults);
 
     useEffect(() => {
+        if (projectConfig.onSetMultiLayout) {
+            projectConfig.onSetMultiLayout(setMultiLayoutMode);
+        }
+    }, [projectConfig, projectConfig.onSetMultiLayout]);
+    useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
             .then((project) => {
@@ -112,24 +120,29 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
-    const zoomToPage = async () => {
-        const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
-        const zoomParams = {
-            pageId: null,
-            left: 0,
-            top: 0,
-            width: iframe?.width,
-            height: iframe?.height,
-        };
+    const zoomToPage = useCallback(async () => {
+        if (!multiLayoutMode) {
+            const iframe = document
+                .getElementById(EDITOR_ID)
+                ?.getElementsByTagName('iframe')?.[0]
+                ?.getBoundingClientRect();
+            const zoomParams = {
+                pageId: null,
+                left: 0,
+                top: 0,
+                width: iframe?.width,
+                height: iframe?.height,
+            };
 
-        await window.StudioUISDK.canvas.zoomToPage(
-            zoomParams.pageId,
-            zoomParams.left,
-            zoomParams.top,
-            zoomParams.width,
-            zoomParams.height,
-        );
-    };
+            await window.StudioUISDK.canvas.zoomToPage(
+                zoomParams.pageId,
+                zoomParams.left,
+                zoomParams.top,
+                zoomParams.width,
+                zoomParams.height,
+            );
+        }
+    }, [multiLayoutMode]);
 
     useEffect(() => {
         if (!eventSubscriber) {
@@ -325,6 +338,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         loadDocument();
     }, [fetchedDocument]);
 
+    useEffect(() => {
+        zoomToPage();
+    }, [multiLayoutMode, zoomToPage]);
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
@@ -355,7 +371,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     />
                                 )}
 
-                                <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
+                                <MainContentContainer
+                                    sandboxMode={projectConfig.sandboxMode}
+                                    fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
+                                >
                                     {!isMobileSize && (
                                         <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                     )}
@@ -370,12 +389,22 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 isDocumentLoaded={isDocumentLoaded}
                                             />
                                         )}
+                                        {projectConfig.customElement && (
+                                            <HtmlRenderer
+                                                content={projectConfig.customElement}
+                                                isVisible={multiLayoutMode}
+                                            />
+                                        )}
                                         <SuiCanvas
                                             // intent prop to calculate pages container
                                             hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            isBottomBarHidden={
+                                                projectConfig.uiOptions.widgets?.bottomBar?.visible === false
+                                            }
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
+                                            isVisible={!multiLayoutMode}
                                         >
                                             <div className="chili-editor" id={EDITOR_ID} />
                                         </SuiCanvas>
