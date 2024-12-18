@@ -10,7 +10,7 @@ import StudioSDK, {
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -120,24 +120,29 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
-    const zoomToPage = async () => {
-        const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
-        const zoomParams = {
-            pageId: null,
-            left: 0,
-            top: 0,
-            width: iframe?.width,
-            height: iframe?.height,
-        };
+    const zoomToPage = useCallback(async () => {
+        if (!multiLayoutMode) {
+            const iframe = document
+                .getElementById(EDITOR_ID)
+                ?.getElementsByTagName('iframe')?.[0]
+                ?.getBoundingClientRect();
+            const zoomParams = {
+                pageId: null,
+                left: 0,
+                top: 0,
+                width: iframe?.width,
+                height: iframe?.height,
+            };
 
-        await window.StudioUISDK.canvas.zoomToPage(
-            zoomParams.pageId,
-            zoomParams.left,
-            zoomParams.top,
-            zoomParams.width,
-            zoomParams.height,
-        );
-    };
+            await window.StudioUISDK.canvas.zoomToPage(
+                zoomParams.pageId,
+                zoomParams.left,
+                zoomParams.top,
+                zoomParams.width,
+                zoomParams.height,
+            );
+        }
+    }, [multiLayoutMode]);
 
     useEffect(() => {
         if (!eventSubscriber) {
@@ -333,6 +338,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         loadDocument();
     }, [fetchedDocument]);
 
+    useEffect(() => {
+        zoomToPage();
+    }, [multiLayoutMode, zoomToPage]);
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
