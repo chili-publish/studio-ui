@@ -23,7 +23,7 @@ describe('BooleanVariable', () => {
             </UiThemeProvider>,
         );
 
-        const variableLabel = screen.queryByText(booleanVar.label);
+        const variableLabel = screen.queryByText(booleanVar.label!);
         // the label is empty string won't be rendered
         expect(variableLabel).toBeNull();
     });
@@ -38,7 +38,7 @@ describe('BooleanVariable', () => {
             </UiThemeProvider>,
         );
 
-        expect(screen.getByText(booleanVar.label)).toBeInTheDocument();
+        expect(screen.getByText(booleanVar.label!)).toBeInTheDocument();
     });
     it('should display label as variable name if label does not exist', () => {
         const booleanVar = {
