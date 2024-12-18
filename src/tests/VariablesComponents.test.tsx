@@ -52,7 +52,7 @@ describe('Variable Component', () => {
                 ,
             </UiThemeProvider>,
         );
-        const variable = await waitFor(() => screen.getByText(variables[0].label));
+        const variable = await waitFor(() => screen.getByText(variables[0].label!));
         expect(variable).toBeInTheDocument();
     });
 
