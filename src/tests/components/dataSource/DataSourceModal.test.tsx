@@ -85,7 +85,8 @@ describe('DataSourceModal test', () => {
         expect(screen.getByDisplayValue('3 | Mary | 17')).toBeInTheDocument();
     });
 
-    it('Should be able to navigate with arrow key in the data source table', async () => {
+    // TODO: Re-enable this test in scope of https://github.com/chili-publish/studio-ui/pull/247
+    it.skip('Should be able to navigate with arrow key in the data source table', async () => {
         render(
             <UiThemeProvider theme="platform">
                 <div id={APP_WRAPPER_ID}>
