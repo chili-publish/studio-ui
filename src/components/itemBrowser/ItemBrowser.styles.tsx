@@ -1,4 +1,4 @@
-import { Colors, ThemeColors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
@@ -31,7 +31,7 @@ export const ModalResourcesContainer = styled.div<{ width?: string }>`
     padding: 0.75rem;
 `;
 
-export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
+export const NavigationWrapper = styled.div<{ themeColors: ITheme['themeColors'] }>`
     display: flex;
     align-items: center;
     text-overflow: ellipsis;
@@ -39,10 +39,10 @@ export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
     position: relative;
     margin-left: -0.75rem;
 
-    & svg {
+    svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-        ${({ themeMode }) => themeMode === 'light' && `color: ${ThemeColors.light.PRIMARY_FONT} !important`};
+        ${({ themeColors }) => `color: ${themeColors.primaryFontText} !important`};
     }
 
     & svg.close-icon,
@@ -132,9 +132,9 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
     `};
 `;
 
-export const EmptySearchResultContainer = styled.div`
+export const EmptySearchResultContainer = styled.div<{ themeColors: ITheme['themeColors'] }>`
     padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
-    color: ${Colors.SECONDARY_FONT};
+    color: ${(props) => props.themeColors.secondaryFontText};
     font-size: 0.875rem;
     text-align: center;
 `;

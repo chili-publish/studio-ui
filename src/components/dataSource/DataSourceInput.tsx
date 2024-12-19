@@ -34,7 +34,7 @@ function DataSourceInput({
     onPrevClick,
     onNextClick,
 }: DataSourceInputProps) {
-    const { icon, mode } = useTheme();
+    const { icon, themeColors } = useTheme();
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} iconStyle={icon} />
@@ -75,7 +75,7 @@ function DataSourceInput({
                     dataTestId={getDataTestIdForSUI('data-row-prev')}
                     icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
                 />
-                <Text mode={mode}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
+                <Text themeColors={themeColors}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
                 <Button
                     variant={ButtonVariant.tertiary}
                     onClick={onNextClick}

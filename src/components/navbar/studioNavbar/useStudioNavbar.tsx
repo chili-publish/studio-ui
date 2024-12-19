@@ -41,14 +41,14 @@ const useStudioNavbar = ({
     const { zoomNavbarItem } = useNavbarZoom(zoom);
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
-    const { mode } = useTheme();
+    const { themeColors } = useTheme();
 
     const navbarItems = useMemo((): NavbarItemType[] => {
         const projectNameItem = {
             label: 'Project information',
             content: (
                 <NavbarGroup>
-                    <NavbarText aria-label={`Project: ${projectName}`} mode={mode}>
+                    <NavbarText aria-label={`Project: ${projectName}`} themeColors={themeColors}>
                         {decodeURI(projectName || '')}
                     </NavbarText>
                 </NavbarGroup>
@@ -74,7 +74,7 @@ const useStudioNavbar = ({
         projectName,
         modeToggleNavbarItem,
         userInterfaceDropdownNavbarItem,
-        mode,
+        themeColors,
     ]);
 
     return {

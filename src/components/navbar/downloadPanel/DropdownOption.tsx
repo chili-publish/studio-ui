@@ -16,9 +16,9 @@ interface DropdownOptionProps {
 
 function DropdownOption(props: DropdownOptionProps) {
     const { iconData, text, description, isExperimental } = props;
-    const { dropdown } = useTheme();
+    const { dropdown, themeColors } = useTheme();
     return (
-        <DropdownOptionLabel>
+        <DropdownOptionLabel themeColors={themeColors}>
             <Icon icon={iconData} />
             <Container dropdownStyles={dropdown}>
                 <DropdownOptionText>{text}</DropdownOptionText>

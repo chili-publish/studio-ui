@@ -1,21 +1,21 @@
-import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const DownloadDropdownTitle = styled.div`
+export const DownloadDropdownTitle = styled.div<{ themeColors: ITheme['themeColors'] }>`
     padding: 1rem 1.25rem 1rem;
     font-weight: bold;
-    color: ${Colors.PRIMARY_FONT};
+    color: ${({ themeColors }) => themeColors.primaryFontText};
 `;
 
-export const DownloadPanelContainer = styled.div<{ styles: ITheme['panel'] }>`
-    background-color: ${({ styles }) => styles.backgroundColor};
+export const DownloadPanelContainer = styled.div<{ panelStyles: ITheme['panel'] }>`
+    background-color: ${({ panelStyles }) => panelStyles.backgroundColor};
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
-    border: solid 1px ${({ styles }) => styles.borderColor};
+    border: solid 1px ${({ panelStyles }) => panelStyles.borderColor};
     border-radius: 0.25rem;
     ${DownloadDropdownTitle} {
-        color: ${({ styles }) => styles.color};
-        border-bottom: 1px solid ${({ styles }) => styles.borderColor};
-        font-size: ${({ styles }) => styles.title.fontSize};
+        color: ${({ panelStyles }) => panelStyles.color};
+        border-bottom: 1px solid ${({ panelStyles }) => panelStyles.borderColor};
+        font-size: ${({ panelStyles }) => panelStyles.title.fontSize};
     }
 `;
 
@@ -26,32 +26,45 @@ export const DesktopDropdownContainer = styled.div`
     gap: 0.75rem;
     margin-top: 1rem;
 `;
-export const DropdownLabel = styled.span`
+
+export const DropdownOptionDescription = styled.span`
     font-size: ${FontSizes.label};
-    color: ${Colors.DARK_GRAY_500};
-    padding-top: 1rem;
+    font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `;
 
-export const DropdownOptionLabel = styled.div`
+export const ExperimentalPill = styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: ${FontSizes.small};
+
+    border-radius: 5rem;
+    height: 1.375rem;
+    margin: 0 0.5rem;
+    padding: 0 0.75rem;
+`;
+
+export const DropdownOptionLabel = styled.div<{ themeColors: ITheme['themeColors'] }>`
     display: flex;
     gap: 0.5rem;
     align-items: center;
     overflow: hidden;
     margin-right: 0.25rem;
     flex: 1;
+    ${DropdownOptionDescription} {
+        color: ${({ themeColors }) => themeColors.secondaryFontText};
+    }
+    ${ExperimentalPill} {
+        color: ${({ themeColors }) => themeColors.primaryFontText};
+        border: 1px solid ${({ themeColors }) => themeColors.primaryFontText};
+    }
 `;
 
 export const DropdownOptionText = styled.span`
     flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`;
-
-export const DropdownOptionDescription = styled.span`
-    font-size: ${FontSizes.label};
-    color: ${Colors.DARK_GRAY_500};
-    font-weight: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -66,7 +79,6 @@ export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
     white-space: nowrap;
     ${DropdownOptionText} {
         font-size: ${({ dropdownStyles }) => `${dropdownStyles.fontSize}`};
-        color: ${({ dropdownStyles }) => `${dropdownStyles.menuOption.color} !important`};
     }
     ${DropdownOptionDescription} {
         font-size: ${({ dropdownStyles }) => `${dropdownStyles.optionInfoFontSize}`};
@@ -82,19 +94,6 @@ export const Content = styled.div<{ borderTop?: boolean; panel: ITheme['panel'] 
     border-top: ${({ borderTop, panel }) => (borderTop ? `1px solid ${panel.borderColor}` : 'none')};
 `;
 
-export const ExperimentalPill = styled.span`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: ${FontSizes.small};
-    color: ${Colors.PRIMARY_FONT};
-    border: 1px solid ${Colors.PRIMARY_FONT};
-    border-radius: 5rem;
-    height: 1.375rem;
-    margin: 0 0.5rem;
-    padding: 0 0.75rem;
-`;
-
 export const BtnContainer = styled.div<{ mobile?: boolean }>`
     padding: ${(props) => (props.mobile ? '0' : '0 1.25rem;')};
 `;
@@ -108,15 +107,6 @@ export const SpinnerContainer = styled(BtnContainer)`
 
 export const LoadPageContainer = styled.div`
     margin: 2.5rem 0;
-`;
-export const LoadingIndicatorContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    color: ${Colors.SECONDARY_FONT};
-    font-size: ${FontSizes.regular};
-`;
-export const Text = styled.span<{ color?: string }>`
-    color: ${(props) => props.color ?? Colors.SECONDARY_FONT};
 `;
 
 export const ErrorToastWrapper = styled.div`

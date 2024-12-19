@@ -10,13 +10,13 @@ interface MobileTrayHeaderProps {
 }
 function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeaderProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
-    const { panel, mode } = useTheme();
+    const { panel, mode, themeColors } = useTheme();
 
     if ((contentType === ContentType.VARIABLES_LIST && !hasDataConnector) || mobileListOpen)
         return <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>;
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
-            <DatePickerTrayTitle themeMode={mode}>
+            <DatePickerTrayTitle themeMode={mode} themeColors={themeColors}>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -37,7 +37,7 @@ function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeader
     if (contentType === ContentType.IMAGE_PANEL) return imagePanelTitle;
     if (contentType === ContentType.DATA_SOURCE_TABLE)
         return (
-            <DatePickerTrayTitle themeMode={mode}>
+            <DatePickerTrayTitle themeMode={mode} themeColors={themeColors}>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}

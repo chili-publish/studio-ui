@@ -60,7 +60,7 @@ export function VariablePanelContextProvider({
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
 
     const variableValidationData = useVariableValidation(variables);
-    const { mode } = useTheme();
+    const { themeColors } = useTheme();
 
     const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
         if (!connectorId) throw new Error('ConnectorId is not defined');
@@ -96,7 +96,7 @@ export function VariablePanelContextProvider({
 
     const imagePanelTitle = useMemo(
         () => (
-            <NavigationWrapper themeMode={mode}>
+            <NavigationWrapper themeColors={themeColors}>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -114,7 +114,7 @@ export function VariablePanelContextProvider({
                 <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, mode],
+        [navigationStack, themeColors],
     );
 
     const data = useMemo(

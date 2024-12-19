@@ -2,7 +2,6 @@ import {
     AvailableIcons,
     Button,
     ButtonVariant,
-    Colors,
     DropDown,
     Icon,
     Menu,
@@ -41,7 +40,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-    const { panel } = useTheme();
+    const { panel, themeColors } = useTheme();
 
     const {
         downloadOptions,
@@ -99,9 +98,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     loading
                                     styles={css`
                                         width: 100%;
-                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        background-color: ${themeColors.disabledElements};
                                         &:hover {
-                                            background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                            background-color: ${themeColors.disabledElements};
                                         }
                                     `}
                                 />
@@ -132,8 +131,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
-                <DownloadPanelContainer ref={downloadPanelRef} styles={panel}>
-                    <DownloadDropdownTitle>Download</DownloadDropdownTitle>
+                <DownloadPanelContainer ref={downloadPanelRef} panelStyles={panel}>
+                    <DownloadDropdownTitle themeColors={themeColors}>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <DropDown
                             label="Output"
@@ -154,9 +153,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 loading
                                 styles={css`
                                     width: 100%;
-                                    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                    background-color: ${themeColors.disabledElements};
                                     &:hover {
-                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        background-color: ${themeColors.disabledElements};
                                     }
                                 `}
                             />
