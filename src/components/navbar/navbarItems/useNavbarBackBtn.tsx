@@ -6,7 +6,7 @@ import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => void) | undefined) => {
     const { isBackBtnVisible } = useUiConfigContext();
-    const { mode } = useTheme();
+    const { themeColors } = useTheme();
 
     const navbarItem = useMemo(
         () =>
@@ -23,7 +23,7 @@ const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => v
                                   icon={AvailableIcons.faArrowLeft}
                                   handleOnClick={onBackClick || (() => null)}
                               />
-                              <NavbarText aria-label={`Project: ${projectName}`} mode={mode}>
+                              <NavbarText aria-label={`Project: ${projectName}`} themeColors={themeColors}>
                                   {decodeURI(projectName || '')}
                               </NavbarText>
                           </NavbarGroup>
@@ -31,7 +31,7 @@ const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => v
                       styles: { marginRight: 'auto' },
                   }
                 : null,
-        [isBackBtnVisible, projectName, onBackClick, mode],
+        [isBackBtnVisible, projectName, onBackClick, themeColors],
     );
 
     return {

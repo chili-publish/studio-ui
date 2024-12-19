@@ -11,7 +11,6 @@ import {
     useMobileSize,
     BreadCrumb,
     Option,
-    ThemeColors,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
@@ -67,7 +66,7 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-    const { mode } = useTheme();
+    const { themeColors } = useTheme();
 
     const {
         connectorCapabilities,
@@ -241,7 +240,7 @@ function ItemBrowser<
             options: [],
             padding: '0',
             footerTopMargin: '0.75rem',
-            backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
+            // backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,
@@ -357,7 +356,7 @@ function ItemBrowser<
             >
                 <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
-                        <EmptySearchResultContainer>
+                        <EmptySearchResultContainer themeColors={themeColors}>
                             No search results found. Maybe try another keyword?
                         </EmptySearchResultContainer>
                     )}

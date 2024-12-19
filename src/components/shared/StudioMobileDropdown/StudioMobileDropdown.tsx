@@ -37,7 +37,7 @@ function StudioMobileDropdown({
     onMenuClose,
 }: StudioMobileDropdownProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
-    const { dropdown } = useTheme();
+    const { icon, dropdown, themeColors } = useTheme();
 
     const openMobileDropdown = useCallback(() => {
         setIsDropdownOpen(true);
@@ -71,18 +71,23 @@ function StudioMobileDropdown({
     ) : (
         <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
-            <MobileDropdownOptionContainer hasError={!!validationError} dropdownStyles={dropdown}>
+            <MobileDropdownOptionContainer
+                hasError={!!validationError}
+                dropdownStyles={dropdown}
+                iconStyles={icon}
+                themeColors={themeColors}
+            >
                 <MobileDropdownValue>
                     {selectedValue?.label ? (
                         // eslint-disable-next-line react/jsx-no-useless-fragment
                         <>{selectedValue.label}</>
                     ) : (
-                        <MobilePlaceholderWrapper>{placeholder}</MobilePlaceholderWrapper>
+                        <MobilePlaceholderWrapper themeColors={themeColors}>{placeholder}</MobilePlaceholderWrapper>
                     )}
                 </MobileDropdownValue>
                 <Icon icon={AvailableIcons.faChevronDown} />
             </MobileDropdownOptionContainer>
-            {validationError ? <ErrorMessage>{validationError}</ErrorMessage> : null}
+            {validationError ? <ErrorMessage themeColors={themeColors}>{validationError}</ErrorMessage> : null}
         </DropdownContainer>
     );
 }

@@ -26,7 +26,7 @@ interface IZoom {
 }
 function Zoom(props: IZoom) {
     const { zoom, zoomIn, zoomOut } = props;
-    const { mode } = useTheme();
+    const { themeColors } = useTheme();
 
     const [currentZoom, setCurrentZoom] = useState(zoom);
 
@@ -45,7 +45,7 @@ function Zoom(props: IZoom) {
     return (
         <NavbarGroup withGap data-testid="zoom">
             <ZoomButton type={ZoomTypeEnum.DECREMENT} handleOnClick={zoomOut} />
-            <NavbarText aria-label="zoom level" mode={mode}>
+            <NavbarText aria-label="zoom level" themeColors={themeColors}>
                 {currentZoom}%
             </NavbarText>
             <ZoomButton handleOnClick={zoomIn} />

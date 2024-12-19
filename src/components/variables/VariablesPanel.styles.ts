@@ -1,4 +1,4 @@
-import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean; isPagesPanelDisplayed?: boolean }>`
@@ -30,12 +30,12 @@ export const VariablesListWrapper = styled.div<{ optionsListOpen?: boolean }>`
     ${(props) => props.optionsListOpen && 'margin: 0 -1.25rem -3rem -1.25rem'};
 `;
 
-export const DatePickerTrayTitle = styled.div<{ themeMode: ITheme['mode'] }>`
+export const DatePickerTrayTitle = styled.div<{ themeMode: ITheme['mode']; themeColors: ITheme['themeColors'] }>`
     display: flex;
     justify-content: center;
     align-items: center;
 
     svg {
-        ${({ themeMode }) => themeMode === 'light' && `color: ${Colors.PRIMARY_FONT} !important`};
+        ${({ themeColors, themeMode }) => themeMode === 'light' && `color: ${themeColors.primaryFontText} !important`};
     }
 `;
