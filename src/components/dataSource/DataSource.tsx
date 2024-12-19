@@ -1,5 +1,5 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PanelTitle } from '../shared/Panel.styles';
 import DataSourceInput from './DataSourceInput';
 import DataSourceModal from './DataSourceModal';
@@ -50,6 +50,14 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         },
         [currentInputRow, loadDataRows],
     );
+
+    useEffect(() => {
+        return () => {
+            // eslint-disable-next-line no-console
+            console.log('cleanup');
+            setIsDataSourceModalOpen(false);
+        };
+    }, []);
 
     if (!hasDataConnector) return null;
     return (
