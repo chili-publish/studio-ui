@@ -1,4 +1,3 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
 import { useCallback, useMemo } from 'react';
 import { ProjectConfig } from '../../../types/types';
 import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
@@ -41,16 +40,13 @@ const useStudioNavbar = ({
     const { zoomNavbarItem } = useNavbarZoom(zoom);
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
-    const { mode } = useTheme();
 
     const navbarItems = useMemo((): NavbarItemType[] => {
         const projectNameItem = {
             label: 'Project information',
             content: (
                 <NavbarGroup>
-                    <NavbarText aria-label={`Project: ${projectName}`} mode={mode}>
-                        {decodeURI(projectName)}
-                    </NavbarText>
+                    <NavbarText aria-label={`Project: ${projectName}`}>{decodeURI(projectName)}</NavbarText>
                 </NavbarGroup>
             ),
             styles: { margin: 'auto' },
@@ -74,7 +70,6 @@ const useStudioNavbar = ({
         projectName,
         modeToggleNavbarItem,
         userInterfaceDropdownNavbarItem,
-        mode,
     ]);
 
     return {

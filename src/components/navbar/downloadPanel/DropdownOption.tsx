@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon } from '@chili-publish/grafx-shared-components';
 import {
     DropdownOptionLabel,
     DropdownOptionText,
@@ -16,11 +16,10 @@ interface DropdownOptionProps {
 
 function DropdownOption(props: DropdownOptionProps) {
     const { iconData, text, description, isExperimental } = props;
-    const { dropdown } = useTheme();
     return (
         <DropdownOptionLabel>
             <Icon icon={iconData} />
-            <Container dropdownStyles={dropdown}>
+            <Container>
                 <DropdownOptionText>{text}</DropdownOptionText>
                 <DropdownOptionDescription>{description}</DropdownOptionDescription>
             </Container>

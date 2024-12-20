@@ -2,7 +2,6 @@ import {
     AvailableIcons,
     Button,
     ButtonVariant,
-    Colors,
     DropDown,
     Icon,
     Menu,
@@ -41,8 +40,7 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-    const { panel } = useTheme();
-
+    const { themeColors } = useTheme();
     const {
         downloadOptions,
         userInterfaceDownloadOptions,
@@ -80,7 +78,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 `}
                 hideCloseButton={mobileDropdownOpen}
             >
-                <Content borderTop={!mobileDropdownOpen} panel={panel}>
+                <Content borderTop={!mobileDropdownOpen}>
                     <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"
@@ -99,9 +97,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     loading
                                     styles={css`
                                         width: 100%;
-                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        background-color: ${themeColors.disabledElements};
                                         &:hover {
-                                            background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                            background-color: ${themeColors.disabledElements};
                                         }
                                     `}
                                 />
@@ -132,7 +130,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
-                <DownloadPanelContainer ref={downloadPanelRef} styles={panel}>
+                <DownloadPanelContainer ref={downloadPanelRef}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <DropDown
@@ -154,9 +152,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 loading
                                 styles={css`
                                     width: 100%;
-                                    background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                    background-color: ${themeColors.disabledElements};
                                     &:hover {
-                                        background-color: ${Colors.STUDIO_BTN_PRIMARY_DISABLED_BG};
+                                        background-color: ${themeColors.disabledElements};
                                     }
                                 `}
                             />

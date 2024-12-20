@@ -1,17 +1,17 @@
 import styled, { css, CSSProp } from 'styled-components';
-import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 import { Text } from '../../styles/Main.styles';
 
 export const STUDIO_NAVBAR_HEIGHT = '3rem';
 const NAVBAR_HEIGHT = '4rem';
 
-export const StyledNavbar = styled.nav<{ panelTheme: ITheme['panel']; mode: ITheme['mode']; styles?: CSSProp }>`
+export const StyledNavbar = styled.nav<{ styles?: CSSProp }>`
     box-sizing: border-box;
     height: ${NAVBAR_HEIGHT};
     padding: 0.75rem 1rem;
-    background-color: ${(props) => props.panelTheme.backgroundColor};
-    border-bottom: 2px solid ${(props) => props.panelTheme.borderColor};
+    background-color: ${({ theme }) => theme.panel.backgroundColor};
+    border-bottom: 2px solid ${({ theme }) => theme.panel.borderColor};
     position: relative;
     z-index: 2;
     ul {

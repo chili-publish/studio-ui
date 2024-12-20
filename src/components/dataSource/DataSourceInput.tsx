@@ -6,7 +6,6 @@ import {
     Input,
     Label,
     LoadingIcon,
-    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { DATA_SOURCE_ID, DataSourceInputStyle, RowInfoContainer } from './DataSource.styles';
@@ -34,10 +33,9 @@ function DataSourceInput({
     onPrevClick,
     onNextClick,
 }: DataSourceInputProps) {
-    const { icon, mode } = useTheme();
     return (
         <>
-            <DataSourceInputStyle disabled={dataIsLoading} iconStyle={icon} />
+            <DataSourceInputStyle disabled={dataIsLoading} />
             <Input
                 type="text"
                 readOnly
@@ -66,7 +64,7 @@ function DataSourceInput({
                 }}
             />
 
-            <RowInfoContainer iconStyle={icon}>
+            <RowInfoContainer>
                 <Button
                     variant={ButtonVariant.tertiary}
                     onClick={onPrevClick}
@@ -75,7 +73,7 @@ function DataSourceInput({
                     dataTestId={getDataTestIdForSUI('data-row-prev')}
                     icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
                 />
-                <Text mode={mode}>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
+                <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
                 <Button
                     variant={ButtonVariant.tertiary}
                     onClick={onNextClick}

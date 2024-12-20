@@ -10,6 +10,7 @@ import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { AuthTokenProvider } from './contexts/AuthTokenProvider';
+import GlobalStyle from './styles/GlobalStyle';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
@@ -61,17 +62,20 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, [projectConfig]);
 
     return (
-        <SubscriberContextProvider subscriber={eventSubscriber}>
-            <UiThemeProvider theme="platform" mode={uiThemeMode}>
-                <NotificationManagerProvider>
-                    <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                        <AuthTokenProvider authToken={authToken}>
-                            <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
-                        </AuthTokenProvider>
-                    </FeatureFlagProvider>
-                </NotificationManagerProvider>
-            </UiThemeProvider>
-        </SubscriberContextProvider>
+        <>
+            <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
+            <SubscriberContextProvider subscriber={eventSubscriber}>
+                <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
+                    <NotificationManagerProvider>
+                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                            <AuthTokenProvider authToken={authToken}>
+                                <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                            </AuthTokenProvider>
+                        </FeatureFlagProvider>
+                    </NotificationManagerProvider>
+                </UiThemeProvider>
+            </SubscriberContextProvider>
+        </>
     );
 }
 
