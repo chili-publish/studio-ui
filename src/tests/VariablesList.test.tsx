@@ -56,7 +56,7 @@ describe('Variables List', () => {
         );
 
         const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(
-            'grafx-drop-down__dropdown-indicator',
+            'grafx-select__dropdown-indicator',
         )[0];
         expect(selectIndicator).toBeInTheDocument();
 
