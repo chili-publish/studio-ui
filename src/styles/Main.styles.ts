@@ -1,7 +1,7 @@
-import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const Text = styled.span<{ themeColors: ITheme['themeColors'] }>`
+export const Text = styled.span`
     font-size: ${FontSizes.regular};
-    color: ${({ themeColors }) => themeColors.secondaryFontText};
+    color: ${({ theme }) => theme?.themeColors?.secondaryFontText};
 `;

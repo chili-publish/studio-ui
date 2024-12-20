@@ -1,21 +1,21 @@
-import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const DownloadDropdownTitle = styled.div<{ themeColors: ITheme['themeColors'] }>`
+export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-weight: bold;
-    color: ${({ themeColors }) => themeColors.primaryFontText};
+    color: ${({ theme }) => theme?.themeColors?.primaryFontText};
 `;
 
-export const DownloadPanelContainer = styled.div<{ panelStyles: ITheme['panel'] }>`
-    background-color: ${({ panelStyles }) => panelStyles.backgroundColor};
+export const DownloadPanelContainer = styled.div`
+    background-color: ${({ theme }) => theme.panel.backgroundColor};
     box-shadow: 0 0 1.5rem 0 rgba(39, 39, 39, 0.25);
-    border: solid 1px ${({ panelStyles }) => panelStyles.borderColor};
+    border: solid 1px ${({ theme }) => theme.panel.borderColor};
     border-radius: 0.25rem;
     ${DownloadDropdownTitle} {
-        color: ${({ panelStyles }) => panelStyles.color};
-        border-bottom: 1px solid ${({ panelStyles }) => panelStyles.borderColor};
-        font-size: ${({ panelStyles }) => panelStyles.title.fontSize};
+        color: ${({ theme }) => theme.panel.color};
+        border-bottom: 1px solid ${({ theme }) => theme.panel.borderColor};
+        font-size: ${({ theme }) => theme.panel.title.fontSize};
     }
 `;
 
@@ -47,7 +47,7 @@ export const ExperimentalPill = styled.span`
     padding: 0 0.75rem;
 `;
 
-export const DropdownOptionLabel = styled.div<{ themeColors: ITheme['themeColors'] }>`
+export const DropdownOptionLabel = styled.div`
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -55,11 +55,11 @@ export const DropdownOptionLabel = styled.div<{ themeColors: ITheme['themeColors
     margin-right: 0.25rem;
     flex: 1;
     ${DropdownOptionDescription} {
-        color: ${({ themeColors }) => themeColors.secondaryFontText};
+        color: ${({ theme }) => theme.themeColors.secondaryFontText};
     }
     ${ExperimentalPill} {
-        color: ${({ themeColors }) => themeColors.primaryFontText};
-        border: 1px solid ${({ themeColors }) => themeColors.primaryFontText};
+        color: ${({ theme }) => theme.themeColors.primaryFontText};
+        border: 1px solid ${({ theme }) => theme.themeColors.primaryFontText};
     }
 `;
 
@@ -70,7 +70,7 @@ export const DropdownOptionText = styled.span`
     white-space: nowrap;
 `;
 
-export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
+export const Container = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -78,10 +78,10 @@ export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
     overflow: hidden;
     white-space: nowrap;
     ${DropdownOptionText} {
-        font-size: ${({ dropdownStyles }) => `${dropdownStyles.fontSize}`};
+        font-size: ${({ theme }) => `${theme.dropdown.fontSize}`};
     }
     ${DropdownOptionDescription} {
-        font-size: ${({ dropdownStyles }) => `${dropdownStyles.optionInfoFontSize}`};
+        font-size: ${({ theme }) => `${theme.dropdown.optionInfoFontSize}`};
     }
 `;
 
@@ -89,9 +89,9 @@ export const ButtonWrapper = styled.div`
     margin-top: 1rem;
 `;
 
-export const Content = styled.div<{ borderTop?: boolean; panel: ITheme['panel'] }>`
+export const Content = styled.div<{ borderTop?: boolean }>`
     padding-top: 1rem;
-    border-top: ${({ borderTop, panel }) => (borderTop ? `1px solid ${panel.borderColor}` : 'none')};
+    border-top: ${({ borderTop, theme }) => (borderTop ? `1px solid ${theme.panel.borderColor}` : 'none')};
 `;
 
 export const BtnContainer = styled.div<{ mobile?: boolean }>`

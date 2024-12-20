@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, Icon, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
@@ -60,7 +60,6 @@ export function VariablePanelContextProvider({
     const [connectorCapabilities, setConnectorCapabilities] = useState<ICapabilities>({});
 
     const variableValidationData = useVariableValidation(variables);
-    const { themeColors } = useTheme();
 
     const getCapabilitiesForConnector = useCallback(async (connectorId: string) => {
         if (!connectorId) throw new Error('ConnectorId is not defined');
@@ -96,7 +95,7 @@ export function VariablePanelContextProvider({
 
     const imagePanelTitle = useMemo(
         () => (
-            <NavigationWrapper themeColors={themeColors}>
+            <NavigationWrapper>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -114,7 +113,7 @@ export function VariablePanelContextProvider({
                 <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, themeColors],
+        [navigationStack],
     );
 
     const data = useMemo(

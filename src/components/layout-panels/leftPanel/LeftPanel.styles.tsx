@@ -1,11 +1,10 @@
-import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const LeftPanelContainer = styled.div<{ overflowScroll: boolean; panelTheme: ITheme['panel'] }>`
+export const LeftPanelContainer = styled.div<{ overflowScroll: boolean }>`
     min-width: 18.75rem;
     width: 18.75rem;
-    background-color: ${(props) => props.panelTheme.backgroundColor};
-    border-right: 2px solid ${(props) => props.panelTheme.borderColor};
+    background-color: ${({ theme }) => theme.panel.backgroundColor};
+    border-right: 2px solid ${({ theme }) => theme.panel.borderColor};
     ${(props) => props.overflowScroll && 'overflow: scroll'};
     padding-left: 0;
 

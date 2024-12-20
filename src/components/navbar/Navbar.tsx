@@ -1,4 +1,3 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { NavbarItem, StyledNavbar } from './Navbar.styles';
@@ -23,14 +22,10 @@ function Navbar(props: INavbar) {
         onDownloadPanelOpen: showDownloadPanel,
     });
 
-    const { panel, mode } = useTheme();
-
     return (
         <StyledNavbar
             data-id={getDataIdForSUI('navbar')}
             data-testid={getDataTestIdForSUI('navbar')}
-            panelTheme={panel}
-            mode={mode}
             styles={css`
                 ul {
                     gap: 1rem;

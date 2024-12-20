@@ -11,7 +11,6 @@ import {
     useMobileSize,
     BreadCrumb,
     Option,
-    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -66,7 +65,6 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-    const { themeColors } = useTheme();
 
     const {
         connectorCapabilities,
@@ -356,7 +354,7 @@ function ItemBrowser<
             >
                 <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
-                        <EmptySearchResultContainer themeColors={themeColors}>
+                        <EmptySearchResultContainer>
                             No search results found. Maybe try another keyword?
                         </EmptySearchResultContainer>
                     )}

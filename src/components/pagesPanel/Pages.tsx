@@ -6,7 +6,6 @@ import {
     PreviewType,
     ScrollbarWrapper,
     useMobileSize,
-    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { ScrollableContainer, Card, Container } from './Pages.styles';
 import { PREVIEW_FALLBACK } from '../../utils/constants';
@@ -21,7 +20,6 @@ interface PagesProps {
 }
 
 function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: PagesProps) {
-    const theme = useTheme();
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
     const isMobileSize = useMobileSize();
 
@@ -80,13 +78,13 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
     }, [pagesToRefresh, setPagesToRefresh, getPagesSnapshot]);
 
     return (
-        <Container themeStyles={theme} isMobileSize={isMobileSize}>
+        <Container isMobileSize={isMobileSize}>
             <ScrollbarWrapper invertScrollbarColors>
                 <ScrollableContainer>
                     {!!pages?.length &&
                         pages.map((item, index) => (
                             <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>
-                                <Card themeStyles={theme} selected={item.id === activePageId} key={`card-${item.id}`}>
+                                <Card selected={item.id === activePageId} key={`card-${item.id}`}>
                                     <PreviewCard
                                         key={`${item.id}-preview-card`}
                                         path={

@@ -1,14 +1,13 @@
-import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const Container = styled.div<{ themeStyles: ITheme; isMobileSize: boolean }>`
+export const Container = styled.div<{ isMobileSize: boolean }>`
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.875rem)' : '100%')};
     height: 7.5rem;
-    background: ${({ themeStyles }) => themeStyles.panel.backgroundColor};
-    border-top: 2px solid ${({ themeStyles }) => themeStyles.panel.borderColor};
+    background: ${({ theme }) => theme.panel.backgroundColor};
+    border-top: 2px solid ${({ theme }) => theme.panel.borderColor};
 `;
 export const ScrollableContainer = styled.div`
     display: flex;
@@ -20,7 +19,7 @@ export const ScrollableContainer = styled.div`
     white-space: nowrap;
     overflow-y: hidden;
 `;
-export const Card = styled.div<{ themeStyles: ITheme; selected?: boolean }>`
+export const Card = styled.div<{ selected?: boolean }>`
     box-sizing: border-box;
     width: 5rem;
     height: 5rem;
@@ -28,11 +27,11 @@ export const Card = styled.div<{ themeStyles: ITheme; selected?: boolean }>`
     flex-shrink: 0;
     border-radius: 0.5rem;
     border: 1px solid
-        ${({ selected, themeStyles }) =>
-            selected ? themeStyles.previewCard.card.selected.borderColor : themeStyles.previewCard.card.borderColor};
-    background-color: ${({ themeStyles }) => themeStyles.canvas.backgroundColor};
+        ${({ selected, theme }) =>
+            selected ? theme.previewCard.card.selected.borderColor : theme.previewCard.card.borderColor};
+    background-color: ${({ theme }) => theme.canvas.backgroundColor};
     &:hover {
-        border-color: ${({ themeStyles }) => themeStyles.previewCard.card.hover.borderColor};
+        border-color: ${({ theme }) => theme.previewCard.card.hover.borderColor};
     }
     [data-id^='gsc-preview-container-'] {
         border-radius: 0.5rem;

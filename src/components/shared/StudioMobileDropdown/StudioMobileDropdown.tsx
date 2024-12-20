@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, InputLabel, Option, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InputLabel, Option } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
 import {
     DropdownContainer,
@@ -37,7 +37,6 @@ function StudioMobileDropdown({
     onMenuClose,
 }: StudioMobileDropdownProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
-    const { icon, dropdown, themeColors } = useTheme();
 
     const openMobileDropdown = useCallback(() => {
         setIsDropdownOpen(true);
@@ -59,7 +58,6 @@ function StudioMobileDropdown({
                         onChange(option.value as string);
                         closeMobileDropdown();
                     }}
-                    dropdownStyles={dropdown}
                 >
                     <MobileDropdownOptionContent>
                         {option.label}
@@ -71,23 +69,18 @@ function StudioMobileDropdown({
     ) : (
         <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
-            <MobileDropdownOptionContainer
-                hasError={!!validationError}
-                dropdownStyles={dropdown}
-                iconStyles={icon}
-                themeColors={themeColors}
-            >
+            <MobileDropdownOptionContainer hasError={!!validationError}>
                 <MobileDropdownValue>
                     {selectedValue?.label ? (
                         // eslint-disable-next-line react/jsx-no-useless-fragment
                         <>{selectedValue.label}</>
                     ) : (
-                        <MobilePlaceholderWrapper themeColors={themeColors}>{placeholder}</MobilePlaceholderWrapper>
+                        <MobilePlaceholderWrapper>{placeholder}</MobilePlaceholderWrapper>
                     )}
                 </MobileDropdownValue>
                 <Icon icon={AvailableIcons.faChevronDown} />
             </MobileDropdownOptionContainer>
-            {validationError ? <ErrorMessage themeColors={themeColors}>{validationError}</ErrorMessage> : null}
+            {validationError ? <ErrorMessage>{validationError}</ErrorMessage> : null}
         </DropdownContainer>
     );
 }

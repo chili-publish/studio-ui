@@ -1,4 +1,4 @@
-import { FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const DropdownContainer = styled.div`
@@ -16,10 +16,8 @@ export const MobileDropdownValue = styled.div`
     white-space: nowrap;
 `;
 
-export const MobilePlaceholderWrapper = styled.span<{
-    themeColors: ITheme['themeColors'];
-}>`
-    color: ${(props) => props.themeColors.placeholderText};
+export const MobilePlaceholderWrapper = styled.span`
+    color: ${(props) => props.theme.themeColors.placeholderText};
     font-style: italic;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -28,16 +26,14 @@ export const MobilePlaceholderWrapper = styled.span<{
 
 export const MobileDropdownOptionContainer = styled.div<{
     hasError?: boolean;
-    iconStyles: ITheme['icon'];
-    dropdownStyles: ITheme['dropdown'];
-    themeColors: ITheme['themeColors'];
 }>`
     display: flex;
     padding: 0 0.75rem;
     justify-content: space-between;
     align-items: center;
-    background-color: ${({ dropdownStyles }) => dropdownStyles.control.backgroundColor};
-    border: ${(props) => (props.hasError ? `1px solid ${props.themeColors.errorColor}` : '1px solid transparent')};
+    background-color: ${({ theme }) => theme.dropdown.control.backgroundColor};
+    border: ${(props) =>
+        props.hasError ? `1px solid ${props.theme.themeColors.errorColor}` : '1px solid transparent'};
     font-size: ${FontSizes.regular};
     line-height: 1.29;
     height: 2.5rem;
@@ -46,25 +42,25 @@ export const MobileDropdownOptionContainer = styled.div<{
         box-shadow: none;
         border-color: ${(props) =>
             props.hasError
-                ? `1px solid ${props.themeColors.errorColor}`
-                : `1px solid ${props.themeColors.inputFocusBorder}`};
+                ? `1px solid ${props.theme.themeColors.errorColor}`
+                : `1px solid ${props.theme.themeColors.inputFocusBorder}`};
         cursor: pointer;
 
         svg {
-            color: ${(props) => props.iconStyles.hover.color};
+            color: ${(props) => props.theme.icon.hover.color};
         }
     }
 
     svg {
-        color: ${({ dropdownStyles }) => dropdownStyles.color};
+        color: ${({ theme }) => theme.dropdown.color};
         min-width: 1.125rem;
     }
     ${MobileDropdownValue} {
-        color: ${({ dropdownStyles }) => dropdownStyles.color};
+        color: ${({ theme }) => theme.dropdown.color};
     }
 `;
 
-export const MobileDropdownMenuOption = styled.div<{ selected?: boolean; dropdownStyles: ITheme['dropdown'] }>`
+export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
     display: flex;
     align-items: center;
     min-height: 3rem;
@@ -72,15 +68,14 @@ export const MobileDropdownMenuOption = styled.div<{ selected?: boolean; dropdow
     padding: 0.5rem 0.75rem;
     font-size: ${FontSizes.regular};
 
-    color: ${({ selected, dropdownStyles }) =>
-        `${selected ? dropdownStyles.color : dropdownStyles.menuOption.color} !important`};
+    color: ${({ selected, theme }) =>
+        `${selected ? theme.dropdown.color : theme.dropdown.menuOption.color} !important`};
 
     svg {
-        ${({ dropdownStyles, selected }) => selected && `color: ${dropdownStyles.color}`};
+        ${({ theme, selected }) => selected && `color: ${theme.dropdown.color}`};
     }
-    ${({ selected, dropdownStyles }) =>
-        selected && `background-color: ${dropdownStyles.menuOption.hover.backgroundColor};`};
-    ${({ selected, dropdownStyles }) => selected && `color: ${dropdownStyles.menuOption.hover.color} !important;`};
+    ${({ selected, theme }) => selected && `background-color: ${theme.dropdown.menuOption.hover.backgroundColor};`};
+    ${({ selected, theme }) => selected && `color: ${theme.dropdown.menuOption.hover.color} !important;`};
 `;
 
 export const MobileDropdownOptionContent = styled.div`

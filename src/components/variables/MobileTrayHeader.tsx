@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, Icon, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
@@ -10,13 +10,12 @@ interface MobileTrayHeaderProps {
 }
 function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeaderProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
-    const { panel, mode, themeColors } = useTheme();
 
     if ((contentType === ContentType.VARIABLES_LIST && !hasDataConnector) || mobileListOpen)
-        return <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>;
+        return <TrayPanelTitle>Customize</TrayPanelTitle>;
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
-            <DatePickerTrayTitle themeMode={mode} themeColors={themeColors}>
+            <DatePickerTrayTitle>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -28,16 +27,14 @@ function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeader
                         padding: 0 0.5rem 0 0;
                     `}
                 />
-                <TrayPanelTitle panelTheme={panel} margin="0">
-                    Select date
-                </TrayPanelTitle>
+                <TrayPanelTitle margin="0">Select date</TrayPanelTitle>
             </DatePickerTrayTitle>
         );
 
     if (contentType === ContentType.IMAGE_PANEL) return imagePanelTitle;
     if (contentType === ContentType.DATA_SOURCE_TABLE)
         return (
-            <DatePickerTrayTitle themeMode={mode} themeColors={themeColors}>
+            <DatePickerTrayTitle>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
@@ -49,12 +46,10 @@ function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeader
                         padding: 0 0.5rem 0 0;
                     `}
                 />
-                <TrayPanelTitle panelTheme={panel} margin="0">
-                    Data source
-                </TrayPanelTitle>
+                <TrayPanelTitle margin="0">Data source</TrayPanelTitle>
             </DatePickerTrayTitle>
         );
-    if (hasDataConnector) return <TrayPanelTitle panelTheme={panel}>Data source</TrayPanelTitle>;
+    if (hasDataConnector) return <TrayPanelTitle>Data source</TrayPanelTitle>;
 }
 
 export default MobileTrayHeader;

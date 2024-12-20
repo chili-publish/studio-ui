@@ -1,4 +1,3 @@
-import { ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 const SANDBOX_NAVBAR_HEIGHT = '3rem';
@@ -16,6 +15,6 @@ export const CanvasContainer = styled.div`
     width: 100%;
 `;
 
-export const Container = styled.div<{ canvas: ITheme['canvas'] }>`
-    background-color: ${({ canvas }) => canvas.backgroundColor};
+export const Container = styled.div`
+    background-color: ${({ theme }) => theme.canvas.backgroundColor};
 `;
