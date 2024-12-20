@@ -1,8 +1,8 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
+import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
@@ -11,8 +11,10 @@ function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
 
     const { panel, mode } = useTheme();
-    const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } =
-        useDownloadPanel(projectConfig);
+    const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
+        projectConfig,
+        projectName,
+    );
 
     const { navbarItems } = useStudioNavbar({
         projectName,
