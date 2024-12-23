@@ -230,6 +230,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onPageSizeChanged: () => {
                 zoomToPage();
             },
+            onCustomUndoDataChanged: (customData: Map<string, string>) => {
+                eventSubscriber.emit('onCustomUndoDataChanged', customData);
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {

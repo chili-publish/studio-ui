@@ -1,7 +1,10 @@
 import { DataItem } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSubscriberContext } from '../../contexts/Subscriber';
 import { SDKError } from '../../types/SDKError';
+
+export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
 const useDataSource = (isDocumentLoaded: boolean) => {
     const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>(null);
@@ -10,6 +13,8 @@ const useDataSource = (isDocumentLoaded: boolean) => {
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+
+    const { subscriber } = useSubscriberContext();
 
     const loadDataRows = useCallback(async () => {
         if (!dataConnector) return;
@@ -80,6 +85,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
             if (currentRow) {
                 try {
                     await window.StudioUISDK.dataSource.setDataRow(currentRow);
+                    await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, currentRowIndex + '');
                 } catch (error) {
                     // "setDataRow" throws an error if there is not all variables available for setting the data source row
                     // We can use it later to show some warning popup with missed variables list
@@ -89,7 +95,17 @@ const useDataSource = (isDocumentLoaded: boolean) => {
                 }
             }
         })();
-    }, [currentRow]);
+    }, [currentRow, currentRowIndex]);
+
+    useEffect(() => {
+        const handler = (undoData: Map<string, string>) => {
+            if (undoData.has(SELECTED_ROW_INDEX_KEY)) {
+                updateSelectedRow(Number(undoData.get(SELECTED_ROW_INDEX_KEY)));
+            }
+        };
+        subscriber?.on('onCustomUndoDataChanged', handler);
+        return () => subscriber?.off('onCustomUndoDataChanged', handler);
+    }, [subscriber, updateSelectedRow]);
 
     return {
         currentInputRow,
