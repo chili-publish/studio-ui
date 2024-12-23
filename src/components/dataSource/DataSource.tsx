@@ -1,5 +1,6 @@
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle } from '../shared/Panel.styles';
 import DataSourceInput from './DataSourceInput';
 import DataSourceModal from './DataSourceModal';
@@ -10,7 +11,7 @@ interface DataSourceProps {
 }
 function DataSource({ isDocumentLoaded }: DataSourceProps) {
     const { panel } = useTheme();
-    const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
+    const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
 
     const {
         currentInputRow,
@@ -29,12 +30,11 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);
-    }, []);
+    }, [setIsDataSourceModalOpen]);
 
     const onSelectedRowChanged = useCallback(
         (index: number) => {
             updateSelectedRow(index);
-            setIsDataSourceModalOpen(false);
         },
         [updateSelectedRow],
     );
@@ -49,10 +49,11 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
                 setIsDataSourceModalOpen(true);
             }
         },
-        [currentInputRow, loadDataRows],
+        [currentInputRow, loadDataRows, setIsDataSourceModalOpen],
     );
 
     if (!hasDataConnector) return null;
+
     return (
         <>
             <PanelTitle panelTheme={panel}>Data source</PanelTitle>
@@ -68,6 +69,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
             />
             {isDataSourceModalOpen ? (
                 <DataSourceModal
+                    isOpen={isDataSourceModalOpen}
                     data={dataRows}
                     selectedRow={currentRowIndex}
                     onSelectedRowChanged={onSelectedRowChanged}

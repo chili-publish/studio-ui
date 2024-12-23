@@ -5,14 +5,18 @@ type Mode = 'design' | 'run';
 interface IAppContext {
     isDocumentLoaded: boolean;
     selectedMode: Mode;
+    isDataSourceModalOpen: boolean;
     updateSelectedMode: (_: string) => void;
+    setIsDataSourceModalOpen: (_: boolean) => void;
     cleanRunningTasks: () => Promise<void>;
 }
 
 const AppContext = createContext<IAppContext>({
     isDocumentLoaded: false,
     selectedMode: 'run',
+    isDataSourceModalOpen: false,
     updateSelectedMode: () => null,
+    setIsDataSourceModalOpen: () => null,
     cleanRunningTasks: () => Promise.resolve(),
 });
 
@@ -30,9 +34,11 @@ function AppProvider({
     children: ReactNode;
 }) {
     const [selectedMode, setSelectedMode] = useState<Mode>('run');
+    const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
 
     const cleanRunningTasks = useCallback(async () => {
         if (isAnimationPlaying) await window.StudioUISDK.animation.pause();
+        setIsDataSourceModalOpen(false);
     }, [isAnimationPlaying]);
 
     const updateSelectedMode = useCallback((val: string) => {
@@ -43,10 +49,19 @@ function AppProvider({
         () => ({
             isDocumentLoaded,
             selectedMode,
+            isDataSourceModalOpen,
+            setIsDataSourceModalOpen,
             updateSelectedMode,
             cleanRunningTasks,
         }),
-        [isDocumentLoaded, selectedMode, updateSelectedMode, cleanRunningTasks],
+        [
+            isDocumentLoaded,
+            selectedMode,
+            isDataSourceModalOpen,
+            updateSelectedMode,
+            cleanRunningTasks,
+            setIsDataSourceModalOpen,
+        ],
     );
 
     return <AppContext.Provider value={data}>{children}</AppContext.Provider>;
