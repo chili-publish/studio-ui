@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- ... insert your own stuff here ... -->
+        <!-- link to the studio ui css, to inject the styling -->
+        <link
+            rel="stylesheet"
+            href="https://stgrafxstudiodevpublic.blob.core.windows.net/studio-ui/pr_builds/251/es-module/main.css"
+        />
+    </head>
+    <body>
+        <button onclick="toggleMultiLayout()">Multi Layout</button>
+        <button onclick="toggleSingleLayout()">Single Layout</button>
+        <!-- div where studio ui will be constructed in -->
+        <div id="studio-ui-container"></div>
+        <!-- 2. ES Modules approach (recommended one) script to inject latest studio ui -->
+        <script type="module">
+            const token = `YOuR-TOKEN`;
+            /* The HTML div for the editor. */
+            const studioUIContainer = 'studio-ui-container';
+            /* The environment API base url for the environment that you're using in your integration. */
+            const environmentBaseURL = 'https://cp-qeb-191.cpstaging.online/grafx/api/v1/environment/cp-qeb-191';
+            /* ID of the project you want to load, this is optional and will enable auto-save when used. */
+            const projectID = '1be385e4-a043-4f4d-b0bc-63099a9e6de7';
+            /* Name of the project, but can be whatever you want, is only a static indication that is displayed in the UI. */
+            const projectName = 'Multi Layout Mode';
+            /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. */
+            const refreshTokenAction = () => Promise.resolve(token);
+            import(
+                'https://stgrafxstudiodevpublic.blob.core.windows.net/studio-ui/pr_builds/251/es-module/bundle.js'
+            ).then((module) => {
+                window.StudioUI = module.default;
+                window.StudioUI.studioLoaderConfig({
+                    selector: studioUIContainer,
+                    projectId: projectID,
+                    projectName: 'Dev Run',
+                    graFxStudioEnvironmentApiBaseUrl: `${environmentBaseURL}`,
+                    authToken: token,
+                    editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/main-1dd58d6df0c4f6503ac00eafcf97fa48871fe4c4/web`,
+                    refreshTokenAction: refreshTokenAction,
+                    uiOptions: {
+                        widgets: {
+                            backButton: { visible: true },
+                            navBar: { visible: false },
+                            bottomBar: { visible: false },
+                        },
+                    },
+                    customElement: '<h1>Rendered from HTMLElement</h1>',
+                    onSetMultiLayout: (stateUpdater) => {
+                        ToggleSetMultiLayout = stateUpdater;
+                    },
+                });
+            });
+        </script>
+        <script>
+            let ToggleSetMultiLayout;
+
+            function toggleMultiLayout() {
+                ToggleSetMultiLayout(true);
+            }
+            function toggleSingleLayout() {
+                ToggleSetMultiLayout(false);
+            }
+        </script>
+    </body>
+</html>
