@@ -1,4 +1,4 @@
-import { InputLabel, Option } from '@chili-publish/grafx-shared-components';
+import { InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import StudioDropdown from '../../shared/StudioDropdown';
 import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
@@ -19,7 +19,7 @@ function ListVariable(props: IListVariable) {
               label: variable.selected.displayValue || variable.selected.value,
               value: variable.selected.value,
           }
-        : ('' as unknown as Option);
+        : ('' as unknown as SelectOptions);
     const placeholder = getVariablePlaceholder(variable);
 
     const updateVariableValue = async (variableId: string, value: string) => {

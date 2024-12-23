@@ -16,11 +16,11 @@ interface DropdownOptionProps {
 
 function DropdownOption(props: DropdownOptionProps) {
     const { iconData, text, description, isExperimental } = props;
-    const { dropdown } = useTheme();
+    const { select } = useTheme();
     return (
         <DropdownOptionLabel>
             <Icon icon={iconData} />
-            <Container dropdownStyles={dropdown}>
+            <Container dropdownStyles={select}>
                 <DropdownOptionText>{text}</DropdownOptionText>
                 <DropdownOptionDescription>{description}</DropdownOptionDescription>
             </Container>

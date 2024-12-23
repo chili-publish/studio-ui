@@ -80,7 +80,7 @@ const variableRequiredTest = async (variable: Variable) => {
 
     const selectIndicator = screen
         .getByTestId(getDataTestIdForSUI(`output-dropdown`))
-        .getElementsByClassName('grafx-drop-down__dropdown-indicator')[0];
+        .getElementsByClassName('grafx-select__dropdown-indicator')[0];
     expect(selectIndicator).toBeInTheDocument();
 
     act(() => {
@@ -166,7 +166,7 @@ describe('Required text variable', () => {
 
         const selectIndicator = screen
             .getByTestId(getDataTestIdForSUI(`dropdown-${listVariable.id}`))
-            .getElementsByClassName('grafx-drop-down__dropdown-indicator')[0];
+            .getElementsByClassName('grafx-select__dropdown-indicator')[0];
         expect(selectIndicator).toBeInTheDocument();
 
         act(() => {
