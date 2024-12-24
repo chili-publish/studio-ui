@@ -1,8 +1,7 @@
 import { DataItem } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSubscriberContext } from '../../contexts/Subscriber';
-import { SDKError } from '../../types/SDKError';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -13,6 +12,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const shouldUpdateDataRow = useRef(true);
 
     const { subscriber } = useSubscriberContext();
 
@@ -82,30 +82,32 @@ const useDataSource = (isDocumentLoaded: boolean) => {
 
     useEffect(() => {
         (async () => {
-            if (currentRow) {
-                try {
-                    await window.StudioUISDK.dataSource.setDataRow(currentRow);
-                    await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
-                } catch (error) {
-                    // "setDataRow" throws an error if there is not all variables available for setting the data source row
-                    // We can use it later to show some warning popup with missed variables list
-                    if ((error as SDKError).cause.name !== '401014') {
-                        throw error;
-                    }
-                }
+            if (currentRow && shouldUpdateDataRow.current) {
+                await window.StudioUISDK.dataSource.setDataRow(currentRow);
             }
         })();
-    }, [currentRow, currentRowIndex]);
+    }, [currentRow]);
+
+    useEffect(() => {
+        (async () => {
+            if (!isDocumentLoaded) return;
+            await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
+        })();
+    }, [currentRowIndex, isDocumentLoaded]);
 
     useEffect(() => {
         const handler = (undoData: Record<string, string>) => {
             if (undoData[SELECTED_ROW_INDEX_KEY]) {
-                updateSelectedRow(Number(undoData[SELECTED_ROW_INDEX_KEY]));
+                const index = Number(undoData[SELECTED_ROW_INDEX_KEY]);
+                // We prevent calling of `.setDataRow` for undo/redo calls (in this case index !== currentRowIndex)
+                // to not create an extra undo item with same dataRow changes
+                shouldUpdateDataRow.current = index === currentRowIndex;
+                updateSelectedRow(index);
             }
         };
         subscriber?.on('onCustomUndoDataChanged', handler);
         return () => subscriber?.off('onCustomUndoDataChanged', handler);
-    }, [subscriber, updateSelectedRow]);
+    }, [subscriber, updateSelectedRow, currentRowIndex]);
 
     return {
         currentInputRow,
