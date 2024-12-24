@@ -1,7 +1,7 @@
 import { ConfigType } from '@chili-publish/studio-sdk';
 
 // replace second generic with particular ConfigType events properties when you wanted to subscribe to the Editor events
-type EditorEvents = Pick<ConfigType, 'onVariableListChanged'>;
+type EditorEvents = Pick<ConfigType, 'onVariableListChanged' | 'onCustomUndoDataChanged'>;
 
 // replace with actual object type if needed
 type CustomEvents = Record<string, never>;

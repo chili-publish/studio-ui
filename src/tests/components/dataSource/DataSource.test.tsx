@@ -19,6 +19,7 @@ describe('DataSource test', () => {
         });
 
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
             <UiThemeProvider theme="platform">
@@ -81,6 +82,7 @@ describe('DataSource test', () => {
             },
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
             <UiThemeProvider theme="platform">
