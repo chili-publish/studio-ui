@@ -98,9 +98,9 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     }, [currentRow, currentRowIndex]);
 
     useEffect(() => {
-        const handler = (undoData: Map<string, string>) => {
-            if (undoData.has(SELECTED_ROW_INDEX_KEY)) {
-                updateSelectedRow(Number(undoData.get(SELECTED_ROW_INDEX_KEY)));
+        const handler = (undoData: Record<string, string>) => {
+            if (undoData[SELECTED_ROW_INDEX_KEY]) {
+                updateSelectedRow(Number(undoData[SELECTED_ROW_INDEX_KEY]));
             }
         };
         subscriber?.on('onCustomUndoDataChanged', handler);

@@ -28,12 +28,8 @@ describe('"useDataSource" hook tests', () => {
         });
         const { result } = await renderHook(() => useDataSource(true));
 
-        const map = new Map<string, string>();
-
-        map.set('arbitaryKey', '333');
-
         act(() => {
-            mockSubscriber.emit('onCustomUndoDataChanged', map);
+            mockSubscriber.emit('onCustomUndoDataChanged', { arbitaryKey: '333' });
         });
 
         expect(result.current.currentRowIndex).toEqual(0);
@@ -45,11 +41,8 @@ describe('"useDataSource" hook tests', () => {
         });
         const { result } = await renderHook(() => useDataSource(true));
 
-        const map = new Map<string, string>();
-        map.set(SELECTED_ROW_INDEX_KEY, '3');
-
         act(() => {
-            mockSubscriber.emit('onCustomUndoDataChanged', map);
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '3' });
         });
 
         expect(result.current.currentRowIndex).toEqual(3);
