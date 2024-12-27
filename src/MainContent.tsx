@@ -23,6 +23,7 @@ import {
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import Navbar from './components/navbar/Navbar';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
+import Pages from './components/pagesPanel/Pages';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
 import AppProvider from './contexts/AppProvider';
 import { useAuthToken } from './contexts/AuthTokenProvider';
@@ -31,7 +32,6 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { SuiCanvas } from './MainContent.styles';
-import Pages from './components/pagesPanel/Pages';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
@@ -338,7 +338,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                 {projectConfig.sandboxMode ? (
                                     <UiThemeProvider theme="studio" mode="dark">
                                         <StudioNavbar
-                                            projectName={projectConfig?.projectName || currentProject?.name}
+                                            projectName={currentProject?.name || projectConfig.projectName}
                                             goBack={projectConfig?.onUserInterfaceBack}
                                             projectConfig={projectConfig}
                                             undoStackState={undoStackState}
@@ -347,7 +347,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     </UiThemeProvider>
                                 ) : (
                                     <Navbar
-                                        projectName={projectConfig?.projectName || currentProject?.name}
+                                        projectName={currentProject?.name || projectConfig.projectName}
                                         goBack={projectConfig?.onUserInterfaceBack}
                                         projectConfig={projectConfig}
                                         undoStackState={undoStackState}

@@ -30,13 +30,11 @@ describe('DataSourceModal test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: tableData },
         });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
     });

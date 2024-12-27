@@ -1,12 +1,12 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
+import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 describe('Navbar', () => {
     let prjConfig: ProjectConfig;
@@ -31,6 +31,7 @@ describe('Navbar', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <Navbar
+                            projectName=""
                             projectConfig={prjConfig}
                             zoom={100}
                             undoStackState={{
@@ -63,6 +64,7 @@ describe('Navbar', () => {
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={LayoutIntent.digitalAnimated}>
                 <UiThemeProvider theme="platform">
                     <Navbar
+                        projectName=""
                         projectConfig={config}
                         zoom={100}
                         undoStackState={{
@@ -100,6 +102,7 @@ describe('Navbar', () => {
             <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={LayoutIntent.digitalAnimated}>
                 <UiThemeProvider theme="platform">
                     <Navbar
+                        projectName=""
                         projectConfig={config}
                         zoom={100}
                         undoStackState={{
@@ -132,6 +135,7 @@ describe('Navbar', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <Navbar
+                            projectName=""
                             projectConfig={prjConfig}
                             zoom={100}
                             undoStackState={{
@@ -193,6 +197,7 @@ describe('Navbar', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <Navbar
+                            projectName=""
                             projectConfig={prjConfig}
                             zoom={100}
                             undoStackState={{
