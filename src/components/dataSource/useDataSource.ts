@@ -1,9 +1,10 @@
-import { ConnectorInstance, ConnectorType } from '@chili-publish/studio-sdk';
+import { DataItem } from '@chili-publish/studio-sdk';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { DataItem } from './DataSource.types';
+import { SDKError } from '../../types/SDKError';
 
 const useDataSource = (isDocumentLoaded: boolean) => {
-    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>();
+    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>(null);
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
@@ -20,9 +21,8 @@ const useDataSource = (isDocumentLoaded: boolean) => {
                 continuationToken,
             });
 
-            // TODO: for now only string | number are supported, extend  the type when more data types will be included
             const rowItems = pageInfoResponse.parsedData?.data || [];
-            setDataRows((prevData) => [...prevData, ...rowItems] as DataItem[]);
+            setDataRows((prevData) => [...prevData, ...rowItems]);
             setContinuationToken(pageInfoResponse.parsedData?.continuationToken || null);
         } catch (error) {
             // eslint-disable-next-line no-console
@@ -32,10 +32,13 @@ const useDataSource = (isDocumentLoaded: boolean) => {
         }
     }, [dataConnector, continuationToken]);
 
-    const currentRow = useMemo(() => {
-        const rowInfo = dataRows[currentRowIndex];
-        return rowInfo ? Object.values(rowInfo).join('|') : '';
+    const currentRow: DataItem | undefined = useMemo(() => {
+        return dataRows[currentRowIndex];
     }, [dataRows, currentRowIndex]);
+
+    const currentInputRow = useMemo(() => {
+        return currentRow ? Object.values(currentRow).join(' | ') : '';
+    }, [currentRow]);
 
     const isPrevDisabled = useMemo(() => isLoading || currentRowIndex === 0, [currentRowIndex, isLoading]);
     const isNextDisabled = useMemo(
@@ -44,14 +47,14 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     );
 
     const getPreviousRow = useCallback(() => {
-        setCurrentRowIndex((prev) => (prev > 0 ? prev - 1 : prev));
+        setCurrentRowIndex((prev) => prev - 1);
     }, []);
 
     const getNextRow = useCallback(async () => {
         if (continuationToken && currentRowIndex + 1 === dataRows.length) {
             await loadDataRows();
         }
-        setCurrentRowIndex((prev) => (currentRowIndex < dataRows.length ? prev + 1 : prev));
+        setCurrentRowIndex((prev) => prev + 1);
     }, [currentRowIndex, dataRows, continuationToken, loadDataRows]);
 
     const updateSelectedRow = useCallback((index: number) => {
@@ -61,8 +64,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     useEffect(() => {
         if (!isDocumentLoaded) return;
         const getDataConnector = async () => {
-            const dataConnectorsResponse = await window.StudioUISDK.connector.getAllByType(ConnectorType.data);
-            const defaultDataConnector = dataConnectorsResponse.parsedData?.[0] || null;
+            const { parsedData: defaultDataConnector } = await window.StudioUISDK.dataSource.getDataSource();
             setDataConnector(defaultDataConnector);
         };
         getDataConnector();
@@ -73,8 +75,24 @@ const useDataSource = (isDocumentLoaded: boolean) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataConnector]);
 
+    useEffect(() => {
+        (async () => {
+            if (currentRow) {
+                try {
+                    await window.StudioUISDK.dataSource.setDataRow(currentRow);
+                } catch (error) {
+                    // "setDataRow" throws an error if there is not all variables available for setting the data source row
+                    // We can use it later to show some warning popup with missed variables list
+                    if ((error as SDKError).cause.name !== '401014') {
+                        throw error;
+                    }
+                }
+            }
+        })();
+    }, [currentRow]);
+
     return {
-        currentRow,
+        currentInputRow,
         currentRowIndex,
         updateSelectedRow,
         loadDataRows,

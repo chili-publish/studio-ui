@@ -62,6 +62,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                         .fn()
                         .mockImplementation(() => Promise.resolve({ parsedData: { query: true } })),
                 },
+                animation: { pause: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
             };
         },
     };

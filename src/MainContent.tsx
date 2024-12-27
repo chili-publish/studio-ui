@@ -5,11 +5,12 @@ import StudioSDK, {
     DocumentType,
     GrafxTokenAuthCredentials,
     LayoutIntent,
+    Page,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -20,16 +21,20 @@ import {
     useConnectorAuthenticationResult,
 } from './components/connector-authentication';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import Navbar from './components/navbar/Navbar';
+import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
+import Pages from './components/pagesPanel/Pages';
+import MobileVariablesTray from './components/variables/MobileVariablesTray';
+import AppProvider from './contexts/AppProvider';
+import { useAuthToken } from './contexts/AuthTokenProvider';
+import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
+import { SuiCanvas } from './MainContent.styles';
 import { Project, ProjectConfig } from './types/types';
-import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import MobileVariablesTray from './components/variables/MobileVariablesTray';
-import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
-import Navbar from './components/navbar/Navbar';
 import { APP_WRAPPER_ID } from './utils/constants';
-import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
+import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
 declare global {
     interface Window {
@@ -38,14 +43,14 @@ declare global {
     }
 }
 
+const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
     projectConfig: ProjectConfig;
-    authToken: string;
     updateToken: (newValue: string) => void;
 }
 
-function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: MainContentProps) {
-    const [fetchedDocument, setFetchedDocument] = useState('');
+function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentProps) {
+    const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
     const [variables, setVariables] = useState<Variable[]>([]);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
@@ -59,6 +64,10 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
 
+    const [pages, setPages] = useState<Page[]>([]);
+    const [activePageId, setActivePageId] = useState<string | null>(null);
+    const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
+
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
 
@@ -66,6 +75,8 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     const isMobileSize = useMobileSize();
 
     const { canvas } = useTheme();
+
+    const { authToken } = useAuthToken();
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -102,12 +113,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
     const zoomToPage = async () => {
+        const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
             pageId: null,
             left: 0,
             top: 0,
-            width: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().width),
-            height: Math.floor(document.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect().height),
+            width: iframe?.width,
+            height: iframe?.height,
         };
 
         await window.StudioUISDK.canvas.zoomToPage(
@@ -124,6 +136,7 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             return;
         }
         const sdk = new StudioSDK({
+            editorId: EDITOR_ID,
             enableNextSubscribers: {
                 onVariableListChanged: true,
             },
@@ -183,10 +196,13 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
                 }
             },
             onSelectedLayoutIdChanged: async () => {
-                zoomToPage();
                 const layoutIntentData =
                     (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value ?? null;
                 setLayoutIntent(layoutIntentData);
+
+                startTransition(() => {
+                    zoomToPage();
+                });
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -198,6 +214,21 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
             },
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
+            },
+            onPageSnapshotInvalidated: (invalidatedPageId) => {
+                setPagesToRefresh((prev) => {
+                    return prev.includes(String(invalidatedPageId)) ? prev : [...prev, String(invalidatedPageId)];
+                });
+            },
+            onPagesChanged: (changedPages) => {
+                const visiblePages = changedPages?.filter((i) => i.isVisible);
+                setPages(visiblePages);
+            },
+            onSelectedPageIdChanged: (pageId) => {
+                setActivePageId(pageId);
+            },
+            onPageSizeChanged: () => {
+                zoomToPage();
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
@@ -256,18 +287,19 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
     }, [currentProject?.template?.id]);
 
     useEffect(() => {
-        const setHandTool = async () => {
-            await window.StudioUISDK.tool.setHand();
-        };
-        setHandTool();
-        const loadDocument = async () => {
-            if (authToken) {
-                await window.StudioUISDK.configuration.setValue(
-                    WellKnownConfigurationKeys.GraFxStudioAuthToken,
-                    authToken,
-                );
-            }
+        (async () => {
+            await window.StudioUISDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+        })();
+    }, [authToken]);
 
+    useEffect(() => {
+        (async () => {
+            await window.StudioUISDK.tool.setHand();
+        })();
+    }, []);
+
+    useEffect(() => {
+        const loadDocument = async () => {
             if (!fetchedDocument) return;
 
             await window.StudioUISDK.document.load(fetchedDocument).then((res) => {
@@ -291,78 +323,98 @@ function MainContent({ projectConfig, authToken, updateToken: setAuthToken }: Ma
         };
 
         loadDocument();
-    }, [authToken, fetchedDocument]);
+    }, [fetchedDocument]);
 
     return (
-        <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
-            <Container canvas={canvas}>
-                <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
-                    <VariablePanelContextProvider
-                        connectors={{ mediaConnectors, fontsConnectors }}
-                        variables={variables}
-                    >
-                        <div id={APP_WRAPPER_ID} className="app">
-                            {projectConfig.sandboxMode ? (
-                                <UiThemeProvider theme="studio" mode="dark">
-                                    <StudioNavbar
-                                        projectName={projectConfig?.projectName || currentProject?.name}
+        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
+            <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
+                <Container canvas={canvas}>
+                    <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
+                        <VariablePanelContextProvider
+                            connectors={{ mediaConnectors, fontsConnectors }}
+                            variables={variables}
+                        >
+                            <div id={APP_WRAPPER_ID} className="app">
+                                {projectConfig.sandboxMode ? (
+                                    <UiThemeProvider theme="studio" mode="dark">
+                                        <StudioNavbar
+                                            projectName={currentProject?.name || projectConfig.projectName}
+                                            goBack={projectConfig?.onUserInterfaceBack}
+                                            projectConfig={projectConfig}
+                                            undoStackState={undoStackState}
+                                            zoom={currentZoom}
+                                        />
+                                    </UiThemeProvider>
+                                ) : (
+                                    <Navbar
+                                        projectName={currentProject?.name || projectConfig.projectName}
                                         goBack={projectConfig?.onUserInterfaceBack}
                                         projectConfig={projectConfig}
                                         undoStackState={undoStackState}
                                         zoom={currentZoom}
                                     />
-                                </UiThemeProvider>
-                            ) : (
-                                <Navbar
-                                    projectName={projectConfig?.projectName || currentProject?.name}
-                                    goBack={projectConfig?.onUserInterfaceBack}
-                                    projectConfig={projectConfig}
-                                    undoStackState={undoStackState}
-                                    zoom={currentZoom}
-                                />
-                            )}
-
-                            <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
-                                {!isMobileSize && (
-                                    <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                 )}
-                                <CanvasContainer>
-                                    {isMobileSize && (
-                                        <MobileVariablesTray
-                                            variables={variables}
-                                            isDocumentLoaded={isDocumentLoaded}
-                                        />
+
+                                <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
+                                    {!isMobileSize && (
+                                        <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
                                     )}
-                                    <div
-                                        className="sui-canvas"
-                                        data-id={getDataIdForSUI('canvas')}
-                                        data-testid={getDataTestIdForSUI('canvas')}
-                                    >
-                                        <div className="chili-editor" id="chili-editor" />
-                                    </div>
-                                    {layoutIntent === LayoutIntent.digitalAnimated ? (
-                                        <AnimationTimeline
-                                            scrubberTimeMs={scrubberTimeMs}
-                                            animationLength={animationLength}
-                                            isAnimationPlaying={animationStatus}
+                                    <CanvasContainer>
+                                        {isMobileSize && (
+                                            <MobileVariablesTray
+                                                variables={variables}
+                                                isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
+                                                isPagesPanelDisplayed={
+                                                    layoutIntent === LayoutIntent.print && pages?.length > 1
+                                                }
+                                                isDocumentLoaded={isDocumentLoaded}
+                                            />
+                                        )}
+                                        <SuiCanvas
+                                            // intent prop to calculate pages container
+                                            hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
+                                            hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            data-id={getDataIdForSUI('canvas')}
+                                            data-testid={getDataTestIdForSUI('canvas')}
+                                        >
+                                            <div className="chili-editor" id={EDITOR_ID} />
+                                        </SuiCanvas>
+                                        {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                            <AnimationTimeline
+                                                scrubberTimeMs={scrubberTimeMs}
+                                                animationLength={animationLength}
+                                                isAnimationPlaying={animationStatus}
+                                            />
+                                        ) : null}
+                                        {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                            <Pages
+                                                pages={pages}
+                                                activePageId={activePageId}
+                                                pagesToRefresh={pagesToRefresh}
+                                                setPagesToRefresh={setPagesToRefresh}
+                                            />
+                                        ) : null}
+                                    </CanvasContainer>
+                                </MainContentContainer>
+                                {pendingAuthentications.length &&
+                                    pendingAuthentications.map((authFlow) => (
+                                        <ConnectorAuthenticationModal
+                                            key={authFlow.connectorId}
+                                            name={authFlow.connectorName}
+                                            onConfirm={() =>
+                                                connectorAuthenticationProcess(authFlow.connectorId)?.start()
+                                            }
+                                            onCancel={() =>
+                                                connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
+                                            }
                                         />
-                                    ) : null}
-                                </CanvasContainer>
-                            </MainContentContainer>
-                            {pendingAuthentications.length &&
-                                pendingAuthentications.map((authFlow) => (
-                                    <ConnectorAuthenticationModal
-                                        key={authFlow.connectorId}
-                                        name={authFlow.connectorName}
-                                        onConfirm={() => connectorAuthenticationProcess(authFlow.connectorId)?.start()}
-                                        onCancel={() => connectorAuthenticationProcess(authFlow.connectorId)?.cancel()}
-                                    />
-                                ))}
-                        </div>
-                    </VariablePanelContextProvider>
-                </UiConfigContextProvider>
-            </Container>
-        </ShortcutProvider>
+                                    ))}
+                            </div>
+                        </VariablePanelContextProvider>
+                    </UiConfigContextProvider>
+                </Container>
+            </ShortcutProvider>
+        </AppProvider>
     );
 }
 

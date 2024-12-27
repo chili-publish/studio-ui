@@ -3,10 +3,12 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
 import { Dispatch, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
+import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
-const useDownloadPanel = (projectConfig: ProjectConfig) => {
+const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => {
+    const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
 
     const { validateVariables } = useVariablePanelContext();
@@ -47,6 +49,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig) => {
             }
             const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
+                headers: { Authorization: `Bearer ${authToken}` },
             });
 
             if (response.status !== 200) return;
@@ -55,7 +58,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig) => {
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',
-                download: `export.${extension}`,
+                download: `${projectName}.${extension}`,
             });
             document.body.appendChild(a);
             a.click();

@@ -1,10 +1,14 @@
 import { Colors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const EditButtonWrapper = styled.div`
+export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean; isPagesPanelDisplayed?: boolean }>`
     position: fixed;
-    left: 2rem;
-    bottom: 6.5rem;
+    left: 1rem;
+    bottom: ${({ isTimelineDisplayed, isPagesPanelDisplayed }) => {
+        if (isTimelineDisplayed) return '6.5rem';
+        if (isPagesPanelDisplayed) return '8.5rem';
+        return '2.5rem';
+    }};
 `;
 
 export const VariablesContainer = styled.div<{ height?: string }>`
@@ -12,7 +16,7 @@ export const VariablesContainer = styled.div<{ height?: string }>`
     height: ${(props) => props.height ?? '100%'};
 `;
 export const TrayPanelTitle = styled.h2<{ margin?: string; panelTheme: ITheme['panel'] }>`
-    font-size: ${FontSizes.heading2};
+    font-size: ${FontSizes.header};
     font-weight: 500;
     ${(props) => props.margin && `margin: ${props.margin};`};
     color: ${(props) => props.panelTheme.color};

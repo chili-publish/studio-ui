@@ -1,17 +1,18 @@
-import { useMemo } from 'react';
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import useNavbarDownloadBtn from '../navbarItems/useNavbarDownloadBtn';
-import useNavbarUndoRedoItems from '../navbarItems/useNavbarUndoRedo';
-import useNavbarZoom from '../navbarItems/useNavbarZoom';
-import { NavbarItemType } from '../Navbar.types';
+import { useCallback, useMemo } from 'react';
+import { ProjectConfig } from '../../../types/types';
+import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { NavbarGroup, NavbarText } from '../Navbar.styles';
+import { NavbarItemType } from '../Navbar.types';
+import useNavbarDownloadBtn from '../navbarItems/useNavbarDownloadBtn';
 import useNavbarMenu from '../navbarItems/useNavbarMenu';
 import useNavbarModeToggle from '../navbarItems/useNavbarModeToggle';
+import useNavbarUndoRedoItems from '../navbarItems/useNavbarUndoRedo';
+import useNavbarZoom from '../navbarItems/useNavbarZoom';
 import useUserInterfaceSelector from '../navbarItems/useUserInterfaceSelector';
-import { ProjectConfig } from '../../../types/types';
 
 interface INavbar {
-    projectName: string | undefined;
+    projectName: string;
     projectConfig: ProjectConfig;
     zoom: number;
     undoStackState: { canRedo: boolean; canUndo: boolean };
@@ -26,10 +27,18 @@ const useStudioNavbar = ({
     onBackClick,
     onDownloadPanelOpen,
 }: INavbar) => {
+    const handleOnBack = useCallback(() => {
+        if (onBackClick) {
+            sessionStorage.removeItem(SESSION_USER_INTEFACE_ID_KEY);
+            return onBackClick?.();
+        }
+        return undefined;
+    }, [onBackClick]);
+    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick: handleOnBack });
+
     const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
     const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen);
     const { zoomNavbarItem } = useNavbarZoom(zoom);
-    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick });
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
     const { mode } = useTheme();
@@ -40,7 +49,7 @@ const useStudioNavbar = ({
             content: (
                 <NavbarGroup>
                     <NavbarText aria-label={`Project: ${projectName}`} mode={mode}>
-                        {decodeURI(projectName || '')}
+                        {decodeURI(projectName)}
                     </NavbarText>
                 </NavbarGroup>
             ),

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { startTransition, useCallback, useEffect, useMemo } from 'react';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
 import { ProjectConfig } from '../../types/types';
 import { isMac } from './shortcuts';
 import useUndoRedo from './useUndoRedo';
 import useZoom from './useZoom';
+import { useAppContext } from '../AppProvider';
 
 interface ShortcutProviderProps {
     projectConfig: ProjectConfig;
@@ -13,7 +14,7 @@ interface ShortcutProviderProps {
 }
 function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: ShortcutProviderProps) {
     const commandKey = isMac ? 'metaKey' : 'ctrlKey';
-    const iframe = useGetIframeAsync()?.contentWindow;
+    const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
 
     const modifierKeys = useCallback((): (keyof KeyboardEvent)[] => {
         return [commandKey, 'shiftKey', 'altKey'];
@@ -21,13 +22,22 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
+    const { isDocumentLoaded, selectedMode, updateSelectedMode, cleanRunningTasks } = useAppContext();
 
     const shortcuts = useMemo(
         () => [
             {
                 keys: 'm',
-                action: () => {
-                    projectConfig?.onSandboxModeToggle?.();
+                action: async () => {
+                    if (!isDocumentLoaded) return;
+
+                    updateSelectedMode('design');
+
+                    document.removeEventListener('keydown', handleKeyDown);
+                    iframe?.removeEventListener('keydown', handleKeyDown);
+
+                    if (selectedMode === 'run') await cleanRunningTasks();
+                    startTransition(() => projectConfig?.onSandboxModeToggle?.());
                 },
             },
             {
@@ -59,7 +69,20 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 },
             },
         ],
-        [projectConfig, undoStackState, handleUndo, handleRedo, zoom, zoomIn, zoomOut, commandKey],
+        [
+            selectedMode,
+            updateSelectedMode,
+            isDocumentLoaded,
+            projectConfig,
+            undoStackState,
+            handleUndo,
+            handleRedo,
+            zoom,
+            zoomIn,
+            zoomOut,
+            commandKey,
+            cleanRunningTasks,
+        ],
     );
 
     const compareShortcuts = (shortcut: string | string[], pressedKeys: string) => {
@@ -75,6 +98,10 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
+            const formElements = ['INPUT', 'TEXTAREA', 'SELECT', 'OPTION'];
+            if (formElements.includes((event.target as HTMLElement).tagName)) {
+                return;
+            }
             const pressedKeys = [];
             modifierKeys().forEach((modifier) => {
                 if (event[modifier]) {
@@ -97,15 +124,11 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
             iframe?.addEventListener('keydown', handleKeyDown);
         };
 
-        const removeShortcutListeners = () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            iframe?.removeEventListener('keydown', handleKeyDown);
-        };
-
         addShortcutListeners();
 
         return () => {
-            removeShortcutListeners();
+            document.removeEventListener('keydown', handleKeyDown);
+            iframe?.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleKeyDown, iframe]);
 

@@ -1,7 +1,7 @@
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import { AxiosResponse } from 'axios';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 import App from './App';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
@@ -25,12 +25,25 @@ import {
 } from './types/types';
 
 export default class StudioUI {
+    protected root: Root | undefined;
+
     constructor(selector: string, projectConfig: ProjectConfig) {
-        ReactDOM.createRoot(document.getElementById(selector || 'sui-root') as HTMLElement).render(
+        const container = document.getElementById(selector || 'sui-root');
+        this.root = createRoot(container!);
+        this.root.render(
             <React.StrictMode>
                 <App projectConfig={projectConfig} />
             </React.StrictMode>,
         );
+    }
+
+    destroy() {
+        if (this.root) {
+            // eslint-disable-next-line no-console
+            console.warn('Destroying studio ui component...');
+            this.root.unmount();
+            this.root = undefined;
+        }
     }
 
     /**
@@ -97,7 +110,7 @@ export default class StudioUI {
         featureFlags: Record<string, boolean> | undefined,
         onSandboxModeToggle: (() => void) | undefined,
         onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectDocumentRequested: (projectId: string) => Promise<string>,
+        onProjectDocumentRequested: (projectId: string) => Promise<string | null>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,

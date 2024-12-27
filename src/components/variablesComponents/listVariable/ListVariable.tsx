@@ -1,10 +1,10 @@
-import { Option, InputLabel } from '@chili-publish/grafx-shared-components';
+import { InputLabel, Option } from '@chili-publish/grafx-shared-components';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
+import StudioDropdown from '../../shared/StudioDropdown';
 import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
-import { IListVariable } from '../VariablesComponents.types';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
-import StudioDropdown from '../../shared/StudioDropdown';
+import { IListVariable } from '../VariablesComponents.types';
 
 function ListVariable(props: IListVariable) {
     const { variable, validationError, onChange } = props;
@@ -36,7 +36,11 @@ function ListVariable(props: IListVariable) {
                 <div>
                     <StudioDropdown
                         dataId={variable.id}
-                        label={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label : variable.name}
+                        label={
+                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
+                                ? variable.label ?? variable.name
+                                : variable.name
+                        }
                         selectedValue={selectedValue || ''}
                         options={options}
                         placeholder={placeholder}

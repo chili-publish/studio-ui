@@ -9,3 +9,16 @@ export const MainContentContainer = styled.div`
 export const CanvasContainer = styled.div`
     width: 100%;
 `;
+
+export const SuiCanvas = styled.div<{ hasAnimationTimeline?: boolean; hasMultiplePages?: boolean }>`
+    height: ${({ hasAnimationTimeline, hasMultiplePages }) => {
+        if (hasAnimationTimeline) {
+            return 'calc(100% - 5rem)';
+        }
+        if (hasMultiplePages) {
+            return 'calc(100% - 7.5rem)';
+        }
+        return '100%';
+    }}}
+    width: 100%;
+`;

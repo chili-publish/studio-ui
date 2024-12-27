@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
     DownloadLinkResult,
     HttpHeaders,
@@ -11,6 +11,7 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 import { getDownloadLink } from './utils/documentExportHelper';
+import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -74,7 +75,7 @@ export class StudioProjectLoader {
         return this.cachedProject;
     };
 
-    public onProjectDocumentRequested = async (): Promise<string> => {
+    public onProjectDocumentRequested = async (): Promise<string | null> => {
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
         return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
     };
@@ -132,22 +133,19 @@ export class StudioProjectLoader {
         );
     };
 
-    private static fetchDocument = async (templateUrl: string, token: string): Promise<string> => {
+    private static fetchDocument = async (templateUrl: string, token: string): Promise<string | null> => {
         const url = templateUrl;
         if (url) {
             const fetchPromise = axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
             return fetchPromise
-                .then((response) => {
-                    return response;
-                })
                 .then((res) => {
                     return JSON.stringify(res.data);
                 })
                 .catch(() => {
-                    return '{}';
+                    return null;
                 });
         }
-        return '{}';
+        return null;
     };
 
     private saveDocument = async (
@@ -194,15 +192,12 @@ export class StudioProjectLoader {
         userInterfaceId = this.userInterfaceID,
     ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
-            try {
-                const res = await this.onFetchUserInterfaces();
-                if (res.status === 200) {
-                    return res.data.data.find((value: UserInterface) => value.default);
-                }
-                throw new Error(`Default user interface not found`);
-            } catch (err) {
-                throw new Error(`${err}`);
+            const res = await this.onFetchUserInterfaces();
+
+            if (res.status === 200) {
+                return res.data.data.find((value: UserInterface) => value.default);
             }
+            throw new Error(`Default user interface not found`);
         };
         const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
             headers: { Authorization: `Bearer ${this.authToken}` },
@@ -226,10 +221,11 @@ export class StudioProjectLoader {
             });
             return mappedOutputSettings;
         };
-
-        if (userInterfaceId) {
+        // userInterfaceID from projectConfig or session-stored userInterfaceId
+        const userInterface = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
+        if (userInterface) {
             const userInterfaceData: UserInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterfaceId}`, {
+                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
                     headers: { Authorization: `Bearer ${this.authToken}` },
                 })
                 .then((res) => res.data)
@@ -256,16 +252,12 @@ export class StudioProjectLoader {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>> => {
-        try {
-            const res = await axios.get<PaginatedResponse<UserInterface>>(
-                `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
-                {
-                    headers: { Authorization: `Bearer ${this.authToken}` },
-                },
-            );
-            return res;
-        } catch (err) {
-            throw new Error(`${err}`);
-        }
+        const res = await axios.get<PaginatedResponse<UserInterface>>(
+            `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
+            {
+                headers: { Authorization: `Bearer ${this.authToken}` },
+            },
+        );
+        return res;
     };
 }
