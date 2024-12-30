@@ -5,6 +5,7 @@ import { MODAL_ID, ModalStyle, TableWrapper } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
 
 interface TableModalProps {
+    isOpen: boolean;
     data: DataItem[];
     hasMoreData?: boolean;
     dataIsLoading?: boolean;
@@ -16,6 +17,7 @@ interface TableModalProps {
 }
 
 function DataSourceModal({
+    isOpen,
     data,
     hasMoreData,
     dataIsLoading,
@@ -31,8 +33,9 @@ function DataSourceModal({
                 id={MODAL_ID}
                 anchorId={APP_WRAPPER_ID}
                 size={ModalSize.L}
-                isVisible
+                isVisible={isOpen}
                 isResizable
+                isDraggable
                 onClose={onClose}
             >
                 <ModalLayout.Title>Data source</ModalLayout.Title>
