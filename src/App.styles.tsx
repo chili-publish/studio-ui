@@ -7,7 +7,7 @@ const NAVBAR_HEIGHT = '4rem';
 export const MainContentContainer = styled.div<{ sandboxMode?: boolean; fullHeight?: boolean }>`
     display: flex;
     height: ${(props) =>
-        props.fullHeight ? `100vh` : `calc(100vh - ${props.sandboxMode ? SANDBOX_NAVBAR_HEIGHT : NAVBAR_HEIGHT})`};
+        props.fullHeight ? `100%` : `calc(100vh - ${props.sandboxMode ? SANDBOX_NAVBAR_HEIGHT : NAVBAR_HEIGHT})`};
     width: 100%;
     z-index: 1;
     position: relative;
