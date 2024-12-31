@@ -37,6 +37,7 @@ describe('DataSourceModal test', () => {
             },
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
     });
 
     it('Should open modal with data rows on click on data source row', async () => {
