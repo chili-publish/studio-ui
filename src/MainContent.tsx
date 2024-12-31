@@ -121,28 +121,23 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
     const zoomToPage = useCallback(async () => {
-        if (!multiLayoutMode) {
-            const iframe = document
-                .getElementById(EDITOR_ID)
-                ?.getElementsByTagName('iframe')?.[0]
-                ?.getBoundingClientRect();
-            const zoomParams = {
-                pageId: null,
-                left: 0,
-                top: 0,
-                width: iframe?.width,
-                height: iframe?.height,
-            };
+        const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
+        const zoomParams = {
+            pageId: null,
+            left: 0,
+            top: 0,
+            width: iframe?.width,
+            height: iframe?.height,
+        };
 
-            await window.StudioUISDK.canvas.zoomToPage(
-                zoomParams.pageId,
-                zoomParams.left,
-                zoomParams.top,
-                zoomParams.width,
-                zoomParams.height,
-            );
-        }
-    }, [multiLayoutMode]);
+        await window.StudioUISDK.canvas.zoomToPage(
+            zoomParams.pageId,
+            zoomParams.left,
+            zoomParams.top,
+            zoomParams.width,
+            zoomParams.height,
+        );
+    }, []);
 
     useEffect(() => {
         if (!eventSubscriber) {
@@ -336,11 +331,12 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         };
 
         loadDocument();
-    }, [fetchedDocument]);
+    }, [fetchedDocument, zoomToPage]);
 
     useEffect(() => {
-        zoomToPage();
+        if (!multiLayoutMode) zoomToPage();
     }, [multiLayoutMode, zoomToPage]);
+
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
