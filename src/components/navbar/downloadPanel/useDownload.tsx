@@ -1,4 +1,4 @@
-import { AvailableIcons, Option, useOnClickOutside } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, SelectOptions, useOnClickOutside } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
@@ -30,7 +30,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
     const downloadPanelRef = useRef<HTMLDivElement | null>(null);
     useOnClickOutside(downloadPanelRef, hideDownloadPanel);
 
-    const downloadOptions: Option[] = useMemo(() => {
+    const downloadOptions: SelectOptions[] = useMemo(() => {
         const allOptions = [
             {
                 label: <DropdownOption iconData={AvailableIcons.faImage} text="JPG" description="" />,
@@ -67,7 +67,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
         return allOptions.filter((opt) => outputSettings[opt.value] === true);
     }, [outputSettings]);
 
-    const userInterfaceDownloadOptions: Option[] | null = useMemo(() => {
+    const userInterfaceDownloadOptions: SelectOptions[] | null = useMemo(() => {
         if (!userInterfaceOutputSettings) return null;
         const outputTypesIcons = {
             jpg: AvailableIcons.faImage,
