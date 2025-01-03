@@ -1,10 +1,12 @@
-import axios from 'axios';
+import { ConnectorMappingDirection } from '@chili-publish/studio-sdk';
 import {
     ConnectorGrafxRegistration,
+    ConnectorInstance,
     ConnectorLocalRegistration,
     ConnectorRegistrationSource,
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
+import axios from 'axios';
 import { MediaRemoteConnector } from './ApiTypes';
 
 const isConnectorUrlRegistration = (
@@ -58,4 +60,25 @@ export async function verifyAuthentication(connectorId: string) {
     } catch (error) {
         throw new Error(`Unauthorized: ${(error as Error).message}`);
     }
+}
+
+export function getEnvId(connector: ConnectorInstance) {
+    if (isConnectorLocalRegistration(connector.source) || isConnectorUrlRegistration(connector.source))
+        return connector.source.url.split('/').at(-1) ?? '';
+
+    return connector.source.id;
+}
+
+export async function getConnectorConfigurationOptions(connectorId: string) {
+    const { parsedData } = await window.StudioUISDK.connector.getMappings(
+        connectorId,
+        ConnectorMappingDirection.engineToConnector,
+    );
+    return (
+        parsedData?.reduce((config, mapping) => {
+            // eslint-disable-next-line no-param-reassign
+            config[mapping.name] = mapping.value;
+            return config;
+        }, {} as Record<string, string | boolean>) ?? null
+    );
 }

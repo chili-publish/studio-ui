@@ -1,8 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from '../App';
-import { getDataTestIdForSUI } from '../utils/dataIds';
 import { ProjectConfig } from '../types/types';
+import { getDataTestIdForSUI } from '../utils/dataIds';
 
 const projectConfig = {
     projectId: 'projectId',
@@ -48,6 +48,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
+                dataSource: { getDataSource: jest.fn().mockResolvedValue({ parsedData: null }) },
             };
         },
     };

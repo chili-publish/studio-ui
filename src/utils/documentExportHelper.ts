@@ -1,6 +1,9 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import axios from 'axios';
+import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
+import { OutputType } from './ApiTypes';
+import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -24,12 +27,13 @@ export const getDownloadLink = async (
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
         const generateExportUrl = `${baseUrl}/output/${format}`;
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        let engineVersion = urlParams.get('engine');
-        const engineCommitSha = urlParams.get('engineCommitSha');
+        let engineVersion: string | null = null;
 
-        if (window.location.hostname !== 'chiligrafx.com') {
+        if (!window.location.hostname.endsWith('chiligrafx.com')) {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            engineVersion = urlParams.get('engine');
+            const engineCommitSha = urlParams.get('engineCommitSha');
             if (engineVersion) {
                 if (/^\d+$/.test(engineVersion)) {
                     engineVersion = `prs/${engineVersion}`;
@@ -40,12 +44,15 @@ export const getDownloadLink = async (
             if (engineCommitSha) engineVersion += `-${engineCommitSha}`;
         }
 
+        const dataConnectorConfig = await getDataSourceConfig(baseUrl, token, outputSettingsId);
+
         const body = documentResponse.data as string;
         const requestBody = {
             outputSettingsId,
             layoutsToExport: [layoutId],
             engineVersion,
             documentContent: JSON.parse(body),
+            dataConnectorConfig,
             ...(isSandboxMode ? { templateId: projectId } : { projectId }),
         };
 
@@ -122,18 +129,51 @@ const startPollingOnEndpoint = async (
         };
         const httpResponse = await axios.get(endpoint, config);
 
-        if (httpResponse?.status === 202) {
+        if (httpResponse.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
             return await startPollingOnEndpoint(endpoint, token);
         }
-        if (httpResponse?.status === 200) {
+        if (httpResponse.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;
         }
         return null;
     } catch (err) {
         return null;
     }
+};
+
+const getDataSourceConfig = async (
+    baseUrl: string,
+    token: string,
+    outputSettingsId: string | undefined,
+): Promise<DataConnectorConfiguration | undefined> => {
+    if (!outputSettingsId) {
+        return undefined;
+    }
+    const { parsedData: dataSource } = await window.StudioUISDK.dataSource.getDataSource();
+    if (!dataSource) {
+        return undefined;
+    }
+
+    const { data: setting } = await axios.get<{ outputType: OutputType }>(
+        `${baseUrl}/output/settings/${outputSettingsId}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+    if (setting.outputType !== OutputType.Batch) {
+        return undefined;
+    }
+    return {
+        dataConnectorId: getEnvId(dataSource),
+        dataConnectorParameters: {
+            context: await getConnectorConfigurationOptions(dataSource.id),
+        },
+    };
 };
 
 type GenerateAnimationResponse = {

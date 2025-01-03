@@ -11,8 +11,11 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { css } from 'styled-components';
 import { Dispatch, useMemo, useState } from 'react';
+import { css } from 'styled-components';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import {
     BtnContainer,
     ButtonWrapper,
@@ -23,9 +26,6 @@ import {
     SpinnerContainer,
 } from './DownloadPanel.styles';
 import useDownload from './useDownload';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;

@@ -1,12 +1,14 @@
 import { DataItem } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
-const useDataSource = (isDocumentLoaded: boolean) => {
-    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>(null);
+const useDataSource = () => {
+    const { dataSource, isDocumentLoaded } = useAppContext();
+    const [dataConnector, setDataConnector] = useState<ConnectorInstance>();
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
@@ -67,13 +69,8 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     }, []);
 
     useEffect(() => {
-        if (!isDocumentLoaded) return;
-        const getDataConnector = async () => {
-            const { parsedData: defaultDataConnector } = await window.StudioUISDK.dataSource.getDataSource();
-            setDataConnector(defaultDataConnector);
-        };
-        getDataConnector();
-    }, [isDocumentLoaded]);
+        setDataConnector(dataSource);
+    }, [dataSource]);
 
     useEffect(() => {
         if (dataConnector) loadDataRows();
