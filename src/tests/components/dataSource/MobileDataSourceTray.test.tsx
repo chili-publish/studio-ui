@@ -31,16 +31,15 @@ describe('MobileDataSource test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: dataRows },
         });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
 
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
     });
 
     afterEach(() => {
