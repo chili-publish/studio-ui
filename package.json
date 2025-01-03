@@ -26,7 +26,7 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/grafx-shared-components": "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/447/grafx-shared-components.tgz",
+        "@chili-publish/grafx-shared-components": "^0.90.0",
         "@chili-publish/studio-sdk": "^1.18.0",
         "@babel/preset-env": "^7.25.3",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
