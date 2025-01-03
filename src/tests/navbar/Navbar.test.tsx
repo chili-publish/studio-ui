@@ -1,10 +1,13 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
+import AppProvider from '../../contexts/AppProvider';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
 import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
+import { OutputType } from '../../utils/ApiTypes';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 
@@ -178,6 +181,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.MP4,
                             layoutIntents: ['digitalAnimated'],
+                            outputType: OutputType.Single,
                         },
                         {
                             name: 'user interface GIF',
@@ -185,6 +189,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.MP4,
                             layoutIntents: ['digitalAnimated'],
+                            outputType: OutputType.Single,
                         },
                     ],
                 }),
@@ -221,6 +226,126 @@ describe('Navbar', () => {
         expect(getByText(/output/i)).toBeInTheDocument();
 
         const dropdown = getByText(/user interface MP4/i);
+        expect(dropdown).toBeInTheDocument();
+    });
+
+    it('Shows show correct output seetings when data source is not available', async () => {
+        prjConfig = {
+            ...ProjectConfigs.empty,
+            outputSettings: { pdf: true, gif: false },
+            onFetchOutputSettings: () =>
+                Promise.resolve({
+                    userInterface: { id: '1', name: 'name' },
+                    outputSettings: [
+                        {
+                            name: 'Batch for PDF',
+                            id: '1',
+                            description: 'some decs',
+                            type: DownloadFormats.PDF,
+                            layoutIntents: ['print'],
+                            outputType: OutputType.Batch,
+                        },
+                        {
+                            name: 'Single for PDF',
+                            id: '1',
+                            description: 'some decs',
+                            type: DownloadFormats.PDF,
+                            layoutIntents: ['print'],
+                            outputType: OutputType.Single,
+                        },
+                    ],
+                }),
+        };
+        const { getByRole, getByText } = render(
+            <UiConfigContext.UiConfigContextProvider projectConfig={prjConfig} layoutIntent={LayoutIntent.print}>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <Navbar
+                            projectName=""
+                            projectConfig={prjConfig}
+                            zoom={100}
+                            undoStackState={{
+                                canRedo: false,
+                                canUndo: false,
+                            }}
+                        />
+                    </UiThemeProvider>
+                </div>
+            </UiConfigContext.UiConfigContextProvider>,
+        );
+
+        await waitFor(() => {
+            const downloadButton = screen.getByRole('button', { name: /download/i });
+            expect(downloadButton).toBeInTheDocument();
+        });
+
+        const downloadButton = getByRole('button', { name: /download/i });
+
+        fireEvent.click(downloadButton);
+        expect(getByText(/output/i)).toBeInTheDocument();
+
+        const dropdown = getByText(/Single for PDF/i);
+        expect(dropdown).toBeInTheDocument();
+    });
+
+    it('Shows show correct output seetings when data source is available', async () => {
+        prjConfig = {
+            ...ProjectConfigs.empty,
+            outputSettings: { pdf: true, gif: false },
+            onFetchOutputSettings: () =>
+                Promise.resolve({
+                    userInterface: { id: '1', name: 'name' },
+                    outputSettings: [
+                        {
+                            name: 'Batch for PDF',
+                            id: '1',
+                            description: 'some decs',
+                            type: DownloadFormats.PDF,
+                            layoutIntents: ['print'],
+                            outputType: OutputType.Batch,
+                        },
+                        {
+                            name: 'Single for PDF',
+                            id: '1',
+                            description: 'some decs',
+                            type: DownloadFormats.PDF,
+                            layoutIntents: ['print'],
+                            outputType: OutputType.Single,
+                        },
+                    ],
+                }),
+        };
+        const { getByRole, getByText } = render(
+            <AppProvider dataSource={{} as ConnectorInstance}>
+                <UiConfigContext.UiConfigContextProvider projectConfig={prjConfig} layoutIntent={LayoutIntent.print}>
+                    <div id={APP_WRAPPER_ID}>
+                        <UiThemeProvider theme="platform">
+                            <Navbar
+                                projectName=""
+                                projectConfig={prjConfig}
+                                zoom={100}
+                                undoStackState={{
+                                    canRedo: false,
+                                    canUndo: false,
+                                }}
+                            />
+                        </UiThemeProvider>
+                    </div>
+                </UiConfigContext.UiConfigContextProvider>
+            </AppProvider>,
+        );
+
+        await waitFor(() => {
+            const downloadButton = screen.getByRole('button', { name: /download/i });
+            expect(downloadButton).toBeInTheDocument();
+        });
+
+        const downloadButton = getByRole('button', { name: /download/i });
+
+        fireEvent.click(downloadButton);
+        expect(getByText(/output/i)).toBeInTheDocument();
+
+        const dropdown = getByText(/Batch for PDF/i);
         expect(dropdown).toBeInTheDocument();
     });
 });

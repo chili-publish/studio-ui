@@ -2,9 +2,9 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
+import AppProvider from '../../contexts/AppProvider';
 import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
 import { ProjectConfig } from '../../types/types';
-import AppProvider from '../../contexts/AppProvider';
 
 describe('ShortcutProvider', () => {
     const mockSDK = mock<EditorSDK>();
@@ -22,7 +22,7 @@ describe('ShortcutProvider', () => {
         const onSandboxModeToggleFn = jest.fn();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
-            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+            <AppProvider isDocumentLoaded>
                 <ShortcutProvider
                     projectConfig={projectConfig}
                     zoom={100}
@@ -41,7 +41,7 @@ describe('ShortcutProvider', () => {
         const onSandboxModeToggleFn = jest.fn();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
-            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+            <AppProvider isDocumentLoaded>
                 <ShortcutProvider
                     projectConfig={projectConfig}
                     zoom={100}
@@ -59,7 +59,7 @@ describe('ShortcutProvider', () => {
     it('triggers redo shortcut', async () => {
         const projectConfig = {} as unknown as ProjectConfig;
         render(
-            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+            <AppProvider isDocumentLoaded>
                 <ShortcutProvider
                     projectConfig={projectConfig}
                     zoom={100}
@@ -78,7 +78,7 @@ describe('ShortcutProvider', () => {
         const projectConfig = {} as unknown as ProjectConfig;
         const zoom = 150;
         render(
-            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+            <AppProvider isDocumentLoaded>
                 <ShortcutProvider
                     projectConfig={projectConfig}
                     zoom={zoom}
@@ -96,7 +96,7 @@ describe('ShortcutProvider', () => {
         const projectConfig = {} as unknown as ProjectConfig;
         const zoom = 120;
         render(
-            <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+            <AppProvider isDocumentLoaded>
                 <ShortcutProvider
                     projectConfig={projectConfig}
                     zoom={zoom}

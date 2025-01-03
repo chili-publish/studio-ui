@@ -1,6 +1,6 @@
+import EditorSDK from '@chili-publish/studio-sdk';
 import '@testing-library/jest-dom';
 import { mock } from 'jest-mock-extended';
-import EditorSDK from '@chili-publish/studio-sdk';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('@chili-publish/studio-sdk/lib/src/next');

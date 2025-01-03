@@ -1,18 +1,17 @@
-import { useCallback, useEffect } from 'react';
-import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useTheme } from '@chili-publish/grafx-shared-components';
-import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
+import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { useCallback, useEffect } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { PanelTitle } from '../shared/Panel.styles';
+import VariablesComponents from '../variablesComponents/VariablesComponents';
+import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
-    isDocumentLoaded: boolean;
 }
 
-function VariablesList({ variables, isDocumentLoaded }: VariablesListProps) {
+function VariablesList({ variables }: VariablesListProps) {
     const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
     const { panel } = useTheme();
     const handleCalendarOpen = useCallback(
@@ -37,7 +36,6 @@ function VariablesList({ variables, isDocumentLoaded }: VariablesListProps) {
                             <VariablesComponents
                                 type={variable.type}
                                 variable={variable}
-                                isDocumentLoaded={isDocumentLoaded}
                                 onCalendarOpen={handleCalendarOpen}
                             />
                         </ComponentWrapper>

@@ -29,7 +29,6 @@ interface VariablesPanelProps {
     variables: Variable[];
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
-    isDocumentLoaded: boolean;
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -40,7 +39,7 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isDocumentLoaded, isTimelineDisplayed, isPagesPanelDisplayed } = props;
+    const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
     const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -62,7 +61,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
-    } = useDataSource(isDocumentLoaded);
+    } = useDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         onDataRowsLoad: loadDataRows,
@@ -147,7 +146,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             <MobileVariablesList
                                 variables={variables}
-                                isDocumentLoaded={isDocumentLoaded}
                                 onMobileOptionListToggle={setMobileOptionsListOpen}
                             />
                         </>
