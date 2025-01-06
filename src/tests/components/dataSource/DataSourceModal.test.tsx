@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/shared.util/app';
 import DataSource from '../../../components/dataSource/DataSource';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
+import AppProvider from '../../../contexts/AppProvider';
 
 const tableData = [
     { id: '1', name: 'Joe', age: 15 },
@@ -29,23 +30,24 @@ describe('DataSourceModal test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: tableData },
         });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
     });
 
     it('Should open modal with data rows on click on data source row', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <div id={APP_WRAPPER_ID}>
-                    <DataSource isDocumentLoaded />
-                </div>
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
@@ -82,17 +84,17 @@ describe('DataSourceModal test', () => {
         await act(async () => {
             await user.click(screen.getByText('Mary'));
         });
-        expect(screen.queryByRole('table')).not.toBeInTheDocument();
         expect(screen.getByDisplayValue('3 | Mary | 17')).toBeInTheDocument();
     });
 
-    // TODO: Re-enable this test in scope of https://github.com/chili-publish/studio-ui/pull/247
-    it.skip('Should be able to navigate with arrow key in the data source table', async () => {
+    it('Should be able to navigate with arrow key in the data source table', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <div id={APP_WRAPPER_ID}>
-                    <DataSource isDocumentLoaded />
-                </div>
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
@@ -111,13 +113,10 @@ describe('DataSourceModal test', () => {
         await act(async () => {
             await user.keyboard('[ArrowDown]');
         });
-        expect(screen.getByText('Row 1')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
-        await act(async () => {
-            await user.keyboard('[Enter]');
+
+        await waitFor(() => {
+            expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            expect(screen.getByText('Row 2')).toBeInTheDocument();
         });
-        expect(screen.queryByRole('table')).not.toBeInTheDocument();
-        expect(screen.getByText('Row 2')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('2 | John | 18')).toBeInTheDocument();
     });
 });
