@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Page[]; activePageId: string | null }) => {
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
-
+    const [isCalendarPickerOpen, setIsCalendarPickerOpen] = useState(false);
     const [selectedPageIndex, setSelectedPageIndex] = useState<number>(-1);
+
+    const calendarPickerElement = document.getElementsByClassName('react-datepicker-popper');
 
     const handleSelectPage = async (pageId: string) => {
         await window.StudioUISDK.page.select(pageId);
@@ -13,7 +15,7 @@ export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Pag
     const handleOnArrowKeyDown = useCallback(
         async (event: KeyboardEvent) => {
             const formElements = ['INPUT', 'TEXTAREA', 'SELECT', 'OPTION'];
-            if (formElements.includes((event.target as HTMLElement).tagName)) {
+            if (formElements.includes((event.target as HTMLElement).tagName) || isCalendarPickerOpen) {
                 return;
             }
             switch (event.key) {
@@ -39,10 +41,25 @@ export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Pag
                     break;
             }
         },
-        [selectedPageIndex, pages],
+        [selectedPageIndex, pages, isCalendarPickerOpen],
     );
 
     useEffect(() => {
+        const customObserver = new MutationObserver(() => {
+            if (document.contains(calendarPickerElement[0])) {
+                setIsCalendarPickerOpen(true);
+            } else {
+                setIsCalendarPickerOpen(false);
+            }
+        });
+
+        customObserver.observe(document, {
+            attributes: false,
+            childList: true,
+            characterData: false,
+            subtree: true,
+        });
+
         const addShortcutListeners = () => {
             document.addEventListener('keydown', handleOnArrowKeyDown);
             iframe?.addEventListener('keydown', handleOnArrowKeyDown);
@@ -53,8 +70,9 @@ export const useAttachArrowKeysListener = ({ pages, activePageId }: { pages: Pag
         return () => {
             document.removeEventListener('keydown', handleOnArrowKeyDown);
             iframe?.removeEventListener('keydown', handleOnArrowKeyDown);
+            customObserver.disconnect();
         };
-    }, [handleOnArrowKeyDown, iframe]);
+    }, [handleOnArrowKeyDown, iframe, calendarPickerElement]);
 
     useEffect(() => {
         if (!pages.length || !activePageId) return;
