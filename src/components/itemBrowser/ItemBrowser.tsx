@@ -238,7 +238,6 @@ function ItemBrowser<
             options: [],
             padding: '0',
             footerTopMargin: '0.75rem',
-            // backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,
