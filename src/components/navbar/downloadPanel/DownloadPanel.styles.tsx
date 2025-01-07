@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-weight: bold;
-    color: ${({ theme }) => theme?.themeColors?.primaryFontText};
+    color: ${({ theme }) => theme?.themeColors?.primaryFontTextColor};
 `;
 
 export const DownloadPanelContainer = styled.div`
@@ -55,11 +55,11 @@ export const DropdownOptionLabel = styled.div`
     margin-right: 0.25rem;
     flex: 1;
     ${DropdownOptionDescription} {
-        color: ${({ theme }) => theme.themeColors.secondaryFontText};
+        color: ${({ theme }) => theme.themeColors.secondaryFontTextColor};
     }
     ${ExperimentalPill} {
-        color: ${({ theme }) => theme.themeColors.primaryFontText};
-        border: 1px solid ${({ theme }) => theme.themeColors.primaryFontText};
+        color: ${({ theme }) => theme.themeColors.primaryFontTextColor};
+        border: 1px solid ${({ theme }) => theme.themeColors.primaryFontTextColor};
     }
 `;
 
@@ -78,10 +78,10 @@ export const Container = styled.div`
     overflow: hidden;
     white-space: nowrap;
     ${DropdownOptionText} {
-        font-size: ${({ theme }) => `${theme.dropdown.fontSize}`};
+        font-size: ${({ theme }) => `${theme.select.fontSize}`};
     }
     ${DropdownOptionDescription} {
-        font-size: ${({ theme }) => `${theme.dropdown.optionInfoFontSize}`};
+        font-size: ${({ theme }) => `${theme.select.optionInfoFontSize}`};
     }
 `;
 

@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, InputLabel, Option } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
 import {
     DropdownContainer,
@@ -11,8 +11,8 @@ import {
 import { ErrorMessage } from '../ErrorMessage.styles';
 
 interface StudioMobileDropdownProps {
-    selectedValue?: Option;
-    options: Option[];
+    selectedValue?: SelectOptions;
+    options: SelectOptions[];
     dataId: string;
     isOpen?: boolean;
     label?: string;
@@ -60,7 +60,7 @@ function StudioMobileDropdown({
                     }}
                 >
                     <MobileDropdownOptionContent>
-                        {option.label}
+                        {option.label as string}
                         {selectedValue?.value === option.value && <Icon icon={AvailableIcons.faCheck} />}
                     </MobileDropdownOptionContent>
                 </MobileDropdownMenuOption>

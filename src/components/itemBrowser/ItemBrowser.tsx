@@ -10,7 +10,7 @@ import {
     useInfiniteScrolling,
     useMobileSize,
     BreadCrumb,
-    Option,
+    SelectOptions,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -258,7 +258,7 @@ function ItemBrowser<
     }, [breadcrumbStack]);
 
     const updateNavigationStack = useCallback(
-        (selected: Option) => {
+        (selected: SelectOptions) => {
             const pathIndex = selected.value as number;
 
             const newNavigationStack = navigationStack?.splice(0, pathIndex);

@@ -42,7 +42,7 @@ export const NavigationWrapper = styled.div`
     svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-        ${({ theme }) => `color: ${theme.themeColors.primaryFontText} !important`};
+        ${({ theme }) => `color: ${theme.themeColors.primaryFontTextColor} !important`};
     }
 
     & svg.close-icon,
@@ -91,7 +91,7 @@ export const BreadCrumbsWrapper = styled.div`
     overflow: visible;
     white-space: nowrap;
     display: flex;
-    & .grafx-drop-down__control {
+    & .grafx-select__control {
         &:hover {
             border: 1px solid transparent !important;
         }
@@ -134,7 +134,7 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
 
 export const EmptySearchResultContainer = styled.div`
     padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
-    color: ${({ theme }) => theme.themeColors.secondaryFontText};
+    color: ${({ theme }) => theme.themeColors.secondaryFontTextColor};
     font-size: 0.875rem;
     text-align: center;
 `;

@@ -36,6 +36,6 @@ export const DatePickerTrayTitle = styled.div`
     align-items: center;
 
     svg {
-        ${({ theme }) => theme.mode === 'light' && `color: ${theme.themeColors.primaryFontText} !important`};
+        ${({ theme }) => theme.mode === 'light' && `color: ${theme.themeColors.primaryFontTextColor} !important`};
     }
 `;

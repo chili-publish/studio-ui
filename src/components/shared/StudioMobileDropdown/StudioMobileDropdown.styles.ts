@@ -17,7 +17,7 @@ export const MobileDropdownValue = styled.div`
 `;
 
 export const MobilePlaceholderWrapper = styled.span`
-    color: ${(props) => props.theme.themeColors.placeholderText};
+    color: ${(props) => props.theme.themeColors.placeholderTextColor};
     font-style: italic;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -31,7 +31,7 @@ export const MobileDropdownOptionContainer = styled.div<{
     padding: 0 0.75rem;
     justify-content: space-between;
     align-items: center;
-    background-color: ${({ theme }) => theme.dropdown.control.backgroundColor};
+    background-color: ${({ theme }) => theme.select.control.backgroundColor};
     border: ${(props) =>
         props.hasError ? `1px solid ${props.theme.themeColors.errorColor}` : '1px solid transparent'};
     font-size: ${FontSizes.regular};
@@ -43,7 +43,7 @@ export const MobileDropdownOptionContainer = styled.div<{
         border-color: ${(props) =>
             props.hasError
                 ? `1px solid ${props.theme.themeColors.errorColor}`
-                : `1px solid ${props.theme.themeColors.inputFocusBorder}`};
+                : `1px solid ${props.theme.themeColors.inputFocusBorderColor}`};
         cursor: pointer;
 
         svg {
@@ -52,11 +52,11 @@ export const MobileDropdownOptionContainer = styled.div<{
     }
 
     svg {
-        color: ${({ theme }) => theme.dropdown.color};
+        color: ${({ theme }) => theme.select.color};
         min-width: 1.125rem;
     }
     ${MobileDropdownValue} {
-        color: ${({ theme }) => theme.dropdown.color};
+        color: ${({ theme }) => theme.select.color};
     }
 `;
 
@@ -68,14 +68,13 @@ export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
     padding: 0.5rem 0.75rem;
     font-size: ${FontSizes.regular};
 
-    color: ${({ selected, theme }) =>
-        `${selected ? theme.dropdown.color : theme.dropdown.menuOption.color} !important`};
+    color: ${({ selected, theme }) => `${selected ? theme.select.color : theme.select.menuOption.color} !important`};
 
     svg {
-        ${({ theme, selected }) => selected && `color: ${theme.dropdown.color}`};
+        ${({ theme, selected }) => selected && `color: ${theme.select.color}`};
     }
-    ${({ selected, theme }) => selected && `background-color: ${theme.dropdown.menuOption.hover.backgroundColor};`};
-    ${({ selected, theme }) => selected && `color: ${theme.dropdown.menuOption.hover.color} !important;`};
+    ${({ selected, theme }) => selected && `background-color: ${theme.select.menuOption.hover.backgroundColor};`};
+    ${({ selected, theme }) => selected && `color: ${theme.select.menuOption.hover.color} !important;`};
 `;
 
 export const MobileDropdownOptionContent = styled.div`

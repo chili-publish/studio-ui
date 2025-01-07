@@ -11,16 +11,15 @@ describe('DataSource test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: [{ id: '1', name: 'Joe', age: 15 }] },
         });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
 
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
             <UiThemeProvider theme="platform">
@@ -33,8 +32,8 @@ describe('DataSource test', () => {
 
     it('Data source row should be hidden is data connector is not available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: null,
         });
 
         render(
@@ -50,13 +49,11 @@ describe('DataSource test', () => {
 
     it('Should display data connector placeholder when no page is available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
 
         render(
@@ -78,15 +75,14 @@ describe('DataSource test', () => {
                 ],
             },
         });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
+        window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
             <UiThemeProvider theme="platform">
@@ -147,13 +143,11 @@ describe('DataSource test', () => {
                     data: [{ id: '3', name: 'Mary', age: 15 }],
                 },
             });
-        window.StudioUISDK.connector.getAllByType = jest.fn().mockResolvedValueOnce({
-            parsedData: [
-                {
-                    id: '1',
-                    name: 'Connector name',
-                },
-            ],
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+                name: 'Connector name',
+            },
         });
 
         render(

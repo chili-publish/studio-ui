@@ -2,7 +2,7 @@ import {
     AvailableIcons,
     Button,
     ButtonVariant,
-    DropDown,
+    Select,
     Icon,
     Menu,
     Tray,
@@ -97,9 +97,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     loading
                                     styles={css`
                                         width: 100%;
-                                        background-color: ${themeColors.disabledElements};
+                                        background-color: ${themeColors.disabledElementsColor};
                                         &:hover {
-                                            background-color: ${themeColors.disabledElements};
+                                            background-color: ${themeColors.disabledElementsColor};
                                         }
                                     `}
                                 />
@@ -133,7 +133,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <DownloadPanelContainer ref={downloadPanelRef}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
-                        <DropDown
+                        <Select
                             label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
@@ -152,9 +152,9 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 loading
                                 styles={css`
                                     width: 100%;
-                                    background-color: ${themeColors.disabledElements};
+                                    background-color: ${themeColors.disabledElementsColor};
                                     &:hover {
-                                        background-color: ${themeColors.disabledElements};
+                                        background-color: ${themeColors.disabledElementsColor};
                                     }
                                 `}
                             />
