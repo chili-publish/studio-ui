@@ -76,6 +76,14 @@ import { TokenManager } from './token-manager';
         onConnectorAuthenticationRequested: (connectorId) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
+        uiOptions: {
+            widgets: {
+                backButton: { visible: true },
+                navBar: { visible: true },
+                bottomBar: { visible: true },
+                downloadButton: { visible: true },
+            },
+        },
         featureFlags: {
             STUDIO_LABEL_PROPERTY_ENABLED: true,
             STUDIO_DATA_SOURCE: true,

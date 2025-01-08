@@ -42,7 +42,7 @@ export const NavigationWrapper = styled.div`
     svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-        ${({ theme }) => `color: ${theme.themeColors.primaryFontTextColor} !important`};
+        ${({ theme }) => `color: ${theme.themeColors.primaryTextColor} !important`};
     }
 
     & svg.close-icon,
@@ -134,7 +134,7 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
 
 export const EmptySearchResultContainer = styled.div`
     padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
-    color: ${({ theme }) => theme.themeColors.secondaryFontTextColor};
+    color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     font-size: 0.875rem;
     text-align: center;
 `;

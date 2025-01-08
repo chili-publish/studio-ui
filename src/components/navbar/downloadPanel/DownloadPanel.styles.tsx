@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const DownloadDropdownTitle = styled.div`
     padding: 1rem 1.25rem 1rem;
     font-weight: bold;
-    color: ${({ theme }) => theme?.themeColors?.primaryFontTextColor};
+    color: ${({ theme }) => theme?.themeColors?.primaryTextColor};
 `;
 
 export const DownloadPanelContainer = styled.div`
@@ -55,11 +55,11 @@ export const DropdownOptionLabel = styled.div`
     margin-right: 0.25rem;
     flex: 1;
     ${DropdownOptionDescription} {
-        color: ${({ theme }) => theme.themeColors.secondaryFontTextColor};
+        color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     }
     ${ExperimentalPill} {
-        color: ${({ theme }) => theme.themeColors.primaryFontTextColor};
-        border: 1px solid ${({ theme }) => theme.themeColors.primaryFontTextColor};
+        color: ${({ theme }) => theme.themeColors.primaryTextColor};
+        border: 1px solid ${({ theme }) => theme.themeColors.primaryTextColor};
     }
 `;
 
