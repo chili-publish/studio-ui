@@ -345,13 +345,16 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
     }, [multiLayoutMode, isDocumentLoaded, zoomToPage]);
 
-    const navbarProps = {
-        projectName: currentProject?.name || projectConfig.projectName,
-        goBack: projectConfig?.onUserInterfaceBack,
-        projectConfig,
-        undoStackState,
-        zoom: currentZoom,
-    };
+    const navbarProps = useMemo(
+        () => ({
+            projectName: currentProject?.name || projectConfig.projectName,
+            goBack: projectConfig?.onUserInterfaceBack,
+            projectConfig,
+            undoStackState,
+            zoom: currentZoom,
+        }),
+        [currentProject?.name, projectConfig, undoStackState, currentZoom],
+    );
 
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
