@@ -24,7 +24,7 @@ export const MobilePlaceholderWrapper = styled.span`
     white-space: nowrap;
 `;
 
-export const MobileDropdownOptionContainer = styled.div<{ hasError?: boolean; dropdownStyles: ITheme['dropdown'] }>`
+export const MobileDropdownOptionContainer = styled.div<{ hasError?: boolean; dropdownStyles: ITheme['select'] }>`
     display: flex;
     padding: 0 0.75rem;
     justify-content: space-between;
@@ -55,7 +55,7 @@ export const MobileDropdownOptionContainer = styled.div<{ hasError?: boolean; dr
     }
 `;
 
-export const MobileDropdownMenuOption = styled.div<{ selected?: boolean; dropdownStyles: ITheme['dropdown'] }>`
+export const MobileDropdownMenuOption = styled.div<{ selected?: boolean; dropdownStyles: ITheme['select'] }>`
     display: flex;
     align-items: center;
     min-height: 3rem;

@@ -1,4 +1,4 @@
-import { AvailableIcons, DropDown } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Select } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
 import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -21,7 +21,7 @@ const useUserInterfaceSelector = () => {
         () => ({
             label: 'UserInterface',
             content: (
-                <DropDown
+                <Select
                     dataId={getDataIdForSUI('dropdown-user-interface')}
                     dataTestId={getDataTestIdForSUI('dropdown-user-interface')}
                     options={options}

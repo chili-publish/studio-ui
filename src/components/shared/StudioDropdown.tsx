@@ -1,11 +1,11 @@
-import { DropDown, Option } from '@chili-publish/grafx-shared-components';
+import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface StudioDropdownProps {
     dataId: string;
     label?: string;
-    selectedValue?: Option;
-    options: Option[];
+    selectedValue?: SelectOptions;
+    options: SelectOptions[];
     width?: string;
     placeholder?: string;
     validationError?: string;
@@ -24,7 +24,7 @@ function StudioDropdown({
     onChange,
 }: StudioDropdownProps) {
     return (
-        <DropDown
+        <Select
             dataId={getDataIdForSUI(`dropdown-${dataId}`)}
             dataTestId={getDataTestIdForSUI(`dropdown-${dataId}`)}
             value={selectedValue}

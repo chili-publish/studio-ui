@@ -57,7 +57,7 @@ export const DropdownOptionDescription = styled.span`
     white-space: nowrap;
 `;
 
-export const Container = styled.div<{ dropdownStyles: ITheme['dropdown'] }>`
+export const Container = styled.div<{ dropdownStyles: ITheme['select'] }>`
     display: flex;
     flex: 1;
     flex-direction: column;

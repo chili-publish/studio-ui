@@ -3,7 +3,7 @@ import {
     Button,
     ButtonVariant,
     Colors,
-    DropDown,
+    Select,
     Icon,
     Menu,
     Tray,
@@ -135,7 +135,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <DownloadPanelContainer ref={downloadPanelRef} styles={panel}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
-                        <DropDown
+                        <Select
                             label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}

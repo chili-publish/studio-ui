@@ -1,4 +1,4 @@
-import { Option } from '@chili-publish/grafx-shared-components';
+import { SelectOptions } from '@chili-publish/grafx-shared-components';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
@@ -35,7 +35,7 @@ function MobileListVariable({
               label: variable.selected.displayValue || variable.selected.value,
               value: variable.selected.value,
           }
-        : ('' as unknown as Option);
+        : ('' as unknown as SelectOptions);
     const placeholder = getVariablePlaceholder(variable);
 
     const updateVariableValue = async (value: string) => {
