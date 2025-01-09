@@ -113,7 +113,7 @@ import { TokenManager } from './token-manager';
                 backButton: { visible: true },
                 navBar: { visible: true },
                 bottomBar: { visible: true },
-                downloadButton: {visible: true}
+                downloadButton: { visible: true },
             },
         },
         customElement: '<h1>Rendered from HTMLElement</h1>',
