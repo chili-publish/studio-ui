@@ -76,22 +76,16 @@ const useDownload = (hideDownloadPanel: () => void) => {
     const userInterfaceDownloadOptions: SelectOptions[] | null = useMemo(() => {
         if (!userInterfaceOutputSettings) return null;
 
-        return userInterfaceOutputSettings
-            .map((item) => ({ ...item, description: 'abcdef' }))
-            .map((val) => {
-                const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
-                return {
-                    label: (
-                        <DropdownOption
-                            iconData={outputTypesIcons[key]}
-                            text={val.name}
-                            description={val.description}
-                        />
-                    ),
-                    value: val.id,
-                    item: val,
-                };
-            });
+        return userInterfaceOutputSettings.map((val) => {
+            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
+            return {
+                label: (
+                    <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
+                ),
+                value: val.id,
+                item: val,
+            };
+        });
     }, [userInterfaceOutputSettings]);
 
     const getFormatFromId = useCallback((id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
