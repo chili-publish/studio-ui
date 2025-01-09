@@ -100,7 +100,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"
                         selectedValue={getCustomSelectedOption(selectedValue)}
-                        options={downloadOptions ?? userInterfaceDownloadOptions}
+                        options={userInterfaceDownloadOptions ?? downloadOptions}
                         onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
                         onMenuClose={() => setMobileDropdownOpen(false)}

@@ -111,8 +111,9 @@ import { TokenManager } from './token-manager';
         uiOptions: {
             widgets: {
                 backButton: { visible: true },
-                navBar: { visible: false },
-                bottomBar: { visible: false },
+                navBar: { visible: true },
+                bottomBar: { visible: true },
+                downloadButton: {visible: true}
             },
         },
         customElement: '<h1>Rendered from HTMLElement</h1>',
