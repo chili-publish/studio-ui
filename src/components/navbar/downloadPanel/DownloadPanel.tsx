@@ -3,9 +3,10 @@ import {
     Button,
     ButtonVariant,
     Colors,
-    Select,
     Icon,
     Menu,
+    Select,
+    SelectOptions,
     Tray,
     useMobileSize,
     useTheme,
@@ -13,6 +14,7 @@ import {
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { UserInterfaceOutputSettings } from '../../../types/types';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
@@ -25,7 +27,11 @@ import {
     DownloadPanelContainer,
     SpinnerContainer,
 } from './DownloadPanel.styles';
+import { outputTypesIcons } from './DownloadPanel.types';
+import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
+
+type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
@@ -37,6 +43,15 @@ interface DownloadPanelProps {
     ) => Promise<void>;
 }
 
+const getCustomSelectedLabel = (option: SelectOptions) => {
+    const item = (option as SelectOptionType).item as UserInterfaceOutputSettings;
+    const key = item.type.toLowerCase() as keyof typeof outputTypesIcons;
+    return <DropdownOption iconData={outputTypesIcons[key]} text={item.name} description="" />;
+};
+
+const getCustomSelectedOption = (option: SelectOptions) => {
+    return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
+};
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
@@ -54,7 +69,7 @@ function DownloadPanel(props: DownloadPanelProps) {
         selectedOutputSettingsId,
     } = useDownload(hideDownloadPanel);
 
-    const getSelectedValue = useMemo(() => {
+    const selectedValue = useMemo(() => {
         if (userInterfaceDownloadOptions) {
             return (
                 userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
@@ -84,7 +99,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"
-                        selectedValue={getSelectedValue}
+                        selectedValue={getCustomSelectedOption(selectedValue)}
                         options={userInterfaceDownloadOptions ?? downloadOptions}
                         onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
@@ -139,13 +154,14 @@ function DownloadPanel(props: DownloadPanelProps) {
                             label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                            defaultValue={getSelectedValue}
+                            defaultValue={selectedValue}
                             options={userInterfaceDownloadOptions ?? downloadOptions}
                             isSearchable={false}
                             width="16.25rem"
                             onChange={(option) =>
                                 handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
                             }
+                            customValue={getCustomSelectedLabel}
                         />
                     </DesktopDropdownContainer>
                     {downloadState[selectedOptionFormat] ? (
