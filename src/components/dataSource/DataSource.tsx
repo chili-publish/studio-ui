@@ -26,6 +26,8 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
+        requiresUserAuthorizationCheck,
+        error,
     } = useDataSource(isDocumentLoaded);
 
     const onDataSourceModalClose = useCallback(() => {
@@ -43,13 +45,13 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
             // input value needs to be truncated when datatable is open
             event.currentTarget.blur();
-            if (!currentInputRow) {
+            if (requiresUserAuthorizationCheck) {
                 loadDataRows();
             } else {
                 setIsDataSourceModalOpen(true);
             }
         },
-        [currentInputRow, loadDataRows, setIsDataSourceModalOpen],
+        [requiresUserAuthorizationCheck, loadDataRows, setIsDataSourceModalOpen],
     );
 
     if (!hasDataConnector) return null;
@@ -61,6 +63,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
                 currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}
                 dataIsLoading={isLoading}
+                isEmptyState={!!error || dataRows.length === 0}
                 isPrevDisabled={isPrevDisabled}
                 isNextDisabled={isNextDisabled}
                 onInputClick={onInputClick}
@@ -71,6 +74,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
                 <DataSourceModal
                     isOpen={isDataSourceModalOpen}
                     data={dataRows}
+                    error={error}
                     selectedRow={currentRowIndex}
                     onSelectedRowChanged={onSelectedRowChanged}
                     dataIsLoading={isLoading}

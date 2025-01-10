@@ -13,6 +13,14 @@ const dataRows = [
     { id: '3', name: 'Mary', age: 17 },
 ];
 
+jest.mock('../../../utils/connectors', () => ({
+    getRemoteMediaConnector: jest.fn().mockResolvedValue({
+        supportedAuthentication: {
+            browser: [],
+        },
+    }),
+}));
+
 describe('MobileDataSource test', () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 

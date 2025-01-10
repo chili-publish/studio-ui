@@ -1,10 +1,21 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { ConnectorHttpError } from '@chili-publish/studio-sdk';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/shared.util/app';
 import DataSource from '../../../components/dataSource/DataSource';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
 import AppProvider from '../../../contexts/AppProvider';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+
+jest.mock('../../../utils/connectors', () => ({
+    getRemoteMediaConnector: jest.fn().mockResolvedValue({
+        supportedAuthentication: {
+            browser: [],
+        },
+    }),
+}));
+
+jest.mock('@chili-publish/studio-sdk', () => jest.requireActual('@chili-publish/studio-sdk'));
 
 const tableData = [
     { id: '1', name: 'Joe', age: 15 },
@@ -24,6 +35,7 @@ describe('DataSourceModal test', () => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } as any),
         );
+        window.console.error = jest.fn();
     });
 
     beforeEach(() => {
@@ -38,6 +50,116 @@ describe('DataSourceModal test', () => {
         });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
         window.StudioUISDK.undoManager.addCustomData = jest.fn();
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+    });
+
+    it('Should show empty state correctly', async () => {
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+            parsedData: { data: [] },
+        });
+        render(
+            <UiThemeProvider theme="platform">
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const dataSourceRow = await screen.findByPlaceholderText('Select data row');
+        expect(dataSourceRow).toBeInTheDocument();
+
+        await act(async () => {
+            await user.click(dataSourceRow);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('No data available.')).toBeInTheDocument();
+            expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Should show "401" state correctly', async () => {
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(401));
+        render(
+            <UiThemeProvider theme="platform">
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const dataSourceRow = await screen.findByPlaceholderText('Select data row');
+        expect(dataSourceRow).toBeInTheDocument();
+
+        await act(async () => {
+            await user.click(dataSourceRow);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('You don’t have access.')).toBeInTheDocument();
+            expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Should show "404" state correctly', async () => {
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(404));
+        render(
+            <UiThemeProvider theme="platform">
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const dataSourceRow = await screen.findByPlaceholderText('Select data row');
+        expect(dataSourceRow).toBeInTheDocument();
+
+        await act(async () => {
+            await user.click(dataSourceRow);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Data not found.')).toBeInTheDocument();
+            expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Should show "error" state correctly', async () => {
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new Error());
+        render(
+            <UiThemeProvider theme="platform">
+                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                    <div id={APP_WRAPPER_ID}>
+                        <DataSource isDocumentLoaded />
+                    </div>
+                </AppProvider>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        const dataSourceRow = await screen.findByPlaceholderText('Select data row');
+        expect(dataSourceRow).toBeInTheDocument();
+
+        await act(async () => {
+            await user.click(dataSourceRow);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Unable to load data.')).toBeInTheDocument();
+            expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        });
     });
 
     it('Should open modal with data rows on click on data source row', async () => {

@@ -1,6 +1,7 @@
 import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
+    ConnectorEvent,
     ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
@@ -20,6 +21,7 @@ import {
     useConnectorAuthentication,
     useConnectorAuthenticationResult,
 } from './components/connector-authentication';
+import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import Navbar from './components/navbar/Navbar';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
@@ -35,7 +37,6 @@ import { SuiCanvas } from './MainContent.styles';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 
 declare global {
     interface Window {
@@ -196,6 +197,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 if (enableAutoSaveRef.current === false) {
                     enableAutoSaveRef.current = true;
                 }
+            },
+            onConnectorEvent: (event: ConnectorEvent) => {
+                eventSubscriber.emit('onConnectorEvent', event);
             },
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {

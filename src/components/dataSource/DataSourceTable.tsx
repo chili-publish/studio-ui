@@ -1,9 +1,17 @@
-import { LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
+import {
+    AvailableIcons,
+    Icon,
+    LoadingIcon,
+    Table,
+    useInfiniteScrolling,
+    useTheme,
+} from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
-import { LoadingContainer } from './DataSourceModal.styles';
+import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg } from './DataSourceTable.styles';
 
 interface DataSourceTableProps {
     data: DataItem[];
+    error?: string;
     hasMoreData?: boolean;
     dataIsLoading?: boolean;
     onNextPageRequested: () => void;
@@ -14,6 +22,7 @@ interface DataSourceTableProps {
 
 function DataSourceTable({
     data,
+    error,
     hasMoreData,
     dataIsLoading,
     selectedRow,
@@ -25,18 +34,35 @@ function DataSourceTable({
         onNextPageRequested,
     );
 
+    const { mode } = useTheme();
+
     return (
         <>
-            <Table
-                defaultSelectedRow={selectedRow}
-                // Type casting is necessary since currently table supports only string and number
-                rows={data as Record<string, string | number>[]}
-                onSelectedRowChanged={onSelectedRowChanged}
-            />
+            {!error && data.length > 0 && (
+                <Table
+                    defaultSelectedRow={selectedRow}
+                    // Type casting is necessary since currently table supports only string and number
+                    rows={data as Record<string, string | number>[]}
+                    onSelectedRowChanged={onSelectedRowChanged}
+                />
+            )}
             {dataIsLoading && (
-                <LoadingContainer>
+                <Center>
                     <LoadingIcon />
-                </LoadingContainer>
+                </Center>
+            )}
+            {!dataIsLoading && data.length === 0 && !error && (
+                <Center>
+                    <EmptyStateText mode={mode}>No data available.</EmptyStateText>
+                </Center>
+            )}
+            {!dataIsLoading && error && (
+                <Center>
+                    <ErrorTextBox mode={mode}>
+                        <Icon icon={AvailableIcons.faCircleExclamation} />
+                        <ErrorTextMsg mode={mode}>{error}</ErrorTextMsg>
+                    </ErrorTextBox>
+                </Center>
             )}
             <div ref={infiniteScrollingRef} />
         </>

@@ -7,6 +7,7 @@ import DataSourceTable from './DataSourceTable';
 interface TableModalProps {
     isOpen: boolean;
     data: DataItem[];
+    error?: string;
     hasMoreData?: boolean;
     dataIsLoading?: boolean;
     onNextPageRequested: () => void;
@@ -19,6 +20,7 @@ interface TableModalProps {
 function DataSourceModal({
     isOpen,
     data,
+    error,
     hasMoreData,
     dataIsLoading,
     onNextPageRequested,
@@ -43,6 +45,7 @@ function DataSourceModal({
                     <TableWrapper>
                         <DataSourceTable
                             data={data}
+                            error={error}
                             hasMoreData={hasMoreData}
                             dataIsLoading={dataIsLoading}
                             selectedRow={selectedRow}
