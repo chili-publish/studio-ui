@@ -65,37 +65,40 @@ const useDataSource = (isDocumentLoaded: boolean) => {
         setContinuationToken(null);
     }, []);
 
-    const loadDataRowsByToken = useCallback(async (connectorId: string, token: string | null) => {
-        setIsLoading(true);
+    const loadDataRowsByToken = useCallback(
+        async (connectorId: string, token: string | null) => {
+            setIsLoading(true);
 
-        try {
-            const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
-                limit: 15,
-                continuationToken: token,
-            });
+            try {
+                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
+                    limit: 15,
+                    continuationToken: token,
+                });
 
-            const rowItems = page?.data ?? [];
-            setError(undefined);
-            setDataRows((prevData) => [...prevData, ...rowItems]);
-            setContinuationToken(page?.continuationToken ?? null);
-        } catch (err) {
-            resetData();
-            // eslint-disable-next-line no-console
-            console.error(err);
-            if (err instanceof ConnectorHttpError) {
-                setError({
-                    status: err.statusCode,
-                    message: getDataSourceErrorText(err.statusCode),
-                });
-            } else {
-                setError({
-                    message: getDataSourceErrorText(),
-                });
+                const rowItems = page?.data ?? [];
+                setError(undefined);
+                setDataRows((prevData) => [...prevData, ...rowItems]);
+                setContinuationToken(page?.continuationToken ?? null);
+            } catch (err) {
+                resetData();
+                // eslint-disable-next-line no-console
+                console.error(err);
+                if (err instanceof ConnectorHttpError) {
+                    setError({
+                        status: err.statusCode,
+                        message: getDataSourceErrorText(err.statusCode),
+                    });
+                } else {
+                    setError({
+                        message: getDataSourceErrorText(),
+                    });
+                }
+            } finally {
+                setIsLoading(false);
             }
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+        },
+        [resetData],
+    );
 
     const loadDataRows = useCallback(async () => {
         if (!dataConnector) return;
