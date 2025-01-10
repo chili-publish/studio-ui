@@ -7,7 +7,7 @@ export const Container = styled.div<{ themeStyles: ITheme; isMobileSize: boolean
     display: flex;
     justify-content: center;
     max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.875rem)' : '100%')};
-    height: calc(100vh - 100dvh + ${PAGES_CONTAINER_HEIGHT});
+    height: ${PAGES_CONTAINER_HEIGHT};
     background: ${({ themeStyles }) => themeStyles.panel.backgroundColor};
     border-top: ${BORDER_SIZE} solid ${({ themeStyles }) => themeStyles.panel.borderColor};
 `;
