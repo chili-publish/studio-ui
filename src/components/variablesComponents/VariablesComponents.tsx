@@ -8,21 +8,23 @@ import {
     VariableType,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
-import { IVariablesComponents } from './VariablesComponents.types';
-import { useVariableComponents } from './useVariablesComponents';
-import ImageVariable from './imageVariable/ImageVariable';
-import TextVariable from './TextVariable';
+import { useAppContext } from '../../contexts/AppProvider';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import BooleanVariable from './BooleanVariable';
 import NumberVariable from './NumberVariable';
-import DateVariable from './dateVariable/DateVariable';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import TextVariable from './TextVariable';
 import { isDateVariable, isNumberVariable, isTextVariable, TextVariable as TextVariableType } from './Variable';
+import { IVariablesComponents } from './VariablesComponents.types';
+import DateVariable from './dateVariable/DateVariable';
+import ImageVariable from './imageVariable/ImageVariable';
 import ListVariable from './listVariable/ListVariable';
+import { useVariableComponents } from './useVariablesComponents';
 
 function VariablesComponents(props: IVariablesComponents) {
-    const { type, variable, isDocumentLoaded, onCalendarOpen } = props;
+    const { type, variable, onCalendarOpen } = props;
     const { handleValueChange, handleImageRemove } = useVariableComponents(variable.id);
     const { variablesValidation, validateVariable } = useVariablePanelContext();
+    const { isDocumentLoaded } = useAppContext();
 
     const errMsg = variablesValidation?.[variable.id]?.errorMsg;
 
