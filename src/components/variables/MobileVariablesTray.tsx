@@ -124,6 +124,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     overflow: ${isVariablesListOpen ? 'auto' : 'hidden'};
                     ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
+                    &::-webkit-scrollbar {
+                        width: 0;
+                    }
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>

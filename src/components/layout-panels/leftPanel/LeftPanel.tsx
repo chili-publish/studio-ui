@@ -1,4 +1,4 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
+import { ScrollbarWrapper, useTheme } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -24,14 +24,16 @@ function LeftPanel({ variables }: LeftPanelProps) {
             overflowScroll={contentType !== ContentType.IMAGE_PANEL}
             panelTheme={panel}
         >
-            <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
-                <VariablesList variables={variables} />
-            </VariablesListContainer>
+            <ScrollbarWrapper>
+                <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
+                    {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
+                    <VariablesList variables={variables} />
+                </VariablesListContainer>
 
-            <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
-                <ImagePanel />
-            </ImagePanelContainer>
+                <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
+                    <ImagePanel />
+                </ImagePanelContainer>
+            </ScrollbarWrapper>
         </LeftPanelContainer>
     );
 }
