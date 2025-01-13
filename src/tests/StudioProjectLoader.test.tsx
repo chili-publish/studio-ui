@@ -13,11 +13,12 @@ jest.mock('../utils/documentExportHelper', () => ({
         parsedData: { url: 'mockUrl' },
         data: JSON.stringify({ url: 'mockUrl' }),
     }),
+    addTrailingSlash: jest.fn().mockReturnValue('mockGraFxStudioEnvironmentApiBaseUrl/'),
 }));
 
 describe('StudioProjectLoader', () => {
     const mockProjectId = 'mockProjectId';
-    const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl';
+    const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl/';
     const mockAuthToken = 'mockAuthToken';
     const mockRefreshTokenAction = jest.fn();
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
