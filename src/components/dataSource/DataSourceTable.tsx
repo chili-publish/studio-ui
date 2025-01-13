@@ -7,7 +7,7 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
-import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg } from './DataSourceTable.styles';
+import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg, TableWrapper } from './DataSourceTable.styles';
 
 interface DataSourceTableProps {
     data: DataItem[];
@@ -39,12 +39,14 @@ function DataSourceTable({
     return (
         <>
             {!error && data.length > 0 && (
-                <Table
-                    defaultSelectedRow={selectedRow}
-                    // Type casting is necessary since currently table supports only string and number
-                    rows={data as Record<string, string | number>[]}
-                    onSelectedRowChanged={onSelectedRowChanged}
-                />
+                <TableWrapper>
+                    <Table
+                        defaultSelectedRow={selectedRow}
+                        // Type casting is necessary since currently table supports only string and number
+                        rows={data as Record<string, string | number>[]}
+                        onSelectedRowChanged={onSelectedRowChanged}
+                    />
+                </TableWrapper>
             )}
             {dataIsLoading && (
                 <Center>

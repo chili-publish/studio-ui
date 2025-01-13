@@ -1,7 +1,7 @@
 import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
 import { APP_WRAPPER_ID } from '../../utils/constants';
-import { MODAL_ID, ModalStyle, TableWrapper } from './DataSourceModal.styles';
+import { MODAL_ID, ModalStyle } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
 
 interface TableModalProps {
@@ -42,17 +42,15 @@ function DataSourceModal({
             >
                 <ModalLayout.Title>Data source</ModalLayout.Title>
                 <ModalLayout.Body>
-                    <TableWrapper>
-                        <DataSourceTable
-                            data={data}
-                            error={error}
-                            hasMoreData={hasMoreData}
-                            dataIsLoading={dataIsLoading}
-                            selectedRow={selectedRow}
-                            onNextPageRequested={onNextPageRequested}
-                            onSelectedRowChanged={onSelectedRowChanged}
-                        />
-                    </TableWrapper>
+                    <DataSourceTable
+                        data={data}
+                        error={error}
+                        hasMoreData={hasMoreData}
+                        dataIsLoading={dataIsLoading}
+                        selectedRow={selectedRow}
+                        onNextPageRequested={onNextPageRequested}
+                        onSelectedRowChanged={onSelectedRowChanged}
+                    />
                 </ModalLayout.Body>
             </ModalLayout.Container>
         </>

@@ -6,11 +6,26 @@ function getErrorColor(mode: ITheme['mode']) {
     return mode === 'light' ? '#d31510' : '#ff816b';
 }
 
+export const TableWrapper = styled.div`
+    width: 100%;
+    display: contents;
+    // Although it states for margin-bottom, actually it implies on the right gap between table and right side of modal
+    margin-bottom: 2.5rem;
+
+    table {
+        margin-bottom: 2.5rem;
+    }
+`;
+
 export const Center = styled.div`
     display: flex;
     justify-content: center;
-    aling-items: center;
+    align-items: center;
     height: 100%;
+
+    ${TableWrapper} + & {
+        margin-top: -2rem;
+    }
 `;
 
 const Text = styled.span`
