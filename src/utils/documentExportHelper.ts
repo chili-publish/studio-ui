@@ -161,4 +161,13 @@ type ApiError = {
     exceptionDetails?: string;
 };
 
-export default { getDownloadLink };
+/**
+ * This method will check if a string has a trailing slash
+ * @param incomingUrl string to check
+ * @returns the string with a trailing slash
+ */
+export const addTrailingSlash = (incomingUrl: string): string => {
+    return incomingUrl.endsWith('/') ? incomingUrl : `${incomingUrl}/`;
+};
+
+export default { getDownloadLink, addTrailingSlash };
