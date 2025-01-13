@@ -337,8 +337,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [fetchedDocument, zoomToPage]);
 
     useEffect(() => {
-        if (!multiLayoutMode) zoomToPage();
-    }, [multiLayoutMode, zoomToPage]);
+        if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
+    }, [isDocumentLoaded, multiLayoutMode, zoomToPage]);
 
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
