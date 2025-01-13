@@ -5,10 +5,13 @@ import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { BooleanVariableContainer, HelpTextWrapper } from './VariablesComponents.styles';
 import { IBooleanVariable } from './VariablesComponents.types';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
     const { featureFlags } = useFeatureFlagContext();
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+
     const [toggled, setToggled] = useState((variable as BooleanVariable).value);
 
     useEffect(() => {
@@ -32,6 +35,8 @@ function BooleanVariable(props: IBooleanVariable) {
                     onChange={(val: boolean) => {
                         handleValueChange(val);
                         setToggled(val);
+                        onVariableFocus?.(variable.id);
+                        onVariableBlur?.(variable.id);
                     }}
                     noLabelHeight
                 />

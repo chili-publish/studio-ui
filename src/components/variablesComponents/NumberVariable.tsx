@@ -4,10 +4,12 @@ import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 import { INumberVariable } from './VariablesComponents.types';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 function NumberVariable(props: INumberVariable) {
     const { variable, validationError, onValueChange } = props;
     const { featureFlags } = useFeatureFlagContext();
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     return (
         <HelpTextWrapper>
@@ -36,10 +38,12 @@ function NumberVariable(props: INumberVariable) {
                 dataId={getDataIdForSUI(`input-number-${variable.id}`)}
                 dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
                 dataIntercomId={`input-variable-${variable.name}`}
+                onFocus={() => onVariableFocus?.(variable.id)}
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                     const currentValue = parseFloat(event.target.value.replace(',', '.'));
                     const prevValue = variable.value;
                     onValueChange(currentValue, { changed: prevValue !== currentValue });
+                    onVariableBlur?.(variable.id);
                 }}
                 onValueChange={(value: string) => {
                     const currentValue = parseFloat(value.replace(',', '.'));
