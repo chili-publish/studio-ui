@@ -1,30 +1,32 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DataSource from '../../../components/dataSource/DataSource';
+import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 
 describe('DataSource test', () => {
     const user = userEvent.setup();
+    const dataSource = {
+        id: '1',
+        name: 'Connector name',
+    } as ConnectorInstance;
 
     it('Should display data connector first row', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: [{ id: '1', name: 'Joe', age: 15 }] },
-        });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
         });
 
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
         window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
-            <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider dataSource={dataSource}>
+                <UiThemeProvider theme="platform">
+                    <DataSource />
+                </UiThemeProvider>
+            </AppProvider>,
         );
 
         expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
@@ -32,14 +34,13 @@ describe('DataSource test', () => {
 
     it('Data source row should be hidden is data connector is not available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: null,
-        });
 
         render(
-            <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider>
+                <UiThemeProvider theme="platform">
+                    <DataSource />
+                </UiThemeProvider>
+            </AppProvider>,
         );
 
         await waitFor(() => {
@@ -49,17 +50,13 @@ describe('DataSource test', () => {
 
     it('Should display data connector placeholder when no page is available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
-        });
 
         render(
-            <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider dataSource={dataSource}>
+                <UiThemeProvider theme="platform">
+                    <DataSource />
+                </UiThemeProvider>
+            </AppProvider>,
         );
 
         expect(await screen.findByPlaceholderText('Select data row')).toBeInTheDocument();
@@ -75,19 +72,15 @@ describe('DataSource test', () => {
                 ],
             },
         });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
-        });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
         window.StudioUISDK.undoManager.addCustomData = jest.fn();
 
         render(
-            <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider dataSource={dataSource}>
+                <UiThemeProvider theme="platform">
+                    <DataSource />
+                </UiThemeProvider>
+            </AppProvider>,
         );
 
         expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
@@ -143,17 +136,13 @@ describe('DataSource test', () => {
                     data: [{ id: '3', name: 'Mary', age: 15 }],
                 },
             });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
-        });
 
         render(
-            <UiThemeProvider theme="platform">
-                <DataSource isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider dataSource={dataSource}>
+                <UiThemeProvider theme="platform">
+                    <DataSource />
+                </UiThemeProvider>
+            </AppProvider>,
         );
 
         expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();

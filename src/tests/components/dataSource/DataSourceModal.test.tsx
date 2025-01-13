@@ -1,10 +1,11 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/shared.util/app';
 import DataSource from '../../../components/dataSource/DataSource';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
 import AppProvider from '../../../contexts/AppProvider';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 const tableData = [
     { id: '1', name: 'Joe', age: 15 },
@@ -14,6 +15,11 @@ const tableData = [
 
 describe('DataSourceModal test', () => {
     const user = userEvent.setup();
+
+    const dataSource = {
+        id: '1',
+        name: 'Connector name',
+    } as ConnectorInstance;
 
     beforeAll(() => {
         window.IntersectionObserver = jest.fn(
@@ -30,12 +36,6 @@ describe('DataSourceModal test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: tableData },
         });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
-        });
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
         window.StudioUISDK.undoManager.addCustomData = jest.fn();
     });
@@ -43,9 +43,9 @@ describe('DataSourceModal test', () => {
     it('Should open modal with data rows on click on data source row', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource isDocumentLoaded />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -90,9 +90,9 @@ describe('DataSourceModal test', () => {
     it('Should be able to navigate with arrow key in the data source table', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <AppProvider isDocumentLoaded isAnimationPlaying={false}>
+                <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource isDocumentLoaded />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,

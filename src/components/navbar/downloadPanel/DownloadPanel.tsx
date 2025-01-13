@@ -3,17 +3,21 @@ import {
     Button,
     ButtonVariant,
     Colors,
-    Select,
     Icon,
     Menu,
+    Select,
+    SelectOptions,
     Tray,
     useMobileSize,
     useTheme,
-    SelectOptions,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { css } from 'styled-components';
 import { Dispatch, useMemo, useState } from 'react';
+import { css } from 'styled-components';
+import { UserInterfaceOutputSettings } from '../../../types/types';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import {
     BtnContainer,
     ButtonWrapper,
@@ -23,13 +27,9 @@ import {
     DownloadPanelContainer,
     SpinnerContainer,
 } from './DownloadPanel.styles';
-import useDownload from './useDownload';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
-import DropdownOption from './DropdownOption';
 import { outputTypesIcons } from './DownloadPanel.types';
-import { UserInterfaceOutputSettings } from '../../../types/types';
+import DropdownOption from './DropdownOption';
+import useDownload from './useDownload';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
