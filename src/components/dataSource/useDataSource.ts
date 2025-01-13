@@ -1,7 +1,7 @@
 import { ConnectorEvent, ConnectorEventType, ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
-import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
+import { useAppContext } from '../../contexts/AppProvider';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
@@ -20,8 +20,8 @@ function getDataSourceErrorText(status?: number) {
     }
 }
 
-const useDataSource = (isDocumentLoaded: boolean) => {
-    const [dataConnector, setDataConnector] = useState<ConnectorInstance | null>(null);
+const useDataSource = () => {
+    const { dataSource, isDocumentLoaded } = useAppContext();
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
@@ -35,12 +35,12 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     const { authToken } = useAuthToken();
 
     const hasUserAuthorization = useAsyncMemo(async () => {
-        if (!dataConnector) {
+        if (!dataSource) {
             return false;
         }
-        const connector = await getRemoteMediaConnector(graFxStudioEnvironmentApiBaseUrl, dataConnector.id, authToken);
+        const connector = await getRemoteMediaConnector(graFxStudioEnvironmentApiBaseUrl, dataSource.id, authToken);
         return connector.supportedAuthentication.browser.includes('oAuth2AuthorizationCode');
-    }, [dataConnector, authToken, graFxStudioEnvironmentApiBaseUrl]);
+    }, [dataSource, authToken, graFxStudioEnvironmentApiBaseUrl]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];
@@ -101,9 +101,9 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     );
 
     const loadDataRows = useCallback(async () => {
-        if (!dataConnector) return;
-        loadDataRowsByToken(dataConnector.id, continuationToken);
-    }, [dataConnector, continuationToken, loadDataRowsByToken]);
+        if (!dataSource) return;
+        loadDataRowsByToken(dataSource.id, continuationToken);
+    }, [dataSource, continuationToken, loadDataRowsByToken]);
 
     const getPreviousRow = useCallback(() => {
         setCurrentRowIndex((prev) => prev - 1);
@@ -121,19 +121,10 @@ const useDataSource = (isDocumentLoaded: boolean) => {
     }, []);
 
     useEffect(() => {
-        if (!isDocumentLoaded) return;
-        const getDataConnector = async () => {
-            const { parsedData: defaultDataConnector } = await window.StudioUISDK.dataSource.getDataSource();
-            setDataConnector(defaultDataConnector);
-        };
-        getDataConnector();
-    }, [isDocumentLoaded]);
-
-    useEffect(() => {
-        if (dataConnector) {
-            loadDataRowsByToken(dataConnector.id, null);
+        if (dataSource) {
+            loadDataRowsByToken(dataSource.id, null);
         }
-    }, [dataConnector, loadDataRowsByToken]);
+    }, [dataSource, loadDataRowsByToken]);
 
     useEffect(() => {
         (async () => {
@@ -166,14 +157,14 @@ const useDataSource = (isDocumentLoaded: boolean) => {
 
     useEffect(() => {
         const handler = (event: ConnectorEvent) => {
-            if (event.type === ConnectorEventType.reloadRequired && event.id === dataConnector?.id) {
+            if (event.type === ConnectorEventType.reloadRequired && event.id === dataSource?.id) {
                 resetData();
-                loadDataRowsByToken(dataConnector.id, null);
+                loadDataRowsByToken(dataSource.id, null);
             }
         };
         subscriber?.on('onConnectorEvent', handler);
         return () => subscriber?.off('onConnectorEvent', handler);
-    }, [subscriber, dataConnector, resetData, loadDataRowsByToken]);
+    }, [subscriber, dataSource, resetData, loadDataRowsByToken]);
 
     return {
         currentInputRow,
@@ -187,7 +178,7 @@ const useDataSource = (isDocumentLoaded: boolean) => {
         isPrevDisabled,
         isNextDisabled,
         hasMoreRows: !!continuationToken,
-        hasDataConnector: !!dataConnector,
+        hasDataConnector: !!dataSource,
         requiresUserAuthorizationCheck,
         error: error?.message,
     };

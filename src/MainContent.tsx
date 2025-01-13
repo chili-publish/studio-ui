@@ -65,6 +65,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
+    const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [multiLayoutMode, setMultiLayoutMode] = useState(false);
 
@@ -332,6 +333,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 }
             });
 
+            window.StudioUISDK.dataSource.getDataSource().then((res) => {
+                setDataSource(res.parsedData ?? undefined);
+            });
+
             const layoutIntentData = (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
             setLayoutIntent(layoutIntentData);
             zoomToPage();
@@ -341,11 +346,22 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, [fetchedDocument, zoomToPage]);
 
     useEffect(() => {
-        if (!multiLayoutMode) zoomToPage();
-    }, [multiLayoutMode, zoomToPage]);
+        if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
+    }, [multiLayoutMode, isDocumentLoaded, zoomToPage]);
+
+    const navbarProps = useMemo(
+        () => ({
+            projectName: currentProject?.name || projectConfig.projectName,
+            goBack: projectConfig?.onUserInterfaceBack,
+            projectConfig,
+            undoStackState,
+            zoom: currentZoom,
+        }),
+        [currentProject?.name, projectConfig, undoStackState, currentZoom],
+    );
 
     return (
-        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
+        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container canvas={canvas}>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
@@ -356,31 +372,19 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                             <div id={APP_WRAPPER_ID} className="app">
                                 {projectConfig.sandboxMode ? (
                                     <UiThemeProvider theme="studio" mode="dark">
-                                        <StudioNavbar
-                                            projectName={currentProject?.name || projectConfig.projectName}
-                                            goBack={projectConfig?.onUserInterfaceBack}
-                                            projectConfig={projectConfig}
-                                            undoStackState={undoStackState}
-                                            zoom={currentZoom}
-                                        />
+                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                        <StudioNavbar {...navbarProps} />
                                     </UiThemeProvider>
                                 ) : (
-                                    <Navbar
-                                        projectName={currentProject?.name || projectConfig.projectName}
-                                        goBack={projectConfig?.onUserInterfaceBack}
-                                        projectConfig={projectConfig}
-                                        undoStackState={undoStackState}
-                                        zoom={currentZoom}
-                                    />
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    <Navbar {...navbarProps} />
                                 )}
 
                                 <MainContentContainer
                                     sandboxMode={projectConfig.sandboxMode}
                                     fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
                                 >
-                                    {!isMobileSize && (
-                                        <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
-                                    )}
+                                    {!isMobileSize && <LeftPanel variables={variables} />}
                                     <CanvasContainer>
                                         {isMobileSize && (
                                             <MobileVariablesTray
@@ -389,7 +393,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
                                                 }
-                                                isDocumentLoaded={isDocumentLoaded}
                                             />
                                         )}
                                         {projectConfig.customElement && (

@@ -29,7 +29,6 @@ interface VariablesPanelProps {
     variables: Variable[];
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
-    isDocumentLoaded: boolean;
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -40,7 +39,7 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isDocumentLoaded, isTimelineDisplayed, isPagesPanelDisplayed } = props;
+    const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
     const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -64,7 +63,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource(isDocumentLoaded);
+    } = useDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         requiresUserAuthorizationCheck,
@@ -127,6 +126,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     overflow: ${isVariablesListOpen ? 'auto' : 'hidden'};
                     ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
+                    &::-webkit-scrollbar {
+                        width: 0;
+                    }
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
@@ -150,7 +152,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             <MobileVariablesList
                                 variables={variables}
-                                isDocumentLoaded={isDocumentLoaded}
                                 onMobileOptionListToggle={setMobileOptionsListOpen}
                             />
                         </>

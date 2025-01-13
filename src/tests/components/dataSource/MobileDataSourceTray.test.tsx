@@ -1,7 +1,9 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
+import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
@@ -24,6 +26,11 @@ jest.mock('../../../utils/connectors', () => ({
 describe('MobileDataSource test', () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
+    const dataSource = {
+        id: '1',
+        name: 'Connector name',
+    } as ConnectorInstance;
+
     beforeEach(() => {
         jest.useFakeTimers();
 
@@ -39,12 +46,6 @@ describe('MobileDataSource test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: dataRows },
         });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
-            parsedData: {
-                id: '1',
-                name: 'Connector name',
-            },
-        });
 
         window.StudioUISDK.dataSource.setDataRow = jest.fn();
         window.StudioUISDK.undoManager.addCustomData = jest.fn();
@@ -55,13 +56,16 @@ describe('MobileDataSource test', () => {
     });
     it('Should display data connector first row', async () => {
         render(
-            <div id={APP_WRAPPER_ID}>
-                <UiThemeProvider theme="platform">
-                    <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
-                        <MobileVariablesPanel variables={[]} isDocumentLoaded />
-                    </FeatureFlagProvider>
-                </UiThemeProvider>
-            </div>,
+            <AppProvider dataSource={dataSource}>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
+                            <MobileVariablesPanel variables={[]} />
+                        </FeatureFlagProvider>
+                    </UiThemeProvider>
+                </div>
+                ,
+            </AppProvider>,
         );
 
         const openBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
@@ -77,18 +81,20 @@ describe('MobileDataSource test', () => {
 
     it('Should open tray with data table on click on data source row', async () => {
         render(
-            <div id={APP_WRAPPER_ID}>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider
-                        connectors={{ mediaConnectors: [], fontsConnectors: [] }}
-                        variables={[]}
-                    >
-                        <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
-                            <MobileVariablesPanel variables={[]} isDocumentLoaded />
-                        </FeatureFlagProvider>
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
-            </div>,
+            <AppProvider dataSource={dataSource}>
+                <div id={APP_WRAPPER_ID}>
+                    <UiThemeProvider theme="platform">
+                        <VariablePanelContextProvider
+                            connectors={{ mediaConnectors: [], fontsConnectors: [] }}
+                            variables={[]}
+                        >
+                            <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
+                                <MobileVariablesPanel variables={[]} />
+                            </FeatureFlagProvider>
+                        </VariablePanelContextProvider>
+                    </UiThemeProvider>
+                </div>
+            </AppProvider>,
         );
 
         const openBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
