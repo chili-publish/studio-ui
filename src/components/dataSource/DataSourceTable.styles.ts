@@ -10,6 +10,7 @@ export const Center = styled.div`
     display: flex;
     justify-content: center;
     aling-items: center;
+    height: 100%;
 `;
 
 const Text = styled.span`
