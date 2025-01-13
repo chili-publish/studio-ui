@@ -1,4 +1,3 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
 import { useCallback } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle } from '../shared/Panel.styles';
@@ -7,7 +6,6 @@ import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
 
 function DataSource() {
-    const { panel } = useTheme();
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
 
     const {
@@ -55,7 +53,7 @@ function DataSource() {
 
     return (
         <>
-            <PanelTitle panelTheme={panel}>Data source</PanelTitle>
+            <PanelTitle>Data source</PanelTitle>
             <DataSourceInput
                 currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}

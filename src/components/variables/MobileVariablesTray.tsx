@@ -1,12 +1,4 @@
-import {
-    AvailableIcons,
-    Button,
-    ButtonVariant,
-    FontSizes,
-    Icon,
-    Tray,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 import { css } from 'styled-components';
@@ -40,7 +32,6 @@ const imagePanelHeight = `
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
-    const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -148,7 +139,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     {(isVariablesListOpen || isDateVariablePanelOpen) && (
                         <>
                             {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
-                                <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>
+                                <TrayPanelTitle>Customize</TrayPanelTitle>
                             ) : null}
                             <MobileVariablesList
                                 variables={variables}

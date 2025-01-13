@@ -1,4 +1,4 @@
-import { ScrollbarWrapper, useTheme } from '@chili-publish/grafx-shared-components';
+import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -14,7 +14,6 @@ interface LeftPanelProps {
 
 function LeftPanel({ variables }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { panel } = useTheme();
     const { featureFlags } = useFeatureFlagContext();
 
     return (
@@ -22,7 +21,6 @@ function LeftPanel({ variables }: LeftPanelProps) {
             id="left-panel"
             data-intercom-target="Customize panel"
             overflowScroll={contentType !== ContentType.IMAGE_PANEL}
-            panelTheme={panel}
         >
             <ScrollbarWrapper>
                 <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>

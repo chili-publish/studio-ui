@@ -363,7 +363,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
-                <Container canvas={canvas}>
+                <Container>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                         <VariablePanelContextProvider
                             connectors={{ mediaConnectors, fontsConnectors }}
