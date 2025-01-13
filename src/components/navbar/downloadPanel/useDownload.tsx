@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import DropdownOption from './DropdownOption';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { UserInterfaceOutputSettings } from '../../../types/types';
+import { outputTypesIcons } from './DownloadPanel.types';
 
 const useDownload = (hideDownloadPanel: () => void) => {
     const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
@@ -35,22 +36,27 @@ const useDownload = (hideDownloadPanel: () => void) => {
             {
                 label: <DropdownOption iconData={AvailableIcons.faImage} text="JPG" description="" />,
                 value: DownloadFormats.JPG,
+                item: { type: DownloadFormats.JPG, name: 'JPG' },
             },
             {
                 label: <DropdownOption iconData={AvailableIcons.faImage} text="PNG" description="" />,
                 value: DownloadFormats.PNG,
+                item: { type: DownloadFormats.PNG, name: 'PNG' },
             },
             {
                 label: <DropdownOption iconData={AvailableIcons.faFileVideo} text="MP4 " description="" />,
                 value: DownloadFormats.MP4,
+                item: { type: DownloadFormats.MP4, name: 'MP4' },
             },
             {
                 label: <DropdownOption iconData={AvailableIcons.faGif} text="GIF" description="" />,
                 value: DownloadFormats.GIF,
+                item: { type: DownloadFormats.GIF, name: 'GIF' },
             },
             {
                 label: <DropdownOption iconData={AvailableIcons.faFilePdf} text="PDF" description="" />,
                 value: DownloadFormats.PDF,
+                item: { type: DownloadFormats.PDF, name: 'PDF' },
             },
         ];
 
@@ -69,13 +75,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
 
     const userInterfaceDownloadOptions: SelectOptions[] | null = useMemo(() => {
         if (!userInterfaceOutputSettings) return null;
-        const outputTypesIcons = {
-            jpg: AvailableIcons.faImage,
-            png: AvailableIcons.faImage,
-            mp4: AvailableIcons.faFileVideo,
-            gif: AvailableIcons.faGif,
-            pdf: AvailableIcons.faFilePdf,
-        };
+
         return userInterfaceOutputSettings.map((val) => {
             const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
             return {
@@ -83,6 +83,7 @@ const useDownload = (hideDownloadPanel: () => void) => {
                     <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
                 ),
                 value: val.id,
+                item: val,
             };
         });
     }, [userInterfaceOutputSettings]);

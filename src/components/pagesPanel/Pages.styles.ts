@@ -1,23 +1,24 @@
 import styled from 'styled-components';
+import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, SCROLL_SIZE } from '../../utils/constants';
 
 export const Container = styled.div<{ isMobileSize: boolean }>`
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.875rem)' : '100%')};
-    height: 7.5rem;
+    height: ${PAGES_CONTAINER_HEIGHT};
     background: ${({ theme }) => theme.panel.backgroundColor};
-    border-top: 2px solid ${({ theme }) => theme.panel.borderColor};
+    border-top: ${BORDER_SIZE} solid ${({ theme }) => theme.panel.borderColor};
 `;
-export const ScrollableContainer = styled.div`
+
+export const ScrollableContainer = styled.div<{ isMobileSize?: boolean }>`
     display: flex;
-    height: 100%;
-    padding: 0 0.625rem;
+    height: calc(${PAGES_CONTAINER_HEIGHT} - ${SCROLL_SIZE} - ${BORDER_SIZE});
     align-items: center;
-    overflow-x: auto;
     width: auto;
     white-space: nowrap;
-    overflow-y: hidden;
+    padding: 0.5rem 0.625rem 0 0.625rem;
+    scrollbar-gutter: stable;
 `;
 export const Card = styled.div<{ selected?: boolean }>`
     box-sizing: border-box;

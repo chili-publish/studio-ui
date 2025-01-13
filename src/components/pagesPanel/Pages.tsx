@@ -8,9 +8,10 @@ import {
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { ScrollableContainer, Card, Container } from './Pages.styles';
-import { PREVIEW_FALLBACK } from '../../utils/constants';
+import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
 import { PageSnapshot } from '../../types/types';
 import { PreviewCardBadge } from './PreviewCardBadge';
+import { useAttachArrowKeysListener } from './useAttachArrowKeysListener';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 interface PagesProps {
@@ -26,10 +27,6 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
     const isMobileSize = useMobileSize();
 
-    const handleSelectPage = async (pageId: string) => {
-        await window.StudioUISDK.page.select(pageId);
-    };
-
     const getPagesSnapshot = useCallback(async (ids: string[]) => {
         const snapArray = ids.map((id) =>
             window.SDK.page.getSnapshot(id).then((snapshot) => ({
@@ -41,6 +38,14 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
         setPageSnapshots(awaitedArray);
         return awaitedArray as PageSnapshot[];
     }, []);
+
+    /**
+     * by attaching listeners here and not in ShortcutProvider.tsx,
+     * 'pages' prop that gets populated via 'onPagesChanged' subscriber,
+     * will not trigger rerenders of ShortcutProvider's children,
+     * causing multiple query refectch in useMediaDetails
+     */
+    const { handleSelectPage } = useAttachArrowKeysListener({ pages, activePageId });
 
     useEffect(() => {
         if (pages?.length && !pageSnapshots.length) {
@@ -84,8 +89,13 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
 
     return (
         <Container isMobileSize={isMobileSize}>
-            <ScrollbarWrapper invertScrollbarColors>
-                <ScrollableContainer>
+            <ScrollbarWrapper
+                height={`calc(${PAGES_CONTAINER_HEIGHT} - ${BORDER_SIZE})`}
+                enableOverflowX
+                enableOverflowY={false}
+                scrollbarHeight={!isMobileSize ? '0.875rem' : '0'}
+            >
+                <ScrollableContainer isMobileSize={isMobileSize}>
                     {!!pages?.length &&
                         pages.map((item, index) => (
                             <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>

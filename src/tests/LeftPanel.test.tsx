@@ -1,15 +1,16 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
-import userEvent from '@testing-library/user-event';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
+import AppProvider from '../contexts/AppProvider';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
+import { getDataTestIdForSUI } from '../utils/dataIds';
 import { mockAssets } from './mocks/mockAssets';
 import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
-import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('@chili-publish/studio-sdk');
@@ -115,11 +116,13 @@ describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const user = userEvent.setup();
         const { getByText, getByRole } = render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
@@ -141,11 +144,13 @@ describe('Image Panel', () => {
     test('Media assets are correctly fetched', async () => {
         const user = userEvent.setup();
         const { getByText, getByTestId, getAllByText } = render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
@@ -167,11 +172,13 @@ describe('Image Panel', () => {
     test('Media asset folder navigation works', async () => {
         const user = userEvent.setup();
         const { getByText } = render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
@@ -190,11 +197,13 @@ describe('Image Panel', () => {
     test.skip('Image Picker updates image after asset is selected', async () => {
         const user = userEvent.setup();
         const { getByRole } = render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await act(async () => {
@@ -228,11 +237,13 @@ describe('Image Panel', () => {
             );
 
         render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
@@ -253,11 +264,13 @@ describe('Image Panel', () => {
     test('Render search input when filtering is supported', async () => {
         const user = userEvent.setup();
         const { getByTestId } = render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel variables={variables} isDocumentLoaded />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                        <LeftPanel variables={variables} />
+                    </VariablePanelContextProvider>
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
