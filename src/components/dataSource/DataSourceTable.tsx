@@ -1,11 +1,4 @@
-import {
-    AvailableIcons,
-    Icon,
-    LoadingIcon,
-    Table,
-    useInfiniteScrolling,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
 import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg, TableWrapper } from './DataSourceTable.styles';
 
@@ -34,8 +27,6 @@ function DataSourceTable({
         onNextPageRequested,
     );
 
-    const { mode } = useTheme();
-
     return (
         <>
             {!error && data.length > 0 && (
@@ -55,14 +46,14 @@ function DataSourceTable({
             )}
             {!dataIsLoading && data.length === 0 && !error && (
                 <Center>
-                    <EmptyStateText mode={mode}>No data available.</EmptyStateText>
+                    <EmptyStateText>No data available.</EmptyStateText>
                 </Center>
             )}
             {!dataIsLoading && error && (
                 <Center>
-                    <ErrorTextBox mode={mode}>
+                    <ErrorTextBox>
                         <Icon icon={AvailableIcons.faCircleExclamation} />
-                        <ErrorTextMsg mode={mode}>{error}</ErrorTextMsg>
+                        <ErrorTextMsg>{error}</ErrorTextMsg>
                     </ErrorTextBox>
                 </Center>
             )}

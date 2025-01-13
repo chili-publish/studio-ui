@@ -75,7 +75,7 @@ const useDataSource = () => {
             setIsLoading(true);
 
             try {
-                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
+                let { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
                     limit: 15,
                     continuationToken: token,
                 });
