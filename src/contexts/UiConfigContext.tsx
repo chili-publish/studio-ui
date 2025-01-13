@@ -20,6 +20,8 @@ export const UiConfigContextDefaultValues: IUiConfigContext = {
     userInterfaces: [],
     selectedUserInterfaceId: '',
     onUserInterfaceChange: () => null,
+    onVariableFocus: () => null,
+    onVariableBlur: () => null,
 };
 
 export const UiConfigContext = createContext<IUiConfigContext>(UiConfigContextDefaultValues);
@@ -85,13 +87,17 @@ export function UiConfigContextProvider({
             userInterfaceOutputSettings,
             isDownloadBtnVisible: projectConfig.uiOptions.widgets?.downloadButton?.visible ?? false,
             isBackBtnVisible: projectConfig.uiOptions.widgets?.backButton?.visible ?? false,
+            onVariableFocus: projectConfig.onVariableFocus,
+            onVariableBlur: projectConfig.onVariableBlur,
         }),
         [
             userInterfaces,
             selectedUserInterfaceId,
-            projectConfig.outputSettings,
             projectConfig.uiOptions,
+            projectConfig.outputSettings,
             projectConfig.graFxStudioEnvironmentApiBaseUrl,
+            projectConfig.onVariableFocus,
+            projectConfig.onVariableBlur,
             userInterfaceOutputSettings,
         ],
     );

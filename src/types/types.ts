@@ -35,6 +35,8 @@ export interface ProjectConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
 export interface DefaultStudioConfig {
@@ -57,6 +59,8 @@ export interface DefaultStudioConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
 export interface StudioConfig extends DefaultStudioConfig {
@@ -201,6 +205,8 @@ export interface IStudioUILoaderConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
 export type PageSnapshot = {

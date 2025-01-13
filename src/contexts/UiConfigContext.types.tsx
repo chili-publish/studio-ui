@@ -11,4 +11,6 @@ export interface IUiConfigContext {
     userInterfaces: UserInterface[];
     selectedUserInterfaceId: string | null;
     onUserInterfaceChange: (_: string) => void;
+    onVariableFocus?: (id: string) => void;
+    onVariableBlur?: (id: string) => void;
 }

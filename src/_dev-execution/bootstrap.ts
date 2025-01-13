@@ -120,5 +120,9 @@ import { TokenManager } from './token-manager';
         onSetMultiLayout: (stateUpdater) => {
             ToggleSetMultiLayout = stateUpdater;
         },
+        // eslint-disable-next-line no-console
+        onVariableFocus: (id) => console.log('focused var: ', id),
+        // eslint-disable-next-line no-console
+        onVariableBlur: (id) => console.log('blurred var: ', id),
     });
 })();
