@@ -1,4 +1,3 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
 import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
@@ -13,7 +12,6 @@ interface VariablesListProps {
 
 function VariablesList({ variables }: VariablesListProps) {
     const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
-    const { panel } = useTheme();
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
             if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
@@ -27,7 +25,7 @@ function VariablesList({ variables }: VariablesListProps) {
 
     return (
         <VariablesListWrapper>
-            <PanelTitle panelTheme={panel}>Customize</PanelTitle>
+            <PanelTitle>Customize</PanelTitle>
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     if (!variable.isVisible) return null;

@@ -281,8 +281,6 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                     <ContextMenu
                         isVisible={isMenuOpen}
                         isDismissible
-                        darkTheme
-                        editorComponent
                         onClose={closeMenu}
                         menuItems={menuItems}
                         position={{ top: 40, left: 8 } as unknown as DOMRect}
