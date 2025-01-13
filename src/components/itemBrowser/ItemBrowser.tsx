@@ -11,8 +11,6 @@ import {
     useMobileSize,
     BreadCrumb,
     SelectOptions,
-    ThemeColors,
-    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -67,7 +65,6 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-    const { mode } = useTheme();
 
     const {
         connectorCapabilities,
@@ -241,7 +238,6 @@ function ItemBrowser<
             options: [],
             padding: '0',
             footerTopMargin: '0.75rem',
-            backgroundColor: mode === 'light' ? ThemeColors.light.GRAY_100 : undefined,
             selected: selectedItems[0]?.id === listItem.instance.id,
             onClickCard: onClick,
             renamingDisabled: true,
