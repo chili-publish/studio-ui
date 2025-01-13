@@ -1,5 +1,4 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { IUiConfigContext } from './UiConfigContext.types';
 import {
     ProjectConfig,
     UserInterface,
@@ -8,6 +7,9 @@ import {
     defaultOutputSettings,
     defaultUiOptions,
 } from '../types/types';
+import { OutputType } from '../utils/ApiTypes';
+import { useAppContext } from './AppProvider';
+import { IUiConfigContext } from './UiConfigContext.types';
 
 export const UiConfigContextDefaultValues: IUiConfigContext = {
     uiOptions: defaultUiOptions,
@@ -39,6 +41,8 @@ export function UiConfigContextProvider({
     projectConfig: ProjectConfig;
     layoutIntent: string | null;
 }) {
+    const { dataSource } = useAppContext();
+
     const [selectedUserInterfaceId, setSelectedUserInterfaceId] = useState<string | null>(
         projectConfig.userInterfaceID || null,
     );
@@ -53,15 +57,17 @@ export function UiConfigContextProvider({
                 projectConfig
                     .onFetchOutputSettings(userInterfaceId)
                     .then((res: UserInterfaceWithOutputSettings | null) => {
-                        setUserInterfaceOutputSettings(
-                            res?.outputSettings?.filter((val) => val.layoutIntents.includes(layoutIntent ?? '')) ??
-                                null,
+                        let settings = res?.outputSettings?.filter((val) =>
+                            val.layoutIntents.includes(layoutIntent ?? ''),
                         );
+
+                        settings = dataSource ? settings : settings?.filter((s) => s.outputType !== OutputType.Batch);
+                        setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
                     });
             }
         },
-        [layoutIntent, projectConfig],
+        [layoutIntent, projectConfig, dataSource],
     );
 
     useEffect(() => {

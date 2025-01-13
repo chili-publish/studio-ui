@@ -1,6 +1,7 @@
 import { ITheme } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
+import { OutputType } from '../utils/ApiTypes';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export type FeatureFlagsType = Record<string, boolean>;
@@ -102,6 +103,7 @@ export type UserInterfaceOutputSettings = {
     id: string;
     description: string;
     type: DownloadFormats;
+    outputType: OutputType;
     layoutIntents: string[];
 };
 
@@ -133,7 +135,7 @@ export type PaginatedResponse<T> = {
 };
 
 export interface IOutputSetting {
-    WatermarkText: string;
+    watermarkText: string;
     default: boolean;
     description: string;
     id: string;

@@ -11,7 +11,6 @@ import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 export interface IVariablesComponents {
     type: VariableType;
     variable: Variable;
-    isDocumentLoaded: boolean;
     onCalendarOpen?: (_: DateVariable) => void;
 }
 

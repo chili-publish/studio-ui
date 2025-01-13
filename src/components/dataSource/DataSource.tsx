@@ -6,10 +6,7 @@ import DataSourceInput from './DataSourceInput';
 import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
 
-interface DataSourceProps {
-    isDocumentLoaded: boolean;
-}
-function DataSource({ isDocumentLoaded }: DataSourceProps) {
+function DataSource() {
     const { panel } = useTheme();
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
 
@@ -26,7 +23,7 @@ function DataSource({ isDocumentLoaded }: DataSourceProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
-    } = useDataSource(isDocumentLoaded);
+    } = useDataSource();
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);
