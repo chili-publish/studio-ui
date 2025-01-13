@@ -5,7 +5,8 @@ import { useAppContext } from '../../contexts/AppProvider';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
-import { getRemoteMediaConnector } from '../../utils/connectors';
+import { DataRemoteConnector } from '../../utils/ApiTypes';
+import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -21,7 +22,7 @@ function getDataSourceErrorText(status?: number) {
 }
 
 const useDataSource = () => {
-    const { dataSource, isDocumentLoaded } = useAppContext();
+    const { dataSource } = useAppContext();
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
 
@@ -38,8 +39,12 @@ const useDataSource = () => {
         if (!dataSource) {
             return false;
         }
-        const connector = await getRemoteMediaConnector(graFxStudioEnvironmentApiBaseUrl, dataSource.id, authToken);
-        return connector.supportedAuthentication.browser.includes('oAuth2AuthorizationCode');
+        const connector = await getRemoteConnector<DataRemoteConnector>(
+            graFxStudioEnvironmentApiBaseUrl,
+            dataSource.id,
+            authToken,
+        );
+        return isAuthenticationRequired(connector);
     }, [dataSource, authToken, graFxStudioEnvironmentApiBaseUrl]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
@@ -136,10 +141,10 @@ const useDataSource = () => {
 
     useEffect(() => {
         (async () => {
-            if (!isDocumentLoaded) return;
+            if (!dataSource) return;
             await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
         })();
-    }, [currentRowIndex, isDocumentLoaded]);
+    }, [currentRowIndex, dataSource]);
 
     useEffect(() => {
         const handler = (undoData: Record<string, string>) => {

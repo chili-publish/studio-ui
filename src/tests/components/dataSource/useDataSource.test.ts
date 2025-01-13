@@ -12,11 +12,12 @@ jest.mock('../../../contexts/Subscriber', () => ({
 }));
 
 jest.mock('../../../utils/connectors', () => ({
-    getRemoteMediaConnector: jest.fn().mockResolvedValue({
+    getRemoteConnector: jest.fn().mockResolvedValue({
         supportedAuthentication: {
             browser: [],
         },
     }),
+    isAuthenticationRequired: jest.requireActual('../../../utils/connectors').isAuthenticationRequired,
 }));
 jest.mock('../../../contexts/AppProvider', () => ({
     useAppContext: jest.fn().mockReturnValue({

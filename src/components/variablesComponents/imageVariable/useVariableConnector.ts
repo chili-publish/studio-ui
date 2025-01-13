@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
 import { ImageVariable } from '@chili-publish/studio-sdk';
-import { MediaRemoteConnector } from '../../../utils/ApiTypes';
-import { getRemoteMediaConnector } from '../../../utils/connectors';
-import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useEffect, useState } from 'react';
 import { useAuthToken } from '../../../contexts/AuthTokenProvider';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { MediaRemoteConnector } from '../../../utils/ApiTypes';
+import { getRemoteConnector } from '../../../utils/connectors';
 
 export const useVariableConnector = (variable: ImageVariable) => {
     const [selectedConnector, setSelectedConnector] = useState<MediaRemoteConnector>();
@@ -13,7 +13,7 @@ export const useVariableConnector = (variable: ImageVariable) => {
     useEffect(() => {
         (async () => {
             if (variable.value?.connectorId) {
-                const remoteMediaConnector = await getRemoteMediaConnector(
+                const remoteMediaConnector = await getRemoteConnector<MediaRemoteConnector>(
                     graFxStudioEnvironmentApiBaseUrl,
                     variable.value.connectorId,
                     authToken,

@@ -9,11 +9,12 @@ import AppProvider from '../../../contexts/AppProvider';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 jest.mock('../../../utils/connectors', () => ({
-    getRemoteMediaConnector: jest.fn().mockResolvedValue({
+    getRemoteConnector: jest.fn().mockResolvedValue({
         supportedAuthentication: {
             browser: [],
         },
     }),
+    isAuthenticationRequired: jest.requireActual('../../../utils/connectors').isAuthenticationRequired,
 }));
 
 jest.mock('@chili-publish/studio-sdk', () => jest.requireActual('@chili-publish/studio-sdk'));

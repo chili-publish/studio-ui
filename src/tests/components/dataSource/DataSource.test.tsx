@@ -7,11 +7,12 @@ import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 
 jest.mock('../../../utils/connectors', () => ({
-    getRemoteMediaConnector: jest.fn().mockResolvedValue({
+    getRemoteConnector: jest.fn().mockResolvedValue({
         supportedAuthentication: {
             browser: [],
         },
     }),
+    isAuthenticationRequired: jest.requireActual('../../../utils/connectors').isAuthenticationRequired,
 }));
 
 describe('DataSource test', () => {

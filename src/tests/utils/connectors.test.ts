@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorSDK from '@chili-publish/studio-sdk';
-import { mock } from 'jest-mock-extended';
 import axios from 'axios';
-import { isAuthenticationRequired, verifyAuthentication, getRemoteMediaConnector } from '../../utils/connectors';
+import { mock } from 'jest-mock-extended';
+import { getRemoteConnector, isAuthenticationRequired, verifyAuthentication } from '../../utils/connectors';
 
 jest.mock('axios');
 
@@ -31,8 +31,8 @@ describe('utils connectors', () => {
         jest.clearAllMocks();
     });
 
-    it('should handle "getRemoteMediaConnector" correctly', async () => {
-        const connector = await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1', 'example');
+    it('should handle "getRemoteConnector" correctly', async () => {
+        const connector = await getRemoteConnector(GRAFX_ENV_API, 'connector-1', 'example');
 
         expect(connector).toEqual({
             id: 'remote-connector-1',
@@ -43,7 +43,7 @@ describe('utils connectors', () => {
         });
 
         expect(async () => {
-            await getRemoteMediaConnector(GRAFX_ENV_API, 'connector-1', 'example');
+            await getRemoteConnector(GRAFX_ENV_API, 'connector-1', 'example');
         }).rejects.toThrow('Connector is not found by connector-1');
     });
 

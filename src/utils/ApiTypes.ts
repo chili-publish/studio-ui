@@ -23,17 +23,20 @@ export enum OutputType {
 
 // It partially describe the API Connector Entity
 // https://main.cpstaging.online/grafx/swagger/index.html?urls.primaryName=experimental#/Connectors/get_api_experimental_environment__environment__connectors__connectorId_
-export type MediaRemoteConnector = {
+export type RemoteConnector = {
     id: string;
     name: string;
+    type: 'media' | 'data';
+    scriptSource: string;
     description: string;
     iconUrl: string | null;
-    scriptSource: 'external' | 'defaultMedia';
-    type: 'media';
     default: boolean;
     enabled: boolean;
     supportedAuthentication: {
         browser: Array<'oAuth2AuthorizationCode' | 'none'>;
     };
-    ownerType: string;
+    ownerType: 'builtIn';
 };
+
+export type MediaRemoteConnector = RemoteConnector & { type: 'media'; scriptSource: 'external' | 'defaultMedia' };
+export type DataRemoteConnector = RemoteConnector & { type: 'data'; scriptSource: 'external' };
