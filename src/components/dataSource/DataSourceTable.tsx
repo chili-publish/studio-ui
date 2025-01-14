@@ -33,8 +33,28 @@ function DataSourceTable({
                 <TableWrapper>
                     <Table
                         defaultSelectedRow={selectedRow}
-                        // Type casting is necessary since currently table supports only string and number
-                        rows={data as Record<string, string | number>[]}
+                        // TODO: Remove/Adopt type casting in context of https://chilipublishintranet.atlassian.net/browse/WRS-2253
+                        rows={data.map((di) =>
+                            Object.entries(di).reduce((transformed, [key, value]) => {
+                                if (typeof value === 'string' || typeof value === 'number') {
+                                    // eslint-disable-next-line no-param-reassign
+                                    transformed[key] = value;
+                                }
+                                if (value instanceof Date) {
+                                    // eslint-disable-next-line no-param-reassign
+                                    transformed[key] = value.toISOString();
+                                }
+                                if (typeof value === 'boolean') {
+                                    // eslint-disable-next-line no-param-reassign
+                                    transformed[key] = `${value}`;
+                                }
+                                if (value === null) {
+                                    // eslint-disable-next-line no-param-reassign
+                                    transformed[key] = '';
+                                }
+                                return transformed;
+                            }, {} as Record<string, string | number>),
+                        )}
                         onSelectedRowChanged={onSelectedRowChanged}
                     />
                 </TableWrapper>
