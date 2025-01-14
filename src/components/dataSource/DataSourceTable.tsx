@@ -1,5 +1,6 @@
 import { AvailableIcons, Icon, LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
+import { useMemo } from 'react';
 import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg, TableWrapper } from './DataSourceTable.styles';
 
 interface DataSourceTableProps {
@@ -27,34 +28,38 @@ function DataSourceTable({
         onNextPageRequested,
     );
 
+    // TODO: Remove/Adopt type casting in context of https://chilipublishintranet.atlassian.net/browse/WRS-2253
+    const transformedData = useMemo(() => {
+        return data.map((di) =>
+            Object.entries(di).reduce((transformed, [key, value]) => {
+                if (typeof value === 'string' || typeof value === 'number') {
+                    // eslint-disable-next-line no-param-reassign
+                    transformed[key] = value;
+                }
+                if (value instanceof Date) {
+                    // eslint-disable-next-line no-param-reassign
+                    transformed[key] = value.toISOString();
+                }
+                if (typeof value === 'boolean') {
+                    // eslint-disable-next-line no-param-reassign
+                    transformed[key] = `${value}`;
+                }
+                if (value === null) {
+                    // eslint-disable-next-line no-param-reassign
+                    transformed[key] = '';
+                }
+                return transformed;
+            }, {} as Record<string, string | number>),
+        );
+    }, [data]);
+
     return (
         <>
             {!error && data.length > 0 && (
                 <TableWrapper>
                     <Table
                         defaultSelectedRow={selectedRow}
-                        // TODO: Remove/Adopt type casting in context of https://chilipublishintranet.atlassian.net/browse/WRS-2253
-                        rows={data.map((di) =>
-                            Object.entries(di).reduce((transformed, [key, value]) => {
-                                if (typeof value === 'string' || typeof value === 'number') {
-                                    // eslint-disable-next-line no-param-reassign
-                                    transformed[key] = value;
-                                }
-                                if (value instanceof Date) {
-                                    // eslint-disable-next-line no-param-reassign
-                                    transformed[key] = value.toISOString();
-                                }
-                                if (typeof value === 'boolean') {
-                                    // eslint-disable-next-line no-param-reassign
-                                    transformed[key] = `${value}`;
-                                }
-                                if (value === null) {
-                                    // eslint-disable-next-line no-param-reassign
-                                    transformed[key] = '';
-                                }
-                                return transformed;
-                            }, {} as Record<string, string | number>),
-                        )}
+                        rows={transformedData}
                         onSelectedRowChanged={onSelectedRowChanged}
                     />
                 </TableWrapper>
