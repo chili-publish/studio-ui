@@ -1,6 +1,7 @@
 import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
+    ConnectorEvent,
     ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
@@ -197,6 +198,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 if (enableAutoSaveRef.current === false) {
                     enableAutoSaveRef.current = true;
                 }
+            },
+            onConnectorEvent: (event: ConnectorEvent) => {
+                eventSubscriber.emit('onConnectorEvent', event);
             },
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {

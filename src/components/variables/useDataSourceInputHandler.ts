@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 interface DataSourceInputHandlerProps {
-    currentRow: string;
+    requiresUserAuthorizationCheck?: boolean;
     onDataRowsLoad: () => void;
     onRowConfirmed: (_: number) => void;
     onDataSourcePanelOpen: () => void;
@@ -9,7 +9,7 @@ interface DataSourceInputHandlerProps {
 }
 
 const useDataSourceInputHandler = ({
-    currentRow,
+    requiresUserAuthorizationCheck,
     onDataRowsLoad,
     onRowConfirmed,
     onDataSourcePanelOpen,
@@ -24,12 +24,12 @@ const useDataSourceInputHandler = ({
     );
 
     const onInputClick = useCallback(() => {
-        if (!currentRow) {
+        if (requiresUserAuthorizationCheck) {
             onDataRowsLoad();
         } else {
             onDataSourcePanelOpen();
         }
-    }, [currentRow, onDataRowsLoad, onDataSourcePanelOpen]);
+    }, [onDataRowsLoad, onDataSourcePanelOpen]);
 
     return {
         onSelectedRowChanged,

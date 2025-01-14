@@ -52,12 +52,14 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
+        requiresUserAuthorizationCheck,
+        error,
     } = useDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
+        requiresUserAuthorizationCheck,
         onDataRowsLoad: loadDataRows,
         onRowConfirmed: updateSelectedRow,
-        currentRow: currentInputRow,
         onDataSourcePanelOpen: showDataSourcePanel,
         onDataSourcePanelClose: showVariablesPanel,
     });
@@ -126,6 +128,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             currentRow={currentInputRow}
                             currentRowIndex={currentRowIndex}
                             dataIsLoading={isLoading}
+                            isEmptyState={!!error || dataRows.length === 0}
                             isPrevDisabled={isPrevDisabled}
                             isNextDisabled={isNextDisabled}
                             onInputClick={onInputClick}

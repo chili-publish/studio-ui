@@ -7,7 +7,7 @@ import {
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
 import axios from 'axios';
-import { MediaRemoteConnector } from './ApiTypes';
+import { RemoteConnector } from './ApiTypes';
 
 const isConnectorUrlRegistration = (
     connector: ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration,
@@ -22,32 +22,31 @@ const isConnectorLocalRegistration = (
 };
 
 // NOTE: Works for Grafx only connectors so far
-export async function getRemoteMediaConnector(
+export async function getRemoteConnector<RC extends RemoteConnector = RemoteConnector>(
     graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
     authToken: string,
-): Promise<MediaRemoteConnector> {
+): Promise<RC> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (engineConnector) {
         if (
             isConnectorUrlRegistration(engineConnector.source) ||
             isConnectorLocalRegistration(engineConnector.source)
         ) {
-            const res = await axios.get<MediaRemoteConnector>(engineConnector.source.url, {
+            const res = await axios.get<RC>(engineConnector.source.url, {
                 headers: { Authorization: `Bearer ${authToken}` },
             });
             return res.data;
         }
-        const res = await axios.get<MediaRemoteConnector>(
-            `${graFxStudioEnvironmentApiBaseUrl}/connectors/${engineConnector.source.id}`,
-            { headers: { Authorization: `Bearer ${authToken}` } },
-        );
+        const res = await axios.get<RC>(`${graFxStudioEnvironmentApiBaseUrl}/connectors/${engineConnector.source.id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+        });
         return res.data;
     }
     throw new Error(`Connector is not found by ${connectorId}`);
 }
 
-export function isAuthenticationRequired(connector: MediaRemoteConnector) {
+export function isAuthenticationRequired(connector: RemoteConnector) {
     return connector.supportedAuthentication.browser.includes('oAuth2AuthorizationCode');
 }
 
