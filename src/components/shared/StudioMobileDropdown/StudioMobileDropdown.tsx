@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, InputLabel, Option, useTheme } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
 import {
     DropdownContainer,
@@ -11,8 +11,8 @@ import {
 import { ErrorMessage } from '../ErrorMessage.styles';
 
 interface StudioMobileDropdownProps {
-    selectedValue?: Option;
-    options: Option[];
+    selectedValue?: SelectOptions;
+    options: SelectOptions[];
     dataId: string;
     isOpen?: boolean;
     label?: string;
@@ -37,7 +37,6 @@ function StudioMobileDropdown({
     onMenuClose,
 }: StudioMobileDropdownProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
-    const { dropdown } = useTheme();
 
     const openMobileDropdown = useCallback(() => {
         setIsDropdownOpen(true);
@@ -59,10 +58,9 @@ function StudioMobileDropdown({
                         onChange(option.value as string);
                         closeMobileDropdown();
                     }}
-                    dropdownStyles={dropdown}
                 >
                     <MobileDropdownOptionContent>
-                        {option.label}
+                        {option.label as string}
                         {selectedValue?.value === option.value && <Icon icon={AvailableIcons.faCheck} />}
                     </MobileDropdownOptionContent>
                 </MobileDropdownMenuOption>
@@ -71,7 +69,7 @@ function StudioMobileDropdown({
     ) : (
         <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
-            <MobileDropdownOptionContainer hasError={!!validationError} dropdownStyles={dropdown}>
+            <MobileDropdownOptionContainer hasError={!!validationError}>
                 <MobileDropdownValue>
                     {selectedValue?.label ? (
                         // eslint-disable-next-line react/jsx-no-useless-fragment

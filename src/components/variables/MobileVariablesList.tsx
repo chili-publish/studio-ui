@@ -1,23 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
-import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { InputLabel } from '@chili-publish/grafx-shared-components';
+import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
-import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
+import { useCallback, useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
 import MobileListVariable from '../variablesComponents/listVariable/MobileListVariable';
 import { isListVariable } from '../variablesComponents/Variable';
+import VariablesComponents from '../variablesComponents/VariablesComponents';
+import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
+import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
-    isDocumentLoaded: boolean;
 }
 
-function MobileVariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
+function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
     const { contentType, showVariablesPanel, showDatePicker, currentVariableId, validateUpdatedVariables } =
         useVariablePanelContext();
     const { variablesValidation, validateVariable } = useVariablePanelContext();
@@ -97,7 +96,6 @@ function MobileVariablesList({ variables, onMobileOptionListToggle, isDocumentLo
                             <VariablesComponents
                                 type={variable.type}
                                 variable={variable}
-                                isDocumentLoaded={isDocumentLoaded}
                                 onCalendarOpen={() => {
                                     if (variable.type === VariableType.date)
                                         showDatePicker(variable as DateVariableType);

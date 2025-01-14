@@ -1,12 +1,4 @@
-import {
-    AvailableIcons,
-    Button,
-    ButtonVariant,
-    FontSizes,
-    Icon,
-    Tray,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 import { css } from 'styled-components';
@@ -29,7 +21,6 @@ interface VariablesPanelProps {
     variables: Variable[];
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
-    isDocumentLoaded: boolean;
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -40,8 +31,7 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isDocumentLoaded, isTimelineDisplayed, isPagesPanelDisplayed } = props;
-    const { panel } = useTheme();
+    const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -62,7 +52,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
-    } = useDataSource(isDocumentLoaded);
+    } = useDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         onDataRowsLoad: loadDataRows,
@@ -125,6 +115,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     overflow: ${isVariablesListOpen ? 'auto' : 'hidden'};
                     ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
+                    &::-webkit-scrollbar {
+                        width: 0;
+                    }
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
@@ -143,11 +136,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     {(isVariablesListOpen || isDateVariablePanelOpen) && (
                         <>
                             {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
-                                <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>
+                                <TrayPanelTitle>Customize</TrayPanelTitle>
                             ) : null}
                             <MobileVariablesList
                                 variables={variables}
-                                isDocumentLoaded={isDocumentLoaded}
                                 onMobileOptionListToggle={setMobileOptionsListOpen}
                             />
                         </>

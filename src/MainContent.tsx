@@ -10,7 +10,7 @@ import StudioSDK, {
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
 import './App.css';
 import { CanvasContainer, Container, MainContentContainer } from './App.styles';
@@ -20,6 +20,7 @@ import {
     useConnectorAuthentication,
     useConnectorAuthenticationResult,
 } from './components/connector-authentication';
+import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import Navbar from './components/navbar/Navbar';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
@@ -63,6 +64,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
+    const [dataSource, setDataSource] = useState<ConnectorInstance>();
+
+    const [multiLayoutMode, setMultiLayoutMode] = useState(false);
 
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
@@ -100,6 +104,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     useConnectorAuthenticationResult(authResults);
 
     useEffect(() => {
+        if (projectConfig.onSetMultiLayout) {
+            projectConfig.onSetMultiLayout(setMultiLayoutMode);
+        }
+    }, [projectConfig, projectConfig.onSetMultiLayout]);
+    useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
             .then((project) => {
@@ -112,7 +121,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
-    const zoomToPage = async () => {
+    const zoomToPage = useCallback(async () => {
         const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
             pageId: null,
@@ -129,7 +138,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             zoomParams.width,
             zoomParams.height,
         );
-    };
+    }, []);
 
     useEffect(() => {
         if (!eventSubscriber) {
@@ -230,6 +239,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onPageSizeChanged: () => {
                 zoomToPage();
             },
+            onCustomUndoDataChanged: (customData: Record<string, string>) => {
+                eventSubscriber.emit('onCustomUndoDataChanged', customData);
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
@@ -317,18 +329,37 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 }
             });
 
+            window.StudioUISDK.dataSource.getDataSource().then((res) => {
+                setDataSource(res.parsedData ?? undefined);
+            });
+
             const layoutIntentData = (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
             setLayoutIntent(layoutIntentData);
             zoomToPage();
         };
 
         loadDocument();
-    }, [fetchedDocument]);
+    }, [fetchedDocument, zoomToPage]);
+
+    useEffect(() => {
+        if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
+    }, [multiLayoutMode, isDocumentLoaded, zoomToPage]);
+
+    const navbarProps = useMemo(
+        () => ({
+            projectName: currentProject?.name || projectConfig.projectName,
+            goBack: projectConfig?.onUserInterfaceBack,
+            projectConfig,
+            undoStackState,
+            zoom: currentZoom,
+        }),
+        [currentProject?.name, projectConfig, undoStackState, currentZoom],
+    );
 
     return (
-        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus}>
+        <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
-                <Container canvas={canvas}>
+                <Container>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                         <VariablePanelContextProvider
                             connectors={{ mediaConnectors, fontsConnectors }}
@@ -337,28 +368,19 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                             <div id={APP_WRAPPER_ID} className="app">
                                 {projectConfig.sandboxMode ? (
                                     <UiThemeProvider theme="studio" mode="dark">
-                                        <StudioNavbar
-                                            projectName={currentProject?.name || projectConfig.projectName}
-                                            goBack={projectConfig?.onUserInterfaceBack}
-                                            projectConfig={projectConfig}
-                                            undoStackState={undoStackState}
-                                            zoom={currentZoom}
-                                        />
+                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                        <StudioNavbar {...navbarProps} />
                                     </UiThemeProvider>
                                 ) : (
-                                    <Navbar
-                                        projectName={currentProject?.name || projectConfig.projectName}
-                                        goBack={projectConfig?.onUserInterfaceBack}
-                                        projectConfig={projectConfig}
-                                        undoStackState={undoStackState}
-                                        zoom={currentZoom}
-                                    />
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    <Navbar {...navbarProps} />
                                 )}
 
-                                <MainContentContainer sandboxMode={projectConfig.sandboxMode}>
-                                    {!isMobileSize && (
-                                        <LeftPanel variables={variables} isDocumentLoaded={isDocumentLoaded} />
-                                    )}
+                                <MainContentContainer
+                                    sandboxMode={projectConfig.sandboxMode}
+                                    fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
+                                >
+                                    {!isMobileSize && <LeftPanel variables={variables} />}
                                     <CanvasContainer>
                                         {isMobileSize && (
                                             <MobileVariablesTray
@@ -367,15 +389,24 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
                                                 }
-                                                isDocumentLoaded={isDocumentLoaded}
+                                            />
+                                        )}
+                                        {projectConfig.customElement && (
+                                            <HtmlRenderer
+                                                content={projectConfig.customElement}
+                                                isVisible={multiLayoutMode}
                                             />
                                         )}
                                         <SuiCanvas
                                             // intent prop to calculate pages container
                                             hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
                                             hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            isBottomBarHidden={
+                                                projectConfig.uiOptions.widgets?.bottomBar?.visible === false
+                                            }
                                             data-id={getDataIdForSUI('canvas')}
                                             data-testid={getDataTestIdForSUI('canvas')}
+                                            isVisible={!multiLayoutMode}
                                         >
                                             <div className="chili-editor" id={EDITOR_ID} />
                                         </SuiCanvas>

@@ -10,7 +10,7 @@ import {
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
 } from './types/types';
-import { getDownloadLink } from './utils/documentExportHelper';
+import { getDownloadLink, addTrailingSlash } from './utils/documentExportHelper';
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
 
 export class StudioProjectLoader {
@@ -83,7 +83,7 @@ export class StudioProjectLoader {
     public onProjectLoaded = (): void => {
         window.StudioUISDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
-            this.graFxStudioEnvironmentApiBaseUrl,
+            addTrailingSlash(this.graFxStudioEnvironmentApiBaseUrl),
         );
     };
 

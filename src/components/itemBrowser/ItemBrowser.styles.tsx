@@ -1,4 +1,4 @@
-import { Colors, ThemeColors, FontSizes, ITheme } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
@@ -31,7 +31,7 @@ export const ModalResourcesContainer = styled.div<{ width?: string }>`
     padding: 0.75rem;
 `;
 
-export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
+export const NavigationWrapper = styled.div`
     display: flex;
     align-items: center;
     text-overflow: ellipsis;
@@ -39,10 +39,10 @@ export const NavigationWrapper = styled.div<{ themeMode: ITheme['mode'] }>`
     position: relative;
     margin-left: -0.75rem;
 
-    & svg {
+    svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-        ${({ themeMode }) => themeMode === 'light' && `color: ${ThemeColors.light.PRIMARY_FONT} !important`};
+        ${({ theme }) => `color: ${theme.themeColors.primaryTextColor} !important`};
     }
 
     & svg.close-icon,
@@ -91,7 +91,7 @@ export const BreadCrumbsWrapper = styled.div`
     overflow: visible;
     white-space: nowrap;
     display: flex;
-    & .grafx-drop-down__control {
+    & .grafx-select__control {
         &:hover {
             border: 1px solid transparent !important;
         }
@@ -134,7 +134,7 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
 
 export const EmptySearchResultContainer = styled.div`
     padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
-    color: ${Colors.SECONDARY_FONT};
+    color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     font-size: 0.875rem;
     text-align: center;
 `;

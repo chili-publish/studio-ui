@@ -2,6 +2,7 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
+import AppProvider from '../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
@@ -30,9 +31,11 @@ describe('Variables List', () => {
     });
     it('Hidden variables should not be shown', async () => {
         render(
-            <UiThemeProvider theme="platform">
-                <VariablesList variables={variables} isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablesList variables={variables} />
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
@@ -49,14 +52,16 @@ describe('Variables List', () => {
 
     it('List variable should use "displayValue" for labels', async () => {
         const { getByTestId } = render(
-            <UiThemeProvider theme="platform">
-                <VariablesList variables={variables} isDocumentLoaded />
-            </UiThemeProvider>,
+            <AppProvider isDocumentLoaded>
+                <UiThemeProvider theme="platform">
+                    <VariablesList variables={variables} />
+                </UiThemeProvider>
+            </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
         const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(
-            'grafx-drop-down__dropdown-indicator',
+            'grafx-select__dropdown-indicator',
         )[0];
         expect(selectIndicator).toBeInTheDocument();
 
