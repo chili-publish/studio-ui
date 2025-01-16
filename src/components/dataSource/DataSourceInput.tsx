@@ -7,14 +7,15 @@ import {
     Label,
     LoadingIcon,
 } from '@chili-publish/grafx-shared-components';
+import { Text } from '../../styles/Main.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { DATA_SOURCE_ID, DataSourceInputStyle, RowInfoContainer } from './DataSource.styles';
-import { Text } from '../../styles/Main.styles';
 
 interface DataSourceInputProps {
     currentRow: string;
     currentRowIndex: number;
     dataIsLoading: boolean;
+    isEmptyState: boolean;
 
     isNextDisabled: boolean;
     isPrevDisabled: boolean;
@@ -27,6 +28,7 @@ function DataSourceInput({
     currentRow,
     currentRowIndex,
     dataIsLoading,
+    isEmptyState,
     isPrevDisabled,
     isNextDisabled,
     onInputClick,
@@ -64,25 +66,27 @@ function DataSourceInput({
                 }}
             />
 
-            <RowInfoContainer>
-                <Button
-                    variant={ButtonVariant.tertiary}
-                    onClick={onPrevClick}
-                    disabled={isPrevDisabled}
-                    dataId={getDataIdForSUI('data-row-prev')}
-                    dataTestId={getDataTestIdForSUI('data-row-prev')}
-                    icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
-                />
-                <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
-                <Button
-                    variant={ButtonVariant.tertiary}
-                    onClick={onNextClick}
-                    disabled={isNextDisabled}
-                    dataId={getDataIdForSUI('data-row-next')}
-                    dataTestId={getDataTestIdForSUI('data-row-next')}
-                    icon={<Icon icon={AvailableIcons.faArrowRight} key="data-source-navigation-arrow-right" />}
-                />
-            </RowInfoContainer>
+            {!isEmptyState && (
+                <RowInfoContainer data-testid={getDataTestIdForSUI('data-row-info')}>
+                    <Button
+                        variant={ButtonVariant.tertiary}
+                        onClick={onPrevClick}
+                        disabled={isPrevDisabled}
+                        dataId={getDataIdForSUI('data-row-prev')}
+                        dataTestId={getDataTestIdForSUI('data-row-prev')}
+                        icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
+                    />
+                    <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
+                    <Button
+                        variant={ButtonVariant.tertiary}
+                        onClick={onNextClick}
+                        disabled={isNextDisabled}
+                        dataId={getDataIdForSUI('data-row-next')}
+                        dataTestId={getDataTestIdForSUI('data-row-next')}
+                        icon={<Icon icon={AvailableIcons.faArrowRight} key="data-source-navigation-arrow-right" />}
+                    />
+                </RowInfoContainer>
+            )}
         </>
     );
 }
