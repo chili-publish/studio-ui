@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import AppProvider from '../contexts/AppProvider';
-import * as FeatureFlagContext from '../contexts/FeatureFlagProvider';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
 
@@ -24,11 +23,6 @@ Object.defineProperty(navigator, 'language', {
     configurable: true,
 });
 
-jest.spyOn(FeatureFlagContext, 'useFeatureFlagContext').mockImplementation(() => {
-    return {
-        featureFlags: { STUDIO_LABEL_PROPERTY_ENABLED: true },
-    };
-});
 describe('Variable Component', () => {
     beforeEach(() => {
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({

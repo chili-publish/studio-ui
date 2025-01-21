@@ -4,14 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import TextVariable from '../../../../components/variablesComponents/TextVariable';
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('TextVariable', () => {
     it('should display the configured placeholder', () => {
         const PLACEHOLDER = 'placeholder text';

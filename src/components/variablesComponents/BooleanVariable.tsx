@@ -1,14 +1,12 @@
 import { InputLabel, Switch } from '@chili-publish/grafx-shared-components';
 import type { BooleanVariable } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
-import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { BooleanVariableContainer, HelpTextWrapper } from './VariablesComponents.styles';
 import { IBooleanVariable } from './VariablesComponents.types';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
-    const { featureFlags } = useFeatureFlagContext();
     const [toggled, setToggled] = useState((variable as BooleanVariable).value);
 
     useEffect(() => {
@@ -25,9 +23,7 @@ function BooleanVariable(props: IBooleanVariable) {
                     id={`ui-${variable.id}`}
                     label={{
                         key: 'visible',
-                        value: featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                            ? variable.label ?? variable.name
-                            : variable.name,
+                        value: variable.label ?? variable.name,
                     }}
                     onChange={(val: boolean) => {
                         handleValueChange(val);
