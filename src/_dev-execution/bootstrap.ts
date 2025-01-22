@@ -85,7 +85,7 @@ import { TokenManager } from './token-manager';
             },
         },
         featureFlags: {
-            STUDIO_DATA_SOURCE: true,
+            studioDataSource: true,
         },
     });
 })();
