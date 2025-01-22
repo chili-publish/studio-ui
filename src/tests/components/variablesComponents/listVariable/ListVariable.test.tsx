@@ -4,14 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import ListVariable from '../../../../components/variablesComponents/listVariable/ListVariable';
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('ListVariable', () => {
     it('should display label as variable name if label is empty', () => {
         const variable = variables.find((item) => item.id === '10');

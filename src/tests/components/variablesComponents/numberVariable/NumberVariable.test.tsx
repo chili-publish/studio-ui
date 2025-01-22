@@ -4,14 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import NumberVariable from '../../../../components/variablesComponents/NumberVariable';
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('NumberVariable', () => {
     it('should display label as variable label if label exists and empty', () => {
         const variable = variables.find((item) => item.id === 'number-variable');

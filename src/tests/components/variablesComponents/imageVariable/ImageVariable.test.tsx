@@ -42,14 +42,6 @@ jest.mock('@chili-publish/grafx-shared-components', () => {
     };
 });
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('"ImageVariable" component ', () => {
     afterEach(() => {
         jest.clearAllMocks();

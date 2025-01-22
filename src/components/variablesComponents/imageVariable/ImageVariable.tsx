@@ -1,6 +1,5 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -13,7 +12,6 @@ import { useVariableConnector } from './useVariableConnector';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove } = props;
-    const { featureFlags } = useFeatureFlagContext();
 
     const placeholder = getVariablePlaceholder(variable);
 
@@ -48,18 +46,7 @@ function ImageVariable(props: IImageVariable) {
                 dataIntercomId={`image-picker-${variable.name}`}
                 id={variable.id}
                 label={
-                    <Label
-                        translationKey={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                        value={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                    />
+                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}

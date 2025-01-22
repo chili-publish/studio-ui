@@ -1,7 +1,6 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 import { ITextVariable } from './VariablesComponents.types';
@@ -9,7 +8,6 @@ import { getVariablePlaceholder } from './variablePlaceholder.util';
 
 function TextVariable(props: ITextVariable) {
     const { variable, validationError, onValueChange } = props;
-    const { featureFlags } = useFeatureFlagContext();
 
     const [variableValue, setVariableValue] = useState(
         (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
@@ -42,18 +40,7 @@ function TextVariable(props: ITextVariable) {
                 }}
                 name={variable.id}
                 label={
-                    <Label
-                        translationKey={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                        value={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                    />
+                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
                 validation={validationError ? ValidationTypes.ERROR : undefined}
                 validationErrorMessage={validationError}
