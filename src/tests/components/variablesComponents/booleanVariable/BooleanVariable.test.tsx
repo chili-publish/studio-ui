@@ -4,14 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import BooleanVariable from '../../../../components/variablesComponents/BooleanVariable';
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('BooleanVariable', () => {
     it('should display label as variable label if label is empty', () => {
         const booleanVar = {
