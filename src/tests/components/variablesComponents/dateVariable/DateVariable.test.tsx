@@ -6,14 +6,6 @@ import DateVariable from '../../../../components/variablesComponents/dateVariabl
 import { APP_WRAPPER_ID } from '../../../../utils/constants';
 import { APP_WRAPPER } from '../../../shared.util/app';
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: () => ({
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-        },
-    }),
-}));
-
 describe('DateVariable', () => {
     it('should display the configured placeholder', async () => {
         const PLACEHOLDER = 'placeholder text';

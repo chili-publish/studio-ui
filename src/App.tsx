@@ -14,7 +14,7 @@ import GlobalStyle from './styles/GlobalStyle';
 
 const testTheme = {
     colors: {
-        inputBorderColor: '#d5c3c3'
+        inputBorderColor: '#d5c3c3',
     },
 };
 
