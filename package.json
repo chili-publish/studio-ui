@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.19.0-16",
+    "version": "1.19.0-17",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
