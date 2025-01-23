@@ -1,12 +1,4 @@
-import {
-    AvailableIcons,
-    Button,
-    ButtonVariant,
-    FontSizes,
-    Icon,
-    Tray,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
 import { Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 import { css } from 'styled-components';
@@ -40,7 +32,6 @@ const imagePanelHeight = `
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
-    const { panel } = useTheme();
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -61,12 +52,14 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
+        requiresUserAuthorizationCheck,
+        error,
     } = useDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
+        requiresUserAuthorizationCheck,
         onDataRowsLoad: loadDataRows,
         onRowConfirmed: updateSelectedRow,
-        currentRow: currentInputRow,
         onDataSourcePanelOpen: showDataSourcePanel,
         onDataSourcePanelClose: showVariablesPanel,
     });
@@ -135,6 +128,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             currentRow={currentInputRow}
                             currentRowIndex={currentRowIndex}
                             dataIsLoading={isLoading}
+                            isEmptyState={!!error || dataRows.length === 0}
                             isPrevDisabled={isPrevDisabled}
                             isNextDisabled={isNextDisabled}
                             onInputClick={onInputClick}
@@ -145,7 +139,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     {(isVariablesListOpen || isDateVariablePanelOpen) && (
                         <>
                             {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
-                                <TrayPanelTitle panelTheme={panel}>Customize</TrayPanelTitle>
+                                <TrayPanelTitle>Customize</TrayPanelTitle>
                             ) : null}
                             <MobileVariablesList
                                 variables={variables}

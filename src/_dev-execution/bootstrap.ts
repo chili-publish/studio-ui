@@ -59,40 +59,12 @@ import { TokenManager } from './token-manager';
         return;
     }
 
-    const element = document.createElement('div');
-    element.innerHTML = `<h1>Rendered from HTMLElement</h1>
-                         <p>This is a test paragraph.</p>`;
-
     let authToken = '';
     if (import.meta.env.VITE_TOKEN) {
         authToken = import.meta.env.VITE_TOKEN;
     } else {
         authToken = await tokenManager.getAccessToken();
     }
-
-    // the following is only for testing pupuses and can be deleted later
-    // start
-    let ToggleSetMultiLayout: (state: boolean) => void;
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.innerHTML = 'Multi Layout';
-    button.id = 'myToggleBtn-multiLayout';
-    button.onclick = () => {
-        ToggleSetMultiLayout(true);
-    };
-
-    const button2 = document.createElement('button');
-    button2.innerHTML = 'Single Layout';
-
-    button2.id = 'myToggleBtn-singleLayout';
-    button2.onclick = () => {
-        ToggleSetMultiLayout(false);
-    };
-    document.body.append(button);
-    document.body.append(button2);
-
-    // end
-
     StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
         projectId,
@@ -104,10 +76,6 @@ import { TokenManager } from './token-manager';
         onConnectorAuthenticationRequested: (connectorId) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
-        featureFlags: {
-            STUDIO_LABEL_PROPERTY_ENABLED: true,
-            STUDIO_DATA_SOURCE: true,
-        },
         uiOptions: {
             widgets: {
                 backButton: { visible: true },
@@ -116,9 +84,8 @@ import { TokenManager } from './token-manager';
                 downloadButton: { visible: true },
             },
         },
-        customElement: '<h1>Rendered from HTMLElement</h1>',
-        onSetMultiLayout: (stateUpdater) => {
-            ToggleSetMultiLayout = stateUpdater;
+        featureFlags: {
+            STUDIO_DATA_SOURCE: true,
         },
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),

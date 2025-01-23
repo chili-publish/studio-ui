@@ -1,6 +1,7 @@
 import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
+    ConnectorEvent,
     ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
@@ -198,6 +199,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                     enableAutoSaveRef.current = true;
                 }
             },
+            onConnectorEvent: (event: ConnectorEvent) => {
+                eventSubscriber.emit('onConnectorEvent', event);
+            },
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
@@ -359,7 +363,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
-                <Container canvas={canvas}>
+                <Container>
                     <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
                         <VariablePanelContextProvider
                             connectors={{ mediaConnectors, fontsConnectors }}

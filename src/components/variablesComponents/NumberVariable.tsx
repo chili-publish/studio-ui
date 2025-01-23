@@ -1,6 +1,5 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
-import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 import { INumberVariable } from './VariablesComponents.types';
@@ -8,7 +7,6 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 function NumberVariable(props: INumberVariable) {
     const { variable, validationError, onValueChange } = props;
-    const { featureFlags } = useFeatureFlagContext();
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     return (
@@ -20,18 +18,7 @@ function NumberVariable(props: INumberVariable) {
                 max={variable.maxValue}
                 precision={variable.numberOfDecimals}
                 label={
-                    <Label
-                        translationKey={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                        value={
-                            featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED
-                                ? variable.label ?? variable.name
-                                : variable.name
-                        }
-                    />
+                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
                 value={`${variable.value}`}
                 step={variable.showStepper ? variable.stepSize : undefined}

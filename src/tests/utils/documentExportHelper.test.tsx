@@ -1,7 +1,7 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
 import { OutputType } from '../../utils/ApiTypes';
-import { getDownloadLink } from '../../utils/documentExportHelper';
+import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
 
 jest.mock('axios');
 
@@ -211,5 +211,15 @@ describe('"getDownloadLink', () => {
                 data: 'http://download.com',
             });
         });
+    });
+});
+
+describe('addTrailingSlash', () => {
+    it('should add trailing slash if it is missing', () => {
+        expect(addTrailingSlash('http://chili.com')).toEqual('http://chili.com/');
+    });
+
+    it('should not add trailing slash if it is already there', () => {
+        expect(addTrailingSlash('http://chili.com/')).toEqual('http://chili.com/');
     });
 });

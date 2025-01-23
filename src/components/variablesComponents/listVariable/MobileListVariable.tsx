@@ -1,7 +1,6 @@
 import { SelectOptions } from '@chili-publish/grafx-shared-components';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
-import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import { getDataIdForSUI } from '../../../utils/dataIds';
@@ -26,7 +25,6 @@ function MobileListVariable({
     onMenuClose,
     onItemSelected,
 }: MobileListVariableProps) {
-    const { featureFlags } = useFeatureFlagContext();
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     const options = variable.items.map((item) => ({
@@ -50,7 +48,7 @@ function MobileListVariable({
         <StudioMobileDropdown
             dataId={getDataIdForSUI(`variable-list-${variable.id}`)}
             isOpen={isOpen}
-            label={featureFlags?.STUDIO_LABEL_PROPERTY_ENABLED ? variable.label ?? variable.name : variable.name}
+            label={variable.label ?? variable.name}
             selectedValue={selectedValue}
             options={options}
             placeholder={placeholder}

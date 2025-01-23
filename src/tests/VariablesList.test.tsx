@@ -39,10 +39,10 @@ describe('Variables List', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
-        const variable1 = await screen.findByText(variables[0].name);
-        const variable12 = await screen.findByText(variables[1].name);
-        const shortVariable1 = screen.getByText(variables[2].name);
-        const longVariable1 = screen.queryByText(variables[3].name);
+        const variable1 = await screen.findByText(variables[0].label ?? variables[0].name);
+        const variable12 = await screen.findByText(variables[1].label ?? variables[1].name);
+        const shortVariable1 = screen.getByText(variables[2].label ?? variables[2].name);
+        const longVariable1 = screen.queryByText(variables[3].label ?? variables[3].name);
 
         expect(variable1).toBeInTheDocument();
         expect(variable12).toBeInTheDocument();
@@ -64,13 +64,12 @@ describe('Variables List', () => {
             'grafx-select__dropdown-indicator',
         )[0];
         expect(selectIndicator).toBeInTheDocument();
-
         act(() => {
             selectEvent.openMenu(selectIndicator as unknown as HTMLElement);
         });
 
         await waitFor(() => {
-            expect(screen.getByText('List')).toBeInTheDocument();
+            expect(screen.getByText('List label')).toBeInTheDocument();
             expect(screen.getByText('Val 1')).toBeInTheDocument();
             expect(screen.getByText('val 2')).toBeInTheDocument();
         });

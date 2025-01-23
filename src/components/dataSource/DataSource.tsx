@@ -1,4 +1,3 @@
-import { useTheme } from '@chili-publish/grafx-shared-components';
 import { useCallback } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle } from '../shared/Panel.styles';
@@ -7,7 +6,6 @@ import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
 
 function DataSource() {
-    const { panel } = useTheme();
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
 
     const {
@@ -23,6 +21,8 @@ function DataSource() {
         getPreviousRow,
         getNextRow,
         hasDataConnector,
+        requiresUserAuthorizationCheck,
+        error,
     } = useDataSource();
 
     const onDataSourceModalClose = useCallback(() => {
@@ -40,24 +40,25 @@ function DataSource() {
         (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
             // input value needs to be truncated when datatable is open
             event.currentTarget.blur();
-            if (!currentInputRow) {
+            if (requiresUserAuthorizationCheck) {
                 loadDataRows();
             } else {
                 setIsDataSourceModalOpen(true);
             }
         },
-        [currentInputRow, loadDataRows, setIsDataSourceModalOpen],
+        [requiresUserAuthorizationCheck, loadDataRows, setIsDataSourceModalOpen],
     );
 
     if (!hasDataConnector) return null;
 
     return (
         <>
-            <PanelTitle panelTheme={panel}>Data source</PanelTitle>
+            <PanelTitle>Data source</PanelTitle>
             <DataSourceInput
                 currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}
                 dataIsLoading={isLoading}
+                isEmptyState={!!error || dataRows.length === 0}
                 isPrevDisabled={isPrevDisabled}
                 isNextDisabled={isNextDisabled}
                 onInputClick={onInputClick}
@@ -68,6 +69,7 @@ function DataSource() {
                 <DataSourceModal
                     isOpen={isDataSourceModalOpen}
                     data={dataRows}
+                    error={error}
                     selectedRow={currentRowIndex}
                     onSelectedRowChanged={onSelectedRowChanged}
                     dataIsLoading={isLoading}

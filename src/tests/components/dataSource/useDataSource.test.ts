@@ -1,3 +1,4 @@
+import { ConnectorEventType } from '@chili-publish/studio-sdk';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import useDataSource, { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import { useAppContext } from '../../../contexts/AppProvider';
@@ -10,6 +11,14 @@ jest.mock('../../../contexts/Subscriber', () => ({
     }),
 }));
 
+jest.mock('../../../utils/connectors', () => ({
+    getRemoteConnector: jest.fn().mockResolvedValue({
+        supportedAuthentication: {
+            browser: [],
+        },
+    }),
+    isAuthenticationRequired: jest.requireActual('../../../utils/connectors').isAuthenticationRequired,
+}));
 jest.mock('../../../contexts/AppProvider', () => ({
     useAppContext: jest.fn().mockReturnValue({
         isDocumentLoaded: true,
@@ -84,5 +93,46 @@ describe('"useDataSource" hook tests', () => {
 
         await waitFor(() => expect(result.current.currentInputRow).toEqual('2 | Finn | 35'));
         expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reset data source data via "onConnectorEvent" subscription', async () => {
+        (useAppContext as jest.Mock).mockReturnValue({
+            isDocumentLoaded: true,
+            dataSource: {
+                id: '1',
+                name: 'Connector name',
+            },
+        });
+        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                id: '1',
+            },
+        });
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
+        const { result } = await renderHook(() => useDataSource());
+
+        await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
+
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+            parsedData: {
+                data: [
+                    { id: '1', name: 'Joe', age: 15 },
+                    { id: '2', name: 'Finn', age: 35 },
+                    { id: '1', name: 'Joe', age: 15 },
+                    { id: '2', name: 'Finn', age: 35 },
+                    { id: '1', name: 'Joe', age: 15 },
+                    { id: '2', name: 'Finn', age: 35 },
+                ],
+            },
+        });
+
+        act(() => {
+            mockSubscriber.emit('onConnectorEvent', { id: '1', type: ConnectorEventType.reloadRequired });
+        });
+
+        await waitFor(() => expect(result.current.dataRows.length).toEqual(6));
     });
 });

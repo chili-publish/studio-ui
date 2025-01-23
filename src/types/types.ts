@@ -1,4 +1,4 @@
-import { ITheme } from '@chili-publish/grafx-shared-components';
+import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
 import { OutputType } from '../utils/ApiTypes';
@@ -79,6 +79,7 @@ export type DownloadLinkResult = {
 };
 
 export interface UiOptions {
+    theme?: UiThemeConfig;
     widgets: {
         downloadButton?: {
             visible?: boolean;

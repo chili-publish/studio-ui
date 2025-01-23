@@ -1307,15 +1307,15 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@^0.90.1":
-  version "0.90.1"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.90.1/63290a2ce8847de75e1e3feff0874a50b52f6880#63290a2ce8847de75e1e3feff0874a50b52f6880"
-  integrity sha512-8t2xxGikkmK6I8LEtqhOlVzyKOFi9R18UIqzrhBKfUH8JCkd8iQmiUnmhUndJP+WE7EuVkGl2oci7HWrZgs8oQ==
+"@chili-publish/grafx-shared-components@^0.91.4":
+  version "0.91.4"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.91.4/0fa039d4d4425e8bcad00b099a10708f37f8fad3#0fa039d4d4425e8bcad00b099a10708f37f8fad3"
+  integrity sha512-854RkZTGyDoEVC5qZfIBKIoVyLemXvW337kOx3xhkTW1LrbO4IAVn7u2tAbhf6ENSMjssI9E2+5k17VPtbWvQw==
 
-"@chili-publish/studio-sdk@^1.18.1-rc.4":
-  version "1.18.1-rc.4"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.18.1-rc.4/6cd080cecfbfb7bb87c512c0c1611514d5009e93#6cd080cecfbfb7bb87c512c0c1611514d5009e93"
-  integrity sha512-C7aPAw2OkB8PKRIif8d6SlRPMyCNREsurKERrKAGoHYFgaTGI3SOcvHGqSD53thWag8TiZJwk/glQeCEt0MhSA==
+"@chili-publish/studio-sdk@1.18.1-rc.8":
+  version "1.18.1-rc.8"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.18.1-rc.8/f5df7c0248735de8f7929225f076db4bebaeae94#f5df7c0248735de8f7929225f076db4bebaeae94"
+  integrity sha512-pUnnxOMJ2y9SCQCirlHRHyA6ZyldiL6CmBDBh5D/3V6qAOk4iBzVP0RSMx919b3EKp0MgxkYNpa4rnv3jwhDow==
   dependencies:
     penpal "6.1.0"
 
@@ -6340,6 +6340,11 @@ url-parse@^1.5.3:
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
+
+use-async-memo@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/use-async-memo/-/use-async-memo-1.2.5.tgz#741f59506dacdd51b26ee47c183c2b99a8ccbc48"
+  integrity sha512-RWpsb3mtLHfU4vpoD2WSKbrcd9s+ZklDvsX2O9TDQafraTLgeFsKGwanNkBAZjdqvXH3hETolGkiVCPkK2Oc5A==
 
 use-isomorphic-layout-effect@^1.1.2:
   version "1.1.2"
