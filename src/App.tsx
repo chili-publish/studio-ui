@@ -12,6 +12,12 @@ import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { AuthTokenProvider } from './contexts/AuthTokenProvider';
 import GlobalStyle from './styles/GlobalStyle';
 
+const testTheme = {
+    colors: {
+        inputBorderColor: '#d5c3c3'
+    },
+};
+
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
     // TODO: Consider to define global object instead
@@ -65,7 +71,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         <>
             <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
             <SubscriberContextProvider subscriber={eventSubscriber}>
-                <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
+                <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={testTheme}>
                     <NotificationManagerProvider>
                         <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
                             <AuthTokenProvider authToken={authToken}>
