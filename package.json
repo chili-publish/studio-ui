@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
-        "@chili-publish/grafx-shared-components": "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/476/grafx-shared-components.tgz",
+        "@chili-publish/grafx-shared-components": "^0.92.0",
         "@chili-publish/studio-sdk": "1.18.1-rc.8",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",

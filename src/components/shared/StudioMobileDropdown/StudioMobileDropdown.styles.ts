@@ -47,14 +47,9 @@ export const MobileDropdownOptionContainer = styled.div<{
                 ? `1px solid ${props.theme.input.wrapper.borderColor.error}`
                 : `1px solid ${props.theme.input.wrapper.borderColor.hover}`};
         cursor: pointer;
-
-        svg {
-            color: ${(props) => props.theme.icon.hover.color};
-        }
     }
 
     svg {
-        color: ${({ theme }) => theme.select.color};
         min-width: 1.125rem;
     }
     ${MobileDropdownValue} {
