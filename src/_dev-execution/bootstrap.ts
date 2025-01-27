@@ -67,7 +67,7 @@ import { TokenManager } from './token-manager';
     }
     StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
-        projectId,
+        projectId: undefined as any,
         projectName: 'Dev Run',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,

@@ -53,6 +53,8 @@ export class StudioProjectLoader {
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
+        if (!this.projectId) throw new Error('Project id is not defined');
+
         if (this.cachedProject) {
             return this.cachedProject;
         }
@@ -76,8 +78,12 @@ export class StudioProjectLoader {
     };
 
     public onProjectDocumentRequested = async (): Promise<string | null> => {
+        if (this.projectDownloadUrl) return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.authToken);
+
+        if (!this.projectId) throw new Error('Document could not be loaded (project id is not defined)');
+
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        return StudioProjectLoader.fetchDocument(this.projectDownloadUrl ?? fallbackDownloadUrl, this.authToken);
+        return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
     };
 
     public onProjectLoaded = (): void => {

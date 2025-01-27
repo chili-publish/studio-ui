@@ -274,9 +274,16 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         // the connection to the engine is established
         projectConfig.onProjectLoaded(currentProject as Project);
 
-        projectConfig.onProjectDocumentRequested(projectConfig.projectId).then((template) => {
-            setFetchedDocument(template);
-        });
+        projectConfig
+            .onProjectDocumentRequested(projectConfig.projectId)
+            .then((template) => {
+                setFetchedDocument(template);
+            })
+            .catch((err: Error) => {
+                // eslint-disable-next-line no-console
+                console.error(`[${MainContent.name}] Error`, err);
+                return err;
+            });
 
         // eslint-disable-next-line no-console
         console.table({
