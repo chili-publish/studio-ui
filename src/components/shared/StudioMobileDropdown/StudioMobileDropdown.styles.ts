@@ -33,7 +33,9 @@ export const MobileDropdownOptionContainer = styled.div<{
     align-items: center;
     background-color: ${({ theme }) => theme.select.control.backgroundColor};
     border: ${(props) =>
-        props.hasError ? `1px solid ${props.theme.themeColors.errorColor}` : '1px solid transparent'};
+        props.hasError
+            ? `1px solid ${props.theme.input.wrapper.borderColor.error}`
+            : `1px solid ${props.theme.input.wrapper.borderColor.default}`};
     font-size: ${FontSizes.regular};
     line-height: 1.29;
     height: 2.5rem;
@@ -42,17 +44,12 @@ export const MobileDropdownOptionContainer = styled.div<{
         box-shadow: none;
         border-color: ${(props) =>
             props.hasError
-                ? `1px solid ${props.theme.themeColors.errorColor}`
-                : `1px solid ${props.theme.themeColors.inputFocusBorderColor}`};
+                ? `1px solid ${props.theme.input.wrapper.borderColor.error}`
+                : `1px solid ${props.theme.input.wrapper.borderColor.hover}`};
         cursor: pointer;
-
-        svg {
-            color: ${(props) => props.theme.icon.hover.color};
-        }
     }
 
     svg {
-        color: ${({ theme }) => theme.select.color};
         min-width: 1.125rem;
     }
     ${MobileDropdownValue} {
