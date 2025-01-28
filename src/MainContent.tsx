@@ -356,7 +356,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     useEffect(() => {
         if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
-    }, [multiLayoutMode, isDocumentLoaded, zoomToPage]);
+    }, [isDocumentLoaded, multiLayoutMode, zoomToPage]);
 
     const navbarProps = useMemo(
         () => ({

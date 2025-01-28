@@ -6,6 +6,7 @@ import useDateVariable from '../useDateVariable';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IDateVariable } from '../VariablesComponents.types';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 function DateVariable(props: IDateVariable) {
     const {
@@ -19,6 +20,8 @@ function DateVariable(props: IDateVariable) {
         validationError,
         onBlur,
     } = props;
+
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     const { minDate, maxDate } = useDateVariable(variable);
     const isMobileSize = useMobileSize();
@@ -64,6 +67,7 @@ function DateVariable(props: IDateVariable) {
                 onBlur={() => {
                     const selectedDate = getSelectedDate;
                     onBlur?.(selectedDate ? formatDate(selectedDate) : '');
+                    onVariableBlur?.(variable.id);
                 }}
                 selected={getSelectedDate}
                 dataId={getDataIdForSUI(`${variable.id}-variable-date-picker`)}
@@ -71,7 +75,10 @@ function DateVariable(props: IDateVariable) {
                 placeholder={placeholder}
                 minDate={minDate}
                 maxDate={maxDate}
-                onCalendarOpen={() => isMobileSize && onCalendarOpen?.(variable)}
+                onCalendarOpen={() => {
+                    onVariableFocus?.(variable.id);
+                    if (isMobileSize) onCalendarOpen?.(variable);
+                }}
                 inline={inline}
                 excludedDays={variable.excludedDays}
                 validationErrorMessage={validationError}
