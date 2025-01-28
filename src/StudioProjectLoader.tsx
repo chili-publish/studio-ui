@@ -18,7 +18,7 @@ export class StudioProjectLoader {
 
     private projectUploadUrl?: string;
 
-    private projectId: string;
+    private projectId?: string;
 
     private graFxStudioEnvironmentApiBaseUrl: string;
 
@@ -33,7 +33,7 @@ export class StudioProjectLoader {
     private userInterfaceID?: string;
 
     constructor(
-        projectId: string,
+        projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
         sandboxMode: boolean,
@@ -53,7 +53,7 @@ export class StudioProjectLoader {
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
-        if (!this.projectId) throw new Error('Project id is not defined');
+        if (!this.projectId) throw new Error('Project id was not provided');
 
         if (this.cachedProject) {
             return this.cachedProject;
@@ -80,7 +80,7 @@ export class StudioProjectLoader {
     public onProjectDocumentRequested = async (): Promise<string | null> => {
         if (this.projectDownloadUrl) return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.authToken);
 
-        if (!this.projectId) throw new Error('Document could not be loaded (project id is not defined)');
+        if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
         const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
         return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
@@ -156,16 +156,20 @@ export class StudioProjectLoader {
 
     private saveDocument = async (
         generateJson: () => Promise<string>,
-        docEditorLink: string | undefined,
-        templateUrl: string | undefined,
+        projectUploadUrl: string | undefined,
+        projectDownloadUrl: string | undefined,
         token: string,
     ) => {
         // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
-        const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        const url =
-            templateUrl ||
-            (docEditorLink ? `${docEditorLink}/assets/assets/documents/demo.json` : null) ||
-            fallbackDownloadUrl;
+        let url =
+            projectDownloadUrl || (projectUploadUrl ? `${projectUploadUrl}/assets/assets/documents/demo.json` : null);
+
+        if (!url) {
+            if (!this.projectId) throw new Error('Project id was not provided');
+
+            const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
+            url = fallbackDownloadUrl;
+        }
 
         try {
             const document = await generateJson().then((res) => {

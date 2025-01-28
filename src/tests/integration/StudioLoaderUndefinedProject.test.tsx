@@ -44,8 +44,7 @@ describe('StudioLoader integration - no projectId', () => {
             authToken: token,
             projectName,
             refreshTokenAction: () => Promise.resolve(''),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any;
+        };
 
         render(<div id="sui-root" />);
         act(() => {
@@ -72,8 +71,7 @@ describe('StudioLoader integration - no projectId', () => {
             authToken: token,
             projectName,
             refreshTokenAction: () => Promise.resolve(''),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any;
+        };
 
         render(<div id="sui-root" />);
         act(() => {

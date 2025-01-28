@@ -20,7 +20,7 @@ export const getDownloadLink = async (
     baseUrl: string,
     token: string,
     layoutId: Id,
-    projectId: Id,
+    projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
 ): Promise<DownloadLinkResult> => {

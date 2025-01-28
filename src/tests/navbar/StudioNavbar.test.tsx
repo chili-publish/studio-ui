@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
