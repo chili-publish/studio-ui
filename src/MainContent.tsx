@@ -37,6 +37,7 @@ import { SuiCanvas } from './MainContent.styles';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
 
 declare global {
     interface Window {
@@ -72,6 +73,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
     const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
+    const [isLoadDocumentErrorDialogOpen, setIsLoadDocumentErrorDialogOpen] = useState(false);
 
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
@@ -318,9 +320,16 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         const loadDocument = async () => {
             if (!fetchedDocument) return;
 
-            await window.StudioUISDK.document.load(fetchedDocument).then((res) => {
-                setIsDocumentLoaded(res.success);
-            });
+            await window.StudioUISDK.document
+                .load(fetchedDocument)
+                .then((res) => {
+                    setIsDocumentLoaded(res.success);
+                })
+                .catch((err: Error) => {
+                    if ((err.cause as { name: string; message: string })?.name === '303001') {
+                        setIsLoadDocumentErrorDialogOpen(true);
+                    }
+                });
             window.StudioUISDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
                 if (res.success && res.parsedData) {
                     setMediaConnectors(res.parsedData);
@@ -431,6 +440,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                         ) : null}
                                     </CanvasContainer>
                                 </MainContentContainer>
+                                <LoadDocumentErrorDialog
+                                    isLoadDocumentErrorDialogOpen={isLoadDocumentErrorDialogOpen}
+                                    goBack={projectConfig?.onUserInterfaceBack}
+                                />
                                 {pendingAuthentications.length &&
                                     pendingAuthentications.map((authFlow) => (
                                         <ConnectorAuthenticationModal
