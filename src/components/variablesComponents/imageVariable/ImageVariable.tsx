@@ -9,9 +9,11 @@ import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { useVariableConnector } from './useVariableConnector';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove } = props;
+    const { onVariableFocus, onVariableBlur } = useUiConfigContext();
 
     const placeholder = getVariablePlaceholder(variable);
 
@@ -52,7 +54,11 @@ function ImageVariable(props: IImageVariable) {
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                onRemove={handleImageRemove}
+                onRemove={() => {
+                    handleImageRemove();
+                    onVariableFocus?.(variable.id);
+                    onVariableBlur?.(variable.id);
+                }}
                 onBrowse={async () => {
                     if (!selectedConnector) {
                         throw new Error('There is no selected connector');
@@ -61,6 +67,7 @@ function ImageVariable(props: IImageVariable) {
                         if (variable.value?.connectorId && isAuthenticationRequired(selectedConnector)) {
                             await verifyAuthentication(variable.value.connectorId);
                         }
+                        onVariableFocus?.(variable.id);
                         showImagePanel(variable);
                     } catch (error) {
                         // TODO: We should handle connector's authorization issue accordingly
