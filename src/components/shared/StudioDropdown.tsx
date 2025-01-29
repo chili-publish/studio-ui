@@ -11,6 +11,8 @@ interface StudioDropdownProps {
     validationError?: string;
     required?: boolean;
     onChange?: (_: string) => void;
+    onMenuOpen?: () => void;
+    onMenuClose?: () => void;
 }
 function StudioDropdown({
     dataId,
@@ -22,6 +24,8 @@ function StudioDropdown({
     validationError,
     required,
     onChange,
+    onMenuOpen,
+    onMenuClose,
 }: StudioDropdownProps) {
     return (
         <Select
@@ -36,6 +40,8 @@ function StudioDropdown({
             required={required}
             label={label}
             validationErrorMessage={validationError}
+            onMenuOpen={onMenuOpen}
+            onMenuClose={onMenuClose}
         />
     );
 }

@@ -1,4 +1,5 @@
 import { InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import StudioDropdown from '../../shared/StudioDropdown';
 import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
@@ -7,6 +8,7 @@ import { IListVariable } from '../VariablesComponents.types';
 
 function ListVariable(props: IListVariable) {
     const { variable, validationError, onChange } = props;
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
@@ -41,6 +43,8 @@ function ListVariable(props: IListVariable) {
                         required={variable.isRequired}
                         validationError={validationError}
                         onChange={(val) => updateVariableValue(variable.id, val)}
+                        onMenuOpen={() => onVariableFocus?.(variable.id)}
+                        onMenuClose={() => onVariableBlur?.(variable.id)}
                     />
                 </div>
                 {variable.helpText && !validationError ? (
