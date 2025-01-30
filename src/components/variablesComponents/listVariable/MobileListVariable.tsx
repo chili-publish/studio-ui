@@ -4,6 +4,7 @@ import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import { getDataIdForSUI } from '../../../utils/dataIds';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 interface MobileListVariableProps {
     variable: ListVariable;
@@ -24,6 +25,8 @@ function MobileListVariable({
     onMenuClose,
     onItemSelected,
 }: MobileListVariableProps) {
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
         value: item.value,
@@ -52,8 +55,14 @@ function MobileListVariable({
             required={required}
             validationError={validationError}
             onChange={updateVariableValue}
-            onMenuOpen={onMenuOpen}
-            onMenuClose={onMenuClose}
+            onMenuOpen={() => {
+                if (onMenuOpen) onMenuOpen();
+                onVariableFocus?.(variable.id);
+            }}
+            onMenuClose={() => {
+                if (onMenuClose) onMenuClose();
+                onVariableBlur?.(variable.id);
+            }}
         />
     );
 }
