@@ -100,7 +100,7 @@ export default class StudioUI {
      */
     static fullIntegrationConfig(
         selector: string,
-        projectId: string,
+        projectId: string | undefined,
         projectName: string,
         userInterfaceID: string | undefined,
         uiOptions: UiOptions,
@@ -109,8 +109,8 @@ export default class StudioUI {
         sandboxMode: boolean,
         featureFlags: Record<string, boolean> | undefined,
         onSandboxModeToggle: (() => void) | undefined,
-        onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectDocumentRequested: (projectId: string) => Promise<string | null>,
+        onProjectInfoRequested: (projectId?: string) => Promise<Project>,
+        onProjectDocumentRequested: (projectId?: string) => Promise<string | null>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
