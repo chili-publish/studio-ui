@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
 import { act, render, waitFor } from '@testing-library/react';
 import { mockUserInterface } from '@mocks/mockUserinterface';
