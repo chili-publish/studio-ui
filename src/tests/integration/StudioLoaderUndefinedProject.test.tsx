@@ -36,19 +36,17 @@ describe('StudioLoader integration - no projectId', () => {
     });
 
     it('Should not try to load project details when there is no projectId provided in the config', async () => {
-        const config = {
-            selector: 'sui-root',
-            projectDownloadUrl,
-            projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
-            graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
-            authToken: token,
-            projectName,
-            refreshTokenAction: () => Promise.resolve(''),
-        };
-
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioLoaderConfig({
+                selector: 'sui-root',
+                projectDownloadUrl,
+                projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
+                graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
+                authToken: token,
+                projectName,
+                refreshTokenAction: () => Promise.resolve(''),
+            });
         });
 
         await waitFor(() => {
