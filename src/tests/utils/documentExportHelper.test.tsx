@@ -1,6 +1,5 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
-import { OutputType } from '../../utils/ApiTypes';
 import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
 
 jest.mock('axios');
@@ -155,7 +154,7 @@ describe('"getDownloadLink', () => {
         it('should send data source', async () => {
             (axios.get as jest.Mock).mockResolvedValue({
                 data: {
-                    outputType: OutputType.Batch,
+                    dataSourceEnabled: true,
                 },
             });
             await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', 'outputId', false);

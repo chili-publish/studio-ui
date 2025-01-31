@@ -16,11 +16,6 @@ export enum AssetTypeToString {
     FOLDER = 'Folder',
 }
 
-export enum OutputType {
-    Single = 'single',
-    Batch = 'batch',
-}
-
 // It partially describe the API Connector Entity
 // https://main.cpstaging.online/grafx/swagger/index.html?urls.primaryName=experimental#/Connectors/get_api_experimental_environment__environment__connectors__connectorId_
 export type RemoteConnector = {

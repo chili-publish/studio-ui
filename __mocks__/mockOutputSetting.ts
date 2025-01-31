@@ -1,5 +1,4 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { OutputType } from '../src/utils/ApiTypes';
 
 export const mockOutputSetting = {
     id: '1',
@@ -10,7 +9,7 @@ export const mockOutputSetting = {
     maxFileSizeInKiloBytes: 120,
     scaling: 1.5,
     watermark: true,
-    outputType: OutputType.Single,
+    dataSourceEnabled: false,
 };
 
 export const mockOutputSetting2 = {
@@ -22,5 +21,5 @@ export const mockOutputSetting2 = {
     maxFileSizeInKiloBytes: 120,
     scaling: 1.5,
     watermark: true,
-    outputType: OutputType.Single,
+    dataSourceEnabled: false,
 };

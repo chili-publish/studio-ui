@@ -7,7 +7,6 @@ import {
     defaultOutputSettings,
     defaultUiOptions,
 } from '../types/types';
-import { OutputType } from '../utils/ApiTypes';
 import { useAppContext } from './AppProvider';
 import { IUiConfigContext } from './UiConfigContext.types';
 
@@ -61,7 +60,7 @@ export function UiConfigContextProvider({
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
 
-                        settings = dataSource ? settings : settings?.filter((s) => s.outputType !== OutputType.Batch);
+                        settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
                     });
