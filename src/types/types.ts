@@ -1,7 +1,6 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
-import { OutputType } from '../utils/ApiTypes';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export type FeatureFlagsType = Record<string, boolean>;
@@ -106,7 +105,7 @@ export type UserInterfaceOutputSettings = {
     id: string;
     description: string;
     type: DownloadFormats;
-    outputType: OutputType;
+    dataSourceEnabled: boolean;
     layoutIntents: string[];
 };
 

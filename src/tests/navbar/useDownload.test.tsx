@@ -2,7 +2,6 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { renderHook } from '@testing-library/react';
 import useDownload from '../../components/navbar/downloadPanel/useDownload';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
-import { OutputType } from '../../utils/ApiTypes';
 import * as OutputSettingsContext from '../../components/navbar/OutputSettingsContext';
 
 describe('useDownload', () => {
@@ -61,7 +60,7 @@ describe('useDownload', () => {
                         description: 'some decs',
                         type: DownloadFormats.MP4,
                         layoutIntents: ['digitalAnimated'],
-                        outputType: OutputType.Single,
+                        dataSourceEnabled: false,
                     },
                     {
                         name: 'GIF',
@@ -69,7 +68,7 @@ describe('useDownload', () => {
                         description: 'some decs',
                         type: DownloadFormats.MP4,
                         layoutIntents: ['digitalAnimated'],
-                        outputType: OutputType.Single,
+                        dataSourceEnabled: false,
                     },
                 ],
             };

@@ -6,7 +6,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
 import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
-import { OutputType } from '../../utils/ApiTypes';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { OutputSettingsContextProvider } from '../../components/navbar/OutputSettingsContext';
@@ -156,7 +155,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.MP4,
                             layoutIntents: ['digitalAnimated'],
-                            outputType: OutputType.Single,
+                            dataSourceEnabled: false,
                         },
                         {
                             name: 'user interface GIF',
@@ -164,7 +163,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.MP4,
                             layoutIntents: ['digitalAnimated'],
-                            outputType: OutputType.Single,
+                            dataSourceEnabled: false,
                         },
                     ],
                 }),
@@ -199,7 +198,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.PDF,
                             layoutIntents: ['print'],
-                            outputType: OutputType.Batch,
+                            dataSourceEnabled: true,
                         },
                         {
                             name: 'Single for PDF',
@@ -207,7 +206,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.PDF,
                             layoutIntents: ['print'],
-                            outputType: OutputType.Single,
+                            dataSourceEnabled: false,
                         },
                     ],
                 }),
@@ -242,7 +241,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.PDF,
                             layoutIntents: ['print'],
-                            outputType: OutputType.Batch,
+                            dataSourceEnabled: true,
                         },
                         {
                             name: 'Single for PDF',
@@ -250,7 +249,7 @@ describe('Navbar', () => {
                             description: 'some decs',
                             type: DownloadFormats.PDF,
                             layoutIntents: ['print'],
-                            outputType: OutputType.Single,
+                            dataSourceEnabled: false,
                         },
                     ],
                 }),

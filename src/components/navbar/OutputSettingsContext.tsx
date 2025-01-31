@@ -7,7 +7,6 @@ import {
 } from '../../types/types';
 import { IOutputSettingsContext } from './OutputSettingsContext.types';
 import { useAppContext } from '../../contexts/AppProvider';
-import { OutputType } from '../../utils/ApiTypes';
 
 export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
     selectedUserInterfaceId: '',
@@ -50,7 +49,7 @@ export function OutputSettingsContextProvider({
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
 
-                        settings = dataSource ? settings : settings?.filter((s) => s.outputType !== OutputType.Batch);
+                        settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
                     });
