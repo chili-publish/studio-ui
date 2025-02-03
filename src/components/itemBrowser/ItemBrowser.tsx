@@ -1,13 +1,16 @@
 import {
-    BreadCrumb,
+    AvailableIcons,
     PreviewCard as ChiliPreview,
-    Colors,
+    Icon,
+    Input,
     Panel,
     PreviewCardVariant,
     PreviewType,
     ScrollbarWrapper,
     useInfiniteScrolling,
     useMobileSize,
+    BreadCrumb,
+    SelectOptions,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,26 +18,20 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { BreadCrumbsWrapper, LoadPageContainer, ResourcesContainer } from './ItemBrowser.styles';
-import { ItemCache } from './ItemCache';
-
-const TOP_BAR_HEIGHT_REM = '4rem';
-const TOP_BAR_BORDER_HEIGHT = '1px';
-const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-const BREADCRUMBS_HEIGHT_REM = '3.5rem';
-
-const leftPanelHeight = `
-    calc(100vh
-        - ${TOP_BAR_HEIGHT_REM}
-        - ${TOP_BAR_BORDER_HEIGHT}
-        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
-        - ${BREADCRUMBS_HEIGHT_REM}
-    )`;
+import {
+    BreadCrumbsWrapper,
+    EmptySearchResultContainer,
+    LoadPageContainer,
+    ResourcesContainer,
+    SearchInputWrapper,
+    ScrollbarContainer,
+} from './ItemBrowser.styles';
+import { ItemCache, PreviewResponse } from './ItemCache';
+import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
     connectorId: string;
-    height?: string;
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
@@ -59,8 +56,7 @@ function ItemBrowser<
         extension: string | null;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isPanelOpen, connectorId, height, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
@@ -78,6 +74,10 @@ function ItemBrowser<
         selectedItems,
         setNavigationStack,
         setSelectedItems,
+        searchKeyWord,
+        setSearchKeyWord,
+        searchQuery,
+        setSearchQuery,
     } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
 
@@ -94,7 +94,7 @@ function ItemBrowser<
             return { token: null, requested: true };
         });
         setList(() => []);
-    }, [navigationStack]);
+    }, [navigationStack, searchQuery]);
 
     useEffect(() => {
         setBreadcrumbStack([]);
@@ -110,7 +110,6 @@ function ItemBrowser<
         // in case the useEffect runs again (dependencies change) while the promise did not resolve, the cleanup function
         // makes sure that the result that is not relevant anymore, won't affect the state.
         let ignore = false;
-
         if (!nextPageToken.requested) return;
         setIsLoading(true);
         // declare the async data fetching function
@@ -123,6 +122,7 @@ function ItemBrowser<
                         collection: `/${navigationStack?.join('/') ?? ''}`,
                         pageToken: nextPageToken.token ? nextPageToken.token : '',
                         pageSize: 15,
+                        ...(connectorCapabilities[connectorId]?.filtering && { filter: [searchQuery] }),
                     },
                     {},
                 );
@@ -168,7 +168,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken, contentType]);
+    }, [nextPageToken.requested, nextPageToken.token, contentType, searchQuery]);
 
     useEffect(() => {
         return () => {
@@ -193,6 +193,13 @@ function ItemBrowser<
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
+    const formatRelativePath = (item: T) => {
+        const { name, relativePath } = item;
+        if (!relativePath) return '/';
+        if (!relativePath.includes(name)) return relativePath + name;
+        return relativePath;
+    };
+
     const elements = list.map((listItem, idx) => {
         const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
 
@@ -201,42 +208,47 @@ function ItemBrowser<
             if (itemType === PreviewType.COLLECTION) {
                 setNavigationStack(() => {
                     setIsLoading(true);
-                    return toNavigationStack(listItem.instance.relativePath);
+                    return toNavigationStack(formatRelativePath(listItem.instance));
                 });
                 setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
             } else {
                 selectItem(listItem.instance);
                 setNavigationStack([]);
+                setSearchQuery('');
+                setSearchKeyWord('');
             }
         };
 
-        return (
-            <ChiliPreview
-                key={getKey(`${listItem.instance.relativePath}-${listItem.instance.name}-${listItem.instance.id}`, idx)}
-                dataId={getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                dataTestId={getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}
-                itemId={listItem.instance.id}
-                name={listItem.instance.name}
-                type={itemType as unknown as PreviewType}
-                path={getPreviewThumbnail(itemType as unknown as PreviewType, listItem.instance.relativePath)}
-                metaData={
-                    listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || '')
-                }
-                renameItem={() => null}
-                options={[]}
-                padding="0rem"
-                footerTopMargin="0.75rem"
-                selected={selectedItems[0]?.id === listItem.instance.id}
-                backgroundColor={Colors.LIGHT_GRAY}
-                byteArray={
-                    itemType === PreviewType.COLLECTION
-                        ? undefined
-                        : listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id))
-                }
-                onClickCard={onClick}
-                isModal={false}
-                renamingDisabled
-            />
+        const previewByteArray: () => Promise<PreviewResponse> = () =>
+            listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id));
+
+        const defaultProps = {
+            key: getKey(
+                `${formatRelativePath(listItem.instance)}-${listItem.instance.name}-${listItem.instance.id}`,
+                idx,
+            ),
+            dataId: `${getDataIdForSUI(`media-card-preview-${listItem.instance.name}`)}`,
+            dataTestId: `${getDataTestIdForSUI(`media-card-preview-${listItem.instance.name}`)}`,
+            itemId: listItem.instance.id,
+            name: listItem.instance.name,
+            type: itemType as unknown as PreviewType,
+            path: getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance)),
+            metaData: listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || ''),
+            renameItem: () => null,
+            options: [],
+            padding: '0',
+            footerTopMargin: '0.75rem',
+            selected: selectedItems[0]?.id === listItem.instance.id,
+            onClickCard: onClick,
+            renamingDisabled: true,
+            fallback: UNABLE_TO_LOAD_PANEL,
+        };
+        return itemType === PreviewType.COLLECTION ? (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <ChiliPreview {...defaultProps} />
+        ) : (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
         );
     });
 
@@ -244,59 +256,131 @@ function ItemBrowser<
         return breadcrumbStack?.join('\\') ?? '';
     }, [breadcrumbStack]);
 
+    const updateNavigationStack = useCallback(
+        (selected: SelectOptions) => {
+            const pathIndex = selected.value as number;
+
+            const newNavigationStack = navigationStack?.splice(0, pathIndex);
+            const newBreadcrumbStack = breadcrumbStack?.splice(0, pathIndex);
+            setNavigationStack(newNavigationStack);
+            setBreadcrumbStack(newBreadcrumbStack);
+        },
+        [navigationStack, breadcrumbStack],
+    );
+
     if (!isPanelOpen) {
         return null;
     }
 
     // eslint-disable-next-line no-nested-ternary
     const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
+    const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
+    const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 
+    const handleSearch = (keyword: string) => {
+        setSearchQuery(keyword);
+        setNavigationStack([]);
+        setBreadcrumbStack([]);
+    };
     return (
         <Panel
             parentOverflow
             title={panelTitle}
             dataId={getDataIdForSUI('widget-media-panel')}
             dataTestId={getDataTestIdForSUI('widget-media-panel')}
-            isModal={false}
             padding="0"
+            height="100%"
+            headerBorderColor="transparent"
         >
-            <BreadCrumbsWrapper>
-                <BreadCrumb
-                    href={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                    color={Colors.SECONDARY_FONT}
-                    activeColor={Colors.PRIMARY_FONT}
-                    onClick={(breadCrumb: string) => {
-                        const newNavigationStack = navigationStack?.splice(0, navigationStack.indexOf(breadCrumb) + 1);
-                        const newBreadcrumbStack = breadcrumbStack?.splice(0, breadcrumbStack.indexOf(breadCrumb) + 1);
-                        setNavigationStack(newNavigationStack);
-                        setBreadcrumbStack(newBreadcrumbStack);
-                    }}
-                />
-            </BreadCrumbsWrapper>
-            <ScrollbarWrapper height={height ?? leftPanelHeight} scrollbarWidth="0">
-                <ResourcesContainer
-                    data-id={getDataIdForSUI('resources-container')}
-                    data-testid={getDataTestIdForSUI('resources-container')}
-                >
-                    {elements}
-                    {isLoading &&
-                        SKELETONS.map((el) => (
-                            <ChiliPreview
-                                key={el}
-                                itemId={el.toString()}
-                                variant={PreviewCardVariant.GRID}
-                                padding="0"
-                                type={PreviewType.COLLECTION}
-                                isSkeleton
-                                onClickCard={() => null}
-                                renamingDisabled
-                            />
-                        ))}
-                    <LoadPageContainer>
-                        <div ref={infiniteScrollingRef} />
-                    </LoadPageContainer>
-                </ResourcesContainer>
-            </ScrollbarWrapper>
+            {navigationEnabled ? (
+                <BreadCrumbsWrapper>
+                    <BreadCrumb
+                        dataId={getDataIdForSUI('toolbar-breadcrumb')}
+                        dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
+                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        onClick={updateNavigationStack}
+                    />
+                </BreadCrumbsWrapper>
+            ) : null}
+            {filteringEnabled ? (
+                <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
+                    <Input
+                        type="text"
+                        name="search"
+                        placeholder="Search"
+                        value={searchKeyWord}
+                        onChange={(e) => setSearchKeyWord(e.target.value)}
+                        onBlur={() => handleSearch(searchKeyWord)}
+                        width="260px"
+                        leftIcon={{
+                            icon: (
+                                <Icon
+                                    dataId={getDataIdForSUI('media-panel-search-icon')}
+                                    dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
+                                    icon={AvailableIcons.faMagnifyingGlass}
+                                />
+                            ),
+                            label: 'Search icon',
+                        }}
+                        dataId={getDataIdForSUI('media-panel-search-input')}
+                        dataTestId={getDataTestIdForSUI('media-panel-search-input')}
+                        rightIcon={
+                            searchKeyWord
+                                ? {
+                                      label: 'Clear search icon',
+                                      icon: (
+                                          <Icon
+                                              dataId={getDataIdForSUI('media-panel-clear-search-icon')}
+                                              dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
+                                              icon={AvailableIcons.faXmark}
+                                          />
+                                      ),
+                                      onClick: () => {
+                                          setSearchKeyWord('');
+                                          setSearchQuery('');
+                                      },
+                                  }
+                                : undefined
+                        }
+                        isHighlightOnClick
+                    />
+                </SearchInputWrapper>
+            ) : null}
+            <ScrollbarContainer
+                filteringEnabled={filteringEnabled}
+                hasSearchQuery={!!searchQuery}
+                navigationBreadcrumbsEnabled={navigationEnabled}
+            >
+                <ScrollbarWrapper height="100%">
+                    {elements.length === 0 && !isLoading && searchQuery && (
+                        <EmptySearchResultContainer>
+                            No search results found. Maybe try another keyword?
+                        </EmptySearchResultContainer>
+                    )}
+                    <ResourcesContainer
+                        data-id={getDataIdForSUI('resources-container')}
+                        data-testid={getDataTestIdForSUI('resources-container')}
+                    >
+                        {elements}
+                        {isLoading &&
+                            SKELETONS.map((el) => (
+                                <ChiliPreview
+                                    key={el}
+                                    itemId={el.toString()}
+                                    variant={PreviewCardVariant.GRID}
+                                    padding="0"
+                                    type={PreviewType.COLLECTION}
+                                    isSkeleton
+                                    onClickCard={() => null}
+                                    renamingDisabled
+                                />
+                            ))}
+                        <LoadPageContainer>
+                            <div ref={infiniteScrollingRef} />
+                        </LoadPageContainer>
+                    </ResourcesContainer>
+                </ScrollbarWrapper>
+            </ScrollbarContainer>
         </Panel>
     );
 }

@@ -1,22 +1,43 @@
+import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
+import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
-export interface ProjectConfig {
-    projectId: string;
+export type FeatureFlagsType = Record<string, boolean>;
+
+export type ProjectConfig = {
+    projectId?: string;
     projectName: string;
     uiOptions: UiOptions;
+    uiTheme: ITheme['mode'] | 'system';
     outputSettings: OutputSettings;
-    onProjectInfoRequested: (projectId: string) => Promise<Project>;
-    onProjectDocumentRequested: (projectId: string) => Promise<string>;
+    userInterfaceID?: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+    sandboxMode: boolean;
+    featureFlags?: FeatureFlagsType;
+    onSandboxModeToggle?: () => void;
+    onProjectInfoRequested: (projectId?: string) => Promise<Project>;
+    onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;
     onProjectLoaded: (project: Project) => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
     onAuthenticationExpired: () => Promise<string>;
     onUserInterfaceBack: () => void;
     onLogInfoRequested: () => unknown;
-    onProjectGetDownloadLink: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
-    overrideEngineUrl?: string | undefined;
-}
+    onProjectGetDownloadLink: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
+    overrideEngineUrl?: string;
+    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
+};
 
 export interface DefaultStudioConfig {
     selector: string;
@@ -25,16 +46,28 @@ export interface DefaultStudioConfig {
     projectId: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
+    featureFlags?: FeatureFlagsType;
     uiOptions?: UiOptions;
+    uiTheme?: ITheme['mode'] | 'system';
     outputSettings?: OutputSettings;
     projectName: string;
-    refreshTokenAction: () => Promise<string | AxiosError>;
+    sandboxMode?: boolean;
+    onSandboxModeToggle?: () => void;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
     editorLink?: string;
+    userInterfaceID?: string;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
-export interface StudioConfig extends DefaultStudioConfig {
+export interface StudioConfig extends Omit<DefaultStudioConfig, 'projectId' | 'projectDownloadUrl'> {
+    projectId?: string;
+    projectDownloadUrl?: string;
     onProjectInfoRequested: () => Promise<Project>;
-    onProjectDocumentRequested: () => Promise<string>;
+    onProjectDocumentRequested: () => Promise<string | null>;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
 }
 
@@ -47,6 +80,7 @@ export type DownloadLinkResult = {
 };
 
 export interface UiOptions {
+    theme?: UiThemeConfig;
     widgets: {
         downloadButton?: {
             visible?: boolean;
@@ -55,10 +89,62 @@ export interface UiOptions {
             visible?: boolean;
             event?: () => void;
         };
+        navBar?: {
+            visible?: boolean;
+        };
+        bottomBar?: {
+            visible?: boolean;
+        };
     };
 }
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
+
+export type UserInterfaceOutputSettings = {
+    name: string;
+    id: string;
+    description: string;
+    type: DownloadFormats;
+    dataSourceEnabled: boolean;
+    layoutIntents: string[];
+};
+
+export type UserInterfaceWithOutputSettings = {
+    outputSettings: UserInterfaceOutputSettings[];
+    userInterface: {
+        id: string;
+        name: string;
+    };
+};
+
+export type UserInterface = {
+    name: string;
+    id: string;
+    default: boolean;
+    outputSettings: {
+        [index: string]: {
+            layoutIntents: string[];
+        };
+    };
+};
+
+export type PaginatedResponse<T> = {
+    data: T[];
+    pageSize: number;
+    links?: {
+        nextPage: string;
+    };
+};
+
+export interface IOutputSetting {
+    watermarkText: string;
+    default: boolean;
+    description: string;
+    id: string;
+    name: string;
+    type: string;
+    watermark: boolean;
+}
 
 export const defaultUiOptions: UiOptions = {
     widgets: {
@@ -90,3 +176,44 @@ export const defaultBackFn = () => history.back();
 export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
 export type Project = { name: string; id: string; template: { id: string } };
+
+export interface IStudioUILoaderConfig {
+    selector: string;
+    projectId?: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+    authToken: string;
+    projectName: string;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
+    uiOptions?: UiOptions;
+    uiTheme?: ITheme['mode'] | 'system';
+    userInterfaceID?: string;
+    outputSettings?: OutputSettings;
+    editorLink?: string;
+    projectDownloadUrl?: string;
+    projectUploadUrl?: string;
+    sandboxMode?: boolean;
+    featureFlags?: Record<string, boolean>;
+    onSandboxModeToggle?: () => void;
+    onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
+    onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
+    onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
+    onProjectLoaded?: (project: Project) => void;
+    onAuthenticationRequested?: () => string;
+    onAuthenticationExpired?: () => Promise<string>;
+    onLogInfoRequested?: () => void;
+    onProjectGetDownloadLink?: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
+    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    customElement?: HTMLElement | string;
+    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
+}
+
+export type PageSnapshot = {
+    id: string;
+    snapshot: Uint8Array;
+};

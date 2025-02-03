@@ -1,5 +1,8 @@
 import { Timeline } from '@chili-publish/grafx-shared-components';
+import { useCallback } from 'react';
 import { AnimationTimelineWrapper } from './AnimationTimeline.styles';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 interface IAnimationTimeline {
     scrubberTimeMs: number;
@@ -8,21 +11,23 @@ interface IAnimationTimeline {
 }
 function AnimationTimeline(props: IAnimationTimeline) {
     const { scrubberTimeMs, animationLength, isAnimationPlaying } = props;
+    const { uiOptions } = useUiConfigContext();
 
     const handlePlay = async () => {
-        await window.SDK.animation.play();
+        await window.StudioUISDK.animation.play();
     };
 
-    const handlePause = async () => {
-        await window.SDK.animation.pause();
-    };
+    const handlePause = useCallback(async () => {
+        await window.StudioUISDK.animation.pause();
+    }, []);
 
     const handleSetScrubberPosition = async (milliseconds: number) => {
-        await window.SDK.animation.setScrubberPosition(milliseconds);
+        await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
     };
 
+    if (uiOptions.widgets?.bottomBar?.visible === false) return null;
     return (
-        <AnimationTimelineWrapper>
+        <AnimationTimelineWrapper data-testid={getDataTestIdForSUI('timeline-wrapper')}>
             {animationLength > 0 && (
                 <Timeline
                     animationLength={animationLength}

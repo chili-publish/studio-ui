@@ -4,11 +4,6 @@
     position: relative;
 }
 
-.sui-canvas {
-    height: calc(100% - 4rem - 5rem);
-    width: 100%;
-}
-
 .chili-editor {
     width: 100%;
     height: 100%;

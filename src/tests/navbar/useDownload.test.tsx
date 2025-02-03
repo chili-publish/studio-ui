@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { renderHook } from '@testing-library/react';
 import useDownload from '../../components/navbar/downloadPanel/useDownload';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
 
@@ -9,14 +9,14 @@ describe('useDownload', () => {
             return UiConfigContext.UiConfigContextDefaultValues;
         });
         const { result } = renderHook(() => useDownload(() => null));
-        expect(result.current.downloadOptions.length).toBe(4);
+        expect(result.current.downloadOptions.length).toBe(5);
     });
 
     test('only false download options, show the onew that are not false', () => {
         jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
             return {
                 ...UiConfigContext.UiConfigContextDefaultValues,
-                outputSettings: { mp4: false, gif: false, jpg: false },
+                outputSettings: { mp4: false, gif: false, jpg: false, pdf: false },
             };
         });
         const { result } = renderHook(() => useDownload(() => null));
@@ -46,5 +46,33 @@ describe('useDownload', () => {
         const { result } = renderHook(() => useDownload(() => null));
         expect(result.current.downloadOptions.length).toBe(1);
         expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
+    });
+
+    test('Show output settings that are coming from selected user interface', () => {
+        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+            return {
+                ...UiConfigContext.UiConfigContextDefaultValues,
+                userInterfaceOutputSettings: [
+                    {
+                        name: 'MP4',
+                        id: '1',
+                        description: 'some decs',
+                        type: DownloadFormats.MP4,
+                        layoutIntents: ['digitalAnimated'],
+                        dataSourceEnabled: false,
+                    },
+                    {
+                        name: 'GIF',
+                        id: '2',
+                        description: 'some decs',
+                        type: DownloadFormats.MP4,
+                        layoutIntents: ['digitalAnimated'],
+                        dataSourceEnabled: false,
+                    },
+                ],
+            };
+        });
+        const { result } = renderHook(() => useDownload(() => null));
+        expect(result.current.userInterfaceDownloadOptions?.length).toBe(2);
     });
 });

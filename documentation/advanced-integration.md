@@ -50,8 +50,17 @@ Create a new html file, you can call it whatever you want, but in our case we ca
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
-        <!-- script to inject latest studio ui -->
+        <!-- 1. ES5 approach script to inject latest studio ui -->
         <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
+
+        <!-- OR -->
+
+        <!-- 2. ES Modules approach (recommended one) script to inject latest studio ui -->
+        <script type="module">
+            import('https://studio-cdn.chiligrafx.com/studio-ui/latest/es-module/bundle.js').then((module) => {
+                window.StudioUI = module.default;
+            });
+        </script>
 
         <!-- custom logic in seperate js file -->
         <script srs="./integration.js"></script>
@@ -78,16 +87,37 @@ const projectID = '859dd405-bfed-467f-b833-510afef5fda4';
 /* Name of the project, but can be whatever you want, is only a static indication that is displayed in the UI. */
 const projectName = 'End User view';
 /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. Preferably you retrieve a token here silently. */
-const refreshTokenAction = () => Promise.resolve('Nothing');
+const refreshTokenAction = () => Promise.resolve(token);
 
 /* this example will allow only animated output within your user interface */
 const outputSettings = {
     mp4: true,
     gif: true,
 };
+/* The ID of the user interface, used to fetch output settings, if passed it will override the default output settings set above */
+const userInterfaceID = '859dd405-bfed-467f-b833-510afef5fda4';
 
 /* this example of uiOptions will show everything and will use a console log when pressing the back button inside the UI. */
 const uiOptions = {
+    theme: {
+        fontFamily: 'inherit',
+        colors: {
+            "brandBackgroundColor": "#F40009", // Used for primary buttons, checkboxes, toggles, radio buttons, animation timeline, etc.
+            "primaryButtonTextColor": "#ffffff", // Used for primary button text, checkboxes, toggles, radio buttons.
+            "primaryButtonHoverColor": "#CB0007", // Used for primary button hover background.
+            "panelBackgroundColor": "#252525", // Used for panel and modal backgrounds.
+            "dropdownMenuBackgroundColor": "#2F2F2F", // Used for dropdown menu backgrounds.
+            "inputBackgroundColor": "#323232", // Used for input fields background.
+            "inputBorderColor": "#F5F5F5"; // Used for the border color of input fields.
+            "inputFocusBorderColor": "#ffffff", // Used for the border color of input fields when focused.
+            "canvasBackgroundColor": "#161616", // Used for canvas background.
+            "highlightedElementsColor": "#3E3E3E", // Used for highlighted elements.
+            "disabledElementsColor": "#6E6E6E", // Used for disabled text and buttons.
+            "placeholderTextColor": "#909090", // Used for text placeholders.
+            "primaryTextColor": "#ffffff" // Used for primary text.
+            "secondaryTextColor": "#B9B9B9", // Used for secondary text.
+        }
+    },
     widgets: {
         downloadButton: {
             visible: true,
@@ -127,8 +157,12 @@ window.StudioUI.studioLoaderConfig({
     /* outputTypes: object of all available output types (optional) that have a boolean value */
     outputTypes: outputTypes,
 
-    /* uiOptions: object to play around with parts of the UI.*/
+    /* uiOptions: object to play around with parts of the UI and the theming.*/
     uiOptions: uiOptions,
+
+    /* userInterfaceID: string, The id of the user interface used to fetch output settings,
+    if passed it will override the default output settings */
+    userInterfaceID: userInterfaceID,
 });
 ```
 
@@ -136,7 +170,7 @@ To see if your code works, serve your html file and use a known project ID, you'
 
 ### Settings deep dive
 
-#### uiSettings, widgets
+#### uiOptions, widgets
 
 For now there are 2 components (widgets) that are able to retrieve some settings.
 
@@ -144,9 +178,16 @@ The downloadButton can be hidden to f.e. disable output in your integration.
 
 The backButton can be hidden, and is actually hidden by default, but you can also explicitly show it and change what the behaviour will be when pressing it. This can be done by passing a function to `event`.
 
+#### uiOptions, theme
+
+The theme field within uiOptions is used to customize various UI elements, specifically focusing on colors and font styles. The configuration object defined above includes all available options for UI customization.
+
+    ** fontFamily: Optional. If the value 'inherit' is provided, the font family of the UI elements will be inherited. Otherwise, 'Roboto' is used as default.
+    ** colors: Optional. The object can be provided partially. The defined fields will be used to customize the UI components.
+
 #### outputSettings
 
-The outputSettings option, is quite a flexible way to set the available output types for your integrations.
+The outputSettings option, is quite a flexible way to set the available output types for your integrations, this option will be overridden when `userInterfaceID` is provided.
 
 It's an optional parameter, that will show every output setting that is available when not provided, but it allows some fine-grained management of the output types available.
 
@@ -180,6 +221,13 @@ const outputSettings = {
     jpg: false,
 };
 ```
+
+#### userInterfaceID
+
+The `userInterfaceID` option is an optional parameter, setting it to valid interface id, means the output settings will be fetched from the API and `outputSettings` will be overridden if set.
+
+When a valid interface id is provided and output settings are returned, every output setting with the same selected layout intent will be available,
+and if no output setting is available for the selected layout intent, the download button will be disabled.
 
 ## Advanced example using own documents
 

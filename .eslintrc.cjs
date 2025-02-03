@@ -9,6 +9,9 @@ module.exports = {
             version: 'detect',
         },
         'import/resolver': {
+            typescript: {
+                project: '.',
+            },
             node: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 moduleDirectory: ['node_modules', 'src/', '_modules/'],
@@ -40,6 +43,7 @@ module.exports = {
     rules: {
         'no-unused-vars': 'off',
         'no-use-before-define': 'off',
+        'no-underscore-dangle': ['error', { allowAfterThis: true }],
         '@typescript-eslint/no-unused-vars': ['error'],
         '@typescript-eslint/no-var-requires': 'off',
         'react-hooks/rules-of-hooks': 'error',

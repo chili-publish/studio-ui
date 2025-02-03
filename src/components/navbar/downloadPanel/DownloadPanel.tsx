@@ -2,48 +2,86 @@ import {
     AvailableIcons,
     Button,
     ButtonVariant,
-    Colors,
-    DropDown,
     Icon,
-    LoadingIcon,
     Menu,
+    Select,
+    SelectOptions,
     Tray,
     useMobileSize,
+    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { Dispatch, useMemo, useState } from 'react';
 import { css } from 'styled-components';
-import { Dispatch, useState } from 'react';
-import StudioDropdown from '../../shared/StudioDropdown';
+import { UserInterfaceOutputSettings } from '../../../types/types';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import {
+    BtnContainer,
     ButtonWrapper,
     Content,
     DesktopDropdownContainer,
     DownloadDropdownTitle,
     DownloadPanelContainer,
-    DropdownLabel,
     SpinnerContainer,
 } from './DownloadPanel.styles';
+import { outputTypesIcons } from './DownloadPanel.types';
+import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+
+type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
 interface DownloadPanelProps {
     hideDownloadPanel: () => void;
     isDownloadPanelVisible: boolean;
-    handleDownload: (_: DownloadFormats, __: Dispatch<Partial<Record<DownloadFormats, boolean>>>) => Promise<void>;
+    handleDownload: (
+        _: DownloadFormats,
+        __: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
+        outputSettingsId: string | undefined,
+    ) => Promise<void>;
 }
 
+const getCustomSelectedLabel = (option: SelectOptions) => {
+    const item = (option as SelectOptionType).item as UserInterfaceOutputSettings;
+    const key = item.type.toLowerCase() as keyof typeof outputTypesIcons;
+    return <DropdownOption iconData={outputTypesIcons[key]} text={item.name} description="" />;
+};
+
+const getCustomSelectedOption = (option: SelectOptions) => {
+    return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
+};
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+    const { themeColors } = useTheme();
+    const {
+        downloadOptions,
+        userInterfaceDownloadOptions,
+        downloadPanelRef,
+        downloadState,
+        selectedOptionFormat,
+        updateDownloadState,
+        handleOutputFormatChange,
+        selectedOutputSettingsId,
+    } = useDownload(hideDownloadPanel);
 
-    const { downloadOptions, downloadPanelRef, downloadState, selectedOption, setSelectedOption, updateDownloadState } =
-        useDownload(hideDownloadPanel);
+    const selectedValue = useMemo(() => {
+        if (userInterfaceDownloadOptions) {
+            return (
+                userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
+                userInterfaceDownloadOptions[0]
+            );
+        }
+        return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
+    }, [downloadOptions, selectedOptionFormat, selectedOutputSettingsId, userInterfaceDownloadOptions]);
 
     return (
         <>
             <Tray
                 isOpen={!!isMobileSize && isDownloadPanelVisible}
+                anchorId={APP_WRAPPER_ID}
                 close={() => {
                     hideDownloadPanel();
                     setMobileDropdownOpen(false);
@@ -56,34 +94,41 @@ function DownloadPanel(props: DownloadPanelProps) {
                 hideCloseButton={mobileDropdownOpen}
             >
                 <Content borderTop={!mobileDropdownOpen}>
-                    <StudioDropdown
+                    <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
-                        label="Output type"
-                        selectedValue={
-                            downloadOptions.find((item) => item.value === selectedOption) || downloadOptions[0]
-                        }
-                        options={downloadOptions}
-                        onChange={(val) => setSelectedOption(val as typeof selectedOption)}
+                        label="Output"
+                        selectedValue={getCustomSelectedOption(selectedValue)}
+                        options={userInterfaceDownloadOptions ?? downloadOptions}
+                        onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
                         onMenuClose={() => setMobileDropdownOpen(false)}
                     />
                 </Content>
                 {!mobileDropdownOpen ? (
                     <ButtonWrapper>
-                        {downloadState[selectedOption] ? (
+                        {downloadState[selectedOptionFormat] ? (
                             <SpinnerContainer mobile>
-                                <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                                <Button
+                                    loading
+                                    styles={css`
+                                        width: 100%;
+                                        background-color: ${themeColors.disabledElementsColor};
+                                        &:hover {
+                                            background-color: ${themeColors.disabledElementsColor};
+                                        }
+                                    `}
+                                />
                             </SpinnerContainer>
                         ) : (
                             <Button
                                 dataId={getDataIdForSUI(`download-btn`)}
                                 dataTestId={getDataTestIdForSUI(`download-btn`)}
                                 onClick={() => {
-                                    handleDownload(selectedOption, updateDownloadState);
+                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
                                 label="Download"
-                                icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
+                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     width: 100%;
                                 `}
@@ -92,46 +137,62 @@ function DownloadPanel(props: DownloadPanelProps) {
                     </ButtonWrapper>
                 ) : null}
             </Tray>
+
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
                 position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
+                anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef}>
                     <DownloadDropdownTitle>Download</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
-                        <DropdownLabel>Output type</DropdownLabel>
-                        <DropDown
+                        <Select
+                            label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                            defaultValue={downloadOptions.find((option) => option.value === selectedOption)}
-                            options={downloadOptions}
+                            defaultValue={selectedValue}
+                            options={userInterfaceDownloadOptions ?? downloadOptions}
                             isSearchable={false}
                             width="16.25rem"
-                            onChange={(option) => setSelectedOption(option?.value as typeof selectedOption)}
+                            onChange={(option) =>
+                                handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
+                            }
+                            customValue={getCustomSelectedLabel}
                         />
                     </DesktopDropdownContainer>
-                    {downloadState[selectedOption] ? (
+                    {downloadState[selectedOptionFormat] ? (
                         <SpinnerContainer>
-                            <LoadingIcon color={Colors.PRIMARY_WHITE} />
+                            <Button
+                                loading
+                                styles={css`
+                                    width: 100%;
+                                    background-color: ${themeColors.disabledElementsColor};
+                                    &:hover {
+                                        background-color: ${themeColors.disabledElementsColor};
+                                    }
+                                `}
+                            />
                         </SpinnerContainer>
                     ) : (
-                        <Button
-                            dataId={getDataIdForSUI(`download-btn`)}
-                            dataTestId={getDataTestIdForSUI(`download-btn`)}
-                            dataIntercomId="Download selected output"
-                            onClick={() => {
-                                handleDownload(selectedOption, updateDownloadState);
-                            }}
-                            variant={ButtonVariant.primary}
-                            label="Download"
-                            icon={<Icon key={selectedOption} icon={AvailableIcons.faArrowDownToLine} />}
-                            styles={css`
-                                margin: 1.25rem auto 1.25rem;
-                                width: 16.25rem;
-                            `}
-                        />
+                        <BtnContainer>
+                            <Button
+                                dataId={getDataIdForSUI(`download-btn`)}
+                                dataTestId={getDataTestIdForSUI(`download-btn`)}
+                                dataIntercomId="Download selected output"
+                                onClick={() => {
+                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
+                                }}
+                                variant={ButtonVariant.primary}
+                                label="Download"
+                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
+                                styles={css`
+                                    margin: 1.25rem auto 1.25rem;
+                                    width: 100%;
+                                `}
+                            />
+                        </BtnContainer>
                     )}
                 </DownloadPanelContainer>
             </Menu>

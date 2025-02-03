@@ -1,7 +1,7 @@
-import axios, { AxiosError } from 'axios';
 import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import { Project } from '../types/types';
+import axios, { AxiosError } from 'axios';
 import { StudioProjectLoader } from '../StudioProjectLoader';
+import { Project } from '../types/types';
 
 jest.mock('axios');
 
@@ -13,11 +13,12 @@ jest.mock('../utils/documentExportHelper', () => ({
         parsedData: { url: 'mockUrl' },
         data: JSON.stringify({ url: 'mockUrl' }),
     }),
+    addTrailingSlash: jest.fn().mockReturnValue('mockGraFxStudioEnvironmentApiBaseUrl/'),
 }));
 
 describe('StudioProjectLoader', () => {
     const mockProjectId = 'mockProjectId';
-    const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl';
+    const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl/';
     const mockAuthToken = 'mockAuthToken';
     const mockRefreshTokenAction = jest.fn();
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
@@ -37,6 +38,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -59,6 +61,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -75,6 +78,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 undefined,
                 mockProjectUploadUrl,
@@ -95,6 +99,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -107,6 +112,26 @@ describe('StudioProjectLoader', () => {
                 headers: { Authorization: 'Bearer mockAuthToken' },
             });
         });
+
+        it('should return "null" in case of error', async () => {
+            (axios.get as jest.Mock).mockRejectedValueOnce({});
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            const result = await loader.onProjectDocumentRequested();
+
+            expect(result).toBeNull();
+            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
+                headers: { Authorization: 'Bearer mockAuthToken' },
+            });
+        });
     });
 
     describe('onProjectLoaded', () => {
@@ -115,15 +140,16 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            window.SDK.configuration.setValue = jest.fn();
+            window.StudioUISDK.configuration.setValue = jest.fn();
 
             loader.onProjectLoaded();
 
-            expect(window.SDK.configuration.setValue).toHaveBeenCalledWith(
+            expect(window.StudioUISDK.configuration.setValue).toHaveBeenCalledWith(
                 WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
                 mockGraFxStudioEnvironmentApiBaseUrl,
             );
@@ -137,6 +163,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -150,11 +177,12 @@ describe('StudioProjectLoader', () => {
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
         });
 
-        it('should not save document if document URL is not provided', async () => {
+        it('Should use fallback url to save document when document URL is not provided', async () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 undefined,
                 undefined,
@@ -165,7 +193,7 @@ describe('StudioProjectLoader', () => {
 
             expect(result).toEqual(mockCachedProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
-            expect(axios.put).not.toHaveBeenCalled();
+            expect(axios.put).toHaveBeenCalled();
         });
     });
 
@@ -175,6 +203,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -194,6 +223,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -212,12 +242,29 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
 
             await expect(loader.onAuthenticationExpired()).rejects.toEqual(mockError);
+        });
+
+        it('should throw error if refresh token is not provided', async () => {
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                undefined,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            await expect(loader.onAuthenticationExpired()).rejects.toEqual(
+                new Error('The authentication token has expired, and a method to obtain a new one is not provided.'),
+            );
         });
     });
 
@@ -227,6 +274,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -247,6 +295,7 @@ describe('StudioProjectLoader', () => {
         it('should get download link', async () => {
             const mockExtension = 'pdf';
             const mockSelectedLayoutID = 'mockSelectedLayoutID';
+            const mockOutputSettingsId = 'mockOutputSettingsId';
             const mockDownloadLinkResult = {
                 status: 200,
                 error: undefined,
@@ -258,14 +307,76 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
+                false,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
 
-            const result = await loader.onProjectGetDownloadLink(mockExtension, mockSelectedLayoutID);
+            const result = await loader.onProjectGetDownloadLink(
+                mockExtension,
+                mockSelectedLayoutID,
+                mockOutputSettingsId,
+            );
 
             expect(result).toEqual(mockDownloadLinkResult);
+        });
+    });
+
+    describe('onFetchOutputSettings', () => {
+        it('should call endpoint for "default" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { data: [{ default: true, outputSettings: {} }] }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+        });
+
+        it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce({ data: {} }) // output settings request
+                .mockResolvedValueOnce({ data: { outputSettings: {} }, status: 200 }); // user interface request
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                '1234',
+            );
+            await loader.onFetchOutputSettings();
+
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
+            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
+                headers: {
+                    Authorization: `Bearer ${mockAuthToken}`,
+                },
+            });
         });
     });
 });

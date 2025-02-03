@@ -1,69 +1,40 @@
-import { useEffect, useState } from 'react';
-import { ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { Option, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { useCallback, useEffect } from 'react';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { PanelTitle } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper, VariablesPanelTitle } from './VariablesPanel.styles';
-import StudioDropdown from '../shared/StudioDropdown';
+import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
-    onMobileOptionListToggle?: (_: boolean) => void;
-    isDocumentLoaded: boolean;
 }
 
-const isListVariable = (variable: Variable): variable is ListVariable => variable.type === VariableType.list;
-
-function VariablesList({ variables, onMobileOptionListToggle, isDocumentLoaded }: VariablesListProps) {
-    const isMobileSize = useMobileSize();
-    const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
-
-    const updateListVariableValue = async (variableId: string, value: string) => {
-        await window.SDK.variable.setValue(variableId, value);
-    };
+function VariablesList({ variables }: VariablesListProps) {
+    const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
+    const handleCalendarOpen = useCallback(
+        (variable: DateVariable) => {
+            if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
+        },
+        [showDatePicker],
+    );
 
     useEffect(() => {
-        if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [listVariableOpen]);
+        validateUpdatedVariables();
+    }, [variables, validateUpdatedVariables]);
 
     return (
-        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
-            {!isMobileSize && <VariablesPanelTitle>Customize</VariablesPanelTitle>}
+        <VariablesListWrapper>
+            <PanelTitle>Customize</PanelTitle>
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     if (!variable.isVisible) return null;
-
-                    const isListVariabledDisplayed =
-                        !listVariableOpen || (listVariableOpen && variable.id === listVariableOpen.id);
-                    if (isListVariable(variable) && isListVariabledDisplayed) {
-                        const variableItem = listVariableOpen || variable;
-                        const options = variableItem.items.map((item) => ({ label: item, value: item }));
-                        const selectedValue = variableItem.selected
-                            ? { label: variableItem.selected, value: variableItem.selected }
-                            : ('' as unknown as Option);
-                        return (
-                            <ComponentWrapper
-                                key={`variable-component-${variable.id}`}
-                                data-intercom-target={`dropdown-variable-${variable.name}`}
-                            >
-                                <StudioDropdown
-                                    dataId={variable.id}
-                                    label={variable.name}
-                                    selectedValue={selectedValue || ''}
-                                    options={options}
-                                    onChange={(val) => updateListVariableValue(variable.id, val)}
-                                    onMenuOpen={() => setListVariableOpen(variable)}
-                                    onMenuClose={() => setListVariableOpen(null)}
-                                />
-                            </ComponentWrapper>
-                        );
-                    }
-                    return !listVariableOpen ? (
+                    return contentType !== ContentType.DATE_VARIABLE_PICKER ? (
                         <ComponentWrapper key={`variable-component-${variable.id}`}>
                             <VariablesComponents
                                 type={variable.type}
                                 variable={variable}
-                                isDocumentLoaded={isDocumentLoaded}
+                                onCalendarOpen={handleCalendarOpen}
                             />
                         </ComponentWrapper>
                     ) : null;

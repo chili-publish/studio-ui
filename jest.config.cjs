@@ -1,7 +1,10 @@
+const esModules = ['@chili-publish/studio-sdk/lib/src/next'].join('|');
+
 module.exports = {
-    roots: ['<rootDir>/src'],
+    roots: ['<rootDir>'],
     testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
     transform: {
+        [`(${esModules}).+\\.js$`]: 'babel-jest',
         '^.+\\.(ts|tsx)$': 'ts-jest',
     },
     preset: 'ts-jest',
@@ -12,6 +15,8 @@ module.exports = {
             '<rootDir>/__mocks__/styles.mock.js',
         '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styles.mock.js',
         '^react($|/.+)': '<rootDir>/node_modules/react$1',
+        '^@mocks/(.*)$': '<rootDir>/__mocks__/$1',
+        '^@tests/(.*)$': '<rootDir>/src/tests/$1',
     },
     collectCoverageFrom: ['src/**', '!src/styles/specials/winter/snow/LetItSnow.tsx'],
     coverageReporters: ['json-summary', 'text-summary', 'lcov'],
@@ -19,4 +24,5 @@ module.exports = {
         'default',
         ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', outputName: 'junit.xml' }],
     ],
+    transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
 };

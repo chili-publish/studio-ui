@@ -1,35 +1,49 @@
+import { ITheme } from '@chili-publish/grafx-shared-components';
+import { AxiosResponse } from 'axios';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 import App from './App';
+import { DemoDocumentLoader } from './DemoDocumentLoader';
+import { StudioProjectLoader } from './StudioProjectLoader';
+import './index.css';
+import { ConnectorAuthenticationResult } from './types/ConnectorAuthenticationResult';
 import {
-    DownloadLinkResult,
-    OutputSettings,
-    Project,
-    ProjectConfig,
-    StudioConfig,
-    UiOptions,
     defaultBackFn,
     defaultOutputSettings,
     defaultPlatformUiOptions,
     defaultUiOptions,
+    DownloadLinkResult,
+    IStudioUILoaderConfig,
+    OutputSettings,
+    PaginatedResponse,
+    Project,
+    ProjectConfig,
+    StudioConfig,
+    UiOptions,
+    UserInterface,
+    UserInterfaceWithOutputSettings,
 } from './types/types';
-import { DemoDocumentLoader } from './DemoDocumentLoader';
-import { StudioProjectLoader } from './StudioProjectLoader';
-import './index.css';
-
-declare global {
-    interface Window {
-        StudioUI: unknown;
-    }
-}
 
 export default class StudioUI {
+    protected root: Root | undefined;
+
     constructor(selector: string, projectConfig: ProjectConfig) {
-        ReactDOM.createRoot(document.getElementById(selector || 'sui-root') as HTMLElement).render(
+        const container = document.getElementById(selector || 'sui-root');
+        this.root = createRoot(container!);
+        this.root.render(
             <React.StrictMode>
                 <App projectConfig={projectConfig} />
             </React.StrictMode>,
         );
+    }
+
+    destroy() {
+        if (this.root) {
+            // eslint-disable-next-line no-console
+            console.warn('Destroying studio ui component...');
+            this.root.unmount();
+            this.root = undefined;
+        }
     }
 
     /**
@@ -45,7 +59,11 @@ export default class StudioUI {
             projectId: 'demo',
             projectName: 'Demo',
             uiOptions: defaultUiOptions,
+            uiTheme: 'light',
             outputSettings: defaultOutputSettings,
+            graFxStudioEnvironmentApiBaseUrl: '',
+            sandboxMode: false,
+            onSandboxModeToggle: () => null,
             onProjectInfoRequested: demoDocumentLoader.onProjectInfoRequested,
             onProjectDocumentRequested: demoDocumentLoader.onProjectDocumentRequested,
             onProjectLoaded: demoDocumentLoader.onProjectLoaded,
@@ -82,12 +100,17 @@ export default class StudioUI {
      */
     static fullIntegrationConfig(
         selector: string,
-        projectId: string,
+        projectId: string | undefined,
         projectName: string,
+        userInterfaceID: string | undefined,
         uiOptions: UiOptions,
+        uiTheme: ITheme['mode'] | 'system',
         outputSettings: OutputSettings,
-        onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectDocumentRequested: (projectId: string) => Promise<string>,
+        sandboxMode: boolean,
+        featureFlags: Record<string, boolean> | undefined,
+        onSandboxModeToggle: (() => void) | undefined,
+        onProjectInfoRequested: (projectId?: string) => Promise<Project>,
+        onProjectDocumentRequested: (projectId?: string) => Promise<string | null>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
@@ -97,14 +120,30 @@ export default class StudioUI {
         onProjectGetDownloadLink: (
             extension: string,
             selectedLayoutID: string | undefined,
+            outputSettingsId: string | undefined,
         ) => Promise<DownloadLinkResult>,
         editorLink?: string,
+        onFetchOutputSettings?: () => Promise<UserInterfaceWithOutputSettings | null>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>,
+        onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
+        customElement?: HTMLElement | string,
+        onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void,
+        onVariableFocus?: (variableId: string) => void,
+        onVariableBlur?: (variableId: string) => void,
+        graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
             projectId,
             projectName,
+            userInterfaceID,
             uiOptions,
+            uiTheme,
             outputSettings,
+            graFxStudioEnvironmentApiBaseUrl,
+            sandboxMode,
+            featureFlags,
+            onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectLoaded,
@@ -115,6 +154,13 @@ export default class StudioUI {
             onLogInfoRequested,
             onProjectGetDownloadLink,
             overrideEngineUrl: editorLink,
+            onFetchOutputSettings,
+            onFetchUserInterfaces,
+            onConnectorAuthenticationRequested,
+            customElement,
+            onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
         });
     }
 
@@ -131,10 +177,13 @@ export default class StudioUI {
      * @param config.outputSettings - The flags to manage the available types of outputs.
      * @param config.refreshTokenAction - Callback to refresh the authentication token.
      * @param config.projectName - The name of the project to load.
-     * @param config.onBack - Callback when the user clicks the back button.
+     * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
+     * @param config.onConnectorAuthenticationRequested - Callback to authenticate in custom connectors
      * @returns
      */
-    static studioLoaderConfig(config: StudioConfig) {
+    static studioLoaderConfig(
+        config: Omit<StudioConfig, 'onProjectInfoRequested' | 'onProjectDocumentRequested' | 'onProjectSave'>,
+    ) {
         const {
             selector,
             projectDownloadUrl,
@@ -142,19 +191,31 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
-            uiOptions,
-            outputSettings,
             projectName,
-            refreshTokenAction,
             editorLink,
+            uiOptions,
+            uiTheme,
+            outputSettings,
+            userInterfaceID,
+            sandboxMode,
+            featureFlags,
+            onSandboxModeToggle,
+            refreshTokenAction,
+            onConnectorAuthenticationRequested,
+            customElement,
+            onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode || false,
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
+            userInterfaceID,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -163,8 +224,13 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
-            uiOptions || defaultPlatformUiOptions,
-            outputSettings || defaultOutputSettings,
+            userInterfaceID,
+            uiOptions ?? defaultPlatformUiOptions,
+            uiTheme ?? 'light',
+            outputSettings ?? defaultOutputSettings,
+            sandboxMode || false,
+            featureFlags,
+            onSandboxModeToggle,
             projectLoader.onProjectInfoRequested,
             projectLoader.onProjectDocumentRequested,
             projectLoader.onProjectSave,
@@ -175,6 +241,14 @@ export default class StudioUI {
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
             editorLink,
+            projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
+            onConnectorAuthenticationRequested,
+            customElement,
+            onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 
@@ -204,12 +278,17 @@ export default class StudioUI {
             projectName,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode,
+            featureFlags,
+            onSandboxModeToggle,
             refreshTokenAction,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectSave,
             uiOptions,
+            uiTheme,
             outputSettings,
+            onConnectorAuthenticationRequested,
         } = config;
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -217,6 +296,7 @@ export default class StudioUI {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
+            sandboxMode || false,
             refreshTokenAction,
         );
 
@@ -224,8 +304,13 @@ export default class StudioUI {
             selector,
             projectId,
             projectName,
+            undefined,
             uiOptions || defaultUiOptions,
+            uiTheme || 'light',
             outputSettings || defaultOutputSettings,
+            sandboxMode || false,
+            featureFlags,
+            onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectSave,
@@ -235,9 +320,103 @@ export default class StudioUI {
             onBack,
             projectLoader.onLogInfoRequested,
             projectLoader.onProjectGetDownloadLink,
+            undefined,
+            undefined,
+            projectLoader.onFetchUserInterfaces,
+            onConnectorAuthenticationRequested,
+            graFxStudioEnvironmentApiBaseUrl,
+        );
+    }
+
+    /**
+     * Creates a new instance of StudioUI with the default project loader and authentication based on the fullIntegration.
+     * if an optional callback is provided f.e onProjectInfoRequested it will be used instead of the default one
+     * @param selector - The selector for the root element of the UI.
+     * @param projectDownloadUrl - Environment API url to download the project.
+     * @param projectUploadUrl - Environment API url to upload the project.
+     * @param projectId - The id of the project to load.
+     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
+     * @param authToken - Environment API authentication token.
+     * @param refreshTokenAction - Callback to refresh the authentication token.
+     * @param projectName - The name of the project to load.
+     * @param onBack - Callback when the user clicks the back button.
+     * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
+     * @returns
+     */
+
+    static studioUILoaderConfig(config: IStudioUILoaderConfig) {
+        const {
+            selector,
+            projectDownloadUrl,
+            projectUploadUrl,
+            projectId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            projectName,
+            editorLink,
+            uiOptions,
+            uiTheme,
+            outputSettings,
+            userInterfaceID,
+            sandboxMode,
+            featureFlags,
+            onSandboxModeToggle,
+            refreshTokenAction,
+            onProjectInfoRequested,
+            onProjectDocumentRequested,
+            onProjectSave,
+            onProjectLoaded,
+            onAuthenticationRequested,
+            onAuthenticationExpired,
+            onLogInfoRequested,
+            onProjectGetDownloadLink,
+            onConnectorAuthenticationRequested,
+            customElement,
+            onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
+        } = config;
+
+        const projectLoader = new StudioProjectLoader(
+            projectId,
+            graFxStudioEnvironmentApiBaseUrl,
+            authToken,
+            sandboxMode || false,
+            refreshTokenAction,
+            projectDownloadUrl,
+            projectUploadUrl,
+            userInterfaceID,
+        );
+        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
+        return StudioUI.fullIntegrationConfig(
+            selector,
+            projectId,
+            projectName,
+            userInterfaceID,
+            uiOptions ?? defaultPlatformUiOptions,
+            uiTheme || 'light',
+            outputSettings ?? defaultOutputSettings,
+            sandboxMode || false,
+            featureFlags,
+            onSandboxModeToggle,
+            onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
+            onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
+            onProjectSave ?? projectLoader.onProjectSave,
+            onProjectLoaded ?? projectLoader.onProjectLoaded,
+            onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
+            onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
+            onBack,
+            onLogInfoRequested ?? projectLoader.onLogInfoRequested,
+            onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+            editorLink,
+            projectLoader.onFetchOutputSettings,
+            projectLoader.onFetchUserInterfaces,
+            onConnectorAuthenticationRequested,
+            customElement,
+            onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
+            graFxStudioEnvironmentApiBaseUrl,
         );
     }
 }
-
-// Make this class accessible on window
-window.StudioUI = StudioUI;

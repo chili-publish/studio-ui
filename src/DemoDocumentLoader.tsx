@@ -4,9 +4,9 @@ import { DownloadLinkResult, Project } from './types/types';
 export class DemoDocumentLoader {
     editorLink: string;
 
-    onProjectInfoRequested: (projectId: string) => Promise<Project>;
+    onProjectInfoRequested: () => Promise<Project>;
 
-    onProjectDocumentRequested: (projectId: string) => Promise<string>;
+    onProjectDocumentRequested: () => Promise<string | null>;
 
     onProjectLoaded: (project: Project) => void;
 
@@ -18,7 +18,11 @@ export class DemoDocumentLoader {
 
     onLogInfoRequested: () => unknown;
 
-    onProjectGetDownloadLink: (extension: string, selectedLayoutID: string | undefined) => Promise<DownloadLinkResult>;
+    onProjectGetDownloadLink: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
 
     demoId: string;
 

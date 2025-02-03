@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.4.5",
+    "version": "1.19.0-22",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -9,7 +9,9 @@
     "license": "MIT",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "tsc && npm run build:iife && npm run build:module",
+        "build:iife": "OUTPUT_FORMAT=iife vite build",
+        "build:module": "OUTPUT_FORMAT=module vite build",
         "preview": "vite preview",
         "testw": "jest --watch --silent",
         "test": "jest",
@@ -24,17 +26,28 @@
         "validate-versions": "node validate_versions.cjs"
     },
     "dependencies": {
-        "@chili-publish/studio-sdk": "1.4.4",
-        "@chili-publish/grafx-shared-components": "^0.46.3",
+        "@babel/preset-env": "^7.25.3",
+        "@chili-publish/grafx-shared-components": "^0.92.0",
+        "@chili-publish/studio-sdk": "1.18.1-rc.8",
+        "@fortawesome/fontawesome-svg-core": "^6.7.1",
+        "@fortawesome/pro-light-svg-icons": "^6.7.1",
+        "@fortawesome/pro-regular-svg-icons": "^6.7.1",
+        "@fortawesome/pro-solid-svg-icons": "^6.7.1",
+        "@fortawesome/react-fontawesome": "^0.2.2",
         "axios": "^1.6.0",
+        "date-fns": "^4.1.0",
         "react": "^18.2.0",
+        "react-datepicker": "^7.5.0",
         "react-dom": "^18.2.0",
-        "styled-components": "^5.3.11"
+        "react-select": "^5.8.3",
+        "styled-components": "^5.3.11",
+        "use-async-memo": "^1.2.5"
     },
     "engines": {
-        "node": ">=18.0.0 <19.0.0"
+        "node": ">=20.0.0 <21.0.0"
     },
     "devDependencies": {
+        "@auth0/auth0-spa-js": "^2.1.3",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^14.0.0",
         "@testing-library/user-event": "^14.4.3",
@@ -50,7 +63,8 @@
         "eslint-config-airbnb-typescript": "^17.0.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-config-standard-with-typescript": "^35.0.0",
-        "eslint-plugin-import": "^2.27.5",
+        "eslint-import-resolver-typescript": "^3.6.1",
+        "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-jsx-a11y": "^6.7.1",
         "eslint-plugin-n": "^16.0.0",
         "eslint-plugin-prettier": "^4.2.1",
@@ -64,6 +78,8 @@
         "jest-mock-extended": "^3.0.4",
         "prettier": "^2.8.8",
         "pretty-quick": "^3.1.3",
+        "react-select-event": "^5.5.1",
+        "resize-observer-polyfill": "^1.5.1",
         "ts-jest": "^29.1.0",
         "typescript": "*",
         "vite": "^4.3.9",

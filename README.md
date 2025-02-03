@@ -1,5 +1,7 @@
 # Studio UI
 
+![Coverage](https://img.shields.io/badge/coverage-75.91%25-red.svg)
+
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
 
@@ -38,8 +40,17 @@ If you need help generating a token or would like code samples, please see our [
         <!-- div where studio ui will be constructed in -->
         <div id="studio-ui-container"></div>
 
-        <!-- script to inject latest studio ui -->
+        <!-- 1. ES5 approach script to inject latest studio ui -->
         <script src="https://studio-cdn.chiligrafx.com/studio-ui/latest/bundle.js"></script>
+
+        <!-- OR -->
+
+        <!-- 2. ES Modules approach (recommended one) script to inject latest studio ui -->
+        <script type="module">
+            import('https://studio-cdn.chiligrafx.com/studio-ui/latest/es-module/bundle.js').then((module) => {
+                window.StudioUI = module.default;
+            });
+        </script>
 
         <!-- custom logic -->
         <script>
@@ -55,7 +66,7 @@ If you need help generating a token or would like code samples, please see our [
             /* Name of the project, but can be whatever you want, is only a static indication that is displayed in the UI. */
             const projectName = 'End User view';
             /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. */
-            const refreshTokenAction = () => Promise.resolve('Nothing');
+            const refreshTokenAction = () => Promise.resolve(token);
 
             window.StudioUI.studioLoaderConfig({
                 // Div id to inject studio-ui in
@@ -74,6 +85,7 @@ If you need help generating a token or would like code samples, please see our [
                 refreshTokenAction: refreshTokenAction,
                 /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
                 projectName: projectName,
+                userInterfaceID: userInterfaceID,
             });
         </script>
     </body>
@@ -86,7 +98,7 @@ for a more advanced example, and extra information about building an integration
 
 ### Tools setup
 
--   [Node v18](https://nodejs.org/en) LTS
+-   [Node LTS version](https://nodejs.org/en) is installed
     > node -v # to check existing node version
 -   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed (yarn `major version 1` though)
     > yarn -v # to check existing yarn version
@@ -125,7 +137,19 @@ yarn dev
 
 Open [http://localhost:3002](http://localhost:3002) with your browser to see the result.
 
-> To see actual template you have to modify `index.html` file with corresponding configuration
+> To see actual template you have create an `.env` file with corresponding keys
+
+```bash
+# Project configuration
+VITE_ENVIRONMENT_NAME=environmentName
+VITE_PROJECT_ID=templateId
+
+# Authentication configuraiton
+VITE_AUTH0_DOMAIN=https://login.chiligrafx-dev.com
+VITE_AUTH0_CLIENT_ID=clientId
+VITE_AUTH_AUTH0_SCOPE=scope
+VITE_AUTH_AUTH0_AUDIENCE=audience
+```
 
 ## Scripts
 

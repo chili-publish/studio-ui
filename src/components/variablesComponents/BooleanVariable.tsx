@@ -1,12 +1,15 @@
-import { Colors, Switch, SwitchSize } from '@chili-publish/grafx-shared-components';
+import { InputLabel, Switch } from '@chili-publish/grafx-shared-components';
+import type { BooleanVariable } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
-import { BooleanVariable } from '@chili-publish/studio-sdk';
-import { IBooleanVariable } from './VariablesComponents.types';
-import { BooleanVariableContainer } from './VariablesComponents.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { BooleanVariableContainer, HelpTextWrapper } from './VariablesComponents.styles';
+import { IBooleanVariable } from './VariablesComponents.types';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 function BooleanVariable(props: IBooleanVariable) {
     const { variable, handleValueChange } = props;
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+
     const [toggled, setToggled] = useState((variable as BooleanVariable).value);
 
     useEffect(() => {
@@ -14,25 +17,28 @@ function BooleanVariable(props: IBooleanVariable) {
     }, [variable]);
 
     return (
-        <BooleanVariableContainer data-intercom-target={`boolean-variable-${variable.name}`}>
-            <Switch
-                dataId={getDataIdForSUI(`switch-${variable.id}`)}
-                dataTestId={getDataTestIdForSUI(`switch-${variable.id}`)}
-                isChecked={toggled}
-                id={variable.id}
-                label={{
-                    key: 'visible',
-                    value: variable.name,
-                }}
-                onChange={(val: boolean) => {
-                    handleValueChange(val);
-                    setToggled(val);
-                }}
-                labelColor={Colors.SECONDARY_FONT}
-                size={SwitchSize.LARGE}
-                noLabelHeight
-            />
-        </BooleanVariableContainer>
+        <HelpTextWrapper>
+            <BooleanVariableContainer data-intercom-target={`boolean-variable-${variable.name}`}>
+                <Switch
+                    dataId={getDataIdForSUI(`switch-${variable.id}`)}
+                    dataTestId={getDataTestIdForSUI(`switch-${variable.id}`)}
+                    isChecked={toggled}
+                    id={`ui-${variable.id}`}
+                    label={{
+                        key: 'visible',
+                        value: variable.label ?? variable.name,
+                    }}
+                    onChange={(val: boolean) => {
+                        handleValueChange(val);
+                        setToggled(val);
+                        onVariableFocus?.(variable.id);
+                        onVariableBlur?.(variable.id);
+                    }}
+                    noLabelHeight
+                />
+            </BooleanVariableContainer>
+            {variable.helpText ? <InputLabel labelFor={variable.id} label={variable.helpText} /> : null}
+        </HelpTextWrapper>
     );
 }
 

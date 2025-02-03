@@ -1,8 +1,16 @@
-import { Colors, FontSizes } from '@chili-publish/grafx-shared-components';
+import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 
+const FILTER_HEIGHT = '2.5rem';
+const FILTER_MARGIN_BOTTOM = '1rem';
+
+const NAVIGATION_HEIGHT = '2.5rem';
+const SCROLLABLE_PANEL_MARGIN_TOP = '1rem';
+const NAVIGATION_MARGIN_BOTTOM = '0.5rem';
+
 export const ResourcesContainer = styled.div`
+    width: 100%;
     display: grid;
     grid-template-columns: 7.5rem 7.5rem;
     gap: 1.3rem;
@@ -31,13 +39,10 @@ export const NavigationWrapper = styled.div`
     position: relative;
     margin-left: -0.75rem;
 
-    & svg {
+    svg {
         box-sizing: content-box !important;
         padding: 0.5rem 0.5625rem !important;
-    }
-
-    & svg path {
-        color: ${Colors.PRIMARY_FONT};
+        ${({ theme }) => `color: ${theme.themeColors.primaryTextColor} !important`};
     }
 
     & svg.close-icon,
@@ -67,7 +72,6 @@ export const NavigationTitle = styled.div`
     overflow: hidden;
     font-weight: 500;
     text-overflow: ellipsis;
-    color: ${Colors.PRIMARY_FONT};
     font-size: ${FontSizes.header};
 `;
 
@@ -82,9 +86,55 @@ export const LoadPageContainer = styled.div`
 
 export const BreadCrumbsWrapper = styled.div`
     width: 15.625rem;
-    height: 2.5rem;
+    height: ${NAVIGATION_HEIGHT};
+    margin-bottom: ${NAVIGATION_MARGIN_BOTTOM};
     overflow: visible;
     white-space: nowrap;
     display: flex;
-    margin-bottom: 1rem;
+    & .grafx-select__control {
+        &:hover {
+            border: 1px solid transparent !important;
+        }
+        &--is-focused {
+            border: 1px solid transparent !important;
+        }
+    }
+`;
+
+export const ScrollbarContainer = styled.div.attrs(
+    (props: { filteringEnabled?: boolean; navigationBreadcrumbsEnabled?: boolean; hasSearchQuery?: boolean }) => {
+        const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_BOTTOM})`;
+        const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
+
+        const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
+            props.navigationBreadcrumbsEnabled ? navigationBarTotalHeight : '0px'
+        } - ${SCROLLABLE_PANEL_MARGIN_TOP} - 0.5rem)`;
+
+        return { ...props, height };
+    },
+)`
+    width: 100%;
+    height: ${(props) => props.height};
+    margin-top: ${SCROLLABLE_PANEL_MARGIN_TOP};
+    @media (hover: none), (hover: on-demand) {
+        > div {
+            overflow-y: auto;
+        }
+    }
+`;
+export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobile?: boolean }>`
+    width: ${(props) => (props.isMobile ? '100%' : '16.25rem')};
+    height: ${FILTER_HEIGHT};
+    ${(props) =>
+        props.hasSearchQuery &&
+        `
+        margin-bottom: ${FILTER_MARGIN_BOTTOM};
+    `};
+`;
+
+export const EmptySearchResultContainer = styled.div`
+    padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
+    color: ${({ theme }) => theme.themeColors.secondaryTextColor};
+    font-size: 0.875rem;
+    text-align: center;
 `;

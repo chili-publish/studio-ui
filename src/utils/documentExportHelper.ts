@@ -1,6 +1,8 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import axios from 'axios';
+import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
+import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -17,25 +19,19 @@ export const getDownloadLink = async (
     baseUrl: string,
     token: string,
     layoutId: Id,
-    projectId: string,
+    projectId: Id | undefined,
+    outputSettingsId: string | undefined,
+    isSandboxMode: boolean,
 ): Promise<DownloadLinkResult> => {
     try {
-        const documentResponse = await window.SDK.document.getCurrentState();
-        let generateExportUrl = `${baseUrl}/output/`;
+        const documentResponse = await window.StudioUISDK.document.getCurrentState();
+        const generateExportUrl = `${baseUrl}/output/${format}`;
+        let engineVersion: string | null = null;
 
-        // Use different URL when format is one of array ['png', 'jpg'].
-        if (['png', 'jpg'].includes(format)) {
-            generateExportUrl += `image?layoutToExport=${layoutId}&outputType=${format}&pixelRatio=1&projectId=${projectId}`;
-        } else {
-            // Here we also pass additional query param `fps` with a default value of `30`.
-            generateExportUrl += `animation?layoutToExport=${layoutId}&outputType=${format}&fps=30&pixelRatio=1&projectId=${projectId}`;
-        }
-
-        // TODO: we tend to use this code only on DEV, we need a better way to verify it
-        if (window.location.hostname !== 'chiligrafx.com') {
+        if (!window.location.hostname.endsWith('chiligrafx.com')) {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-            let engineVersion = urlParams.get('engine');
+            engineVersion = urlParams.get('engine');
             const engineCommitSha = urlParams.get('engineCommitSha');
             if (engineVersion) {
                 if (/^\d+$/.test(engineVersion)) {
@@ -44,22 +40,27 @@ export const getDownloadLink = async (
             } else {
                 engineVersion = (documentResponse.parsedData as unknown as { engineVersion: string })?.engineVersion;
             }
-            generateExportUrl += `&engineVersion=${engineVersion}`;
-            if (engineCommitSha) generateExportUrl += `-${engineCommitSha}`;
+            if (engineCommitSha) engineVersion += `-${engineCommitSha}`;
         }
-        const config: HttpHeaders = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: (documentResponse.data as string) ?? null,
+
+        const dataConnectorConfig = await getDataSourceConfig(baseUrl, token, outputSettingsId);
+
+        const body = documentResponse.data as string;
+        const requestBody = {
+            outputSettingsId,
+            layoutsToExport: [layoutId],
+            engineVersion,
+            documentContent: JSON.parse(body),
+            dataConnectorConfig,
+            ...(isSandboxMode ? { templateId: projectId } : { projectId }),
         };
 
-        if (token) {
-            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-        }
-
-        const httpResponse = await axios.post(generateExportUrl, undefined, config);
+        const httpResponse = await axios.post(generateExportUrl, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
         const response: GenerateAnimationResponse | ApiError = httpResponse.data as
             | GenerateAnimationResponse
@@ -125,23 +126,53 @@ const startPollingOnEndpoint = async (
             },
             body: null,
         };
-        if (token) {
-            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-        }
-        const httpResponse = await fetch(endpoint, config);
+        const httpResponse = await axios.get(endpoint, config);
 
-        if (httpResponse?.status === 202) {
+        if (httpResponse.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
             return await startPollingOnEndpoint(endpoint, token);
         }
-        if (httpResponse?.status === 200) {
-            return (await httpResponse.json()) as GenerateAnimationTaskPollingResponse;
+        if (httpResponse.status === 200) {
+            return httpResponse.data as GenerateAnimationTaskPollingResponse;
         }
         return null;
     } catch (err) {
         return null;
     }
+};
+
+const getDataSourceConfig = async (
+    baseUrl: string,
+    token: string,
+    outputSettingsId: string | undefined,
+): Promise<DataConnectorConfiguration | undefined> => {
+    if (!outputSettingsId) {
+        return undefined;
+    }
+    const { parsedData: dataSource } = await window.StudioUISDK.dataSource.getDataSource();
+    if (!dataSource) {
+        return undefined;
+    }
+
+    const { data: setting } = await axios.get<{ dataSourceEnabled: boolean }>(
+        `${baseUrl}/output/settings/${outputSettingsId}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+    if (!setting.dataSourceEnabled) {
+        return undefined;
+    }
+    return {
+        dataConnectorId: getEnvId(dataSource),
+        dataConnectorParameters: {
+            context: await getConnectorConfigurationOptions(dataSource.id),
+        },
+    };
 };
 
 type GenerateAnimationResponse = {
@@ -169,4 +200,13 @@ type ApiError = {
     exceptionDetails?: string;
 };
 
-export default { getDownloadLink };
+/**
+ * This method will check if a string has a trailing slash
+ * @param incomingUrl string to check
+ * @returns the string with a trailing slash
+ */
+export const addTrailingSlash = (incomingUrl: string): string => {
+    return incomingUrl.endsWith('/') ? incomingUrl : `${incomingUrl}/`;
+};
+
+export default { getDownloadLink, addTrailingSlash };
