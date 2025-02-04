@@ -9,7 +9,7 @@ import MobileListVariable from '../variablesComponents/listVariable/MobileListVa
 import { isListVariable } from '../variablesComponents/Variable';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
-import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
+import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -41,7 +41,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
     );
 
     return (
-        <VariablesListWrapper optionsListOpen={!!listVariableOpen}>
+        <ListWrapper optionsListOpen={!!listVariableOpen}>
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     if (!variable.isVisible) return null;
@@ -104,7 +104,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                         </ComponentWrapper>
                     ) : null;
                 })}
-        </VariablesListWrapper>
+        </ListWrapper>
     );
 }
 

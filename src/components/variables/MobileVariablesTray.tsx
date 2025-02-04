@@ -1,6 +1,6 @@
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
-import { Variable } from '@chili-publish/studio-sdk';
-import { useCallback, useState } from 'react';
+import { Layout, LayoutListItemType, Variable } from '@chili-publish/studio-sdk';
+import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
@@ -15,10 +15,14 @@ import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './Mobil
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
-import { EditButtonWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
 
 interface VariablesPanelProps {
     variables: Variable[];
+    selectedLayout: Layout | null;
+    layouts: LayoutListItemType[];
+
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
 }
@@ -31,13 +35,14 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, isTimelineDisplayed, isPagesPanelDisplayed } = props;
+    const { variables, selectedLayout, layouts, isTimelineDisplayed, isPagesPanelDisplayed } = props;
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
 
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
-    const [mobileOptionsListOpen, setMobileOptionsListOpen] = useState(false);
+    const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
+    const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
 
     const {
         currentInputRow,
@@ -66,19 +71,23 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const closeTray = () => setIsTrayVisible(false);
 
-    const isVariablesListOpen = contentType === ContentType.VARIABLES_LIST;
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
     const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
+    const isDefaultPanelView = !(isDateVariablePanelOpen || isImageBrowsePanelOpen || isDataSourcePanelOpen);
 
-    const isDataSourceInputShown =
-        hasDataConnector &&
-        contentType !== ContentType.DATA_SOURCE_TABLE &&
-        contentType !== ContentType.DATE_VARIABLE_PICKER &&
-        contentType !== ContentType.IMAGE_PANEL &&
-        !mobileOptionsListOpen;
+    const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
 
-    const showImagePanel = !(isVariablesListOpen || isDateVariablePanelOpen);
+    const isDataSourceDisplayed = featureFlags?.STUDIO_DATA_SOURCE && hasDataConnector && !mobileOptionListOpen;
+
+    const hasAvailableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser).length >= 2, [layouts]);
+    const isAvailableLayoutsDisplayed =
+        layoutsMobileOptionsListOpen || (hasAvailableLayouts && !variablesMobileOptionsListOpen);
+    const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
+
+    const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
+
+    const showImagePanel = !(isDefaultPanelView || isDateVariablePanelOpen);
 
     const onTrayHidden = useCallback(() => {
         showVariablesPanel();
@@ -109,12 +118,19 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 isOpen={isTrayVisible}
                 anchorId={APP_WRAPPER_ID}
                 close={closeTray}
-                title={<MobileTrayHeader hasDataConnector={hasDataConnector} mobileListOpen={mobileOptionsListOpen} />}
+                title={
+                    <MobileTrayHeader
+                        isDefaultPanelView={isDefaultPanelView}
+                        isDataSourceDisplayed={isDataSourceDisplayed || false}
+                        isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
+                        mobileListOpen={variablesMobileOptionsListOpen}
+                    />
+                }
                 onTrayHidden={onTrayHidden}
-                hideCloseButton={mobileOptionsListOpen}
+                hideCloseButton={variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen}
                 styles={css`
                     height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
-                    overflow: ${isVariablesListOpen ? 'auto' : 'hidden'};
+                    overflow: ${isDefaultPanelView ? 'auto' : 'hidden'};
                     ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
                     &::-webkit-scrollbar {
@@ -123,32 +139,50 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
-                    {isDataSourceInputShown && featureFlags?.STUDIO_DATA_SOURCE ? (
-                        <DataSourceInput
-                            currentRow={currentInputRow}
-                            currentRowIndex={currentRowIndex}
-                            dataIsLoading={isLoading}
-                            isEmptyState={!!error || dataRows.length === 0}
-                            isPrevDisabled={isPrevDisabled}
-                            isNextDisabled={isNextDisabled}
-                            onInputClick={onInputClick}
-                            onPrevClick={getPreviousRow}
-                            onNextClick={getNextRow}
-                        />
-                    ) : null}
-                    {(isVariablesListOpen || isDateVariablePanelOpen) && (
+                    {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
-                            {hasDataConnector && isVariablesListOpen && !mobileOptionsListOpen ? (
-                                <TrayPanelTitle>Customize</TrayPanelTitle>
+                            {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
+                                <DataSourceInput
+                                    currentRow={currentInputRow}
+                                    currentRowIndex={currentRowIndex}
+                                    dataIsLoading={isLoading}
+                                    isEmptyState={!!error || dataRows.length === 0}
+                                    isPrevDisabled={isPrevDisabled}
+                                    isNextDisabled={isNextDisabled}
+                                    onInputClick={onInputClick}
+                                    onPrevClick={getPreviousRow}
+                                    onNextClick={getNextRow}
+                                />
                             ) : null}
-                            <MobileVariablesList
-                                variables={variables}
-                                onMobileOptionListToggle={setMobileOptionsListOpen}
-                            />
+                            {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
+                                <>
+                                    {isAvailableLayoutSubtitleDisplayed && <TrayPanelTitle>Layout</TrayPanelTitle>}
+                                    <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
+                                        <AvailableLayouts
+                                            selectedLayout={selectedLayout}
+                                            layouts={layouts}
+                                            mobileDevice
+                                            onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
+                                        />
+                                    </ListWrapper>
+                                </>
+                            )}
+
+                            {!layoutsMobileOptionsListOpen && (
+                                <>
+                                    {isCustomizeSubtitleDisplayed && <TrayPanelTitle>Customize</TrayPanelTitle>}
+                                    <MobileVariablesList
+                                        variables={variables}
+                                        onMobileOptionListToggle={setVariablesMobileOptionsListOpen}
+                                    />
+                                </>
+                            )}
                         </>
                     )}
+
                     {isImageBrowsePanelOpen && <ImagePanel />}
                 </VariablesContainer>
+
                 {isDataSourcePanelOpen && (
                     <DataSourceTableWrapper>
                         <DataSourceTable

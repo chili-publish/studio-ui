@@ -5,7 +5,9 @@ import StudioSDK, {
     ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
+    Layout,
     LayoutIntent,
+    LayoutListItemType,
     Page,
     Variable,
     WellKnownConfigurationKeys,
@@ -66,6 +68,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
+
+    const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
     const [multiLayoutMode, setMultiLayoutMode] = useState(false);
 
@@ -209,8 +214,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 }
             },
             onSelectedLayoutIdChanged: async () => {
-                const layoutIntentData =
-                    (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value ?? null;
+                const layout = (await window.StudioUISDK.layout.getSelected()).parsedData;
+                const layoutIntentData = layout?.intent.value ?? null;
+
+                setSelectedLayout(layout);
                 setLayoutIntent(layoutIntentData);
 
                 startTransition(() => {
@@ -245,6 +252,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
+            },
+            onLayoutsChanged: (layoutList) => {
+                setLayouts(layoutList);
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
@@ -391,10 +401,18 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     sandboxMode={projectConfig.sandboxMode}
                                     fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
                                 >
-                                    {!isMobileSize && <LeftPanel variables={variables} />}
+                                    {!isMobileSize && (
+                                        <LeftPanel
+                                            variables={variables}
+                                            selectedLayout={currentSelectedLayout}
+                                            layouts={layouts}
+                                        />
+                                    )}
                                     <CanvasContainer>
                                         {isMobileSize && (
                                             <MobileVariablesTray
+                                                selectedLayout={currentSelectedLayout}
+                                                layouts={layouts}
                                                 variables={variables}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
