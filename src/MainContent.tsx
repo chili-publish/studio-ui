@@ -37,6 +37,7 @@ import { SuiCanvas } from './MainContent.styles';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 
 declare global {
     interface Window {
@@ -117,7 +118,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             })
             .catch((err: Error) => {
                 // eslint-disable-next-line no-console
-                console.error(`[${MainContent.name}] Error`, err);
+                console.log(`[${MainContent.name}]`, err);
                 return err;
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
@@ -281,7 +282,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             })
             .catch((err: Error) => {
                 // eslint-disable-next-line no-console
-                console.error(`[${MainContent.name}] Error`, err);
+                console.log(`[${MainContent.name}]`, err);
                 return err;
             });
 
@@ -371,20 +372,27 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container>
-                    <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
+                    <UiConfigContextProvider projectConfig={projectConfig}>
                         <VariablePanelContextProvider
                             connectors={{ mediaConnectors, fontsConnectors }}
                             variables={variables}
                         >
                             <div id={APP_WRAPPER_ID} className="app">
-                                {projectConfig.sandboxMode ? (
-                                    <UiThemeProvider theme="studio" mode="dark">
-                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                        <StudioNavbar {...navbarProps} />
-                                    </UiThemeProvider>
-                                ) : (
-                                    // eslint-disable-next-line react/jsx-props-no-spreading
-                                    <Navbar {...navbarProps} />
+                                {projectConfig.uiOptions.widgets?.navBar?.visible === false ? null : (
+                                    <OutputSettingsContextProvider
+                                        projectConfig={projectConfig}
+                                        layoutIntent={layoutIntent}
+                                    >
+                                        {projectConfig.sandboxMode ? (
+                                            <UiThemeProvider theme="studio" mode="dark">
+                                                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                                <StudioNavbar {...navbarProps} />
+                                            </UiThemeProvider>
+                                        ) : (
+                                            // eslint-disable-next-line react/jsx-props-no-spreading
+                                            <Navbar {...navbarProps} />
+                                        )}
+                                    </OutputSettingsContextProvider>
                                 )}
 
                                 <MainContentContainer

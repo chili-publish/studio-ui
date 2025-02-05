@@ -1,16 +1,12 @@
-import { OutputSettings, UiOptions, UserInterface, UserInterfaceOutputSettings } from '../types/types';
+import { ProjectConfig, UiOptions } from '../types/types';
 
 export interface IUiConfigContext {
+    projectConfig: ProjectConfig;
+
     uiOptions: UiOptions;
-    outputSettings: OutputSettings;
-    userInterfaceOutputSettings: UserInterfaceOutputSettings[] | null;
     isDownloadBtnVisible: boolean;
     isBackBtnVisible: boolean;
     graFxStudioEnvironmentApiBaseUrl: string;
-
-    userInterfaces: UserInterface[];
-    selectedUserInterfaceId: string | null;
-    onUserInterfaceChange: (_: string) => void;
     onVariableFocus?: (id: string) => void;
     onVariableBlur?: (id: string) => void;
 }

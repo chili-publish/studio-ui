@@ -2,6 +2,7 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { renderHook } from '@testing-library/react';
 import useDownload from '../../components/navbar/downloadPanel/useDownload';
 import * as UiConfigContext from '../../contexts/UiConfigContext';
+import * as OutputSettingsContext from '../../components/navbar/OutputSettingsContext';
 
 describe('useDownload', () => {
     test('default download options show all download options', () => {
@@ -13,9 +14,9 @@ describe('useDownload', () => {
     });
 
     test('only false download options, show the onew that are not false', () => {
-        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+        jest.spyOn(OutputSettingsContext, 'useOutputSettingsContext').mockImplementation(() => {
             return {
-                ...UiConfigContext.UiConfigContextDefaultValues,
+                ...OutputSettingsContext.OutputSettingsContextDefaultValues,
                 outputSettings: { mp4: false, gif: false, jpg: false, pdf: false },
             };
         });
@@ -25,9 +26,9 @@ describe('useDownload', () => {
     });
 
     test('only true download options, show only that option', () => {
-        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+        jest.spyOn(OutputSettingsContext, 'useOutputSettingsContext').mockImplementation(() => {
             return {
-                ...UiConfigContext.UiConfigContextDefaultValues,
+                ...OutputSettingsContext.OutputSettingsContextDefaultValues,
                 outputSettings: { mp4: true, gif: true },
             };
         });
@@ -37,9 +38,9 @@ describe('useDownload', () => {
     });
 
     test('mix true and false listens to those, not provided means same as falls', () => {
-        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+        jest.spyOn(OutputSettingsContext, 'useOutputSettingsContext').mockImplementation(() => {
             return {
-                ...UiConfigContext.UiConfigContextDefaultValues,
+                ...OutputSettingsContext.OutputSettingsContextDefaultValues,
                 outputSettings: { mp4: true, gif: false },
             };
         });
@@ -49,9 +50,9 @@ describe('useDownload', () => {
     });
 
     test('Show output settings that are coming from selected user interface', () => {
-        jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
+        jest.spyOn(OutputSettingsContext, 'useOutputSettingsContext').mockImplementation(() => {
             return {
-                ...UiConfigContext.UiConfigContextDefaultValues,
+                ...OutputSettingsContext.OutputSettingsContextDefaultValues,
                 userInterfaceOutputSettings: [
                     {
                         name: 'MP4',
