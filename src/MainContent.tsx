@@ -298,7 +298,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         // eslint-disable-next-line no-console
         console.table({
             'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
-            'Studio UI version': packageInfo.version,
+            'Studio UI version': packageInfo.version.split('-')[0],
         });
         // eslint-disable-next-line consistent-return
         return () => {
