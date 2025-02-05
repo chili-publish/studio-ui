@@ -67,7 +67,7 @@ function StudioMobileDropdown({
             ))}
         </>
     ) : (
-        <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
+        <DropdownContainer data-id={dataId} data-testid={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
             <MobileDropdownOptionContainer hasError={!!validationError}>
                 <MobileDropdownValue>

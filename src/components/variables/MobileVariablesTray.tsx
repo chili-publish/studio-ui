@@ -36,6 +36,7 @@ const imagePanelHeight = `
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const { variables, selectedLayout, layouts, isTimelineDisplayed, isPagesPanelDisplayed } = props;
+    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -80,7 +81,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const isDataSourceDisplayed = featureFlags?.STUDIO_DATA_SOURCE && hasDataConnector && !mobileOptionListOpen;
 
-    const hasAvailableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser).length >= 2, [layouts]);
+    const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
     const isAvailableLayoutsDisplayed =
         layoutsMobileOptionsListOpen || (hasAvailableLayouts && !variablesMobileOptionsListOpen);
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
@@ -115,6 +116,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
             </EditButtonWrapper>
             {isDataSourcePanelOpen ? <TrayStyle /> : null}
             <Tray
+                dataTestId={getDataTestIdForSUI('tray-panel')}
                 isOpen={isTrayVisible}
                 anchorId={APP_WRAPPER_ID}
                 close={closeTray}
@@ -160,7 +162,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                     <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
                                         <AvailableLayouts
                                             selectedLayout={selectedLayout}
-                                            layouts={layouts}
+                                            availableForUserLayouts={availableLayouts}
                                             mobileDevice
                                             onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
                                         />

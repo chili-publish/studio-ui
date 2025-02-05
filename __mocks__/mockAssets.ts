@@ -1,4 +1,4 @@
-import { AssetWithPreview, AssetType, Asset } from '../../utils/ApiTypes';
+import { AssetWithPreview, Asset, AssetType } from '../src/utils/ApiTypes';
 
 export const mockAssets: Asset[] = [
     {

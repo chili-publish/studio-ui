@@ -6,25 +6,28 @@ import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobile
 
 interface AvailableLayoutsProp {
     selectedLayout: Layout | null;
-    layouts: LayoutListItemType[];
+    availableForUserLayouts: LayoutListItemType[];
 
     mobileDevice?: boolean;
     onMobileOptionListToggle?: (_: boolean) => void;
 }
 
-function AvailableLayouts({ selectedLayout, layouts, mobileDevice, onMobileOptionListToggle }: AvailableLayoutsProp) {
-    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
-
+function AvailableLayouts({
+    selectedLayout,
+    availableForUserLayouts,
+    mobileDevice,
+    onMobileOptionListToggle,
+}: AvailableLayoutsProp) {
     const layoutOptions = useMemo(() => {
         let resultList = [];
-        if (!availableLayouts.length && selectedLayout)
+        if (!availableForUserLayouts.length && selectedLayout)
             return [{ label: selectedLayout.displayName ?? selectedLayout.name, value: selectedLayout.id }];
 
-        resultList = availableLayouts.map((item) => ({ label: item.displayName ?? item.name, value: item.id }));
+        resultList = availableForUserLayouts.map((item) => ({ label: item.displayName ?? item.name, value: item.id }));
         resultList.sort((item1, item2) => item1.label.localeCompare(item2.label));
 
         return resultList;
-    }, [selectedLayout, availableLayouts]);
+    }, [selectedLayout, availableForUserLayouts]);
 
     const selectedLayoutOption = useMemo(
         () =>
@@ -37,8 +40,6 @@ function AvailableLayouts({ selectedLayout, layouts, mobileDevice, onMobileOptio
     const handleLayoutChange = useCallback(async (layoutId: string) => {
         await window.StudioUISDK.layout.select(layoutId);
     }, []);
-
-    if (availableLayouts.length < 2) return null;
 
     return mobileDevice ? (
         <StudioMobileDropdown

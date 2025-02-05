@@ -1,5 +1,6 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, Variable } from '@chili-publish/studio-sdk';
+import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
@@ -20,16 +21,22 @@ interface LeftPanelProps {
 function LeftPanel({ variables, selectedLayout, layouts }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
+    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     return (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                     {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
-                    <>
-                        <PanelTitle>Layout</PanelTitle>
-                        <AvailableLayouts selectedLayout={selectedLayout} layouts={layouts} />
-                    </>
+                    {availableLayouts.length >= 2 && (
+                        <>
+                            <PanelTitle>Layout</PanelTitle>
+                            <AvailableLayouts
+                                selectedLayout={selectedLayout}
+                                availableForUserLayouts={availableLayouts}
+                            />
+                        </>
+                    )}
                     <VariablesList variables={variables} />
                 </LeftPanelContainer>
 
