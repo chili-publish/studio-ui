@@ -71,6 +71,7 @@ export const mockLayout: Layout = {
         isReadOnly: false,
     },
     availableForUser: true,
+    selectedByUser: false,
 };
 export const mockLayouts: LayoutListItemType[] = [
     {
@@ -81,6 +82,7 @@ export const mockLayouts: LayoutListItemType[] = [
         availableForUser: false,
         parentId: null,
         childLayouts: ['1', '2'],
+        selectedByUser: false,
     },
     {
         id: '1',
@@ -90,6 +92,7 @@ export const mockLayouts: LayoutListItemType[] = [
         availableForUser: true,
         parentId: '0',
         childLayouts: [],
+        selectedByUser: false,
     },
     {
         id: '2',
@@ -99,6 +102,7 @@ export const mockLayouts: LayoutListItemType[] = [
         availableForUser: true,
         parentId: '0',
         childLayouts: [],
+        selectedByUser: false,
     },
     {
         id: '3',
@@ -108,5 +112,6 @@ export const mockLayouts: LayoutListItemType[] = [
         availableForUser: true,
         parentId: '0',
         childLayouts: [],
+        selectedByUser: false,
     },
 ];
