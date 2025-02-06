@@ -1,4 +1,9 @@
-import { ConnectorMappingDirection } from '@chili-publish/studio-sdk';
+import {
+    BooleanVariable,
+    ConnectorMappingDirection,
+    EngineToConnectorMapping,
+    ShortTextVariable,
+} from '@chili-publish/studio-sdk';
 import {
     ConnectorGrafxRegistration,
     ConnectorInstance,
@@ -68,16 +73,44 @@ export function getEnvId(connector: ConnectorInstance) {
     return connector.source.id;
 }
 
+export type TextEngineToConnectorMapping = Omit<EngineToConnectorMapping, 'value'> & { value: string };
+
+type LinkedVariable = ShortTextVariable | BooleanVariable;
+
+export function isLinkToVariable(mapping: EngineToConnectorMapping): mapping is TextEngineToConnectorMapping {
+    return typeof mapping.value === 'string' && mapping.value.startsWith('var.');
+}
+
+export function linkToVariable(variableId: string) {
+    return `var.${variableId}`;
+}
+
+export function fromLinkToVariableId(value: string) {
+    return value.replace('var.', '');
+}
+
 export async function getConnectorConfigurationOptions(connectorId: string) {
     const { parsedData } = await window.StudioUISDK.connector.getMappings(
         connectorId,
         ConnectorMappingDirection.engineToConnector,
     );
-    return (
-        parsedData?.reduce((config, mapping) => {
-            // eslint-disable-next-line no-param-reassign
-            config[mapping.name] = mapping.value;
-            return config;
-        }, {} as Record<string, string | boolean>) ?? null
+    if (!parsedData) {
+        return null;
+    }
+    const mappingValues = await Promise.all(
+        parsedData.map((m) => {
+            if (isLinkToVariable(m)) {
+                return window.StudioUISDK.variable.getById(fromLinkToVariableId(m.value)).then((v) => ({
+                    name: m.name,
+                    value: (v.parsedData as LinkedVariable).value,
+                }));
+            }
+            return m;
+        }),
     );
+    return mappingValues.reduce((config, mapping) => {
+        // eslint-disable-next-line no-param-reassign
+        config[mapping.name] = mapping.value;
+        return config;
+    }, {} as Record<string, string | boolean>);
 }
