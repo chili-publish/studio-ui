@@ -1,3 +1,4 @@
+import { formatCell } from '@chili-publish/grafx-shared-components';
 import { ConnectorEvent, ConnectorEventType, ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
@@ -52,7 +53,11 @@ const useDataSource = () => {
     }, [dataRows, currentRowIndex]);
 
     const currentInputRow = useMemo(() => {
-        return currentRow ? Object.values(currentRow).join(' | ') : '';
+        return currentRow
+            ? Object.values(currentRow)
+                  .map((v) => formatCell(v))
+                  .join(' | ')
+            : '';
     }, [currentRow]);
 
     const isPrevDisabled = useMemo(() => isLoading || currentRowIndex === 0, [currentRowIndex, isLoading]);
