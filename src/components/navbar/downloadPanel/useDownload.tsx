@@ -2,12 +2,12 @@ import { AvailableIcons, SelectOptions, useOnClickOutside } from '@chili-publish
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import DropdownOption from './DropdownOption';
-import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { outputTypesIcons } from './DownloadPanel.types';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 const useDownload = (hideDownloadPanel: () => void) => {
-    const { outputSettings, userInterfaceOutputSettings } = useUiConfigContext();
+    const { outputSettings, userInterfaceOutputSettings } = useOutputSettingsContext();
     const initialDownloadState: Record<DownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,

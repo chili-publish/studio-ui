@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
-import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void) => {
-    const { isDownloadBtnVisible, userInterfaceOutputSettings } = useUiConfigContext();
+    const { isDownloadBtnVisible } = useUiConfigContext();
+    const { userInterfaceOutputSettings } = useOutputSettingsContext();
     const isMobile = useMobileSize();
 
     const navbarItem = useMemo(

@@ -5,11 +5,50 @@ import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
-import * as UiConfigContext from '../../contexts/UiConfigContext';
 import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { OutputSettingsContextProvider } from '../../components/navbar/OutputSettingsContext';
+import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
+const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, dataSource?: ConnectorInstance) => {
+    const prjConfig = {
+        ...ProjectConfigs.empty,
+        onFetchOutputSettings: () =>
+            Promise.resolve({
+                userInterface: { id: '1', name: 'name' },
+                outputSettings: [
+                    { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
+                ],
+            }),
+    };
+    const projectConfig = config || prjConfig;
+
+    render(
+        <AppProvider dataSource={dataSource || undefined}>
+            <UiConfigContextProvider projectConfig={projectConfig}>
+                <OutputSettingsContextProvider
+                    projectConfig={projectConfig}
+                    layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
+                >
+                    <div id={APP_WRAPPER_ID}>
+                        <UiThemeProvider theme="platform">
+                            <Navbar
+                                projectName=""
+                                projectConfig={projectConfig}
+                                zoom={100}
+                                undoStackState={{
+                                    canRedo: false,
+                                    canUndo: false,
+                                }}
+                            />
+                        </UiThemeProvider>
+                    </div>
+                </OutputSettingsContextProvider>
+            </UiConfigContextProvider>
+        </AppProvider>,
+    );
+};
 describe('Navbar', () => {
     let prjConfig: ProjectConfig;
     beforeEach(() => {
@@ -25,28 +64,9 @@ describe('Navbar', () => {
         };
     });
     it('Should render 4 navbar items', async () => {
-        const { getByTestId } = render(
-            <UiConfigContext.UiConfigContextProvider
-                projectConfig={prjConfig}
-                layoutIntent={LayoutIntent.digitalAnimated}
-            >
-                <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <Navbar
-                            projectName=""
-                            projectConfig={prjConfig}
-                            zoom={100}
-                            undoStackState={{
-                                canRedo: false,
-                                canUndo: false,
-                            }}
-                        />
-                    </UiThemeProvider>
-                </div>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+        renderComponent();
         await waitFor(() => {
-            const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
+            const navbarItems = Array.from(screen.getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
             expect(navbarItems).toHaveLength(4);
         });
     });
@@ -62,24 +82,11 @@ describe('Navbar', () => {
                 },
             },
         };
-        const { getByTestId } = render(
-            <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={LayoutIntent.digitalAnimated}>
-                <UiThemeProvider theme="platform">
-                    <Navbar
-                        projectName=""
-                        projectConfig={config}
-                        zoom={100}
-                        undoStackState={{
-                            canRedo: false,
-                            canUndo: false,
-                        }}
-                    />
-                </UiThemeProvider>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+
+        renderComponent(config);
 
         await waitFor(() => {
-            const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
+            const navbarItems = Array.from(screen.getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
             expect(navbarItems).toHaveLength(3);
         });
 
@@ -100,21 +107,8 @@ describe('Navbar', () => {
                 },
             },
         };
-        const { getByTestId } = render(
-            <UiConfigContext.UiConfigContextProvider projectConfig={config} layoutIntent={LayoutIntent.digitalAnimated}>
-                <UiThemeProvider theme="platform">
-                    <Navbar
-                        projectName=""
-                        projectConfig={config}
-                        zoom={100}
-                        undoStackState={{
-                            canRedo: false,
-                            canUndo: false,
-                        }}
-                    />
-                </UiThemeProvider>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+        renderComponent(config);
+
         const backButton = screen.queryByTestId(getDataTestId('back-btn'));
         expect(backButton).not.toBeInTheDocument();
 
@@ -123,44 +117,25 @@ describe('Navbar', () => {
             expect(downloadButton).toBeInTheDocument();
         });
         await waitFor(() => {
-            const navbarItems = Array.from(getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
+            const navbarItems = Array.from(screen.getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
             expect(navbarItems).toHaveLength(3);
         });
     });
 
     it('Should show download panel when download button is clicked', async () => {
-        const { getByRole, getByText } = render(
-            <UiConfigContext.UiConfigContextProvider
-                projectConfig={prjConfig}
-                layoutIntent={LayoutIntent.digitalAnimated}
-            >
-                <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <Navbar
-                            projectName=""
-                            projectConfig={prjConfig}
-                            zoom={100}
-                            undoStackState={{
-                                canRedo: false,
-                                canUndo: false,
-                            }}
-                        />
-                    </UiThemeProvider>
-                </div>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+        renderComponent();
 
         await waitFor(() => {
             const downloadButton = screen.getByRole('button', { name: /download/i });
             expect(downloadButton).toBeInTheDocument();
         });
 
-        const downloadButton = getByRole('button', { name: /download/i });
+        const downloadButton = screen.getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output/i)).toBeInTheDocument();
+        expect(screen.getByText(/output/i)).toBeInTheDocument();
 
-        const dropdown = getByText(/gif/i);
+        const dropdown = screen.getByText(/gif/i);
         expect(dropdown).toBeInTheDocument();
 
         fireEvent.click(dropdown);
@@ -193,38 +168,19 @@ describe('Navbar', () => {
                     ],
                 }),
         };
-        const { getByRole, getByText } = render(
-            <UiConfigContext.UiConfigContextProvider
-                projectConfig={prjConfig}
-                layoutIntent={LayoutIntent.digitalAnimated}
-            >
-                <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <Navbar
-                            projectName=""
-                            projectConfig={prjConfig}
-                            zoom={100}
-                            undoStackState={{
-                                canRedo: false,
-                                canUndo: false,
-                            }}
-                        />
-                    </UiThemeProvider>
-                </div>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+        renderComponent(prjConfig);
 
         await waitFor(() => {
             const downloadButton = screen.getByRole('button', { name: /download/i });
             expect(downloadButton).toBeInTheDocument();
         });
 
-        const downloadButton = getByRole('button', { name: /download/i });
+        const downloadButton = screen.getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output/i)).toBeInTheDocument();
+        expect(screen.getByText(/output/i)).toBeInTheDocument();
 
-        const dropdown = getByText(/user interface MP4/i);
+        const dropdown = screen.getByText(/user interface MP4/i);
         expect(dropdown).toBeInTheDocument();
     });
 
@@ -255,35 +211,19 @@ describe('Navbar', () => {
                     ],
                 }),
         };
-        const { getByRole, getByText } = render(
-            <UiConfigContext.UiConfigContextProvider projectConfig={prjConfig} layoutIntent={LayoutIntent.print}>
-                <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <Navbar
-                            projectName=""
-                            projectConfig={prjConfig}
-                            zoom={100}
-                            undoStackState={{
-                                canRedo: false,
-                                canUndo: false,
-                            }}
-                        />
-                    </UiThemeProvider>
-                </div>
-            </UiConfigContext.UiConfigContextProvider>,
-        );
+        renderComponent(prjConfig, LayoutIntent.print);
 
         await waitFor(() => {
             const downloadButton = screen.getByRole('button', { name: /download/i });
             expect(downloadButton).toBeInTheDocument();
         });
 
-        const downloadButton = getByRole('button', { name: /download/i });
+        const downloadButton = screen.getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output/i)).toBeInTheDocument();
+        expect(screen.getByText(/output/i)).toBeInTheDocument();
 
-        const dropdown = getByText(/Single for PDF/i);
+        const dropdown = screen.getByText(/Single for PDF/i);
         expect(dropdown).toBeInTheDocument();
     });
 
@@ -314,37 +254,20 @@ describe('Navbar', () => {
                     ],
                 }),
         };
-        const { getByRole, getByText } = render(
-            <AppProvider dataSource={{} as ConnectorInstance}>
-                <UiConfigContext.UiConfigContextProvider projectConfig={prjConfig} layoutIntent={LayoutIntent.print}>
-                    <div id={APP_WRAPPER_ID}>
-                        <UiThemeProvider theme="platform">
-                            <Navbar
-                                projectName=""
-                                projectConfig={prjConfig}
-                                zoom={100}
-                                undoStackState={{
-                                    canRedo: false,
-                                    canUndo: false,
-                                }}
-                            />
-                        </UiThemeProvider>
-                    </div>
-                </UiConfigContext.UiConfigContextProvider>
-            </AppProvider>,
-        );
+
+        renderComponent(prjConfig, LayoutIntent.print, {} as ConnectorInstance);
 
         await waitFor(() => {
             const downloadButton = screen.getByRole('button', { name: /download/i });
             expect(downloadButton).toBeInTheDocument();
         });
 
-        const downloadButton = getByRole('button', { name: /download/i });
+        const downloadButton = screen.getByRole('button', { name: /download/i });
 
         fireEvent.click(downloadButton);
-        expect(getByText(/output/i)).toBeInTheDocument();
+        expect(screen.getByText(/output/i)).toBeInTheDocument();
 
-        const dropdown = getByText(/Batch for PDF/i);
+        const dropdown = screen.getByText(/Batch for PDF/i);
         expect(dropdown).toBeInTheDocument();
     });
 });
