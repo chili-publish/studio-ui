@@ -1,5 +1,5 @@
-import { Select } from '@chili-publish/grafx-shared-components';
-import { useCallback, useMemo } from 'react';
+import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
@@ -18,24 +18,35 @@ function AvailableLayouts({
     mobileDevice,
     onMobileOptionListToggle,
 }: AvailableLayoutsProp) {
-    const layoutOptions = useMemo(() => {
-        let resultList = [];
-        if (!availableForUserLayouts.length && selectedLayout)
-            return [{ label: selectedLayout.displayName ?? selectedLayout.name, value: selectedLayout.id }];
+    const [selectedLayoutOption, setSelectedLayoutOption] = useState<SelectOptions>();
 
-        resultList = availableForUserLayouts.map((item) => ({ label: item.displayName ?? item.name, value: item.id }));
+    const layoutOptions = useMemo(() => {
+        const resultList = availableForUserLayouts.map((item) => ({
+            label: item.displayName ?? item.name,
+            value: item.id,
+        }));
         resultList.sort((item1, item2) => item1.label.localeCompare(item2.label));
 
         return resultList;
-    }, [selectedLayout, availableForUserLayouts]);
+    }, [availableForUserLayouts]);
 
-    const selectedLayoutOption = useMemo(
-        () =>
-            selectedLayout
-                ? { label: selectedLayout.displayName ?? selectedLayout.name, value: selectedLayout.id }
-                : layoutOptions?.[0],
-        [selectedLayout, layoutOptions],
-    );
+    useEffect(() => {
+        const selectLayout = async () => {
+            const isSelectedLayoutAvailable = layoutOptions.some((item) => item.value === selectedLayout?.id);
+
+            if ((!isSelectedLayoutAvailable || !selectedLayout) && !selectedLayoutOption) {
+                setSelectedLayoutOption(layoutOptions[0]);
+                await window.StudioUISDK.layout.select(layoutOptions[0].value);
+            }
+            if (isSelectedLayoutAvailable && selectedLayout) {
+                setSelectedLayoutOption({
+                    label: selectedLayout.displayName ?? selectedLayout.name,
+                    value: selectedLayout.id,
+                });
+            }
+        };
+        selectLayout();
+    }, [selectedLayout, layoutOptions]);
 
     const handleLayoutChange = useCallback(async (layoutId: string) => {
         await window.StudioUISDK.layout.select(layoutId);
