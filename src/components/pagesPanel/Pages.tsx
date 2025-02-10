@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Page } from '@chili-publish/studio-sdk';
 import {
     PreviewCard,
     PreviewCardVariant,
@@ -7,12 +5,14 @@ import {
     ScrollbarWrapper,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
-import { ScrollableContainer, Card, Container } from './Pages.styles';
-import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
+import { Page } from '@chili-publish/studio-sdk';
+import { useCallback, useEffect, useState } from 'react';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { PageSnapshot } from '../../types/types';
+import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
+import { Card, Container, ScrollableContainer } from './Pages.styles';
 import { PreviewCardBadge } from './PreviewCardBadge';
 import { useAttachArrowKeysListener } from './useAttachArrowKeysListener';
-import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 interface PagesProps {
     pages: Page[];
@@ -105,7 +105,9 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh }: Pages
                                         path={
                                             pageSnapshots[index] &&
                                             URL.createObjectURL(
-                                                new Blob([pageSnapshots[index].snapshot.buffer], { type: 'image/png' }),
+                                                new Blob([pageSnapshots[index].snapshot.buffer as BlobPart], {
+                                                    type: 'image/png',
+                                                }),
                                             )
                                         }
                                         type={PreviewType.IMAGE}

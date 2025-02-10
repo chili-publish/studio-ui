@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.20.0-3",
+    "version": "1.20.0-4",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -81,7 +81,7 @@
         "react-select-event": "^5.5.1",
         "resize-observer-polyfill": "^1.5.1",
         "ts-jest": "^29.1.0",
-        "typescript": "*",
+        "typescript": "^5.7.3",
         "vite": "^4.3.9",
         "vite-plugin-environment": "^1.1.3"
     },
