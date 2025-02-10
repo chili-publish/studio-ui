@@ -17,7 +17,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily?: string }>`
     #studio-ui-root-wrapper *,
     #studio-ui-root-wrapper *::before,
     #studio-ui-root-wrapper *::after {
-        box-sizing: inherit;
+        box-sizing: border-box;
     }
 
     /* Reset only specific inherited properties we want to control */
@@ -25,7 +25,7 @@ const GlobalStyle = createGlobalStyle<{ fontFamily?: string }>`
         color: inherit;
         background: transparent;
         line-height: normal;
-        font-size: 16px;
+        font-size: 1rem;
     }
 `;
 
