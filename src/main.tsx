@@ -100,7 +100,7 @@ export default class StudioUI {
      */
     static fullIntegrationConfig(
         selector: string,
-        projectId: string,
+        projectId: string | undefined,
         projectName: string,
         userInterfaceID: string | undefined,
         uiOptions: UiOptions,
@@ -109,8 +109,8 @@ export default class StudioUI {
         sandboxMode: boolean,
         featureFlags: Record<string, boolean> | undefined,
         onSandboxModeToggle: (() => void) | undefined,
-        onProjectInfoRequested: (projectId: string) => Promise<Project>,
-        onProjectDocumentRequested: (projectId: string) => Promise<string | null>,
+        onProjectInfoRequested: (projectId?: string) => Promise<Project>,
+        onProjectDocumentRequested: (projectId?: string) => Promise<string | null>,
         onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>,
         onProjectLoaded: (project: Project) => void,
         onAuthenticationRequested: () => string,
@@ -129,6 +129,8 @@ export default class StudioUI {
         onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>,
         customElement?: HTMLElement | string,
         onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void,
+        onVariableFocus?: (variableId: string) => void,
+        onVariableBlur?: (variableId: string) => void,
         graFxStudioEnvironmentApiBaseUrl = '',
     ) {
         return new StudioUI(selector, {
@@ -157,6 +159,8 @@ export default class StudioUI {
             onConnectorAuthenticationRequested,
             customElement,
             onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
         });
     }
 
@@ -200,6 +204,8 @@ export default class StudioUI {
             onConnectorAuthenticationRequested,
             customElement,
             onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -240,6 +246,8 @@ export default class StudioUI {
             onConnectorAuthenticationRequested,
             customElement,
             onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
             graFxStudioEnvironmentApiBaseUrl,
         );
     }
@@ -365,6 +373,8 @@ export default class StudioUI {
             onConnectorAuthenticationRequested,
             customElement,
             onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
         } = config;
 
         const projectLoader = new StudioProjectLoader(
@@ -404,6 +414,8 @@ export default class StudioUI {
             onConnectorAuthenticationRequested,
             customElement,
             onSetMultiLayout,
+            onVariableFocus,
+            onVariableBlur,
             graFxStudioEnvironmentApiBaseUrl,
         );
     }

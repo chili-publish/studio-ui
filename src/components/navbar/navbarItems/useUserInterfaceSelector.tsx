@@ -1,11 +1,23 @@
 import { AvailableIcons, Select } from '@chili-publish/grafx-shared-components';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { UserInterface } from '../../../types/types';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 const useUserInterfaceSelector = () => {
-    const { selectedUserInterfaceId, userInterfaces, onUserInterfaceChange } = useUiConfigContext();
+    const { projectConfig } = useUiConfigContext();
+    const [userInterfaces, setUserInterfaces] = useState<UserInterface[]>([]);
+    const { selectedUserInterfaceId, onUserInterfaceChange } = useOutputSettingsContext();
+
+    useEffect(() => {
+        if (projectConfig.onFetchUserInterfaces) {
+            projectConfig.onFetchUserInterfaces().then((res) => {
+                setUserInterfaces(res?.data?.data || []);
+            });
+        }
+    }, [projectConfig]);
 
     const options = useMemo(
         () => userInterfaces.map((item) => ({ label: item.name, value: item.id })),

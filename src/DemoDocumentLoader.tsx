@@ -4,9 +4,9 @@ import { DownloadLinkResult, Project } from './types/types';
 export class DemoDocumentLoader {
     editorLink: string;
 
-    onProjectInfoRequested: (projectId: string) => Promise<Project>;
+    onProjectInfoRequested: () => Promise<Project>;
 
-    onProjectDocumentRequested: (projectId: string) => Promise<string | null>;
+    onProjectDocumentRequested: () => Promise<string | null>;
 
     onProjectLoaded: (project: Project) => void;
 
