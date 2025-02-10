@@ -8,6 +8,7 @@ import StudioSDK, {
     Layout,
     LayoutIntent,
     LayoutListItemType,
+    LayoutPropertiesType,
     Page,
     Variable,
     WellKnownConfigurationKeys,
@@ -71,6 +72,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
     const [multiLayoutMode, setMultiLayoutMode] = useState(false);
@@ -210,6 +212,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {
+                    setSelectedPropertiesState(layoutProperties);
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
                     setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
                 }
@@ -414,6 +417,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             variables={variables}
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
+                                            layoutPropertiesState={layoutPropertiesState}
                                         />
                                     )}
                                     <CanvasContainer>
