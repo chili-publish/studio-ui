@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
@@ -6,7 +6,6 @@ import { AxiosResponse } from 'axios';
 import { mockUserInterface, mockUserInterface2 } from '@mocks/mockUserinterface';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
-import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -17,6 +16,8 @@ import {
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import StudioNavbar from '../../components/navbar/studioNavbar/StudioNavbar';
+import { OutputSettingsContextProvider } from '../../components/navbar/OutputSettingsContext';
+import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
 type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutputSettings | null>;
 
@@ -79,10 +80,12 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
         projectConfig,
     };
     render(
-        <UiConfigContextProvider projectConfig={projectConfig} layoutIntent={LayoutIntent.digitalAnimated}>
-            <UiThemeProvider theme="studio" mode="dark">
-                <StudioNavbar {...navbarProps} />
-            </UiThemeProvider>
+        <UiConfigContextProvider projectConfig={projectConfig}>
+            <OutputSettingsContextProvider projectConfig={projectConfig} layoutIntent={LayoutIntent.digitalAnimated}>
+                <UiThemeProvider theme="studio" mode="dark">
+                    <StudioNavbar {...navbarProps} />
+                </UiThemeProvider>
+            </OutputSettingsContextProvider>
         </UiConfigContextProvider>,
     );
 };

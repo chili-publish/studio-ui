@@ -2,7 +2,6 @@ import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
-import { OutputType } from './ApiTypes';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
@@ -20,7 +19,7 @@ export const getDownloadLink = async (
     baseUrl: string,
     token: string,
     layoutId: Id,
-    projectId: Id,
+    projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
 ): Promise<DownloadLinkResult> => {
@@ -156,7 +155,7 @@ const getDataSourceConfig = async (
         return undefined;
     }
 
-    const { data: setting } = await axios.get<{ outputType: OutputType }>(
+    const { data: setting } = await axios.get<{ dataSourceEnabled: boolean }>(
         `${baseUrl}/output/settings/${outputSettingsId}`,
         {
             headers: {
@@ -165,7 +164,7 @@ const getDataSourceConfig = async (
             },
         },
     );
-    if (setting.outputType !== OutputType.Batch) {
+    if (!setting.dataSourceEnabled) {
         return undefined;
     }
     return {

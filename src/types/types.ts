@@ -1,13 +1,12 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
-import { OutputType } from '../utils/ApiTypes';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export type FeatureFlagsType = Record<string, boolean>;
 
-export interface ProjectConfig {
-    projectId: string;
+export type ProjectConfig = {
+    projectId?: string;
     projectName: string;
     uiOptions: UiOptions;
     uiTheme: ITheme['mode'] | 'system';
@@ -17,8 +16,8 @@ export interface ProjectConfig {
     sandboxMode: boolean;
     featureFlags?: FeatureFlagsType;
     onSandboxModeToggle?: () => void;
-    onProjectInfoRequested: (projectId: string) => Promise<Project>;
-    onProjectDocumentRequested: (projectId: string) => Promise<string | null>;
+    onProjectInfoRequested: (projectId?: string) => Promise<Project>;
+    onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;
     onProjectLoaded: (project: Project) => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
@@ -36,7 +35,9 @@ export interface ProjectConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
-}
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
+};
 
 export interface DefaultStudioConfig {
     selector: string;
@@ -58,9 +59,13 @@ export interface DefaultStudioConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
-export interface StudioConfig extends DefaultStudioConfig {
+export interface StudioConfig extends Omit<DefaultStudioConfig, 'projectId' | 'projectDownloadUrl'> {
+    projectId?: string;
+    projectDownloadUrl?: string;
     onProjectInfoRequested: () => Promise<Project>;
     onProjectDocumentRequested: () => Promise<string | null>;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
@@ -100,7 +105,7 @@ export type UserInterfaceOutputSettings = {
     id: string;
     description: string;
     type: DownloadFormats;
-    outputType: OutputType;
+    dataSourceEnabled: boolean;
     layoutIntents: string[];
 };
 
@@ -174,7 +179,7 @@ export type Project = { name: string; id: string; template: { id: string } };
 
 export interface IStudioUILoaderConfig {
     selector: string;
-    projectId: string;
+    projectId?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName: string;
@@ -189,8 +194,8 @@ export interface IStudioUILoaderConfig {
     sandboxMode?: boolean;
     featureFlags?: Record<string, boolean>;
     onSandboxModeToggle?: () => void;
-    onProjectInfoRequested?: (projectId: string) => Promise<Project>;
-    onProjectDocumentRequested?: (projectId: string) => Promise<string | null>;
+    onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
+    onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
     onProjectLoaded?: (project: Project) => void;
     onAuthenticationRequested?: () => string;
@@ -204,6 +209,8 @@ export interface IStudioUILoaderConfig {
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    onVariableFocus?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void;
 }
 
 export type PageSnapshot = {

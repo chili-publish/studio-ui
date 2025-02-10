@@ -87,5 +87,9 @@ import { TokenManager } from './token-manager';
         featureFlags: {
             studioDataSource: true,
         },
+        // eslint-disable-next-line no-console
+        onVariableFocus: (id) => console.log('focused var: ', id),
+        // eslint-disable-next-line no-console
+        onVariableBlur: (id) => console.log('blurred var: ', id),
     });
 })();
