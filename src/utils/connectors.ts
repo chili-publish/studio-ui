@@ -1,9 +1,4 @@
-import {
-    BooleanVariable,
-    ConnectorMappingDirection,
-    EngineToConnectorMapping,
-    ShortTextVariable,
-} from '@chili-publish/studio-sdk';
+import { ConnectorMappingDirection, EngineToConnectorMapping, Variable } from '@chili-publish/studio-sdk';
 import {
     ConnectorGrafxRegistration,
     ConnectorInstance,
@@ -12,6 +7,7 @@ import {
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
 import axios from 'axios';
+import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
 import { RemoteConnector } from './ApiTypes';
 
 const isConnectorUrlRegistration = (
@@ -75,7 +71,15 @@ export function getEnvId(connector: ConnectorInstance) {
 
 export type TextEngineToConnectorMapping = Omit<EngineToConnectorMapping, 'value'> & { value: string };
 
-type LinkedVariable = ShortTextVariable | BooleanVariable;
+function readValueFromLinkedVariable(variable: Variable) {
+    if (isTextVariable(variable) || isBooleanVariable(variable)) {
+        return variable.value;
+    }
+    if (isListVariable(variable)) {
+        return variable.selected?.value ?? null;
+    }
+    throw new Error('Unsupported variable type for link the value');
+}
 
 export function isLinkToVariable(mapping: EngineToConnectorMapping): mapping is TextEngineToConnectorMapping {
     return typeof mapping.value === 'string' && mapping.value.startsWith('var.');
@@ -100,9 +104,9 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
     const mappingValues = await Promise.all(
         parsedData.map((m) => {
             if (isLinkToVariable(m)) {
-                return window.StudioUISDK.variable.getById(fromLinkToVariableId(m.value)).then((v) => ({
+                return window.StudioUISDK.next.variable.getById(fromLinkToVariableId(m.value)).then((v) => ({
                     name: m.name,
-                    value: (v.parsedData as LinkedVariable).value,
+                    value: readValueFromLinkedVariable(v.parsedData as Variable),
                 }));
             }
             return m;
@@ -112,5 +116,5 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
         // eslint-disable-next-line no-param-reassign
         config[mapping.name] = mapping.value;
         return config;
-    }, {} as Record<string, string | boolean>);
+    }, {} as Record<string, string | boolean | null>);
 }
