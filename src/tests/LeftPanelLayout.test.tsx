@@ -38,7 +38,7 @@ describe('Layout selection', () => {
         expect(screen.queryByText('Layout')).not.toBeInTheDocument();
     });
 
-    test('Layout dropdown is display when there are more than 2 layouts available', async () => {
+    test('Layout dropdown is displayed when there are more than 2 layouts available', async () => {
         render(
             <UiThemeProvider theme="platform">
                 <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
@@ -61,7 +61,7 @@ describe('Layout selection', () => {
         });
 
         expect(screen.queryByText(mockLayouts[0].name)).not.toBeInTheDocument();
-        expect(screen.getByText(mockLayouts[1].displayName!)).toBeInTheDocument();
+        expect(screen.getAllByText(mockLayouts[1].displayName!)).toHaveLength(2);
         // layout does not have display name
         expect(screen.getByText(mockLayouts[2].name)).toBeInTheDocument();
         expect(screen.getByText(mockLayouts[3].displayName!)).toBeInTheDocument();

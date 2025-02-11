@@ -11,7 +11,7 @@ import {
 import { ErrorMessage } from '../ErrorMessage.styles';
 
 interface StudioMobileDropdownProps {
-    selectedValue?: SelectOptions;
+    selectedValue?: SelectOptions | null;
     options: SelectOptions[];
     dataId: string;
     isOpen?: boolean;
