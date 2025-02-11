@@ -105,7 +105,12 @@ describe('"useMediaDetails" hook', () => {
 
         expect(window.StudioUISDK.connector.waitToBeReady).not.toHaveBeenCalledWith('grafx-media');
 
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
         await waitFor(() => expect(getCapabilitiesForConnector).toHaveBeenCalledWith('grafx-media'));
 
         expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
@@ -127,7 +132,12 @@ describe('"useMediaDetails" hook', () => {
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         expect(getCapabilitiesForConnector).not.toHaveBeenCalledWith('grafx-media');
         expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
@@ -150,7 +160,12 @@ describe('"useMediaDetails" hook', () => {
         renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         const variableChange = { id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
@@ -176,7 +191,12 @@ describe('"useMediaDetails" hook', () => {
         renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         const variableChange = { id: '2', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
@@ -202,7 +222,12 @@ describe('"useMediaDetails" hook', () => {
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
@@ -233,7 +258,12 @@ describe('"useMediaDetails" hook', () => {
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
@@ -271,7 +301,12 @@ describe('"useMediaDetails" hook', () => {
         const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
-        await waitFor(() => expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(window.StudioUISDK.connector.getMappings).toHaveBeenCalledWith(
+                'grafx-media',
+                ConnectorMappingDirection.engineToConnector,
+            ),
+        );
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
         await act(() => {

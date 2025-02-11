@@ -60,7 +60,7 @@ describe('MobileDataSource test', () => {
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
-                        <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
+                        <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
                             <MobileVariablesPanel variables={[]} />
                         </FeatureFlagProvider>
                     </UiThemeProvider>
@@ -89,7 +89,7 @@ describe('MobileDataSource test', () => {
                             connectors={{ mediaConnectors: [], fontsConnectors: [] }}
                             variables={[]}
                         >
-                            <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
+                            <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
                                 <MobileVariablesPanel variables={[]} />
                             </FeatureFlagProvider>
                         </VariablePanelContextProvider>

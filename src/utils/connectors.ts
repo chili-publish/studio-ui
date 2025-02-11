@@ -1,4 +1,4 @@
-import { ConnectorMappingDirection } from '@chili-publish/studio-sdk';
+import { ConnectorMappingDirection, EngineToConnectorMapping, Variable } from '@chili-publish/studio-sdk';
 import {
     ConnectorGrafxRegistration,
     ConnectorInstance,
@@ -7,6 +7,7 @@ import {
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
 import axios from 'axios';
+import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
 import { RemoteConnector } from './ApiTypes';
 
 const isConnectorUrlRegistration = (
@@ -68,16 +69,52 @@ export function getEnvId(connector: ConnectorInstance) {
     return connector.source.id;
 }
 
+export type TextEngineToConnectorMapping = Omit<EngineToConnectorMapping, 'value'> & { value: string };
+
+function readValueFromLinkedVariable(variable: Variable) {
+    if (isTextVariable(variable) || isBooleanVariable(variable)) {
+        return variable.value;
+    }
+    if (isListVariable(variable)) {
+        return variable.selected?.value ?? null;
+    }
+    throw new Error('Unsupported variable type for link the value');
+}
+
+export function isLinkToVariable(mapping: EngineToConnectorMapping): mapping is TextEngineToConnectorMapping {
+    return typeof mapping.value === 'string' && mapping.value.startsWith('var.');
+}
+
+export function linkToVariable(variableId: string) {
+    return `var.${variableId}`;
+}
+
+export function fromLinkToVariableId(value: string) {
+    return value.replace('var.', '');
+}
+
 export async function getConnectorConfigurationOptions(connectorId: string) {
     const { parsedData } = await window.StudioUISDK.connector.getMappings(
         connectorId,
         ConnectorMappingDirection.engineToConnector,
     );
-    return (
-        parsedData?.reduce((config, mapping) => {
-            // eslint-disable-next-line no-param-reassign
-            config[mapping.name] = mapping.value;
-            return config;
-        }, {} as Record<string, string | boolean>) ?? null
+    if (!parsedData) {
+        return null;
+    }
+    const mappingValues = await Promise.all(
+        parsedData.map((m) => {
+            if (isLinkToVariable(m)) {
+                return window.StudioUISDK.next.variable.getById(fromLinkToVariableId(m.value)).then((v) => ({
+                    name: m.name,
+                    value: readValueFromLinkedVariable(v.parsedData as Variable),
+                }));
+            }
+            return m;
+        }),
     );
+    return mappingValues.reduce((config, mapping) => {
+        // eslint-disable-next-line no-param-reassign
+        config[mapping.name] = mapping.value;
+        return config;
+    }, {} as Record<string, string | boolean | null>);
 }

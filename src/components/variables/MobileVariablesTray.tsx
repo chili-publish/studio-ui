@@ -123,7 +123,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 `}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
-                    {isDataSourceInputShown && featureFlags?.STUDIO_DATA_SOURCE ? (
+                    {isDataSourceInputShown && featureFlags?.studioDataSource ? (
                         <DataSourceInput
                             currentRow={currentInputRow}
                             currentRowIndex={currentRowIndex}
