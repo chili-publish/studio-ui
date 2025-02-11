@@ -24,7 +24,7 @@ function LeftPanel({ variables }: LeftPanelProps) {
         >
             <ScrollbarWrapper>
                 <VariablesListContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
+                    {featureFlags?.studioDataSource ? <DataSource /> : null}
                     <VariablesList variables={variables} />
                 </VariablesListContainer>
 
