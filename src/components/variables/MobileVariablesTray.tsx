@@ -93,6 +93,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const onTrayHidden = useCallback(() => {
         showVariablesPanel();
         setIsTrayVisible(false);
+        setLayoutsMobileOptionsListOpen(false);
     }, [showVariablesPanel]);
 
     return (

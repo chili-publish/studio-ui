@@ -75,7 +75,7 @@ function StudioMobileDropdown({
                         // eslint-disable-next-line react/jsx-no-useless-fragment
                         <>{selectedValue.label}</>
                     ) : (
-                        <MobilePlaceholderWrapper>{placeholder}</MobilePlaceholderWrapper>
+                        <MobilePlaceholderWrapper>{placeholder ?? 'Select...'}</MobilePlaceholderWrapper>
                     )}
                 </MobileDropdownValue>
                 <Icon icon={AvailableIcons.faChevronDown} />
