@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { BORDER_SIZE, SCROLL_SIZE } from '../../../utils/constants';
 
-export const LeftPanelContainer = styled.div<{ overflowScroll: boolean }>`
+export const LeftPanelWrapper = styled.div<{ overflowScroll: boolean }>`
     min-width: 18.75rem;
     width: 18.75rem;
     background-color: ${({ theme }) => theme.panel.backgroundColor};
@@ -10,7 +10,7 @@ export const LeftPanelContainer = styled.div<{ overflowScroll: boolean }>`
     scollbar-gutter: stable;
 `;
 
-export const VariablesListContainer = styled.div<{ hidden: boolean }>`
+export const LeftPanelContainer = styled.div<{ hidden: boolean }>`
     padding: 0 0 0 1.25rem;
     box-sizing: border-box;
     width: calc(18.75rem - 1.5625rem - ${SCROLL_SIZE} + 1.25rem);

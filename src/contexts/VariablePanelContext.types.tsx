@@ -4,7 +4,7 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { Dispatch, SetStateAction } from 'react';
 
 export const enum ContentType {
-    VARIABLES_LIST = 'variables_list',
+    DEFAULT = 'default',
     IMAGE_PANEL = 'image_panel',
     DATE_VARIABLE_PICKER = 'date_variable_picker',
     DATA_SOURCE_TABLE = 'data_source_table',

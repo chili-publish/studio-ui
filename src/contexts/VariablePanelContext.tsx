@@ -17,7 +17,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     validateUpdatedVariables: () => false,
     validateVariable: () => undefined,
     getVariableError: () => '',
-    contentType: ContentType.VARIABLES_LIST,
+    contentType: ContentType.DEFAULT,
     currentVariableId: '',
     currentVariableConnectorId: '',
     handleUpdateImage: () => undefined,
@@ -49,7 +49,7 @@ export function VariablePanelContextProvider({
     connectors: IConnectors;
     variables: Variable[];
 }) {
-    const [contentType, setContentType] = useState<ContentType>(ContentType.VARIABLES_LIST);
+    const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
     const [selectedItems, setSelectedItems] = useState<Media[]>([]);
@@ -88,7 +88,7 @@ export function VariablePanelContextProvider({
                     ...variable,
                     value: { ...variable.value, ...imgSrc },
                 } as ImageVariable);
-            setContentType(ContentType.VARIABLES_LIST);
+            setContentType(ContentType.DEFAULT);
         },
         [currentVariableConnectorId, handleImageChange, currentVariableId, variableValidationData, variables],
     );
@@ -100,7 +100,7 @@ export function VariablePanelContextProvider({
                     type="button"
                     variant={ButtonVariant.tertiary}
                     onClick={() => {
-                        setContentType(ContentType.VARIABLES_LIST);
+                        setContentType(ContentType.DEFAULT);
                         setNavigationStack([]);
                         setSearchKeyWord('');
                         setSearchQuery('');
@@ -119,7 +119,7 @@ export function VariablePanelContextProvider({
     const data = useMemo(
         () => ({
             showVariablesPanel: () => {
-                setContentType(ContentType.VARIABLES_LIST);
+                setContentType(ContentType.DEFAULT);
             },
             showDatePicker: (variable: DateVariable) => {
                 setContentType(ContentType.DATE_VARIABLE_PICKER);

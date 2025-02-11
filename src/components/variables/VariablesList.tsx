@@ -4,7 +4,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { PanelTitle } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, VariablesListWrapper } from './VariablesPanel.styles';
+import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
 
 interface VariablesListProps {
     variables: Variable[];
@@ -24,7 +24,7 @@ function VariablesList({ variables }: VariablesListProps) {
     }, [variables, validateUpdatedVariables]);
 
     return (
-        <VariablesListWrapper>
+        <ListWrapper>
             <PanelTitle>Customize</PanelTitle>
             {variables.length > 0 &&
                 variables.map((variable: Variable) => {
@@ -39,7 +39,7 @@ function VariablesList({ variables }: VariablesListProps) {
                         </ComponentWrapper>
                     ) : null;
                 })}
-        </VariablesListWrapper>
+        </ListWrapper>
     );
 }
 
