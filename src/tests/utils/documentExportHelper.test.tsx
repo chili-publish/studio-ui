@@ -127,9 +127,11 @@ describe('"getDownloadLink', () => {
             );
         });
 
-        it('should skip sending data source output type is not "Batch"', async () => {
+        it('should skip sending data source if output setting does not have "dataSourceEnabled"', async () => {
             (axios.get as jest.Mock).mockResolvedValue({
-                data: {},
+                data: {
+                    dataSourceEnabled: false,
+                },
             });
             await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', 'outputId', false);
 

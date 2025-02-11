@@ -27,7 +27,7 @@ function LeftPanel({ variables, selectedLayout, layouts }: LeftPanelProps) {
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
+                    {featureFlags?.studioDataSource ? <DataSource /> : null}
                     {availableLayouts.length >= 2 && (
                         <>
                             <PanelTitle>Layout</PanelTitle>

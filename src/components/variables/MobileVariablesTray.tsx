@@ -79,7 +79,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
 
-    const isDataSourceDisplayed = featureFlags?.STUDIO_DATA_SOURCE && hasDataConnector && !mobileOptionListOpen;
+    const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
 
     const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
     const isAvailableLayoutsDisplayed =

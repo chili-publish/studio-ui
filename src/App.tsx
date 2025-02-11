@@ -62,7 +62,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     }, [projectConfig]);
 
     return (
-        <>
+        <div id="studio-ui-root-wrapper">
             <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
             <SubscriberContextProvider subscriber={eventSubscriber}>
                 <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
@@ -75,7 +75,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     </NotificationManagerProvider>
                 </UiThemeProvider>
             </SubscriberContextProvider>
-        </>
+        </div>
     );
 }
 
