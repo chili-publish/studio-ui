@@ -1,6 +1,6 @@
 import { Button, ButtonVariant, ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { MessageWrapper } from './LoadDocumentErrorDialog.styles';
+import { MessageWrapper, TitleWrapper } from './LoadDocumentErrorDialog.styles';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 
 interface LoadDocumentErrorDialog {
@@ -23,7 +23,9 @@ function LoadDocumentErrorDialog({ isLoadDocumentErrorDialogOpen, goBack }: Load
             onClose={onClose}
             isCloseIconHidden
         >
-            <ModalLayout.Title>Incompatible project</ModalLayout.Title>
+            <ModalLayout.Title>
+                <TitleWrapper>Incompatible project</TitleWrapper>
+            </ModalLayout.Title>
             <ModalLayout.Body>
                 <MessageWrapper>This project cannot be opened. Please contact your Admin.</MessageWrapper>
             </ModalLayout.Body>
