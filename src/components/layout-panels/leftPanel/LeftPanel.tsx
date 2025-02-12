@@ -28,21 +28,19 @@ function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState }
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.STUDIO_DATA_SOURCE ? <DataSource /> : null}
-                    <>
-                        {(availableLayouts.length >= 2 || selectedLayout?.resizableByUser?.enabled) && (
+                    {featureFlags?.studioDataSource ? <DataSource /> : null}
+                    {availableLayouts.length >= 2 && (
+                        <>
                             <PanelTitle>Layout</PanelTitle>
-                        )}
-                        {availableLayouts.length >= 2 && (
                             <AvailableLayouts
                                 selectedLayout={selectedLayout}
                                 availableForUserLayouts={availableLayouts}
                             />
-                        )}
-                        {selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && (
-                            <LayoutProperties layout={layoutPropertiesState} />
-                        )}
-                    </>
+                        </>
+                    )}
+                    {selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && (
+                        <LayoutProperties layout={layoutPropertiesState} />
+                    )}
                     <VariablesList variables={variables} />
                 </LeftPanelContainer>
 

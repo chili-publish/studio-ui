@@ -74,7 +74,7 @@ describe('MobileVariableTrayLayout', () => {
     it('Data source is the title of the tray when available', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <FeatureFlagProvider featureFlags={{ STUDIO_DATA_SOURCE: true }}>
+                <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
                     <MobileVariablesPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                 </FeatureFlagProvider>
             </UiThemeProvider>,

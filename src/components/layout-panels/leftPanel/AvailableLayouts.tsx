@@ -1,5 +1,5 @@
 import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
@@ -18,8 +18,6 @@ function AvailableLayouts({
     mobileDevice,
     onMobileOptionListToggle,
 }: AvailableLayoutsProp) {
-    const [selectedLayoutOption, setSelectedLayoutOption] = useState<SelectOptions>();
-
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({
             label: item.displayName ?? item.name,
@@ -30,22 +28,8 @@ function AvailableLayouts({
         return resultList;
     }, [availableForUserLayouts]);
 
-    useEffect(() => {
-        const selectLayout = async () => {
-            const isSelectedLayoutAvailable = layoutOptions.some((item) => item.value === selectedLayout?.id);
-
-            if ((!isSelectedLayoutAvailable || !selectedLayout) && !selectedLayoutOption) {
-                setSelectedLayoutOption(layoutOptions[0]);
-                await window.StudioUISDK.layout.select(layoutOptions[0].value);
-            }
-            if (isSelectedLayoutAvailable && selectedLayout) {
-                setSelectedLayoutOption({
-                    label: selectedLayout.displayName ?? selectedLayout.name,
-                    value: selectedLayout.id,
-                });
-            }
-        };
-        selectLayout();
+    const selectedLayoutOption = useMemo(() => {
+        return layoutOptions.find((item) => item.value === selectedLayout?.id) || null;
     }, [selectedLayout, layoutOptions]);
 
     const handleLayoutChange = useCallback(async (layoutId: string) => {
@@ -65,7 +49,7 @@ function AvailableLayouts({
         <Select
             dataId={getDataIdForSUI(`dropdown-available-layout`)}
             dataTestId={getDataTestIdForSUI(`dropdown-available-layout`)}
-            value={selectedLayoutOption}
+            value={selectedLayoutOption as SelectOptions}
             options={layoutOptions}
             isSearchable={false}
             onChange={(option) => handleLayoutChange(option?.value as string)}

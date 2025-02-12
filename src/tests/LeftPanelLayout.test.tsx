@@ -74,8 +74,9 @@ describe('Layout selection', () => {
         await act(async () => {
             await selectEvent.openMenu(selectIndicator as HTMLElement);
         });
+        screen.logTestingPlaygroundURL();
         expect(screen.queryByText(mockLayouts[0].name)).not.toBeInTheDocument();
-        expect(screen.getByText(mockLayouts[1].displayName as string)).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: /l1 display name/i })).toBeInTheDocument();
         expect(screen.getByText(mockLayouts[2].name)).toBeInTheDocument();
         expect(screen.getByText(mockLayouts[3].displayName!)).toBeInTheDocument();
 

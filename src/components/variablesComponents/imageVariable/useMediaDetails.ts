@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
 import { ConnectorMappingDirection, ConnectorStateType, Media } from '@chili-publish/studio-sdk';
+import { useCallback, useEffect, useState } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { useVariablesChange } from '../../../core/hooks/useVariablesChange';
+import { fromLinkToVariableId, isLinkToVariable } from '../../../utils/connectors';
 
 export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: string | undefined) => {
     const { connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
@@ -47,11 +48,13 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             if (!connectorId || mediaConnectorState === null) {
                 return;
             }
-            const mappings = await window.StudioUISDK.connector.getMappings(connectorId);
+            const mappings = await window.StudioUISDK.connector.getMappings(
+                connectorId,
+                ConnectorMappingDirection.engineToConnector,
+            );
             const variableIds = mappings.parsedData
-                ?.filter((m) => m.direction === ConnectorMappingDirection.engineToConnector)
-                .filter((m) => typeof m.value === 'string' && m.value.startsWith('var.'))
-                .map((m) => (m.value as string).replace('var.', ''));
+                ?.filter((m) => isLinkToVariable(m))
+                .map((m) => fromLinkToVariableId(m.value as string));
             setVariableIdsInMapping(variableIds ?? []);
         })();
     }, [connectorId, mediaConnectorState]);
