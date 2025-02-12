@@ -5,14 +5,23 @@ import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
 interface MobileTrayHeaderProps {
+    isDefaultPanelView: boolean;
     mobileListOpen: boolean;
-    hasDataConnector: boolean;
+    isDataSourceDisplayed: boolean;
+    isAvailableLayoutsDisplayed: boolean;
 }
-function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeaderProps) {
+function MobileTrayHeader({
+    isDefaultPanelView,
+    mobileListOpen,
+    isDataSourceDisplayed,
+    isAvailableLayoutsDisplayed,
+}: MobileTrayHeaderProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
-    if ((contentType === ContentType.VARIABLES_LIST && !hasDataConnector) || mobileListOpen)
-        return <TrayPanelTitle>Customize</TrayPanelTitle>;
+    if (isDefaultPanelView && isDataSourceDisplayed) return <TrayPanelTitle>Data source</TrayPanelTitle>;
+    if (isDefaultPanelView && isAvailableLayoutsDisplayed) return <TrayPanelTitle>Layout</TrayPanelTitle>;
+
+    if (contentType === ContentType.DEFAULT || mobileListOpen) return <TrayPanelTitle>Customize</TrayPanelTitle>;
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle>
@@ -49,7 +58,6 @@ function MobileTrayHeader({ mobileListOpen, hasDataConnector }: MobileTrayHeader
                 <TrayPanelTitle margin="0">Data source</TrayPanelTitle>
             </DatePickerTrayTitle>
         );
-    if (hasDataConnector) return <TrayPanelTitle>Data source</TrayPanelTitle>;
 }
 
 export default MobileTrayHeader;

@@ -11,7 +11,7 @@ import {
 import { ErrorMessage } from '../ErrorMessage.styles';
 
 interface StudioMobileDropdownProps {
-    selectedValue?: SelectOptions;
+    selectedValue?: SelectOptions | null;
     options: SelectOptions[];
     dataId: string;
     isOpen?: boolean;
@@ -67,7 +67,7 @@ function StudioMobileDropdown({
             ))}
         </>
     ) : (
-        <DropdownContainer data-id={dataId} onClick={() => openMobileDropdown()}>
+        <DropdownContainer data-id={dataId} data-testid={dataId} onClick={() => openMobileDropdown()}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
             <MobileDropdownOptionContainer hasError={!!validationError}>
                 <MobileDropdownValue>
@@ -75,7 +75,7 @@ function StudioMobileDropdown({
                         // eslint-disable-next-line react/jsx-no-useless-fragment
                         <>{selectedValue.label}</>
                     ) : (
-                        <MobilePlaceholderWrapper>{placeholder}</MobilePlaceholderWrapper>
+                        <MobilePlaceholderWrapper>{placeholder ?? 'Select...'}</MobilePlaceholderWrapper>
                     )}
                 </MobileDropdownValue>
                 <Icon icon={AvailableIcons.faChevronDown} />

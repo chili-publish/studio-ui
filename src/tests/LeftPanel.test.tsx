@@ -4,12 +4,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
+import { mockLayout, mockLayouts } from '@mocks/mockLayout';
+import { mockAssets } from '@mocks/mockAssets';
+import { mockConnectors } from '@mocks/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import AppProvider from '../contexts/AppProvider';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
-import { mockAssets } from './mocks/mockAssets';
-import { mockConnectors } from './mocks/mockConnectors';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
 
@@ -119,7 +120,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -147,7 +148,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -175,7 +176,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -200,7 +201,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -240,7 +241,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -267,7 +268,7 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} />
+                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,

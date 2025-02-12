@@ -2,6 +2,7 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
@@ -61,7 +62,7 @@ describe('MobileDataSource test', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                            <MobileVariablesPanel variables={[]} />
+                            <MobileVariablesPanel variables={[]} selectedLayout={mockLayout} layouts={mockLayouts} />
                         </FeatureFlagProvider>
                     </UiThemeProvider>
                 </div>
@@ -90,7 +91,11 @@ describe('MobileDataSource test', () => {
                             variables={[]}
                         >
                             <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                                <MobileVariablesPanel variables={[]} />
+                                <MobileVariablesPanel
+                                    variables={[]}
+                                    selectedLayout={mockLayout}
+                                    layouts={mockLayouts}
+                                />
                             </FeatureFlagProvider>
                         </VariablePanelContextProvider>
                     </UiThemeProvider>
