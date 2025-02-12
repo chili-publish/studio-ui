@@ -29,18 +29,22 @@ function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState }
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                     {featureFlags?.studioDataSource ? <DataSource /> : null}
-                    {availableLayouts.length >= 2 && (
+                    {(availableLayouts.length >= 2 ||
+                        (selectedLayout?.id && selectedLayout?.resizableByUser?.enabled)) && (
                         <>
                             <PanelTitle>Layout</PanelTitle>
-                            <AvailableLayouts
-                                selectedLayout={selectedLayout}
-                                availableForUserLayouts={availableLayouts}
-                            />
+                            {availableLayouts.length >= 2 && (
+                                <AvailableLayouts
+                                    selectedLayout={selectedLayout}
+                                    availableForUserLayouts={availableLayouts}
+                                />
+                            )}
+                            {selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && (
+                                <LayoutProperties layout={layoutPropertiesState} />
+                            )}
                         </>
                     )}
-                    {selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && (
-                        <LayoutProperties layout={layoutPropertiesState} />
-                    )}
+
                     <VariablesList variables={variables} />
                 </LeftPanelContainer>
 

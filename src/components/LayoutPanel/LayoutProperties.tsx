@@ -38,7 +38,7 @@ function LayoutProperties({ layout }: LayoutPropertiesProps) {
             }}
             onFocus={() => handleFocus(id)}
             onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                const property = LayoutPropertyMap[event.target.id as LayoutInputId];
+                const property = LayoutPropertyMap[id as LayoutInputId];
                 const { value } = event.target;
                 const oldValue = (layout?.[property as keyof LayoutPropertiesType] as Record<string, unknown>)
                     ?.value as number;
@@ -49,7 +49,7 @@ function LayoutProperties({ layout }: LayoutPropertiesProps) {
                     )} ${(layout?.unit as Record<string, unknown>).value as MeasurementUnit}` === value;
 
                 if (!isSame) {
-                    handleBlur(event.target.id as LayoutInputId, event.target.value);
+                    handleBlur(id as LayoutInputId, event.target.value);
                 }
             }}
             name={id}
