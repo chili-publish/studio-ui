@@ -1,33 +1,39 @@
 import { useCallback, useEffect, useState } from 'react';
-import { LayoutPropertiesType, MeasurementUnit } from '@chili-publish/studio-sdk';
+import { LayoutPropertiesType, MeasurementUnit, Page } from '@chili-publish/studio-sdk';
 import { formatNumber, handleSetProperty } from './utils';
 
-export const useLayoutProperties = (layout: LayoutPropertiesType) => {
-    const [layoutWidth, setLayoutWidth] = useState<string>('');
-    const [layoutHeight, setLayoutHeight] = useState<string>('');
+export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: Page) => {
     const [measurementUnit, setMeasurementUnit] = useState<MeasurementUnit>();
 
+    const [pageWidth, setPageWidth] = useState<string>('');
+    const [pageHeight, setPageHeight] = useState<string>('');
     const handleChange = useCallback(
         async (name: string, value: string) => {
             switch (name) {
                 case 'width': {
-                    setLayoutWidth(value);
+                    setPageWidth(value);
                     handleSetProperty(
-                        () => window.StudioUISDK.layout.setWidth(layout?.id as string, value),
+                        () => window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value),
                         () =>
-                            setLayoutWidth(
-                                `${formatNumber(layout?.width.value as number, measurementUnit)} ${measurementUnit}`,
+                            setPageWidth(
+                                `${formatNumber(
+                                    activePageDetails?.width as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
                             ),
                     );
                     break;
                 }
                 case 'height': {
-                    setLayoutHeight(value);
+                    setPageHeight(value);
                     handleSetProperty(
-                        () => window.StudioUISDK.layout?.setHeight(layout?.id as string, value),
+                        () => window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value),
                         () =>
-                            setLayoutHeight(
-                                `${formatNumber(layout?.height.value as number, measurementUnit)} ${measurementUnit}`,
+                            setPageHeight(
+                                `${formatNumber(
+                                    activePageDetails?.height as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
                             ),
                     );
                     break;
@@ -36,7 +42,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType) => {
                     break;
             }
         },
-        [measurementUnit, layout?.width.value, layout?.height.value, layout?.id],
+        [measurementUnit, activePageDetails?.id, activePageDetails?.width, activePageDetails?.height],
     );
 
     useEffect(() => {
@@ -46,22 +52,44 @@ export const useLayoutProperties = (layout: LayoutPropertiesType) => {
                 setMeasurementUnit(unit.value as MeasurementUnit);
             }
         }
-    }, [layout?.id, layout?.unit]);
+
+        // Set default page dimensions if not set;
+        const setDefaultDimension = async (dimension: 'width' | 'height') => {
+            switch (dimension) {
+                case 'width':
+                    await window.StudioUISDK.page.setWidth(activePageDetails?.id as string, '1');
+                    break;
+                case 'height':
+                    await window.StudioUISDK.page.setHeight(activePageDetails?.id as string, '1');
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        // width and height can be null from engine;
+        if (activePageDetails?.width === null) {
+            setDefaultDimension('width');
+        }
+        if (activePageDetails?.height === null) {
+            setDefaultDimension('height');
+        }
+    }, [layout?.id, layout?.unit, activePageDetails?.width, activePageDetails?.height, activePageDetails?.id]);
 
     useEffect(() => {
         if (measurementUnit) {
-            const formattedWidth = `${formatNumber(
-                layout?.width?.value as number,
+            const formattedPageWidth = `${formatNumber(
+                (activePageDetails?.width ?? 0) as number,
                 measurementUnit,
             )} ${measurementUnit}`;
-            const formattedHeight = `${formatNumber(
-                layout?.height?.value as number,
+            const formattedPageHeight = `${formatNumber(
+                (activePageDetails?.height ?? 0) as number,
                 measurementUnit,
             )} ${measurementUnit}`;
-            setLayoutWidth(formattedWidth);
-            setLayoutHeight(formattedHeight);
+            setPageWidth(formattedPageWidth);
+            setPageHeight(formattedPageHeight);
         }
-    }, [measurementUnit, layout?.width.value, layout?.height.value]);
+    }, [measurementUnit, activePageDetails?.width, activePageDetails?.height]);
 
-    return { handleChange, layoutWidth, layoutHeight };
+    return { handleChange, pageWidth, pageHeight };
 };

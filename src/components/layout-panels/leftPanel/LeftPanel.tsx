@@ -1,5 +1,5 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, LayoutPropertiesType, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, Page, Variable } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -18,9 +18,10 @@ interface LeftPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
+    activePageDetails?: Page;
 }
 
-function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState }: LeftPanelProps) {
+function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState, activePageDetails }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
@@ -30,7 +31,7 @@ function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState }
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                     {featureFlags?.studioDataSource ? <DataSource /> : null}
                     {(availableLayouts.length >= 2 ||
-                        (selectedLayout?.id && selectedLayout?.resizableByUser?.enabled)) && (
+                        (selectedLayout?.id && selectedLayout?.resizableByUser.enabled)) && (
                         <>
                             <PanelTitle>Layout</PanelTitle>
                             {availableLayouts.length >= 2 && (
@@ -39,8 +40,11 @@ function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState }
                                     availableForUserLayouts={availableLayouts}
                                 />
                             )}
-                            {selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && (
-                                <LayoutProperties layout={layoutPropertiesState} />
+                            {selectedLayout?.id && selectedLayout?.resizableByUser.enabled && (
+                                <LayoutProperties
+                                    layout={layoutPropertiesState}
+                                    activePageDetails={activePageDetails}
+                                />
                             )}
                         </>
                     )}

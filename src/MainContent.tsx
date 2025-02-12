@@ -427,6 +427,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
+                                            activePageDetails={
+                                                pages.find((page) => page.id === activePageId) ?? undefined
+                                            }
                                         />
                                     )}
                                     <CanvasContainer>

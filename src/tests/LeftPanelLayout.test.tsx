@@ -24,10 +24,8 @@ describe('Layout selection', () => {
     });
     window.StudioUISDK = mockSDK;
 
-    test('Layout dropdown is not displayed when only one layout is available for user', () => {
-        const singleAvailableLayout = [
-            mockLayouts[1], // Only one layout available for user
-        ];
+    test('Layout dropdown and dimension inputs are rendered based on layout properties', () => {
+        const singleAvailableLayout = [mockLayouts[1]];
 
         render(
             <UiThemeProvider theme="platform">
@@ -43,10 +41,36 @@ describe('Layout selection', () => {
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
-        expect(screen.getByText('Customize')).toBeInTheDocument();
+        // Verify dropdown not shown with single layout
+        expect(screen.queryByTestId(getDataTestIdForSUI('dropdown-available-layout'))).not.toBeInTheDocument();
+
+        // Verify dimension inputs shown for resizable layout
         expect(screen.getByLabelText('Width')).toBeInTheDocument();
         expect(screen.getByLabelText('Height')).toBeInTheDocument();
-        expect(screen.queryByTestId(getDataTestIdForSUI('dropdown-available-layout'))).not.toBeInTheDocument();
+
+        // Re-render with non-resizable layout
+        const nonResizableLayout = {
+            ...mockLayout,
+            resizableByUser: { ...mockLayout.resizableByUser, enabled: false },
+        };
+
+        render(
+            <UiThemeProvider theme="platform">
+                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={nonResizableLayout}
+                        layouts={singleAvailableLayout}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    />
+                </VariablePanelContextProvider>
+            </UiThemeProvider>,
+            { container: document.body.appendChild(APP_WRAPPER) },
+        );
+
+        // Verify dimension inputs not shown for non-resizable layout
+        expect(screen.queryByLabelText('Width')).not.toBeInTheDocument();
+        expect(screen.queryByLabelText('Height')).not.toBeInTheDocument();
     });
 
     test('Layout dropdown is displayed when multiple layouts are available for user', async () => {
