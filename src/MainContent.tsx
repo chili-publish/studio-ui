@@ -438,6 +438,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 selectedLayout={currentSelectedLayout}
                                                 layouts={layouts}
                                                 variables={variables}
+                                                layoutPropertiesState={layoutPropertiesState}
+                                                activePageDetails={
+                                                    pages.find((page) => page.id === activePageId) ?? undefined
+                                                }
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1

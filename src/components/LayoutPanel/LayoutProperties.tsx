@@ -26,6 +26,18 @@ function LayoutProperties({ layout, activePageDetails }: LayoutPropertiesProps) 
         handleChange(PagePropertyMap[inputId], value);
     };
 
+    const handleInputBlur = (id: string) => (event: ChangeEvent<HTMLInputElement>) => {
+        const property = PagePropertyMap[id as PageInputId]; // width or height
+        const newValue = event.target.value;
+        const oldValue = activePageDetails?.[property as keyof Page] as number;
+        const isSame =
+            `${formatNumber(oldValue as number, (layout?.unit as Record<string, unknown>).value as MeasurementUnit)} ${
+                (layout?.unit as Record<string, unknown>).value as MeasurementUnit
+            }` === newValue;
+        if (!isSame) {
+            handleBlur(id as PageInputId, newValue);
+        }
+    };
     const renderInput = (id: string, inputValue: string, label: string) => (
         <Input
             type="number"
@@ -38,20 +50,7 @@ function LayoutProperties({ layout, activePageDetails }: LayoutPropertiesProps) 
                 handleChange(PagePropertyMap[id as PageInputId], v);
             }}
             onFocus={() => handleFocus(id)}
-            onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                const property = PagePropertyMap[id as PageInputId];
-                const { value } = event.target;
-                const oldValue = activePageDetails?.[property as keyof Page] as number;
-                const isSame =
-                    `${formatNumber(
-                        oldValue as number,
-                        (layout?.unit as Record<string, unknown>).value as MeasurementUnit,
-                    )} ${(layout?.unit as Record<string, unknown>).value as MeasurementUnit}` === value;
-
-                if (!isSame) {
-                    handleBlur(id as PageInputId, event.target.value);
-                }
-            }}
+            onBlur={handleInputBlur(id)}
             name={id}
             label={label}
         />
