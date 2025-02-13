@@ -132,16 +132,15 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
-    const zoomToPage = useCallback(async () => {
+    const zoomToPage = useCallback(async (pageId: string | null = null) => {
         const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
-            pageId: null,
+            pageId,
             left: 0,
             top: 0,
             width: iframe?.width,
             height: iframe?.height,
         };
-
         await window.StudioUISDK.canvas.zoomToPage(
             zoomParams.pageId,
             zoomParams.left,
@@ -252,9 +251,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onSelectedPageIdChanged: (pageId) => {
                 setActivePageId(pageId);
+                zoomToPage(pageId);
             },
-            onPageSizeChanged: () => {
-                zoomToPage();
+            onPageSizeChanged: (pageSize) => {
+                zoomToPage(pageSize.id);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
