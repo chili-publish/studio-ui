@@ -94,10 +94,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
 
-    const isLayoutResizable = useMemo(() => {
-        if (!selectedLayout) return false;
-        return selectedLayout?.resizableByUser.enabled;
-    }, [selectedLayout]);
+    const isLayoutResizable = useMemo(() => selectedLayout?.resizableByUser.enabled ?? false, [selectedLayout]);
 
     const isAvailableLayoutsDisplayed =
         layoutsMobileOptionsListOpen || ((hasAvailableLayouts || isLayoutResizable) && !variablesMobileOptionsListOpen);

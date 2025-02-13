@@ -54,7 +54,7 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
             );
             const variableIds = mappings.parsedData
                 ?.filter((m) => isLinkToVariable(m))
-                .map((m) => fromLinkToVariableId(m.value as string));
+                .map((m) => fromLinkToVariableId(m.value));
             setVariableIdsInMapping(variableIds ?? []);
         })();
     }, [connectorId, mediaConnectorState]);
