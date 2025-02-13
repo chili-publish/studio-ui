@@ -46,12 +46,13 @@ export default class StudioUI {
     }
 
     /**
-     * Creates a new instance of StudioUI with the default project loader and authentication based on the fullIntegration.
+     * Creates a new instance of StudioUI with the default project loader and authentication.
      * @param selector - The selector for the root element of the UI.
      * @param projectId - The id of the project to load.
      * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
      * @param authToken - Environment API authentication token.
      * @param refreshTokenAction - Callback to refresh the authentication token.
+     * @param editorLink - Url to the engine /web folder
      * @returns
      */
     static defaultStudioUILoaderConfig(config: IDefaultStudioUILoaderConfig) {
@@ -93,12 +94,31 @@ export default class StudioUI {
      * @param projectDownloadUrl - Environment API url to download the project.
      * @param projectUploadUrl - Environment API url to upload the project.
      * @param projectId - The id of the project to load.
-     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
-     * @param authToken - Environment API authentication token.
-     * @param refreshTokenAction - Callback to refresh the authentication token.
      * @param projectName - The name of the project to load.
+     * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
+     * @param editorLink - Url to the engine /web folder
+     * @param authToken - Environment API authentication token.
+     * @param uiOptions - The configuration of ui widgets.
+     * @param uiTheme - The configuration of ui theme.
+     * @param refreshTokenAction - Callback to refresh the authentication token.
      * @param onBack - Callback when the user clicks the back button.
-     * @param config.userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
+     * @param outputSettings - The flags to manage the available types of outputs.
+     * @param userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
+     * @param sandboxMode - Flag to open the project in sandbox mode.
+     * @param onSandboxModeToggle - Callback when user switches sandbox mode.
+     * @param onProjectInfoRequested - Callback to get the project info.
+     * @param onProjectDocumentRequested - Callback to get the project template.
+     * @param onProjectSave - Callback to save the project.
+     * @param onProjectLoaded - Callback when the project is loaded. use this to set the configuration values on sdk.
+     * @param onAuthenticationRequested - Callback to get the authentication token.
+     * @param onAuthenticationExpired - Callback to refresh the authentication token.
+     * @param onLogInfoRequested - Callback used to generate loading info in the console.
+     * @param onProjectGetDownloadLink - Callback to get the output download link for the project.
+     * @param onConnectorAuthenticationRequested - Callback to authenticate in custom connectors.
+     * @param customElement - HTML element that is rendered in multiLayout mode.
+     * @param onSetMultiLayout - Callback used to switch from single to multiLayout mode.
+     * @param onVariableFocus - Callback which returns the id of the currently focused variable.
+     * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {
@@ -107,18 +127,18 @@ export default class StudioUI {
             projectDownloadUrl,
             projectUploadUrl,
             projectId,
-            graFxStudioEnvironmentApiBaseUrl,
-            authToken,
             projectName,
+            graFxStudioEnvironmentApiBaseUrl,
             editorLink,
+            authToken,
+            refreshTokenAction,
             uiOptions,
             uiTheme,
             outputSettings,
             userInterfaceID,
-            sandboxMode,
             featureFlags,
+            sandboxMode,
             onSandboxModeToggle,
-            refreshTokenAction,
             onProjectInfoRequested,
             onProjectDocumentRequested,
             onProjectSave,
