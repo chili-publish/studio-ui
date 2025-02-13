@@ -1,7 +1,7 @@
 import { MeasurementUnit, EditorResponse } from '@chili-publish/studio-sdk';
 
 export const formatNumber = (value: number | string, measurementUnit?: MeasurementUnit): string => {
-    if (value === undefined) return 'undefined';
+    if (!value) return 'undefined';
 
     let newValue;
     if (typeof value === 'number') {
