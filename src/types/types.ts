@@ -7,13 +7,12 @@ export type FeatureFlagsType = Record<string, boolean>;
 
 export type ProjectConfig = {
     projectId?: string;
-    projectName: string;
+    projectName?: string;
     uiOptions: UiOptions;
-    uiTheme: ITheme['mode'] | 'system';
     outputSettings: OutputSettings;
     userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
-    sandboxMode: boolean;
+    sandboxMode?: boolean;
     featureFlags?: FeatureFlagsType;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
@@ -22,7 +21,7 @@ export type ProjectConfig = {
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
     onAuthenticationExpired: () => Promise<string>;
-    onUserInterfaceBack: () => void;
+    onBack: () => void;
     onLogInfoRequested: () => unknown;
     onProjectGetDownloadLink: (
         extension: string,
@@ -48,7 +47,7 @@ export interface DefaultStudioConfig {
     authToken: string;
     featureFlags?: FeatureFlagsType;
     uiOptions?: UiOptions;
-    uiTheme?: ITheme['mode'] | 'system';
+
     outputSettings?: OutputSettings;
     projectName: string;
     sandboxMode?: boolean;
@@ -81,6 +80,7 @@ export type DownloadLinkResult = {
 
 export interface UiOptions {
     theme?: UiThemeConfig;
+    uiTheme?: ITheme['mode'] | 'system';
     widgets: {
         downloadButton?: {
             visible?: boolean;
@@ -177,6 +177,17 @@ export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: s
 
 export type Project = { name: string; id: string; template: { id: string } };
 
+export interface IDefaultStudioUILoaderConfig {
+    selector: string;
+
+    editorLink?: string;
+
+    projectId: string;
+    graFxStudioEnvironmentApiBaseUrl: string;
+
+    authToken: string;
+    refreshTokenAction?: () => Promise<string | AxiosError>;
+}
 export interface IStudioUILoaderConfig {
     selector: string;
     projectId?: string;
