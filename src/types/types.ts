@@ -196,7 +196,6 @@ export interface IStudioUILoaderConfig {
     projectName: string;
     refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
-    uiTheme?: ITheme['mode'] | 'system';
     userInterfaceID?: string;
     outputSettings?: OutputSettings;
     editorLink?: string;

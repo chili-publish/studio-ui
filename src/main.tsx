@@ -98,8 +98,7 @@ export default class StudioUI {
      * @param graFxStudioEnvironmentApiBaseUrl - Environment API url to get the project info.
      * @param editorLink - Url to the engine /web folder
      * @param authToken - Environment API authentication token.
-     * @param uiOptions - The configuration of ui widgets.
-     * @param uiTheme - The configuration of ui theme.
+     * @param uiOptions - The configuration of ui widgets and theming.
      * @param refreshTokenAction - Callback to refresh the authentication token.
      * @param onBack - Callback when the user clicks the back button.
      * @param outputSettings - The flags to manage the available types of outputs.
@@ -133,7 +132,6 @@ export default class StudioUI {
             authToken,
             refreshTokenAction,
             uiOptions,
-            uiTheme,
             outputSettings,
             userInterfaceID,
             featureFlags,
@@ -173,7 +171,7 @@ export default class StudioUI {
             userInterfaceID,
             graFxStudioEnvironmentApiBaseUrl,
             outputSettings: outputSettings ?? defaultOutputSettings,
-            uiOptions: { ...uiOptionsConfig, uiTheme: uiTheme || 'light' },
+            uiOptions: { ...uiOptionsConfig, uiTheme: uiOptionsConfig.uiTheme || 'light' },
             featureFlags,
             sandboxMode: sandboxMode || false,
             onSandboxModeToggle,
