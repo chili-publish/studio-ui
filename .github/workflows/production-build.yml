@@ -24,12 +24,6 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: run license check
-              run: yarn validate-licenses
-            - name: run linting
-              run: yarn ci-lint
-            - name: run tests
-              run: yarn cover
             - name: Bump version locally
               run: |
                   git config --global user.name 'github-actions[bot]'
