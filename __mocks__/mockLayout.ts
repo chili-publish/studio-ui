@@ -72,6 +72,13 @@ export const mockLayout: Layout = {
     },
     availableForUser: true,
     selectedByUser: false,
+    resizableByUser: {
+        enabled: true,
+        minWidth: 100,
+        maxWidth: 1000,
+        minHeight: 100,
+        maxHeight: 1000,
+    },
 };
 export const mockLayouts: LayoutListItemType[] = [
     {

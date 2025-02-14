@@ -3,7 +3,7 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mock } from 'jest-mock-extended';
-import EditorSDK, { ConnectorRegistrationSource } from '@chili-publish/studio-sdk';
+import EditorSDK, { ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import MobileVariablesPanel from '../components/variables/MobileVariablesTray';
 import { APP_WRAPPER } from './shared.util/app';
@@ -58,7 +58,12 @@ describe('MobileVariableTrayLayout', () => {
     it('Layout is the title of the tray when no data source is available', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                <MobileVariablesPanel
+                    variables={variables}
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
@@ -75,7 +80,12 @@ describe('MobileVariableTrayLayout', () => {
         render(
             <UiThemeProvider theme="platform">
                 <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                    <MobileVariablesPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                    <MobileVariablesPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    />
                 </FeatureFlagProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -93,7 +103,12 @@ describe('MobileVariableTrayLayout', () => {
     it('Change selected layout is available', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                <MobileVariablesPanel
+                    variables={variables}
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );

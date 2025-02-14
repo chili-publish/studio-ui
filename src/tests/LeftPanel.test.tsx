@@ -1,5 +1,5 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
-import EditorSDK from '@chili-publish/studio-sdk';
+import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
@@ -120,7 +120,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -148,7 +153,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -176,7 +186,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -201,7 +216,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -241,7 +261,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
@@ -268,7 +293,12 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                        <LeftPanel variables={variables} selectedLayout={mockLayout} layouts={mockLayouts} />
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,
