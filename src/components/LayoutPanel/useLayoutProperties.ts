@@ -26,7 +26,11 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                                     : '',
                             ),
                     );
-                    setPageWidth(value);
+                    setPageWidth(
+                        activePageDetails?.width
+                            ? `${formatNumber(activePageDetails?.width as number, measurementUnit)} ${measurementUnit}`
+                            : '',
+                    );
                     break;
                 }
                 case 'height': {
@@ -42,7 +46,11 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                                     : '',
                             ),
                     );
-                    setPageHeight(value);
+                    setPageHeight(
+                        activePageDetails?.height
+                            ? `${formatNumber(activePageDetails?.height as number, measurementUnit)} ${measurementUnit}`
+                            : '',
+                    );
                     break;
                 }
                 default:
