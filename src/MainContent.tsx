@@ -74,7 +74,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
-    const [activePageDetails, setActivePageDetails] = useState<PageSize | null>(null);
+    const [pageSize, setPageSize] = useState<PageSize | null>(null);
     const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
@@ -255,9 +255,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setActivePageId(pageId);
                 zoomToPage(pageId);
             },
+            // eslint-disable-next-line @typescript-eslint/no-shadow
             onPageSizeChanged: (pageSize) => {
                 zoomToPage(pageSize.id);
-                setActivePageDetails(pageSize);
+                setPageSize(pageSize);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -430,7 +431,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
-                                            activePageDetails={activePageDetails ?? undefined}
+                                            pageSize={pageSize ?? undefined}
                                         />
                                     )}
                                     <CanvasContainer>
@@ -440,7 +441,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 layouts={layouts}
                                                 variables={variables}
                                                 layoutPropertiesState={layoutPropertiesState}
-                                                activePageDetails={activePageDetails ?? undefined}
+                                                pageSize={pageSize ?? undefined}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1

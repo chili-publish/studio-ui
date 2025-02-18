@@ -24,7 +24,7 @@ interface VariablesPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
-    activePageDetails?: PageSize;
+    pageSize?: PageSize;
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
@@ -45,7 +45,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         isTimelineDisplayed,
         isPagesPanelDisplayed,
         layoutPropertiesState,
-        activePageDetails,
+        pageSize,
     } = props;
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
@@ -183,10 +183,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                         />
                                     </ListWrapper>
                                     {isLayoutResizable && !layoutsMobileOptionsListOpen && (
-                                        <LayoutProperties
-                                            layout={layoutPropertiesState}
-                                            activePageDetails={activePageDetails}
-                                        />
+                                        <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
                                     )}
                                 </>
                             )}

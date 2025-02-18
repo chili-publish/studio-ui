@@ -18,10 +18,10 @@ interface LeftPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
-    activePageDetails?: PageSize;
+    pageSize?: PageSize;
 }
 
-function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState, activePageDetails }: LeftPanelProps) {
+function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState, pageSize }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
@@ -41,10 +41,7 @@ function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState, 
                                 />
                             )}
                             {selectedLayout?.id && selectedLayout?.resizableByUser.enabled && (
-                                <LayoutProperties
-                                    layout={layoutPropertiesState}
-                                    activePageDetails={activePageDetails}
-                                />
+                                <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
                             )}
                         </>
                     )}
