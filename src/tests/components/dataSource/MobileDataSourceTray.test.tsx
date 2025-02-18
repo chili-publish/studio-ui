@@ -1,9 +1,9 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
+import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
@@ -68,6 +68,10 @@ describe('MobileDataSource test', () => {
                                 selectedLayout={mockLayout}
                                 layouts={mockLayouts}
                                 layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                                layoutSectionUIOptions={{
+                                    visible: false,
+                                    title: 'Layout',
+                                }}
                             />
                         </FeatureFlagProvider>
                     </UiThemeProvider>
@@ -102,6 +106,10 @@ describe('MobileDataSource test', () => {
                                     selectedLayout={mockLayout}
                                     layouts={mockLayouts}
                                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                                    layoutSectionUIOptions={{
+                                        visible: false,
+                                        title: 'Layout',
+                                    }}
                                 />
                             </FeatureFlagProvider>
                         </VariablePanelContextProvider>

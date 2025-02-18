@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import selectEvent from 'react-select-event';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import selectEvent from 'react-select-event';
+import { mockConnectors } from '../../__mocks__/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
-import { mockConnectors } from '../../__mocks__/mockConnectors';
+import { getDataTestIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
-import { getDataTestIdForSUI } from '../utils/dataIds';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -35,6 +35,10 @@ describe('Layout selection', () => {
                         selectedLayout={mockLayout}
                         layouts={singleAvailableLayout}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: true,
+                            title: 'Layout',
+                        }}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -62,6 +66,10 @@ describe('Layout selection', () => {
                         selectedLayout={nonResizableLayout}
                         layouts={singleAvailableLayout}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: true,
+                            title: 'Layout',
+                        }}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -82,6 +90,10 @@ describe('Layout selection', () => {
                         selectedLayout={mockLayout}
                         layouts={mockLayouts}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: true,
+                            title: 'Layout',
+                        }}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,

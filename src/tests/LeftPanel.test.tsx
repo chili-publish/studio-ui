@@ -1,12 +1,12 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import { mockAssets } from '@mocks/mockAssets';
+import { mockConnectors } from '@mocks/mockConnectors';
+import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
-import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { mockAssets } from '@mocks/mockAssets';
-import { mockConnectors } from '@mocks/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import AppProvider from '../contexts/AppProvider';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
@@ -125,6 +125,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -158,6 +162,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -191,6 +199,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -221,6 +233,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -266,6 +282,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -298,6 +318,10 @@ describe('Image Panel', () => {
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                title: 'Layout',
+                            }}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>

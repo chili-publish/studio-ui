@@ -5,8 +5,8 @@ import { IUiConfigContext } from './UiConfigContext.types';
 export const UiConfigContextDefaultValues: IUiConfigContext = {
     projectConfig: {} as ProjectConfig,
     uiOptions: defaultUiOptions,
-    isDownloadBtnVisible: false,
-    isBackBtnVisible: defaultUiOptions.widgets.downloadButton?.visible || false,
+    isDownloadBtnVisible: defaultUiOptions.widgets.downloadButton.visible,
+    isBackBtnVisible: defaultUiOptions.widgets.backButton.visible,
     graFxStudioEnvironmentApiBaseUrl: '',
     onVariableFocus: () => null,
     onVariableBlur: () => null,

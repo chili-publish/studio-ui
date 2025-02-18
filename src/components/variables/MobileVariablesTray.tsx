@@ -5,25 +5,27 @@ import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
 import DataSourceTable from '../dataSource/DataSourceTable';
 import useDataSource from '../dataSource/useDataSource';
 import ImagePanel from '../imagePanel/ImagePanel';
+import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
+import LayoutProperties from '../LayoutPanel/LayoutProperties';
 import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
-import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
-import LayoutProperties from '../LayoutPanel/LayoutProperties';
 
 interface VariablesPanelProps {
     variables: Variable[];
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
+    layoutSectionUIOptions: Required<Required<Required<UiOptions>['widgets']>['layoutSection']>;
     activePageDetails?: Page;
 
     isTimelineDisplayed?: boolean;
@@ -46,6 +48,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         isPagesPanelDisplayed,
         layoutPropertiesState,
         activePageDetails,
+        layoutSectionUIOptions,
     } = props;
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
@@ -97,7 +100,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const isLayoutResizable = useMemo(() => selectedLayout?.resizableByUser.enabled ?? false, [selectedLayout]);
 
     const isAvailableLayoutsDisplayed =
-        layoutsMobileOptionsListOpen || ((hasAvailableLayouts || isLayoutResizable) && !variablesMobileOptionsListOpen);
+        layoutsMobileOptionsListOpen ||
+        ((hasAvailableLayouts || isLayoutResizable) &&
+            !variablesMobileOptionsListOpen &&
+            layoutSectionUIOptions.visible);
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
     const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
@@ -137,6 +143,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 close={closeTray}
                 title={
                     <MobileTrayHeader
+                        layoutSectionTitle={layoutSectionUIOptions.title}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
@@ -173,7 +180,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
                                 <>
-                                    {isAvailableLayoutSubtitleDisplayed && <TrayPanelTitle>Layout</TrayPanelTitle>}
+                                    {isAvailableLayoutSubtitleDisplayed && (
+                                        <TrayPanelTitle>{layoutSectionUIOptions.title}</TrayPanelTitle>
+                                    )}
                                     <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
                                         <AvailableLayouts
                                             selectedLayout={selectedLayout}

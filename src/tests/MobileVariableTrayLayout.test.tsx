@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { mock } from 'jest-mock-extended';
 import EditorSDK, { ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import { mockLayout, mockLayouts } from '@mocks/mockLayout';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mock } from 'jest-mock-extended';
 import MobileVariablesPanel from '../components/variables/MobileVariablesTray';
-import { APP_WRAPPER } from './shared.util/app';
-import { variables } from './mocks/mockVariables';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
+import { variables } from './mocks/mockVariables';
+import { APP_WRAPPER } from './shared.util/app';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -63,6 +63,10 @@ describe('MobileVariableTrayLayout', () => {
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: true,
+                        title: 'Layout',
+                    }}
                 />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -85,6 +89,10 @@ describe('MobileVariableTrayLayout', () => {
                         selectedLayout={mockLayout}
                         layouts={mockLayouts}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: true,
+                            title: 'Layout',
+                        }}
                     />
                 </FeatureFlagProvider>
             </UiThemeProvider>,
@@ -108,6 +116,10 @@ describe('MobileVariableTrayLayout', () => {
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: true,
+                        title: 'Layout',
+                    }}
                 />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },

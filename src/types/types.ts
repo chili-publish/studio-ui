@@ -81,7 +81,7 @@ export type DownloadLinkResult = {
 
 export interface UiOptions {
     theme?: UiThemeConfig;
-    widgets: {
+    widgets?: {
         downloadButton?: {
             visible?: boolean;
         };
@@ -94,6 +94,10 @@ export interface UiOptions {
         };
         bottomBar?: {
             visible?: boolean;
+        };
+        layoutSection?: {
+            visible?: boolean;
+            title?: string;
         };
     };
 }
@@ -146,13 +150,17 @@ export interface IOutputSetting {
     watermark: boolean;
 }
 
-export const defaultUiOptions: UiOptions = {
+export const defaultUiOptions = {
     widgets: {
         downloadButton: {
             visible: true,
         },
         backButton: {
             visible: false,
+        },
+        layoutSection: {
+            visible: true,
+            title: 'Layout',
         },
     },
 };

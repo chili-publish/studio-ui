@@ -26,7 +26,9 @@ import {
 } from './components/connector-authentication';
 import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
 import Navbar from './components/navbar/Navbar';
+import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Pages from './components/pagesPanel/Pages';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
@@ -40,8 +42,6 @@ import { SuiCanvas } from './MainContent.styles';
 import { Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
-import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 
 declare global {
     interface Window {
@@ -390,6 +390,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         [currentProject?.name, projectConfig, undoStackState, currentZoom],
     );
 
+    const layoutSectionUIOptions = {
+        visible: !multiLayoutMode && !!projectConfig.uiOptions.widgets?.layoutSection?.visible,
+        title: projectConfig.uiOptions.widgets?.layoutSection?.title ?? 'Layout',
+    };
+
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
@@ -427,6 +432,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
+                                            layoutSectionUIOptions={layoutSectionUIOptions}
                                             activePageDetails={
                                                 pages.find((page) => page.id === activePageId) ?? undefined
                                             }
@@ -439,6 +445,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 layouts={layouts}
                                                 variables={variables}
                                                 layoutPropertiesState={layoutPropertiesState}
+                                                layoutSectionUIOptions={layoutSectionUIOptions}
                                                 activePageDetails={
                                                     pages.find((page) => page.id === activePageId) ?? undefined
                                                 }
