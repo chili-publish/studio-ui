@@ -10,6 +10,7 @@ import StudioSDK, {
     LayoutListItemType,
     LayoutPropertiesType,
     Page,
+    PageSize,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
@@ -73,6 +74,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [activePageDetails, setActivePageDetails] = useState<PageSize | null>(null);
     const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
@@ -255,6 +257,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onPageSizeChanged: (pageSize) => {
                 zoomToPage(pageSize.id);
+                setActivePageDetails(pageSize);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -427,9 +430,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
-                                            activePageDetails={
-                                                pages.find((page) => page.id === activePageId) ?? undefined
-                                            }
+                                            activePageDetails={activePageDetails ?? undefined}
                                         />
                                     )}
                                     <CanvasContainer>
@@ -439,9 +440,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 layouts={layouts}
                                                 variables={variables}
                                                 layoutPropertiesState={layoutPropertiesState}
-                                                activePageDetails={
-                                                    pages.find((page) => page.id === activePageId) ?? undefined
-                                                }
+                                                activePageDetails={activePageDetails ?? undefined}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1

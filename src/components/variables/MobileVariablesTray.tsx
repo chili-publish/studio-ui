@@ -1,5 +1,5 @@
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, LayoutPropertiesType, Page, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
@@ -24,7 +24,7 @@ interface VariablesPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
-    activePageDetails?: Page;
+    activePageDetails?: PageSize;
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
