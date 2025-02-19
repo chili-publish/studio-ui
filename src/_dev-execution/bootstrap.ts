@@ -91,7 +91,6 @@ import { TokenManager } from './token-manager';
         featureFlags: {
             studioDataSource: true,
         },
-        onSetMultiLayout: (setter) => setter(true),
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console
