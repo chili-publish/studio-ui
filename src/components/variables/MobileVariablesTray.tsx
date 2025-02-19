@@ -1,5 +1,5 @@
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, Page, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
@@ -17,11 +17,14 @@ import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
+import LayoutProperties from '../LayoutPanel/LayoutProperties';
 
 interface VariablesPanelProps {
     variables: Variable[];
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
+    layoutPropertiesState: LayoutPropertiesType;
+    activePageDetails?: Page;
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
@@ -35,7 +38,15 @@ const imagePanelHeight = `
     )`;
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
-    const { variables, selectedLayout, layouts, isTimelineDisplayed, isPagesPanelDisplayed } = props;
+    const {
+        variables,
+        selectedLayout,
+        layouts,
+        isTimelineDisplayed,
+        isPagesPanelDisplayed,
+        layoutPropertiesState,
+        activePageDetails,
+    } = props;
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -82,8 +93,11 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
 
     const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
+
+    const isLayoutResizable = useMemo(() => selectedLayout?.resizableByUser.enabled ?? false, [selectedLayout]);
+
     const isAvailableLayoutsDisplayed =
-        layoutsMobileOptionsListOpen || (hasAvailableLayouts && !variablesMobileOptionsListOpen);
+        layoutsMobileOptionsListOpen || ((hasAvailableLayouts || isLayoutResizable) && !variablesMobileOptionsListOpen);
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
     const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
@@ -168,6 +182,12 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                             onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
                                         />
                                     </ListWrapper>
+                                    {isLayoutResizable && !layoutsMobileOptionsListOpen && (
+                                        <LayoutProperties
+                                            layout={layoutPropertiesState}
+                                            activePageDetails={activePageDetails}
+                                        />
+                                    )}
                                 </>
                             )}
 

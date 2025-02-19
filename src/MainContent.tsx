@@ -8,6 +8,7 @@ import StudioSDK, {
     Layout,
     LayoutIntent,
     LayoutListItemType,
+    LayoutPropertiesType,
     Page,
     Variable,
     WellKnownConfigurationKeys,
@@ -72,6 +73,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
     const [multiLayoutMode, setMultiLayoutMode] = useState(false);
@@ -130,16 +132,15 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             });
     }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
-    const zoomToPage = useCallback(async () => {
+    const zoomToPage = useCallback(async (pageId: string | null = null) => {
         const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
-            pageId: null,
+            pageId,
             left: 0,
             top: 0,
             width: iframe?.width,
             height: iframe?.height,
         };
-
         await window.StudioUISDK.canvas.zoomToPage(
             zoomParams.pageId,
             zoomParams.left,
@@ -212,6 +213,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onSelectedLayoutPropertiesChanged: (layoutProperties) => {
                 if (layoutProperties) {
+                    setSelectedPropertiesState(layoutProperties);
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
                     setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
                 }
@@ -249,9 +251,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onSelectedPageIdChanged: (pageId) => {
                 setActivePageId(pageId);
+                zoomToPage(pageId);
             },
-            onPageSizeChanged: () => {
-                zoomToPage();
+            onPageSizeChanged: (pageSize) => {
+                zoomToPage(pageSize.id);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -423,6 +426,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             variables={variables}
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
+                                            layoutPropertiesState={layoutPropertiesState}
+                                            activePageDetails={
+                                                pages.find((page) => page.id === activePageId) ?? undefined
+                                            }
                                         />
                                     )}
                                     <CanvasContainer>
@@ -431,6 +438,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 selectedLayout={currentSelectedLayout}
                                                 layouts={layouts}
                                                 variables={variables}
+                                                layoutPropertiesState={layoutPropertiesState}
+                                                activePageDetails={
+                                                    pages.find((page) => page.id === activePageId) ?? undefined
+                                                }
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1

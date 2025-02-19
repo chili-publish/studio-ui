@@ -3,6 +3,7 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
+import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
@@ -62,7 +63,12 @@ describe('MobileDataSource test', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                            <MobileVariablesPanel variables={[]} selectedLayout={mockLayout} layouts={mockLayouts} />
+                            <MobileVariablesPanel
+                                variables={[]}
+                                selectedLayout={mockLayout}
+                                layouts={mockLayouts}
+                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            />
                         </FeatureFlagProvider>
                     </UiThemeProvider>
                 </div>
@@ -95,6 +101,7 @@ describe('MobileDataSource test', () => {
                                     variables={[]}
                                     selectedLayout={mockLayout}
                                     layouts={mockLayouts}
+                                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                                 />
                             </FeatureFlagProvider>
                         </VariablePanelContextProvider>
