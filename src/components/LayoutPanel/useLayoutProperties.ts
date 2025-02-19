@@ -15,7 +15,16 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
             switch (name) {
                 case 'width': {
                     handleSetProperty(
-                        () => window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value),
+                        async () => {
+                            await window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value);
+                            setPageWidth(
+                                `${formatNumber(
+                                    activePageDetails?.width as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
+                            );
+                            return null;
+                        },
                         () =>
                             setPageWidth(
                                 activePageDetails?.width
@@ -26,16 +35,21 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                                     : '',
                             ),
                     );
-                    setPageWidth(
-                        activePageDetails?.width
-                            ? `${formatNumber(activePageDetails?.width as number, measurementUnit)} ${measurementUnit}`
-                            : '',
-                    );
+                    setPageWidth(value);
                     break;
                 }
                 case 'height': {
                     handleSetProperty(
-                        () => window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value),
+                        async () => {
+                            await window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value);
+                            setPageHeight(
+                                `${formatNumber(
+                                    activePageDetails?.height as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
+                            );
+                            return null;
+                        },
                         () =>
                             setPageHeight(
                                 activePageDetails?.height
@@ -46,11 +60,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                                     : '',
                             ),
                     );
-                    setPageHeight(
-                        activePageDetails?.height
-                            ? `${formatNumber(activePageDetails?.height as number, measurementUnit)} ${measurementUnit}`
-                            : '',
-                    );
+                    setPageHeight(value);
                     break;
                 }
                 default:
