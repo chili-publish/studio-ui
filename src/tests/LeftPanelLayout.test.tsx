@@ -37,6 +37,7 @@ describe('Layout selection', () => {
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
+                            layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
                     />
@@ -68,6 +69,7 @@ describe('Layout selection', () => {
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
+                            layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
                     />
@@ -92,6 +94,7 @@ describe('Layout selection', () => {
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
+                            layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
                     />

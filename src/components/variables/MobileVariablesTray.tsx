@@ -25,7 +25,7 @@ interface VariablesPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
-    layoutSectionUIOptions: Required<Required<Required<UiOptions>['widgets']>['layoutSection']>;
+    layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
     activePageDetails?: Page;
 
     isTimelineDisplayed?: boolean;
@@ -99,11 +99,14 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const isLayoutResizable = useMemo(() => selectedLayout?.resizableByUser.enabled ?? false, [selectedLayout]);
 
+    const isLayoutSwitcherVisible = hasAvailableLayouts && layoutSectionUIOptions.layoutSwitcherVisible;
+    const isLayoutResizableVisible = isLayoutResizable;
+
     const isAvailableLayoutsDisplayed =
         layoutsMobileOptionsListOpen ||
-        ((hasAvailableLayouts || isLayoutResizable) &&
-            !variablesMobileOptionsListOpen &&
-            layoutSectionUIOptions.visible);
+        (layoutSectionUIOptions.visible &&
+            (isLayoutSwitcherVisible || isLayoutResizableVisible) &&
+            !variablesMobileOptionsListOpen);
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
     const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
@@ -183,14 +186,16 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                     {isAvailableLayoutSubtitleDisplayed && (
                                         <TrayPanelTitle>{layoutSectionUIOptions.title}</TrayPanelTitle>
                                     )}
-                                    <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
-                                        <AvailableLayouts
-                                            selectedLayout={selectedLayout}
-                                            availableForUserLayouts={availableLayouts}
-                                            mobileDevice
-                                            onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
-                                        />
-                                    </ListWrapper>
+                                    {isLayoutSwitcherVisible && (
+                                        <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
+                                            <AvailableLayouts
+                                                selectedLayout={selectedLayout}
+                                                availableForUserLayouts={availableLayouts}
+                                                mobileDevice
+                                                onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
+                                            />
+                                        </ListWrapper>
+                                    )}
                                     {isLayoutResizable && !layoutsMobileOptionsListOpen && (
                                         <LayoutProperties
                                             layout={layoutPropertiesState}

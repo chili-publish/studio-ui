@@ -80,13 +80,18 @@ import { TokenManager } from './token-manager';
             widgets: {
                 backButton: { visible: true },
                 navBar: { visible: true },
-                bottomBar: { visible: true },
+                bottomBar: { visible: false },
                 downloadButton: { visible: true },
+            },
+            layoutSection: {
+                layoutSwitcherVisible: true,
+                title: 'Layout',
             },
         },
         featureFlags: {
             studioDataSource: true,
         },
+        onSetMultiLayout: (setter) => setter(true),
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console

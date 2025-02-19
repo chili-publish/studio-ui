@@ -70,6 +70,7 @@ describe('MobileDataSource test', () => {
                                 layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                                 layoutSectionUIOptions={{
                                     visible: false,
+                                    layoutSwitcherVisible: false,
                                     title: 'Layout',
                                 }}
                             />
@@ -108,6 +109,7 @@ describe('MobileDataSource test', () => {
                                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                                     layoutSectionUIOptions={{
                                         visible: false,
+                                        layoutSwitcherVisible: false,
                                         title: 'Layout',
                                     }}
                                 />

@@ -95,10 +95,13 @@ export interface UiOptions {
         bottomBar?: {
             visible?: boolean;
         };
-        layoutSection?: {
-            visible?: boolean;
-            title?: string;
-        };
+    };
+    /**
+     * Experimental. Don't use in production. Will be changed soon.
+     */
+    layoutSection?: {
+        layoutSwitcherVisible?: boolean;
+        title?: string;
     };
 }
 
@@ -158,10 +161,10 @@ export const defaultUiOptions = {
         backButton: {
             visible: false,
         },
-        layoutSection: {
-            visible: true,
-            title: 'Layout',
-        },
+    },
+    layoutSection: {
+        layoutSwitcherVisible: true,
+        title: 'Layout',
     },
 };
 

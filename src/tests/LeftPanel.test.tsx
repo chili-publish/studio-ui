@@ -127,6 +127,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />
@@ -164,6 +165,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />
@@ -201,6 +203,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />
@@ -235,6 +238,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />
@@ -284,6 +288,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />
@@ -320,6 +325,7 @@ describe('Image Panel', () => {
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                             layoutSectionUIOptions={{
                                 visible: false,
+                                layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
                         />

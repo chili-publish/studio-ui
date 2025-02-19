@@ -391,8 +391,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     );
 
     const layoutSectionUIOptions = {
-        visible: !multiLayoutMode && !!projectConfig.uiOptions.widgets?.layoutSection?.visible,
-        title: projectConfig.uiOptions.widgets?.layoutSection?.title ?? 'Layout',
+        visible: !multiLayoutMode,
+        layoutSwitcherVisible: !!projectConfig.uiOptions.layoutSection?.layoutSwitcherVisible,
+        title: projectConfig.uiOptions.layoutSection?.title ?? 'Layout',
     };
 
     return (

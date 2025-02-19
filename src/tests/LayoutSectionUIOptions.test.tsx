@@ -96,7 +96,7 @@ describe('Layout Section UI Options', () => {
             setMobileView(false);
         });
 
-        it('should not render layout when widget is false', async () => {
+        it('should not render layout section when "layoutSwitcherVisible" is false', async () => {
             render(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
@@ -105,10 +105,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: false,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: false,
                                         },
                                     },
                                 }}
@@ -148,10 +146,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                 }}
@@ -186,10 +182,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                     onSetMultiLayout: (setter) => setter(true),
@@ -213,10 +207,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                 }}
@@ -256,11 +248,9 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                                title: 'Custom Layout Title',
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
+                                            title: 'Custom Layout Title',
                                         },
                                     },
                                 }}
@@ -306,10 +296,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: false,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: false,
                                         },
                                     },
                                 }}
@@ -354,10 +342,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                 }}
@@ -393,10 +379,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                     onSetMultiLayout: (setter) => setter(true),
@@ -425,10 +409,8 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
                                         },
                                     },
                                 }}
@@ -473,11 +455,9 @@ describe('Layout Section UI Options', () => {
                                 projectConfig={{
                                     ...mockProjectConfig,
                                     uiOptions: {
-                                        widgets: {
-                                            layoutSection: {
-                                                visible: true,
-                                                title: 'Custom Layout Title',
-                                            },
+                                        layoutSection: {
+                                            layoutSwitcherVisible: true,
+                                            title: 'Custom Layout Title',
                                         },
                                     },
                                 }}

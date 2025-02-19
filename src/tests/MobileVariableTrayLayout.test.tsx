@@ -65,6 +65,7 @@ describe('MobileVariableTrayLayout', () => {
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                     layoutSectionUIOptions={{
                         visible: true,
+                        layoutSwitcherVisible: true,
                         title: 'Layout',
                     }}
                 />
@@ -75,6 +76,8 @@ describe('MobileVariableTrayLayout', () => {
         const openTrayBtn = screen.getByRole('button');
 
         await userEvent.click(openTrayBtn);
+
+        await waitFor(() => expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument());
 
         expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Layout');
         expect(screen.getByText('Customize')).toBeInTheDocument();
@@ -91,6 +94,7 @@ describe('MobileVariableTrayLayout', () => {
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
+                            layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
                     />
@@ -118,6 +122,7 @@ describe('MobileVariableTrayLayout', () => {
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                     layoutSectionUIOptions={{
                         visible: true,
+                        layoutSwitcherVisible: true,
                         title: 'Layout',
                     }}
                 />

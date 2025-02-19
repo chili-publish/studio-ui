@@ -19,7 +19,7 @@ interface LeftPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
-    layoutSectionUIOptions: Required<Required<Required<UiOptions>['widgets']>['layoutSection']>;
+    layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
     activePageDetails?: Page;
 }
 
@@ -34,9 +34,11 @@ function LeftPanel({
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
+
+    const isLayoutSwitcherVisible = availableLayouts.length >= 2 && layoutSectionUIOptions.layoutSwitcherVisible;
+    const isLayoutResizableVisible = !!(selectedLayout?.id && selectedLayout?.resizableByUser.enabled);
     const isAvailableLayoutsDisplayed =
-        layoutSectionUIOptions.visible &&
-        (availableLayouts.length >= 2 || !!(selectedLayout?.id && selectedLayout?.resizableByUser.enabled));
+        layoutSectionUIOptions.visible && (isLayoutSwitcherVisible || isLayoutResizableVisible);
     return (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
@@ -45,13 +47,13 @@ function LeftPanel({
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <PanelTitle>{layoutSectionUIOptions.title}</PanelTitle>
-                            {availableLayouts.length >= 2 && (
+                            {isLayoutSwitcherVisible && (
                                 <AvailableLayouts
                                     selectedLayout={selectedLayout}
                                     availableForUserLayouts={availableLayouts}
                                 />
                             )}
-                            {selectedLayout?.id && selectedLayout?.resizableByUser.enabled && (
+                            {isLayoutResizableVisible && (
                                 <LayoutProperties
                                     layout={layoutPropertiesState}
                                     activePageDetails={activePageDetails}
