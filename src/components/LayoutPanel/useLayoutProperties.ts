@@ -15,6 +15,12 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
             switch (name) {
                 case 'width': {
                     handleSetProperty(
+                        /**
+                         if the same value is set twice, 
+                         on first try it pageSizeChanged event is emitted and input updated with unit
+                         on second try, since no real changes are made to pageSize, engine will not emit PageSizeChanged event
+                         this way we manually set measurement unit after successful SDK update
+                         */
                         async () => {
                             await window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value);
                             setPageWidth(
@@ -25,6 +31,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                             );
                             return null;
                         },
+                        // reset to previous valid width with measurement unit
                         () =>
                             setPageWidth(
                                 activePageDetails?.width
@@ -40,6 +47,11 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                 }
                 case 'height': {
                     handleSetProperty(
+                        /** same for height
+                         if the same value is set twice, on first try it pageSizeChanged event is emitted and input updated with unit
+                         on second try, since no real changes are made to pageSize, engine will not emit PageSizeChanged event
+                         this way we manually set measurement unit after successful SDK update
+                         */
                         async () => {
                             await window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value);
                             setPageHeight(
@@ -50,6 +62,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                             );
                             return null;
                         },
+                        // reset to previous valid width with measurement unit
                         () =>
                             setPageHeight(
                                 activePageDetails?.height
