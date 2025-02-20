@@ -20,7 +20,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     contentType: ContentType.DEFAULT,
     currentVariableId: '',
     currentVariableConnectorId: '',
-    handleUpdateImage: () => undefined,
+    handleUpdateImage: () => Promise.resolve(),
     selectedItems: [],
     navigationStack: [],
     setSelectedItems: () => undefined,
