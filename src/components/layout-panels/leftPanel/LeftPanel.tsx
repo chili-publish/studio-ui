@@ -4,13 +4,14 @@ import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
+import { UiOptions } from '../../../types/types';
 import DataSource from '../../dataSource/DataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
-import VariablesList from '../../variables/VariablesList';
-import { ImagePanelContainer, LeftPanelWrapper, LeftPanelContainer } from './LeftPanel.styles';
-import AvailableLayouts from './AvailableLayouts';
-import { PanelTitle } from '../../shared/Panel.styles';
 import LayoutProperties from '../../LayoutPanel/LayoutProperties';
+import { PanelTitle } from '../../shared/Panel.styles';
+import VariablesList from '../../variables/VariablesList';
+import AvailableLayouts from './AvailableLayouts';
+import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -18,29 +19,41 @@ interface LeftPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
+    layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
     activePageDetails?: Page;
 }
 
-function LeftPanel({ variables, selectedLayout, layouts, layoutPropertiesState, activePageDetails }: LeftPanelProps) {
+function LeftPanel({
+    variables,
+    selectedLayout,
+    layouts,
+    layoutPropertiesState,
+    activePageDetails,
+    layoutSectionUIOptions,
+}: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
+
+    const isLayoutSwitcherVisible = availableLayouts.length >= 2 && layoutSectionUIOptions.layoutSwitcherVisible;
+    const isLayoutResizableVisible = !!(selectedLayout?.id && selectedLayout?.resizableByUser.enabled);
+    const isAvailableLayoutsDisplayed =
+        layoutSectionUIOptions.visible && (isLayoutSwitcherVisible || isLayoutResizableVisible);
     return (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
                     {featureFlags?.studioDataSource ? <DataSource /> : null}
-                    {(availableLayouts.length >= 2 ||
-                        (selectedLayout?.id && selectedLayout?.resizableByUser.enabled)) && (
+                    {isAvailableLayoutsDisplayed && (
                         <>
-                            <PanelTitle>Layout</PanelTitle>
-                            {availableLayouts.length >= 2 && (
+                            <PanelTitle>{layoutSectionUIOptions.title}</PanelTitle>
+                            {isLayoutSwitcherVisible && (
                                 <AvailableLayouts
                                     selectedLayout={selectedLayout}
                                     availableForUserLayouts={availableLayouts}
                                 />
                             )}
-                            {selectedLayout?.id && selectedLayout?.resizableByUser.enabled && (
+                            {isLayoutResizableVisible && (
                                 <LayoutProperties
                                     layout={layoutPropertiesState}
                                     activePageDetails={activePageDetails}
