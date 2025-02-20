@@ -15,8 +15,6 @@ Configurable widgets are able to be hidden, or in some cases you can add events 
 
 #### Theming
 
-> Not available yet
-
 Add your own theming to the Studio UI, to give the UI a little touch of your own, to seamlessly blend in with your own application
 
 ### outputSettings
