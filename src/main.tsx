@@ -1,6 +1,4 @@
-import React from 'react';
-import { createRoot, Root } from 'react-dom/client';
-import App from './App';
+import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
 import {
@@ -11,28 +9,10 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
+import StudioUILoader from './deprecated-loaders';
 
-export default class StudioUI {
+export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
-
-    constructor(selector: string, projectConfig: ProjectConfig) {
-        const container = document.getElementById(selector || 'sui-root');
-        this.root = createRoot(container!);
-        this.root.render(
-            <React.StrictMode>
-                <App projectConfig={projectConfig} />
-            </React.StrictMode>,
-        );
-    }
-
-    destroy() {
-        if (this.root) {
-            // eslint-disable-next-line no-console
-            console.warn('Destroying studio ui component...');
-            this.root.unmount();
-            this.root = undefined;
-        }
-    }
 
     /**
      * Creates a new instance of StudioUI with all integration points available.
@@ -40,7 +20,7 @@ export default class StudioUI {
      * @param projectConfig - The configuration of the project
      * @returns
      */
-    private static fullIntegrationConfig(selector: string, projectConfig: ProjectConfig) {
+    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig) {
         return new StudioUI(selector, projectConfig);
     }
 
@@ -66,7 +46,7 @@ export default class StudioUI {
             refreshTokenAction,
         );
 
-        return this.fullIntegrationConfig(selector, {
+        return this.fullStudioIntegrationConfig(selector, {
             projectId,
             outputSettings: defaultOutputSettings,
             uiOptions: defaultPlatformUiOptions,
@@ -164,7 +144,7 @@ export default class StudioUI {
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const uiOptionsConfig = uiOptions ?? defaultPlatformUiOptions;
 
-        return this.fullIntegrationConfig(selector, {
+        return this.fullStudioIntegrationConfig(selector, {
             projectId,
             projectName,
             userInterfaceID,
