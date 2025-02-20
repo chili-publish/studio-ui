@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LayoutPropertiesType, MeasurementUnit, Page } from '@chili-publish/studio-sdk';
-import { formatNumber, handleSetProperty } from './utils';
+import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
 
 export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: Page) => {
     const [pageWidth, setPageWidth] = useState<string>('');
