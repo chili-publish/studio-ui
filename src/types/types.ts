@@ -166,7 +166,7 @@ export const defaultUiOptions = {
         layoutSwitcherVisible: true,
         title: 'Layout',
     },
-    uiTheme: 'light',
+    uiTheme: 'light' as ITheme['mode'],
 };
 
 export const defaultPlatformUiOptions: UiOptions = {
