@@ -5,8 +5,8 @@ import { LayoutInputsContainer } from './Layout.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { useLayoutProperties } from './useLayoutProperties';
-import { formatNumber } from './utils';
 import { PageInputId, PagePropertyMap } from './types';
+import { formatNumber } from '../../utils/formatNumber';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
