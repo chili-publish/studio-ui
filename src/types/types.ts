@@ -28,7 +28,7 @@ export type ProjectConfig = {
         selectedLayoutID: string | undefined,
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
-    overrideEngineUrl?: string;
+    editorLink?: string;
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
@@ -155,6 +155,7 @@ export const defaultUiOptions: UiOptions = {
             visible: false,
         },
     },
+    uiTheme: 'light',
 };
 
 export const defaultPlatformUiOptions: UiOptions = {

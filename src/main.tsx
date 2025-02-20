@@ -7,7 +7,6 @@ import {
     defaultBackFn,
     defaultOutputSettings,
     defaultPlatformUiOptions,
-    defaultUiOptions,
     IDefaultStudioUILoaderConfig,
     IStudioUILoaderConfig,
     ProjectConfig,
@@ -70,7 +69,7 @@ export default class StudioUI {
         return this.fullIntegrationConfig(selector, {
             projectId,
             outputSettings: defaultOutputSettings,
-            uiOptions: { ...defaultUiOptions, uiTheme: 'light' },
+            uiOptions: defaultPlatformUiOptions,
             onProjectInfoRequested: projectLoader.onProjectInfoRequested,
             onProjectDocumentRequested: projectLoader.onProjectDocumentRequested,
             onProjectSave: projectLoader.onProjectSave,
@@ -83,7 +82,7 @@ export default class StudioUI {
             onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
             onBack: defaultBackFn,
             graFxStudioEnvironmentApiBaseUrl,
-            overrideEngineUrl: editorLink,
+            editorLink,
         });
     }
 
@@ -186,7 +185,7 @@ export default class StudioUI {
             onFetchOutputSettings: projectLoader.onFetchOutputSettings,
             onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
             onConnectorAuthenticationRequested,
-            overrideEngineUrl: editorLink,
+            editorLink,
             onBack,
             customElement,
             onSetMultiLayout,

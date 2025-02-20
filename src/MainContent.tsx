@@ -278,7 +278,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                     viewMode: { enabled: false },
                 },
             },
-            editorLink: projectConfig.overrideEngineUrl,
+            editorLink: projectConfig.editorLink,
         });
 
         // Connect to ths SDK
