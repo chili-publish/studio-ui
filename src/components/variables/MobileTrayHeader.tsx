@@ -1,16 +1,18 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
 interface MobileTrayHeaderProps {
+    layoutSectionTitle: string;
     isDefaultPanelView: boolean;
     mobileListOpen: boolean;
     isDataSourceDisplayed: boolean;
     isAvailableLayoutsDisplayed: boolean;
 }
 function MobileTrayHeader({
+    layoutSectionTitle,
     isDefaultPanelView,
     mobileListOpen,
     isDataSourceDisplayed,
@@ -19,7 +21,7 @@ function MobileTrayHeader({
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     if (isDefaultPanelView && isDataSourceDisplayed) return <TrayPanelTitle>Data source</TrayPanelTitle>;
-    if (isDefaultPanelView && isAvailableLayoutsDisplayed) return <TrayPanelTitle>Layout</TrayPanelTitle>;
+    if (isDefaultPanelView && isAvailableLayoutsDisplayed) return <TrayPanelTitle>{layoutSectionTitle}</TrayPanelTitle>;
 
     if (contentType === ContentType.DEFAULT || mobileListOpen) return <TrayPanelTitle>Customize</TrayPanelTitle>;
     if (contentType === ContentType.DATE_VARIABLE_PICKER)

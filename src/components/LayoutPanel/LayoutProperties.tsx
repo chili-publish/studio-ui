@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import { Input } from '@chili-publish/grafx-shared-components';
-import { LayoutPropertiesType, MeasurementUnit, Page } from '@chili-publish/studio-sdk';
+import { LayoutPropertiesType, MeasurementUnit, PageSize } from '@chili-publish/studio-sdk';
 import { LayoutInputsContainer } from './Layout.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
@@ -10,12 +10,12 @@ import { PageInputId, PagePropertyMap } from './types';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
-    activePageDetails?: Page;
+    pageSize?: PageSize;
 }
 
-function LayoutProperties({ layout, activePageDetails }: LayoutPropertiesProps) {
+function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
-    const { handleChange, pageWidth, pageHeight } = useLayoutProperties(layout, activePageDetails);
+    const { handleChange, pageWidth, pageHeight } = useLayoutProperties(layout, pageSize);
 
     const handleFocus = (inputId: string) => {
         onVariableFocus?.(inputId);
@@ -29,7 +29,7 @@ function LayoutProperties({ layout, activePageDetails }: LayoutPropertiesProps) 
     const handleInputBlur = (id: string) => (event: ChangeEvent<HTMLInputElement>) => {
         const property = PagePropertyMap[id as PageInputId]; // width or height
         const newValue = event.target.value;
-        const oldValue = activePageDetails?.[property as keyof Page] as number;
+        const oldValue = pageSize?.[property as keyof PageSize] as number;
         const isSame =
             `${formatNumber(oldValue as number, (layout?.unit as Record<string, unknown>).value as MeasurementUnit)} ${
                 (layout?.unit as Record<string, unknown>).value as MeasurementUnit
