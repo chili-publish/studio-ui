@@ -40,7 +40,7 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { SuiCanvas } from './MainContent.styles';
-import { Project, ProjectConfig } from './types/types';
+import { defaultUiOptions, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
@@ -396,8 +396,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     const layoutSectionUIOptions = {
         visible: !multiLayoutMode,
-        layoutSwitcherVisible: !!projectConfig.uiOptions.layoutSection?.layoutSwitcherVisible,
-        title: projectConfig.uiOptions.layoutSection?.title ?? 'Layout',
+        layoutSwitcherVisible:
+            projectConfig.uiOptions.layoutSection?.layoutSwitcherVisible ??
+            defaultUiOptions.layoutSection.layoutSwitcherVisible,
+        title: projectConfig.uiOptions.layoutSection?.title ?? defaultUiOptions.layoutSection.title,
     };
 
     return (
