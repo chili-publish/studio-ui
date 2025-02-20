@@ -19,6 +19,8 @@ Add your own theming to the Studio UI, to give the UI a little touch of your own
 
 ### outputSettings
 
+-   **Deprecated**: Yes
+
 > Alpha
 
 This setting allows you to fine grain which output types are possible within the integration. At the time of writing we are working on simplifying this drastically, but this isn't implemented yet.
@@ -184,6 +186,8 @@ The theme field within uiOptions is used to customize various UI elements, speci
     ** colors: Optional. The object can be provided partially. The defined fields will be used to customize the UI components.
 
 #### outputSettings
+
+-   **Deprecated**: Yes
 
 The outputSettings option, is quite a flexible way to set the available output types for your integrations, this option will be overridden when `userInterfaceID` is provided.
 

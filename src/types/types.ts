@@ -209,6 +209,9 @@ export interface IStudioUILoaderConfig {
     refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
+    /**
+     * @deprecated The outputSettings property is deprecated and will be removed in a future version.
+     */
     outputSettings?: OutputSettings;
     editorLink?: string;
     projectDownloadUrl?: string;

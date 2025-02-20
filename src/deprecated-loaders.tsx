@@ -48,7 +48,7 @@ export default class StudioUILoader {
     }
 
     /**
-     * @deprecated
+     * @deprecated The defaultConfigWithEditorLink method is deprecated and will be removed in a future version.
      * Creates a new instance of StudioUI with with the demo document loaded.
      * @param selector - The selector for the root element of the UI.
      * @param editorLink - Url to the engine /web folder
@@ -81,7 +81,7 @@ export default class StudioUILoader {
     }
 
     /**
-     * @deprecated
+     * @deprecated The fullIntegrationConfig method is deprecated and will be removed in a future version.
      * Creates a new instance of StudioUI with all integration points available. Use this if you want
      * to use your own project loader and authentication.
      * @param selector - The selector for the root element of the UI.
@@ -166,7 +166,7 @@ export default class StudioUILoader {
     }
 
     /**
-     * @deprecated
+     * @deprecated The studioLoaderConfig method is deprecated and will be removed in a future version.
      * Creates a new instance of StudioUI with the default project loader and authentication.
      * @param config - The configuration data.
      * @param config.selector - The selector for the root element of the UI.
@@ -256,7 +256,7 @@ export default class StudioUILoader {
     }
 
     /**
-     * @deprecated
+     * @deprecated The studioLoaderCustomTemplateConfig method is deprecated and will be removed in a future version.
      * Creates a new instance of StudioUI with the default authentication, and allows to set
      * the project loader callbacks. Bring your own project json.
      * In this scenario, the environment api is used for the template connectors and
