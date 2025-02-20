@@ -24,23 +24,23 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: Bump version locally
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version patch --no-git-tag-version
+            # - name: Bump version locally
+            #   run: |
+            #       git config --global user.name 'github-actions[bot]'
+            #       git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            #       git fetch origin
+            #       git checkout -B main origin/main
+            #       npm version patch --no-git-tag-version
 
             - name: build code
               run: yarn build
-            - name: Commit version changes
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git add package.json yarn.lock
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags
+            # - name: Commit version changes
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #   run: |
+            #       git add package.json yarn.lock
+            #       git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+            #       git push origin main --follow-tags
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
