@@ -197,10 +197,10 @@ function ItemBrowser<
             });
             setBreadcrumbStack((currentStack) => [...currentStack, item.name]);
         } else {
-            await onSelect(item);
             setNavigationStack([]);
             setSearchQuery('');
             setSearchKeyWord('');
+            await onSelect(item);
         }
     };
 
