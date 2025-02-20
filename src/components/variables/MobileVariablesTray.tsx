@@ -1,5 +1,5 @@
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, LayoutPropertiesType, Page, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
@@ -25,8 +25,8 @@ interface VariablesPanelProps {
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
+    pageSize?: PageSize;
     layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
-    activePageDetails?: Page;
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
@@ -47,7 +47,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         isTimelineDisplayed,
         isPagesPanelDisplayed,
         layoutPropertiesState,
-        activePageDetails,
+        pageSize,
         layoutSectionUIOptions,
     } = props;
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
@@ -197,10 +197,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                         </ListWrapper>
                                     )}
                                     {isLayoutResizable && !layoutsMobileOptionsListOpen && (
-                                        <LayoutProperties
-                                            layout={layoutPropertiesState}
-                                            activePageDetails={activePageDetails}
-                                        />
+                                        <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
                                     )}
                                 </>
                             )}

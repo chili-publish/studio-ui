@@ -10,6 +10,7 @@ import StudioSDK, {
     LayoutListItemType,
     LayoutPropertiesType,
     Page,
+    PageSize,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
@@ -73,6 +74,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [pageSize, setPageSize] = useState<PageSize | null>(null);
     const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
@@ -253,8 +255,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setActivePageId(pageId);
                 zoomToPage(pageId);
             },
+            // eslint-disable-next-line @typescript-eslint/no-shadow
             onPageSizeChanged: (pageSize) => {
                 zoomToPage(pageSize.id);
+                setPageSize(pageSize);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -433,10 +437,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
+                                            pageSize={pageSize ?? undefined}
                                             layoutSectionUIOptions={layoutSectionUIOptions}
-                                            activePageDetails={
-                                                pages.find((page) => page.id === activePageId) ?? undefined
-                                            }
                                         />
                                     )}
                                     <CanvasContainer>
@@ -446,10 +448,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 layouts={layouts}
                                                 variables={variables}
                                                 layoutPropertiesState={layoutPropertiesState}
+                                                pageSize={pageSize ?? undefined}
                                                 layoutSectionUIOptions={layoutSectionUIOptions}
-                                                activePageDetails={
-                                                    pages.find((page) => page.id === activePageId) ?? undefined
-                                                }
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1

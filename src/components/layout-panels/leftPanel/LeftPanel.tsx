@@ -1,5 +1,5 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, LayoutPropertiesType, Page, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -20,7 +20,7 @@ interface LeftPanelProps {
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
     layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
-    activePageDetails?: Page;
+    pageSize?: PageSize;
 }
 
 function LeftPanel({
@@ -28,7 +28,7 @@ function LeftPanel({
     selectedLayout,
     layouts,
     layoutPropertiesState,
-    activePageDetails,
+    pageSize,
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
@@ -54,10 +54,7 @@ function LeftPanel({
                                 />
                             )}
                             {isLayoutResizableVisible && (
-                                <LayoutProperties
-                                    layout={layoutPropertiesState}
-                                    activePageDetails={activePageDetails}
-                                />
+                                <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
                             )}
                         </>
                     )}
