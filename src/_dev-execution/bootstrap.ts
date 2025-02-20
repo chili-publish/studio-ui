@@ -80,12 +80,8 @@ import { TokenManager } from './token-manager';
             widgets: {
                 backButton: { visible: true },
                 navBar: { visible: true },
-                bottomBar: { visible: false },
+                bottomBar: { visible: true },
                 downloadButton: { visible: true },
-            },
-            layoutSection: {
-                layoutSwitcherVisible: true,
-                title: 'Layout',
             },
         },
         featureFlags: {
