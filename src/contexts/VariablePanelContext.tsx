@@ -20,7 +20,7 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     contentType: ContentType.DEFAULT,
     currentVariableId: '',
     currentVariableConnectorId: '',
-    handleUpdateImage: () => undefined,
+    handleUpdateImage: () => Promise.resolve(),
     selectedItems: [],
     navigationStack: [],
     setSelectedItems: () => undefined,
@@ -77,6 +77,7 @@ export function VariablePanelContextProvider({
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
+            setContentType(ContentType.DEFAULT);
             const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
@@ -88,7 +89,6 @@ export function VariablePanelContextProvider({
                     ...variable,
                     value: { ...variable.value, ...imgSrc },
                 } as ImageVariable);
-            setContentType(ContentType.DEFAULT);
         },
         [currentVariableConnectorId, handleImageChange, currentVariableId, variableValidationData, variables],
     );
