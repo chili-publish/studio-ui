@@ -10,6 +10,7 @@ import StudioSDK, {
     LayoutListItemType,
     LayoutPropertiesType,
     Page,
+    PageSize,
     Variable,
     WellKnownConfigurationKeys,
 } from '@chili-publish/studio-sdk';
@@ -26,7 +27,9 @@ import {
 } from './components/connector-authentication';
 import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
 import Navbar from './components/navbar/Navbar';
+import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Pages from './components/pagesPanel/Pages';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
@@ -37,11 +40,9 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { SuiCanvas } from './MainContent.styles';
-import { Project, ProjectConfig } from './types/types';
+import { defaultUiOptions, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
-import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 
 declare global {
     interface Window {
@@ -73,6 +74,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
+    const [pageSize, setPageSize] = useState<PageSize | null>(null);
     const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
@@ -253,8 +255,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setActivePageId(pageId);
                 zoomToPage(pageId);
             },
+            // eslint-disable-next-line @typescript-eslint/no-shadow
             onPageSizeChanged: (pageSize) => {
                 zoomToPage(pageSize.id);
+                setPageSize(pageSize);
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -390,6 +394,14 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         [currentProject?.name, projectConfig, undoStackState, currentZoom],
     );
 
+    const layoutSectionUIOptions = {
+        visible: !multiLayoutMode,
+        layoutSwitcherVisible:
+            projectConfig.uiOptions.layoutSection?.layoutSwitcherVisible ??
+            defaultUiOptions.layoutSection.layoutSwitcherVisible,
+        title: projectConfig.uiOptions.layoutSection?.title ?? defaultUiOptions.layoutSection.title,
+    };
+
     return (
         <AppProvider isDocumentLoaded={isDocumentLoaded} isAnimationPlaying={animationStatus} dataSource={dataSource}>
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
@@ -427,9 +439,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             selectedLayout={currentSelectedLayout}
                                             layouts={layouts}
                                             layoutPropertiesState={layoutPropertiesState}
-                                            activePageDetails={
-                                                pages.find((page) => page.id === activePageId) ?? undefined
-                                            }
+                                            pageSize={pageSize ?? undefined}
+                                            layoutSectionUIOptions={layoutSectionUIOptions}
                                         />
                                     )}
                                     <CanvasContainer>
@@ -439,9 +450,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 layouts={layouts}
                                                 variables={variables}
                                                 layoutPropertiesState={layoutPropertiesState}
-                                                activePageDetails={
-                                                    pages.find((page) => page.id === activePageId) ?? undefined
-                                                }
+                                                pageSize={pageSize ?? undefined}
+                                                layoutSectionUIOptions={layoutSectionUIOptions}
                                                 isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
