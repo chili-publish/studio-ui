@@ -276,10 +276,9 @@ class ProjectConfigs {
     static empty: ProjectConfig = {
         projectId: '00000000-0000-0000-0000-000000000000',
         projectName: '',
-        uiOptions: defaultPlatformUiOptions,
+        uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'light' },
         outputSettings: defaultOutputSettings,
         graFxStudioEnvironmentApiBaseUrl: '',
-        uiTheme: 'light',
         sandboxMode: false,
         onProjectInfoRequested: async () => {
             return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
@@ -303,7 +302,7 @@ class ProjectConfigs {
         onAuthenticationExpired: async () => {
             return '';
         },
-        onUserInterfaceBack: () => {
+        onBack: () => {
             // ignored
         },
         onLogInfoRequested: () => {

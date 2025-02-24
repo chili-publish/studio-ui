@@ -105,7 +105,7 @@ describe('Required text variable', () => {
         });
         render(<div id="sui-root" />);
         await act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
         await act(async () => {
             await (window.StudioUISDK as any).next.subscriber.onVariableListChanged(variablesStr);

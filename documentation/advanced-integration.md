@@ -19,6 +19,8 @@ Add your own theming to the Studio UI, to give the UI a little touch of your own
 
 ### outputSettings
 
+-   **Deprecated**: Yes
+
 > Alpha
 
 This setting allows you to fine grain which output types are possible within the integration. At the time of writing we are working on simplifying this drastically, but this isn't implemented yet.
@@ -127,7 +129,7 @@ const uiOptions = {
     },
 };
 
-window.StudioUI.studioLoaderConfig({
+window.StudioUI.studioUILoaderConfig({
     // Div id to inject studio-ui in
     selector: studioUIContainer,
 
@@ -153,7 +155,7 @@ window.StudioUI.studioLoaderConfig({
     projectName: projectName,
 
     /* outputTypes: object of all available output types (optional) that have a boolean value */
-    outputTypes: outputTypes,
+    outputSettings: outputSettings,
 
     /* uiOptions: object to play around with parts of the UI and the theming.*/
     uiOptions: uiOptions,
@@ -184,6 +186,8 @@ The theme field within uiOptions is used to customize various UI elements, speci
     ** colors: Optional. The object can be provided partially. The defined fields will be used to customize the UI components.
 
 #### outputSettings
+
+-   **Deprecated**: Yes
 
 The outputSettings option, is quite a flexible way to set the available output types for your integrations, this option will be overridden when `userInterfaceID` is provided.
 
@@ -280,38 +284,6 @@ const onProjectSave = async (generateJson) => {
         },
     };
 };
-
-window.StudioUI.studioLoaderCustomTemplateConfig({
-    // Div id to inject studio-ui in
-    selector: studioUIContainer,
-
-    // downloadUrl used to fetch the document
-    projectDownloadUrl: `${environmentBaseURL}/projects/${projectID}/document`,
-
-    // uploadUrl used to save the changes you did to the document (autosave)
-    projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
-
-    // project Id to enable autosave
-    projectId: projectID,
-
-    /* environment base URL ex: https://cp-abc-123.chili-publish.online/grafx/api/v1/cp-abc-123 */
-    graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
-
-    /* Integration access token */
-    authToken: token,
-
-    /* refreshTokenAction, being a function that will return a promise () => Promise<string | Error> */
-    refreshTokenAction: refreshTokenAction,
-
-    /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
-    projectName: projectName,
-
-    /* outputTypes: object of all available output types (optional) that have a boolean value */
-    outputTypes: outputTypes,
-
-    /* uiOptions: object to play around with parts of the UI.*/
-    uiOptions: uiOptions,
-});
 ```
 
 onProjectSave example implementation [can be found here](https://github.com/chili-publish/studio-ui/blob/b2f7e5307cc8dee41eb89a15c3647a8ce1d13768/src/StudioProjectLoader.tsx#L72).

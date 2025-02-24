@@ -24,10 +24,9 @@ type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutp
 const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig => ({
     projectId: '1111-111-0000-0000-1111',
     projectName: '',
-    uiOptions: defaultPlatformUiOptions,
+    uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'dark' },
     outputSettings: defaultOutputSettings,
     graFxStudioEnvironmentApiBaseUrl: '',
-    uiTheme: 'dark',
     sandboxMode: true,
     onProjectInfoRequested: async () => {
         return { name: '', id: '', template: { id: '1111-111-0000-0000-1111' } };
@@ -51,7 +50,7 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onAuthenticationExpired: async () => {
         return '';
     },
-    onUserInterfaceBack: () => {
+    onBack: () => {
         // ignored
     },
     onLogInfoRequested: () => {
