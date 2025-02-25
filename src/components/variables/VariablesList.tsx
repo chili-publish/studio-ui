@@ -21,7 +21,7 @@ function VariablesList({ variables }: VariablesListProps) {
 
     useEffect(() => {
         validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+    }, [variables, validateUpdatedVariables]);
 
     return (
         <ListWrapper>

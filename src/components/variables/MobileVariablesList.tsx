@@ -30,7 +30,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
 
     useEffect(() => {
         validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+    }, [variables, validateUpdatedVariables]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {
