@@ -6,6 +6,7 @@ import { useAppContext } from '../../contexts/AppProvider';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
+import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
 
@@ -24,17 +25,19 @@ function getDataSourceErrorText(status?: number) {
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
-    const [dataRows, setDataRows] = useState<DataItem[]>([]);
-    const [continuationToken, setContinuationToken] = useState<string | null>(null);
-
-    const [currentRowIndex, setCurrentRowIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const shouldUpdateDataRow = useRef(true);
-    const [error, setError] = useState<{ status?: number; message: string } | undefined>();
-
+    const { validateVariables } = useVariablePanelContext();
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
+
+    const [dataRows, setDataRows] = useState<DataItem[]>([]);
+    const [continuationToken, setContinuationToken] = useState<string | null>(null);
+    const [currentRowIndex, setCurrentRowIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<{ status?: number; message: string } | undefined>();
+
+    const shouldUpdateDataRow = useRef(true);
+    const shouldValidateVariables = useRef(false);
 
     const hasUserAuthorization = useAsyncMemo(async () => {
         if (!dataSource) {
@@ -139,7 +142,11 @@ const useDataSource = () => {
     useEffect(() => {
         (async () => {
             if (currentRow && shouldUpdateDataRow.current) {
-                await window.StudioUISDK.dataSource.setDataRow(currentRow);
+                try {
+                    await window.StudioUISDK.dataSource.setDataRow(currentRow);
+                } finally {
+                    shouldValidateVariables.current = true;
+                }
             }
         })();
     }, [currentRow]);
@@ -175,6 +182,17 @@ const useDataSource = () => {
         subscriber?.on('onConnectorEvent', handler);
         return () => subscriber?.off('onConnectorEvent', handler);
     }, [subscriber, dataSource, resetData, loadDataRowsByToken]);
+
+    useEffect(() => {
+        // In order to run "dirty" validation of variables at the right time,
+        // we check the ref that will be updated only after the execution of the `setDataRow` method above.
+        // The result of setDataRow leads to changing the variables, which will lead to the re-execution of this useEffect,
+        // since validateVariables is a callback that has a dependency on the "variables" value.
+        if (shouldValidateVariables.current) {
+            shouldValidateVariables.current = false;
+            validateVariables();
+        }
+    }, [validateVariables]);
 
     return {
         currentInputRow,
