@@ -40,7 +40,7 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { SuiCanvas } from './MainContent.styles';
-import { defaultUiOptions, Project, ProjectConfig } from './types/types';
+import { defaultUiOptions, LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 
@@ -83,7 +83,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
     const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
-    const [isLoadDocumentErrorDialogOpen, setIsLoadDocumentErrorDialogOpen] = useState(false);
+    const [loadDocumentError, setLoadDocumentError] = useState<{ isOpen: boolean; error: LoadDocumentError }>();
 
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
     const { subscriber: eventSubscriber } = useSubscriberContext();
@@ -345,35 +345,59 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         const loadDocument = async () => {
             if (!fetchedDocument) return;
 
-            await window.StudioUISDK.document
-                .load(fetchedDocument)
-                .then((res) => {
-                    setIsDocumentLoaded(res.success);
-                })
-                .catch((err: Error) => {
-                    if ((err.cause as { name: string; message: string })?.name === '303001') {
-                        setIsLoadDocumentErrorDialogOpen(true);
+            try {
+                const result = await window.StudioUISDK.document.load(fetchedDocument);
+                setIsDocumentLoaded(result.success);
+
+                window.StudioUISDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
+                    if (res.success && res.parsedData) {
+                        setMediaConnectors(res.parsedData);
                     }
                 });
-            window.StudioUISDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
-                if (res.success && res.parsedData) {
-                    setMediaConnectors(res.parsedData);
+
+                window.StudioUISDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
+                    if (res.success && res.parsedData) {
+                        setFontsConnectors(res.parsedData);
+                    }
+                });
+
+                window.StudioUISDK.dataSource.getDataSource().then((res) => {
+                    setDataSource(res.parsedData ?? undefined);
+                });
+
+                const layoutIntentData =
+                    (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
+                setLayoutIntent(layoutIntentData);
+                zoomToPage();
+            } catch (err: unknown) {
+                const errorCode = ((err as Error).cause as { name: string; message: string })?.name;
+                if (errorCode === '303011') {
+                    setLoadDocumentError({ isOpen: true, error: LoadDocumentError.PARSING_ERROR });
+                } else if (errorCode === '303012') {
+                    setLoadDocumentError({ isOpen: true, error: LoadDocumentError.FORMAT_ERROR });
+                } else if (errorCode === '303001') {
+                    setLoadDocumentError({ isOpen: true, error: LoadDocumentError.VERSION_ERROR });
+                } else {
+                    setLoadDocumentError({ isOpen: true, error: LoadDocumentError.TECHNICAL_ERROR });
                 }
-            });
-
-            window.StudioUISDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
-                if (res.success && res.parsedData) {
-                    setFontsConnectors(res.parsedData);
-                }
-            });
-
-            window.StudioUISDK.dataSource.getDataSource().then((res) => {
-                setDataSource(res.parsedData ?? undefined);
-            });
-
-            const layoutIntentData = (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
-            setLayoutIntent(layoutIntentData);
-            zoomToPage();
+            }
+            // await window.StudioUISDK.document
+            //     .load(fetchedDocument)
+            //     .then((res) => {
+            //         setIsDocumentLoaded(res.success);
+            //     })
+            //     .catch((err: Error) => {
+            //         const errorCode = (err.cause as { name: string; message: string })?.name;
+            //         if (errorCode === '303011') {
+            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.PARSING_ERROR });
+            //         } else if (errorCode === '303012') {
+            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.FORMAT_ERROR });
+            //         } else if (errorCode === '303001') {
+            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.VERSION_ERROR });
+            //         } else {
+            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.TECHNICAL_ERROR });
+            //         }
+            //     });
         };
 
         loadDocument();
@@ -495,7 +519,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     </CanvasContainer>
                                 </MainContentContainer>
                                 <LoadDocumentErrorDialog
-                                    isLoadDocumentErrorDialogOpen={isLoadDocumentErrorDialogOpen}
+                                    loadDocumentError={loadDocumentError}
                                     goBack={projectConfig?.onUserInterfaceBack}
                                 />
                                 {pendingAuthentications.length &&

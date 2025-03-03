@@ -5,6 +5,13 @@ import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 
 export type FeatureFlagsType = Record<string, boolean>;
 
+export enum LoadDocumentError {
+    PARSING_ERROR = 'PARSING_ERROR',
+    FORMAT_ERROR = 'FORMAT_ERROR',
+    VERSION_ERROR = 'VERSION_ERROR',
+    TECHNICAL_ERROR = 'TECHNICAL_ERROR',
+}
+
 export type ProjectConfig = {
     projectId?: string;
     projectName: string;
