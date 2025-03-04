@@ -385,7 +385,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     const navbarProps = useMemo(
         () => ({
-            projectName: currentProject?.name ?? projectConfig.projectName ?? '',
+            projectName: currentProject?.name || projectConfig.projectName || '',
             goBack: projectConfig.onBack,
             projectConfig,
             undoStackState,
