@@ -38,7 +38,7 @@ export interface IVariablePanelContext {
     contentType: ContentType;
     currentVariableId: string;
     currentVariableConnectorId: string;
-    handleUpdateImage: (_: Media) => void;
+    handleUpdateImage: (_: Media) => Promise<void>;
     selectedItems: Media[];
     navigationStack: string[];
     setSelectedItems: Dispatch<SetStateAction<Media[]>>;
