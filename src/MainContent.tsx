@@ -381,23 +381,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                     setLoadDocumentError({ isOpen: true, error: LoadDocumentError.TECHNICAL_ERROR });
                 }
             }
-            // await window.StudioUISDK.document
-            //     .load(fetchedDocument)
-            //     .then((res) => {
-            //         setIsDocumentLoaded(res.success);
-            //     })
-            //     .catch((err: Error) => {
-            //         const errorCode = (err.cause as { name: string; message: string })?.name;
-            //         if (errorCode === '303011') {
-            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.PARSING_ERROR });
-            //         } else if (errorCode === '303012') {
-            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.FORMAT_ERROR });
-            //         } else if (errorCode === '303001') {
-            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.VERSION_ERROR });
-            //         } else {
-            //             setLoadDocumentError({ isOpen: true, error: LoadDocumentError.TECHNICAL_ERROR });
-            //         }
-            //     });
         };
 
         loadDocument();
