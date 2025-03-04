@@ -71,7 +71,7 @@ describe('StudioLoader integration - expired auth token', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await waitFor(() => {
@@ -138,7 +138,7 @@ describe('StudioLoader integration - expired auth token', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => null);

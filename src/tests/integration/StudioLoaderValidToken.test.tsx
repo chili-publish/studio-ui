@@ -48,7 +48,7 @@ describe('StudioLoader integration - valid auth token', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await waitFor(() => {

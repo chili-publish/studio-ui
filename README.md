@@ -68,7 +68,7 @@ If you need help generating a token or would like code samples, please see our [
             /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. */
             const refreshTokenAction = () => Promise.resolve(token);
 
-            window.StudioUI.studioLoaderConfig({
+            window.StudioUI.studioUILoaderConfig({
                 // Div id to inject studio-ui in
                 selector: studioUIContainer,
                 // downloadUrl used to fetch the document
