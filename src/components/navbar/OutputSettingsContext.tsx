@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+    LayoutForm,
     ProjectConfig,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
@@ -13,6 +14,7 @@ export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
+    layoutsFormBuilderData: null,
 };
 
 export const OutputSettingsContext = createContext<IOutputSettingsContext>(OutputSettingsContextDefaultValues);
@@ -38,6 +40,7 @@ export function OutputSettingsContextProvider({
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
     >([]);
+    const [layoutsFormBuilderData, setLayoutsFormBuilderData] = useState<LayoutForm | null>(null);
 
     const fetchOutputSettings = useCallback(
         async (userInterfaceId?: string) => {
@@ -52,6 +55,7 @@ export function OutputSettingsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                        setLayoutsFormBuilderData(res?.formBuilder?.layouts || null);
                     });
             }
         },
@@ -68,12 +72,14 @@ export function OutputSettingsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
+            layoutsFormBuilderData,
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
+            layoutsFormBuilderData,
         ],
     );
 

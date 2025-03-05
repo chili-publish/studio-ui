@@ -248,6 +248,7 @@ export class StudioProjectLoader {
             return {
                 userInterface: { id: userInterfaceData?.id, name: userInterfaceData?.name },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
+                formBuilder: userInterfaceData?.formBuilder,
             };
         }
         const defaultUserInterface = await fetchDefaultUserInterface();
@@ -256,6 +257,7 @@ export class StudioProjectLoader {
             ? {
                   userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
                   outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
+                  formBuilder: defaultUserInterface?.formBuilder,
               }
             : null;
     };
