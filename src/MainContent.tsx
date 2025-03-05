@@ -282,7 +282,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                     viewMode: { enabled: false },
                 },
             },
-            editorLink: projectConfig.overrideEngineUrl,
+            editorLink: projectConfig.editorLink,
         });
 
         // Connect to ths SDK
@@ -385,8 +385,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     const navbarProps = useMemo(
         () => ({
-            projectName: currentProject?.name || projectConfig.projectName,
-            goBack: projectConfig?.onUserInterfaceBack,
+            projectName: currentProject?.name || projectConfig.projectName || '',
+            goBack: projectConfig.onBack,
             projectConfig,
             undoStackState,
             zoom: currentZoom,
@@ -496,7 +496,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                 </MainContentContainer>
                                 <LoadDocumentErrorDialog
                                     isLoadDocumentErrorDialogOpen={isLoadDocumentErrorDialogOpen}
-                                    goBack={projectConfig?.onUserInterfaceBack}
+                                    goBack={projectConfig.onBack}
                                 />
                                 {pendingAuthentications.length &&
                                     pendingAuthentications.map((authFlow) => (

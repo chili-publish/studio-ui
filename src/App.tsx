@@ -18,12 +18,12 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     const [eventSubscriber] = useState(new Subscriber());
 
     const uiThemeMode = useMemo(() => {
-        if (projectConfig.uiTheme === 'system') {
+        if (projectConfig.uiOptions.uiTheme === 'system') {
             const isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)');
             return isDarkTheme ? 'dark' : 'light';
         }
-        return projectConfig.uiTheme;
-    }, [projectConfig.uiTheme]);
+        return projectConfig.uiOptions.uiTheme;
+    }, [projectConfig.uiOptions.uiTheme]);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     useEffect(() => {
