@@ -79,7 +79,7 @@ describe('MobileVariableTrayLayout', () => {
 
         await waitFor(() => expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument());
 
-        expect(await screen.findByTestId('test-gsc-tray-header')).toHaveTextContent('Layout');
+        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Layout');
         expect(screen.getByText('Customize')).toBeInTheDocument();
     });
 
