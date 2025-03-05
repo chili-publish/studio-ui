@@ -36,6 +36,7 @@
         "@fortawesome/react-fontawesome": "^0.2.2",
         "axios": "^1.6.0",
         "date-fns": "^4.1.0",
+        "dnd-core": "^16.0.1",
         "react": "^18.2.0",
         "react-datepicker": "^7.5.0",
         "react-dnd": "^16.0.1",
