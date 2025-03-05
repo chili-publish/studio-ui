@@ -122,17 +122,39 @@ export type UserInterfaceWithOutputSettings = {
         id: string;
         name: string;
     };
+    formBuilder: FormBuilderType;
 };
 
+export interface BaseFormBuilderType<T extends FormKeys> {
+    type: T;
+    active: boolean;
+    header: string;
+    helpText: string;
+}
+
+export interface LayoutForm extends BaseFormBuilderType<'layouts'> {
+    layoutSelector: boolean;
+    multipleLayouts: boolean;
+    allowNewProjectFromLayout: boolean;
+    showWidthHeightInputs: boolean;
+}
+
+export type DataSourceAndVariablesForm = BaseFormBuilderType<'datasource' | 'variables'>;
+
+export type FormKeys = 'datasource' | 'layouts' | 'variables';
+
+export type FormBuilderType = {
+    [K in FormKeys]: K extends 'layouts' ? LayoutForm : DataSourceAndVariablesForm;
+};
+export type OutputSettingsType = {
+    [index: string]: { layoutIntents: string[] };
+};
 export type UserInterface = {
-    name: string;
     id: string;
+    name: string;
+    outputSettings: OutputSettingsType;
+    formBuilder: FormBuilderType;
     default: boolean;
-    outputSettings: {
-        [index: string]: {
-            layoutIntents: string[];
-        };
-    };
 };
 
 export type PaginatedResponse<T> = {

@@ -96,6 +96,7 @@ describe('StudioNavbar', () => {
             Promise.resolve({
                 userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
                 outputSettings: [],
+                formBuilder: mockUserInterface.formBuilder,
             }),
         );
         renderTemplate(fetchOutputSettings);

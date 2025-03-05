@@ -2,6 +2,7 @@ import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-comp
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { mockUserInterface } from '@mocks/mockUserinterface';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
@@ -20,6 +21,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                 outputSettings: [
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
+                formBuilder: mockUserInterface.formBuilder,
             }),
     };
     const projectConfig = config || prjConfig;
@@ -60,6 +62,7 @@ describe('Navbar', () => {
                     outputSettings: [
                         { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                     ],
+                    formBuilder: mockUserInterface.formBuilder,
                 }),
         };
     });
@@ -166,6 +169,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder,
                 }),
         };
         renderComponent(prjConfig);
@@ -209,6 +213,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder,
                 }),
         };
         renderComponent(prjConfig, LayoutIntent.print);
@@ -252,6 +257,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder,
                 }),
         };
 

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import EditorSDK, { Layout, LayoutIntent, LayoutListItemType, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
+import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
@@ -12,28 +14,38 @@ import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
+import { OutputSettingsContextProvider } from '../components/navbar/OutputSettingsContext';
+import { defaultOutputSettings, defaultPlatformUiOptions, ProjectConfig } from '../types/types';
 
 afterEach(() => {
     jest.clearAllMocks();
 });
 const mockSDK = mock<EditorSDK>();
 
-describe('Layout selection', () => {
-    mockSDK.layout.select = jest.fn().mockResolvedValue({
-        parsedData: null,
-    });
-    window.StudioUISDK = mockSDK;
+const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemType[], selectedLayout?: Layout) => {
+    const projectConfig = {
+        ...ProjectConfigs.empty,
+        onFetchOutputSettings: () =>
+            Promise.resolve({
+                userInterface: { id: '1', name: 'name' },
+                outputSettings: [
+                    { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
+                ],
+                formBuilder: mockUserInterface.formBuilder,
+            }),
+    };
 
-    test('Layout dropdown and dimension inputs are rendered based on layout properties', () => {
-        const singleAvailableLayout = [mockLayouts[1]];
-
-        render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+    render(
+        <UiThemeProvider theme="platform">
+            <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                <OutputSettingsContextProvider
+                    projectConfig={projectConfig}
+                    layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
+                >
                     <LeftPanel
                         variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={singleAvailableLayout}
+                        selectedLayout={selectedLayout || mockLayout}
+                        layouts={layouts || mockLayouts}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
@@ -41,17 +53,27 @@ describe('Layout selection', () => {
                             title: 'Layout',
                         }}
                     />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
-        );
+                </OutputSettingsContextProvider>
+            </VariablePanelContextProvider>
+        </UiThemeProvider>,
+        { container: document.body.appendChild(APP_WRAPPER) },
+    );
+};
+describe('Layout selection', () => {
+    mockSDK.layout.select = jest.fn().mockResolvedValue({
+        parsedData: null,
+    });
+    window.StudioUISDK = mockSDK;
+    test('Layout dropdown and dimension inputs are rendered based on layout properties', async () => {
+        const singleAvailableLayout = [mockLayouts[1]];
+
+        renderComponent(LayoutIntent.print, singleAvailableLayout, mockLayout);
 
         // Verify dropdown not shown with single layout
         expect(screen.queryByTestId(getDataTestIdForSUI('dropdown-available-layout'))).not.toBeInTheDocument();
-
         // Verify dimension inputs shown for resizable layout
-        expect(screen.getByLabelText('Width')).toBeInTheDocument();
-        expect(screen.getByLabelText('Height')).toBeInTheDocument();
+        expect(await screen.findByLabelText('Width')).toBeInTheDocument();
+        expect(await screen.findByLabelText('Height')).toBeInTheDocument();
 
         // Re-render with non-resizable layout
         const nonResizableLayout = {
@@ -59,49 +81,14 @@ describe('Layout selection', () => {
             resizableByUser: { ...mockLayout.resizableByUser, enabled: false },
         };
 
-        render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={nonResizableLayout}
-                        layouts={singleAvailableLayout}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
-        );
-
+        renderComponent(LayoutIntent.print, singleAvailableLayout, nonResizableLayout);
         // Verify dimension inputs not shown for non-resizable layout
         expect(screen.queryByLabelText('Width')).not.toBeInTheDocument();
         expect(screen.queryByLabelText('Height')).not.toBeInTheDocument();
     });
 
     test('Layout dropdown is displayed when multiple layouts are available for user', async () => {
-        render(
-            <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
-            </UiThemeProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
-        );
+        renderComponent();
 
         expect(screen.getByText('Customize')).toBeInTheDocument();
 
@@ -113,7 +100,6 @@ describe('Layout selection', () => {
         await act(async () => {
             await selectEvent.openMenu(selectIndicator as HTMLElement);
         });
-        screen.logTestingPlaygroundURL();
         expect(screen.queryByText(mockLayouts[0].name)).not.toBeInTheDocument();
         expect(screen.getByRole('option', { name: /l1 display name/i })).toBeInTheDocument();
         expect(screen.getByText(mockLayouts[2].name)).toBeInTheDocument();
@@ -128,3 +114,45 @@ describe('Layout selection', () => {
         });
     });
 });
+class ProjectConfigs {
+    static empty: ProjectConfig = {
+        projectId: '00000000-0000-0000-0000-000000000000',
+        projectName: '',
+        uiOptions: defaultPlatformUiOptions,
+        outputSettings: defaultOutputSettings,
+        graFxStudioEnvironmentApiBaseUrl: '',
+        uiTheme: 'light',
+        sandboxMode: false,
+        onProjectInfoRequested: async () => {
+            return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
+        },
+        onProjectDocumentRequested: async () => {
+            return '';
+        },
+        onProjectLoaded: () => {
+            // ignored
+        },
+        onProjectSave: async () => {
+            return {
+                name: '',
+                id: '00000000-0000-0000-0000-000000000000',
+                template: { id: '00000000-0000-0000-0000-000000000000' },
+            };
+        },
+        onAuthenticationRequested: () => {
+            return '';
+        },
+        onAuthenticationExpired: async () => {
+            return '';
+        },
+        onUserInterfaceBack: () => {
+            // ignored
+        },
+        onLogInfoRequested: () => {
+            // ignored
+        },
+        onProjectGetDownloadLink: async () => {
+            return { status: 0, error: '', success: false, parsedData: '', data: '' };
+        },
+    };
+}
