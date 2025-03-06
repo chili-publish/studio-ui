@@ -124,7 +124,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     dataTestId={getDataTestIdForSUI('mobile-variables')}
                     variant={ButtonVariant.primary}
                     icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
-                    onClick={() => setIsTrayVisible(true)}
+                    onClick={() => {
+                        setIsTrayVisible(true);
+                    }}
                     styles={css`
                         padding: 0.9375rem;
                         font-size: ${FontSizes.regular};
