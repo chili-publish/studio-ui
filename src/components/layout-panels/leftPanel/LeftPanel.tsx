@@ -1,7 +1,6 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
-import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -32,7 +31,6 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { featureFlags } = useFeatureFlagContext();
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const isLayoutSwitcherVisible = availableLayouts.length >= 2 && layoutSectionUIOptions.layoutSwitcherVisible;
@@ -43,7 +41,7 @@ function LeftPanel({
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.studioDataSource ? <DataSource /> : null}
+                    <DataSource />
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <PanelTitle>{layoutSectionUIOptions.title}</PanelTitle>
