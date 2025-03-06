@@ -24,11 +24,11 @@ const mockDataSource = {
     source: { source: ConnectorRegistrationSource.url, url: '' },
 };
 
-/*jest.mock('../contexts/AppProvider', () => ({
+/* jest.mock('../contexts/AppProvider', () => ({
     useAppContext: () => ({
         dataSource: mockDataSource,
     }),
-}));*/
+})); */
 
 jest.mock('../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
