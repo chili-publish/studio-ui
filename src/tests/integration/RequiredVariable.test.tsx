@@ -129,7 +129,7 @@ describe('Required text variable', () => {
     it('Should trigger text variable validation on blur', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await act(async () => {
@@ -159,7 +159,7 @@ describe('Required text variable', () => {
     it('Should validate list variable', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(listVariable);
@@ -188,7 +188,7 @@ describe('Required text variable', () => {
     it('Should validate date variable', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(dateVariable);
@@ -206,7 +206,7 @@ describe('Required text variable', () => {
             render(<div id="sui-root" />);
         });
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(textVariable);
@@ -215,7 +215,7 @@ describe('Required text variable', () => {
     it('Should trigger date variable validation when download is clicked', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(dateVariable);
@@ -224,7 +224,7 @@ describe('Required text variable', () => {
     it('Should trigger list variable validation when download is clicked', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(listVariable);
@@ -233,7 +233,7 @@ describe('Required text variable', () => {
     it('Should trigger image variable validation when download is clicked', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await variableRequiredTest(imageVariable);

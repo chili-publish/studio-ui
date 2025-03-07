@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.21.0-5",
+    "version": "1.22.0-4",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
-        "@chili-publish/grafx-shared-components": "^0.92.1",
+        "@chili-publish/grafx-shared-components": "0.95.2",
         "@chili-publish/studio-sdk": "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/577/studio-sdk.tgz",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",
@@ -38,6 +38,10 @@
         "date-fns": "^4.1.0",
         "react": "^18.2.0",
         "react-datepicker": "^7.5.0",
+        "dnd-core": "^15.1.1",
+        "react-dnd": "^15.1.1",
+        "react-dnd-html5-backend": "^15.1.2",
+        "react-dnd-touch-backend": "^15.1.1",
         "react-dom": "^18.2.0",
         "react-select": "^5.8.3",
         "styled-components": "^5.3.11",

@@ -38,7 +38,7 @@ describe('StudioLoader integration - no projectId', () => {
     it('Should not try to load project details when there is no projectId provided in the config', async () => {
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig({
+            StudioUI.studioUILoaderConfig({
                 selector: 'sui-root',
                 projectDownloadUrl,
                 projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
@@ -73,7 +73,7 @@ describe('StudioLoader integration - no projectId', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         await waitFor(() => {

@@ -21,6 +21,7 @@ export default ({ mode }) => {
         resolve: {
             // force Vite to always resolve listed dependencies to the same copy (from project root).
             dedupe: ['react', 'react-dom'],
+            alias: { 'react/jsx-runtime.js': 'react/jsx-runtime' },
         },
         build: {
             emptyOutDir: true,
