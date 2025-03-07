@@ -298,7 +298,9 @@ function ItemBrowser<
                         placeholder="Search"
                         value={searchKeyWord}
                         onChange={(e) => setSearchKeyWord(e.target.value)}
-                        onBlur={() => handleSearch(searchKeyWord)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch(searchKeyWord);
+                        }}
                         width="260px"
                         leftIcon={{
                             icon: (

@@ -1,5 +1,5 @@
 import { Toggle, ToggleOption } from '@chili-publish/grafx-shared-components';
-import { ChangeEvent, startTransition, useCallback, useMemo } from 'react';
+import { startTransition, useCallback, useMemo } from 'react';
 import { css } from 'styled-components';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { ProjectConfig } from '../../../types/types';
@@ -13,11 +13,8 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
     const { selectedMode, isDocumentLoaded, updateSelectedMode, cleanRunningTasks } = useAppContext();
 
     const onToggle = useCallback(
-        async (ev: ChangeEvent<HTMLInputElement>) => {
-            ev.stopPropagation();
-            ev.preventDefault();
-
-            updateSelectedMode(ev.target.value);
+        async (value: string) => {
+            updateSelectedMode(value);
 
             await cleanRunningTasks();
 
