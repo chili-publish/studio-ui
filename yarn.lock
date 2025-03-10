@@ -1313,8 +1313,8 @@
   integrity sha512-D2BcrcUK2Vn9jEE5FnNdlT+StUPqQbjo3sF+fKuglOZ0GPac7XOC8HrIOxJ9DOhl6SiHMNL51lwHPzS5j2OnZg==
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/585/studio-sdk.tgz":
-  version "1.21.1-rc.3"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/585/studio-sdk.tgz#ee37618513db98fd8d0bf74965c329dd81310326"
+  version "1.21.1-rc.4"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/585/studio-sdk.tgz#d84a13bcffd18e369364eb4a3e1b1192bd345f2d"
   dependencies:
     penpal "6.1.0"
 

@@ -278,16 +278,14 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onAsyncError(asyncError) {
                 console.log('asyncError', asyncError);
-                if (asyncError instanceof AggregateAsyncError) {
-                    console.log('here');
-                    asyncError.exceptions.forEach((exception) =>
-                        addNotification({
-                            id: 'data-source-validation',
-                            message: exception.message,
-                            type: ToastVariant.NEGATIVE,
-                        }),
-                    );
-                }
+                (asyncError as any).exceptions.forEach((exception, index) =>
+                    addNotification({
+                        id: `data-source-validation-${index}`,
+                        message: exception.message,
+                        type: ToastVariant.NEGATIVE,
+                    }),
+                );
+                
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
