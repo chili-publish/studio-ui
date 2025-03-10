@@ -1,5 +1,12 @@
-import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
+import {
+    ToastVariant,
+    UiThemeProvider,
+    useDebounce,
+    useMobileSize,
+    useTheme,
+} from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
+    AggregateAsyncError,
     AuthRefreshTypeEnum,
     ConnectorEvent,
     ConnectorType,
@@ -43,6 +50,7 @@ import { SuiCanvas } from './MainContent.styles';
 import { defaultUiOptions, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 
 declare global {
     interface Window {
@@ -94,6 +102,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const { canvas } = useTheme();
 
     const { authToken } = useAuthToken();
+
+    const { addNotification } = useNotificationManager();
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -265,6 +275,19 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             onLayoutsChanged: (layoutList) => {
                 setLayouts(layoutList);
+            },
+            onAsyncError(asyncError) {
+                console.log('asyncError', asyncError);
+                if (asyncError instanceof AggregateAsyncError) {
+                    console.log('here');
+                    asyncError.exceptions.forEach((exception) =>
+                        addNotification({
+                            id: 'data-source-validation',
+                            message: exception.message,
+                            type: ToastVariant.NEGATIVE,
+                        }),
+                    );
+                }
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
