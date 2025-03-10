@@ -6,7 +6,6 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
-    AggregateAsyncError,
     AuthRefreshTypeEnum,
     ConnectorEvent,
     ConnectorType,
@@ -277,15 +276,15 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setLayouts(layoutList);
             },
             onAsyncError(asyncError) {
+                // eslint-disable-next-line no-console
                 console.log('asyncError', asyncError);
-                (asyncError as any).exceptions.forEach((exception, index) =>
+                (asyncError as any).exceptions.forEach((exception: any, index: number) =>
                     addNotification({
                         id: `data-source-validation-${index}`,
                         message: exception.message,
                         type: ToastVariant.NEGATIVE,
                     }),
                 );
-                
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
