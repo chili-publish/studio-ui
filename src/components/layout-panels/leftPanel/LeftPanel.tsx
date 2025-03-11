@@ -21,8 +21,6 @@ interface LeftPanelProps {
     layoutPropertiesState: LayoutPropertiesType;
     layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
     pageSize?: PageSize;
-
-    onSelectedDataRowChanged: (_?: number) => void;
 }
 
 function LeftPanel({
@@ -32,7 +30,6 @@ function LeftPanel({
     layoutPropertiesState,
     pageSize,
     layoutSectionUIOptions,
-    onSelectedDataRowChanged,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -46,9 +43,7 @@ function LeftPanel({
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.studioDataSource ? (
-                        <DataSource onSelectedDataRowChanged={onSelectedDataRowChanged} />
-                    ) : null}
+                    {featureFlags?.studioDataSource ? <DataSource /> : null}
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <PanelTitle>{layoutSectionUIOptions.title}</PanelTitle>

@@ -65,7 +65,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -91,7 +91,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -117,7 +117,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -143,7 +143,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -168,7 +168,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -215,7 +215,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource onSelectedDataRowChanged={jest.fn} />
+                        <DataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,

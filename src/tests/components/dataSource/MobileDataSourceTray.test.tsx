@@ -73,7 +73,6 @@ describe('MobileDataSource test', () => {
                                     layoutSwitcherVisible: false,
                                     title: 'Layout',
                                 }}
-                                onSelectedDataRowChanged={jest.fn}
                             />
                         </FeatureFlagProvider>
                     </UiThemeProvider>
@@ -113,7 +112,6 @@ describe('MobileDataSource test', () => {
                                         layoutSwitcherVisible: false,
                                         title: 'Layout',
                                     }}
-                                    onSelectedDataRowChanged={jest.fn}
                                 />
                             </FeatureFlagProvider>
                         </VariablePanelContextProvider>

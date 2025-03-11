@@ -130,7 +130,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -169,7 +168,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -208,7 +206,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -244,7 +241,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -295,7 +291,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
@@ -333,7 +328,6 @@ describe('Image Panel', () => {
                                 layoutSwitcherVisible: false,
                                 title: 'Layout',
                             }}
-                            onSelectedDataRowChanged={jest.fn}
                         />
                     </VariablePanelContextProvider>
                 </UiThemeProvider>

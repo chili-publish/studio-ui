@@ -25,7 +25,7 @@ function getDataSourceErrorText(status?: number) {
     }
 }
 
-const useDataSource = (onSelectedDataRowChanged: (_?: number) => void) => {
+const useDataSource = () => {
     const { dataSource } = useAppContext();
     const { removeNotifications } = useNotificationManager();
     const { validateVariables } = useVariablePanelContext();
@@ -157,10 +157,6 @@ const useDataSource = (onSelectedDataRowChanged: (_?: number) => void) => {
             removeNotifications(`${DATA_SOURCE_TOAST_ID}-${currentRowIndex}`);
         };
     }, [currentRowIndex, removeNotifications]);
-
-    useEffect(() => {
-        onSelectedDataRowChanged(currentRowIndex);
-    }, [currentRowIndex, onSelectedDataRowChanged]);
 
     useEffect(() => {
         (async () => {

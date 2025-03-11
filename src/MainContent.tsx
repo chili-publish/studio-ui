@@ -13,7 +13,6 @@ import StudioSDK, {
     PageSize,
     Variable,
     WellKnownConfigurationKeys,
-    DataRowAsyncError,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -91,17 +90,13 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const { subscriber: eventSubscriber } = useSubscriberContext();
 
     const enableAutoSaveRef = useRef(false);
-    const selectedDataSourceRow = useRef<number | undefined>();
 
     const isMobileSize = useMobileSize();
     const { canvas } = useTheme();
     const { authToken } = useAuthToken();
 
-    const { handleRowExceptions } = useDataRowExceptionHandler();
-
-    const setSelectedDataSourceRow = useCallback((item?: number) => {
-        selectedDataSourceRow.current = item;
-    }, []);
+    const [sdkRef, setSDKRef] = useState<StudioSDK>();
+    useDataRowExceptionHandler(sdkRef);
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -274,10 +269,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onLayoutsChanged: (layoutList) => {
                 setLayouts(layoutList);
             },
-            onAsyncError: (asyncError) => {
-                if (asyncError instanceof DataRowAsyncError)
-                    handleRowExceptions(asyncError, selectedDataSourceRow.current);
-            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
@@ -300,6 +291,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         // Connect to ths SDK
         window.StudioUISDK = sdk;
         window.SDK = sdk;
+
+        setSDKRef(sdk);
         window.StudioUISDK.loadEditor();
 
         // loadEditor is a synchronous call after which we are sure
@@ -453,7 +446,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             layoutPropertiesState={layoutPropertiesState}
                                             pageSize={pageSize ?? undefined}
                                             layoutSectionUIOptions={layoutSectionUIOptions}
-                                            onSelectedDataRowChanged={setSelectedDataSourceRow}
                                         />
                                     )}
                                     <CanvasContainer>
@@ -469,7 +461,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
                                                 }
-                                                onSelectedDataRowChanged={setSelectedDataSourceRow}
                                             />
                                         )}
                                         {projectConfig.customElement && (

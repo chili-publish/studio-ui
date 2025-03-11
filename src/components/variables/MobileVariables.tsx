@@ -17,8 +17,6 @@ interface MobileVariablesProps {
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
-
-    onSelectedDataRowChanged: (_?: number) => void;
 }
 
 function MobileVariables(props: MobileVariablesProps) {

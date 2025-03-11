@@ -68,7 +68,6 @@ describe('MobileVariableTrayLayout', () => {
                         layoutSwitcherVisible: true,
                         title: 'Layout',
                     }}
-                    onSelectedDataRowChanged={jest.fn}
                 />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
@@ -98,7 +97,6 @@ describe('MobileVariableTrayLayout', () => {
                             layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
-                        onSelectedDataRowChanged={jest.fn}
                     />
                 </FeatureFlagProvider>
             </UiThemeProvider>,
@@ -127,7 +125,6 @@ describe('MobileVariableTrayLayout', () => {
                         layoutSwitcherVisible: true,
                         title: 'Layout',
                     }}
-                    onSelectedDataRowChanged={jest.fn}
                 />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },

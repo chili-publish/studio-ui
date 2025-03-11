@@ -1,4 +1,4 @@
-import { ConfigType, DataRowAsyncError, LayoutIntent } from '@chili-publish/studio-sdk';
+import { ConfigType, DataRowAsyncError, LayoutIntent, VariableType } from '@chili-publish/studio-sdk';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import MainContent from '../MainContent';
@@ -111,48 +111,42 @@ describe('Data source error handling', () => {
     it('Should correctly show notification error for missing variable value', async () => {
         renderComponent();
 
-        jest.spyOn(window.StudioUISDK.variable, 'getByName').mockResolvedValue({
-            success: true,
-            status: 200,
-            parsedData: variables[2],
-        });
-
         await act(() => {
             window.StudioUISDK.config.events.onAsyncError.trigger(
                 new DataRowAsyncError(2, '', [
-                    { type: 'missingVariable', code: 403104, message: 'Variable "varName" is missing' },
+                    {
+                        type: 'missingVariable',
+                        code: 403104,
+                        message: 'Variable "varName" is missing',
+                        context: { variableName: 'varName', variableLabel: 'varLabel' },
+                    },
                 ]),
             );
         });
 
         await waitFor(() => {
-            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
-                `${variables[2].label} is invalid. The value is cleared.`,
-            );
+            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(`varLabel is invalid. The value is cleared.`);
         });
     });
 
     it('Should correctly show notification error for variable invalid value exception', async () => {
         renderComponent();
 
-        jest.spyOn(window.StudioUISDK.variable, 'getByName').mockResolvedValue({
-            success: true,
-            status: 200,
-            parsedData: variables[2],
-        });
-
         await act(() => {
             window.StudioUISDK.config.events.onAsyncError.trigger(
                 new DataRowAsyncError(2, '', [
-                    { type: 'resetVar', code: 403032, message: 'Variable "varName" is reseted' },
+                    {
+                        type: 'resetVar',
+                        code: 403032,
+                        message: 'Variable "varName" is reseted',
+                        context: { variableName: 'varName' },
+                    },
                 ]),
             );
         });
 
         await waitFor(() => {
-            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
-                `${variables[2].label} is invalid. A default value is used.`,
-            );
+            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(`varName is invalid. A default value is used.`);
         });
     });
 
@@ -168,14 +162,19 @@ describe('Data source error handling', () => {
         await act(() => {
             window.StudioUISDK.config.events.onAsyncError.trigger(
                 new DataRowAsyncError(2, '', [
-                    { type: 'resetVar', code: 403105, message: 'Variable "varName" is reseted' },
+                    {
+                        type: 'resetVar',
+                        code: 403105,
+                        message: 'Variable "varName" is reseted',
+                        context: { variableLabel: 'numbervariableLabel', variableType: VariableType.number },
+                    },
                 ]),
             );
         });
 
         await waitFor(() => {
             expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
-                `${variables[5].label} is invalid. A default value is used.`,
+                `numbervariableLabel is invalid. A default value is used.`,
             );
         });
     });
