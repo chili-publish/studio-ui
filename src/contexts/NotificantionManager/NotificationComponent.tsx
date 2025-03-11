@@ -1,6 +1,6 @@
 import { Toast, ToastVariant } from '@chili-publish/grafx-shared-components';
 import { NotificationWrapper } from './Notification.styles';
-import { INotificationComponent } from './Notification.types';
+import { INotificationComponent, TOAST_ID } from './Notification.types';
 
 const DEFAULT_NOTIFICATION_DURATION = 5000;
 
@@ -9,6 +9,7 @@ function NotificationComponent(props: INotificationComponent) {
     return (
         <NotificationWrapper>
             <Toast
+                id={TOAST_ID}
                 dataId={currentNotification?.dataId}
                 key={currentNotification?.id}
                 visible={!!currentNotification}

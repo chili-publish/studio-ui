@@ -156,11 +156,11 @@ const useDataSource = (onSelectedDataRowChanged: (_?: number) => void) => {
         return () => {
             removeNotifications(`${DATA_SOURCE_TOAST_ID}-${currentRowIndex}`);
         };
-    }, [currentRowIndex]);
+    }, [currentRowIndex, removeNotifications]);
 
     useEffect(() => {
         onSelectedDataRowChanged(currentRowIndex);
-    }, [currentRowIndex]);
+    }, [currentRowIndex, onSelectedDataRowChanged]);
 
     useEffect(() => {
         (async () => {

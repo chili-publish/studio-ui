@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, react/no-array-index-key */
-import { DataItem, DataRowAsyncError, VariableType } from '@chili-publish/studio-sdk';
+import { DataRowAsyncError, VariableType } from '@chili-publish/studio-sdk';
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
@@ -16,7 +16,7 @@ const BoldText = styled.span`
 export const useDataRowExceptionHandler = () => {
     const { addNotification } = useNotificationManager();
 
-    const handleRowExceptions = async (asyncError: DataRowAsyncError, selectedDataSourceRow?: DataItem) => {
+    const handleRowExceptions = async (asyncError: DataRowAsyncError, selectedDataSourceRow?: number) => {
         const exceptionPromises = Promise.all(
             asyncError.exceptions.map(async (dataRowException) => {
                 const variableNameMatch = dataRowException.message.match(variableNameInQuotesRegex);

@@ -33,7 +33,6 @@ import Navbar from './components/navbar/Navbar';
 import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Pages from './components/pagesPanel/Pages';
-import MobileVariablesTray from './components/variables/MobileVariablesTray';
 import AppProvider from './contexts/AppProvider';
 import { useAuthToken } from './contexts/AuthTokenProvider';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
@@ -45,6 +44,7 @@ import { defaultUiOptions, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
+import MobileVariables from './components/variables/MobileVariables';
 
 declare global {
     interface Window {
@@ -96,11 +96,13 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const isMobileSize = useMobileSize();
     const { canvas } = useTheme();
     const { authToken } = useAuthToken();
+
     const { handleRowExceptions } = useDataRowExceptionHandler();
 
     const setSelectedDataSourceRow = useCallback((item?: number) => {
         selectedDataSourceRow.current = item;
     }, []);
+
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
             const { data } = await window.StudioUISDK.document.getCurrentState();
@@ -456,7 +458,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     )}
                                     <CanvasContainer>
                                         {isMobileSize && (
-                                            <MobileVariablesTray
+                                            <MobileVariables
                                                 selectedLayout={currentSelectedLayout}
                                                 layouts={layouts}
                                                 variables={variables}

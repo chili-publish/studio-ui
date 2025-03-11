@@ -1,5 +1,6 @@
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 
+export const TOAST_ID = 'toast-notification';
 export interface Notification {
     id: string;
     dataId?: string;

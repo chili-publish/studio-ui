@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon, Tray } from '@chili-publish/grafx-shared-components';
+import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
@@ -18,18 +18,19 @@ import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './Mobil
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
-import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
 
 interface VariablesPanelProps {
+    isTrayVisible: boolean;
+    setIsTrayVisible: (_: boolean) => void;
+
     variables: Variable[];
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
     pageSize?: PageSize;
     layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
-
-    isTimelineDisplayed?: boolean;
-    isPagesPanelDisplayed?: boolean;
 
     onSelectedDataRowChanged: (_?: number) => void;
 }
@@ -43,11 +44,11 @@ const imagePanelHeight = `
 
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const {
+        isTrayVisible,
+        setIsTrayVisible,
         variables,
         selectedLayout,
         layouts,
-        isTimelineDisplayed,
-        isPagesPanelDisplayed,
         layoutPropertiesState,
         pageSize,
         layoutSectionUIOptions,
@@ -58,7 +59,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
 
-    const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
     const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
 
@@ -120,27 +120,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         showVariablesPanel();
         setIsTrayVisible(false);
         setLayoutsMobileOptionsListOpen(false);
-    }, [showVariablesPanel]);
+    }, [showVariablesPanel, setIsTrayVisible]);
 
     return (
         <>
-            <EditButtonWrapper isTimelineDisplayed={isTimelineDisplayed} isPagesPanelDisplayed={isPagesPanelDisplayed}>
-                <Button
-                    dataTestId={getDataTestIdForSUI('mobile-variables')}
-                    variant={ButtonVariant.primary}
-                    icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
-                    onClick={() => setIsTrayVisible(true)}
-                    styles={css`
-                        padding: 0.9375rem;
-                        font-size: ${FontSizes.regular};
-                        border-radius: 50%;
-
-                        svg {
-                            width: 1.125rem !important;
-                        }
-                    `}
-                />
-            </EditButtonWrapper>
             {isDataSourcePanelOpen ? <TrayStyle /> : null}
             <Tray
                 dataTestId={getDataTestIdForSUI('tray-panel')}
@@ -167,6 +150,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                         width: 0;
                     }
                 `}
+                ignoreCloseOnParentId={TOAST_ID}
             >
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
