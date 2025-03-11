@@ -91,14 +91,16 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const { subscriber: eventSubscriber } = useSubscriberContext();
 
     const enableAutoSaveRef = useRef(false);
+    const selectedDataSourceRow = useRef<number | undefined>();
+
     const isMobileSize = useMobileSize();
-
     const { canvas } = useTheme();
-
     const { authToken } = useAuthToken();
-
     const { handleRowExceptions } = useDataRowExceptionHandler();
 
+    const setSelectedDataSourceRow = useCallback((item?: number) => {
+        selectedDataSourceRow.current = item;
+    }, []);
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
             const { data } = await window.StudioUISDK.document.getCurrentState();
@@ -271,7 +273,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setLayouts(layoutList);
             },
             onAsyncError: (asyncError) => {
-                if (asyncError instanceof DataRowAsyncError) handleRowExceptions(asyncError as any);
+                if (asyncError instanceof DataRowAsyncError)
+                    handleRowExceptions(asyncError, selectedDataSourceRow.current);
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
@@ -448,6 +451,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             layoutPropertiesState={layoutPropertiesState}
                                             pageSize={pageSize ?? undefined}
                                             layoutSectionUIOptions={layoutSectionUIOptions}
+                                            onSelectedDataRowChanged={setSelectedDataSourceRow}
                                         />
                                     )}
                                     <CanvasContainer>
@@ -463,6 +467,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
                                                 }
+                                                onSelectedDataRowChanged={setSelectedDataSourceRow}
                                             />
                                         )}
                                         {projectConfig.customElement && (

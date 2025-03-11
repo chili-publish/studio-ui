@@ -30,6 +30,8 @@ interface VariablesPanelProps {
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
+
+    onSelectedDataRowChanged: (_?: number) => void;
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -49,6 +51,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         layoutPropertiesState,
         pageSize,
         layoutSectionUIOptions,
+        onSelectedDataRowChanged,
     } = props;
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
@@ -74,7 +77,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useDataSource(onSelectedDataRowChanged);
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         requiresUserAuthorizationCheck,

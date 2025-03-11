@@ -28,10 +28,16 @@ const useNotifications = () => {
         setNotifications((prev) => prev.filter((item) => item.id !== msg.id));
     }, []);
 
+    const removeNotifications = useCallback((id: string) => {
+        setCurrentNotification(null);
+        setNotifications((prev) => prev.filter((item) => !item.id.startsWith(id)));
+    }, []);
+
     return {
         currentNotification,
         addNotification,
         removeNotification,
+        removeNotifications,
         notifications,
     };
 };

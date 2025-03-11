@@ -5,7 +5,10 @@ import DataSourceInput from './DataSourceInput';
 import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
 
-function DataSource() {
+interface DataSourceProp {
+    onSelectedDataRowChanged: (_?: number) => void;
+}
+function DataSource({ onSelectedDataRowChanged }: DataSourceProp) {
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
 
     const {
@@ -23,7 +26,7 @@ function DataSource() {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useDataSource(onSelectedDataRowChanged);
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);

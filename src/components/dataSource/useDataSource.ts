@@ -10,8 +10,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
-import { DATA_SOURCE_NOTIFICATION_ID } from '../../useDataRowExceptionHandler';
-import { Notification } from '../../contexts/NotificantionManager/Notification.types';
+import { DATA_SOURCE_TOAST_ID } from '../../contexts/NotificantionManager/Notification.styles';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -26,9 +25,9 @@ function getDataSourceErrorText(status?: number) {
     }
 }
 
-const useDataSource = () => {
+const useDataSource = (onSelectedDataRowChanged: (_?: number) => void) => {
     const { dataSource } = useAppContext();
-    const { removeNotification } = useNotificationManager();
+    const { removeNotifications } = useNotificationManager();
     const { validateVariables } = useVariablePanelContext();
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
@@ -145,14 +144,23 @@ const useDataSource = () => {
         (async () => {
             if (currentRow && shouldUpdateDataRow.current) {
                 try {
-                    removeNotification({ id: DATA_SOURCE_NOTIFICATION_ID } as unknown as Notification);
                     await window.StudioUISDK.dataSource.setDataRow(currentRow);
                 } finally {
                     shouldValidateVariables.current = true;
                 }
             }
         })();
-    }, [currentRow, removeNotification]);
+    }, [currentRow]);
+
+    useEffect(() => {
+        return () => {
+            removeNotifications(`${DATA_SOURCE_TOAST_ID}-${currentRowIndex}`);
+        };
+    }, [currentRowIndex]);
+
+    useEffect(() => {
+        onSelectedDataRowChanged(currentRowIndex);
+    }, [currentRowIndex]);
 
     useEffect(() => {
         (async () => {
