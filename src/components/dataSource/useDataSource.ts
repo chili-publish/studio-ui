@@ -9,6 +9,9 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
+import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
+import { DATA_SOURCE_NOTIFICATION_ID } from '../../useDataRowExceptionHandler';
+import { Notification } from '../../contexts/NotificantionManager/Notification.types';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -25,6 +28,7 @@ function getDataSourceErrorText(status?: number) {
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
+    const { removeNotification } = useNotificationManager();
     const { validateVariables } = useVariablePanelContext();
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
@@ -94,8 +98,6 @@ const useDataSource = () => {
                 setContinuationToken(page?.continuationToken ?? null);
             } catch (err) {
                 resetData();
-                // eslint-disable-next-line no-console
-                console.error(err);
                 if (err instanceof ConnectorHttpError) {
                     setError({
                         status: err.statusCode,
@@ -143,13 +145,14 @@ const useDataSource = () => {
         (async () => {
             if (currentRow && shouldUpdateDataRow.current) {
                 try {
+                    removeNotification({ id: DATA_SOURCE_NOTIFICATION_ID } as unknown as Notification);
                     await window.StudioUISDK.dataSource.setDataRow(currentRow);
                 } finally {
                     shouldValidateVariables.current = true;
                 }
             }
         })();
-    }, [currentRow]);
+    }, [currentRow, removeNotification]);
 
     useEffect(() => {
         (async () => {

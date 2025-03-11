@@ -9,6 +9,7 @@ function NotificationComponent(props: INotificationComponent) {
     return (
         <NotificationWrapper>
             <Toast
+                dataId={currentNotification?.dataId}
                 key={currentNotification?.id}
                 visible={!!currentNotification}
                 time={currentNotification?.duration ?? DEFAULT_NOTIFICATION_DURATION}

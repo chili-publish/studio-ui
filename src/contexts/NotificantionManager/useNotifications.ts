@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Notification } from './Notification.types';
 import { getPriority, insertNotification } from './notification.util';
 
@@ -23,10 +23,10 @@ const useNotifications = () => {
         setNotifications((prev) => insertNotification(message, [...prev]));
     };
 
-    const removeNotification = (msg: Notification) => {
+    const removeNotification = useCallback((msg: Notification) => {
         setCurrentNotification(null);
         setNotifications((prev) => prev.filter((item) => item.id !== msg.id));
-    };
+    }, []);
 
     return {
         currentNotification,

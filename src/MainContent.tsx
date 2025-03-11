@@ -1,10 +1,4 @@
-import {
-    ToastVariant,
-    UiThemeProvider,
-    useDebounce,
-    useMobileSize,
-    useTheme,
-} from '@chili-publish/grafx-shared-components';
+import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     AuthRefreshTypeEnum,
     ConnectorEvent,
@@ -19,6 +13,7 @@ import StudioSDK, {
     PageSize,
     Variable,
     WellKnownConfigurationKeys,
+    DataRowAsyncError,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -49,7 +44,7 @@ import { SuiCanvas } from './MainContent.styles';
 import { defaultUiOptions, Project, ProjectConfig } from './types/types';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
+import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
 
 declare global {
     interface Window {
@@ -102,7 +97,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     const { authToken } = useAuthToken();
 
-    const { addNotification } = useNotificationManager();
+    const { handleRowExceptions } = useDataRowExceptionHandler();
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -275,16 +270,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onLayoutsChanged: (layoutList) => {
                 setLayouts(layoutList);
             },
-            onAsyncError(asyncError) {
-                // eslint-disable-next-line no-console
-                console.log('asyncError', asyncError);
-                (asyncError as any).exceptions.forEach((exception: any, index: number) =>
-                    addNotification({
-                        id: `data-source-validation-${index}`,
-                        message: exception.message,
-                        type: ToastVariant.NEGATIVE,
-                    }),
-                );
+            onAsyncError: (asyncError) => {
+                if (asyncError instanceof DataRowAsyncError) handleRowExceptions(asyncError as any);
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
