@@ -5,7 +5,7 @@ import { css } from 'styled-components';
 import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { defaultUiOptions, UiOptions } from '../../types/types';
+import { UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
@@ -20,6 +20,7 @@ import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import { useOutputSettingsContext } from '../navbar/OutputSettingsContext';
+import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -51,7 +52,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         pageSize,
         layoutSectionUIOptions,
     } = props;
-    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
@@ -87,6 +87,11 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     });
 
     const closeTray = () => setIsTrayVisible(false);
+    const { availableLayouts, isLayoutSwitcherVisible, isAvailableLayoutsDisplayed, sectionTitle } = useLayoutSection({
+        layouts,
+        selectedLayout,
+        layoutSectionUIOptions,
+    });
 
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
@@ -97,40 +102,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
 
-    const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
-
     const isLayoutResizable = useMemo(
         () => selectedLayout?.resizableByUser.enabled && layoutsFormBuilderData?.showWidthHeightInputs,
         [selectedLayout, layoutsFormBuilderData?.showWidthHeightInputs],
-    );
-    const isLayoutSwitcherVisible = useMemo(() => {
-        if (hasAvailableLayouts) {
-            if (layoutSectionUIOptions.layoutSwitcherVisible !== undefined)
-                return layoutSectionUIOptions.layoutSwitcherVisible;
-            if (layoutsFormBuilderData?.layoutSelector !== undefined) return layoutsFormBuilderData.layoutSelector;
-            return defaultUiOptions.layoutSection.layoutSwitcherVisible;
-        }
-        return false;
-    }, [layoutSectionUIOptions.layoutSwitcherVisible, layoutsFormBuilderData?.layoutSelector, hasAvailableLayouts]);
-
-    const layoutsSectionVisibility = useMemo(
-        () => layoutSectionUIOptions.visible && layoutsFormBuilderData?.active,
-        [layoutSectionUIOptions.visible, layoutsFormBuilderData?.active],
-    );
-
-    const isAvailableLayoutsDisplayed = useMemo(() => {
-        if (layoutsSectionVisibility !== undefined) {
-            if (layoutsSectionVisibility) {
-                if (isLayoutSwitcherVisible || isLayoutResizable) return true;
-            }
-            return false;
-        }
-        return isLayoutSwitcherVisible;
-    }, [isLayoutSwitcherVisible, isLayoutResizable, layoutsSectionVisibility]);
-
-    const sectionTitle = useMemo(
-        () => layoutSectionUIOptions.title || layoutsFormBuilderData?.header || defaultUiOptions.layoutSection.title,
-        [layoutSectionUIOptions.title, layoutsFormBuilderData?.header],
     );
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 

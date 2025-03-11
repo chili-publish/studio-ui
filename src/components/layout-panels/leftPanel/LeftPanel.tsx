@@ -1,10 +1,9 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useMemo } from 'react';
 import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
-import { defaultUiOptions, UiOptions } from '../../../types/types';
+import { UiOptions } from '../../../types/types';
 import DataSource from '../../dataSource/DataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import LayoutProperties from '../../LayoutPanel/LayoutProperties';
@@ -12,7 +11,7 @@ import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
-import { useOutputSettingsContext } from '../../navbar/OutputSettingsContext';
+import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -34,43 +33,15 @@ function LeftPanel({
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
+    const {
+        availableLayouts,
+        isLayoutSwitcherVisible,
+        isLayoutResizableVisible,
+        isAvailableLayoutsDisplayed,
+        sectionTitle,
+        layoutsFormBuilderData,
+    } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
 
-    const { layoutsFormBuilderData } = useOutputSettingsContext();
-    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
-
-    const layoutSwitcherVisibility = useMemo(() => {
-        if (layoutSectionUIOptions.layoutSwitcherVisible !== undefined)
-            return layoutSectionUIOptions.layoutSwitcherVisible;
-        if (layoutsFormBuilderData?.layoutSelector !== undefined) return layoutsFormBuilderData.layoutSelector;
-
-        return defaultUiOptions.layoutSection.layoutSwitcherVisible;
-    }, [layoutSectionUIOptions.layoutSwitcherVisible, layoutsFormBuilderData?.layoutSelector]);
-
-    const layoutsSectionIsVisible = useMemo(
-        () => layoutSectionUIOptions.visible && layoutsFormBuilderData?.active,
-        [layoutSectionUIOptions.visible, layoutsFormBuilderData?.active],
-    );
-    const isLayoutSwitcherVisible = availableLayouts.length >= 2 && layoutSwitcherVisibility;
-
-    const isLayoutResizableVisible =
-        !!(selectedLayout?.id && selectedLayout?.resizableByUser.enabled) &&
-        layoutsFormBuilderData?.showWidthHeightInputs;
-
-    const isAvailableLayoutsDisplayed = useMemo(() => {
-        if (layoutsSectionIsVisible !== undefined) {
-            if (layoutsSectionIsVisible) {
-                if (isLayoutSwitcherVisible || isLayoutResizableVisible) return true;
-            }
-            return false;
-        }
-
-        return layoutSwitcherVisibility;
-    }, [isLayoutSwitcherVisible, isLayoutResizableVisible, layoutsSectionIsVisible, layoutSwitcherVisibility]);
-
-    const sectionTitle = useMemo(
-        () => layoutSectionUIOptions.title || layoutsFormBuilderData?.header || defaultUiOptions.layoutSection.title,
-        [layoutSectionUIOptions.title, layoutsFormBuilderData?.header],
-    );
     return (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
