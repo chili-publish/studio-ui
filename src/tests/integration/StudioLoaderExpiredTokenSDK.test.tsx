@@ -48,7 +48,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         let authResult: string;
@@ -79,7 +79,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         render(<div id="sui-root" />);
         act(() => {
-            StudioUI.studioLoaderConfig(config);
+            StudioUI.studioUILoaderConfig(config);
         });
 
         let authResult: string;
