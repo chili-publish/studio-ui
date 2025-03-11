@@ -21,7 +21,7 @@ function getDataSourceErrorText(status?: number) {
         case 404:
             return 'Data not found.';
         default:
-            return 'Unable to load data.';
+            return 'Invalid data source.';
     }
 }
 

@@ -158,7 +158,7 @@ describe('DataSourceModal test', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Unable to load data.')).toBeInTheDocument();
+            expect(screen.getByText('Invalid data source.')).toBeInTheDocument();
             expect(screen.queryByRole('table')).not.toBeInTheDocument();
         });
     });
