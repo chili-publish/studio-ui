@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useCallback, useEffect, useRef } from 'react';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 import { DATA_SOURCE_TOAST_ID } from './contexts/NotificantionManager/Notification.styles';
+import { SELECTED_ROW_INDEX_KEY } from './components/dataSource/useDataSource';
 
 export const DATA_SOURCE_NOTIFICATION_ID = 'data-source-validation-msg';
 const varTypesWithNoValue = [VariableType.number, VariableType.boolean];
@@ -62,7 +63,7 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
 
     useEffect(() => {
         const unsubscriber = sdkRef?.config?.events?.onCustomUndoDataChanged.registerCallback((data) => {
-            selectedDataSourceRow.current = data.DataSourceSelectedRowIdex;
+            selectedDataSourceRow.current = data[SELECTED_ROW_INDEX_KEY];
         });
         return () => {
             unsubscriber?.();
