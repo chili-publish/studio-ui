@@ -41,10 +41,9 @@ function MultiLineTextVariable(props: ITextVariable) {
                 }
                 placeholder={placeholder}
                 onFocus={() => onVariableFocus?.(variable.id)}
-                onBlur={(event: ChangeEvent<HTMLTextAreaElement>) => {
-                    const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
-                    const newValue = event.target.value;
-                    onValueChange(newValue, { changed: oldValue !== newValue });
+                onBlur={() => {
+                    const oldValue = (variable as LongTextVariable).value;
+                    onValueChange(variableValue, { changed: oldValue !== variableValue });
                     onVariableBlur?.(variable.id);
                 }}
                 onChange={handleVariableChange}
