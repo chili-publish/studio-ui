@@ -31,29 +31,6 @@ function MultiLineTextVariable(props: ITextVariable) {
     };
     return (
         <HelpTextWrapper>
-            {/* <Input
-                type="text"
-                dataId={getDataIdForSUI(`input-${variable.id}`)}
-                dataTestId={getDataTestIdForSUI(`input-${variable.id}`)}
-                dataIntercomId={`input-variable-${variable.name}`}
-                value={variableValue}
-                placeholder={placeholder}
-                required={variable.isRequired}
-                onChange={handleVariableChange}
-                onFocus={() => onVariableFocus?.(variable.id)}
-                onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                    const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
-                    const newValue = event.target.value;
-                    onValueChange(newValue, { changed: oldValue !== newValue });
-                    onVariableBlur?.(variable.id);
-                }}
-                name={variable.id}
-                label={
-                    <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
-                }
-                validation={validationError ? ValidationTypes.ERROR : undefined}
-                validationErrorMessage={validationError}
-            /> */}
             <Input
                 name="multi-line-text"
                 type="textarea"
