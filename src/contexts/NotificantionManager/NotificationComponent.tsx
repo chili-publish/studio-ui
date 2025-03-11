@@ -11,6 +11,7 @@ function NotificationComponent(props: INotificationComponent) {
             <Toast
                 id={TOAST_ID}
                 dataId={currentNotification?.dataId}
+                dataTestId={TOAST_ID}
                 key={currentNotification?.id}
                 visible={!!currentNotification}
                 time={currentNotification?.duration ?? DEFAULT_NOTIFICATION_DURATION}
