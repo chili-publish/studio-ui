@@ -1,13 +1,12 @@
 import { ConfigType, DataRowAsyncError, LayoutIntent } from '@chili-publish/studio-sdk';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import MainContent from '../MainContent';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import MainContent from '../MainContent';
 import { ProjectConfig } from '../types/types';
 import { SubscriberContextProvider } from '../contexts/Subscriber';
 import { Subscriber } from '../utils/subscriber';
 import { variables } from './mocks/mockVariables';
 import { NotificationManagerProvider } from '../contexts/NotificantionManager/NotificationManagerProvider';
-import { mockVariables } from '@mocks/mockVariables';
 import { TOAST_ID } from '../contexts/NotificantionManager/Notification.types';
 
 jest.mock('@chili-publish/studio-sdk', () => {
