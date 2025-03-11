@@ -47,7 +47,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHook(() => useDataSource(jest.fn));
 
         act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { arbitaryKey: '333' });
@@ -60,7 +60,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHook(() => useDataSource(jest.fn));
 
         act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '3' });
@@ -82,7 +82,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHook(() => useDataSource(jest.fn));
 
         await waitFor(() => expect(result.current.currentInputRow).toEqual('1 | Joe | 15'));
         expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledTimes(1);
@@ -112,7 +112,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHook(() => useDataSource(jest.fn));
 
         await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
 

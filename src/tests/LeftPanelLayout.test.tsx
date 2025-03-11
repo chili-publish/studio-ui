@@ -40,6 +40,7 @@ describe('Layout selection', () => {
                             layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
+                        onSelectedDataRowChanged={jest.fn}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -72,6 +73,7 @@ describe('Layout selection', () => {
                             layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
+                        onSelectedDataRowChanged={jest.fn}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,
@@ -97,6 +99,7 @@ describe('Layout selection', () => {
                             layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
+                        onSelectedDataRowChanged={jest.fn}
                     />
                 </VariablePanelContextProvider>
             </UiThemeProvider>,

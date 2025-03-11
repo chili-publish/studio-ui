@@ -41,7 +41,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -55,7 +55,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -71,7 +71,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -91,7 +91,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -114,7 +114,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -179,7 +179,7 @@ describe('DataSource test', () => {
         render(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <DataSource onSelectedDataRowChanged={jest.fn} />
                 </UiThemeProvider>
             </AppProvider>,
         );
