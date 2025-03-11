@@ -24,7 +24,10 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                 .forEach((exception) => {
                     let msg;
                     const variableInfo = exception.context;
-                    if (exception.code === 403104) {
+                    if (
+                        exception.code === 403104 ||
+                        (exception.code === 403062 && variableInfo.variableType === VariableType.image)
+                    ) {
                         msg = (
                             <>
                                 <BoldText>{variableInfo?.variableLabel ?? variableInfo?.variableName}</BoldText> is
