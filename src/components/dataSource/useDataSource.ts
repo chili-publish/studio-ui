@@ -94,8 +94,6 @@ const useDataSource = () => {
                 setContinuationToken(page?.continuationToken ?? null);
             } catch (err) {
                 resetData();
-                // eslint-disable-next-line no-console
-                console.error(err);
                 if (err instanceof ConnectorHttpError) {
                     setError({
                         status: err.statusCode,

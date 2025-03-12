@@ -4,12 +4,12 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MobileVariablesPanel from '../../../components/variables/MobileVariablesTray';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import MobileVariables from '../../../components/variables/MobileVariables';
 
 const dataRows = [
     { id: '1', name: 'Joe', age: 15 },
@@ -63,7 +63,7 @@ describe('MobileDataSource test', () => {
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
                         <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                            <MobileVariablesPanel
+                            <MobileVariables
                                 variables={[]}
                                 selectedLayout={mockLayout}
                                 layouts={mockLayouts}
@@ -102,7 +102,7 @@ describe('MobileDataSource test', () => {
                             variables={[]}
                         >
                             <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                                <MobileVariablesPanel
+                                <MobileVariables
                                     variables={[]}
                                     selectedLayout={mockLayout}
                                     layouts={mockLayouts}

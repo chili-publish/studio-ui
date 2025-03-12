@@ -6,6 +6,7 @@ export interface NotificationManager {
     notifications: Notification[];
     addNotification: (_: Notification) => void;
     removeNotification: (_: Notification) => void;
+    removeNotifications: (idRegex: string) => void;
 }
 
 export const defaultValues: NotificationManager = {
@@ -13,6 +14,7 @@ export const defaultValues: NotificationManager = {
     notifications: [],
     addNotification: () => null,
     removeNotification: () => null,
+    removeNotifications: () => null,
 };
 
 export const NotificationManagerContext = createContext<NotificationManager>(defaultValues);

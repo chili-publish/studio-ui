@@ -5,10 +5,11 @@ import NotificationComponent from './NotificationComponent';
 
 export function NotificationManagerProvider(props: { children: ReactNode }) {
     const { children } = props;
-    const { currentNotification, notifications, addNotification, removeNotification } = useNotifications();
+    const { currentNotification, notifications, addNotification, removeNotification, removeNotifications } =
+        useNotifications();
     const contextData = useMemo(
-        () => ({ currentNotification, notifications, addNotification, removeNotification }),
-        [currentNotification, notifications, addNotification, removeNotification],
+        () => ({ currentNotification, notifications, addNotification, removeNotification, removeNotifications }),
+        [currentNotification, notifications, addNotification, removeNotification, removeNotifications],
     );
 
     return (

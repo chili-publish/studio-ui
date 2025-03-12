@@ -5,11 +5,11 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import MobileVariablesPanel from '../components/variables/MobileVariablesTray';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
+import MobileVariables from '../components/variables/MobileVariables';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -58,7 +58,7 @@ describe('MobileVariableTrayLayout', () => {
     it('Layout is the title of the tray when no data source is available', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel
+                <MobileVariables
                     variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
@@ -87,7 +87,7 @@ describe('MobileVariableTrayLayout', () => {
         render(
             <UiThemeProvider theme="platform">
                 <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                    <MobileVariablesPanel
+                    <MobileVariables
                         variables={variables}
                         selectedLayout={mockLayout}
                         layouts={mockLayouts}
@@ -115,7 +115,7 @@ describe('MobileVariableTrayLayout', () => {
     it('Change selected layout is available', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel
+                <MobileVariables
                     variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
