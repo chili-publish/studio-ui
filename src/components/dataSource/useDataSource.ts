@@ -1,4 +1,4 @@
-import { formatCell, useDebounce } from '@chili-publish/grafx-shared-components';
+import { formatCell } from '@chili-publish/grafx-shared-components';
 import { ConnectorEvent, ConnectorEventType, ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
