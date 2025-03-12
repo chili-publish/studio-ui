@@ -21,6 +21,7 @@ import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import { useOutputSettingsContext } from '../navbar/OutputSettingsContext';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
+import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -92,7 +93,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         selectedLayout,
         layoutSectionUIOptions,
     });
-
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
     const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
@@ -183,8 +183,13 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
                                 <>
-                                    {isAvailableLayoutSubtitleDisplayed && (
-                                        <TrayPanelTitle margin="0">{layoutSectionUIOptions.title}</TrayPanelTitle>
+                                    {isAvailableLayoutSubtitleDisplayed && isDataSourceDisplayed && (
+                                        <SectionWrapper>
+                                            <TrayPanelTitle margin="0">{sectionTitle}</TrayPanelTitle>
+                                            {layoutsFormBuilderData?.helpText && (
+                                                <SectionHelpText>{layoutsFormBuilderData?.helpText}</SectionHelpText>
+                                            )}
+                                        </SectionWrapper>
                                     )}
                                     {isLayoutSwitcherVisible && (
                                         <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
