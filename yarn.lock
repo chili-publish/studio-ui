@@ -1307,9 +1307,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/485/grafx-shared-components.tgz":
-  version "0.96.1"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/485/grafx-shared-components.tgz#694dce7b0ce65227b3e39ffb9f356fa23f3ed3ac"
+"@chili-publish/grafx-shared-components@^0.96.2":
+  version "0.96.2"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.96.2/ad1c59f97031e90a80206b16b061b67106df5739#ad1c59f97031e90a80206b16b061b67106df5739"
+  integrity sha512-Ows9jBi6Ho/CYxiFxCMK8ul+FmMbaiAmj1rEnCWojEex5A70ryPJAy8+539zbqXUM14SjHDTXCYYnMO6FXfoqw==
 
 "@chili-publish/studio-sdk@1.21.1-rc.4":
   version "1.21.1-rc.4"
