@@ -163,7 +163,7 @@ const useDataSource = () => {
                 // We prevent calling of `.setDataRow` for undo/redo calls (in this case index !== currentRowIndex)
                 // to not create an extra undo item with same dataRow changes
                 shouldUpdateDataRow.current = index === currentRowIndex;
-                if (shouldUpdateDataRow.current) updateSelectedRow(index);
+                updateSelectedRow(index);
             }
         };
         subscriber?.on('onCustomUndoDataChanged', handler);
