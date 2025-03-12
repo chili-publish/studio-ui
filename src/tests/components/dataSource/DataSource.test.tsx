@@ -182,7 +182,7 @@ describe('DataSource test', () => {
 
         expect(screen.getByText('Row 2')).toBeInTheDocument();
         expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
-    }, 100000);
+    });
 
     it('Should load next data rows page when available', async () => {
         const mockSubscriber = new Subscriber();
