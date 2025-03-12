@@ -7,10 +7,13 @@ const GlobalStyle = createGlobalStyle<{ fontFamily?: string }>`
         isolation: isolate;
         
         /* Set base styles */
-        font-family: ${(props) => props.fontFamily || 'Roboto'};
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        font-family: ${(props) => props.fontFamily || 'Roboto'} !important;
+        * {
+            font-family: ${(props) => props.fontFamily || 'Roboto'};
+        }
     }
 
     /* Ensure all child elements inherit the box-sizing */

@@ -13,17 +13,17 @@ function AnimationTimeline(props: IAnimationTimeline) {
     const { scrubberTimeMs, animationLength, isAnimationPlaying } = props;
     const { uiOptions } = useUiConfigContext();
 
-    const handlePlay = async () => {
+    const handlePlay = useCallback(async () => {
         await window.StudioUISDK.animation.play();
-    };
+    }, []);
 
     const handlePause = useCallback(async () => {
         await window.StudioUISDK.animation.pause();
     }, []);
 
-    const handleSetScrubberPosition = async (milliseconds: number) => {
+    const handleSetScrubberPosition = useCallback(async (milliseconds: number) => {
         await window.StudioUISDK.animation.setScrubberPosition(milliseconds);
-    };
+    }, []);
 
     if (uiOptions.widgets?.bottomBar?.visible === false) return null;
     return (
@@ -31,7 +31,7 @@ function AnimationTimeline(props: IAnimationTimeline) {
             {animationLength > 0 && (
                 <Timeline
                     animationLength={animationLength}
-                    setScrubberPosition={(milliseconds: number) => handleSetScrubberPosition(milliseconds)}
+                    setScrubberPosition={handleSetScrubberPosition}
                     playAnimation={handlePlay}
                     pauseAnimation={handlePause}
                     timestamp={scrubberTimeMs}
