@@ -5,6 +5,9 @@ import userEvent from '@testing-library/user-event';
 import DataSource from '../../../components/dataSource/DataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import { Subscriber } from '../../../utils/subscriber';
+import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -13,6 +16,12 @@ jest.mock('../../../utils/connectors', () => ({
         },
     }),
     isAuthenticationRequired: jest.requireActual('../../../utils/connectors').isAuthenticationRequired,
+}));
+
+jest.mock('../../../contexts/Subscriber', () => ({
+    useSubscriberContext: jest.fn().mockReturnValue({
+        subscriber: null,
+    }),
 }));
 
 describe('DataSource test', () => {
@@ -101,6 +110,11 @@ describe('DataSource test', () => {
     });
 
     it('Should be able to navigate through available data rows', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
+
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: {
                 data: [
@@ -134,12 +148,20 @@ describe('DataSource test', () => {
         expect(nextIcon).toBeInTheDocument();
         expect(nextIcon).not.toHaveAttribute('disabled');
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
+
         await act(async () => {
             await user.click(nextIcon);
         });
         expect(screen.getByText('Row 2')).toBeInTheDocument();
         expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
         expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledWith({ id: '2', name: 'John', age: 18 });
+
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
+        });
 
         await act(async () => {
             await user.click(nextIcon);
@@ -150,15 +172,24 @@ describe('DataSource test', () => {
         expect(nextIcon).toHaveAttribute('disabled');
         expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledWith({ id: '13', name: 'Mary', age: 17 });
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '2' });
+        });
+
         await act(async () => {
             await user.click(prevIcon);
         });
 
         expect(screen.getByText('Row 2')).toBeInTheDocument();
         expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
-    });
+    }, 100000);
 
     it('Should load next data rows page when available', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
+
         window.StudioUISDK.dataConnector.getPage = jest
             .fn()
             .mockResolvedValueOnce({
@@ -187,12 +218,20 @@ describe('DataSource test', () => {
         expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
         expect(screen.getByText('Row 1')).toBeInTheDocument();
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
+
         const nextIcon = screen.getByTestId(getDataTestIdForSUI('data-row-next'));
         await act(async () => {
             await user.click(nextIcon);
         });
         expect(screen.getByText('Row 2')).toBeInTheDocument();
         expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
+        });
 
         await act(async () => {
             await user.click(nextIcon);

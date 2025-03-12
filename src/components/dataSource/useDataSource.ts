@@ -146,7 +146,6 @@ const useDataSource = () => {
         (async () => {
             if (currentRow && shouldUpdateDataRow.current) {
                 try {
-                    console.log('setDataRow', currentRow, currentRowIndex);
                     await window.StudioUISDK.dataSource.setDataRow(currentRow);
                 } finally {
                     shouldValidateVariables.current = true;
