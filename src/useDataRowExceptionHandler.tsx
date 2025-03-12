@@ -2,12 +2,10 @@
 import SDK, { DataRowAsyncError, VariableType } from '@chili-publish/studio-sdk';
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
-import { DATA_SOURCE_TOAST_ID } from './contexts/NotificantionManager/Notification.styles';
-import { SELECTED_ROW_INDEX_KEY } from './components/dataSource/useDataSource';
 
-export const DATA_SOURCE_NOTIFICATION_ID = 'data-source-validation-msg';
+const DATA_SOURCE_TOAST_ID = 'data-source-toast';
 const varTypesWithNoValue = [VariableType.number, VariableType.boolean];
 
 const BoldText = styled.span`
@@ -15,8 +13,7 @@ const BoldText = styled.span`
 `;
 
 export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
-    const { addNotification } = useNotificationManager();
-    const selectedDataSourceRow = useRef<string>();
+    const { addNotification, removeNotifications } = useNotificationManager();
 
     const handleRowExceptions = useCallback(
         async (asyncError: DataRowAsyncError) => {
@@ -51,7 +48,7 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                     }
                     if (msg) {
                         addNotification({
-                            id: `${DATA_SOURCE_TOAST_ID}-${selectedDataSourceRow.current}-${variableInfo.variableId}`,
+                            id: `${DATA_SOURCE_TOAST_ID}-${variableInfo.variableId}`,
                             message: msg as any,
                             type: ToastVariant.NEGATIVE,
                         });
@@ -62,22 +59,16 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
     );
 
     useEffect(() => {
-        const unsubscriber = sdkRef?.config?.events?.onCustomUndoDataChanged.registerCallback((data) => {
-            selectedDataSourceRow.current = data[SELECTED_ROW_INDEX_KEY];
-        });
-        return () => {
-            unsubscriber?.();
-        };
-    }, [sdkRef]);
-
-    useEffect(() => {
         const unsubscriber = sdkRef?.config?.events?.onAsyncError.registerCallback((exception) => {
-            if (exception instanceof DataRowAsyncError) handleRowExceptions(exception);
+            if (exception instanceof DataRowAsyncError) {
+                removeNotifications(`${DATA_SOURCE_TOAST_ID}-`);
+                handleRowExceptions(exception);
+            }
         });
         return () => {
             unsubscriber?.();
         };
-    }, [sdkRef, handleRowExceptions]);
+    }, [sdkRef, handleRowExceptions, removeNotifications]);
 
     return {
         handleRowExceptions,

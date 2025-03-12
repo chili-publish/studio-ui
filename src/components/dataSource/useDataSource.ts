@@ -9,8 +9,6 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
-import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
-import { DATA_SOURCE_TOAST_ID } from '../../contexts/NotificantionManager/Notification.styles';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -27,7 +25,6 @@ function getDataSourceErrorText(status?: number) {
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
-    const { removeNotifications } = useNotificationManager();
     const { validateVariables } = useVariablePanelContext();
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
@@ -153,12 +150,6 @@ const useDataSource = () => {
     }, [currentRow]);
 
     useEffect(() => {
-        return () => {
-            removeNotifications(`${DATA_SOURCE_TOAST_ID}-${currentRowIndex}`);
-        };
-    }, [currentRowIndex, removeNotifications]);
-
-    useEffect(() => {
         (async () => {
             if (!dataSource) return;
             await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
@@ -172,7 +163,7 @@ const useDataSource = () => {
                 // We prevent calling of `.setDataRow` for undo/redo calls (in this case index !== currentRowIndex)
                 // to not create an extra undo item with same dataRow changes
                 shouldUpdateDataRow.current = index === currentRowIndex;
-                updateSelectedRow(index);
+                if (shouldUpdateDataRow.current) updateSelectedRow(index);
             }
         };
         subscriber?.on('onCustomUndoDataChanged', handler);
