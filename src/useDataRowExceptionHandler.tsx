@@ -61,7 +61,7 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                 .filter((exception) => exception.code === 104004)
                 .map((exception) => exception.message)
                 .join(`\n`);
-            if (!!unhandledExceptions) throw new Error(unhandledExceptions);
+            if (unhandledExceptions) throw new Error(unhandledExceptions);
         },
         [addNotification],
     );
