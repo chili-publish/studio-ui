@@ -56,11 +56,24 @@ describe('"useDataSource" hook tests', () => {
         expect(result.current.currentRowIndex).toEqual(0);
     });
     it('should change selected row via "onCustomUndoDataChanged" subscription', async () => {
+        (useAppContext as jest.Mock).mockReturnValue({
+            isDocumentLoaded: true,
+            dataSource: {
+                id: '1',
+                name: 'Connector name',
+            },
+        });
+
         const mockSubscriber = new Subscriber();
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
         const { result } = await renderHook(() => useDataSource());
+
+        await act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
+        await waitFor(() => expect(result.current.currentInputRow).toEqual('1 | Joe | 15'));
 
         act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '3' });
@@ -83,6 +96,10 @@ describe('"useDataSource" hook tests', () => {
             subscriber: mockSubscriber,
         });
         const { result } = await renderHook(() => useDataSource());
+
+        await act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
 
         await waitFor(() => expect(result.current.currentInputRow).toEqual('1 | Joe | 15'));
         expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledTimes(1);
