@@ -19,6 +19,7 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
         async (asyncError: DataRowAsyncError) => {
             asyncError.exceptions
                 .filter((item) => !!item)
+                .filter((exception) => exception.code !== 104004)
                 .forEach((exception) => {
                     let msg;
                     const variableInfo = exception.context;
@@ -54,6 +55,13 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                         });
                     }
                 });
+
+            const unhandledExceptions: string = asyncError.exceptions
+                // engine code for unhandled exceptions
+                .filter((exception) => exception.code === 104004)
+                .map((exception) => exception.message)
+                .join(`\n`);
+            if (!!unhandledExceptions) throw new Error(unhandledExceptions);
         },
         [addNotification],
     );
