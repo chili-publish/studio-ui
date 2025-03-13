@@ -84,9 +84,7 @@ import { TokenManager } from './token-manager';
                 downloadButton: { visible: true },
             },
         },
-        featureFlags: {
-            studioDataSource: true,
-        },
+        featureFlags: {},
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console

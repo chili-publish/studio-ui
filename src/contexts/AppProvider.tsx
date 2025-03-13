@@ -3,7 +3,7 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 
 type Mode = 'design' | 'run';
 
-interface IAppContext {
+export interface IAppContext {
     isDocumentLoaded: boolean;
     selectedMode: Mode;
     dataSource?: ConnectorInstance;
