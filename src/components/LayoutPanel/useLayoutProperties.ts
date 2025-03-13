@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { LayoutPropertiesType, MeasurementUnit, Page } from '@chili-publish/studio-sdk';
+import { LayoutPropertiesType, MeasurementUnit, PageSize } from '@chili-publish/studio-sdk';
 import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
 
-export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: Page) => {
+export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: PageSize) => {
     const [pageWidth, setPageWidth] = useState<string>('');
     const [pageHeight, setPageHeight] = useState<string>('');
 
@@ -15,7 +15,23 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
             switch (name) {
                 case 'width': {
                     handleSetProperty(
-                        () => window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value),
+                        /**
+                         if the same value is set twice, 
+                         on first try it pageSizeChanged event is emitted and input updated with unit
+                         on second try, since no real changes are made to pageSize, engine will not emit PageSizeChanged event
+                         this way we manually set measurement unit after successful SDK update
+                         */
+                        async () => {
+                            await window.StudioUISDK.page.setWidth(activePageDetails?.id as string, value);
+                            setPageWidth(
+                                `${formatNumber(
+                                    activePageDetails?.width as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
+                            );
+                            return null;
+                        },
+                        // reset to previous valid width with measurement unit
                         () =>
                             setPageWidth(
                                 activePageDetails?.width
@@ -31,7 +47,22 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                 }
                 case 'height': {
                     handleSetProperty(
-                        () => window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value),
+                        /** same for height
+                         if the same value is set twice, on first try it pageSizeChanged event is emitted and input updated with unit
+                         on second try, since no real changes are made to pageSize, engine will not emit PageSizeChanged event
+                         this way we manually set measurement unit after successful SDK update
+                         */
+                        async () => {
+                            await window.StudioUISDK.page.setHeight(activePageDetails?.id as string, value);
+                            setPageHeight(
+                                `${formatNumber(
+                                    activePageDetails?.height as number,
+                                    measurementUnit,
+                                )} ${measurementUnit}`,
+                            );
+                            return null;
+                        },
+                        // reset to previous valid width with measurement unit
                         () =>
                             setPageHeight(
                                 activePageDetails?.height

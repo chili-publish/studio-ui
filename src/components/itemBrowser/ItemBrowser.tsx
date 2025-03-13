@@ -12,7 +12,7 @@ import {
     BreadCrumb,
     SelectOptions,
 } from '@chili-publish/grafx-shared-components';
-import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
+import { EditorResponse, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
@@ -35,7 +35,7 @@ type ItemBrowserProps<T extends { id: string }> = {
     queryCall: (connector: string, options: QueryOptions, context: MetaData) => Promise<EditorResponse<QueryPage<T>>>;
     previewCall: (id: string) => Promise<Uint8Array>;
     convertToPreviewType: (_: AssetType) => PreviewType;
-    onSelect: (items: T[]) => void | null;
+    onSelect: (items: T) => Promise<void | null>;
 };
 
 const SKELETONS = [...Array.from(Array(10).keys())];
@@ -178,19 +178,6 @@ function ItemBrowser<
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Handle double clicking a item to unselect it.
-    const selectItem = (item: T) => {
-        // If item is already in the selectedItems, make filteredItems empty (this equals to the deselecting an item)
-        const filteredItems = selectedItems.filter((i) => i.id === item.id).length === 0 ? [item] : [];
-        // If the `selectedItems` is empty, just make one item array, otherwise pass in the `filteredItems`
-        const items = selectedItems.length === 0 ? [item] : filteredItems;
-
-        setSelectedItems(items as unknown as Media[]);
-        if (onSelect) {
-            onSelect(items);
-        }
-    };
-
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
 
     const formatRelativePath = (item: T) => {
@@ -200,24 +187,25 @@ function ItemBrowser<
         return relativePath;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const onItemClick = async (item: T) => {
+        const itemType = convertToPreviewType(item.type as unknown as AssetType);
+        if (itemType === PreviewType.COLLECTION) {
+            setNavigationStack(() => {
+                setIsLoading(true);
+                return toNavigationStack(formatRelativePath(item));
+            });
+            setBreadcrumbStack((currentStack) => [...currentStack, item.name]);
+        } else {
+            await onSelect(item);
+            setNavigationStack([]);
+            setSearchQuery('');
+            setSearchKeyWord('');
+        }
+    };
+
     const elements = list.map((listItem, idx) => {
         const itemType = convertToPreviewType(listItem.instance.type as unknown as AssetType);
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const onClick = () => {
-            if (itemType === PreviewType.COLLECTION) {
-                setNavigationStack(() => {
-                    setIsLoading(true);
-                    return toNavigationStack(formatRelativePath(listItem.instance));
-                });
-                setBreadcrumbStack((currentStack) => [...currentStack, listItem.instance.name]);
-            } else {
-                selectItem(listItem.instance);
-                setNavigationStack([]);
-                setSearchQuery('');
-                setSearchKeyWord('');
-            }
-        };
 
         const previewByteArray: () => Promise<PreviewResponse> = () =>
             listItem.createOrGetDownloadPromise(() => previewCall(listItem.instance.id));
@@ -239,7 +227,7 @@ function ItemBrowser<
             padding: '0',
             footerTopMargin: '0.75rem',
             selected: selectedItems[0]?.id === listItem.instance.id,
-            onClickCard: onClick,
+            onClickCard: () => onItemClick(listItem.instance),
             renamingDisabled: true,
             fallback: UNABLE_TO_LOAD_PANEL,
         };
@@ -310,7 +298,9 @@ function ItemBrowser<
                         placeholder="Search"
                         value={searchKeyWord}
                         onChange={(e) => setSearchKeyWord(e.target.value)}
-                        onBlur={() => handleSearch(searchKeyWord)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch(searchKeyWord);
+                        }}
                         width="260px"
                         leftIcon={{
                             icon: (

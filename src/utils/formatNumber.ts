@@ -1,4 +1,5 @@
-import { EditorResponse, MeasurementUnit } from '@chili-publish/studio-sdk';
+import { MeasurementUnit, EditorResponse } from '@chili-publish/studio-sdk';
+import { getPrecisionForUnit } from './precisionConfig';
 
 export const formatNumber = (value: number | string, measurementUnit?: MeasurementUnit): string => {
     if (!value) return 'undefined';
@@ -9,7 +10,8 @@ export const formatNumber = (value: number | string, measurementUnit?: Measureme
     } else {
         newValue = +value.replace(measurementUnit ?? '', '');
     }
-    return newValue % 1 ? String(+newValue.toFixed(2)) : newValue.toString();
+    const precision = getPrecisionForUnit(measurementUnit);
+    return newValue % 1 ? String(+newValue.toFixed(precision)) : newValue.toString();
 };
 
 export const handleSetProperty = async (
