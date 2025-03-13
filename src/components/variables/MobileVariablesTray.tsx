@@ -19,6 +19,9 @@ import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { useOutputSettingsContext } from '../navbar/OutputSettingsContext';
+import { useLayoutSection } from '../../core/hooks/useLayoutSection';
+import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 
 interface VariablesPanelProps {
     variables: Variable[];
@@ -26,7 +29,7 @@ interface VariablesPanelProps {
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
     pageSize?: PageSize;
-    layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
+    layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;
@@ -50,10 +53,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         pageSize,
         layoutSectionUIOptions,
     } = props;
-    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
+    const { layoutsFormBuilderData } = useOutputSettingsContext();
 
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
@@ -85,7 +88,11 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     });
 
     const closeTray = () => setIsTrayVisible(false);
-
+    const { availableLayouts, isLayoutSwitcherVisible, isAvailableLayoutsDisplayed, sectionTitle } = useLayoutSection({
+        layouts,
+        selectedLayout,
+        layoutSectionUIOptions,
+    });
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
     const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
@@ -95,18 +102,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
 
-    const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
-
-    const isLayoutResizable = useMemo(() => selectedLayout?.resizableByUser.enabled ?? false, [selectedLayout]);
-
-    const isLayoutSwitcherVisible = hasAvailableLayouts && layoutSectionUIOptions.layoutSwitcherVisible;
-    const isLayoutResizableVisible = isLayoutResizable;
-
-    const isAvailableLayoutsDisplayed =
-        layoutsMobileOptionsListOpen ||
-        (layoutSectionUIOptions.visible &&
-            (isLayoutSwitcherVisible || isLayoutResizableVisible) &&
-            !variablesMobileOptionsListOpen);
+    const isLayoutResizable = useMemo(
+        () => selectedLayout?.resizableByUser.enabled && layoutsFormBuilderData?.showWidthHeightInputs,
+        [selectedLayout, layoutsFormBuilderData?.showWidthHeightInputs],
+    );
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
     const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
@@ -146,7 +145,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 close={closeTray}
                 title={
                     <MobileTrayHeader
-                        layoutSectionTitle={layoutSectionUIOptions.title}
+                        layoutSectionTitle={sectionTitle}
+                        layoutSectionHelpText={layoutsFormBuilderData?.helpText}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
@@ -183,8 +183,13 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
                                 <>
-                                    {isAvailableLayoutSubtitleDisplayed && (
-                                        <TrayPanelTitle>{layoutSectionUIOptions.title}</TrayPanelTitle>
+                                    {isAvailableLayoutSubtitleDisplayed && isDataSourceDisplayed && (
+                                        <SectionWrapper>
+                                            <TrayPanelTitle margin="0">{sectionTitle}</TrayPanelTitle>
+                                            {layoutsFormBuilderData?.helpText && (
+                                                <SectionHelpText>{layoutsFormBuilderData?.helpText}</SectionHelpText>
+                                            )}
+                                        </SectionWrapper>
                                     )}
                                     {isLayoutSwitcherVisible && (
                                         <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
