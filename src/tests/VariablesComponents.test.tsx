@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { DateVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { DateVariable, ShortTextVariable, Variable } from '@chili-publish/studio-sdk';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
@@ -53,8 +53,8 @@ describe('Variable Component', () => {
         expect(variable).toBeInTheDocument();
     });
 
-    it('Shows the input component for short text and long text variables', () => {
-        let container = render(
+    it('Shows the input component for short text variables', () => {
+        const container = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
@@ -72,26 +72,32 @@ describe('Variable Component', () => {
 
         expect(screen.getByText('Short Variable 1')).toBeInTheDocument();
         expect(screen.getByDisplayValue('I just got updated')).toHaveAttribute('value', 'I just got updated');
+    });
+    it('Shows the text area component for multi line text variables', async () => {
+        const user = userEvent.setup();
+        const longText = variables.find((variable) => variable.id === 'multi-line-text-variable-1') as Variable;
 
-        container = render(
+        render(
             <AppProvider>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
-                        key={`variable-component-${variables[3].id}`}
-                        type={variables[3].type} // short text variable
-                        variable={variables[3]}
+                        key={`variable-component-${longText.id}`}
+                        type={longText.type}
+                        variable={longText}
                     />
                 </UiThemeProvider>
             </AppProvider>,
         );
 
-        const inputLong = container.container.getElementsByTagName('input')[0];
-        fireEvent.focus(inputLong);
-        fireEvent.change(inputLong, { target: { value: 'I just got longer' } });
-        fireEvent.blur(inputLong);
+        const inputLong = screen.getByRole('textbox');
+        await act(async () => {
+            await user.click(inputLong);
+            await user.type(inputLong, 'I am tying\n in the second line');
+            await inputLong.blur();
+        });
 
-        expect(screen.getByText('Long Variable 1 Label')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('I just got longer')).toHaveAttribute('value', 'I just got longer');
+        expect(screen.getByText('Long text Var label')).toBeInTheDocument();
+        expect(screen.getByText(/i am tying in the second line/i)).toBeInTheDocument();
     });
     it('Shows the number component for number variables', () => {
         const { getByRole, getAllByRole } = render(

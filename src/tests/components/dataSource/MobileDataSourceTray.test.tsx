@@ -9,6 +9,9 @@ import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import { Subscriber } from '../../../utils/subscriber';
+import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import MobileVariables from '../../../components/variables/MobileVariables';
 
 const dataRows = [
@@ -16,6 +19,12 @@ const dataRows = [
     { id: '2', name: 'John', age: 18 },
     { id: '3', name: 'Mary', age: 17 },
 ];
+
+jest.mock('../../../contexts/Subscriber', () => ({
+    useSubscriberContext: jest.fn().mockReturnValue({
+        subscriber: null,
+    }),
+}));
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -93,6 +102,10 @@ describe('MobileDataSource test', () => {
     });
 
     it('Should open tray with data table on click on data source row', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
         render(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
@@ -136,6 +149,10 @@ describe('MobileDataSource test', () => {
             expect(dataSourceRow).toBeInTheDocument();
         });
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
+
         await act(async () => {
             await user.click(screen.getByDisplayValue('1 | Joe | 15'));
         });
@@ -161,6 +178,11 @@ describe('MobileDataSource test', () => {
             });
         });
         const row = screen.getAllByRole('row')[3];
+
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '2' });
+        });
+
         await act(async () => {
             await user.click(row);
         });

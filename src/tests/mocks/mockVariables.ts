@@ -122,4 +122,14 @@ export const variables: Variable[] = [
         parentId: '2',
         isVisible: true,
     },
+    <LongTextVariable>{
+        id: 'multi-line-text-variable-1',
+        name: 'Long text Var name',
+        label: 'Long text Var label',
+        type: VariableType.longText,
+        value: 'I am long text\nSecond line',
+        occurrences: 22,
+        parentId: '2',
+        isVisible: true,
+    },
 ];
