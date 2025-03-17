@@ -91,6 +91,7 @@ export const BreadCrumbsWrapper = styled.div`
     overflow: visible;
     white-space: nowrap;
     display: flex;
+    margin-top: 1px;
     & .grafx-select__control {
         &:hover {
             border: 1px solid transparent !important;

@@ -13,6 +13,7 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import BooleanVariable from './BooleanVariable';
 import NumberVariable from './NumberVariable';
 import TextVariable from './TextVariable';
+import MultiLineTextVariable from './MultiLineTextVariable';
 import { isDateVariable, isNumberVariable, isTextVariable, TextVariable as TextVariableType } from './Variable';
 import { IVariablesComponents } from './VariablesComponents.types';
 import DateVariable from './dateVariable/DateVariable';
@@ -56,7 +57,15 @@ function VariablesComponents(props: IVariablesComponents) {
 
     const RenderComponents = useMemo(() => {
         switch (type) {
-            case VariableType.longText:
+            case VariableType.longText: {
+                return (
+                    <MultiLineTextVariable
+                        variable={variable}
+                        validationError={errMsg}
+                        onValueChange={onVariableValueChange}
+                    />
+                );
+            }
             case VariableType.shortText: {
                 return (
                     <TextVariable variable={variable} validationError={errMsg} onValueChange={onVariableValueChange} />
