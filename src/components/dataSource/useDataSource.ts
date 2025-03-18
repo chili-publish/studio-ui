@@ -39,6 +39,8 @@ const useDataSource = () => {
     const shouldUpdateDataRow = useRef(true);
     const shouldValidateVariables = useRef(false);
 
+    const processingDataRow = useRef<number | null>();
+
     const hasUserAuthorization = useAsyncMemo(async () => {
         if (!dataSource) {
             return false;
@@ -94,8 +96,6 @@ const useDataSource = () => {
                 setContinuationToken(page?.continuationToken ?? null);
             } catch (err) {
                 resetData();
-                // eslint-disable-next-line no-console
-                console.error(err);
                 if (err instanceof ConnectorHttpError) {
                     setError({
                         status: err.statusCode,
@@ -119,10 +119,12 @@ const useDataSource = () => {
     }, [dataSource, continuationToken, loadDataRowsByToken]);
 
     const getPreviousRow = useCallback(() => {
+        if (processingDataRow.current !== null) return;
         setCurrentRowIndex((prev) => prev - 1);
     }, []);
 
     const getNextRow = useCallback(async () => {
+        if (processingDataRow.current !== null) return;
         if (continuationToken && currentRowIndex + 1 === dataRows.length) {
             await loadDataRows();
         }
@@ -130,6 +132,7 @@ const useDataSource = () => {
     }, [currentRowIndex, dataRows, continuationToken, loadDataRows]);
 
     const updateSelectedRow = useCallback((index: number) => {
+        if (processingDataRow.current !== null) return;
         if (index >= 0) setCurrentRowIndex(index);
     }, []);
 
@@ -154,6 +157,7 @@ const useDataSource = () => {
     useEffect(() => {
         (async () => {
             if (!dataSource) return;
+            processingDataRow.current = currentRowIndex;
             await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
         })();
     }, [currentRowIndex, dataSource]);
@@ -165,6 +169,7 @@ const useDataSource = () => {
                 // We prevent calling of `.setDataRow` for undo/redo calls (in this case index !== currentRowIndex)
                 // to not create an extra undo item with same dataRow changes
                 shouldUpdateDataRow.current = index === currentRowIndex;
+                if (processingDataRow.current === index) processingDataRow.current = null;
                 updateSelectedRow(index);
             }
         };

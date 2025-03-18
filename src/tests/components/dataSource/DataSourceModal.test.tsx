@@ -7,6 +7,15 @@ import { APP_WRAPPER } from '@tests/shared.util/app';
 import DataSource from '../../../components/dataSource/DataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { Subscriber } from '../../../utils/subscriber';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+
+jest.mock('../../../contexts/Subscriber', () => ({
+    useSubscriberContext: jest.fn().mockReturnValue({
+        subscriber: null,
+    }),
+}));
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -164,6 +173,11 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should open modal with data rows on click on data source row', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
+
         render(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
@@ -177,6 +191,10 @@ describe('DataSourceModal test', () => {
 
         const dataSourceRow = await screen.findByDisplayValue('1 | Joe | 15');
         expect(dataSourceRow).toBeInTheDocument();
+
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
 
         await act(async () => {
             await user.click(dataSourceRow);
@@ -204,6 +222,11 @@ describe('DataSourceModal test', () => {
         });
 
         expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '2' });
+        });
+
         await act(async () => {
             await user.click(screen.getByText('Mary'));
         });
@@ -211,6 +234,10 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should be able to navigate with arrow key in the data source table', async () => {
+        const mockSubscriber = new Subscriber();
+        (useSubscriberContext as jest.Mock).mockReturnValue({
+            subscriber: mockSubscriber,
+        });
         render(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
@@ -224,6 +251,10 @@ describe('DataSourceModal test', () => {
         const dataSourceRow = await screen.findByDisplayValue('1 | Joe | 15');
         expect(dataSourceRow).toBeInTheDocument();
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
+        });
+
         await act(async () => {
             await user.click(dataSourceRow);
         });
@@ -233,6 +264,9 @@ describe('DataSourceModal test', () => {
             expect(dataRowsTable).toBeInTheDocument();
         });
 
+        act(() => {
+            mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
+        });
         await act(async () => {
             await user.keyboard('[ArrowDown]');
         });
