@@ -34,7 +34,7 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
 
     const isLayoutResizableVisible = useMemo(
         () =>
-            !!(selectedLayout?.id && selectedLayout?.resizableByUser.enabled) &&
+            !!(selectedLayout?.id && selectedLayout?.resizableByUser?.enabled) &&
             layoutsFormBuilderData?.showWidthHeightInputs,
         [selectedLayout, layoutsFormBuilderData?.showWidthHeightInputs],
     );
