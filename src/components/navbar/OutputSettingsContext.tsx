@@ -51,7 +51,8 @@ export function OutputSettingsContextProvider({
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
-
+                        // eslint-disable-next-line no-console
+                        console.log('onFetch', res);
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);

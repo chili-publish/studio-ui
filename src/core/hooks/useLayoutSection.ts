@@ -51,6 +51,18 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
         () => layoutSectionUIOptions.title || layoutsFormBuilderData?.header || defaultUiOptions.layoutSection.title,
         [layoutSectionUIOptions.title, layoutsFormBuilderData?.header],
     );
+    // eslint-disable-next-line
+    console.log('title', [
+        layoutSectionUIOptions.title,
+        layoutsFormBuilderData?.header,
+        defaultUiOptions.layoutSection.title,
+    ]);
+    // eslint-disable-next-line
+    console.log('layoutSwitcherVisibility', [
+        layoutSectionUIOptions.layoutSwitcherVisible,
+        layoutsFormBuilderData?.layoutSelector,
+        defaultUiOptions.layoutSection.layoutSwitcherVisible,
+    ]);
 
     return {
         availableLayouts,
