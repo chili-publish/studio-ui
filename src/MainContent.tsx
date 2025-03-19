@@ -510,7 +510,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     loadDocumentError={loadDocumentError}
                                     goBack={projectConfig?.onBack}
                                 />
-                                {pendingAuthentications.length &&
+                                {pendingAuthentications.length ?
                                     pendingAuthentications.map((authFlow) => (
                                         <ConnectorAuthenticationModal
                                             key={authFlow.connectorId}
@@ -522,7 +522,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                 connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
                                             }
                                         />
-                                    ))}
+                                    )) : null}
                             </div>
                         </VariablePanelContextProvider>
                     </UiConfigContextProvider>

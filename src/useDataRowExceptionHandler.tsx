@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, react/no-array-index-key */
-import SDK, { DataRowAsyncError, VariableType } from '@chili-publish/studio-sdk';
+import SDK, { DataRowAsyncError, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { useCallback, useEffect } from 'react';
@@ -12,44 +12,60 @@ const BoldText = styled.span`
     font-weight: bold;
 `;
 
+type ExceptionWithVariableInfo = { exception: DataRowAsyncError['exceptions'][0]; variableData: Variable | null };
+
 export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
     const { addNotification, removeNotifications } = useNotificationManager();
 
     const handleRowExceptions = useCallback(
         async (asyncError: DataRowAsyncError) => {
-            asyncError.exceptions
+            const exceptionsWithVariableInfoPromises = asyncError.exceptions
                 .filter((item) => !!item)
                 .filter((exception) => exception.code !== 104004)
-                .forEach((exception) => {
-                    let msg;
+                .map(async (exception) => {
                     const variableInfo = exception.context;
+                    const variableId = variableInfo?.variableId;
+                    if (!variableId) return;
+                    const variableData = (await window.StudioUISDK.variable.getById(variableId)).parsedData;
+
+                    return { exception, variableData };
+                });
+
+            const exceptionsWithVariableInfo: ExceptionWithVariableInfo[] = (await Promise.all(
+                exceptionsWithVariableInfoPromises,
+            )) as ExceptionWithVariableInfo[];
+
+            exceptionsWithVariableInfo
+                .filter((data) => !!data)
+                .forEach(({ exception, variableData }) => {
+                    let msg;
                     if (
                         exception.code === 403104 ||
-                        (exception.code === 403062 && variableInfo.variableType === VariableType.image)
+                        (exception.code === 403062 && variableData?.type === VariableType.image)
                     ) {
                         msg = (
                             <>
-                                <BoldText>{variableInfo?.variableLabel ?? variableInfo?.variableName}</BoldText> is
-                                invalid. The value is cleared.
+                                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. The value
+                                is cleared.
                             </>
                         );
                     }
                     if (
                         exception.code === 403032 ||
                         (exception.code === 403105 &&
-                            variableInfo.variableType &&
-                            varTypesWithNoValue.includes(variableInfo.variableType))
+                            variableData?.type &&
+                            varTypesWithNoValue.includes(variableData.type))
                     ) {
                         msg = (
                             <>
-                                <BoldText>{variableInfo?.variableLabel ?? variableInfo?.variableName}</BoldText> is
-                                invalid. A default value is used.
+                                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. A default
+                                value is used.
                             </>
                         );
                     }
                     if (msg) {
                         addNotification({
-                            id: `${DATA_SOURCE_TOAST_ID}-${variableInfo.variableId}`,
+                            id: `${DATA_SOURCE_TOAST_ID}-${variableData?.id}`,
                             message: msg as any,
                             type: ToastVariant.NEGATIVE,
                         });

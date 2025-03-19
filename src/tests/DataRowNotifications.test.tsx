@@ -42,7 +42,10 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
                 dataSource: { getDataSource: jest.fn().mockResolvedValue({ parsedData: null }) },
-                variable: { getByName: jest.fn().mockResolvedValue({ parsedData: variables[2] }) },
+                variable: {
+                    getByName: jest.fn().mockResolvedValue({ parsedData: variables[2] }),
+                    getById: jest.fn().mockResolvedValue({ parsedData: variables[2] }),
+                },
             };
         },
     };
@@ -111,6 +114,12 @@ describe('Data source error handling', () => {
     it('Should correctly show notification error for missing variable value', async () => {
         renderComponent();
 
+        jest.spyOn(window.StudioUISDK.variable, 'getById').mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: variables[2],
+        });
+
         await act(() => {
             window.StudioUISDK.config.events.onAsyncError.trigger(
                 new DataRowAsyncError(2, '', [
@@ -118,19 +127,27 @@ describe('Data source error handling', () => {
                         type: 'missingVariable',
                         code: 403104,
                         message: 'Variable "varName" is missing',
-                        context: { variableName: 'varName', variableLabel: 'varLabel' },
+                        context: { variableName: 'varName', variableLabel: 'varLabel', variableId: variables[2].id },
                     },
                 ]),
             );
         });
 
         await waitFor(() => {
-            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(`varLabel is invalid. The value is cleared.`);
+            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
+                `${variables[2].label} is invalid. The value is cleared.`,
+            );
         });
     });
 
     it('Should correctly show notification error for variable invalid value exception', async () => {
         renderComponent();
+
+        jest.spyOn(window.StudioUISDK.variable, 'getById').mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: variables[9],
+        });
 
         await act(() => {
             window.StudioUISDK.config.events.onAsyncError.trigger(
@@ -139,21 +156,23 @@ describe('Data source error handling', () => {
                         type: 'resetVar',
                         code: 403032,
                         message: 'Variable "varName" is reseted',
-                        context: { variableName: 'varName' },
+                        context: { variableId: variables[9].id },
                     },
                 ]),
             );
         });
 
         await waitFor(() => {
-            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(`varName is invalid. A default value is used.`);
+            expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
+                `${variables[9].name} is invalid. A default value is used.`,
+            );
         });
     });
 
     it('Should correctly show notification error for reset variable value exception of a number variable', async () => {
         renderComponent();
 
-        jest.spyOn(window.StudioUISDK.variable, 'getByName').mockResolvedValue({
+        jest.spyOn(window.StudioUISDK.variable, 'getById').mockResolvedValue({
             success: true,
             status: 200,
             parsedData: variables[5],
@@ -166,7 +185,7 @@ describe('Data source error handling', () => {
                         type: 'resetVar',
                         code: 403105,
                         message: 'Variable "varName" is reseted',
-                        context: { variableLabel: 'numbervariableLabel', variableType: VariableType.number },
+                        context: { variableId: variables[5].id },
                     },
                 ]),
             );
@@ -174,7 +193,7 @@ describe('Data source error handling', () => {
 
         await waitFor(() => {
             expect(screen.getByTestId(TOAST_ID)).toHaveTextContent(
-                `numbervariableLabel is invalid. A default value is used.`,
+                `${variables[5].label} is invalid. A default value is used.`,
             );
         });
     });
