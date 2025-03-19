@@ -29,6 +29,7 @@ import {
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
+import ExportModal from '../exportModal/ExportModal';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -40,6 +41,7 @@ interface DownloadPanelProps {
         __: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
         outputSettingsId: string | undefined,
     ) => Promise<void>;
+    isSandBoxMode?: boolean;
 }
 
 const getCustomSelectedLabel = (option: SelectOptions) => {
@@ -52,7 +54,8 @@ const getCustomSelectedOption = (option: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode = false } = props;
+
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const { themeColors } = useTheme();
@@ -138,64 +141,72 @@ function DownloadPanel(props: DownloadPanelProps) {
                 ) : null}
             </Tray>
 
-            <Menu
-                isVisible={!isMobileSize && isDownloadPanelVisible}
-                onClose={() => undefined}
-                position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
-                style={{ width: 19 * 16 - 3 }}
-                anchorId={APP_WRAPPER_ID}
-            >
-                <DownloadPanelContainer ref={downloadPanelRef}>
-                    <DownloadDropdownTitle>Download</DownloadDropdownTitle>
-                    <DesktopDropdownContainer>
-                        <Select
-                            label="Output"
-                            dataId={getDataIdForSUI(`output-dropdown`)}
-                            dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                            defaultValue={selectedValue}
-                            options={userInterfaceDownloadOptions ?? downloadOptions}
-                            isSearchable={false}
-                            width="16.25rem"
-                            onChange={(option) =>
-                                handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
-                            }
-                            customValue={getCustomSelectedLabel}
-                        />
-                    </DesktopDropdownContainer>
-                    {downloadState[selectedOptionFormat] ? (
-                        <SpinnerContainer>
-                            <Button
-                                loading
-                                styles={css`
-                                    width: 100%;
-                                    background-color: ${themeColors.disabledElementsColor};
-                                    &:hover {
+            {isSandBoxMode ? (
+                <ExportModal isExportModalVisible={isDownloadPanelVisible} hideExportModalVisible={hideDownloadPanel} />
+            ) : (
+                <Menu
+                    isVisible={!isMobileSize && isDownloadPanelVisible}
+                    onClose={() => undefined}
+                    position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
+                    style={{ width: 19 * 16 - 3 }}
+                    anchorId={APP_WRAPPER_ID}
+                >
+                    <DownloadPanelContainer ref={downloadPanelRef}>
+                        <DownloadDropdownTitle>Download</DownloadDropdownTitle>
+                        <DesktopDropdownContainer>
+                            <Select
+                                label="Output"
+                                dataId={getDataIdForSUI(`output-dropdown`)}
+                                dataTestId={getDataTestIdForSUI(`output-dropdown`)}
+                                defaultValue={selectedValue}
+                                options={userInterfaceDownloadOptions ?? downloadOptions}
+                                isSearchable={false}
+                                width="16.25rem"
+                                onChange={(option) =>
+                                    handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
+                                }
+                                customValue={getCustomSelectedLabel}
+                            />
+                        </DesktopDropdownContainer>
+                        {downloadState[selectedOptionFormat] ? (
+                            <SpinnerContainer>
+                                <Button
+                                    loading
+                                    styles={css`
+                                        width: 100%;
                                         background-color: ${themeColors.disabledElementsColor};
-                                    }
-                                `}
-                            />
-                        </SpinnerContainer>
-                    ) : (
-                        <BtnContainer>
-                            <Button
-                                dataId={getDataIdForSUI(`download-btn`)}
-                                dataTestId={getDataTestIdForSUI(`download-btn`)}
-                                dataIntercomId="Download selected output"
-                                onClick={() => {
-                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
-                                }}
-                                variant={ButtonVariant.primary}
-                                label="Download"
-                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
-                                styles={css`
-                                    margin: 1.25rem auto 1.25rem;
-                                    width: 100%;
-                                `}
-                            />
-                        </BtnContainer>
-                    )}
-                </DownloadPanelContainer>
-            </Menu>
+                                        &:hover {
+                                            background-color: ${themeColors.disabledElementsColor};
+                                        }
+                                    `}
+                                />
+                            </SpinnerContainer>
+                        ) : (
+                            <BtnContainer>
+                                <Button
+                                    dataId={getDataIdForSUI(`download-btn`)}
+                                    dataTestId={getDataTestIdForSUI(`download-btn`)}
+                                    dataIntercomId="Download selected output"
+                                    onClick={() => {
+                                        handleDownload(
+                                            selectedOptionFormat,
+                                            updateDownloadState,
+                                            selectedOutputSettingsId,
+                                        );
+                                    }}
+                                    variant={ButtonVariant.primary}
+                                    label="Download"
+                                    icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
+                                    styles={css`
+                                        margin: 1.25rem auto 1.25rem;
+                                        width: 100%;
+                                    `}
+                                />
+                            </BtnContainer>
+                        )}
+                    </DownloadPanelContainer>
+                </Menu>
+            )}
         </>
     );
 }

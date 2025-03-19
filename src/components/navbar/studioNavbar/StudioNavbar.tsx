@@ -5,10 +5,13 @@ import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+    const ff = useOutputSettingsContext();
 
+    console.log('%c⧭ ffff', 'color: #00ff88', ff);
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
         projectName,
@@ -55,6 +58,7 @@ function StudioNavbar(props: INavbar) {
                 isDownloadPanelVisible={isDownloadPanelVisible}
                 hideDownloadPanel={hideDownloadPanel}
                 handleDownload={handleDownload}
+                isSandBoxMode={projectConfig.sandboxMode}
             />
         </StyledNavbar>
     );
