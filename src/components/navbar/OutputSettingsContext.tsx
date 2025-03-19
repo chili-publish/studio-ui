@@ -13,6 +13,7 @@ export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
+    outputSettingsFullList: undefined,
 };
 
 export const OutputSettingsContext = createContext<IOutputSettingsContext>(OutputSettingsContextDefaultValues);
@@ -39,12 +40,15 @@ export function OutputSettingsContextProvider({
         UserInterfaceOutputSettings[] | null
     >([]);
 
+    const [outputSettingsFullList, setOutputSettingsFullList] = useState<UserInterfaceOutputSettings[] | undefined>([]);
+
     const fetchOutputSettings = useCallback(
         async (userInterfaceId?: string) => {
             if (projectConfig.onFetchOutputSettings) {
                 projectConfig
                     .onFetchOutputSettings(userInterfaceId)
                     .then((res: UserInterfaceWithOutputSettings | null) => {
+                        // console.log('%c⧭ resresres', 'color: #7f2200', res);
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
@@ -52,6 +56,7 @@ export function OutputSettingsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                        setOutputSettingsFullList(res?.outputSettingsFullList);
                     });
             }
         },
@@ -68,12 +73,14 @@ export function OutputSettingsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
+            outputSettingsFullList,
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
+            outputSettingsFullList,
         ],
     );
 
