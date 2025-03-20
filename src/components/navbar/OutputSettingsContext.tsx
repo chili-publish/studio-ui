@@ -48,7 +48,6 @@ export function OutputSettingsContextProvider({
                 projectConfig
                     .onFetchOutputSettings(userInterfaceId)
                     .then((res: UserInterfaceWithOutputSettings | null) => {
-                        // console.log('%c⧭ resresres', 'color: #7f2200', res);
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );

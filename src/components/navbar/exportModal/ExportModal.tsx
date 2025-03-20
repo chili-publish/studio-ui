@@ -63,10 +63,6 @@ function ExportModal({
 
     const outputSettingsOptions = useMemo(() => {
         if (layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print) {
-            // OutputSettingFormats
-
-            // console.log('%c⧭ outputSettingsFullList', 'color: #733d00', outputSettingsFullList);
-
             return outputSettingsFullList
                 ?.filter(
                     (output) =>
