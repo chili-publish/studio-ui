@@ -142,7 +142,12 @@ function DownloadPanel(props: DownloadPanelProps) {
             </Tray>
 
             {isSandBoxMode ? (
-                <ExportModal isExportModalVisible={isDownloadPanelVisible} hideExportModalVisible={hideDownloadPanel} />
+                <ExportModal
+                    isExportModalVisible={isDownloadPanelVisible}
+                    hideExportModalVisible={hideDownloadPanel}
+                    handleExport={handleDownload}
+                    updateDownloadState={updateDownloadState}
+                />
             ) : (
                 <Menu
                     isVisible={!isMobileSize && isDownloadPanelVisible}
