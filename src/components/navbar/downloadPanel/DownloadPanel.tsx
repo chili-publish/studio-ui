@@ -10,7 +10,7 @@ import {
     useMobileSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
-import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { Dispatch, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { UserInterfaceOutputSettings } from '../../../types/types';
@@ -42,6 +42,7 @@ interface DownloadPanelProps {
         outputSettingsId: string | undefined,
     ) => Promise<void>;
     isSandBoxMode?: boolean;
+    layoutIntent?: LayoutIntent | null;
 }
 
 const getCustomSelectedLabel = (option: SelectOptions) => {
@@ -54,7 +55,7 @@ const getCustomSelectedOption = (option: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode = false } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent } = props;
 
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
@@ -148,6 +149,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     handleExport={handleDownload}
                     updateDownloadState={updateDownloadState}
                     downloadState={downloadState}
+                    layoutIntent={layoutIntent}
                 />
             ) : (
                 <Menu

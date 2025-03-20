@@ -77,6 +77,7 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
         zoom: 100,
         undoStackState: { canRedo: true, canUndo: true },
         projectConfig,
+        layoutIntent: LayoutIntent.digitalAnimated,
     };
     render(
         <UiConfigContextProvider projectConfig={projectConfig}>

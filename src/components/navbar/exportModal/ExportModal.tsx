@@ -12,7 +12,7 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { css } from 'styled-components';
-import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import {
     DragHandleContainer,
@@ -38,6 +38,7 @@ interface ExportMenuProps {
     ) => Promise<void>;
     updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>;
     downloadState: Record<DownloadFormats, boolean>;
+    layoutIntent?: LayoutIntent | null;
 }
 const formatIconMappings: { [key in keyof typeof OutputSettingFormats]: AvailableIconsType } = {
     [OutputSettingFormats.JPG]: AvailableIcons.faImage,
@@ -53,14 +54,49 @@ function ExportModal({
     handleExport,
     updateDownloadState,
     downloadState,
+    layoutIntent,
 }: ExportMenuProps) {
     const { outputSettingsFullList } = useOutputSettingsContext();
     const [selectedOption, setSelectedOption] = useState<string | number | null>();
     const ref = useRef<HTMLDivElement>(null);
     const { icon } = useTheme();
 
-    const outputSettingsOptions = useMemo(
-        () =>
+    const outputSettingsOptions = useMemo(() => {
+        if (layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print) {
+            // OutputSettingFormats
+
+            // console.log('%c⧭ outputSettingsFullList', 'color: #733d00', outputSettingsFullList);
+
+            return outputSettingsFullList
+                ?.filter(
+                    (output) =>
+                        output.type.toLocaleLowerCase() !== DownloadFormats.MP4 &&
+                        output.type.toLocaleLowerCase() !== DownloadFormats.GIF,
+                )
+                .map(
+                    (item) =>
+                        ({
+                            label: (
+                                <OptionWithIcon height="2rem">
+                                    <Icon
+                                        width="1rem"
+                                        icon={
+                                            formatIconMappings[item.type as unknown as keyof typeof formatIconMappings]
+                                        }
+                                    />
+                                    <OptionText>
+                                        <span>{item.name}</span>
+                                        <span>{item.description}</span>
+                                    </OptionText>
+                                </OptionWithIcon>
+                            ),
+                            item,
+                            value: item.id,
+                        } as unknown as SelectOptionType),
+                );
+        }
+
+        return (
             outputSettingsFullList?.map(
                 (item) =>
                     ({
@@ -79,9 +115,9 @@ function ExportModal({
                         item,
                         value: item.id,
                     } as unknown as SelectOptionType),
-            ) || null,
-        [outputSettingsFullList],
-    );
+            ) || null
+        );
+    }, [layoutIntent, outputSettingsFullList]);
 
     const closeMenu = useCallback(() => {
         hideExportModalVisible();
@@ -165,16 +201,16 @@ function ExportModal({
                         dataTestId={getDataTestIdForSUI(`export-btn`)}
                         onClick={() => {
                             if (!Object.values(downloadState).some((value) => value === true)) {
-                                const selectedOutputSetting = outputSettingsFullList?.find(
-                                    (output) => output.id === selectedOption,
+                                const selectedOutputSetting = outputSettingsOptions?.find(
+                                    (output) => output.value === selectedOption,
                                 );
                                 if (selectedOutputSetting) {
                                     handleExport(
                                         DownloadFormats[
-                                            selectedOutputSetting.type as unknown as keyof typeof DownloadFormats
+                                            selectedOutputSetting.item.type as unknown as keyof typeof DownloadFormats
                                         ],
                                         updateDownloadState,
-                                        selectedOutputSetting.id,
+                                        selectedOutputSetting.item.id,
                                     );
                                 }
                             }
