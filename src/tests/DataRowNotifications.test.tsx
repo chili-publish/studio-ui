@@ -1,4 +1,4 @@
-import { ConfigType, DataRowAsyncError, LayoutIntent, VariableType } from '@chili-publish/studio-sdk';
+import { ConfigType, DataRowAsyncError, LayoutIntent } from '@chili-publish/studio-sdk';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import MainContent from '../MainContent';
@@ -127,7 +127,7 @@ describe('Data source error handling', () => {
                         type: 'missingVariable',
                         code: 403104,
                         message: 'Variable "varName" is missing',
-                        context: { variableName: 'varName', variableLabel: 'varLabel', variableId: variables[2].id },
+                        context: { variableId: variables[2].id },
                     },
                 ]),
             );

@@ -510,19 +510,20 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     loadDocumentError={loadDocumentError}
                                     goBack={projectConfig?.onBack}
                                 />
-                                {pendingAuthentications.length ?
-                                    pendingAuthentications.map((authFlow) => (
-                                        <ConnectorAuthenticationModal
-                                            key={authFlow.connectorId}
-                                            name={authFlow.connectorName}
-                                            onConfirm={() =>
-                                                connectorAuthenticationProcess(authFlow.connectorId)?.start()
-                                            }
-                                            onCancel={() =>
-                                                connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
-                                            }
-                                        />
-                                    )) : null}
+                                {pendingAuthentications.length
+                                    ? pendingAuthentications.map((authFlow) => (
+                                          <ConnectorAuthenticationModal
+                                              key={authFlow.connectorId}
+                                              name={authFlow.connectorName}
+                                              onConfirm={() =>
+                                                  connectorAuthenticationProcess(authFlow.connectorId)?.start()
+                                              }
+                                              onCancel={() =>
+                                                  connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
+                                              }
+                                          />
+                                      ))
+                                    : null}
                             </div>
                         </VariablePanelContextProvider>
                     </UiConfigContextProvider>

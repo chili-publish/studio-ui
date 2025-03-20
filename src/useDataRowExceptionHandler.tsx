@@ -25,7 +25,7 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                 .map(async (exception) => {
                     const variableInfo = exception.context;
                     const variableId = variableInfo?.variableId;
-                    if (!variableId) return;
+                    if (!variableId) return null;
                     const variableData = (await window.StudioUISDK.variable.getById(variableId)).parsedData;
 
                     return { exception, variableData };
