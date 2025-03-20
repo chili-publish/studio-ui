@@ -147,6 +147,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     hideExportModalVisible={hideDownloadPanel}
                     handleExport={handleDownload}
                     updateDownloadState={updateDownloadState}
+                    downloadState={downloadState}
                 />
             ) : (
                 <Menu

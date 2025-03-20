@@ -24,6 +24,7 @@ import {
 } from './ExportModal.styles';
 import { useOutputSettingsContext } from '../OutputSettingsContext';
 import { OutputSettingFormats, OutputSettings } from './ExportModal.types';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 type SelectOptionType = SelectOptions & { item: OutputSettings };
 
@@ -36,6 +37,7 @@ interface ExportMenuProps {
         outputSettingsId: string | undefined,
     ) => Promise<void>;
     updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>;
+    downloadState: Record<DownloadFormats, boolean>;
 }
 const formatIconMappings: { [key in keyof typeof OutputSettingFormats]: AvailableIconsType } = {
     [OutputSettingFormats.JPG]: AvailableIcons.faImage,
@@ -50,11 +52,13 @@ function ExportModal({
     hideExportModalVisible,
     handleExport,
     updateDownloadState,
+    downloadState,
 }: ExportMenuProps) {
     const { outputSettingsFullList } = useOutputSettingsContext();
     const [selectedOption, setSelectedOption] = useState<string | number | null>();
     const ref = useRef<HTMLDivElement>(null);
     const { icon } = useTheme();
+
     const outputSettingsOptions = useMemo(
         () =>
             outputSettingsFullList?.map(
@@ -89,7 +93,7 @@ function ExportModal({
 
     return (
         <Modal
-            anchorId="sui-navbar"
+            anchorId={APP_WRAPPER_ID}
             id="export-menu-modal"
             key="export-menu-modal"
             dataId={getDataIdForSUI('export-menu-modal')}
@@ -114,12 +118,11 @@ function ExportModal({
                     </TitleContainer>
                 }
                 rightIcon={
-                    <IconWrapper>
+                    <IconWrapper onClick={closeMenu}>
                         <Icon
                             dataId={getDataIdForSUI('export-modal-close-icon')}
                             dataTestId={getDataTestIdForSUI('export-modal-close-icon')}
                             icon={AvailableIcons.faXmark}
-                            onClick={closeMenu}
                         />
                     </IconWrapper>
                 }
@@ -157,20 +160,23 @@ function ExportModal({
                         <div style={{ height: '58px', width: '2rem' }} />
                     )}
                     <Button
+                        loading={Object.values(downloadState).some((value) => value === true)}
                         dataId={getDataIdForSUI(`export-btn`)}
                         dataTestId={getDataTestIdForSUI(`export-btn`)}
                         onClick={() => {
-                            const selectedOutputSetting = outputSettingsFullList?.find(
-                                (output) => output.id === selectedOption,
-                            );
-                            if (selectedOutputSetting) {
-                                handleExport(
-                                    DownloadFormats[
-                                        selectedOutputSetting.type as unknown as keyof typeof DownloadFormats
-                                    ],
-                                    updateDownloadState,
-                                    selectedOutputSetting.id,
+                            if (!Object.values(downloadState).some((value) => value === true)) {
+                                const selectedOutputSetting = outputSettingsFullList?.find(
+                                    (output) => output.id === selectedOption,
                                 );
+                                if (selectedOutputSetting) {
+                                    handleExport(
+                                        DownloadFormats[
+                                            selectedOutputSetting.type as unknown as keyof typeof DownloadFormats
+                                        ],
+                                        updateDownloadState,
+                                        selectedOutputSetting.id,
+                                    );
+                                }
                             }
                         }}
                         variant={ButtonVariant.primary}

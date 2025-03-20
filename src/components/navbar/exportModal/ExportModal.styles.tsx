@@ -12,7 +12,11 @@ export const DragHandleContainer = styled.div`
 
 export const IconWrapper = styled.div`
     z-index: 2;
-    background: red;
+    padding: 0.75rem;
+    svg {
+        padding: 0;
+    }
+    cursor: pointer;
 `;
 
 export const MenuContainer = styled.div`
