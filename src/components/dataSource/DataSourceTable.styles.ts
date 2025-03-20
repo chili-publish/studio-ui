@@ -6,10 +6,16 @@ export const TableWrapper = styled.div`
     display: contents;
     // Although it states for margin-bottom, actually it implies on the right gap between table and right side of modal
     margin-bottom: 2.5rem;
-
+    position: relative;
     table {
         margin-bottom: 2.5rem;
     }
+`;
+
+export const LoadingWrapper = styled.div`
+    position: absolute;
+    bottom: 2.5rem;
+    width: 100%;
 `;
 
 export const Center = styled.div`

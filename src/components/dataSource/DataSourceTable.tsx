@@ -1,6 +1,13 @@
 import { AvailableIcons, Icon, LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
-import { Center, EmptyStateText, ErrorTextBox, ErrorTextMsg, TableWrapper } from './DataSourceTable.styles';
+import {
+    Center,
+    EmptyStateText,
+    ErrorTextBox,
+    ErrorTextMsg,
+    LoadingWrapper,
+    TableWrapper,
+} from './DataSourceTable.styles';
 
 interface DataSourceTableProps {
     data: DataItem[];
@@ -32,8 +39,10 @@ function DataSourceTable({
             {!error && data.length > 0 && (
                 <TableWrapper>
                     <Table defaultSelectedRow={selectedRow} rows={data} onSelectedRowChanged={onSelectedRowChanged} />
+                    <LoadingWrapper ref={infiniteScrollingRef} />
                 </TableWrapper>
             )}
+
             {dataIsLoading && (
                 <Center>
                     <LoadingIcon />
@@ -52,7 +61,6 @@ function DataSourceTable({
                     </ErrorTextBox>
                 </Center>
             )}
-            <div ref={infiniteScrollingRef} />
         </>
     );
 }
