@@ -130,7 +130,6 @@ function ExportModal({
             key="export-menu-modal"
             dataId={getDataIdForSUI('export-menu-modal')}
             dataTestId={getDataTestIdForSUI('export-menu-modal')}
-            isDismissible
             isDraggable
             dragHandleRef={ref}
             style={{
@@ -212,7 +211,7 @@ function ExportModal({
                             }
                         }}
                         variant={ButtonVariant.primary}
-                        label="To Run mode"
+                        label="Export"
                         icon={<Icon key="export-btn-icon" icon={AvailableIcons.faArrowDownToLine} />}
                         disabled={!outputSettingsFullList?.length}
                         styles={css`

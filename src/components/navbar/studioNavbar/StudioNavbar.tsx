@@ -1,4 +1,6 @@
 import { css } from 'styled-components';
+import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
+import { useEffect } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
 import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
@@ -8,6 +10,7 @@ import useStudioNavbar from './useStudioNavbar';
 
 function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState, layoutIntent } = props;
+    const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
 
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
@@ -22,6 +25,27 @@ function StudioNavbar(props: INavbar) {
         onBackClick: goBack,
         onDownloadPanelOpen: showDownloadPanel,
     });
+
+    useEffect(() => {
+        const handleShortcut = (e: KeyboardEvent) => {
+            if (e.metaKey && e.key.toLowerCase() === 'e') {
+                if (isDownloadPanelVisible) {
+                    hideDownloadPanel();
+                } else {
+                    showDownloadPanel();
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleShortcut);
+        iframe?.addEventListener('keydown', handleShortcut);
+
+        return () => {
+            document.removeEventListener('keydown', handleShortcut);
+            iframe?.removeEventListener('keydown', handleShortcut);
+        };
+    }, [hideDownloadPanel, iframe, isDownloadPanelVisible, showDownloadPanel]);
+
     return (
         <StyledNavbar
             id="sui-navbar"
@@ -51,13 +75,15 @@ function StudioNavbar(props: INavbar) {
                     </NavbarItem>
                 ))}
             </ul>
-            <DownloadPanel
-                isDownloadPanelVisible={isDownloadPanelVisible}
-                hideDownloadPanel={hideDownloadPanel}
-                handleDownload={handleDownload}
-                isSandBoxMode={projectConfig.sandboxMode}
-                layoutIntent={layoutIntent}
-            />
+            {isDownloadPanelVisible && (
+                <DownloadPanel
+                    isDownloadPanelVisible={isDownloadPanelVisible}
+                    hideDownloadPanel={hideDownloadPanel}
+                    handleDownload={handleDownload}
+                    isSandBoxMode={projectConfig.sandboxMode}
+                    layoutIntent={layoutIntent}
+                />
+            )}
         </StyledNavbar>
     );
 }

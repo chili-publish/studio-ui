@@ -68,12 +68,6 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                     if (zoom) zoomOut();
                 },
             },
-            {
-                keys: `${commandKey} e`,
-                action: (e: KeyboardEvent) => {
-                    e.preventDefault();
-                },
-            },
         ],
         [
             selectedMode,
