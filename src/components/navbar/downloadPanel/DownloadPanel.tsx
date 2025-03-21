@@ -25,11 +25,13 @@ import {
     DownloadDropdownTitle,
     DownloadPanelContainer,
     SpinnerContainer,
+    OptionText,
+    OptionWithIcon,
 } from './DownloadPanel.styles';
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
-import ExportModal from '../exportModal/ExportModal';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -56,6 +58,7 @@ const getCustomSelectedOption = (option: SelectOptions) => {
 };
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent } = props;
+    const { outputSettingsFullList } = useOutputSettingsContext();
 
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
@@ -71,7 +74,40 @@ function DownloadPanel(props: DownloadPanelProps) {
         selectedOutputSettingsId,
     } = useDownload(hideDownloadPanel);
 
+    const outputSettingsOptions = useMemo(() => {
+        if (!isSandBoxMode) return [];
+
+        const mapToSelectOption = (item: UserInterfaceOutputSettings): SelectOptionType => ({
+            label: (
+                <OptionWithIcon height="2rem">
+                    <Icon
+                        width="1rem"
+                        icon={outputTypesIcons[item.type.toLocaleLowerCase() as keyof typeof outputTypesIcons]}
+                    />
+                    <OptionText>
+                        <span>{item.name}</span>
+                        <span>{item.description}</span>
+                    </OptionText>
+                </OptionWithIcon>
+            ),
+            item,
+            value: item.id,
+        });
+
+        const filteredList =
+            layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
+                ? outputSettingsFullList?.filter(
+                      (output) =>
+                          output.type.toLowerCase() !== DownloadFormats.MP4 &&
+                          output.type.toLowerCase() !== DownloadFormats.GIF,
+                  )
+                : outputSettingsFullList;
+
+        return filteredList?.map(mapToSelectOption) || [];
+    }, [isSandBoxMode, layoutIntent, outputSettingsFullList]);
+
     const selectedValue = useMemo(() => {
+        if (isSandBoxMode) return outputSettingsOptions[0];
         if (userInterfaceDownloadOptions) {
             return (
                 userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
@@ -79,7 +115,14 @@ function DownloadPanel(props: DownloadPanelProps) {
             );
         }
         return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
-    }, [downloadOptions, selectedOptionFormat, selectedOutputSettingsId, userInterfaceDownloadOptions]);
+    }, [
+        downloadOptions,
+        isSandBoxMode,
+        outputSettingsOptions,
+        selectedOptionFormat,
+        selectedOutputSettingsId,
+        userInterfaceDownloadOptions,
+    ]);
 
     return (
         <>
@@ -142,79 +185,66 @@ function DownloadPanel(props: DownloadPanelProps) {
                 ) : null}
             </Tray>
 
-            {isSandBoxMode ? (
-                <ExportModal
-                    isExportModalVisible={isDownloadPanelVisible}
-                    hideExportModalVisible={hideDownloadPanel}
-                    handleExport={handleDownload}
-                    updateDownloadState={updateDownloadState}
-                    downloadState={downloadState}
-                    layoutIntent={layoutIntent}
-                />
-            ) : (
-                <Menu
-                    isVisible={!isMobileSize && isDownloadPanelVisible}
-                    onClose={() => undefined}
-                    position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
-                    style={{ width: 19 * 16 - 3 }}
-                    anchorId={APP_WRAPPER_ID}
-                >
-                    <DownloadPanelContainer ref={downloadPanelRef}>
-                        <DownloadDropdownTitle>Download</DownloadDropdownTitle>
-                        <DesktopDropdownContainer>
-                            <Select
-                                label="Output"
-                                dataId={getDataIdForSUI(`output-dropdown`)}
-                                dataTestId={getDataTestIdForSUI(`output-dropdown`)}
-                                defaultValue={selectedValue}
-                                options={userInterfaceDownloadOptions ?? downloadOptions}
-                                isSearchable={false}
-                                width="16.25rem"
-                                onChange={(option) =>
-                                    handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
-                                }
-                                customValue={getCustomSelectedLabel}
-                            />
-                        </DesktopDropdownContainer>
-                        {downloadState[selectedOptionFormat] ? (
-                            <SpinnerContainer>
-                                <Button
-                                    loading
-                                    styles={css`
-                                        width: 100%;
+            <Menu
+                isVisible={!isMobileSize && isDownloadPanelVisible}
+                onClose={() => undefined}
+                position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
+                style={{ width: 19 * 16 - 3 }}
+                anchorId={APP_WRAPPER_ID}
+            >
+                <DownloadPanelContainer ref={downloadPanelRef}>
+                    <DownloadDropdownTitle>{isSandBoxMode ? 'Export' : 'Download'}</DownloadDropdownTitle>
+                    <DesktopDropdownContainer>
+                        <Select
+                            label="Output"
+                            dataId={getDataIdForSUI(`output-dropdown`)}
+                            dataTestId={getDataTestIdForSUI(`output-dropdown`)}
+                            defaultValue={selectedValue}
+                            options={
+                                isSandBoxMode ? outputSettingsOptions : userInterfaceDownloadOptions ?? downloadOptions
+                            }
+                            isSearchable={false}
+                            width="16.25rem"
+                            onChange={(option) =>
+                                handleOutputFormatChange(option?.value as typeof selectedOptionFormat)
+                            }
+                            customValue={getCustomSelectedLabel}
+                        />
+                    </DesktopDropdownContainer>
+                    {downloadState[selectedOptionFormat] ? (
+                        <SpinnerContainer>
+                            <Button
+                                loading
+                                styles={css`
+                                    width: 100%;
+                                    background-color: ${themeColors.disabledElementsColor};
+                                    &:hover {
                                         background-color: ${themeColors.disabledElementsColor};
-                                        &:hover {
-                                            background-color: ${themeColors.disabledElementsColor};
-                                        }
-                                    `}
-                                />
-                            </SpinnerContainer>
-                        ) : (
-                            <BtnContainer>
-                                <Button
-                                    dataId={getDataIdForSUI(`download-btn`)}
-                                    dataTestId={getDataTestIdForSUI(`download-btn`)}
-                                    dataIntercomId="Download selected output"
-                                    onClick={() => {
-                                        handleDownload(
-                                            selectedOptionFormat,
-                                            updateDownloadState,
-                                            selectedOutputSettingsId,
-                                        );
-                                    }}
-                                    variant={ButtonVariant.primary}
-                                    label="Download"
-                                    icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
-                                    styles={css`
-                                        margin: 1.25rem auto 1.25rem;
-                                        width: 100%;
-                                    `}
-                                />
-                            </BtnContainer>
-                        )}
-                    </DownloadPanelContainer>
-                </Menu>
-            )}
+                                    }
+                                `}
+                            />
+                        </SpinnerContainer>
+                    ) : (
+                        <BtnContainer>
+                            <Button
+                                dataId={getDataIdForSUI(`download-btn`)}
+                                dataTestId={getDataTestIdForSUI(`download-btn`)}
+                                dataIntercomId="Download selected output"
+                                onClick={() => {
+                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
+                                }}
+                                variant={ButtonVariant.primary}
+                                label={isSandBoxMode ? 'Export' : 'Download'}
+                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
+                                styles={css`
+                                    margin: 1.25rem auto 1.25rem;
+                                    width: 100%;
+                                `}
+                            />
+                        </BtnContainer>
+                    )}
+                </DownloadPanelContainer>
+            </Menu>
         </>
     );
 }

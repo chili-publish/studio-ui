@@ -75,15 +75,14 @@ function StudioNavbar(props: INavbar) {
                     </NavbarItem>
                 ))}
             </ul>
-            {isDownloadPanelVisible && (
-                <DownloadPanel
-                    isDownloadPanelVisible={isDownloadPanelVisible}
-                    hideDownloadPanel={hideDownloadPanel}
-                    handleDownload={handleDownload}
-                    isSandBoxMode={projectConfig.sandboxMode}
-                    layoutIntent={layoutIntent}
-                />
-            )}
+
+            <DownloadPanel
+                isDownloadPanelVisible={isDownloadPanelVisible}
+                hideDownloadPanel={hideDownloadPanel}
+                handleDownload={handleDownload}
+                isSandBoxMode={projectConfig.sandboxMode}
+                layoutIntent={layoutIntent}
+            />
         </StyledNavbar>
     );
 }
