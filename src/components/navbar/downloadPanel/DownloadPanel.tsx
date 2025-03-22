@@ -188,7 +188,7 @@ function DownloadPanel(props: DownloadPanelProps) {
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
-                position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
+                position={{ right: isSandBoxMode ? 6.875 * 16 : 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
