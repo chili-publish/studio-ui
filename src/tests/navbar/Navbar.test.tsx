@@ -20,6 +20,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                 outputSettings: [
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
+                outputSettingsFullList: [],
             }),
     };
     const projectConfig = config || prjConfig;
@@ -41,6 +42,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                                     canRedo: false,
                                     canUndo: false,
                                 }}
+                                layoutIntent={LayoutIntent.print}
                             />
                         </UiThemeProvider>
                     </div>
@@ -60,6 +62,7 @@ describe('Navbar', () => {
                     outputSettings: [
                         { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                     ],
+                    outputSettingsFullList: [],
                 }),
         };
     });
@@ -166,6 +169,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    outputSettingsFullList: [],
                 }),
         };
         renderComponent(prjConfig);
@@ -209,6 +213,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    outputSettingsFullList: [],
                 }),
         };
         renderComponent(prjConfig, LayoutIntent.print);
@@ -252,6 +257,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    outputSettingsFullList: [],
                 }),
         };
 

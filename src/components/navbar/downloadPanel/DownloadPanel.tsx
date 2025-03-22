@@ -10,7 +10,7 @@ import {
     useMobileSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
-import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { Dispatch, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { UserInterfaceOutputSettings } from '../../../types/types';
@@ -25,10 +25,13 @@ import {
     DownloadDropdownTitle,
     DownloadPanelContainer,
     SpinnerContainer,
+    OptionText,
+    OptionWithIcon,
 } from './DownloadPanel.styles';
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
+import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -40,6 +43,8 @@ interface DownloadPanelProps {
         __: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
         outputSettingsId: string | undefined,
     ) => Promise<void>;
+    isSandBoxMode?: boolean;
+    layoutIntent?: LayoutIntent | null;
 }
 
 const getCustomSelectedLabel = (option: SelectOptions) => {
@@ -52,7 +57,9 @@ const getCustomSelectedOption = (option: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent } = props;
+    const { outputSettingsFullList } = useOutputSettingsContext();
+
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const { themeColors } = useTheme();
@@ -67,7 +74,40 @@ function DownloadPanel(props: DownloadPanelProps) {
         selectedOutputSettingsId,
     } = useDownload(hideDownloadPanel);
 
+    const outputSettingsOptions = useMemo(() => {
+        if (!isSandBoxMode) return [];
+
+        const mapToSelectOption = (item: UserInterfaceOutputSettings): SelectOptionType => ({
+            label: (
+                <OptionWithIcon height="2rem">
+                    <Icon
+                        width="1rem"
+                        icon={outputTypesIcons[item.type.toLocaleLowerCase() as keyof typeof outputTypesIcons]}
+                    />
+                    <OptionText>
+                        <span>{item.name}</span>
+                        <span>{item.description}</span>
+                    </OptionText>
+                </OptionWithIcon>
+            ),
+            item,
+            value: item.id,
+        });
+
+        const filteredList =
+            layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
+                ? outputSettingsFullList?.filter(
+                      (output) =>
+                          output.type.toLowerCase() !== DownloadFormats.MP4 &&
+                          output.type.toLowerCase() !== DownloadFormats.GIF,
+                  )
+                : outputSettingsFullList;
+
+        return filteredList?.map(mapToSelectOption) || [];
+    }, [isSandBoxMode, layoutIntent, outputSettingsFullList]);
+
     const selectedValue = useMemo(() => {
+        if (isSandBoxMode) return outputSettingsOptions[0];
         if (userInterfaceDownloadOptions) {
             return (
                 userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
@@ -75,7 +115,14 @@ function DownloadPanel(props: DownloadPanelProps) {
             );
         }
         return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
-    }, [downloadOptions, selectedOptionFormat, selectedOutputSettingsId, userInterfaceDownloadOptions]);
+    }, [
+        downloadOptions,
+        isSandBoxMode,
+        outputSettingsOptions,
+        selectedOptionFormat,
+        selectedOutputSettingsId,
+        userInterfaceDownloadOptions,
+    ]);
 
     return (
         <>
@@ -141,19 +188,21 @@ function DownloadPanel(props: DownloadPanelProps) {
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
-                position={{ right: 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
+                position={{ right: isSandBoxMode ? 6.875 * 16 : 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef}>
-                    <DownloadDropdownTitle>Download</DownloadDropdownTitle>
+                    <DownloadDropdownTitle>{isSandBoxMode ? 'Export' : 'Download'}</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <Select
                             label="Output"
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={selectedValue}
-                            options={userInterfaceDownloadOptions ?? downloadOptions}
+                            options={
+                                isSandBoxMode ? outputSettingsOptions : userInterfaceDownloadOptions ?? downloadOptions
+                            }
                             isSearchable={false}
                             width="16.25rem"
                             onChange={(option) =>
@@ -185,7 +234,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
-                                label="Download"
+                                label={isSandBoxMode ? 'Export' : 'Download'}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     margin: 1.25rem auto 1.25rem;

@@ -244,17 +244,6 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
             editMenuOptions,
             frameMenuOptions,
             viewMenuOptions,
-            {
-                label: (
-                    <MenuOption>
-                        <Label value="Export" translationKey="export" />
-                        <div>{getShortcut('export')}</div>
-                    </MenuOption>
-                ),
-                onClick: () => null,
-                hasSeparator: true,
-                isDisabled: true,
-            },
         ],
         [onBackClick, fileMenuOptions, editMenuOptions, frameMenuOptions, viewMenuOptions],
     );
