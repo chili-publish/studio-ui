@@ -5,13 +5,11 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import MobileVariablesPanel from '../components/variables/MobileVariablesTray';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
-import * as AppProvider from '../contexts/AppProvider';
-import { IAppContext } from '../contexts/AppProvider';
+import MobileVariables from '../components/variables/MobileVariables';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -64,7 +62,7 @@ describe('MobileVariableTrayLayout', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel
+                <MobileVariables
                     variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
@@ -96,7 +94,7 @@ describe('MobileVariableTrayLayout', () => {
         render(
             <UiThemeProvider theme="platform">
                 <FeatureFlagProvider>
-                    <MobileVariablesPanel
+                    <MobileVariables
                         variables={variables}
                         selectedLayout={mockLayout}
                         layouts={mockLayouts}
@@ -131,19 +129,17 @@ describe('MobileVariableTrayLayout', () => {
         } as IAppContext);
         render(
             <UiThemeProvider theme="platform">
-                <FeatureFlagProvider>
-                    <MobileVariablesPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
-                        }}
-                    />
-                </FeatureFlagProvider>
+                <MobileVariables
+                    variables={variables}
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: true,
+                        layoutSwitcherVisible: true,
+                        title: 'Layout',
+                    }}
+                />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );

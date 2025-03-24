@@ -33,6 +33,8 @@ const useDataSource = () => {
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
+    const [prevDataRowIndex, setPrevDataRowIndex] = useState(currentRowIndex);
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<{ status?: number; message: string } | undefined>();
 
@@ -56,6 +58,13 @@ const useDataSource = () => {
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];
     }, [dataRows, currentRowIndex]);
+
+    // keep track of the change of dataRow in order to be able to trigger variable validation
+    // when the source of variable change comes from the undo/redo actions
+    if (prevDataRowIndex !== currentRowIndex) {
+        setPrevDataRowIndex(currentRowIndex);
+        shouldValidateVariables.current = true;
+    }
 
     const currentInputRow = useMemo(() => {
         return currentRow
@@ -197,7 +206,7 @@ const useDataSource = () => {
             shouldValidateVariables.current = false;
             validateVariables();
         }
-    }, [validateVariables]);
+    }, [validateVariables, currentRow]);
 
     return {
         currentInputRow,
