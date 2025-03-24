@@ -124,6 +124,15 @@ function DownloadPanel(props: DownloadPanelProps) {
         userInterfaceDownloadOptions,
     ]);
 
+    const downloadButton = document.querySelector('[data-id="sui-navbar-download-btn"]');
+
+    const downloadMenuRightOffset = useMemo(() => {
+        if (downloadButton) {
+            return window.innerWidth - downloadButton.getBoundingClientRect().right;
+        }
+        return 9.875 * 16; // Default value
+    }, [downloadButton]);
+
     return (
         <>
             <Tray
@@ -188,7 +197,7 @@ function DownloadPanel(props: DownloadPanelProps) {
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
-                position={{ right: isSandBoxMode ? 6.875 * 16 : 9.875 * 16, top: 3.75 * 16 } as unknown as DOMRect}
+                position={{ right: downloadMenuRightOffset, top: 3.75 * 16 } as unknown as DOMRect}
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
