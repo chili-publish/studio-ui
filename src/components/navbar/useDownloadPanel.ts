@@ -51,6 +51,13 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => 
                 responseType: 'blob',
                 headers: { Authorization: `Bearer ${authToken}` },
             });
+            // eslint-disable-next-line no-console
+            console.log(
+                response.headers['content-type'],
+                response.headers['content-disposition'],
+                response.headers['Content-Disposition'],
+                response.headers,
+            );
 
             if (response.status !== 200) return;
 
