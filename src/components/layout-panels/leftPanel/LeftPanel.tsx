@@ -1,6 +1,5 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -32,7 +31,6 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { featureFlags } = useFeatureFlagContext();
     const {
         availableLayouts,
         isLayoutSwitcherVisible,
@@ -46,7 +44,7 @@ function LeftPanel({
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {featureFlags?.studioDataSource ? <DataSource /> : null}
+                    <DataSource />
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <SectionWrapper id="layout-section-header">

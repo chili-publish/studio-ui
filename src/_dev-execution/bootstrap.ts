@@ -100,9 +100,7 @@ import { TokenManager } from './token-manager';
             },
             variables: undefined,
         },
-        featureFlags: {
-            studioDataSource: true,
-        },
+        featureFlags: {},
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console

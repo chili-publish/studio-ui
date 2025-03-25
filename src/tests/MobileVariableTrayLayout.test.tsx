@@ -5,11 +5,13 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import MobileVariablesPanel from '../components/variables/MobileVariablesTray';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
+import MobileVariables from '../components/variables/MobileVariables';
+import * as AppProvider from '../contexts/AppProvider';
+import { IAppContext } from '../contexts/AppProvider';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -21,12 +23,6 @@ const mockDataSource = {
     iconUrl: '',
     source: { source: ConnectorRegistrationSource.url, url: '' },
 };
-
-jest.mock('../contexts/AppProvider', () => ({
-    useAppContext: () => ({
-        dataSource: mockDataSource,
-    }),
-}));
 
 jest.mock('../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -56,9 +52,13 @@ describe('MobileVariableTrayLayout', () => {
     window.StudioUISDK = mockSDK;
 
     it('Layout is the title of the tray when no data source is available', async () => {
+        jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
+            dataSource: undefined,
+        } as IAppContext);
+
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel
+                <MobileVariables
                     variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
@@ -83,10 +83,13 @@ describe('MobileVariableTrayLayout', () => {
     });
 
     it('Data source is the title of the tray when available', async () => {
+        jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
+            dataSource: mockDataSource,
+        } as IAppContext);
         render(
             <UiThemeProvider theme="platform">
-                <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
-                    <MobileVariablesPanel
+                <FeatureFlagProvider>
+                    <MobileVariables
                         variables={variables}
                         selectedLayout={mockLayout}
                         layouts={mockLayouts}
@@ -106,15 +109,22 @@ describe('MobileVariableTrayLayout', () => {
 
         await userEvent.click(openTrayBtn);
 
+        await waitFor(() => {
+            expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument();
+        });
+
         expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Data source');
         expect(screen.getByText('Layout')).toBeInTheDocument();
         expect(screen.getByText('Customize')).toBeInTheDocument();
     });
 
     it('Change selected layout is available', async () => {
+        jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
+            dataSource: mockDataSource,
+        } as IAppContext);
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariablesPanel
+                <MobileVariables
                     variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
@@ -133,7 +143,11 @@ describe('MobileVariableTrayLayout', () => {
 
         await userEvent.click(openTrayBtn);
 
-        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Layout');
+        await waitFor(() => {
+            expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument();
+        });
+
+        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Data source');
 
         const layoutsDropdown = screen.getByTestId(getDataIdForSUI(`dropdown-available-layout`));
         expect(layoutsDropdown).toBeInTheDocument();

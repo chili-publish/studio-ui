@@ -14,6 +14,8 @@ export const mockLayout: Layout = {
     displayName: null,
     privateData: {},
     parentId: '0',
+    layoutHeight: { value: 100, isOverride: false, isReadOnly: false },
+    layoutWidth: { value: 500, isOverride: false, isReadOnly: false },
     width: {
         value: 246.94444444444443,
         isOverride: false,
