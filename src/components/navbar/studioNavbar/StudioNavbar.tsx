@@ -1,6 +1,6 @@
 import { css } from 'styled-components';
 import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
 import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
@@ -11,11 +11,12 @@ import useStudioNavbar from './useStudioNavbar';
 function StudioNavbar(props: INavbar) {
     const { projectName, goBack, projectConfig, zoom, undoStackState, layoutIntent } = props;
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
-
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
         projectName,
     );
+
+    const exportButtonRef = useRef<HTMLLIElement>(null);
 
     const { navbarItems } = useStudioNavbar({
         projectName,
@@ -70,6 +71,7 @@ function StudioNavbar(props: INavbar) {
                         key={item.label}
                         hideOnMobile={item.hideOnMobile}
                         styles={item.styles}
+                        ref={item.label === 'Export' || item.label === 'Download' ? exportButtonRef : undefined}
                     >
                         {item.content}
                     </NavbarItem>
@@ -82,6 +84,7 @@ function StudioNavbar(props: INavbar) {
                 handleDownload={handleDownload}
                 isSandBoxMode={projectConfig.sandboxMode}
                 layoutIntent={layoutIntent}
+                exportButtonRef={exportButtonRef}
             />
         </StyledNavbar>
     );

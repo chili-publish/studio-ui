@@ -11,7 +11,7 @@ import {
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
-import { Dispatch, useMemo, useState } from 'react';
+import { Dispatch, RefObject, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
@@ -45,6 +45,7 @@ interface DownloadPanelProps {
     ) => Promise<void>;
     isSandBoxMode?: boolean;
     layoutIntent?: LayoutIntent | null;
+    exportButtonRef?: RefObject<HTMLLIElement>;
 }
 
 const getCustomSelectedLabel = (option: SelectOptions) => {
@@ -57,7 +58,8 @@ const getCustomSelectedOption = (option: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent } = props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent, exportButtonRef } =
+        props;
     const { outputSettingsFullList } = useOutputSettingsContext();
 
     const isMobileSize = useMobileSize();
@@ -124,14 +126,13 @@ function DownloadPanel(props: DownloadPanelProps) {
         userInterfaceDownloadOptions,
     ]);
 
-    const downloadButton = document.querySelector('[data-id="sui-navbar-download-btn"]');
-
     const downloadMenuRightOffset = useMemo(() => {
-        if (downloadButton) {
-            return window.innerWidth - downloadButton.getBoundingClientRect().right;
+        if (exportButtonRef?.current) {
+            return window.innerWidth - exportButtonRef.current.getBoundingClientRect().right;
         }
         return 9.875 * 16; // Default value
-    }, [downloadButton]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [exportButtonRef?.current]);
 
     return (
         <>
