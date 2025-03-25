@@ -71,7 +71,7 @@ describe('MobileDataSource test', () => {
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
-                        <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
+                        <FeatureFlagProvider>
                             <MobileVariables
                                 variables={[]}
                                 selectedLayout={mockLayout}
@@ -114,7 +114,7 @@ describe('MobileDataSource test', () => {
                             connectors={{ mediaConnectors: [], fontsConnectors: [] }}
                             variables={[]}
                         >
-                            <FeatureFlagProvider featureFlags={{ studioDataSource: true }}>
+                            <FeatureFlagProvider>
                                 <MobileVariables
                                     variables={[]}
                                     selectedLayout={mockLayout}

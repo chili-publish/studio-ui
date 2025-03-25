@@ -2,7 +2,6 @@ import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
-import { useFeatureFlagContext } from '../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../types/types';
@@ -54,7 +53,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
-    const { featureFlags } = useFeatureFlagContext();
 
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
     const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
@@ -93,7 +91,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
 
-    const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
+    const isDataSourceDisplayed = hasDataConnector && !mobileOptionListOpen;
 
     const hasAvailableLayouts = useMemo(() => availableLayouts.length >= 2, [availableLayouts]);
 
