@@ -6,10 +6,10 @@ import {
     UserInterfaceWithOutputSettings,
     defaultOutputSettings,
 } from '../../types/types';
-import { IOutputSettingsContext } from './OutputSettingsContext.types';
+import { IUserInterfaceDetailsContext } from './UserInterfaceDetailsContext.types';
 import { useAppContext } from '../../contexts/AppProvider';
 
-export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
+export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsContext = {
     selectedUserInterfaceId: '',
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
@@ -17,13 +17,15 @@ export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
     layoutsFormBuilderData: null,
 };
 
-export const OutputSettingsContext = createContext<IOutputSettingsContext>(OutputSettingsContextDefaultValues);
+export const UserInterfaceDetailsContext = createContext<IUserInterfaceDetailsContext>(
+    UserInterfaceDetailsContextDefaultValues,
+);
 
-export const useOutputSettingsContext = () => {
-    return useContext(OutputSettingsContext);
+export const useUserInterfaceDetailsContext = () => {
+    return useContext(UserInterfaceDetailsContext);
 };
 
-export function OutputSettingsContextProvider({
+export function UserInterfaceDetailsContextProvider({
     projectConfig,
     layoutIntent,
     children,
@@ -42,17 +44,15 @@ export function OutputSettingsContextProvider({
     >([]);
     const [layoutsFormBuilderData, setLayoutsFormBuilderData] = useState<LayoutForm | null>(null);
 
-    const fetchOutputSettings = useCallback(
+    const fetchtUserInterfaceDetails = useCallback(
         async (userInterfaceId?: string) => {
-            if (projectConfig.onFetchOutputSettings) {
+            if (projectConfig.onFetchUserInterfaceDetails) {
                 projectConfig
-                    .onFetchOutputSettings(userInterfaceId)
+                    .onFetchUserInterfaceDetails(userInterfaceId)
                     .then((res: UserInterfaceWithOutputSettings | null) => {
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
-                        // eslint-disable-next-line no-console
-                        console.log('onFetch', res);
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
@@ -64,8 +64,8 @@ export function OutputSettingsContextProvider({
     );
 
     useEffect(() => {
-        fetchOutputSettings(selectedUserInterfaceId || undefined);
-    }, [selectedUserInterfaceId, fetchOutputSettings]);
+        fetchtUserInterfaceDetails(selectedUserInterfaceId || undefined);
+    }, [selectedUserInterfaceId, fetchtUserInterfaceDetails]);
 
     const data = useMemo(
         () => ({
@@ -84,5 +84,5 @@ export function OutputSettingsContextProvider({
         ],
     );
 
-    return <OutputSettingsContext.Provider value={data}>{children}</OutputSettingsContext.Provider>;
+    return <UserInterfaceDetailsContext.Provider value={data}>{children}</UserInterfaceDetailsContext.Provider>;
 }

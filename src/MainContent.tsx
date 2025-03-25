@@ -29,7 +29,7 @@ import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
 import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
 import Navbar from './components/navbar/Navbar';
-import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
+import { UserInterfaceDetailsContextProvider } from './components/navbar/UserInterfaceDetailsContext';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Pages from './components/pagesPanel/Pages';
 import MobileVariablesTray from './components/variables/MobileVariablesTray';
@@ -415,7 +415,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                             connectors={{ mediaConnectors, fontsConnectors }}
                             variables={variables}
                         >
-                            <OutputSettingsContextProvider projectConfig={projectConfig} layoutIntent={layoutIntent}>
+                            <UserInterfaceDetailsContextProvider
+                                projectConfig={projectConfig}
+                                layoutIntent={layoutIntent}
+                            >
                                 <div id={APP_WRAPPER_ID} className="app">
                                     {/* eslint-disable-next-line no-nested-ternary */}
                                     {projectConfig.uiOptions.widgets?.navBar?.visible ===
@@ -514,7 +517,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                             />
                                         ))}
                                 </div>
-                            </OutputSettingsContextProvider>
+                            </UserInterfaceDetailsContextProvider>
                         </VariablePanelContextProvider>
                     </UiConfigContextProvider>
                 </Container>

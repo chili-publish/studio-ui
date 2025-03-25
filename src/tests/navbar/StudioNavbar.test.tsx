@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
+    FormBuilderType,
     PaginatedResponse,
     ProjectConfig,
     UserInterface,
@@ -16,7 +17,7 @@ import {
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import StudioNavbar from '../../components/navbar/studioNavbar/StudioNavbar';
-import { OutputSettingsContextProvider } from '../../components/navbar/OutputSettingsContext';
+import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
 type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutputSettings | null>;
@@ -59,6 +60,7 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onProjectGetDownloadLink: async () => {
         return { status: 0, error: '', success: false, parsedData: '', data: '' };
     },
+    onFetchUserInterfaceDetails: fetchOuptputSettingsFn,
     onFetchOutputSettings: fetchOuptputSettingsFn,
     onFetchUserInterfaces: async () => {
         return Promise.resolve({
@@ -80,11 +82,14 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
     };
     render(
         <UiConfigContextProvider projectConfig={projectConfig}>
-            <OutputSettingsContextProvider projectConfig={projectConfig} layoutIntent={LayoutIntent.digitalAnimated}>
+            <UserInterfaceDetailsContextProvider
+                projectConfig={projectConfig}
+                layoutIntent={LayoutIntent.digitalAnimated}
+            >
                 <UiThemeProvider theme="studio" mode="dark">
                     <StudioNavbar {...navbarProps} />
                 </UiThemeProvider>
-            </OutputSettingsContextProvider>
+            </UserInterfaceDetailsContextProvider>
         </UiConfigContextProvider>,
     );
 };
@@ -95,7 +100,7 @@ describe('StudioNavbar', () => {
             Promise.resolve({
                 userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
                 outputSettings: [],
-                formBuilder: mockUserInterface.formBuilder,
+                formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
             }),
         );
         renderTemplate(fetchOutputSettings);

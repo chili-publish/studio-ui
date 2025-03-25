@@ -8,14 +8,23 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
+import { transformFormBuilderArrayToObject } from '../utils/helpers';
 import { mockConnectors } from '../../__mocks__/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { variables } from './mocks/mockVariables';
 import { APP_WRAPPER } from './shared.util/app';
-import { OutputSettingsContextProvider } from '../components/navbar/OutputSettingsContext';
-import { defaultOutputSettings, defaultPlatformUiOptions, ProjectConfig } from '../types/types';
+import { UserInterfaceDetailsContextProvider } from '../components/navbar/UserInterfaceDetailsContext';
+import {
+    defaultOutputSettings,
+    defaultPlatformUiOptions,
+    FormBuilderArray,
+    ProjectConfig,
+    LayoutForm,
+    DataSourceForm,
+    VariablesForm,
+} from '../types/types';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -23,6 +32,7 @@ afterEach(() => {
 const mockSDK = mock<EditorSDK>();
 
 const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemType[], selectedLayout?: Layout) => {
+    const formBuilder = transformFormBuilderArrayToObject(mockUserInterface.formBuilder as FormBuilderArray);
     const projectConfig = {
         ...ProjectConfigs.empty,
         onFetchOutputSettings: () =>
@@ -31,14 +41,34 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                 outputSettings: [
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
-                formBuilder: mockUserInterface.formBuilder,
+                formBuilder,
             }),
+        onFetchUserInterfaceDetails: () =>
+            Promise.resolve({
+                userInterface: { id: '1', name: 'name' },
+                outputSettings: [
+                    { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
+                ],
+                formBuilder,
+            }),
+        uiOptions: {
+            ...ProjectConfigs.empty.uiOptions,
+            ...(formBuilder.layouts && {
+                layouts: formBuilder.layouts as LayoutForm,
+            }),
+            ...(formBuilder.datasource && {
+                datasource: formBuilder.datasource as DataSourceForm,
+            }),
+            ...(formBuilder.variables && {
+                variables: formBuilder.variables as VariablesForm,
+            }),
+        },
     };
 
     render(
         <UiThemeProvider theme="platform">
             <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
-                <OutputSettingsContextProvider
+                <UserInterfaceDetailsContextProvider
                     projectConfig={projectConfig}
                     layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
                 >
@@ -53,7 +83,7 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                             title: 'Layout',
                         }}
                     />
-                </OutputSettingsContextProvider>
+                </UserInterfaceDetailsContextProvider>
             </VariablePanelContextProvider>
         </UiThemeProvider>,
         { container: document.body.appendChild(APP_WRAPPER) },
@@ -72,8 +102,10 @@ describe('Layout selection', () => {
         // Verify dropdown not shown with single layout
         expect(screen.queryByTestId(getDataTestIdForSUI('dropdown-available-layout'))).not.toBeInTheDocument();
         // Verify dimension inputs shown for resizable layout
-        expect(await screen.findByLabelText('Width')).toBeInTheDocument();
-        expect(await screen.findByLabelText('Height')).toBeInTheDocument();
+        const width = await screen.findByLabelText('Width');
+        const height = await screen.findByLabelText('Height');
+        expect(width).toBeInTheDocument();
+        expect(height).toBeInTheDocument();
 
         // Re-render with non-resizable layout
         const nonResizableLayout = {

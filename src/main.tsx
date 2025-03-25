@@ -2,12 +2,14 @@ import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
 import {
+    DataSourceForm,
     defaultBackFn,
     defaultOutputSettings,
     defaultPlatformUiOptions,
     IDefaultStudioUILoaderConfig,
     IStudioUILoaderConfig,
     ProjectConfig,
+    VariablesForm,
 } from './types/types';
 import StudioUILoader from './deprecated-loaders';
 
@@ -97,6 +99,7 @@ export default class StudioUI extends StudioUILoader {
      * @param onSetMultiLayout - Callback used to switch from single to multiLayout mode.
      * @param onVariableFocus - Callback which returns the id of the currently focused variable.
      * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
+     * @param onFetchUserInterfaceDetails - Callback to get the user interface details if userInterfaceID is provided.
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {
@@ -129,8 +132,9 @@ export default class StudioUI extends StudioUILoader {
             onSetMultiLayout,
             onVariableFocus,
             onVariableBlur,
+            userInterfaceFormBuilderData,
+            onFetchUserInterfaceDetails,
         } = config;
-
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
@@ -140,7 +144,9 @@ export default class StudioUI extends StudioUILoader {
             projectDownloadUrl,
             projectUploadUrl,
             userInterfaceID,
+            onFetchUserInterfaceDetails,
         );
+
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const uiOptionsConfig = uiOptions ?? defaultPlatformUiOptions;
 
@@ -148,9 +154,22 @@ export default class StudioUI extends StudioUILoader {
             projectId,
             projectName,
             userInterfaceID,
+            userInterfaceFormBuilderData,
             graFxStudioEnvironmentApiBaseUrl,
             outputSettings: outputSettings ?? defaultOutputSettings,
-            uiOptions: { ...uiOptionsConfig, uiTheme: uiOptionsConfig.uiTheme || 'light' },
+            uiOptions: {
+                ...uiOptionsConfig,
+                ...(projectLoader.userInterfaceFormBuilderData?.datasource && {
+                    datasource: projectLoader.userInterfaceFormBuilderData.datasource as DataSourceForm,
+                }),
+                ...(projectLoader.userInterfaceFormBuilderData?.variables && {
+                    variables: projectLoader.userInterfaceFormBuilderData.variables as VariablesForm,
+                }),
+                ...(projectLoader.userInterfaceFormBuilderData?.layouts && {
+                    layouts: projectLoader.userInterfaceFormBuilderData.layouts,
+                }),
+                uiTheme: uiOptionsConfig.uiTheme || 'light',
+            },
             featureFlags,
             sandboxMode: sandboxMode || false,
             onSandboxModeToggle,
@@ -164,6 +183,7 @@ export default class StudioUI extends StudioUILoader {
             onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
             onFetchOutputSettings: projectLoader.onFetchOutputSettings,
             onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
+            onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
             onConnectorAuthenticationRequested,
             editorLink,
             onBack,

@@ -1,6 +1,6 @@
 import { LayoutForm, OutputSettings, UserInterfaceOutputSettings } from '../../types/types';
 
-export interface IOutputSettingsContext {
+export interface IUserInterfaceDetailsContext {
     outputSettings: OutputSettings;
     userInterfaceOutputSettings: UserInterfaceOutputSettings[] | null;
     selectedUserInterfaceId: string | null;

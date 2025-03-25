@@ -9,14 +9,14 @@ export const mockUserInterface = {
             layoutIntents: ['digitalAnimated'],
         },
     },
-    formBuilder: {
-        datasource: {
+    formBuilder: [
+        {
             type: 'datasource' as const,
             active: true,
             header: 'Data source',
             helpText: 'Select a data source',
         },
-        layouts: {
+        {
             type: 'layouts' as const,
             active: true,
             header: 'Layouts',
@@ -26,13 +26,13 @@ export const mockUserInterface = {
             allowNewProjectFromLayout: true,
             showWidthHeightInputs: true,
         },
-        variables: {
+        {
             type: 'variables' as const,
             active: true,
             header: 'Variables',
             helpText: 'Change the variables',
         },
-    },
+    ],
     default: true,
 };
 
@@ -47,14 +47,14 @@ export const mockUserInterface2 = {
             layoutIntents: ['digitalAnimated'],
         },
     },
-    formBuilder: {
-        datasource: {
+    formBuilder: [
+        {
             type: 'datasource' as const,
             active: true,
             header: 'Data source',
             helpText: 'Select a data source',
         },
-        layouts: {
+        {
             type: 'layouts' as const,
             active: false,
             header: 'Layouts',
@@ -64,12 +64,12 @@ export const mockUserInterface2 = {
             allowNewProjectFromLayout: true,
             showWidthHeightInputs: false,
         },
-        variables: {
+        {
             type: 'variables' as const,
             active: true,
             header: 'Variables',
             helpText: 'Change the variables',
         },
-    },
+    ],
     default: false,
 };

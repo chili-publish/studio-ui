@@ -87,6 +87,18 @@ import { TokenManager } from './token-manager';
                 title: undefined,
                 layoutSwitcherVisible: undefined,
             },
+            dataSource: undefined,
+            layouts: {
+                type: 'layouts',
+                active: true,
+                header: 'Layouts',
+                helpText: 'Layouts help text',
+                layoutSelector: true,
+                showWidthHeightInputs: true,
+                multipleLayouts: true,
+                allowNewProjectFromLayout: true,
+            },
+            variables: undefined,
         },
         featureFlags: {
             studioDataSource: true,

@@ -39,7 +39,7 @@ function LeftPanel({
         isLayoutResizableVisible,
         isAvailableLayoutsDisplayed,
         sectionTitle,
-        layoutsFormBuilderData,
+        helpText,
     } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
 
     return (
@@ -51,9 +51,7 @@ function LeftPanel({
                         <>
                             <SectionWrapper id="layout-section-header">
                                 <PanelTitle margin="0">{sectionTitle}</PanelTitle>
-                                {layoutsFormBuilderData?.helpText && (
-                                    <SectionHelpText>{layoutsFormBuilderData?.helpText}</SectionHelpText>
-                                )}
+                                {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
                             </SectionWrapper>
                             {isLayoutSwitcherVisible && (
                                 <AvailableLayouts

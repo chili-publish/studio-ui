@@ -3,11 +3,11 @@ import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/gra
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
-import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void) => {
     const { isDownloadBtnVisible } = useUiConfigContext();
-    const { userInterfaceOutputSettings } = useOutputSettingsContext();
+    const { userInterfaceOutputSettings } = useUserInterfaceDetailsContext();
     const isMobile = useMobileSize();
 
     const navbarItem = useMemo(

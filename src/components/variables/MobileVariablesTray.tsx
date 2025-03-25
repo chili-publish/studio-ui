@@ -19,7 +19,7 @@ import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { EditButtonWrapper, ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
-import { useOutputSettingsContext } from '../navbar/OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 
@@ -56,7 +56,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
     const { featureFlags } = useFeatureFlagContext();
-    const { layoutsFormBuilderData } = useOutputSettingsContext();
+    const { layoutsFormBuilderData } = useUserInterfaceDetailsContext();
 
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
@@ -88,11 +88,12 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     });
 
     const closeTray = () => setIsTrayVisible(false);
-    const { availableLayouts, isLayoutSwitcherVisible, isAvailableLayoutsDisplayed, sectionTitle } = useLayoutSection({
-        layouts,
-        selectedLayout,
-        layoutSectionUIOptions,
-    });
+    const { availableLayouts, isLayoutSwitcherVisible, isAvailableLayoutsDisplayed, sectionTitle, helpText } =
+        useLayoutSection({
+            layouts,
+            selectedLayout,
+            layoutSectionUIOptions,
+        });
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
     const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
@@ -103,7 +104,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const isDataSourceDisplayed = featureFlags?.studioDataSource && hasDataConnector && !mobileOptionListOpen;
 
     const isLayoutResizable = useMemo(
-        () => selectedLayout?.resizableByUser.enabled && layoutsFormBuilderData?.showWidthHeightInputs,
+        () => selectedLayout?.resizableByUser?.enabled && layoutsFormBuilderData?.showWidthHeightInputs,
         [selectedLayout, layoutsFormBuilderData?.showWidthHeightInputs],
     );
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
@@ -146,7 +147,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 title={
                     <MobileTrayHeader
                         layoutSectionTitle={sectionTitle}
-                        layoutSectionHelpText={layoutsFormBuilderData?.helpText}
+                        layoutSectionHelpText={helpText}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
