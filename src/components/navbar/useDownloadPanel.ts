@@ -7,6 +7,16 @@ import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 
+type MimeType = 'image/png' | 'image/jpeg' | 'application/pdf' | 'application/zip' | 'video/mp4' | 'image/gif';
+const mimeToExt: { [key in MimeType]: string } = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'application/pdf': 'pdf',
+    'application/zip': 'zip',
+    'video/mp4': 'mp4',
+    'image/gif': 'gif',
+};
+
 const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => {
     const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
@@ -51,6 +61,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => 
                 responseType: 'blob',
                 headers: { Authorization: `Bearer ${authToken}` },
             });
+
             // eslint-disable-next-line no-console
             console.log(
                 response.headers['content-type'],
@@ -61,11 +72,14 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => 
 
             if (response.status !== 200) return;
 
+            const contentType: MimeType = response.headers['content-type'];
+            const extensionType = mimeToExt[contentType];
+
             const objectUrl = window.URL.createObjectURL(response.data);
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',
-                download: `${projectName}.${extension}`,
+                download: `${projectName}.${extensionType}`,
             });
             document.body.appendChild(a);
             a.click();
