@@ -43,6 +43,7 @@ export type ProjectConfig = {
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
+    enableQueryCallCache?: boolean;
 };
 
 export interface DefaultStudioConfig {
@@ -243,6 +244,7 @@ export interface IStudioUILoaderConfig {
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
+    enableQueryCallCache?: boolean;
 }
 
 export type PageSnapshot = {
