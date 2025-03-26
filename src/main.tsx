@@ -97,7 +97,7 @@ export default class StudioUI extends StudioUILoader {
      * @param onSetMultiLayout - Callback used to switch from single to multiLayout mode.
      * @param onVariableFocus - Callback which returns the id of the currently focused variable.
      * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
-     * @param enableQueryCallCache - Allows configuring the connector query call caching behavior, when enableQueryCallCache is true or undefined the query calls will be cached
+     * @param enableQueryCallCache - Allows configuring the connector query call caching behavior, when enableQueryCallCache is true or undefined the connector query calls will be cached
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {

@@ -163,6 +163,10 @@ window.StudioUI.studioUILoaderConfig({
     /* userInterfaceID: string, The id of the user interface used to fetch output settings,
     if passed it will override the default output settings */
     userInterfaceID: userInterfaceID,
+
+    /* enableQueryCallCache: boolean, controls wether or not to cache the connector query calls,
+    if passed and set to false the connector query calls will not be cached otherwise the connector query calls will cached */
+    enableQueryCallCache: true,
 });
 ```
 
