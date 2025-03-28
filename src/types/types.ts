@@ -43,6 +43,8 @@ export type ProjectConfig = {
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
+    userInterfaceFormBuilderData?: FormBuilderType;
+    onFetchUserInterfaceDetails?: (userInterfaceId?: string) => Promise<UserInterfaceWithOutputSettings | null>;
 };
 
 export interface DefaultStudioConfig {
@@ -110,6 +112,9 @@ export interface UiOptions {
         layoutSwitcherVisible?: boolean;
         title?: string;
     };
+    layouts?: LayoutForm;
+    dataSource?: DataSourceForm;
+    variables?: VariablesForm;
 }
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
@@ -129,17 +134,43 @@ export type UserInterfaceWithOutputSettings = {
         id: string;
         name: string;
     };
+    formBuilder: FormBuilderType;
 };
 
+export interface BaseFormBuilderType<T extends FormKeys> {
+    type: T;
+    active: boolean;
+    header: string;
+    helpText: string;
+}
+
+export interface LayoutForm extends BaseFormBuilderType<'layouts'> {
+    layoutSelector: boolean;
+    multipleLayouts: boolean;
+    allowNewProjectFromLayout: boolean;
+    showWidthHeightInputs: boolean;
+}
+
+export type DataSourceForm = BaseFormBuilderType<'datasource'>;
+export type VariablesForm = BaseFormBuilderType<'variables'>;
+
+export type FormBuilderArray = Array<DataSourceForm | VariablesForm | LayoutForm>;
+export type DataSourceAndVariablesForm = DataSourceForm | VariablesForm;
+
+export type FormKeys = 'datasource' | 'layouts' | 'variables';
+
+export type FormBuilderType = {
+    [K in FormKeys]: K extends 'layouts' ? LayoutForm : DataSourceAndVariablesForm;
+};
+export type OutputSettingsType = {
+    [index: string]: { layoutIntents: string[] };
+};
 export type UserInterface = {
-    name: string;
     id: string;
+    name: string;
+    outputSettings: OutputSettingsType;
+    formBuilder: FormBuilderArray;
     default: boolean;
-    outputSettings: {
-        [index: string]: {
-            layoutIntents: string[];
-        };
-    };
 };
 
 export type PaginatedResponse<T> = {
@@ -216,6 +247,7 @@ export interface IStudioUILoaderConfig {
     refreshTokenAction?: () => Promise<string | AxiosError>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
+    userInterfaceFormBuilderData?: FormBuilderType;
     /**
      * @deprecated The outputSettings property is deprecated and will be removed in a future version.
      */
@@ -243,6 +275,7 @@ export interface IStudioUILoaderConfig {
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
+    onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 }
 
 export type PageSnapshot = {
