@@ -5,4 +5,5 @@ export interface IOutputSettingsContext {
     userInterfaceOutputSettings: UserInterfaceOutputSettings[] | null;
     selectedUserInterfaceId: string | null;
     onUserInterfaceChange: (_: string) => void;
+    outputSettingsFullList: UserInterfaceOutputSettings[] | undefined;
 }
