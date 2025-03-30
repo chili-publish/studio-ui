@@ -115,6 +115,7 @@ export interface UiOptions {
     layouts?: LayoutForm;
     dataSource?: DataSourceForm;
     variables?: VariablesForm;
+    formBuilder?: FormBuilderType;
 }
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
@@ -160,7 +161,9 @@ export type DataSourceAndVariablesForm = DataSourceForm | VariablesForm;
 export type FormKeys = 'datasource' | 'layouts' | 'variables';
 
 export type FormBuilderType = {
-    [K in FormKeys]: K extends 'layouts' ? LayoutForm : DataSourceAndVariablesForm;
+    datasource?: DataSourceForm;
+    layouts?: LayoutForm;
+    variables?: VariablesForm;
 };
 export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };

@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
-    LayoutForm,
     ProjectConfig,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
@@ -14,7 +13,6 @@ export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsCont
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
-    layoutsFormBuilderData: null,
 };
 
 export const UserInterfaceDetailsContext = createContext<IUserInterfaceDetailsContext>(
@@ -35,14 +33,12 @@ export function UserInterfaceDetailsContextProvider({
     children: ReactNode;
 }) {
     const { dataSource } = useAppContext();
-
     const [selectedUserInterfaceId, setSelectedUserInterfaceId] = useState<string | null>(
         projectConfig.userInterfaceID || null,
     );
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
     >([]);
-    const [layoutsFormBuilderData, setLayoutsFormBuilderData] = useState<LayoutForm | null>(null);
 
     const fetchtUserInterfaceDetails = useCallback(
         async (userInterfaceId?: string) => {
@@ -56,7 +52,6 @@ export function UserInterfaceDetailsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
-                        setLayoutsFormBuilderData(res?.formBuilder?.layouts || null);
                     });
             }
         },
@@ -73,14 +68,12 @@ export function UserInterfaceDetailsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
-            layoutsFormBuilderData,
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
-            layoutsFormBuilderData,
         ],
     );
 

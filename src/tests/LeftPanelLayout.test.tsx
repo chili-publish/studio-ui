@@ -21,9 +21,7 @@ import {
     defaultPlatformUiOptions,
     FormBuilderArray,
     ProjectConfig,
-    LayoutForm,
-    DataSourceForm,
-    VariablesForm,
+    UserInterfaceWithOutputSettings,
 } from '../types/types';
 
 afterEach(() => {
@@ -42,7 +40,7 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder,
-            }),
+            } as UserInterfaceWithOutputSettings),
         onFetchUserInterfaceDetails: () =>
             Promise.resolve({
                 userInterface: { id: '1', name: 'name' },
@@ -50,18 +48,10 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder,
-            }),
+            } as UserInterfaceWithOutputSettings),
         uiOptions: {
             ...ProjectConfigs.empty.uiOptions,
-            ...(formBuilder.layouts && {
-                layouts: formBuilder.layouts as LayoutForm,
-            }),
-            ...(formBuilder.datasource && {
-                datasource: formBuilder.datasource as DataSourceForm,
-            }),
-            ...(formBuilder.variables && {
-                variables: formBuilder.variables as VariablesForm,
-            }),
+            formBuilder,
         },
     };
 
@@ -82,6 +72,7 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                             layoutSwitcherVisible: true,
                             title: 'Layout',
                         }}
+                        formBuilder={formBuilder}
                     />
                 </UserInterfaceDetailsContextProvider>
             </VariablePanelContextProvider>

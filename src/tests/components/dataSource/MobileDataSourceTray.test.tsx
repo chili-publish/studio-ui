@@ -4,6 +4,8 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { transformFormBuilderArrayToObject } from '../../../utils/helpers';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
@@ -67,6 +69,7 @@ describe('MobileDataSource test', () => {
         jest.useRealTimers();
     });
     it('Should display data connector first row', async () => {
+        const formBuilder = transformFormBuilderArrayToObject(mockUserInterface.formBuilder);
         render(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
@@ -82,6 +85,7 @@ describe('MobileDataSource test', () => {
                                     layoutSwitcherVisible: false,
                                     title: 'Layout',
                                 }}
+                                formBuilder={formBuilder}
                             />
                         </FeatureFlagProvider>
                     </UiThemeProvider>

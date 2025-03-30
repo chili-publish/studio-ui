@@ -2,14 +2,12 @@ import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
 import {
-    DataSourceForm,
     defaultBackFn,
     defaultOutputSettings,
     defaultPlatformUiOptions,
     IDefaultStudioUILoaderConfig,
     IStudioUILoaderConfig,
     ProjectConfig,
-    VariablesForm,
 } from './types/types';
 import StudioUILoader from './deprecated-loaders';
 
@@ -159,15 +157,7 @@ export default class StudioUI extends StudioUILoader {
             outputSettings: outputSettings ?? defaultOutputSettings,
             uiOptions: {
                 ...uiOptionsConfig,
-                ...(projectLoader.userInterfaceFormBuilderData?.datasource && {
-                    datasource: projectLoader.userInterfaceFormBuilderData.datasource as DataSourceForm,
-                }),
-                ...(projectLoader.userInterfaceFormBuilderData?.variables && {
-                    variables: projectLoader.userInterfaceFormBuilderData.variables as VariablesForm,
-                }),
-                ...(projectLoader.userInterfaceFormBuilderData?.layouts && {
-                    layouts: projectLoader.userInterfaceFormBuilderData.layouts,
-                }),
+                formBuilder: projectLoader.userInterfaceFormBuilderData,
                 uiTheme: uiOptionsConfig.uiTheme || 'light',
             },
             featureFlags,

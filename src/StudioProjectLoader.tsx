@@ -58,7 +58,6 @@ export class StudioProjectLoader {
         this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
-        this.userInterfaceFormBuilderData = undefined;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -247,7 +246,6 @@ export class StudioProjectLoader {
                 const userInterfaceData = await this.onFetchUserInterfaceDetails(userInterface);
                 const formBuilderAsObject = transformFormBuilderArrayToObject(userInterfaceData?.formBuilder);
                 this.userInterfaceFormBuilderData = formBuilderAsObject;
-
                 return {
                     userInterface: {
                         id: userInterfaceData.id,
@@ -268,20 +266,20 @@ export class StudioProjectLoader {
                     }
                     throw new Error(`${err}`);
                 });
-
+            this.userInterfaceFormBuilderData = transformFormBuilderArrayToObject(userInterfaceData.formBuilder);
             return {
                 userInterface: { id: userInterfaceData?.id, name: userInterfaceData?.name },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
-                formBuilder: transformFormBuilderArrayToObject(userInterfaceData?.formBuilder),
+                formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
             };
         }
         const defaultUserInterface = await fetchDefaultUserInterface();
-
+        this.userInterfaceFormBuilderData = transformFormBuilderArrayToObject(defaultUserInterface?.formBuilder);
         return defaultUserInterface
             ? {
                   userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
                   outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
-                  formBuilder: transformFormBuilderArrayToObject(defaultUserInterface?.formBuilder),
+                  formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
               }
             : null;
     };
