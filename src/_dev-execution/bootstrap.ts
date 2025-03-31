@@ -87,18 +87,6 @@ import { TokenManager } from './token-manager';
                 title: undefined,
                 layoutSwitcherVisible: undefined,
             },
-            formBuilder: {
-                layouts: {
-                    type: 'layouts',
-                    active: true,
-                    header: 'Layouts header',
-                    helpText: 'Layouts help text',
-                    layoutSelector: true,
-                    showWidthHeightInputs: true,
-                    multipleLayouts: true,
-                    allowNewProjectFromLayout: true,
-                },
-            },
         },
         featureFlags: {},
         // eslint-disable-next-line no-console
