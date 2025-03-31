@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { EditButtonWrapper } from './VariablesPanel.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { FormBuilderType, UiOptions } from '../../types/types';
+import { UiOptions } from '../../types/types';
 import MobileVariablesPanel from './MobileVariablesTray';
 
 interface MobileVariablesProps {
@@ -14,7 +14,6 @@ interface MobileVariablesProps {
     layoutPropertiesState: LayoutPropertiesType;
     pageSize?: PageSize;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
-    formBuilder?: FormBuilderType;
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;

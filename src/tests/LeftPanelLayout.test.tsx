@@ -69,10 +69,9 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
                         layoutSectionUIOptions={{
                             visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
+                            layoutSwitcherVisible: undefined,
+                            title: undefined,
                         }}
-                        formBuilder={formBuilder}
                     />
                 </UserInterfaceDetailsContextProvider>
             </VariablePanelContextProvider>

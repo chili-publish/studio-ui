@@ -1,54 +1,52 @@
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
-import { FormBuilderType, UiOptions } from '../../types/types';
+import { UiOptions } from '../../types/types';
+import { useUserInterfaceDetailsContext } from '../../components/navbar/UserInterfaceDetailsContext';
 
 interface UseLayoutSectionProps {
     layouts: LayoutListItemType[];
     selectedLayout: Layout | null;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
-    formBuilder?: FormBuilderType;
 }
-const defaultFallbackLayoutSection = {
-    layoutSwitcherVisible: true,
-    title: 'Layout',
-};
 
-export function useLayoutSection({
-    layouts,
-    selectedLayout,
-    layoutSectionUIOptions,
-    formBuilder,
-}: UseLayoutSectionProps) {
-    const availableLayouts = useMemo(() => layouts.filter((item) => item.availableForUser), [layouts]);
+export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions }: UseLayoutSectionProps) {
+    const { formBuilder } = useUserInterfaceDetailsContext();
+    const availableLayouts = useMemo(() => layouts?.filter((item) => item.availableForUser), [layouts]);
+
+    const hasLayoutSectionUIOptions = useMemo(
+        () =>
+            [layoutSectionUIOptions.title, layoutSectionUIOptions.layoutSwitcherVisible].every((value) =>
+                Boolean(value),
+            ),
+        [layoutSectionUIOptions],
+    );
 
     const layoutsSectionIsVisible = useMemo(
-        () => formBuilder?.layouts?.active ?? layoutSectionUIOptions?.visible,
-        [layoutSectionUIOptions?.visible, formBuilder?.layouts],
+        () => (hasLayoutSectionUIOptions ? layoutSectionUIOptions?.visible : formBuilder.layouts?.active),
+        [hasLayoutSectionUIOptions, layoutSectionUIOptions, formBuilder.layouts],
     );
-
     const sectionTitle = useMemo(
-        () => formBuilder?.layouts?.header ?? layoutSectionUIOptions?.title ?? defaultFallbackLayoutSection.title,
-        [layoutSectionUIOptions?.title, formBuilder?.layouts],
+        () => layoutSectionUIOptions?.title ?? formBuilder.layouts?.header,
+        [layoutSectionUIOptions?.title, formBuilder.layouts],
     );
     const layoutSwitcherVisibility = useMemo(
-        () =>
-            formBuilder?.layouts?.layoutSelector ??
-            layoutSectionUIOptions?.layoutSwitcherVisible ??
-            defaultFallbackLayoutSection.layoutSwitcherVisible,
-        [layoutSectionUIOptions?.layoutSwitcherVisible, formBuilder?.layouts],
+        () => layoutSectionUIOptions?.layoutSwitcherVisible ?? formBuilder.layouts?.layoutSelector,
+        [layoutSectionUIOptions?.layoutSwitcherVisible, formBuilder.layouts],
     );
 
     const isLayoutSwitcherVisible = useMemo(
-        () => availableLayouts.length >= 2 && layoutSwitcherVisibility,
-        [availableLayouts.length, layoutSwitcherVisibility],
+        () => availableLayouts?.length >= 2 && layoutSwitcherVisibility,
+        [availableLayouts?.length, layoutSwitcherVisibility],
     );
 
     const isLayoutResizableVisible = useMemo(
         () =>
+            !hasLayoutSectionUIOptions &&
             !!(selectedLayout?.id && selectedLayout?.resizableByUser?.enabled) &&
-            formBuilder?.layouts?.showWidthHeightInputs,
-        [selectedLayout, formBuilder?.layouts],
+            formBuilder.layouts?.showWidthHeightInputs,
+        [selectedLayout, formBuilder.layouts, hasLayoutSectionUIOptions],
     );
+
     const isAvailableLayoutsDisplayed = useMemo(() => {
         if (layoutsSectionIsVisible !== undefined) {
             if (layoutsSectionIsVisible) return isLayoutSwitcherVisible || !!isLayoutResizableVisible;
@@ -63,6 +61,6 @@ export function useLayoutSection({
         isLayoutResizableVisible,
         isAvailableLayoutsDisplayed,
         sectionTitle,
-        helpText: formBuilder?.layouts?.helpText,
+        helpText: formBuilder.layouts?.helpText,
     };
 }

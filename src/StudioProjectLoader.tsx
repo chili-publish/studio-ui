@@ -2,7 +2,6 @@ import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/stud
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
     DownloadLinkResult,
-    FormBuilderType,
     HttpHeaders,
     IOutputSetting,
     PaginatedResponse,
@@ -35,8 +34,6 @@ export class StudioProjectLoader {
     private userInterfaceID?: string;
 
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
-
-    public userInterfaceFormBuilderData?: FormBuilderType;
 
     constructor(
         projectId: string | undefined,
@@ -245,7 +242,6 @@ export class StudioProjectLoader {
             if (this.onFetchUserInterfaceDetails) {
                 const userInterfaceData = await this.onFetchUserInterfaceDetails(userInterface);
                 const formBuilderAsObject = transformFormBuilderArrayToObject(userInterfaceData?.formBuilder);
-                this.userInterfaceFormBuilderData = formBuilderAsObject;
                 return {
                     userInterface: {
                         id: userInterfaceData.id,
@@ -266,22 +262,24 @@ export class StudioProjectLoader {
                     }
                     throw new Error(`${err}`);
                 });
-            this.userInterfaceFormBuilderData = transformFormBuilderArrayToObject(userInterfaceData.formBuilder);
             return {
                 userInterface: { id: userInterfaceData?.id, name: userInterfaceData?.name },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
             };
         }
-        const defaultUserInterface = await fetchDefaultUserInterface();
-        this.userInterfaceFormBuilderData = transformFormBuilderArrayToObject(defaultUserInterface?.formBuilder);
-        return defaultUserInterface
-            ? {
-                  userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
-                  outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
-                  formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
-              }
-            : null;
+
+        if (this.sandboxMode) {
+            const defaultUserInterface = await fetchDefaultUserInterface();
+            return defaultUserInterface
+                ? {
+                      userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
+                      outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
+                      formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
+                  }
+                : null;
+        }
+        return null;
     };
 
     /**

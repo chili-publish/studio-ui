@@ -332,12 +332,13 @@ describe('StudioProjectLoader', () => {
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
-                false,
+                true,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            await loader.onFetchOutputSettings();
+
+            await loader.onFetchStudioUserInterfaceDetails();
 
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
                 headers: {
@@ -350,7 +351,6 @@ describe('StudioProjectLoader', () => {
                 },
             });
         });
-
         it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
             (axios.get as jest.Mock)
                 .mockResolvedValueOnce({ data: {} }) // output settings request

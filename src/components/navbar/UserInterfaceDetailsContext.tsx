@@ -1,8 +1,10 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+    FormBuilderType,
     ProjectConfig,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
+    defaultFormBuilder,
     defaultOutputSettings,
 } from '../../types/types';
 import { IUserInterfaceDetailsContext } from './UserInterfaceDetailsContext.types';
@@ -13,6 +15,7 @@ export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsCont
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
+    formBuilder: defaultFormBuilder,
 };
 
 export const UserInterfaceDetailsContext = createContext<IUserInterfaceDetailsContext>(
@@ -39,6 +42,7 @@ export function UserInterfaceDetailsContextProvider({
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
     >([]);
+    const [formBuilder, setFormBuilder] = useState<FormBuilderType | undefined>();
 
     const fetchtUserInterfaceDetails = useCallback(
         async (userInterfaceId?: string) => {
@@ -52,6 +56,7 @@ export function UserInterfaceDetailsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                        setFormBuilder(res?.formBuilder);
                     });
             }
         },
@@ -68,12 +73,14 @@ export function UserInterfaceDetailsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
+            formBuilder: formBuilder ?? defaultFormBuilder,
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
+            formBuilder,
         ],
     );
 

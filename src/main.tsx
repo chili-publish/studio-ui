@@ -157,7 +157,6 @@ export default class StudioUI extends StudioUILoader {
             outputSettings: outputSettings ?? defaultOutputSettings,
             uiOptions: {
                 ...uiOptionsConfig,
-                formBuilder: projectLoader.userInterfaceFormBuilderData,
                 uiTheme: uiOptionsConfig.uiTheme || 'light',
             },
             featureFlags,

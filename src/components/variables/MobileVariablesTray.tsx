@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { FormBuilderType, UiOptions } from '../../types/types';
+import { UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
@@ -32,7 +32,6 @@ interface VariablesPanelProps {
     layoutPropertiesState: LayoutPropertiesType;
     pageSize?: PageSize;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
-    formBuilder?: FormBuilderType;
 }
 
 const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
@@ -52,7 +51,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         layoutPropertiesState,
         pageSize,
         layoutSectionUIOptions,
-        formBuilder,
     } = props;
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
@@ -97,7 +95,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         layouts,
         selectedLayout,
         layoutSectionUIOptions,
-        formBuilder,
     });
     const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
     const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;

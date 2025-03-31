@@ -108,6 +108,7 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: false,
+                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -211,6 +212,7 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
+                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -346,6 +348,7 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
+                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -383,6 +386,7 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
+                                            title: 'Layout',
                                         },
                                     },
                                     onSetMultiLayout: multiLayoutMock,
@@ -395,9 +399,9 @@ describe('Layout Section UI Options', () => {
             );
 
             const openTrayBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
-
             await userEvent.click(openTrayBtn);
 
+            expect(multiLayoutMock).toHaveBeenCalled();
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');
             expect(screen.queryByText('Layout')).not.toBeInTheDocument();
         });

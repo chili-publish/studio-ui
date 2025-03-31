@@ -2,7 +2,7 @@ import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
-import { FormBuilderType, UiOptions } from '../../../types/types';
+import { UiOptions } from '../../../types/types';
 import DataSource from '../../dataSource/DataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import LayoutProperties from '../../LayoutPanel/LayoutProperties';
@@ -20,7 +20,6 @@ interface LeftPanelProps {
     layoutPropertiesState: LayoutPropertiesType;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
     pageSize?: PageSize;
-    formBuilder?: FormBuilderType;
 }
 
 function LeftPanel({
@@ -30,7 +29,6 @@ function LeftPanel({
     layoutPropertiesState,
     pageSize,
     layoutSectionUIOptions,
-    formBuilder,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const {
@@ -40,7 +38,7 @@ function LeftPanel({
         isAvailableLayoutsDisplayed,
         sectionTitle,
         helpText,
-    } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions, formBuilder });
+    } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
 
     return (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>

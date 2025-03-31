@@ -112,9 +112,6 @@ export interface UiOptions {
         layoutSwitcherVisible?: boolean;
         title?: string;
     };
-    layouts?: LayoutForm;
-    dataSource?: DataSourceForm;
-    variables?: VariablesForm;
     formBuilder?: FormBuilderType;
 }
 
@@ -161,9 +158,9 @@ export type DataSourceAndVariablesForm = DataSourceForm | VariablesForm;
 export type FormKeys = 'datasource' | 'layouts' | 'variables';
 
 export type FormBuilderType = {
-    datasource?: DataSourceForm;
-    layouts?: LayoutForm;
-    variables?: VariablesForm;
+    datasource: DataSourceForm;
+    layouts: LayoutForm;
+    variables: VariablesForm;
 };
 export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
@@ -203,10 +200,7 @@ export const defaultUiOptions = {
             visible: false,
         },
     },
-    layoutSection: {
-        layoutSwitcherVisible: true,
-        title: 'Layout',
-    },
+
     uiTheme: 'light' as ITheme['mode'],
 };
 
@@ -221,6 +215,31 @@ export const defaultOutputSettings: OutputSettings = {
     png: true,
     jpg: true,
     pdf: true,
+};
+
+export const defaultFormBuilder: FormBuilderType = {
+    datasource: {
+        type: 'datasource',
+        active: true,
+        header: 'Datasource',
+        helpText: '',
+    },
+    layouts: {
+        type: 'layouts',
+        active: true,
+        header: 'Layouts',
+        helpText: '',
+        layoutSelector: true,
+        showWidthHeightInputs: true,
+        multipleLayouts: true,
+        allowNewProjectFromLayout: true,
+    },
+    variables: {
+        type: 'variables',
+        active: true,
+        header: 'Variables',
+        helpText: '',
+    },
 };
 
 // eslint-disable-next-line no-restricted-globals
