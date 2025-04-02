@@ -87,9 +87,9 @@ const variableRequiredTest = async (variable: Variable) => {
         selectEvent.openMenu(selectIndicator as unknown as HTMLElement);
     });
 
-    const jpgOption = screen.getByText('JPG');
+    const jpgOptions = screen.getAllByText(/jpg/i);
     await act(async () => {
-        await user.click(jpgOption);
+        await user.click(jpgOptions[0]);
     });
 
     const panelDownloadButton = screen.getByTestId(getDataTestIdForSUI(`download-btn`));

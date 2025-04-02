@@ -1,27 +1,32 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+    FormBuilderType,
     ProjectConfig,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
+    defaultFormBuilder,
     defaultOutputSettings,
 } from '../../types/types';
-import { IOutputSettingsContext } from './OutputSettingsContext.types';
+import { IUserInterfaceDetailsContext } from './UserInterfaceDetailsContext.types';
 import { useAppContext } from '../../contexts/AppProvider';
 
-export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
+export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsContext = {
     selectedUserInterfaceId: '',
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
+    formBuilder: defaultFormBuilder,
 };
 
-export const OutputSettingsContext = createContext<IOutputSettingsContext>(OutputSettingsContextDefaultValues);
+export const UserInterfaceDetailsContext = createContext<IUserInterfaceDetailsContext>(
+    UserInterfaceDetailsContextDefaultValues,
+);
 
-export const useOutputSettingsContext = () => {
-    return useContext(OutputSettingsContext);
+export const useUserInterfaceDetailsContext = () => {
+    return useContext(UserInterfaceDetailsContext);
 };
 
-export function OutputSettingsContextProvider({
+export function UserInterfaceDetailsContextProvider({
     projectConfig,
     layoutIntent,
     children,
@@ -31,27 +36,27 @@ export function OutputSettingsContextProvider({
     children: ReactNode;
 }) {
     const { dataSource } = useAppContext();
-
     const [selectedUserInterfaceId, setSelectedUserInterfaceId] = useState<string | null>(
         projectConfig.userInterfaceID || null,
     );
     const [userInterfaceOutputSettings, setUserInterfaceOutputSettings] = useState<
         UserInterfaceOutputSettings[] | null
     >([]);
+    const [formBuilder, setFormBuilder] = useState<FormBuilderType | undefined>();
 
-    const fetchOutputSettings = useCallback(
+    const fetchtUserInterfaceDetails = useCallback(
         async (userInterfaceId?: string) => {
-            if (projectConfig.onFetchOutputSettings) {
+            if (projectConfig.onFetchUserInterfaceDetails) {
                 projectConfig
-                    .onFetchOutputSettings(userInterfaceId)
+                    .onFetchUserInterfaceDetails(userInterfaceId)
                     .then((res: UserInterfaceWithOutputSettings | null) => {
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
-
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                        setFormBuilder(res?.formBuilder ?? defaultFormBuilder);
                     });
             }
         },
@@ -59,8 +64,8 @@ export function OutputSettingsContextProvider({
     );
 
     useEffect(() => {
-        fetchOutputSettings(selectedUserInterfaceId || undefined);
-    }, [selectedUserInterfaceId, fetchOutputSettings]);
+        fetchtUserInterfaceDetails(selectedUserInterfaceId || undefined);
+    }, [selectedUserInterfaceId, fetchtUserInterfaceDetails]);
 
     const data = useMemo(
         () => ({
@@ -68,14 +73,20 @@ export function OutputSettingsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
+            formBuilder: {
+                datasource: formBuilder?.datasource ?? defaultFormBuilder.datasource,
+                layouts: formBuilder?.layouts ?? defaultFormBuilder.layouts,
+                variables: formBuilder?.variables ?? defaultFormBuilder.variables,
+            },
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
+            formBuilder,
         ],
     );
 
-    return <OutputSettingsContext.Provider value={data}>{children}</OutputSettingsContext.Provider>;
+    return <UserInterfaceDetailsContext.Provider value={data}>{children}</UserInterfaceDetailsContext.Provider>;
 }
