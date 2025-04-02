@@ -56,7 +56,7 @@ export function UserInterfaceDetailsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
-                        setFormBuilder(res?.formBuilder);
+                        setFormBuilder(res?.formBuilder ?? defaultFormBuilder);
                     });
             }
         },
@@ -73,7 +73,11 @@ export function UserInterfaceDetailsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
-            formBuilder: formBuilder ?? defaultFormBuilder,
+            formBuilder: {
+                datasource: formBuilder?.datasource ?? defaultFormBuilder.datasource,
+                layouts: formBuilder?.layouts ?? defaultFormBuilder.layouts,
+                variables: formBuilder?.variables ?? defaultFormBuilder.variables,
+            },
         }),
         [
             selectedUserInterfaceId,

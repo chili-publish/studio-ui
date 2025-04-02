@@ -323,7 +323,7 @@ describe('StudioProjectLoader', () => {
         });
     });
 
-    describe('onFetchOutputSettings', () => {
+    describe('onFetchStudioUserInterfaceDetails', () => {
         it('should call endpoint for "default" user interface with correct params', async () => {
             (axios.get as jest.Mock)
                 .mockResolvedValueOnce({ data: {} }) // output settings request
@@ -354,7 +354,22 @@ describe('StudioProjectLoader', () => {
         it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
             (axios.get as jest.Mock)
                 .mockResolvedValueOnce({ data: {} }) // output settings request
-                .mockResolvedValueOnce({ data: { outputSettings: {} }, status: 200 }); // user interface request
+                .mockResolvedValueOnce({
+                    data: {
+                        outputSettings: {},
+                        formBuilder: [
+                            {
+                                type: 'layouts',
+                                active: true,
+                                header: 'Layouts',
+                                helpText: '',
+                                layoutSelector: true,
+                                showWidthHeightInputs: true,
+                            },
+                        ],
+                    },
+                    status: 200,
+                }); // user interface request
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -365,13 +380,14 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
                 '1234',
             );
-            await loader.onFetchOutputSettings();
+            await loader.onFetchStudioUserInterfaceDetails();
 
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
                 headers: {
                     Authorization: `Bearer ${mockAuthToken}`,
                 },
             });
+
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
                 headers: {
                     Authorization: `Bearer ${mockAuthToken}`,

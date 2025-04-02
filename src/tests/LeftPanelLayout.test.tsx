@@ -21,6 +21,7 @@ import {
     defaultPlatformUiOptions,
     FormBuilderArray,
     ProjectConfig,
+    UiOptions,
     UserInterfaceWithOutputSettings,
 } from '../types/types';
 
@@ -29,7 +30,16 @@ afterEach(() => {
 });
 const mockSDK = mock<EditorSDK>();
 
-const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemType[], selectedLayout?: Layout) => {
+const renderComponent = (
+    layoutIntent?: LayoutIntent,
+    layouts?: LayoutListItemType[],
+    selectedLayout?: Layout,
+    layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean } = {
+        visible: true,
+        layoutSwitcherVisible: undefined,
+        title: undefined,
+    },
+) => {
     const formBuilder = transformFormBuilderArrayToObject(mockUserInterface.formBuilder as FormBuilderArray);
     const projectConfig = {
         ...ProjectConfigs.empty,
@@ -51,7 +61,6 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
             } as UserInterfaceWithOutputSettings),
         uiOptions: {
             ...ProjectConfigs.empty.uiOptions,
-            formBuilder,
         },
     };
 
@@ -67,11 +76,7 @@ const renderComponent = (layoutIntent?: LayoutIntent, layouts?: LayoutListItemTy
                         selectedLayout={selectedLayout || mockLayout}
                         layouts={layouts || mockLayouts}
                         layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: undefined,
-                            title: undefined,
-                        }}
+                        layoutSectionUIOptions={layoutSectionUIOptions}
                     />
                 </UserInterfaceDetailsContextProvider>
             </VariablePanelContextProvider>
@@ -107,6 +112,16 @@ describe('Layout selection', () => {
         // Verify dimension inputs not shown for non-resizable layout
         expect(screen.queryByLabelText('Width')).not.toBeInTheDocument();
         expect(screen.queryByLabelText('Height')).not.toBeInTheDocument();
+    });
+    test('Layout dropdown input and title are rendered based on uiOptions', async () => {
+        renderComponent(LayoutIntent.print, mockLayouts, mockLayout, {
+            visible: true,
+            layoutSwitcherVisible: true,
+            title: 'UiOptions title',
+        });
+
+        expect(screen.getByText('UiOptions title')).toBeInTheDocument();
+        expect(screen.getByTestId(getDataTestIdForSUI('dropdown-available-layout'))).toBeInTheDocument();
     });
 
     test('Layout dropdown is displayed when multiple layouts are available for user', async () => {

@@ -15,7 +15,7 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
 
     const hasLayoutSectionUIOptions = useMemo(
         () =>
-            [layoutSectionUIOptions.title, layoutSectionUIOptions.layoutSwitcherVisible].every((value) =>
+            [layoutSectionUIOptions.title, layoutSectionUIOptions.layoutSwitcherVisible].some((value) =>
                 Boolean(value),
             ),
         [layoutSectionUIOptions],
@@ -32,6 +32,11 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
     const layoutSwitcherVisibility = useMemo(
         () => layoutSectionUIOptions?.layoutSwitcherVisible ?? formBuilder.layouts?.layoutSelector,
         [layoutSectionUIOptions?.layoutSwitcherVisible, formBuilder.layouts],
+    );
+
+    const helpText = useMemo(
+        () => (hasLayoutSectionUIOptions ? undefined : formBuilder.layouts?.helpText),
+        [hasLayoutSectionUIOptions, formBuilder.layouts],
     );
 
     const isLayoutSwitcherVisible = useMemo(
@@ -61,6 +66,6 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
         isLayoutResizableVisible,
         isAvailableLayoutsDisplayed,
         sectionTitle,
-        helpText: formBuilder.layouts?.helpText,
+        helpText,
     };
 }

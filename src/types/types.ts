@@ -132,7 +132,7 @@ export type UserInterfaceWithOutputSettings = {
         id: string;
         name: string;
     };
-    formBuilder: FormBuilderType;
+    formBuilder?: FormBuilderType;
 };
 
 export interface BaseFormBuilderType<T extends FormKeys> {

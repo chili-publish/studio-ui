@@ -83,10 +83,6 @@ import { TokenManager } from './token-manager';
                 bottomBar: { visible: true },
                 downloadButton: { visible: true },
             },
-            layoutSection: {
-                title: undefined,
-                layoutSwitcherVisible: undefined,
-            },
         },
         featureFlags: {},
         // eslint-disable-next-line no-console

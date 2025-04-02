@@ -108,7 +108,6 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: false,
-                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -198,7 +197,7 @@ describe('Layout Section UI Options', () => {
                 </AppProvider>,
             );
 
-            expect(screen.queryByText('Layout')).not.toBeInTheDocument();
+            expect(screen.queryByText('Layouts')).not.toBeInTheDocument();
         });
 
         it('should render layout with default title when widget is true', async () => {
@@ -212,7 +211,6 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
-                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -239,7 +237,7 @@ describe('Layout Section UI Options', () => {
                     },
                 ] as LayoutListItemType[]);
             });
-            expect(screen.getByText('Layout')).toBeInTheDocument();
+            expect(screen.getByText('Layouts')).toBeInTheDocument();
         });
 
         it('should render layout with custom title', async () => {
@@ -348,7 +346,6 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
-                                            title: 'Layout',
                                         },
                                     },
                                 }}
@@ -386,7 +383,6 @@ describe('Layout Section UI Options', () => {
                                     uiOptions: {
                                         layoutSection: {
                                             layoutSwitcherVisible: true,
-                                            title: 'Layout',
                                         },
                                     },
                                     onSetMultiLayout: multiLayoutMock,
