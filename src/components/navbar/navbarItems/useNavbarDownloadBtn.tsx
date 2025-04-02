@@ -11,9 +11,13 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
     const isMobile = useMobileSize();
 
     const label = isSandBoxMode ? 'Export' : 'Download';
+    const isVisible = isSandBoxMode
+        ? isDownloadBtnVisible
+        : isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0;
+
     const navbarItem = useMemo(
         () =>
-            isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0
+            isVisible
                 ? {
                       label,
                       content: (
@@ -36,7 +40,7 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
                       ),
                   }
                 : null,
-        [isDownloadBtnVisible, isMobile, label, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
+        [isMobile, isVisible, label, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
     );
 
     return {
