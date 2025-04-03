@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import {
     ProjectConfig,
     UserInterfaceOutputSettings,
@@ -51,11 +52,26 @@ export function OutputSettingsContextProvider({
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
-
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
+
+                        let fullSettingsList = res?.outputSettingsFullList;
+
+                        fullSettingsList =
+                            layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
+                                ? outputSettingsFullList?.filter(
+                                      (output) =>
+                                          output.type.toLowerCase() !== DownloadFormats.MP4 &&
+                                          output.type.toLowerCase() !== DownloadFormats.GIF,
+                                  )
+                                : outputSettingsFullList;
+
+                        fullSettingsList = dataSource
+                            ? res?.outputSettingsFullList
+                            : res?.outputSettingsFullList?.filter((s) => !s.dataSourceEnabled);
+
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
-                        setOutputSettingsFullList(res?.outputSettingsFullList);
+                        setOutputSettingsFullList(fullSettingsList);
                     });
             }
         },

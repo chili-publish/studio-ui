@@ -402,9 +402,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             projectConfig,
             undoStackState,
             zoom: currentZoom,
-            layoutIntent,
         }),
-        [currentProject?.name, projectConfig, undoStackState, currentZoom, layoutIntent],
+        [currentProject?.name, projectConfig, undoStackState, currentZoom],
     );
 
     const layoutSectionUIOptions = {

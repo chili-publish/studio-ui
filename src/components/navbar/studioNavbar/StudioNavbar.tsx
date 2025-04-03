@@ -9,7 +9,7 @@ import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
 
 function StudioNavbar(props: INavbar) {
-    const { projectName, goBack, projectConfig, zoom, undoStackState, layoutIntent } = props;
+    const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
@@ -83,7 +83,6 @@ function StudioNavbar(props: INavbar) {
                 hideDownloadPanel={hideDownloadPanel}
                 handleDownload={handleDownload}
                 isSandBoxMode={projectConfig.sandboxMode}
-                layoutIntent={layoutIntent}
                 exportButtonRef={exportButtonRef}
             />
         </StyledNavbar>

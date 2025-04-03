@@ -1,6 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
 import { CSSProp } from 'styled-components';
-import { LayoutIntent } from '@chili-publish/studio-sdk';
 import { ProjectConfig } from '../../types/types';
 
 export interface INavbar {
@@ -9,7 +8,6 @@ export interface INavbar {
     zoom: number;
     undoStackState: { canRedo: boolean; canUndo: boolean };
     projectConfig: ProjectConfig;
-    layoutIntent: LayoutIntent | null;
 }
 export interface NavbarItemType {
     label: string;

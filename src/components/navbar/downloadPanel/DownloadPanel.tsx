@@ -10,7 +10,7 @@ import {
     useMobileSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
-import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
+import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, RefObject, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { UserInterfaceOutputSettings } from '../../../types/types';
@@ -44,7 +44,6 @@ interface DownloadPanelProps {
         outputSettingsId: string | undefined,
     ) => Promise<void>;
     isSandBoxMode?: boolean;
-    layoutIntent?: LayoutIntent | null;
     exportButtonRef?: RefObject<HTMLLIElement>;
 }
 
@@ -58,8 +57,7 @@ const getCustomSelectedOption = (option: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
-    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, layoutIntent, exportButtonRef } =
-        props;
+    const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
     const { outputSettingsFullList } = useOutputSettingsContext();
 
     const isMobileSize = useMobileSize();
@@ -96,17 +94,8 @@ function DownloadPanel(props: DownloadPanelProps) {
             value: item.id,
         });
 
-        const filteredList =
-            layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
-                ? outputSettingsFullList?.filter(
-                      (output) =>
-                          output.type.toLowerCase() !== DownloadFormats.MP4 &&
-                          output.type.toLowerCase() !== DownloadFormats.GIF,
-                  )
-                : outputSettingsFullList;
-
-        return filteredList?.map(mapToSelectOption) || [];
-    }, [isSandBoxMode, layoutIntent, outputSettingsFullList]);
+        return outputSettingsFullList?.map(mapToSelectOption) || [];
+    }, [isSandBoxMode, outputSettingsFullList]);
 
     const selectedValue = useMemo(() => {
         if (isSandBoxMode) return outputSettingsOptions[0];
