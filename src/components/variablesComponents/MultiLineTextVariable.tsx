@@ -53,6 +53,7 @@ function MultiLineTextVariable(props: ITextVariable) {
                 dataTestId={getDataTestIdForSUI('multi-line-variable')}
                 onKeyDown={handleLineBreakKeyDown}
                 validation={validationError ? ValidationTypes.ERROR : undefined}
+                validationErrorMessage={validationError}
             />
             {variable.helpText && !validationError ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
