@@ -59,11 +59,21 @@ jobs:
                   cp -R dist/* ${buildPath%"/merge"}
                   cp -R dist/* ${latestPath%"/merge"}
                   cp -R dist/* ${versionedLatestPath%"/merge"}
-            - name: Copy to Azure Blob Storage
-              uses: azure/CLI@v1
+            - name: Azure Login action
+              uses: azure/login@v2
               with:
+                  creds: '{"clientId":"${{ vars.SP_FRONTEND_CLIENT_ID }}", "clientSecret": "${{ secrets.SP_FRONTEND_CLIENT_SECRET }}","tenantId":"${{ vars.AZURE_TENANT_ID }}", "subscriptionId": "${{ vars.SUBSCRIPTION_ID_PRD }}"}'
+            - name: Upload build
+              uses: azure/cli@v2
+              with:
+                  azcliversion: latest
                   inlineScript: |
-                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_PRD_CONNECTION_STRING }}" --overwrite true
+                      az storage blob upload-batch \
+                      --account-name ${{ vars.STORAGE_ACCOUNT_NAME_PRD }} \
+                      --source upload/ \
+                      --destination studio-ui \
+                      --overwrite true \
+                      --auth-mode login
 
     bump-version:
         needs: build
