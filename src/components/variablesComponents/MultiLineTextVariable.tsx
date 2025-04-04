@@ -24,18 +24,32 @@ function MultiLineTextVariable(props: ITextVariable) {
     };
 
     const handleLineBreakKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        const textarea = e.target as HTMLTextAreaElement;
+        const cursorPosition = textarea.selectionStart;
+        const currentTextValue = textarea.value;
         if (e.key === 'Enter') {
             e.preventDefault();
-            setVariableValue((prev) => prev + (e.shiftKey ? '\n' : '\n\n'));
+
+            const lineBreak = e.shiftKey ? '\n' : '\n\u200B';
+
+            const newTextValue =
+                currentTextValue.substring(0, cursorPosition) + lineBreak + currentTextValue.substring(cursorPosition);
+
+            setVariableValue(newTextValue);
+            setTimeout(() => {
+                textarea.selectionStart = cursorPosition + lineBreak.length;
+                textarea.selectionEnd = cursorPosition + lineBreak.length;
+            }, 1);
         }
     };
+
     return (
         <HelpTextWrapper>
             <Input
                 name="multi-line-text"
                 type="textarea"
                 width="100%"
-                value={variableValue}
+                value={variableValue.replace(/\n\n/g, '\n\u200B')}
                 label={
                     <Label translationKey={variable?.label ?? variable.name} value={variable?.label ?? variable.name} />
                 }
@@ -43,7 +57,9 @@ function MultiLineTextVariable(props: ITextVariable) {
                 onFocus={() => onVariableFocus?.(variable.id)}
                 onBlur={() => {
                     const oldValue = (variable as LongTextVariable).value;
-                    onValueChange(variableValue, { changed: oldValue !== variableValue });
+                    onValueChange(variableValue.replace(/\n\u200B/g, '\n\n'), {
+                        changed: oldValue !== variableValue.replace(/\n\u200B/g, '\n\n'),
+                    });
                     onVariableBlur?.(variable.id);
                 }}
                 onChange={handleVariableChange}
