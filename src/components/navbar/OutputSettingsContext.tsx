@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import {
     ProjectConfig,
     UserInterfaceOutputSettings,
@@ -13,6 +14,7 @@ export const OutputSettingsContextDefaultValues: IOutputSettingsContext = {
     outputSettings: defaultOutputSettings,
     userInterfaceOutputSettings: null,
     onUserInterfaceChange: () => null,
+    outputSettingsFullList: undefined,
 };
 
 export const OutputSettingsContext = createContext<IOutputSettingsContext>(OutputSettingsContextDefaultValues);
@@ -39,6 +41,8 @@ export function OutputSettingsContextProvider({
         UserInterfaceOutputSettings[] | null
     >([]);
 
+    const [outputSettingsFullList, setOutputSettingsFullList] = useState<UserInterfaceOutputSettings[] | undefined>([]);
+
     const fetchOutputSettings = useCallback(
         async (userInterfaceId?: string) => {
             if (projectConfig.onFetchOutputSettings) {
@@ -48,10 +52,26 @@ export function OutputSettingsContextProvider({
                         let settings = res?.outputSettings?.filter((val) =>
                             val.layoutIntents.includes(layoutIntent ?? ''),
                         );
-
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
+
+                        let fullSettingsList = res?.outputSettingsFullList;
+
+                        fullSettingsList =
+                            layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
+                                ? fullSettingsList?.filter(
+                                      (output) =>
+                                          output.type.toLowerCase() !== DownloadFormats.MP4 &&
+                                          output.type.toLowerCase() !== DownloadFormats.GIF,
+                                  )
+                                : fullSettingsList;
+
+                        fullSettingsList = dataSource
+                            ? fullSettingsList
+                            : fullSettingsList?.filter((s) => !s.dataSourceEnabled);
+
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
+                        setOutputSettingsFullList(fullSettingsList);
                     });
             }
         },
@@ -68,12 +88,14 @@ export function OutputSettingsContextProvider({
             outputSettings: projectConfig.outputSettings,
             userInterfaceOutputSettings,
             onUserInterfaceChange: setSelectedUserInterfaceId,
+            outputSettingsFullList,
         }),
         [
             selectedUserInterfaceId,
             userInterfaceOutputSettings,
             projectConfig.outputSettings,
             setSelectedUserInterfaceId,
+            outputSettingsFullList,
         ],
     );
 

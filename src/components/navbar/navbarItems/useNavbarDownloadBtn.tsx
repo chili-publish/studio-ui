@@ -5,25 +5,30 @@ import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
 import { useOutputSettingsContext } from '../OutputSettingsContext';
 
-const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void) => {
+const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: boolean) => {
     const { isDownloadBtnVisible } = useUiConfigContext();
     const { userInterfaceOutputSettings } = useOutputSettingsContext();
     const isMobile = useMobileSize();
 
+    const label = isSandBoxMode ? 'Export' : 'Download';
+    const isVisible = isSandBoxMode
+        ? isDownloadBtnVisible
+        : isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0;
+
     const navbarItem = useMemo(
         () =>
-            isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0
+            isVisible
                 ? {
-                      label: 'Download',
+                      label,
                       content: (
                           <NavbarButton
                               dataId="navbar-download-btn"
                               dataIntercomId="Download button"
-                              ariaLabel="Download"
+                              ariaLabel={label}
                               label={
                                   !isMobile ? (
-                                      <NavbarLabel key="Download" hideOnMobile>
-                                          Download
+                                      <NavbarLabel key={label} hideOnMobile>
+                                          {label}
                                       </NavbarLabel>
                                   ) : undefined
                               }
@@ -35,7 +40,7 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void) => {
                       ),
                   }
                 : null,
-        [isDownloadBtnVisible, isMobile, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
+        [isMobile, isVisible, label, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
     );
 
     return {
