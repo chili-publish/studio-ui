@@ -58,16 +58,16 @@ export function OutputSettingsContextProvider({
 
                         fullSettingsList =
                             layoutIntent === LayoutIntent.digitalStatic || layoutIntent === LayoutIntent.print
-                                ? outputSettingsFullList?.filter(
+                                ? fullSettingsList?.filter(
                                       (output) =>
                                           output.type.toLowerCase() !== DownloadFormats.MP4 &&
                                           output.type.toLowerCase() !== DownloadFormats.GIF,
                                   )
-                                : outputSettingsFullList;
+                                : fullSettingsList;
 
                         fullSettingsList = dataSource
-                            ? res?.outputSettingsFullList
-                            : res?.outputSettingsFullList?.filter((s) => !s.dataSourceEnabled);
+                            ? fullSettingsList
+                            : fullSettingsList?.filter((s) => !s.dataSourceEnabled);
 
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
