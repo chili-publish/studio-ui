@@ -42,7 +42,6 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                                     canRedo: false,
                                     canUndo: false,
                                 }}
-                                layoutIntent={LayoutIntent.print}
                             />
                         </UiThemeProvider>
                     </div>
