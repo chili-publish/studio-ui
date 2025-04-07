@@ -304,6 +304,6 @@ Following callbacks are also available (in other loaders):
 
 By default, connector query calls are cached. This behavior can be overridden using:
 
-`await StudioUISDK.configuration.setValue('enableQueryCallCache', status)`
+`await StudioUISDK.configuration.setValue('ENABLE_QUERY_CALL_CACHE', status)`
 
-Here, status is a boolean — if true, query calls will be cached; if false, they will not be cached.
+Here, status is a string — if sent as 'true', query calls will be cached; if 'false', they will not be cached.
