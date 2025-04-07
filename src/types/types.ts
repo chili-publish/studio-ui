@@ -221,7 +221,7 @@ export const defaultFormBuilder: FormBuilderType = {
     datasource: {
         type: 'datasource',
         active: true,
-        header: 'Datasource',
+        header: 'Data source',
         helpText: '',
     },
     layouts: {
@@ -237,7 +237,7 @@ export const defaultFormBuilder: FormBuilderType = {
     variables: {
         type: 'variables',
         active: true,
-        header: 'Variables',
+        header: 'Customize',
         helpText: '',
     },
 };

@@ -56,7 +56,7 @@ export function UserInterfaceDetailsContextProvider({
                         settings = dataSource ? settings : settings?.filter((s) => !s.dataSourceEnabled);
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
-                        setFormBuilder(res?.formBuilder ?? defaultFormBuilder);
+                        setFormBuilder(res?.formBuilder);
                     });
             }
         },
