@@ -11,6 +11,7 @@ import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
 import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
+import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -31,6 +32,7 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
+    const { formBuilder } = useUserInterfaceDetailsContext();
     const {
         availableLayouts,
         isLayoutSwitcherVisible,
@@ -44,7 +46,7 @@ function LeftPanel({
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    <DataSource />
+                    {formBuilder.datasource.active && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <SectionWrapper id="layout-section-header">
@@ -63,12 +65,14 @@ function LeftPanel({
                         </>
                     )}
 
-                    <VariablesList variables={variables} />
+                    {formBuilder.variables.active && <VariablesList variables={variables} />}
                 </LeftPanelContainer>
 
-                <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
-                    <ImagePanel />
-                </ImagePanelContainer>
+                {formBuilder.variables.active && (
+                    <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
+                        <ImagePanel />
+                    </ImagePanelContainer>
+                )}
             </ScrollbarWrapper>
         </LeftPanelWrapper>
     );

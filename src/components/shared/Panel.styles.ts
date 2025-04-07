@@ -14,9 +14,10 @@ export const SectionHelpText = styled.p`
     color: ${({ theme }) => theme.label.color};
 `;
 
-export const SectionWrapper = styled.div`
+export const SectionWrapper = styled.div<{ id?: string; margin?: string }>`
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
     margin: 1rem 0;
+    ${(props) => props.margin && `margin: ${props.margin};`};
 `;

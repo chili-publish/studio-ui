@@ -21,6 +21,7 @@ import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPane
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
+import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
 interface VariablesPanelProps {
     isTrayVisible: boolean;
@@ -54,7 +55,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     } = props;
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
-
+    const { formBuilder } = useUserInterfaceDetailsContext();
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
     const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
 
@@ -103,7 +104,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
 
-    const isDataSourceDisplayed = hasDataConnector && !mobileOptionListOpen;
+    const isDataSourceDisplayed = formBuilder.datasource.active && hasDataConnector && !mobileOptionListOpen;
 
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
@@ -129,6 +130,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                     <MobileTrayHeader
                         layoutSectionTitle={sectionTitle}
                         layoutSectionHelpText={helpText}
+                        datasourceSectionTitle={formBuilder.datasource?.header}
+                        datasourceSectionHelpText={formBuilder.datasource?.helpText}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
@@ -151,7 +154,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
-                            {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
+                            {formBuilder.datasource.active && isDataSourceDisplayed && !isDateVariablePanelOpen ? (
                                 <DataSourceInput
                                     currentRow={currentInputRow}
                                     currentRowIndex={currentRowIndex}
@@ -166,7 +169,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
                                 <>
-                                    {isAvailableLayoutSubtitleDisplayed && isDataSourceDisplayed && (
+                                    {isAvailableLayoutSubtitleDisplayed && (
                                         <SectionWrapper>
                                             <TrayPanelTitle margin="0">{sectionTitle}</TrayPanelTitle>
                                             {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
