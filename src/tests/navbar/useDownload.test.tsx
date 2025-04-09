@@ -9,7 +9,7 @@ describe('useDownload', () => {
         jest.spyOn(UiConfigContext, 'useUiConfigContext').mockImplementation(() => {
             return UiConfigContext.UiConfigContextDefaultValues;
         });
-        const { result } = renderHook(() => useDownload(() => null));
+        const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
         expect(result.current.downloadOptions.length).toBe(5);
     });
 
@@ -20,7 +20,7 @@ describe('useDownload', () => {
                 outputSettings: { mp4: false, gif: false, jpg: false, pdf: false },
             };
         });
-        const { result } = renderHook(() => useDownload(() => null));
+        const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
         expect(result.current.downloadOptions.length).toBe(1);
         expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.PNG);
     });
@@ -32,7 +32,7 @@ describe('useDownload', () => {
                 outputSettings: { mp4: true, gif: true },
             };
         });
-        const { result } = renderHook(() => useDownload(() => null));
+        const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
         expect(result.current.downloadOptions.length).toBe(2);
         expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
     });
@@ -44,7 +44,7 @@ describe('useDownload', () => {
                 outputSettings: { mp4: true, gif: false },
             };
         });
-        const { result } = renderHook(() => useDownload(() => null));
+        const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
         expect(result.current.downloadOptions.length).toBe(1);
         expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
     });
@@ -73,7 +73,7 @@ describe('useDownload', () => {
                 ],
             };
         });
-        const { result } = renderHook(() => useDownload(() => null));
+        const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
         expect(result.current.userInterfaceDownloadOptions?.length).toBe(2);
     });
 });

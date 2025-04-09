@@ -7,7 +7,7 @@ import { useOutputSettingsContext } from '../OutputSettingsContext';
 
 const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: boolean) => {
     const { isDownloadBtnVisible } = useUiConfigContext();
-    const { userInterfaceOutputSettings } = useOutputSettingsContext();
+    const { userInterfaceOutputSettings, outputSettingsFullList } = useOutputSettingsContext();
     const isMobile = useMobileSize();
 
     const label = isSandBoxMode ? 'Export' : 'Download';
@@ -35,12 +35,24 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
                               icon={AvailableIcons.faArrowDownToLine}
                               variant={ButtonVariant.primary}
                               handleOnClick={onDownloadPanelOpen}
-                              disabled={userInterfaceOutputSettings?.length === 0}
+                              disabled={
+                                  isSandBoxMode
+                                      ? outputSettingsFullList?.length === 0
+                                      : userInterfaceOutputSettings?.length === 0
+                              }
                           />
                       ),
                   }
                 : null,
-        [isMobile, isVisible, label, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
+        [
+            isMobile,
+            isSandBoxMode,
+            isVisible,
+            label,
+            onDownloadPanelOpen,
+            outputSettingsFullList?.length,
+            userInterfaceOutputSettings?.length,
+        ],
     );
 
     return {

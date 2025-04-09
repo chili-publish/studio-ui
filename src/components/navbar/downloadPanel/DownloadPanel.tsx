@@ -72,7 +72,7 @@ function DownloadPanel(props: DownloadPanelProps) {
         updateDownloadState,
         handleOutputFormatChange,
         selectedOutputSettingsId,
-    } = useDownload(hideDownloadPanel);
+    } = useDownload({ hideDownloadPanel, isSandBoxMode });
 
     const outputSettingsOptions = useMemo(() => {
         if (!isSandBoxMode) return [];
