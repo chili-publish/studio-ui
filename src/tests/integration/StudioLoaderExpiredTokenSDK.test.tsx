@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
-import { act, render, waitFor } from '@testing-library/react';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import { connectorSourceUrl } from '@tests/mocks/sdk.mock';
+import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { act, render, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import StudioUI from '../../main';
 
 const environmentBaseURL = 'http://abc.com';

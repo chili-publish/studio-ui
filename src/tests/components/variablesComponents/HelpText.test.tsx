@@ -1,18 +1,18 @@
-import { variables } from '@tests/mocks/mockVariables';
+import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import {
+    BooleanVariable as BooleanVariableType,
     DateVariable as DateVariableType,
     NumberVariable as NumberVariableType,
     ShortTextVariable,
-    BooleanVariable as BooleanVariableType,
 } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import NumberVariable from '../../../components/variablesComponents/NumberVariable';
-import DateVariable from '../../../components/variablesComponents/dateVariable/DateVariable';
-import TextVariable from '../../../components/variablesComponents/TextVariable';
-import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';
+import { variables } from '@tests/mocks/mockVariables';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
-import { APP_WRAPPER } from '../../shared.util/app';
+import NumberVariable from '../../../components/variablesComponents/NumberVariable';
+import TextVariable from '../../../components/variablesComponents/TextVariable';
+import DateVariable from '../../../components/variablesComponents/dateVariable/DateVariable';
+import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';
+import { APP_WRAPPER } from '../../mocks/app';
 
 describe('Variable help text', () => {
     afterEach(() => {

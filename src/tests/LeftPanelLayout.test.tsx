@@ -6,12 +6,11 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
-import { mockConnectors } from '../../__mocks__/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -29,7 +28,7 @@ describe('Layout selection', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                <VariablePanelContextProvider variables={variables}>
                     <LeftPanel
                         variables={variables}
                         selectedLayout={mockLayout}
@@ -61,7 +60,7 @@ describe('Layout selection', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                <VariablePanelContextProvider variables={variables}>
                     <LeftPanel
                         variables={variables}
                         selectedLayout={nonResizableLayout}
@@ -86,7 +85,7 @@ describe('Layout selection', () => {
     test('Layout dropdown is displayed when multiple layouts are available for user', async () => {
         render(
             <UiThemeProvider theme="platform">
-                <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                <VariablePanelContextProvider variables={variables}>
                     <LeftPanel
                         variables={variables}
                         selectedLayout={mockLayout}

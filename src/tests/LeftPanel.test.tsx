@@ -1,7 +1,6 @@
 import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockAssets } from '@mocks/mockAssets';
-import { mockConnectors } from '@mocks/mockConnectors';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,13 +10,13 @@ import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import AppProvider from '../contexts/AppProvider';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
-        selectedConnector: {
+        remoteConnector: {
             supportedAuthentication: {
                 browser: ['none'],
             },
@@ -119,7 +118,7 @@ describe('Image Panel', () => {
         const { getByText, getByRole } = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}
@@ -157,7 +156,7 @@ describe('Image Panel', () => {
         const { getByText, getByTestId, getAllByText } = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}
@@ -195,7 +194,7 @@ describe('Image Panel', () => {
         const { getByText } = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}
@@ -230,7 +229,7 @@ describe('Image Panel', () => {
         const { getByRole } = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}
@@ -280,7 +279,7 @@ describe('Image Panel', () => {
         render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}
@@ -317,7 +316,7 @@ describe('Image Panel', () => {
         const { getByTestId } = render(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+                    <VariablePanelContextProvider variables={variables}>
                         <LeftPanel
                             variables={variables}
                             selectedLayout={mockLayout}

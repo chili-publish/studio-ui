@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
-import { MediaDownloadType } from '@chili-publish/studio-sdk';
 import { usePreviewImageUrl as coreHook } from '@chili-publish/grafx-shared-components';
+import { MediaDownloadType } from '@chili-publish/studio-sdk';
+import { useCallback } from 'react';
 import { MediaRemoteConnector } from 'src/utils/ApiTypes';
 
 export const usePreviewImageUrl = (
     connectorId: string | undefined,
     mediaAssetId: string | undefined,
-    selectedConnector: MediaRemoteConnector | undefined,
+    remoteConnector: MediaRemoteConnector | undefined,
 ) => {
     const previewCall = useCallback(
         async (id: string, retries = 3) => {
@@ -21,8 +21,8 @@ export const usePreviewImageUrl = (
                 if (
                     typeof res === 'object' &&
                     'data' in res &&
-                    selectedConnector?.name === 'GraFx Media' &&
-                    selectedConnector?.ownerType === 'builtIn'
+                    remoteConnector?.name === 'GraFx Media' &&
+                    remoteConnector?.ownerType === 'builtIn'
                 ) {
                     if (JSON.parse((res as { data: string }).data).statusCode === 202) {
                         if (retries > 0) {
@@ -43,7 +43,7 @@ export const usePreviewImageUrl = (
                 return null;
             }
         },
-        [connectorId, selectedConnector?.name, selectedConnector?.ownerType],
+        [connectorId, remoteConnector?.name, remoteConnector?.ownerType],
     );
 
     const previewImageUrl = coreHook(mediaAssetId, previewCall);

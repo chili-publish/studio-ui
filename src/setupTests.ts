@@ -9,6 +9,12 @@ const ResizeObserver = require('resize-observer-polyfill');
 
 global.ResizeObserver = ResizeObserver;
 
+jest.mock('./utils/readEnvVariables', () => {
+    return {
+        getEnvVariables: () => ({}),
+    };
+});
+
 window.matchMedia =
     window.matchMedia ||
     function matchMedia() {

@@ -3,13 +3,13 @@ import { ConnectorHttpError } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { APP_WRAPPER } from '@tests/shared.util/app';
+import { APP_WRAPPER } from '@tests/mocks/app';
 import DataSource from '../../../components/dataSource/DataSource';
-import AppProvider from '../../../contexts/AppProvider';
-import { APP_WRAPPER_ID } from '../../../utils/constants';
-import { useSubscriberContext } from '../../../contexts/Subscriber';
-import { Subscriber } from '../../../utils/subscriber';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import AppProvider from '../../../contexts/AppProvider';
+import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
+import { Subscriber } from '../../../utils/subscriber';
 
 jest.mock('../../../contexts/Subscriber', () => ({
     useSubscriberContext: jest.fn().mockReturnValue({

@@ -21,7 +21,8 @@
         "outDir": "dist",
         "paths": {
             "@mocks/*": ["__mocks__/*"],
-            "@tests/*": ["./src/tests/*"]
+            "@tests/*": ["./src/tests/*"],
+            "src/*": ["./src/*"]
         }
     },
     "include": ["src/**/*"],

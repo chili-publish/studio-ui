@@ -1,10 +1,11 @@
-import { connectorSourceUrl, onVariableListChangedCallback } from '@tests/shared.util/sdk.mock';
-import axios from 'axios';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import { connectorSourceUrl, onVariableListChangedCallback } from '@tests/mocks/sdk.mock';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
+import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockVariables } from '@mocks/mockVariables';
+import { act, render, screen, waitFor } from '@testing-library/react';
+
+import axios from 'axios';
 
 import { ImageVariable } from '@chili-publish/studio-sdk';
 import StudioUI from '../../main';
@@ -60,7 +61,7 @@ describe('StudioLoader integration - valid auth token', () => {
             onVariableListChangedCallback?.(mockVariables);
         });
         await waitFor(() => {
-            expect(screen.getByText('Variable1')).toBeInTheDocument();
+            expect(screen.getByText('Variable1 Label')).toBeInTheDocument();
         });
         await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(

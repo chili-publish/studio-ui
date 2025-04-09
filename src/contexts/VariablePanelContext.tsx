@@ -4,7 +4,7 @@ import { ReactNode, createContext, useCallback, useContext, useMemo, useState } 
 import { css } from 'styled-components';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
-import { ContentType, ICapabilities, IConnectors, IVariablePanelContext } from './VariablePanelContext.types';
+import { ContentType, ICapabilities, IVariablePanelContext } from './VariablePanelContext.types';
 import { useVariableValidation } from './useVariableValidation';
 
 const VariablePanelContextDefaultValues: IVariablePanelContext = {
@@ -40,15 +40,7 @@ export const useVariablePanelContext = () => {
     return useContext(VariablePanelContext);
 };
 
-export function VariablePanelContextProvider({
-    children,
-    connectors,
-    variables,
-}: {
-    children: ReactNode;
-    connectors: IConnectors;
-    variables: Variable[];
-}) {
+export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
@@ -147,7 +139,6 @@ export function VariablePanelContextProvider({
             setSearchQuery,
             imagePanelTitle,
             connectorCapabilities,
-            connectors,
             getCapabilitiesForConnector,
             ...variableValidationData,
         }),
@@ -162,7 +153,6 @@ export function VariablePanelContextProvider({
             searchQuery,
             imagePanelTitle,
             connectorCapabilities,
-            connectors,
             getCapabilitiesForConnector,
             variableValidationData,
         ],

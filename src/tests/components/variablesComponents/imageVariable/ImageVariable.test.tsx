@@ -10,7 +10,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds'
 import { variables } from '../../../mocks/mockVariables';
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
-    useVariableConnector: jest.fn().mockReturnValue({ selectedConnector: null }),
+    useVariableConnector: jest.fn().mockReturnValue({ remoteConnector: null }),
 }));
 
 jest.mock('../../../../contexts/VariablePanelContext', () => ({
@@ -216,7 +216,7 @@ describe('"ImageVariable" component ', () => {
 
     it('should handle "browse" with required authentication', async () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
-            selectedConnector: { supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] } },
+            remoteConnector: { supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] } },
         });
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         const showImagePanel = jest.fn();
@@ -255,7 +255,7 @@ describe('"ImageVariable" component ', () => {
 
     it('should handle "browse" without required authentication', async () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
-            selectedConnector: { supportedAuthentication: { browser: [] } },
+            remoteConnector: { supportedAuthentication: { browser: [] } },
         });
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         const showImagePanel = jest.fn();

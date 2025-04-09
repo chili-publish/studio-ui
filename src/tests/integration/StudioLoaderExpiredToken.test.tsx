@@ -1,4 +1,4 @@
-import { connectorSourceUrl } from '@tests/shared.util/sdk.mock';
+import { connectorSourceUrl } from '@tests/mocks/sdk.mock';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';

@@ -10,17 +10,22 @@ import axios from 'axios';
 import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
 import { RemoteConnector } from './ApiTypes';
 
-const isConnectorUrlRegistration = (
-    connector: ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration,
-): connector is ConnectorUrlRegistration => {
+type ConnectorRegistration = ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration;
+
+const isConnectorUrlRegistration = (connector: ConnectorRegistration): connector is ConnectorUrlRegistration => {
     return connector.source === ConnectorRegistrationSource.url;
 };
 
-const isConnectorLocalRegistration = (
-    connector: ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration,
-): connector is ConnectorLocalRegistration => {
+const isConnectorLocalRegistration = (connector: ConnectorRegistration): connector is ConnectorLocalRegistration => {
     return connector.source === ConnectorRegistrationSource.local;
 };
+
+export function getConnectorUrl(connector: ConnectorInstance, graFxStudioEnvironmentApiBaseUrl: string) {
+    if (isConnectorUrlRegistration(connector.source) || isConnectorLocalRegistration(connector.source)) {
+        return connector.source.url;
+    }
+    return `${graFxStudioEnvironmentApiBaseUrl}/connectors/${connector.source.id}`;
+}
 
 // NOTE: Works for Grafx only connectors so far
 export async function getRemoteConnector<RC extends RemoteConnector = RemoteConnector>(
@@ -29,22 +34,14 @@ export async function getRemoteConnector<RC extends RemoteConnector = RemoteConn
     authToken: string,
 ): Promise<RC> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
-    if (engineConnector) {
-        if (
-            isConnectorUrlRegistration(engineConnector.source) ||
-            isConnectorLocalRegistration(engineConnector.source)
-        ) {
-            const res = await axios.get<RC>(engineConnector.source.url, {
-                headers: { Authorization: `Bearer ${authToken}` },
-            });
-            return res.data;
-        }
-        const res = await axios.get<RC>(`${graFxStudioEnvironmentApiBaseUrl}/connectors/${engineConnector.source.id}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-        });
-        return res.data;
+    if (!engineConnector) {
+        throw new Error(`Connector is not found by ${connectorId}`);
     }
-    throw new Error(`Connector is not found by ${connectorId}`);
+    const connectorRequestUrl = getConnectorUrl(engineConnector, graFxStudioEnvironmentApiBaseUrl);
+    const res = await axios.get<RC>(connectorRequestUrl, {
+        headers: { Authorization: `Bearer ${authToken}` },
+    });
+    return res.data;
 }
 
 export function isAuthenticationRequired(connector: RemoteConnector) {
@@ -113,7 +110,6 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
         }),
     );
     return mappingValues.reduce((config, mapping) => {
-        // eslint-disable-next-line no-param-reassign
         config[mapping.name] = mapping.value;
         return config;
     }, {} as Record<string, string | boolean | null>);

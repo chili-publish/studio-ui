@@ -1,5 +1,6 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -9,7 +10,6 @@ import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { useVariableConnector } from './useVariableConnector';
-import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove } = props;
@@ -17,7 +17,7 @@ function ImageVariable(props: IImageVariable) {
 
     const placeholder = getVariablePlaceholder(variable);
 
-    const { selectedConnector } = useVariableConnector(variable);
+    const { remoteConnector } = useVariableConnector(variable);
 
     const { showImagePanel } = useVariablePanelContext();
 
@@ -25,7 +25,7 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const previewImageUrl = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId, selectedConnector);
+    const previewImageUrl = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId, remoteConnector);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
 
     const previewImage = useMemo(() => {
@@ -60,11 +60,11 @@ function ImageVariable(props: IImageVariable) {
                     onVariableBlur?.(variable.id);
                 }}
                 onBrowse={async () => {
-                    if (!selectedConnector) {
-                        throw new Error('There is no selected connector');
+                    if (!remoteConnector) {
+                        throw new Error('There is no remote connector for defined image variable');
                     }
                     try {
-                        if (variable.value?.connectorId && isAuthenticationRequired(selectedConnector)) {
+                        if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                             await verifyAuthentication(variable.value.connectorId);
                         }
                         onVariableFocus?.(variable.id);

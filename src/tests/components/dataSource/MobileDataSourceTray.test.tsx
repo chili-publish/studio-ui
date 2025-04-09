@@ -4,15 +4,15 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import MobileVariables from '../../../components/variables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
+import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
-import { useSubscriberContext } from '../../../contexts/Subscriber';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
-import MobileVariables from '../../../components/variables/MobileVariables';
 
 const dataRows = [
     { id: '1', name: 'Joe', age: 15 },
@@ -110,10 +110,7 @@ describe('MobileDataSource test', () => {
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
-                        <VariablePanelContextProvider
-                            connectors={{ mediaConnectors: [], fontsConnectors: [] }}
-                            variables={[]}
-                        >
+                        <VariablePanelContextProvider variables={[]}>
                             <FeatureFlagProvider>
                                 <MobileVariables
                                     variables={[]}
