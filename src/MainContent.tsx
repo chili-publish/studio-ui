@@ -2,7 +2,6 @@ import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-pu
 import StudioSDK, {
     AuthRefreshTypeEnum,
     ConnectorEvent,
-    ConnectorType,
     DocumentType,
     GrafxTokenAuthCredentials,
     Layout,
@@ -32,18 +31,21 @@ import Navbar from './components/navbar/Navbar';
 import { OutputSettingsContextProvider } from './components/navbar/OutputSettingsContext';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import Pages from './components/pagesPanel/Pages';
+import MobileVariables from './components/variables/MobileVariables';
 import AppProvider from './contexts/AppProvider';
 import { useAuthToken } from './contexts/AuthTokenProvider';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
+import { useMediaConnectors } from './editor/useMediaConnectors';
 import { SuiCanvas } from './MainContent.styles';
+import { useAppDispatch } from './store';
+import { setConfiguration } from './store/reducers/documentReducer';
 import { defaultUiOptions, LoadDocumentError, Project, ProjectConfig } from './types/types';
+import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
-import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
-import MobileVariables from './components/variables/MobileVariables';
 
 declare global {
     interface Window {
@@ -59,6 +61,7 @@ interface MainContentProps {
 }
 
 function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentProps) {
+    const dispatch = useAppDispatch();
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
     const [variables, setVariables] = useState<Variable[]>([]);
     const [canUndo, setCanUndo] = useState(false);
@@ -69,8 +72,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const [currentZoom, setCurrentZoom] = useState<number>(100);
     const [currentProject, setCurrentProject] = useState<Project>();
     const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
-    const [mediaConnectors, setMediaConnectors] = useState<ConnectorInstance[]>([]);
-    const [fontsConnectors, setFontsConnectors] = useState<ConnectorInstance[]>([]);
     const [layoutIntent, setLayoutIntent] = useState<LayoutIntent | null>(null);
     const [dataSource, setDataSource] = useState<ConnectorInstance>();
 
@@ -94,6 +95,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const isMobileSize = useMobileSize();
     const { canvas } = useTheme();
     const { authToken } = useAuthToken();
+    const { loadConnectors } = useMediaConnectors();
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
@@ -119,24 +121,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
 
     useConnectorAuthenticationResult(authResults);
 
-    useEffect(() => {
-        if (projectConfig.onSetMultiLayout) {
-            projectConfig.onSetMultiLayout(setMultiLayoutMode);
-        }
-    }, [projectConfig, projectConfig.onSetMultiLayout]);
-    useEffect(() => {
-        projectConfig
-            .onProjectInfoRequested(projectConfig.projectId)
-            .then((project) => {
-                setCurrentProject(project);
-            })
-            .catch((err: Error) => {
-                // eslint-disable-next-line no-console
-                console.log(`[${MainContent.name}]`, err);
-                return err;
-            });
-    }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
-
     const zoomToPage = useCallback(async (pageId: string | null = null) => {
         const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
         const zoomParams = {
@@ -154,6 +138,25 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             zoomParams.height,
         );
     }, []);
+
+    useEffect(() => {
+        if (projectConfig.onSetMultiLayout) {
+            projectConfig.onSetMultiLayout(setMultiLayoutMode);
+        }
+    }, [projectConfig, projectConfig.onSetMultiLayout]);
+
+    useEffect(() => {
+        projectConfig
+            .onProjectInfoRequested(projectConfig.projectId)
+            .then((project) => {
+                setCurrentProject(project);
+            })
+            .catch((err: Error) => {
+                // eslint-disable-next-line no-console
+                console.log(`[${MainContent.name}]`, err);
+                return err;
+            });
+    }, [projectConfig.onProjectInfoRequested, projectConfig.projectId, projectConfig]);
 
     useEffect(() => {
         if (!eventSubscriber) {
@@ -348,6 +351,12 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     }, []);
 
     useEffect(() => {
+        dispatch(
+            setConfiguration({ graFxStudioEnvironmentApiBaseUrl: projectConfig.graFxStudioEnvironmentApiBaseUrl }),
+        );
+    }, [dispatch, projectConfig.graFxStudioEnvironmentApiBaseUrl]);
+
+    useEffect(() => {
         const loadDocument = async () => {
             if (!fetchedDocument) return;
 
@@ -355,26 +364,17 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 const result = await window.StudioUISDK.document.load(fetchedDocument);
                 setIsDocumentLoaded(result.success);
 
-                window.StudioUISDK.next.connector.getAllByType(ConnectorType.media).then(async (res) => {
-                    if (res.success && res.parsedData) {
-                        setMediaConnectors(res.parsedData);
-                    }
-                });
-
-                window.StudioUISDK.next.connector.getAllByType('font' as ConnectorType).then(async (res) => {
-                    if (res.success && res.parsedData) {
-                        setFontsConnectors(res.parsedData);
-                    }
-                });
+                loadConnectors();
 
                 window.StudioUISDK.dataSource.getDataSource().then((res) => {
                     setDataSource(res.parsedData ?? undefined);
                 });
 
+                // TODO: Consider to remove it from here, since set happens in different SDK event subscriptions
+                // Currently removal requires tests updates
                 const layoutIntentData =
                     (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
                 setLayoutIntent(layoutIntentData);
-                zoomToPage();
             } catch (err: unknown) {
                 const errorCode = ((err as Error).cause as { name: string; message: string })?.name;
                 if (errorCode === '303011') {
@@ -390,7 +390,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         };
 
         loadDocument();
-    }, [fetchedDocument, zoomToPage]);
+    }, [fetchedDocument, loadConnectors]);
 
     useEffect(() => {
         if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
@@ -420,10 +420,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container>
                     <UiConfigContextProvider projectConfig={projectConfig}>
-                        <VariablePanelContextProvider
-                            connectors={{ mediaConnectors, fontsConnectors }}
-                            variables={variables}
-                        >
+                        <VariablePanelContextProvider variables={variables}>
                             <div id={APP_WRAPPER_ID} className="app">
                                 {projectConfig.uiOptions.widgets?.navBar?.visible === false ? null : (
                                     <OutputSettingsContextProvider

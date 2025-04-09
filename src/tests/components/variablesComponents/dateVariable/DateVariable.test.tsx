@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import DateVariable from '../../../../components/variablesComponents/dateVariable/DateVariable';
 import { APP_WRAPPER_ID } from '../../../../utils/constants';
-import { APP_WRAPPER } from '../../../shared.util/app';
+import { APP_WRAPPER } from '../../../mocks/app';
 
 describe('DateVariable', () => {
     it('should display the configured placeholder', async () => {

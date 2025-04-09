@@ -1,16 +1,16 @@
-import '@tests/shared.util/sdk.mock';
-import { act, render, waitFor, screen, fireEvent } from '@testing-library/react';
-import { variables } from '@tests/mocks/mockVariables';
-import axios from 'axios';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import '@tests/mocks/sdk.mock';
+import { DateVariable, ImageVariable, ShortTextVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
-import { DateVariable, ImageVariable, ShortTextVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { variables } from '@tests/mocks/mockVariables';
+import axios from 'axios';
 import selectEvent from 'react-select-event';
-import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
 import StudioUI from '../../main';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';

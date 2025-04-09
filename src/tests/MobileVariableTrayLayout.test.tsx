@@ -5,13 +5,13 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
-import { getDataIdForSUI } from '../utils/dataIds';
-import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 import MobileVariables from '../components/variables/MobileVariables';
 import * as AppProvider from '../contexts/AppProvider';
 import { IAppContext } from '../contexts/AppProvider';
+import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
+import { getDataIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './mocks/app';
+import { variables } from './mocks/mockVariables';
 
 afterEach(() => {
     jest.clearAllMocks();
