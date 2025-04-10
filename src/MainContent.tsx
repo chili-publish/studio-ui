@@ -286,6 +286,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 },
             },
             editorLink: projectConfig.editorLink,
+            enableQueryCallCache: true,
         });
 
         // Connect to ths SDK

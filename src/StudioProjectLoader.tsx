@@ -260,6 +260,7 @@ export class StudioProjectLoader {
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: userInterfaceData?.formBuilder.length ? formBuilderAsObject : undefined,
+                outputSettingsFullList: outputSettings.data.data,
             };
         }
         if (this.sandboxMode) {
@@ -269,6 +270,7 @@ export class StudioProjectLoader {
                       userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
+                      outputSettingsFullList: outputSettings.data.data,
                   }
                 : null;
         }

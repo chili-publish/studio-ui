@@ -22,6 +22,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder: mockUserInterface.formBuilder,
+                outputSettingsFullList: [],
             }),
         onFetchUserInterfaceDetails: () =>
             Promise.resolve({
@@ -30,6 +31,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                outputSettingsFullList: [],
             }),
     };
     const projectConfig = config || prjConfig;
@@ -71,6 +73,7 @@ describe('Navbar', () => {
                         { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                     ],
                     formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                    outputSettingsFullList: [],
                 }),
         };
     });
@@ -178,6 +181,7 @@ describe('Navbar', () => {
                         },
                     ],
                     formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                    outputSettingsFullList: [],
                 }),
         };
         renderComponent(prjConfig);
@@ -222,6 +226,7 @@ describe('Navbar', () => {
                         },
                     ],
                     formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                    outputSettingsFullList: [],
                 }),
         };
         renderComponent(prjConfig, LayoutIntent.print);
@@ -266,6 +271,7 @@ describe('Navbar', () => {
                         },
                     ],
                     formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                    outputSettingsFullList: [],
                 }),
         };
 

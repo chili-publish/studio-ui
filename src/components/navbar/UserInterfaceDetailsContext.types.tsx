@@ -6,4 +6,5 @@ export interface IUserInterfaceDetailsContext {
     selectedUserInterfaceId: string | null;
     onUserInterfaceChange: (_: string) => void;
     formBuilder: FormBuilderType;
+    outputSettingsFullList: UserInterfaceOutputSettings[] | undefined;
 }
