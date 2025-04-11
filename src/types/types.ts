@@ -129,6 +129,7 @@ export type UserInterfaceWithOutputSettings = {
         id: string;
         name: string;
     };
+    outputSettingsFullList: UserInterfaceOutputSettings[];
 };
 
 export type UserInterface = {

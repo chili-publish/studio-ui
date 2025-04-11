@@ -6,8 +6,15 @@ import { UserInterfaceOutputSettings } from '../../../types/types';
 import { outputTypesIcons } from './DownloadPanel.types';
 import { useOutputSettingsContext } from '../OutputSettingsContext';
 
-const useDownload = (hideDownloadPanel: () => void) => {
-    const { outputSettings, userInterfaceOutputSettings } = useOutputSettingsContext();
+const useDownload = ({
+    hideDownloadPanel,
+    isSandBoxMode,
+}: {
+    hideDownloadPanel: () => void;
+    isSandBoxMode?: boolean;
+}) => {
+    const { outputSettings, userInterfaceOutputSettings, outputSettingsFullList } = useOutputSettingsContext();
+
     const initialDownloadState: Record<DownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,
         [DownloadFormats.PNG]: false,
@@ -88,9 +95,17 @@ const useDownload = (hideDownloadPanel: () => void) => {
         });
     }, [userInterfaceOutputSettings]);
 
-    const getFormatFromId = useCallback((id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
-        return availableOutputs.find((output) => output.id === id)?.type.toLocaleLowerCase() as DownloadFormats;
-    }, []);
+    const getFormatFromId = useCallback(
+        (id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
+            if (isSandBoxMode && outputSettingsFullList) {
+                return outputSettingsFullList
+                    .find((output) => output.id === id)
+                    ?.type.toLocaleLowerCase() as DownloadFormats;
+            }
+            return availableOutputs.find((output) => output.id === id)?.type.toLocaleLowerCase() as DownloadFormats;
+        },
+        [isSandBoxMode, outputSettingsFullList],
+    );
 
     useEffect(() => {
         if (userInterfaceOutputSettings && userInterfaceOutputSettings.length > 0) {
