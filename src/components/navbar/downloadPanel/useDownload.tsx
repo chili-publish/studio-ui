@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import DropdownOption from './DropdownOption';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { outputTypesIcons } from './DownloadPanel.types';
-import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 const useDownload = ({
     hideDownloadPanel,
@@ -13,7 +13,7 @@ const useDownload = ({
     hideDownloadPanel: () => void;
     isSandBoxMode?: boolean;
 }) => {
-    const { outputSettings, userInterfaceOutputSettings, outputSettingsFullList } = useOutputSettingsContext();
+    const { outputSettings, userInterfaceOutputSettings, outputSettingsFullList } = useUserInterfaceDetailsContext();
 
     const initialDownloadState: Record<DownloadFormats, boolean> = {
         [DownloadFormats.JPG]: false,

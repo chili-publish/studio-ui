@@ -3,11 +3,11 @@ import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/gra
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
-import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: boolean) => {
     const { isDownloadBtnVisible } = useUiConfigContext();
-    const { userInterfaceOutputSettings, outputSettingsFullList } = useOutputSettingsContext();
+    const { userInterfaceOutputSettings, outputSettingsFullList } = useUserInterfaceDetailsContext();
     const isMobile = useMobileSize();
 
     const label = isSandBoxMode ? 'Export' : 'Download';
