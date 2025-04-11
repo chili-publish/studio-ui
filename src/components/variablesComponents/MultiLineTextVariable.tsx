@@ -25,12 +25,12 @@ function MultiLineTextVariable(props: ITextVariable) {
     };
 
     const handleLineBreakKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+        const cursorPosition = textarea.selectionStart;
+        const currentTextValue = textarea.value;
         if (e.key === 'Enter') {
             e.preventDefault();
-            const textarea = textareaRef.current;
-            if (!textarea) return;
-            const cursorPosition = textarea.selectionStart;
-            const currentTextValue = textarea.value;
             // To make the hard line break visually similar to the soft line break instead of going with \n\n
             // I went with \n\u200B (zero-width space), so it will be visiually the same but still can be targeted and replaced by \n\n
             // when sending it to the engine
@@ -42,6 +42,21 @@ function MultiLineTextVariable(props: ITextVariable) {
                 textarea.selectionStart = cursorPosition + lineBreak.length;
                 textarea.selectionEnd = cursorPosition + lineBreak.length;
             });
+        }
+        if (e.key === 'ArrowLeft') {
+            if (currentTextValue[cursorPosition - 1] === '\u200B' && currentTextValue[cursorPosition - 2] === '\n') {
+                e.preventDefault();
+                textarea.selectionStart = cursorPosition - 2;
+                textarea.selectionEnd = cursorPosition - 2;
+            }
+        }
+
+        if (e.key === 'ArrowRight') {
+            if (currentTextValue[cursorPosition] === '\n' && currentTextValue[cursorPosition + 1] === '\u200B') {
+                e.preventDefault();
+                textarea.selectionStart = cursorPosition + 2;
+                textarea.selectionEnd = cursorPosition + 2;
+            }
         }
     };
 
