@@ -239,19 +239,23 @@ export class StudioProjectLoader {
         // userInterfaceID from projectConfig or session-stored userInterfaceId
         const userInterface = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
         if (userInterface) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const handleError = async (err: any) => {
+                if (err.response && err.response.status === 404) {
+                    return fetchDefaultUserInterface();
+                }
+                throw new Error(`${err}`);
+            };
+
             const userInterfaceData: UserInterface =
-                (await this.onFetchUserInterfaceDetails?.(userInterface)) ??
+                (await this.onFetchUserInterfaceDetails?.(userInterface).catch(handleError)) ??
                 (await axios
                     .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
                         headers: { Authorization: `Bearer ${this.authToken}` },
                     })
                     .then((res) => res.data)
-                    .catch(async (err) => {
-                        if (err.response && err.response.status === 404) {
-                            return fetchDefaultUserInterface();
-                        }
-                        throw new Error(`${err}`);
-                    }));
+                    .catch(handleError));
+
             const formBuilderAsObject = transformFormBuilderArrayToObject(userInterfaceData?.formBuilder);
             return {
                 userInterface: {
@@ -259,7 +263,7 @@ export class StudioProjectLoader {
                     name: userInterfaceData.name,
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
-                formBuilder: userInterfaceData?.formBuilder.length ? formBuilderAsObject : undefined,
+                formBuilder: userInterfaceData?.formBuilder?.length ? formBuilderAsObject : undefined,
                 outputSettingsFullList: outputSettings.data.data,
             };
         }
