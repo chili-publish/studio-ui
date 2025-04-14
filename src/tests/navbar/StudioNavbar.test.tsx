@@ -79,6 +79,7 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
         zoom: 100,
         undoStackState: { canRedo: true, canUndo: true },
         projectConfig,
+        layoutIntent: LayoutIntent.digitalAnimated,
     };
     render(
         <UiConfigContextProvider projectConfig={projectConfig}>
@@ -101,6 +102,7 @@ describe('StudioNavbar', () => {
                 userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
                 outputSettings: [],
                 formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+                outputSettingsFullList: [],
             }),
         );
         renderTemplate(fetchOutputSettings);

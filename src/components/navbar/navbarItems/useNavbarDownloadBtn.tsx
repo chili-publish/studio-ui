@@ -5,37 +5,54 @@ import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
 import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
-const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void) => {
+const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: boolean) => {
     const { isDownloadBtnVisible } = useUiConfigContext();
-    const { userInterfaceOutputSettings } = useUserInterfaceDetailsContext();
+    const { userInterfaceOutputSettings, outputSettingsFullList } = useUserInterfaceDetailsContext();
     const isMobile = useMobileSize();
+
+    const label = isSandBoxMode ? 'Export' : 'Download';
+    const isVisible = isSandBoxMode
+        ? isDownloadBtnVisible
+        : isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0;
 
     const navbarItem = useMemo(
         () =>
-            isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0
+            isVisible
                 ? {
-                      label: 'Download',
+                      label,
                       content: (
                           <NavbarButton
                               dataId="navbar-download-btn"
                               dataIntercomId="Download button"
-                              ariaLabel="Download"
+                              ariaLabel={label}
                               label={
                                   !isMobile ? (
-                                      <NavbarLabel key="Download" hideOnMobile>
-                                          Download
+                                      <NavbarLabel key={label} hideOnMobile>
+                                          {label}
                                       </NavbarLabel>
                                   ) : undefined
                               }
                               icon={AvailableIcons.faArrowDownToLine}
                               variant={ButtonVariant.primary}
                               handleOnClick={onDownloadPanelOpen}
-                              disabled={userInterfaceOutputSettings?.length === 0}
+                              disabled={
+                                  isSandBoxMode
+                                      ? outputSettingsFullList?.length === 0
+                                      : userInterfaceOutputSettings?.length === 0
+                              }
                           />
                       ),
                   }
                 : null,
-        [isDownloadBtnVisible, isMobile, onDownloadPanelOpen, userInterfaceOutputSettings?.length],
+        [
+            isMobile,
+            isSandBoxMode,
+            isVisible,
+            label,
+            onDownloadPanelOpen,
+            outputSettingsFullList?.length,
+            userInterfaceOutputSettings?.length,
+        ],
     );
 
     return {

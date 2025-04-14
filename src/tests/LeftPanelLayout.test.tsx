@@ -50,6 +50,7 @@ const renderComponent = (
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder,
+                outputSettingsFullList: [],
             } as UserInterfaceWithOutputSettings),
         onFetchUserInterfaceDetails: () =>
             Promise.resolve({
@@ -58,6 +59,7 @@ const renderComponent = (
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
                 formBuilder,
+                outputSettingsFullList: [],
             } as UserInterfaceWithOutputSettings),
         uiOptions: {
             ...ProjectConfigs.empty.uiOptions,

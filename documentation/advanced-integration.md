@@ -299,3 +299,11 @@ Following callbacks are also available (in other loaders):
 -   `onAuthenticationExpired`: Basically the same as refreshTokenAction above
 -   `onLogInfoRequested`: A callback used to generate some loading information in the console.
 -   `onProjectGetDownloadLink`: A callback to get the output download link for the project.
+
+### Enable/Disable Connector Query Call Caching
+
+By default, connector query calls are cached. This behavior can be overridden using:
+
+`await StudioUISDK.configuration.setValue('ENABLE_QUERY_CALL_CACHE', status)`
+
+Here, status is a string — if sent as 'true', query calls will be cached; if 'false', they will not be cached.
