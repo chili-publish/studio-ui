@@ -13,7 +13,7 @@ interface MobileVariablesProps {
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
     pageSize?: PageSize;
-    layoutSectionUIOptions: Required<Required<UiOptions>['layoutSection']> & { visible: boolean };
+    layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
 
     isTimelineDisplayed?: boolean;
     isPagesPanelDisplayed?: boolean;

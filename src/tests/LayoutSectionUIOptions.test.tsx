@@ -76,6 +76,7 @@ const mockProjectConfig = {
     onProjectDocumentRequested: jest.fn().mockResolvedValue('{}'),
     onProjectInfoRequested: jest.fn().mockResolvedValue({}),
     onProjectSave: jest.fn(),
+    onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(false)),
     onAuthenticationExpired: jest.fn(),
     outputSettings: {},
 } as unknown as ProjectConfig;
@@ -172,6 +173,7 @@ describe('Layout Section UI Options', () => {
                     },
                 ] as LayoutListItemType[]);
             });
+            const multiLayoutMock = jest.fn((callback) => callback(true));
 
             await screen.findByTestId(getDataTestIdForSUI('canvas'));
             rerender(
@@ -186,7 +188,7 @@ describe('Layout Section UI Options', () => {
                                             layoutSwitcherVisible: true,
                                         },
                                     },
-                                    onSetMultiLayout: (setter) => setter(true),
+                                    onSetMultiLayout: multiLayoutMock,
                                 }}
                                 updateToken={jest.fn()}
                             />
@@ -195,7 +197,7 @@ describe('Layout Section UI Options', () => {
                 </AppProvider>,
             );
 
-            expect(screen.queryByText('Layout')).not.toBeInTheDocument();
+            expect(screen.queryByText('Layouts')).not.toBeInTheDocument();
         });
 
         it('should render layout with default title when widget is true', async () => {
@@ -235,8 +237,7 @@ describe('Layout Section UI Options', () => {
                     },
                 ] as LayoutListItemType[]);
             });
-
-            expect(screen.getByText('Layout')).toBeInTheDocument();
+            expect(screen.getByText('Layouts')).toBeInTheDocument();
         });
 
         it('should render layout with custom title', async () => {
@@ -332,8 +333,9 @@ describe('Layout Section UI Options', () => {
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');
             expect(screen.queryByText('Layout')).not.toBeInTheDocument();
         });
-
         it('should not render layout in multiLayout view', async () => {
+            const multiLayoutMock = jest.fn((callback) => callback(true));
+
             const { rerender } = render(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
@@ -383,7 +385,7 @@ describe('Layout Section UI Options', () => {
                                             layoutSwitcherVisible: true,
                                         },
                                     },
-                                    onSetMultiLayout: (setter) => setter(true),
+                                    onSetMultiLayout: multiLayoutMock,
                                 }}
                                 updateToken={jest.fn()}
                             />
@@ -393,9 +395,9 @@ describe('Layout Section UI Options', () => {
             );
 
             const openTrayBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
-
             await userEvent.click(openTrayBtn);
 
+            expect(multiLayoutMock).toHaveBeenCalled();
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');
             expect(screen.queryByText('Layout')).not.toBeInTheDocument();
         });
