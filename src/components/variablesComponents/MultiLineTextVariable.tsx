@@ -104,7 +104,7 @@ function MultiLineTextVariable(props: ITextVariable) {
                 ref={textareaRef}
                 type="textarea"
                 width="100%"
-                value={variableValue.replace(/\n\n/g, HARD_BREAK).replace(/\n\u200C/g, '\n')}
+                value={variableValue.replace(/\n\n/g, HARD_BREAK)}
                 label={
                     <Label translationKey={variable?.label ?? variable.name} value={variable?.label ?? variable.name} />
                 }
