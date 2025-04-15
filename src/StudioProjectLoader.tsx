@@ -12,6 +12,7 @@ import {
 } from './types/types';
 import { getDownloadLink, addTrailingSlash } from './utils/documentExportHelper';
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
+import { transformFormBuilderArrayToObject } from './utils/helpers';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -32,6 +33,8 @@ export class StudioProjectLoader {
 
     private userInterfaceID?: string;
 
+    private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
+
     constructor(
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
@@ -41,6 +44,7 @@ export class StudioProjectLoader {
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
         userInterfaceID?: string,
+        onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
@@ -50,6 +54,7 @@ export class StudioProjectLoader {
         this.authToken = authToken;
         this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
+        this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -198,7 +203,7 @@ export class StudioProjectLoader {
         }
     };
 
-    public onFetchOutputSettings = async (
+    public onFetchStudioUserInterfaceDetails = async (
         userInterfaceId = this.userInterfaceID,
     ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
@@ -234,32 +239,57 @@ export class StudioProjectLoader {
         // userInterfaceID from projectConfig or session-stored userInterfaceId
         const userInterface = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
         if (userInterface) {
-            const userInterfaceData: UserInterface = await axios
-                .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
-                    headers: { Authorization: `Bearer ${this.authToken}` },
-                })
-                .then((res) => res.data)
-                .catch(async (err) => {
-                    if (err.response && err.response.status === 404) {
-                        return fetchDefaultUserInterface();
-                    }
-                    throw new Error(`${err}`);
-                });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const handleError = async (err: any) => {
+                if (err.response && err.response.status === 404) {
+                    return fetchDefaultUserInterface();
+                }
+                throw new Error(`${err}`);
+            };
+
+            const userInterfaceData: UserInterface =
+                (await this.onFetchUserInterfaceDetails?.(userInterface).catch(handleError)) ??
+                (await axios
+                    .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
+                        headers: { Authorization: `Bearer ${this.authToken}` },
+                    })
+                    .then((res) => res.data)
+                    .catch(handleError));
+
+            const formBuilderAsObject = transformFormBuilderArrayToObject(userInterfaceData?.formBuilder);
             return {
-                userInterface: { id: userInterfaceData?.id, name: userInterfaceData?.name },
+                userInterface: {
+                    id: userInterfaceData.id,
+                    name: userInterfaceData.name,
+                },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
+                formBuilder: userInterfaceData?.formBuilder?.length ? formBuilderAsObject : undefined,
                 outputSettingsFullList: outputSettings.data.data,
             };
         }
-        const defaultUserInterface = await fetchDefaultUserInterface();
+        if (this.sandboxMode) {
+            const defaultUserInterface = await fetchDefaultUserInterface();
+            return defaultUserInterface
+                ? {
+                      userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
+                      outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
+                      formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
+                      outputSettingsFullList: outputSettings.data.data,
+                  }
+                : null;
+        }
+        return null;
+    };
 
-        return defaultUserInterface
-            ? {
-                  userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
-                  outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
-                  outputSettingsFullList: outputSettings.data.data,
-              }
-            : null;
+    /**
+     * @deprecated This method is deprecated and will be removed in a future version.
+     * Please use onFetchStudioUserInterfaceDetails() instead which provides the same functionality
+     */
+    public onFetchOutputSettings = async (
+        userInterfaceId = this.userInterfaceID,
+    ): Promise<UserInterfaceWithOutputSettings | null> => {
+        const userInterfaceDetails = await this.onFetchStudioUserInterfaceDetails(userInterfaceId);
+        return userInterfaceDetails;
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

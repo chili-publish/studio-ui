@@ -2,14 +2,14 @@ import { AvailableIcons, Select } from '@chili-publish/grafx-shared-components';
 import { useEffect, useMemo, useState } from 'react';
 import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 import { UserInterface } from '../../../types/types';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 const useUserInterfaceSelector = () => {
     const { projectConfig } = useUiConfigContext();
     const [userInterfaces, setUserInterfaces] = useState<UserInterface[]>([]);
-    const { selectedUserInterfaceId, onUserInterfaceChange } = useOutputSettingsContext();
+    const { selectedUserInterfaceId, onUserInterfaceChange } = useUserInterfaceDetailsContext();
 
     useEffect(() => {
         if (projectConfig.onFetchUserInterfaces) {
