@@ -31,7 +31,7 @@ import {
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
-import { useOutputSettingsContext } from '../OutputSettingsContext';
+import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -58,7 +58,7 @@ const getCustomSelectedOption = (option: SelectOptions) => {
 };
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
-    const { outputSettingsFullList } = useOutputSettingsContext();
+    const { outputSettingsFullList } = useUserInterfaceDetailsContext();
 
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
