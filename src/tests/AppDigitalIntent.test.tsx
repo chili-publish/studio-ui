@@ -1,8 +1,9 @@
 import { LayoutIntent } from '@chili-publish/studio-sdk';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import App from '../App';
 import { ProjectConfig } from '../types/types';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { renderWithProviders } from './mocks/Provider';
 
 const projectConfig = {
     projectId: 'projectId',
@@ -57,7 +58,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
 
 describe('AppDigitalIntent', () => {
     it('Timeline should not be shown if layout intent is not Digital animated', async () => {
-        render(<App projectConfig={projectConfig as unknown as ProjectConfig} />);
+        renderWithProviders(<App projectConfig={projectConfig as unknown as ProjectConfig} />);
 
         await waitFor(() => {
             expect(screen.getByTestId(getDataTestIdForSUI('timeline-wrapper'))).toBeInTheDocument();

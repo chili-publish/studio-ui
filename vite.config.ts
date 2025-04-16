@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 import { defineConfig } from 'vite';
 import EnvironmentPlugin from 'vite-plugin-environment';
 
@@ -21,7 +22,10 @@ export default ({ mode }) => {
         resolve: {
             // force Vite to always resolve listed dependencies to the same copy (from project root).
             dedupe: ['react', 'react-dom'],
-            alias: { 'react/jsx-runtime.js': 'react/jsx-runtime' },
+            alias: {
+                'react/jsx-runtime.js': 'react/jsx-runtime',
+                src: path.resolve(__dirname, './src'),
+            },
         },
         build: {
             emptyOutDir: true,

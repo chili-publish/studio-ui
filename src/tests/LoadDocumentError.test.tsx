@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { act } from 'react-dom/test-utils';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ProjectConfig } from '../types/types';
+import { act } from 'react-dom/test-utils';
 import MainContent from '../MainContent';
 import AppProvider from '../contexts/AppProvider';
 import { SubscriberContextProvider } from '../contexts/Subscriber';
+import { ProjectConfig } from '../types/types';
 import { Subscriber } from '../utils/subscriber';
+import { renderWithProviders } from './mocks/Provider';
 
 const onUserInterfaceBackMock = jest.fn();
 const projectConfig = {
@@ -70,12 +70,10 @@ describe('LoadDocumentError', () => {
     it('Shows a dialog when load document errors because of selected engine version being lower than the one in the document', async () => {
         const user = userEvent.setup();
         await act(async () => {
-            await render(
+            await renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent updateToken={jest.fn()} projectConfig={projectConfig} />
-                        </UiThemeProvider>
+                        <MainContent updateToken={jest.fn()} projectConfig={projectConfig} />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );

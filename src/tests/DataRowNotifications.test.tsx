@@ -1,13 +1,13 @@
 import { ConfigType, DataRowAsyncError, LayoutIntent } from '@chili-publish/studio-sdk';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+import { act, screen, waitFor } from '@testing-library/react';
+import { TOAST_ID } from '../contexts/NotificantionManager/Notification.types';
+import { NotificationManagerProvider } from '../contexts/NotificantionManager/NotificationManagerProvider';
+import { SubscriberContextProvider } from '../contexts/Subscriber';
 import MainContent from '../MainContent';
 import { ProjectConfig } from '../types/types';
-import { SubscriberContextProvider } from '../contexts/Subscriber';
 import { Subscriber } from '../utils/subscriber';
 import { variables } from './mocks/mockVariables';
-import { NotificationManagerProvider } from '../contexts/NotificantionManager/NotificationManagerProvider';
-import { TOAST_ID } from '../contexts/NotificantionManager/Notification.types';
+import { renderWithProviders } from './mocks/Provider';
 
 jest.mock('@chili-publish/studio-sdk', () => {
     const originalModule = jest.requireActual('@chili-publish/studio-sdk');
@@ -90,23 +90,21 @@ afterAll(() => {
 });
 
 const renderComponent = () => {
-    render(
+    renderWithProviders(
         <SubscriberContextProvider subscriber={new Subscriber()}>
-            <UiThemeProvider theme="platform">
-                <NotificationManagerProvider>
-                    <MainContent
-                        projectConfig={{
-                            ...mockProjectConfig,
-                            uiOptions: {
-                                layoutSection: {
-                                    layoutSwitcherVisible: false,
-                                },
+            <NotificationManagerProvider>
+                <MainContent
+                    projectConfig={{
+                        ...mockProjectConfig,
+                        uiOptions: {
+                            layoutSection: {
+                                layoutSwitcherVisible: false,
                             },
-                        }}
-                        updateToken={jest.fn()}
-                    />
-                </NotificationManagerProvider>
-            </UiThemeProvider>
+                        },
+                    }}
+                    updateToken={jest.fn()}
+                />
+            </NotificationManagerProvider>
         </SubscriberContextProvider>,
     );
 };

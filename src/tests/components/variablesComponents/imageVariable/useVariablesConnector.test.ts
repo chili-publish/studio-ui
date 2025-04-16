@@ -1,10 +1,11 @@
-import { mock } from 'jest-mock-extended';
 import EditorSDK, { ImageVariable } from '@chili-publish/studio-sdk';
-import { renderHook, waitFor } from '@testing-library/react';
-import axios from 'axios';
 import { ConnectorRegistrationSource } from '@chili-publish/studio-sdk/lib/src/next';
-import { variables as mockVariables } from '../../../mocks/mockVariables';
+import { renderHookWithProviders } from '@tests/mocks/Provider';
+import axios from 'axios';
+import { mock } from 'jest-mock-extended';
+import { MediaRemoteConnector } from 'src/utils/ApiTypes';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
+import { variables as mockVariables } from '../../../mocks/mockVariables';
 
 jest.mock('axios');
 
@@ -32,23 +33,19 @@ describe('"useVariablesConnector" hook', () => {
         jest.resetAllMocks();
     });
 
-    it('should set connector', async () => {
+    it('should set connector from store', async () => {
         const currentImageVariable: ImageVariable = mockVariables[0];
-        const { result } = renderHook(() => useVariableConnector(currentImageVariable));
-
-        await waitFor(() => {
-            expect(window.StudioUISDK.next.connector.getById).toHaveBeenCalledWith(
-                currentImageVariable.value?.connectorId,
-            );
+        const { result } = renderHookWithProviders(() => useVariableConnector(currentImageVariable), {
+            preloadedState: {
+                media: {
+                    connectors: {
+                        [currentImageVariable.value!.connectorId]: { id: 'remote-connector-1' } as MediaRemoteConnector,
+                    },
+                },
+            },
         });
 
-        await waitFor(() => {
-            expect(axios.get).toHaveBeenCalledWith('http://deploy.com/media-connector', {
-                headers: { Authorization: 'Bearer ' },
-            });
-        });
-
-        expect(result.current.selectedConnector).toEqual({
+        expect(result.current.remoteConnector).toEqual({
             id: 'remote-connector-1',
         });
     });
