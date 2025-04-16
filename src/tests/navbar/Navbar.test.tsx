@@ -2,13 +2,14 @@ import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-comp
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { mockUserInterface } from '@mocks/mockUserinterface';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
-import { ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
+import { FormBuilderType, ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { OutputSettingsContextProvider } from '../../components/navbar/OutputSettingsContext';
+import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
 const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, dataSource?: ConnectorInstance) => {
@@ -20,6 +21,16 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                 outputSettings: [
                     { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                 ],
+                formBuilder: mockUserInterface.formBuilder,
+                outputSettingsFullList: [],
+            }),
+        onFetchUserInterfaceDetails: () =>
+            Promise.resolve({
+                userInterface: { id: '1', name: 'name' },
+                outputSettings: [
+                    { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
+                ],
+                formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
                 outputSettingsFullList: [],
             }),
     };
@@ -27,16 +38,16 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
 
     render(
         <AppProvider dataSource={dataSource || undefined}>
-            <UiConfigContextProvider projectConfig={projectConfig}>
-                <OutputSettingsContextProvider
-                    projectConfig={projectConfig}
+            <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
+                <UserInterfaceDetailsContextProvider
+                    projectConfig={projectConfig as ProjectConfig}
                     layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
                 >
                     <div id={APP_WRAPPER_ID}>
                         <UiThemeProvider theme="platform">
                             <Navbar
                                 projectName=""
-                                projectConfig={projectConfig}
+                                projectConfig={projectConfig as ProjectConfig}
                                 zoom={100}
                                 undoStackState={{
                                     canRedo: false,
@@ -45,7 +56,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                             />
                         </UiThemeProvider>
                     </div>
-                </OutputSettingsContextProvider>
+                </UserInterfaceDetailsContextProvider>
             </UiConfigContextProvider>
         </AppProvider>,
     );
@@ -55,12 +66,13 @@ describe('Navbar', () => {
     beforeEach(() => {
         prjConfig = {
             ...ProjectConfigs.empty,
-            onFetchOutputSettings: () =>
+            onFetchUserInterfaceDetails: () =>
                 Promise.resolve({
                     userInterface: { id: '1', name: 'name' },
                     outputSettings: [
                         { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
                     ],
+                    formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
                     outputSettingsFullList: [],
                 }),
         };
@@ -147,7 +159,7 @@ describe('Navbar', () => {
         prjConfig = {
             ...ProjectConfigs.empty,
             outputSettings: { mp4: true, gif: false },
-            onFetchOutputSettings: () =>
+            onFetchUserInterfaceDetails: () =>
                 Promise.resolve({
                     userInterface: { id: '1', name: 'name' },
                     outputSettings: [
@@ -168,6 +180,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
                     outputSettingsFullList: [],
                 }),
         };
@@ -191,7 +204,7 @@ describe('Navbar', () => {
         prjConfig = {
             ...ProjectConfigs.empty,
             outputSettings: { pdf: true, gif: false },
-            onFetchOutputSettings: () =>
+            onFetchUserInterfaceDetails: () =>
                 Promise.resolve({
                     userInterface: { id: '1', name: 'name' },
                     outputSettings: [
@@ -212,6 +225,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
                     outputSettingsFullList: [],
                 }),
         };
@@ -235,7 +249,7 @@ describe('Navbar', () => {
         prjConfig = {
             ...ProjectConfigs.empty,
             outputSettings: { pdf: true, gif: false },
-            onFetchOutputSettings: () =>
+            onFetchUserInterfaceDetails: () =>
                 Promise.resolve({
                     userInterface: { id: '1', name: 'name' },
                     outputSettings: [
@@ -256,6 +270,7 @@ describe('Navbar', () => {
                             dataSourceEnabled: false,
                         },
                     ],
+                    formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
                     outputSettingsFullList: [],
                 }),
         };
