@@ -8,6 +8,10 @@ import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 interface MobileTrayHeaderProps {
     layoutSectionTitle: string;
     layoutSectionHelpText?: string;
+    datasourceSectionTitle: string;
+    datasourceSectionHelpText?: string;
+    variablesSectionTitle: string;
+    variablesSectionHelpText?: string;
     isDefaultPanelView: boolean;
     mobileListOpen: boolean;
     isDataSourceDisplayed: boolean;
@@ -16,6 +20,10 @@ interface MobileTrayHeaderProps {
 function MobileTrayHeader({
     layoutSectionTitle,
     layoutSectionHelpText,
+    datasourceSectionTitle,
+    datasourceSectionHelpText,
+    variablesSectionTitle,
+    variablesSectionHelpText,
     isDefaultPanelView,
     mobileListOpen,
     isDataSourceDisplayed,
@@ -23,7 +31,13 @@ function MobileTrayHeader({
 }: MobileTrayHeaderProps) {
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
-    if (isDefaultPanelView && isDataSourceDisplayed) return <TrayPanelTitle>Data source</TrayPanelTitle>;
+    if (isDefaultPanelView && isDataSourceDisplayed)
+        return (
+            <SectionWrapper id="datasource-section-header">
+                <TrayPanelTitle margin="0">{datasourceSectionTitle}</TrayPanelTitle>
+                {datasourceSectionHelpText && <SectionHelpText>{datasourceSectionHelpText}</SectionHelpText>}
+            </SectionWrapper>
+        );
     if (isDefaultPanelView && isAvailableLayoutsDisplayed)
         return (
             <SectionWrapper id="layout-section-header">
@@ -31,8 +45,13 @@ function MobileTrayHeader({
                 {layoutSectionHelpText && <SectionHelpText>{layoutSectionHelpText}</SectionHelpText>}
             </SectionWrapper>
         );
-
-    if (contentType === ContentType.DEFAULT || mobileListOpen) return <TrayPanelTitle>Customize</TrayPanelTitle>;
+    if (contentType === ContentType.DEFAULT || mobileListOpen)
+        return (
+            <SectionWrapper id="layout-section-header">
+                <TrayPanelTitle margin="0">{variablesSectionTitle}</TrayPanelTitle>
+                {variablesSectionHelpText && <SectionHelpText>{variablesSectionHelpText}</SectionHelpText>}
+            </SectionWrapper>
+        );
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle>
@@ -66,7 +85,7 @@ function MobileTrayHeader({
                         padding: 0 0.5rem 0 0;
                     `}
                 />
-                <TrayPanelTitle margin="0">Data source</TrayPanelTitle>
+                <TrayPanelTitle margin="0">{datasourceSectionTitle}</TrayPanelTitle>
             </DatePickerTrayTitle>
         );
 }
