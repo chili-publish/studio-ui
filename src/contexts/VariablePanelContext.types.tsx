@@ -1,5 +1,4 @@
-import { MediaConnectorCapabilities, ImageVariable, Media, DateVariable, Variable } from '@chili-publish/studio-sdk';
-import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
+import { DateVariable, ImageVariable, Media, MediaConnectorCapabilities, Variable } from '@chili-publish/studio-sdk';
 
 import { Dispatch, SetStateAction } from 'react';
 
@@ -8,11 +7,6 @@ export const enum ContentType {
     IMAGE_PANEL = 'image_panel',
     DATE_VARIABLE_PICKER = 'date_variable_picker',
     DATA_SOURCE_TABLE = 'data_source_table',
-}
-
-export interface IConnectors {
-    mediaConnectors: ConnectorInstance[];
-    fontsConnectors: ConnectorInstance[];
 }
 
 export interface ICapabilities {
@@ -44,7 +38,6 @@ export interface IVariablePanelContext {
     setSelectedItems: Dispatch<SetStateAction<Media[]>>;
     setNavigationStack: Dispatch<SetStateAction<string[]>>;
     imagePanelTitle: JSX.Element;
-    connectors?: IConnectors;
     connectorCapabilities: ICapabilities;
     getCapabilitiesForConnector: (connectorId: string) => Promise<void>;
     searchKeyWord: string;

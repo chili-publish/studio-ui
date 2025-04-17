@@ -1,7 +1,7 @@
 // studio-ui/src/tests/LayoutSectionUIOptions.test.tsx
 import { UiThemeProvider, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { ConfigType, LayoutListItemType } from '@chili-publish/studio-sdk';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import AppProvider from '../contexts/AppProvider';
@@ -10,6 +10,7 @@ import MainContent from '../MainContent';
 import { ProjectConfig } from '../types/types';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { Subscriber } from '../utils/subscriber';
+import { renderWithProviders } from './mocks/Provider';
 
 // Mock the useMobileSize hook
 jest.mock('@chili-publish/grafx-shared-components', () => ({
@@ -98,22 +99,20 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should not render layout section when "layoutSwitcherVisible" is false', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: false,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: false,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -139,22 +138,20 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should not render layout in multiLayout view', async () => {
-            const { rerender } = render(
+            const { rerender } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -201,22 +198,20 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should render layout with default title when widget is true', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -241,24 +236,21 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should render layout with custom title', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                            title: 'Custom Layout Title',
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
+                                        title: 'Custom Layout Title',
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                            ,
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -289,22 +281,20 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should not render layout when widget is false', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: false,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: false,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -336,22 +326,20 @@ describe('Layout Section UI Options', () => {
         it('should not render layout in multiLayout view', async () => {
             const multiLayoutMock = jest.fn((callback) => callback(true));
 
-            const { rerender } = render(
+            const { rerender } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -403,22 +391,20 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should render layout with default title when widget is true', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
@@ -449,23 +435,21 @@ describe('Layout Section UI Options', () => {
         });
 
         it('should render layout with custom title', async () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <UiThemeProvider theme="platform">
-                            <MainContent
-                                projectConfig={{
-                                    ...mockProjectConfig,
-                                    uiOptions: {
-                                        layoutSection: {
-                                            layoutSwitcherVisible: true,
-                                            title: 'Custom Layout Title',
-                                        },
+                        <MainContent
+                            projectConfig={{
+                                ...mockProjectConfig,
+                                uiOptions: {
+                                    layoutSection: {
+                                        layoutSwitcherVisible: true,
+                                        title: 'Custom Layout Title',
                                     },
-                                }}
-                                updateToken={jest.fn()}
-                            />
-                        </UiThemeProvider>
+                                },
+                            }}
+                            updateToken={jest.fn()}
+                        />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );

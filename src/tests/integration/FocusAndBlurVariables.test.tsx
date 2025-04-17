@@ -1,15 +1,15 @@
-import '@tests/shared.util/sdk.mock';
-import { act, render, waitFor, screen, fireEvent, within } from '@testing-library/react';
-import { variables } from '@tests/mocks/mockVariables';
-import axios from 'axios';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import '@tests/mocks/sdk.mock';
+import { DateVariable, ImageVariable, NumberVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
-import { DateVariable, ImageVariable, NumberVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { variables } from '@tests/mocks/mockVariables';
+import axios from 'axios';
 import StudioUI from '../../main';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
@@ -70,7 +70,7 @@ afterAll(() => {
 
 jest.mock('../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
-        selectedConnector: {
+        remoteConnector: {
             id: 'some-id',
             type: 'media',
             scriptSource: 'defaultMedia',

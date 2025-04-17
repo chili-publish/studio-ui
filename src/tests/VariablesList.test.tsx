@@ -4,8 +4,8 @@ import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
 import AppProvider from '../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../utils/dataIds';
+import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({

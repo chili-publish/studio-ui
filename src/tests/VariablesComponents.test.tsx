@@ -6,8 +6,8 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import AppProvider from '../contexts/AppProvider';
+import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({

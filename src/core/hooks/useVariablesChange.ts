@@ -21,7 +21,6 @@ export function useVariablesChange(variableIds: Array<string>) {
             const variablesChangeToListen = documentVariables
                 .filter((v) => variableIds.includes(v.id))
                 .reduce((all, vm) => {
-                    // eslint-disable-next-line no-param-reassign
                     all[vm.id] = vm;
                     return all;
                 }, {} as Record<string, Variable>);

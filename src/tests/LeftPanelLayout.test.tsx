@@ -8,14 +8,9 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
-import { transformFormBuilderArrayToObject } from '../utils/helpers';
-import { mockConnectors } from '../../__mocks__/mockConnectors';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
-import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
-import { getDataTestIdForSUI } from '../utils/dataIds';
-import { variables } from './mocks/mockVariables';
-import { APP_WRAPPER } from './shared.util/app';
 import { UserInterfaceDetailsContextProvider } from '../components/navbar/UserInterfaceDetailsContext';
+import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -24,6 +19,10 @@ import {
     UiOptions,
     UserInterfaceWithOutputSettings,
 } from '../types/types';
+import { getDataTestIdForSUI } from '../utils/dataIds';
+import { transformFormBuilderArrayToObject } from '../utils/helpers';
+import { APP_WRAPPER } from './mocks/app';
+import { variables } from './mocks/mockVariables';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -68,7 +67,7 @@ const renderComponent = (
 
     render(
         <UiThemeProvider theme="platform">
-            <VariablePanelContextProvider connectors={mockConnectors} variables={variables}>
+            <VariablePanelContextProvider variables={variables}>
                 <UserInterfaceDetailsContextProvider
                     projectConfig={projectConfig}
                     layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}

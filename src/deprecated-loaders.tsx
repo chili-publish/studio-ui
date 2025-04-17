@@ -2,10 +2,12 @@ import { ITheme } from '@chili-publish/grafx-shared-components';
 import { AxiosResponse } from 'axios';
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
+import { Provider } from 'react-redux';
 import App from './App';
 import { DemoDocumentLoader } from './DemoDocumentLoader';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import './index.css';
+import { setupStore } from './store';
 import { ConnectorAuthenticationResult } from './types/ConnectorAuthenticationResult';
 import {
     defaultBackFn,
@@ -30,10 +32,20 @@ export default class StudioUILoader {
 
     constructor(selector: string, projectConfig: ProjectConfig) {
         const container = document.getElementById(selector || 'sui-root');
+
+        if (this.root) {
+            throw new Error(
+                'Studio UI component is already instantiated. Destroy first, if you wanna to mount a new one',
+            );
+        }
+
+        const store = setupStore();
         this.root = createRoot(container!);
         this.root.render(
             <React.StrictMode>
-                <App projectConfig={projectConfig} />
+                <Provider store={store}>
+                    <App projectConfig={projectConfig} />
+                </Provider>
             </React.StrictMode>,
         );
     }
@@ -41,7 +53,7 @@ export default class StudioUILoader {
     destroy() {
         if (this.root) {
             // eslint-disable-next-line no-console
-            console.warn('Destroying studio ui component...');
+            console.warn('Destroying Studio UI component...');
             this.root.unmount();
             this.root = undefined;
         }
