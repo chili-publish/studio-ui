@@ -132,6 +132,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                         layoutSectionHelpText={helpText}
                         datasourceSectionTitle={formBuilder.datasource?.header}
                         datasourceSectionHelpText={formBuilder.datasource?.helpText}
+                        variablesSectionTitle={formBuilder.variables?.header}
+                        variablesSectionHelpText={formBuilder.variables?.helpText}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
@@ -191,9 +193,16 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                 </>
                             )}
 
-                            {!layoutsMobileOptionsListOpen && (
+                            {!layoutsMobileOptionsListOpen && formBuilder.variables.active && (
                                 <>
-                                    {isCustomizeSubtitleDisplayed && <TrayPanelTitle>Customize</TrayPanelTitle>}
+                                    {isCustomizeSubtitleDisplayed && (
+                                        <SectionWrapper id="variables-section-header">
+                                            <TrayPanelTitle margin="0">{formBuilder.variables?.header}</TrayPanelTitle>
+                                            {formBuilder.variables?.helpText && (
+                                                <SectionHelpText>{formBuilder.variables?.helpText}</SectionHelpText>
+                                            )}
+                                        </SectionWrapper>
+                                    )}
                                     <MobileVariablesList
                                         variables={variables}
                                         onMobileOptionListToggle={setVariablesMobileOptionsListOpen}

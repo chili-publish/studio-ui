@@ -10,6 +10,8 @@ interface MobileTrayHeaderProps {
     layoutSectionHelpText?: string;
     datasourceSectionTitle: string;
     datasourceSectionHelpText?: string;
+    variablesSectionTitle: string;
+    variablesSectionHelpText?: string;
     isDefaultPanelView: boolean;
     mobileListOpen: boolean;
     isDataSourceDisplayed: boolean;
@@ -20,6 +22,8 @@ function MobileTrayHeader({
     layoutSectionHelpText,
     datasourceSectionTitle,
     datasourceSectionHelpText,
+    variablesSectionTitle,
+    variablesSectionHelpText,
     isDefaultPanelView,
     mobileListOpen,
     isDataSourceDisplayed,
@@ -41,8 +45,13 @@ function MobileTrayHeader({
                 {layoutSectionHelpText && <SectionHelpText>{layoutSectionHelpText}</SectionHelpText>}
             </SectionWrapper>
         );
-
-    if (contentType === ContentType.DEFAULT || mobileListOpen) return <TrayPanelTitle>Customize</TrayPanelTitle>;
+    if (contentType === ContentType.DEFAULT || mobileListOpen)
+        return (
+            <SectionWrapper id="layout-section-header">
+                <TrayPanelTitle margin="0">{variablesSectionTitle}</TrayPanelTitle>
+                {variablesSectionHelpText && <SectionHelpText>{variablesSectionHelpText}</SectionHelpText>}
+            </SectionWrapper>
+        );
     if (contentType === ContentType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle>
