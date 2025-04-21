@@ -277,7 +277,7 @@ describe('"useMediaDetails" hook', () => {
         await waitFor(() =>
             expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
                 'grafx-media',
-                { filter: ['media-asset-id'] },
+                { filter: ['media-asset-id'], pageSize: 1 },
                 {},
             ),
         );
