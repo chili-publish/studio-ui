@@ -24,12 +24,12 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
                 {},
             );
             return parsedData?.data[0] ?? null;
-        } else if (connectorCapabilities[connectorId]?.detail) {
+        }
+        if (connectorCapabilities[connectorId]?.detail) {
             const { parsedData } = await window.StudioUISDK.mediaConnector.detail(connectorId, mediaAssetId);
             return parsedData;
-        } else {
-            return null;
         }
+        return null;
     }, [connectorId, mediaAssetId, connectorCapabilities]);
 
     useEffect(() => {
