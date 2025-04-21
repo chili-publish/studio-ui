@@ -5,7 +5,7 @@ import {
     EmptyStateText,
     ErrorTextBox,
     ErrorTextMsg,
-    LoadingWrapper,
+    InfiniteScrollingContainer,
     TableWrapper,
 } from './DataSourceTable.styles';
 
@@ -39,7 +39,6 @@ function DataSourceTable({
             {!error && data.length > 0 && (
                 <TableWrapper>
                     <Table defaultSelectedRow={selectedRow} rows={data} onSelectedRowChanged={onSelectedRowChanged} />
-                    <LoadingWrapper ref={infiniteScrollingRef} />
                 </TableWrapper>
             )}
 
@@ -61,6 +60,7 @@ function DataSourceTable({
                     </ErrorTextBox>
                 </Center>
             )}
+            <InfiniteScrollingContainer ref={infiniteScrollingRef}></InfiniteScrollingContainer>
         </>
     );
 }
