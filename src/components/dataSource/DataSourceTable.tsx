@@ -60,7 +60,7 @@ function DataSourceTable({
                     </ErrorTextBox>
                 </Center>
             )}
-            <InfiniteScrollingContainer ref={infiniteScrollingRef}></InfiniteScrollingContainer>
+            <InfiniteScrollingContainer ref={infiniteScrollingRef} />
         </>
     );
 }
