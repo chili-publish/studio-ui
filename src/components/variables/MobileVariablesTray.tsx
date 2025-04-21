@@ -1,10 +1,10 @@
 import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { UiOptions } from '../../types/types';
+import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
@@ -118,6 +118,31 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         setLayoutsMobileOptionsListOpen(false);
     }, [showVariablesPanel, setIsTrayVisible]);
 
+    const trayHeaderData: MobileTrayFormBuilderHeader = useMemo(
+        () => ({
+            layouts: {
+                title: sectionTitle,
+                helpText,
+            },
+            datasource: {
+                title: formBuilder.datasource?.header,
+                helpText: formBuilder.datasource?.helpText,
+            },
+            variables: {
+                title: formBuilder.variables.header,
+                helpText: formBuilder.variables.helpText,
+            },
+        }),
+        [
+            sectionTitle,
+            helpText,
+            formBuilder.datasource?.header,
+            formBuilder.datasource?.helpText,
+            formBuilder.variables.header,
+            formBuilder.variables.helpText,
+        ],
+    );
+
     return (
         <>
             {isDataSourcePanelOpen ? <TrayStyle /> : null}
@@ -128,12 +153,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 close={closeTray}
                 title={
                     <MobileTrayHeader
-                        layoutSectionTitle={sectionTitle}
-                        layoutSectionHelpText={helpText}
-                        datasourceSectionTitle={formBuilder.datasource?.header}
-                        datasourceSectionHelpText={formBuilder.datasource?.helpText}
-                        variablesSectionTitle={formBuilder.variables?.header}
-                        variablesSectionHelpText={formBuilder.variables?.helpText}
+                        trayHeaderData={trayHeaderData}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}

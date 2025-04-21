@@ -65,7 +65,7 @@ function LeftPanel({
                         </>
                     )}
 
-                    {formBuilder.variables.active && <VariablesList variables={variables} />}
+                    <VariablesList variables={variables} />
                 </LeftPanelContainer>
 
                 {formBuilder.variables.active && (

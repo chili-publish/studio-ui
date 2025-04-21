@@ -305,3 +305,14 @@ export type PageSnapshot = {
     id: string;
     snapshot: Uint8Array;
 };
+
+export type MobileTrayHeaderDetailsr = {
+    title: string;
+    helpText: string;
+};
+
+export type MobileTrayFormBuilderHeader = {
+    datasource: MobileTrayHeaderDetailsr;
+    variables: MobileTrayHeaderDetailsr;
+    layouts: MobileTrayHeaderDetailsr;
+};

@@ -35,7 +35,7 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
     );
 
     const helpText = useMemo(
-        () => (hasLayoutSectionUIOptions ? undefined : formBuilder.layouts?.helpText),
+        () => (hasLayoutSectionUIOptions ? '' : formBuilder.layouts?.helpText),
         [hasLayoutSectionUIOptions, formBuilder.layouts],
     );
 

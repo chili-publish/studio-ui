@@ -76,7 +76,22 @@ export function UserInterfaceDetailsContextProvider({
 
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
-                        setFormBuilder(res?.formBuilder ?? defaultFormBuilder);
+                        setFormBuilder(() =>
+                            res?.formBuilder
+                                ? ({
+                                      ...res?.formBuilder,
+                                      variables: {
+                                          ...res?.formBuilder?.variables,
+                                          header: res?.formBuilder?.variables?.active
+                                              ? res?.formBuilder?.variables.header
+                                              : defaultFormBuilder.variables.header,
+                                          helpText: res?.formBuilder?.variables?.active
+                                              ? res?.formBuilder?.variables.helpText
+                                              : defaultFormBuilder.variables.helpText,
+                                      },
+                                  } as FormBuilderType)
+                                : defaultFormBuilder,
+                        );
                         setOutputSettingsFullList(fullSettingsList);
                     });
             }
