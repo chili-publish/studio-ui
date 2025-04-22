@@ -29,12 +29,11 @@ import { EngineVersionManager } from './version-manager';
     const engineVersionManager = new EngineVersionManager(authToken);
 
     const engineVersion = urlParams.get('engine') ?? 'main';
-    const engineCommitSha = urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha());
+    const engineCommitSha =
+        urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha(engineVersion));
 
     // The following will take released versions in consideration
     const engineRegex = /^\d+\.\d+\.\d+$/;
-    const engineSource =
-        engineRegex.test(engineVersion) || !engineCommitSha ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
     const envName = import.meta.env.VITE_ENVIRONMENT_NAME;
     const projectId = import.meta.env.VITE_PROJECT_ID;
@@ -59,6 +58,8 @@ import { EngineVersionManager } from './version-manager';
 
         return;
     }
+
+    const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
     StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
