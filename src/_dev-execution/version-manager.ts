@@ -7,7 +7,9 @@ interface EngineVerion {
 
 export class EngineVersionManager {
     private readonly baseUrl = 'https://dev.devapi.chiligrafx-dev.com/version-management';
+
     private readonly CACHE_TTL = 120; // 2 minutes in seconds
+
     private authToken: string;
 
     constructor(authToken: string) {
