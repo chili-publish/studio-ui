@@ -31,11 +31,6 @@ export class EngineVersionManager {
         return commitSha;
     }
 
-    // Method to update the auth token if it changes
-    updateAuthToken(newToken: string): void {
-        this.authToken = newToken;
-    }
-
     private async fetchLatestCommitSha(): Promise<string | null> {
         const data: Array<EngineVerion> = await fetch(`${this.baseUrl}/studio-engine`, {
             headers: {
