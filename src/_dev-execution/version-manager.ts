@@ -6,7 +6,7 @@ interface EngineVerion {
 }
 
 export class EngineVersionManager {
-    private readonly baseUrl = 'https://dev.devapi.chiligrafx-dev.com/version-management';
+    private readonly requestUrl = import.meta.env.VITE_ENGINE_VERSIONS_URL;
 
     private readonly CACHE_TTL = 60 * 60; // 1h (in seconds)
 
@@ -32,8 +32,11 @@ export class EngineVersionManager {
     }
 
     private async fetchLatestCommitSha(branchPath: string): Promise<string | null> {
+        if (!this.requestUrl) {
+            return null;
+        }
         const selected = branchPath === 'main' ? 'latest' : branchPath;
-        const data: Array<EngineVerion> = await fetch(`${this.baseUrl}/studio-engine`, {
+        const data: Array<EngineVerion> = await fetch(this.requestUrl, {
             headers: {
                 Authorization: `Bearer ${this.authToken}`,
                 'Content-Type': 'application/json',
