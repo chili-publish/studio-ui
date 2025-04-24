@@ -1,7 +1,7 @@
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
-import { UiOptions } from '../../types/types';
 import { useUserInterfaceDetailsContext } from '../../components/navbar/UserInterfaceDetailsContext';
+import { UiOptions } from '../../types/types';
 
 interface UseLayoutSectionProps {
     layouts: LayoutListItemType[];
@@ -13,17 +13,9 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
     const { formBuilder } = useUserInterfaceDetailsContext();
     const availableLayouts = useMemo(() => layouts?.filter((item) => item.availableForUser), [layouts]);
 
-    const hasLayoutSectionUIOptions = useMemo(
-        () =>
-            [layoutSectionUIOptions.title, layoutSectionUIOptions.layoutSwitcherVisible].some((value) =>
-                Boolean(value),
-            ),
-        [layoutSectionUIOptions],
-    );
-
-    const layoutsSectionIsVisible = useMemo(
-        () => (hasLayoutSectionUIOptions ? layoutSectionUIOptions?.visible : formBuilder.layouts?.active),
-        [hasLayoutSectionUIOptions, layoutSectionUIOptions, formBuilder.layouts],
+    const layoutsSectionVisibility = useMemo(
+        () => layoutSectionUIOptions.visible && formBuilder.layouts?.active,
+        [layoutSectionUIOptions.visible, formBuilder.layouts],
     );
     const sectionTitle = useMemo(
         () => layoutSectionUIOptions?.title ?? formBuilder.layouts?.header,
@@ -34,10 +26,9 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
         [layoutSectionUIOptions?.layoutSwitcherVisible, formBuilder.layouts],
     );
 
-    const helpText = useMemo(
-        () => (hasLayoutSectionUIOptions ? undefined : formBuilder.layouts?.helpText),
-        [hasLayoutSectionUIOptions, formBuilder.layouts],
-    );
+    const layoutResizableVisibility = useMemo(() => formBuilder.layouts?.showWidthHeightInputs, [formBuilder.layouts]);
+
+    const helpText = useMemo(() => formBuilder.layouts?.helpText, [formBuilder.layouts]);
 
     const isLayoutSwitcherVisible = useMemo(
         () => availableLayouts?.length >= 2 && layoutSwitcherVisibility,
@@ -45,20 +36,16 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
     );
 
     const isLayoutResizableVisible = useMemo(
-        () =>
-            !hasLayoutSectionUIOptions &&
-            !!(selectedLayout?.id && selectedLayout?.resizableByUser?.enabled) &&
-            formBuilder.layouts?.showWidthHeightInputs,
-        [selectedLayout, formBuilder.layouts, hasLayoutSectionUIOptions],
+        () => selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && layoutResizableVisibility,
+        [selectedLayout, layoutResizableVisibility],
     );
 
     const isAvailableLayoutsDisplayed = useMemo(() => {
-        if (layoutsSectionIsVisible !== undefined) {
-            if (layoutsSectionIsVisible) return isLayoutSwitcherVisible || !!isLayoutResizableVisible;
+        if (!layoutsSectionVisibility) {
             return false;
         }
-        return layoutSwitcherVisibility;
-    }, [isLayoutSwitcherVisible, isLayoutResizableVisible, layoutsSectionIsVisible, layoutSwitcherVisibility]);
+        return isLayoutSwitcherVisible || !!isLayoutResizableVisible;
+    }, [layoutsSectionVisibility, isLayoutSwitcherVisible, isLayoutResizableVisible]);
 
     return {
         availableLayouts,
