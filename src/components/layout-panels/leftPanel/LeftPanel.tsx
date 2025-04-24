@@ -1,5 +1,6 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
+import { useMemo } from 'react';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -32,7 +33,7 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { formBuilder } = useUserInterfaceDetailsContext();
+    const { formBuilder, validFormBuilder } = useUserInterfaceDetailsContext();
     const {
         availableLayouts,
         isLayoutSwitcherVisible,
@@ -41,8 +42,13 @@ function LeftPanel({
         sectionTitle,
         helpText,
     } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
-
-    return (
+    const shouldHideLeftPanel = useMemo(
+        () =>
+            validFormBuilder &&
+            [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed].every((v) => !v),
+        [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed, validFormBuilder],
+    );
+    return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
@@ -75,7 +81,7 @@ function LeftPanel({
                 )}
             </ScrollbarWrapper>
         </LeftPanelWrapper>
-    );
+    ) : null;
 }
 
 export default LeftPanel;

@@ -4,6 +4,8 @@ import { ConfigType, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
+import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { mockUserInterface } from '@mocks/mockUserinterface';
 import AppProvider from '../contexts/AppProvider';
 import { SubscriberContextProvider } from '../contexts/Subscriber';
 import MainContent from '../MainContent';
@@ -80,6 +82,13 @@ const mockProjectConfig = {
     onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(false)),
     onAuthenticationExpired: jest.fn(),
     outputSettings: {},
+    onFetchUserInterfaceDetails: jest.fn().mockResolvedValue({
+        userInterface: { id: '1', name: 'name' },
+        outputSettings: [{ ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] }],
+        formBuilder: mockUserInterface.formBuilder,
+        outputSettingsFullList: [],
+    }),
+    userInterfaceID: mockUserInterface.id,
 } as unknown as ProjectConfig;
 
 describe('Layout Section UI Options', () => {
@@ -382,8 +391,8 @@ describe('Layout Section UI Options', () => {
                 </AppProvider>,
             );
 
-            const openTrayBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
-            await userEvent.click(openTrayBtn);
+            const openTrayBtn = await screen.findAllByTestId(getDataTestIdForSUI('mobile-variables'));
+            await userEvent.click(openTrayBtn[0]);
 
             expect(multiLayoutMock).toHaveBeenCalled();
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');

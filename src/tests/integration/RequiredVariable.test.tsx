@@ -26,6 +26,8 @@ const config = {
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
     authToken: token,
     projectName: '',
+    userInterfaceID: mockUserInterface.id,
+    onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
 };
 
 jest.mock('axios');
@@ -123,6 +125,35 @@ describe('Required text variable', () => {
             if (url === 'connectorSourceUrl') return Promise.resolve({ data: {} });
 
             return Promise.resolve({ data: {} });
+        });
+    });
+
+    it('Should render variables if variables form builder is active', async () => {
+        const { rerender } = render(<div id="sui-root" />);
+        act(() => {
+            StudioUI.studioUILoaderConfig({
+                ...config,
+                onFetchUserInterfaceDetails: () =>
+                    Promise.resolve({
+                        ...mockUserInterface,
+                        formBuilder: [
+                            mockUserInterface.formBuilder[0], // data source
+                            mockUserInterface.formBuilder[1], // layouts
+                            { type: 'variables', active: false, header: 'Variables', helpText: 'Variables help text' },
+                        ],
+                    }),
+            });
+        });
+        const variablesHeader = mockUserInterface.formBuilder.find((item) => item.type === 'variables')?.header;
+        await waitFor(() => {
+            expect(screen.queryByText(`${variablesHeader}`)).not.toBeInTheDocument();
+        });
+        rerender(<div id="sui-root" />);
+        act(() => {
+            StudioUI.studioUILoaderConfig(config);
+        });
+        await waitFor(() => {
+            expect(screen.getByText(`${variablesHeader}`)).toBeInTheDocument();
         });
     });
 

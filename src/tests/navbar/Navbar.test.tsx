@@ -3,10 +3,11 @@ import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockUserInterface } from '@mocks/mockUserinterface';
+import { ProjectConfigs } from '@tests/mocks/MockProjectConfig';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
-import { FormBuilderType, ProjectConfig, defaultOutputSettings, defaultPlatformUiOptions } from '../../types/types';
+import { FormBuilderType, ProjectConfig } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
@@ -292,44 +293,44 @@ describe('Navbar', () => {
     });
 });
 
-class ProjectConfigs {
-    static empty: ProjectConfig = {
-        projectId: '00000000-0000-0000-0000-000000000000',
-        projectName: '',
-        uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'light' },
-        outputSettings: defaultOutputSettings,
-        graFxStudioEnvironmentApiBaseUrl: '',
-        sandboxMode: false,
-        onProjectInfoRequested: async () => {
-            return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
-        },
-        onProjectDocumentRequested: async () => {
-            return '';
-        },
-        onProjectLoaded: () => {
-            // ignored
-        },
-        onProjectSave: async () => {
-            return {
-                name: '',
-                id: '00000000-0000-0000-0000-000000000000',
-                template: { id: '00000000-0000-0000-0000-000000000000' },
-            };
-        },
-        onAuthenticationRequested: () => {
-            return '';
-        },
-        onAuthenticationExpired: async () => {
-            return '';
-        },
-        onBack: () => {
-            // ignored
-        },
-        onLogInfoRequested: () => {
-            // ignored
-        },
-        onProjectGetDownloadLink: async () => {
-            return { status: 0, error: '', success: false, parsedData: '', data: '' };
-        },
-    };
-}
+// class ProjectConfigs {
+//     static empty: ProjectConfig = {
+//         projectId: '00000000-0000-0000-0000-000000000000',
+//         projectName: '',
+//         uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'light' },
+//         outputSettings: defaultOutputSettings,
+//         graFxStudioEnvironmentApiBaseUrl: '',
+//         sandboxMode: false,
+//         onProjectInfoRequested: async () => {
+//             return { name: '', id: '', template: { id: '00000000-0000-0000-0000-000000000000' } };
+//         },
+//         onProjectDocumentRequested: async () => {
+//             return '';
+//         },
+//         onProjectLoaded: () => {
+//             // ignored
+//         },
+//         onProjectSave: async () => {
+//             return {
+//                 name: '',
+//                 id: '00000000-0000-0000-0000-000000000000',
+//                 template: { id: '00000000-0000-0000-0000-000000000000' },
+//             };
+//         },
+//         onAuthenticationRequested: () => {
+//             return '';
+//         },
+//         onAuthenticationExpired: async () => {
+//             return '';
+//         },
+//         onBack: () => {
+//             // ignored
+//         },
+//         onLogInfoRequested: () => {
+//             // ignored
+//         },
+//         onProjectGetDownloadLink: async () => {
+//             return { status: 0, error: '', success: false, parsedData: '', data: '' };
+//         },
+//     };
+// }

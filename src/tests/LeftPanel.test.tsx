@@ -6,12 +6,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { act } from 'react-dom/test-utils';
+import { FormBuilderArray, ProjectConfig, UserInterfaceWithOutputSettings } from 'src/types/types';
+import { transformFormBuilderArrayToObject } from 'src/utils/helpers';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { mockOutputSetting } from '@mocks/mockOutputSetting';
+import { UiConfigContextProvider } from 'src/contexts/UiConfigContext';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import AppProvider from '../contexts/AppProvider';
 import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
+import { ProjectConfigs } from './mocks/MockProjectConfig';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -112,6 +118,28 @@ beforeEach(() => {
 afterEach(() => {
     jest.clearAllMocks();
 });
+
+const formBuilder = transformFormBuilderArrayToObject(mockUserInterface.formBuilder as FormBuilderArray);
+const projectConfig = {
+    ...ProjectConfigs.empty,
+    onFetchOutputSettings: () =>
+        Promise.resolve({
+            userInterface: { id: '1', name: 'name' },
+            outputSettings: [{ ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] }],
+            formBuilder,
+            outputSettingsFullList: [],
+        } as UserInterfaceWithOutputSettings),
+    onFetchUserInterfaceDetails: () =>
+        Promise.resolve({
+            userInterface: { id: '1', name: 'name' },
+            outputSettings: [{ ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] }],
+            formBuilder,
+            outputSettingsFullList: [],
+        } as UserInterfaceWithOutputSettings),
+    uiOptions: {
+        ...ProjectConfigs.empty.uiOptions,
+    },
+};
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const user = userEvent.setup();
@@ -119,17 +147,19 @@ describe('Image Panel', () => {
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
+                        <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
+                            <LeftPanel
+                                variables={variables}
+                                selectedLayout={mockLayout}
+                                layouts={mockLayouts}
+                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                                layoutSectionUIOptions={{
+                                    visible: false,
+                                    layoutSwitcherVisible: false,
+                                    title: 'Layout',
+                                }}
+                            />
+                        </UiConfigContextProvider>
                     </VariablePanelContextProvider>
                 </UiThemeProvider>
             </AppProvider>,

@@ -25,14 +25,13 @@ function VariablesList({ variables }: VariablesListProps) {
         validateUpdatedVariables();
     }, [validateUpdatedVariables]);
 
-    return (
+    return formBuilder.variables.active ? (
         <ListWrapper>
             <SectionWrapper id="variables-section-header">
                 <PanelTitle margin="0">{formBuilder.variables.header}</PanelTitle>
                 {formBuilder.variables.helpText && <SectionHelpText>{formBuilder.variables.helpText}</SectionHelpText>}
             </SectionWrapper>
-            {formBuilder.variables.active &&
-                variables.length > 0 &&
+            {variables.length > 0 &&
                 variables.map((variable: Variable) => {
                     if (!variable.isVisible) return null;
                     return contentType !== ContentType.DATE_VARIABLE_PICKER ? (
@@ -46,7 +45,7 @@ function VariablesList({ variables }: VariablesListProps) {
                     ) : null;
                 })}
         </ListWrapper>
-    );
+    ) : null;
 }
 
 export default VariablesList;
