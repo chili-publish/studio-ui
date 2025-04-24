@@ -1,7 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { defineConfig } from 'vite';
-import EnvironmentPlugin from 'vite-plugin-environment';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -10,7 +9,7 @@ export default ({ mode }) => {
         process.exit(1);
     }
     return defineConfig({
-        plugins: [react(), EnvironmentPlugin(['NODE_ENV', 'PREVIEW_ERROR_URL'])],
+        plugins: [react()],
         server: {
             port: 3002,
         },
