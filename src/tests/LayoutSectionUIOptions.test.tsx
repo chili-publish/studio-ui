@@ -319,9 +319,8 @@ describe('Layout Section UI Options', () => {
             const openTrayBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
 
             await userEvent.click(openTrayBtn);
-
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');
-            expect(screen.queryByText('Layout')).not.toBeInTheDocument();
+            expect(screen.queryByText('Layouts')).not.toBeInTheDocument();
         });
         it('should not render layout in multiLayout view', async () => {
             const multiLayoutMock = jest.fn((callback) => callback(true));
@@ -384,10 +383,9 @@ describe('Layout Section UI Options', () => {
 
             const openTrayBtn = screen.getByTestId(getDataTestIdForSUI('mobile-variables'));
             await userEvent.click(openTrayBtn);
-
             expect(multiLayoutMock).toHaveBeenCalled();
             expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Customize');
-            expect(screen.queryByText('Layout')).not.toBeInTheDocument();
+            expect(screen.queryByText('Layouts')).not.toBeInTheDocument();
         });
 
         it('should render layout with default title when widget is true', async () => {
@@ -430,7 +428,7 @@ describe('Layout Section UI Options', () => {
 
             await userEvent.click(openTrayBtn);
 
-            expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Layout');
+            expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Layouts');
             expect(screen.queryByText('Customize')).toBeInTheDocument();
         });
 
