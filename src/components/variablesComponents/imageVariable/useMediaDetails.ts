@@ -10,25 +10,27 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const [mediaConnectorState, setMediaConnectorState] = useState<ConnectorStateType.ready | null>(null);
     const [variableIdsInMapping, setVariableIdsInMapping] = useState<Array<string>>([]);
+    const { currentVariables } = useVariablesChange(variableIdsInMapping);
 
     const getMediaDetails = useCallback(async () => {
-        if (!connectorId || !connectorCapabilities[connectorId]?.query || !mediaAssetId) {
-            return;
+        if (!connectorId || !mediaAssetId) {
+            return null;
         }
 
-        const { parsedData } = await window.StudioUISDK.mediaConnector.query(
-            connectorId,
-            connectorCapabilities[connectorId]?.filtering
-                ? {
-                      filter: [mediaAssetId],
-                  }
-                : {},
-            {},
-        );
-        setMediaDetails(parsedData?.data[0] ?? null);
+        if (connectorCapabilities[connectorId]?.query && connectorCapabilities[connectorId]?.filtering) {
+            const { parsedData } = await window.StudioUISDK.mediaConnector.query(
+                connectorId,
+                { filter: [mediaAssetId], pageSize: 1 },
+                {},
+            );
+            return parsedData?.data[0] ?? null;
+        }
+        if (connectorCapabilities[connectorId]?.detail) {
+            const { parsedData } = await window.StudioUISDK.mediaConnector.detail(connectorId, mediaAssetId);
+            return parsedData;
+        }
+        return null;
     }, [connectorId, mediaAssetId, connectorCapabilities]);
-
-    const { currentVariables } = useVariablesChange(variableIdsInMapping);
 
     useEffect(() => {
         (async () => {
@@ -70,7 +72,7 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
     }, [getCapabilitiesForConnector, connectorId, connectorCapabilities, mediaConnectorState]);
 
     useEffect(() => {
-        getMediaDetails();
+        getMediaDetails().then((media) => setMediaDetails(media));
     }, [currentVariables, getMediaDetails]);
 
     return mediaDetails;
