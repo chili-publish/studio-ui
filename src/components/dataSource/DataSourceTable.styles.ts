@@ -23,11 +23,14 @@ export const Center = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
 
     ${TableWrapper} + & {
         margin-top: -2rem;
     }
+`;
+
+export const FullSizeCenter = styled(Center)`
+    height: 100%;
 `;
 
 const Text = styled.span`
