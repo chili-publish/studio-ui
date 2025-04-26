@@ -1,10 +1,10 @@
 import { AvailableIcons, SelectOptions, useOnClickOutside } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import DropdownOption from './DropdownOption';
-import { UserInterfaceOutputSettings } from '../../../types/types';
-import { outputTypesIcons } from './DownloadPanel.types';
+import { IOutputSetting, UserInterfaceOutputSettings } from '../../../types/types';
 import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
+import { outputTypesIcons } from './DownloadPanel.types';
+import DropdownOption from './DropdownOption';
 
 const useDownload = ({
     hideDownloadPanel,
@@ -95,28 +95,55 @@ const useDownload = ({
         });
     }, [userInterfaceOutputSettings]);
 
+    const outputSettingsFullListOptions: SelectOptions[] | null = useMemo(() => {
+        if (!outputSettingsFullList) return null;
+
+        return outputSettingsFullList.map((val) => {
+            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
+            return {
+                label: (
+                    <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
+                ),
+                value: val.id,
+                item: val,
+            };
+        });
+    }, [isSandBoxMode, outputSettingsFullList]);
+
     const getFormatFromId = useCallback(
-        (id: string, availableOutputs: UserInterfaceOutputSettings[]) => {
-            if (isSandBoxMode && outputSettingsFullList) {
-                return outputSettingsFullList
-                    .find((output) => output.id === id)
-                    ?.type.toLocaleLowerCase() as DownloadFormats;
-            }
+        (id: string, availableOutputs: UserInterfaceOutputSettings[] | IOutputSetting[]) => {
             return availableOutputs.find((output) => output.id === id)?.type.toLocaleLowerCase() as DownloadFormats;
         },
-        [isSandBoxMode, outputSettingsFullList],
+        [],
     );
 
-    useEffect(() => {
-        if (userInterfaceOutputSettings && userInterfaceOutputSettings.length > 0) {
-            setSelectedOutputSettingsId(userInterfaceOutputSettings[0].id);
-            setSelectedOptionFormat(getFormatFromId(userInterfaceOutputSettings[0].id, userInterfaceOutputSettings));
+    const options = useMemo(
+        () => (isSandBoxMode ? outputSettingsFullListOptions : userInterfaceDownloadOptions) ?? downloadOptions,
+        [isSandBoxMode, outputSettingsFullList, userInterfaceOutputSettings, downloadOptions],
+    );
+
+    const selectedValue = useMemo(() => {
+        if (isSandBoxMode && outputSettingsFullListOptions)
+            return outputSettingsFullListOptions.find((item) => item.value === selectedOutputSettingsId);
+        if (userInterfaceDownloadOptions) {
+            return userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId);
         }
-    }, [getFormatFromId, userInterfaceOutputSettings]);
+        return downloadOptions.find((item) => item.value === selectedOptionFormat);
+    }, [
+        downloadOptions,
+        isSandBoxMode,
+        outputSettingsFullListOptions,
+        selectedOptionFormat,
+        selectedOutputSettingsId,
+        userInterfaceDownloadOptions,
+    ]);
 
     const handleOutputFormatChange = useCallback(
         (id: DownloadFormats | string) => {
-            if (userInterfaceOutputSettings) {
+            if (isSandBoxMode && outputSettingsFullList) {
+                setSelectedOptionFormat(getFormatFromId(id, outputSettingsFullList));
+                setSelectedOutputSettingsId(id);
+            } else if (userInterfaceOutputSettings) {
                 setSelectedOptionFormat(getFormatFromId(id, userInterfaceOutputSettings));
                 setSelectedOutputSettingsId(id);
             } else {
@@ -124,12 +151,25 @@ const useDownload = ({
                 setSelectedOutputSettingsId(undefined);
             }
         },
-        [getFormatFromId, userInterfaceOutputSettings],
+        [getFormatFromId, userInterfaceOutputSettings, outputSettingsFullList],
     );
 
+    useEffect(() => {
+        if (isSandBoxMode && outputSettingsFullList?.length) {
+            setSelectedOutputSettingsId(outputSettingsFullList[0].id);
+            setSelectedOptionFormat(getFormatFromId(outputSettingsFullList[0].id, outputSettingsFullList));
+        } else if (userInterfaceOutputSettings?.length) {
+            setSelectedOutputSettingsId(userInterfaceOutputSettings[0].id);
+            setSelectedOptionFormat(getFormatFromId(userInterfaceOutputSettings[0].id, userInterfaceOutputSettings));
+        } else {
+            setSelectedOptionFormat(downloadOptions[0].value as DownloadFormats);
+            setSelectedOutputSettingsId(undefined);
+        }
+    }, [getFormatFromId, userInterfaceOutputSettings, isSandBoxMode, outputSettingsFullList, downloadOptions]);
+
     return {
-        downloadOptions,
-        userInterfaceDownloadOptions,
+        options,
+        selectedValue,
         downloadPanelRef,
         downloadState,
         selectedOptionFormat,

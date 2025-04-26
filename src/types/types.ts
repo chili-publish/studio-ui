@@ -133,7 +133,7 @@ export type UserInterfaceWithOutputSettings = {
         name: string;
     };
     formBuilder?: FormBuilderType;
-    outputSettingsFullList: UserInterfaceOutputSettings[];
+    outputSettingsFullList: IOutputSetting[];
 };
 
 export interface BaseFormBuilderType<T extends FormKeys> {
@@ -188,8 +188,9 @@ export interface IOutputSetting {
     description: string;
     id: string;
     name: string;
-    type: string;
+    type: DownloadFormats;
     watermark: boolean;
+    dataSourceEnabled: boolean;
 }
 
 export const defaultUiOptions = {
