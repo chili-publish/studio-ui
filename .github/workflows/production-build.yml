@@ -24,23 +24,23 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: Bump version locally
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version patch --no-git-tag-version
+            # - name: Bump version locally
+            #   run: |
+            #       git config --global user.name 'github-actions[bot]'
+            #       git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            #       git fetch origin
+            #       git checkout -B main origin/main
+            #       npm version patch --no-git-tag-version
 
             - name: build code
               run: yarn build
-            - name: Commit version changes
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git add package.json yarn.lock
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags
+            # - name: Commit version changes
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #   run: |
+            #       git add package.json yarn.lock
+            #       git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+            #       git push origin main --follow-tags
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
@@ -75,32 +75,32 @@ jobs:
                       --overwrite true \
                       --auth-mode login
 
-    bump-version:
-        needs: build
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
-        steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v3
-              with:
-                  token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  registry-url: 'https://npm.pkg.github.com'
-                  scope: '@chili-publish'
-            - name: Bump version
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version preminor --no-git-tag-version
-                  git add package.json yarn.lock
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags
+    # bump-version:
+    #     needs: build
+    #     runs-on: ubuntu-latest
+    #     strategy:
+    #         matrix:
+    #             node-version: [20]
+    #     steps:
+    #         - uses: FranzDiebold/github-env-vars-action@v2
+    #         - uses: actions/checkout@v3
+    #           with:
+    #               token: ${{ secrets.PACKAGE_SECRET }}
+    #         - name: Use Node ${{ matrix.node-version }}
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: ${{ matrix.node-version }}
+    #               registry-url: 'https://npm.pkg.github.com'
+    #               scope: '@chili-publish'
+    #         - name: Bump version
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           run: |
+    #               git config --global user.name 'github-actions[bot]'
+    #               git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+    #               git fetch origin
+    #               git checkout -B main origin/main
+    #               npm version preminor --no-git-tag-version
+    #               git add package.json yarn.lock
+    #               git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+    #               git push origin main --follow-tags

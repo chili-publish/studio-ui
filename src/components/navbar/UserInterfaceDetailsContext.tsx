@@ -1,7 +1,9 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { DownloadFormats, LayoutIntent } from '@chili-publish/studio-sdk';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useAppContext } from '../../contexts/AppProvider';
 import {
     FormBuilderType,
+    IOutputSetting,
     ProjectConfig,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
@@ -9,7 +11,6 @@ import {
     defaultOutputSettings,
 } from '../../types/types';
 import { IUserInterfaceDetailsContext } from './UserInterfaceDetailsContext.types';
-import { useAppContext } from '../../contexts/AppProvider';
 
 export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsContext = {
     selectedUserInterfaceId: '',
@@ -46,7 +47,7 @@ export function UserInterfaceDetailsContextProvider({
     >([]);
     const [formBuilder, setFormBuilder] = useState<FormBuilderType | undefined>();
 
-    const [outputSettingsFullList, setOutputSettingsFullList] = useState<UserInterfaceOutputSettings[] | undefined>([]);
+    const [outputSettingsFullList, setOutputSettingsFullList] = useState<IOutputSetting[] | undefined>([]);
 
     const fetchtUserInterfaceDetails = useCallback(
         async (userInterfaceId?: string) => {
