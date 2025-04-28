@@ -25,13 +25,10 @@ import {
     DownloadDropdownTitle,
     DownloadPanelContainer,
     SpinnerContainer,
-    OptionText,
-    OptionWithIcon,
 } from './DownloadPanel.styles';
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
-import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -53,19 +50,18 @@ const getCustomSelectedLabel = (option: SelectOptions) => {
     return <DropdownOption iconData={outputTypesIcons[key]} text={item.name} description="" />;
 };
 
-const getCustomSelectedOption = (option: SelectOptions) => {
+const getCustomSelectedOption = (option?: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
-    const { outputSettingsFullList } = useUserInterfaceDetailsContext();
 
     const isMobileSize = useMobileSize();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const { themeColors } = useTheme();
     const {
-        downloadOptions,
-        userInterfaceDownloadOptions,
+        options,
+        selectedValue,
         downloadPanelRef,
         downloadState,
         selectedOptionFormat,
@@ -73,47 +69,6 @@ function DownloadPanel(props: DownloadPanelProps) {
         handleOutputFormatChange,
         selectedOutputSettingsId,
     } = useDownload({ hideDownloadPanel, isSandBoxMode });
-
-    const outputSettingsOptions = useMemo(() => {
-        if (!isSandBoxMode) return [];
-
-        const mapToSelectOption = (item: UserInterfaceOutputSettings): SelectOptionType => ({
-            label: (
-                <OptionWithIcon height="2rem">
-                    <Icon
-                        width="1rem"
-                        icon={outputTypesIcons[item.type.toLocaleLowerCase() as keyof typeof outputTypesIcons]}
-                    />
-                    <OptionText>
-                        <span>{item.name}</span>
-                        <span>{item.description}</span>
-                    </OptionText>
-                </OptionWithIcon>
-            ),
-            item,
-            value: item.id,
-        });
-
-        return outputSettingsFullList?.map(mapToSelectOption) || [];
-    }, [isSandBoxMode, outputSettingsFullList]);
-
-    const selectedValue = useMemo(() => {
-        if (isSandBoxMode) return outputSettingsOptions[0];
-        if (userInterfaceDownloadOptions) {
-            return (
-                userInterfaceDownloadOptions.find((item) => item.value === selectedOutputSettingsId) ??
-                userInterfaceDownloadOptions[0]
-            );
-        }
-        return downloadOptions.find((item) => item.value === selectedOptionFormat) ?? downloadOptions[0];
-    }, [
-        downloadOptions,
-        isSandBoxMode,
-        outputSettingsOptions,
-        selectedOptionFormat,
-        selectedOutputSettingsId,
-        userInterfaceDownloadOptions,
-    ]);
 
     const downloadMenuRightOffset = useMemo(() => {
         if (exportButtonRef?.current) {
@@ -144,7 +99,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                         dataId={getDataIdForSUI(`output-dropdown`)}
                         label="Output"
                         selectedValue={getCustomSelectedOption(selectedValue)}
-                        options={userInterfaceDownloadOptions ?? downloadOptions}
+                        options={options}
                         onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
                         onMenuOpen={() => setMobileDropdownOpen(true)}
                         onMenuClose={() => setMobileDropdownOpen(false)}
@@ -199,9 +154,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={selectedValue}
-                            options={
-                                isSandBoxMode ? outputSettingsOptions : userInterfaceDownloadOptions ?? downloadOptions
-                            }
+                            options={options}
                             isSearchable={false}
                             width="16.25rem"
                             onChange={(option) =>
