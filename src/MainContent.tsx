@@ -169,12 +169,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             },
             async onAuthExpired(request) {
                 try {
-                    if (request.type === AuthRefreshTypeEnum.grafxToken) {
-                        const newToken = await projectConfig.onAuthenticationExpired();
-                        setAuthToken(newToken);
-                        return new GrafxTokenAuthCredentials(newToken);
-                    }
-
                     // "oAuth2AuthorizationCode" Environment API Connector's authorization entity type
                     // NOTE: We apply .toLowerCase() for both header and entity type as header came with first capital letter where entity type is fully camelCase
                     if (
@@ -196,6 +190,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                         );
                         return result;
                     }
+                    // default to grafx token renewal
+                    const newToken = await projectConfig.onAuthenticationExpired();
+                    setAuthToken(newToken);
+                    return new GrafxTokenAuthCredentials(newToken);
                 } catch (error) {
                     // eslint-disable-next-line no-console
                     console.error(error);
