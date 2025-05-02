@@ -1,8 +1,8 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { renderHook } from '@testing-library/react';
 import useDownload from '../../components/navbar/downloadPanel/useDownload';
-import * as UiConfigContext from '../../contexts/UiConfigContext';
 import * as UserInterfaceDetailsContext from '../../components/navbar/UserInterfaceDetailsContext';
+import * as UiConfigContext from '../../contexts/UiConfigContext';
 
 describe('useDownload', () => {
     test('default download options show all download options', () => {
@@ -10,7 +10,7 @@ describe('useDownload', () => {
             return UiConfigContext.UiConfigContextDefaultValues;
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.downloadOptions.length).toBe(5);
+        expect(result.current.options.length).toBe(5);
     });
 
     test('only false download options, show the onew that are not false', () => {
@@ -21,8 +21,8 @@ describe('useDownload', () => {
             };
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.downloadOptions.length).toBe(1);
-        expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.PNG);
+        expect(result.current.options.length).toBe(1);
+        expect(result.current.options[0].value).toBe(DownloadFormats.PNG);
     });
 
     test('only true download options, show only that option', () => {
@@ -33,8 +33,8 @@ describe('useDownload', () => {
             };
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.downloadOptions.length).toBe(2);
-        expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
+        expect(result.current.options.length).toBe(2);
+        expect(result.current.options[0].value).toBe(DownloadFormats.MP4);
     });
 
     test('mix true and false listens to those, not provided means same as falls', () => {
@@ -45,8 +45,8 @@ describe('useDownload', () => {
             };
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.downloadOptions.length).toBe(1);
-        expect(result.current.downloadOptions[0].value).toBe(DownloadFormats.MP4);
+        expect(result.current.options.length).toBe(1);
+        expect(result.current.options[0].value).toBe(DownloadFormats.MP4);
     });
 
     test('Show output settings that are coming from selected user interface', () => {
@@ -74,6 +74,6 @@ describe('useDownload', () => {
             };
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.userInterfaceDownloadOptions?.length).toBe(2);
+        expect(result.current.options?.length).toBe(2);
     });
 });

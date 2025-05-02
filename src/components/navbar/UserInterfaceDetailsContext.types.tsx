@@ -1,4 +1,4 @@
-import { FormBuilderType, OutputSettings, UserInterfaceOutputSettings } from '../../types/types';
+import { FormBuilderType, IOutputSetting, OutputSettings, UserInterfaceOutputSettings } from '../../types/types';
 
 export interface IUserInterfaceDetailsContext {
     outputSettings: OutputSettings;
@@ -6,5 +6,5 @@ export interface IUserInterfaceDetailsContext {
     selectedUserInterfaceId: string | null;
     onUserInterfaceChange: (_: string) => void;
     formBuilder: FormBuilderType;
-    outputSettingsFullList: UserInterfaceOutputSettings[] | undefined;
+    outputSettingsFullList: IOutputSetting[] | undefined;
 }

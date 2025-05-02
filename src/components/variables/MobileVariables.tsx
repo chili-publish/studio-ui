@@ -22,13 +22,12 @@ interface MobileVariablesProps {
 
 function MobileVariables(props: MobileVariablesProps) {
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
-    const { formBuilder, validFormBuilder } = useUserInterfaceDetailsContext();
+    const { formBuilder } = useUserInterfaceDetailsContext();
     const { isTimelineDisplayed, isPagesPanelDisplayed, ...trayProps } = props;
     const shouldHideEditButton = useMemo(
         () =>
-            validFormBuilder &&
             [formBuilder.variables.active, formBuilder.datasource.active, formBuilder.layouts.active].every((v) => !v),
-        [validFormBuilder, formBuilder.variables.active, formBuilder.datasource.active, formBuilder.layouts.active],
+        [formBuilder.variables.active, formBuilder.datasource.active, formBuilder.layouts.active],
     );
     return (
         <>

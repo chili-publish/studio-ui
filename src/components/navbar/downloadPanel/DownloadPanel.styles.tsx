@@ -116,27 +116,3 @@ export const ErrorToastWrapper = styled.div`
         z-index: 2;
     }
 `;
-
-export const OptionText = styled.div`
-    display: flex;
-    flex-direction: column;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    > * {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-`;
-
-export const OptionWithIcon = styled.span<{ height?: string }>`
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    min-width: 0;
-    height: ${(props) => props.height ?? 'auto'};
-    svg {
-        min-width: 1rem;
-    }
-`;

@@ -60,7 +60,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                     query: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: { data: mockMedia } })),
                     getCapabilities: jest
                         .fn()
-                        .mockImplementation(() => Promise.resolve({ parsedData: { query: true } })),
+                        .mockImplementation(() => Promise.resolve({ parsedData: { query: true, filtering: true } })),
                 },
                 animation: { pause: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 dataSource: { getDataSource: jest.fn().mockResolvedValue({ parsedData: null }) },

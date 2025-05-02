@@ -10,8 +10,8 @@ import {
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
 } from './types/types';
-import { getDownloadLink, addTrailingSlash } from './utils/documentExportHelper';
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
+import { addTrailingSlash, getDownloadLink } from './utils/documentExportHelper';
 import { transformFormBuilderArrayToObject } from './utils/helpers';
 
 export class StudioProjectLoader {
@@ -214,9 +214,12 @@ export class StudioProjectLoader {
             }
             throw new Error(`Default user interface not found`);
         };
-        const outputSettings = await axios.get(`${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-            headers: { Authorization: `Bearer ${this.authToken}` },
-        });
+        const outputSettings = await axios.get<{ data: IOutputSetting[] }>(
+            `${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`,
+            {
+                headers: { Authorization: `Bearer ${this.authToken}` },
+            },
+        );
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
