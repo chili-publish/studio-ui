@@ -33,7 +33,7 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { formBuilder, validFormBuilder } = useUserInterfaceDetailsContext();
+    const { formBuilder } = useUserInterfaceDetailsContext();
     const {
         availableLayouts,
         isLayoutSwitcherVisible,
@@ -44,9 +44,8 @@ function LeftPanel({
     } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
     const shouldHideLeftPanel = useMemo(
         () =>
-            validFormBuilder &&
             [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed].every((v) => !v),
-        [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed, validFormBuilder],
+        [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed],
     );
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
@@ -71,14 +70,12 @@ function LeftPanel({
                         </>
                     )}
 
-                    <VariablesList variables={variables} />
+                    {formBuilder.variables.active && <VariablesList variables={variables} />}
                 </LeftPanelContainer>
 
-                {formBuilder.variables.active && (
-                    <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
-                        <ImagePanel />
-                    </ImagePanelContainer>
-                )}
+                <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
+                    <ImagePanel />
+                </ImagePanelContainer>
             </ScrollbarWrapper>
         </LeftPanelWrapper>
     ) : null;

@@ -176,7 +176,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
-                            {formBuilder.datasource.active && isDataSourceDisplayed && !isDateVariablePanelOpen ? (
+                            {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
                                 <DataSourceInput
                                     currentRow={currentInputRow}
                                     currentRowIndex={currentRowIndex}

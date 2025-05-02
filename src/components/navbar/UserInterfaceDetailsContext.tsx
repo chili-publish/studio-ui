@@ -18,7 +18,6 @@ export const UserInterfaceDetailsContextDefaultValues: IUserInterfaceDetailsCont
     onUserInterfaceChange: () => null,
     formBuilder: defaultFormBuilder,
     outputSettingsFullList: undefined,
-    validFormBuilder: false,
 };
 
 export const UserInterfaceDetailsContext = createContext<IUserInterfaceDetailsContext>(
@@ -46,7 +45,6 @@ export function UserInterfaceDetailsContextProvider({
         UserInterfaceOutputSettings[] | null
     >([]);
     const [formBuilder, setFormBuilder] = useState<FormBuilderType | undefined>();
-    const [validFormBuilder, setValidFormBuilder] = useState(false);
 
     const [outputSettingsFullList, setOutputSettingsFullList] = useState<UserInterfaceOutputSettings[] | undefined>([]);
 
@@ -79,7 +77,6 @@ export function UserInterfaceDetailsContextProvider({
                         setUserInterfaceOutputSettings(settings ?? null);
                         setSelectedUserInterfaceId(res?.userInterface?.id || null);
                         setFormBuilder(res?.formBuilder ?? defaultFormBuilder);
-                        setValidFormBuilder(!!res?.formBuilder);
                         setOutputSettingsFullList(fullSettingsList);
                     });
             }
@@ -102,7 +99,6 @@ export function UserInterfaceDetailsContextProvider({
                 layouts: formBuilder?.layouts ?? defaultFormBuilder.layouts,
                 variables: formBuilder?.variables ?? defaultFormBuilder.variables,
             },
-            validFormBuilder,
             outputSettingsFullList,
         }),
         [
@@ -112,7 +108,6 @@ export function UserInterfaceDetailsContextProvider({
             setSelectedUserInterfaceId,
             formBuilder,
             outputSettingsFullList,
-            validFormBuilder,
         ],
     );
 

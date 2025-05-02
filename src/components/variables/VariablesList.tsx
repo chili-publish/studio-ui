@@ -25,7 +25,7 @@ function VariablesList({ variables }: VariablesListProps) {
         validateUpdatedVariables();
     }, [validateUpdatedVariables]);
 
-    return formBuilder.variables.active ? (
+    return (
         <ListWrapper>
             <SectionWrapper id="variables-section-header">
                 <PanelTitle margin="0">{formBuilder.variables.header}</PanelTitle>
@@ -45,7 +45,7 @@ function VariablesList({ variables }: VariablesListProps) {
                     ) : null;
                 })}
         </ListWrapper>
-    ) : null;
+    );
 }
 
 export default VariablesList;

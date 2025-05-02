@@ -7,5 +7,4 @@ export interface IUserInterfaceDetailsContext {
     onUserInterfaceChange: (_: string) => void;
     formBuilder: FormBuilderType;
     outputSettingsFullList: UserInterfaceOutputSettings[] | undefined;
-    validFormBuilder: boolean;
 }
