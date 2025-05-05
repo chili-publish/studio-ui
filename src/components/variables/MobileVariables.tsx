@@ -7,6 +7,7 @@ import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { UiOptions } from '../../types/types';
 import MobileVariablesPanel from './MobileVariablesTray';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
+import { useAppContext } from '../../contexts/AppProvider';
 
 interface MobileVariablesProps {
     variables: Variable[];
@@ -22,12 +23,18 @@ interface MobileVariablesProps {
 
 function MobileVariables(props: MobileVariablesProps) {
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
+    const { dataSource } = useAppContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { isTimelineDisplayed, isPagesPanelDisplayed, ...trayProps } = props;
+
+    const hasDataSource = useMemo(
+        () => formBuilder.datasource.active && !!dataSource,
+        [dataSource, formBuilder.datasource.active],
+    );
+
     const shouldHideEditButton = useMemo(
-        () =>
-            [formBuilder.variables.active, formBuilder.datasource.active, formBuilder.layouts.active].every((v) => !v),
-        [formBuilder.variables.active, formBuilder.datasource.active, formBuilder.layouts.active],
+        () => [formBuilder.variables.active, hasDataSource, formBuilder.layouts.active].every((v) => !v),
+        [formBuilder.variables.active, hasDataSource, formBuilder.layouts.active],
     );
     return (
         <>

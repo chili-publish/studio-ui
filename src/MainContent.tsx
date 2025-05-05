@@ -498,6 +498,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                     activePageId={activePageId}
                                                     pagesToRefresh={pagesToRefresh}
                                                     setPagesToRefresh={setPagesToRefresh}
+                                                    layoutDetails={{
+                                                        selectedLayout: currentSelectedLayout,
+                                                        layouts,
+                                                        layoutSectionUIOptions,
+                                                    }}
                                                 />
                                             ) : null}
                                         </CanvasContainer>

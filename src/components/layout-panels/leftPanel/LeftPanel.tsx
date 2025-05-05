@@ -13,6 +13,7 @@ import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
 import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
+import { useAppContext } from '../../../contexts/AppProvider';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -33,6 +34,8 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
+    const { dataSource } = useAppContext();
+
     const { formBuilder } = useUserInterfaceDetailsContext();
     const {
         availableLayouts,
@@ -42,10 +45,14 @@ function LeftPanel({
         sectionTitle,
         helpText,
     } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
+
+    const hasDataSource = useMemo(
+        () => formBuilder.datasource.active && !!dataSource,
+        [dataSource, formBuilder.datasource.active],
+    );
     const shouldHideLeftPanel = useMemo(
-        () =>
-            [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed].every((v) => !v),
-        [formBuilder.datasource.active, formBuilder.variables.active, isAvailableLayoutsDisplayed],
+        () => [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed].every((v) => !v),
+        [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed],
     );
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
