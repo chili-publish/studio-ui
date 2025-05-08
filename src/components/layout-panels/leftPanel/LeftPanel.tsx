@@ -1,6 +1,6 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useMemo } from 'react';
+import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -11,9 +11,7 @@ import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
-import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
-import { useAppContext } from '../../../contexts/AppProvider';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -34,31 +32,26 @@ function LeftPanel({
     layoutSectionUIOptions,
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
-    const { dataSource } = useAppContext();
+    const {
+        shouldHide: shouldHideLeftPanel,
+        layoutSection: {
+            availableLayouts,
+            isLayoutSwitcherVisible,
+            isLayoutResizableVisible,
+            isAvailableLayoutsDisplayed,
+            sectionTitle,
+            helpText,
+        },
+        isDataSourceDisplayed,
+    } = useLeftPanelAndTrayVisibility({ layouts, selectedLayout, layoutSectionUIOptions });
 
     const { formBuilder } = useUserInterfaceDetailsContext();
-    const {
-        availableLayouts,
-        isLayoutSwitcherVisible,
-        isLayoutResizableVisible,
-        isAvailableLayoutsDisplayed,
-        sectionTitle,
-        helpText,
-    } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
 
-    const hasDataSource = useMemo(
-        () => formBuilder.datasource.active && !!dataSource,
-        [dataSource, formBuilder.datasource.active],
-    );
-    const shouldHideLeftPanel = useMemo(
-        () => [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed].every((v) => !v),
-        [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed],
-    );
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    {formBuilder.datasource.active && <DataSource />}
+                    {isDataSourceDisplayed && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <SectionWrapper id="layout-section-header">

@@ -1,13 +1,12 @@
 import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
+import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
 import { EditButtonWrapper } from './VariablesPanel.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { UiOptions } from '../../types/types';
 import MobileVariablesPanel from './MobileVariablesTray';
-import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
-import { useAppContext } from '../../contexts/AppProvider';
 
 interface MobileVariablesProps {
     variables: Variable[];
@@ -22,20 +21,21 @@ interface MobileVariablesProps {
 }
 
 function MobileVariables(props: MobileVariablesProps) {
+    const {
+        isTimelineDisplayed,
+        isPagesPanelDisplayed,
+        layouts,
+        selectedLayout,
+        layoutSectionUIOptions,
+        ...trayProps
+    } = props;
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
-    const { dataSource } = useAppContext();
-    const { formBuilder } = useUserInterfaceDetailsContext();
-    const { isTimelineDisplayed, isPagesPanelDisplayed, ...trayProps } = props;
+    const { shouldHide: shouldHideEditButton } = useLeftPanelAndTrayVisibility({
+        layouts,
+        selectedLayout,
+        layoutSectionUIOptions,
+    });
 
-    const hasDataSource = useMemo(
-        () => formBuilder.datasource.active && !!dataSource,
-        [dataSource, formBuilder.datasource.active],
-    );
-
-    const shouldHideEditButton = useMemo(
-        () => [formBuilder.variables.active, hasDataSource, formBuilder.layouts.active].every((v) => !v),
-        [formBuilder.variables.active, hasDataSource, formBuilder.layouts.active],
-    );
     return (
         <>
             {!shouldHideEditButton && (
@@ -66,6 +66,9 @@ function MobileVariables(props: MobileVariablesProps) {
                     {...trayProps}
                     isTrayVisible={isTrayVisible}
                     setIsTrayVisible={setIsTrayVisible}
+                    layouts={layouts}
+                    selectedLayout={selectedLayout}
+                    layoutSectionUIOptions={layoutSectionUIOptions}
                 />
             ) : null}
         </>

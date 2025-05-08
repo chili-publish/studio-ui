@@ -6,16 +6,14 @@ import {
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, Page } from '@chili-publish/studio-sdk';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { PageSnapshot, UiOptions } from '../../types/types';
 import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, PREVIEW_FALLBACK } from '../../utils/constants';
 import { Card, Container, ScrollableContainer } from './Pages.styles';
 import { PreviewCardBadge } from './PreviewCardBadge';
 import { useAttachArrowKeysListener } from './useAttachArrowKeysListener';
-import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
-import { useLayoutSection } from '../../core/hooks/useLayoutSection';
-import { useAppContext } from '../../contexts/AppProvider';
 
 interface PagesProps {
     pages: Page[];
@@ -31,21 +29,10 @@ interface PagesProps {
 
 function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh, layoutDetails }: PagesProps) {
     const { uiOptions } = useUiConfigContext();
-    const { formBuilder } = useUserInterfaceDetailsContext();
-    const { dataSource } = useAppContext();
-    const { isAvailableLayoutsDisplayed } = useLayoutSection(layoutDetails);
+    const { shouldHide: leftPanelIsHidden } = useLeftPanelAndTrayVisibility(layoutDetails);
 
     const [pageSnapshots, setPageSnapshots] = useState<PageSnapshot[]>([]);
     const isMobileSize = useMobileSize();
-    const hasDataSource = useMemo(
-        () => formBuilder.datasource.active && !!dataSource,
-        [dataSource, formBuilder.datasource.active],
-    );
-
-    const leftPanelIsVisible = useMemo(
-        () => [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed].some((v) => v),
-        [hasDataSource, formBuilder.variables.active, isAvailableLayoutsDisplayed],
-    );
 
     const getPagesSnapshot = useCallback(async (ids: string[]) => {
         const snapArray = ids.map((id) =>
@@ -108,7 +95,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh, layoutD
     if (uiOptions.widgets?.bottomBar?.visible === false) return null;
 
     return (
-        <Container isMobileSize={isMobileSize} leftPanelIsVisible={leftPanelIsVisible}>
+        <Container isMobileSize={isMobileSize} leftPanelIsVisible={!leftPanelIsHidden}>
             <ScrollbarWrapper
                 height={`calc(${PAGES_CONTAINER_HEIGHT} - ${BORDER_SIZE})`}
                 enableOverflowX
