@@ -75,7 +75,7 @@ export function VariablePanelContextProvider({ children, variables }: { children
                 connectorId: currentVariableConnectorId,
             };
             await handleImageChange(imgSrc);
-            const variable: ImageVariable | undefined = variables.find((item) => item.id === currentVariableId);
+            const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable | undefined;
             if (variable)
                 variableValidationData.validateVariable({
                     ...variable,

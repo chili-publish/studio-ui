@@ -11,9 +11,9 @@ import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/
 import { useAppContext } from '../../contexts/AppProvider';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import BooleanVariable from './BooleanVariable';
+import MultiLineTextVariable from './MultiLineTextVariable';
 import NumberVariable from './NumberVariable';
 import TextVariable from './TextVariable';
-import MultiLineTextVariable from './MultiLineTextVariable';
 import { isDateVariable, isNumberVariable, isTextVariable, TextVariable as TextVariableType } from './Variable';
 import { IVariablesComponents } from './VariablesComponents.types';
 import DateVariable from './dateVariable/DateVariable';
@@ -23,7 +23,7 @@ import { useVariableComponents } from './useVariablesComponents';
 
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable, onCalendarOpen } = props;
-    const { handleValueChange, handleImageRemove } = useVariableComponents(variable.id);
+    const { handleValueChange, handleImageRemove, handleImageChange } = useVariableComponents(variable.id);
     const { variablesValidation, validateVariable } = useVariablePanelContext();
     const { isDocumentLoaded } = useAppContext();
 
@@ -75,9 +75,10 @@ function VariablesComponents(props: IVariablesComponents) {
             case VariableType.image: {
                 return isDocumentLoaded ? (
                     <ImageVariable
-                        variable={variable}
+                        variable={variable as ImageVariableType}
                         validationError={errMsg}
                         handleImageRemove={onImageVariableRemove}
+                        handleImageChange={handleImageChange}
                     />
                 ) : null;
             }
@@ -132,6 +133,7 @@ function VariablesComponents(props: IVariablesComponents) {
         onCalendarOpen,
         validateVariable,
         handleValueChange,
+        handleImageChange,
         errMsg,
     ]);
 

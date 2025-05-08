@@ -18,6 +18,7 @@ export interface IImageVariable {
     variable: ImageVariable;
     validationError?: string;
     handleImageRemove: () => void;
+    handleImageChange?: (payload: { assetId: string; id: string }) => void;
 }
 
 export interface ITextVariable {

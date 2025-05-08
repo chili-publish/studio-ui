@@ -46,7 +46,5 @@ export const usePreviewImageUrl = (
         [connectorId, remoteConnector?.name, remoteConnector?.ownerType],
     );
 
-    const previewImageUrl = coreHook(mediaAssetId, previewCall);
-
-    return previewImageUrl;
+    return coreHook(mediaAssetId, previewCall);
 };
