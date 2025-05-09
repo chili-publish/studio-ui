@@ -1,5 +1,6 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
+import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -10,7 +11,7 @@ import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
-import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
+import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -32,19 +33,25 @@ function LeftPanel({
 }: LeftPanelProps) {
     const { contentType } = useVariablePanelContext();
     const {
-        availableLayouts,
-        isLayoutSwitcherVisible,
-        isLayoutResizableVisible,
-        isAvailableLayoutsDisplayed,
-        sectionTitle,
-        helpText,
-    } = useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions });
+        shouldHide: shouldHideLeftPanel,
+        layoutSection: {
+            availableLayouts,
+            isLayoutSwitcherVisible,
+            isLayoutResizableVisible,
+            isAvailableLayoutsDisplayed,
+            sectionTitle,
+            helpText,
+        },
+        isDataSourceDisplayed,
+    } = useLeftPanelAndTrayVisibility({ layouts, selectedLayout, layoutSectionUIOptions });
 
-    return (
+    const { formBuilder } = useUserInterfaceDetailsContext();
+
+    return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 <LeftPanelContainer hidden={contentType === ContentType.IMAGE_PANEL}>
-                    <DataSource />
+                    {isDataSourceDisplayed && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <SectionWrapper id="layout-section-header">
@@ -63,7 +70,7 @@ function LeftPanel({
                         </>
                     )}
 
-                    <VariablesList variables={variables} />
+                    {formBuilder.variables.active && <VariablesList variables={variables} />}
                 </LeftPanelContainer>
 
                 <ImagePanelContainer hidden={contentType !== ContentType.IMAGE_PANEL}>
@@ -71,7 +78,7 @@ function LeftPanel({
                 </ImagePanelContainer>
             </ScrollbarWrapper>
         </LeftPanelWrapper>
-    );
+    ) : null;
 }
 
 export default LeftPanel;
