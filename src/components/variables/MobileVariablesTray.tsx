@@ -1,10 +1,10 @@
 import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
-import { UiOptions } from '../../types/types';
+import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
@@ -21,6 +21,7 @@ import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPane
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
+import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
 interface VariablesPanelProps {
     isTrayVisible: boolean;
@@ -54,7 +55,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     } = props;
 
     const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
-
+    const { formBuilder } = useUserInterfaceDetailsContext();
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
     const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
 
@@ -103,7 +104,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
 
-    const isDataSourceDisplayed = hasDataConnector && !mobileOptionListOpen;
+    const isDataSourceDisplayed = formBuilder.datasource.active && hasDataConnector && !mobileOptionListOpen;
 
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
@@ -117,6 +118,31 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         setLayoutsMobileOptionsListOpen(false);
     }, [showVariablesPanel, setIsTrayVisible]);
 
+    const trayHeaderData: MobileTrayFormBuilderHeader = useMemo(
+        () => ({
+            layouts: {
+                title: sectionTitle,
+                helpText,
+            },
+            datasource: {
+                title: formBuilder.datasource?.header,
+                helpText: formBuilder.datasource?.helpText,
+            },
+            variables: {
+                title: formBuilder.variables.header,
+                helpText: formBuilder.variables.helpText,
+            },
+        }),
+        [
+            sectionTitle,
+            helpText,
+            formBuilder.datasource?.header,
+            formBuilder.datasource?.helpText,
+            formBuilder.variables.header,
+            formBuilder.variables.helpText,
+        ],
+    );
+
     return (
         <>
             {isDataSourcePanelOpen ? <TrayStyle /> : null}
@@ -127,8 +153,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 close={closeTray}
                 title={
                     <MobileTrayHeader
-                        layoutSectionTitle={sectionTitle}
-                        layoutSectionHelpText={helpText}
+                        trayHeaderData={trayHeaderData}
                         isDefaultPanelView={isDefaultPanelView}
                         isDataSourceDisplayed={isDataSourceDisplayed || false}
                         isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
@@ -166,7 +191,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             ) : null}
                             {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
                                 <>
-                                    {isAvailableLayoutSubtitleDisplayed && isDataSourceDisplayed && (
+                                    {isAvailableLayoutSubtitleDisplayed && (
                                         <SectionWrapper>
                                             <TrayPanelTitle margin="0">{sectionTitle}</TrayPanelTitle>
                                             {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
@@ -188,9 +213,16 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                 </>
                             )}
 
-                            {!layoutsMobileOptionsListOpen && (
+                            {!layoutsMobileOptionsListOpen && formBuilder.variables.active && (
                                 <>
-                                    {isCustomizeSubtitleDisplayed && <TrayPanelTitle>Customize</TrayPanelTitle>}
+                                    {isCustomizeSubtitleDisplayed && (
+                                        <SectionWrapper id="variables-section-header">
+                                            <TrayPanelTitle margin="0">{formBuilder.variables?.header}</TrayPanelTitle>
+                                            {formBuilder.variables?.helpText && (
+                                                <SectionHelpText>{formBuilder.variables?.helpText}</SectionHelpText>
+                                            )}
+                                        </SectionWrapper>
+                                    )}
                                     <MobileVariablesList
                                         variables={variables}
                                         onMobileOptionListToggle={setVariablesMobileOptionsListOpen}
