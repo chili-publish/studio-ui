@@ -35,7 +35,11 @@ function ImageVariable(props: IImageVariable) {
         remoteConnector,
     );
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
-    const { upload, pending: uploadPending, errorMsg } = useUploadAsset(variable.value?.connectorId);
+    const {
+        upload,
+        pending: uploadPending,
+        errorMsg,
+    } = useUploadAsset(remoteConnector?.id, variable.value?.connectorId);
 
     const previewImage = useMemo(() => {
         if (!mediaDetails || !previewImageUrl) {
