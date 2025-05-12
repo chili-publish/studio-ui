@@ -112,10 +112,6 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         }),
     );
 
-    const shouldSaveDocument = useMemo(() => {
-        return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
-    }, [projectConfig.sandboxMode]);
-
     const {
         pendingAuthentications,
         authResults,
@@ -166,6 +162,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         if (!eventSubscriber) {
             return;
         }
+
+        const shouldSaveDocument = enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+
         const sdk = new StudioSDK({
             editorId: EDITOR_ID,
             enableNextSubscribers: {
