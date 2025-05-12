@@ -112,6 +112,10 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         }),
     );
 
+    const shouldSaveDocument = useMemo(() => {
+        return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+    }, [projectConfig.sandboxMode]);
+
     const {
         pendingAuthentications,
         authResults,
@@ -206,7 +210,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onVariableListChanged: (variableList: Variable[]) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 setVariables(variableList);
-                if (enableAutoSaveRef.current === true && !projectConfig.sandboxMode) {
+                if (shouldSaveDocument) {
                     saveDocumentDebounced();
                 }
 
@@ -234,7 +238,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 startTransition(() => {
                     zoomToPage();
                 });
-                if (enableAutoSaveRef.current === true && !projectConfig.sandboxMode) {
+                if (shouldSaveDocument) {
                     saveDocumentDebounced();
                 }
             },
@@ -265,7 +269,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onPageSizeChanged: (size) => {
                 zoomToPage(size.id);
                 setPageSize(size);
-                if (enableAutoSaveRef.current === true && !projectConfig.sandboxMode) {
+                if (shouldSaveDocument) {
                     saveDocumentDebounced();
                 }
             },
