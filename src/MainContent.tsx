@@ -162,9 +162,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         if (!eventSubscriber) {
             return;
         }
-
-        const shouldSaveDocument = enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
-
+        const shouldSaveDocument = () => {
+            return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+        };
         const sdk = new StudioSDK({
             editorId: EDITOR_ID,
             enableNextSubscribers: {
@@ -209,7 +209,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onVariableListChanged: (variableList: Variable[]) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 setVariables(variableList);
-                if (shouldSaveDocument) {
+
+                if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
 
@@ -237,7 +238,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 startTransition(() => {
                     zoomToPage();
                 });
-                if (shouldSaveDocument) {
+                if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
             },
@@ -265,10 +266,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setActivePageId(pageId);
                 zoomToPage(pageId);
             },
+
             onPageSizeChanged: (size) => {
                 zoomToPage(size.id);
-                setPageSize(size);
-                if (shouldSaveDocument) {
+                setPageSize(pageSize);
+                if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
             },
@@ -504,6 +506,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                     activePageId={activePageId}
                                                     pagesToRefresh={pagesToRefresh}
                                                     setPagesToRefresh={setPagesToRefresh}
+                                                    layoutDetails={{
+                                                        selectedLayout: currentSelectedLayout,
+                                                        layouts,
+                                                        layoutSectionUIOptions,
+                                                    }}
                                                 />
                                             ) : null}
                                         </CanvasContainer>
