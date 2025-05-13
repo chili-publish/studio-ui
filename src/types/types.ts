@@ -223,7 +223,7 @@ export const defaultFormBuilder: FormBuilderType = {
     datasource: {
         type: 'datasource',
         active: true,
-        header: 'Datasource',
+        header: 'Data source',
         helpText: '',
     },
     layouts: {
@@ -239,7 +239,7 @@ export const defaultFormBuilder: FormBuilderType = {
     variables: {
         type: 'variables',
         active: true,
-        header: 'Variables',
+        header: 'Customize',
         helpText: '',
     },
 };
@@ -305,4 +305,15 @@ export interface IStudioUILoaderConfig {
 export type PageSnapshot = {
     id: string;
     snapshot: Uint8Array;
+};
+
+export type MobileTrayHeaderDetailsr = {
+    title: string;
+    helpText: string;
+};
+
+export type MobileTrayFormBuilderHeader = {
+    datasource: MobileTrayHeaderDetailsr;
+    variables: MobileTrayHeaderDetailsr;
+    layouts: MobileTrayHeaderDetailsr;
 };

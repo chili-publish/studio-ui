@@ -163,6 +163,9 @@ window.StudioUI.studioUILoaderConfig({
     /* userInterfaceID: string, The id of the user interface used to fetch output settings,
     if passed it will override the default output settings */
     userInterfaceID: userInterfaceID,
+
+    /* Callback function that fetches UI configuration details based on the provided userInterfaceId */
+    onFetchUserInterfaceDetails
 });
 ```
 
@@ -230,6 +233,79 @@ The `userInterfaceID` option is an optional parameter, setting it to valid inter
 
 When a valid interface id is provided and output settings are returned, every output setting with the same selected layout intent will be available,
 and if no output setting is available for the selected layout intent, the download button will be disabled.
+
+#### onFetchUserInterfaceDetails
+
+A callback function that retrieves details about a user interface configuration based on its ID.
+Promise that resolves to a UserInterface object with the following structure:
+
+```typescript
+enum LayoutIntent {
+    print = 'print',
+    digitalStatic = 'digitalStatic',
+    digitalAnimated = 'digitalAnimated',
+}
+type OutputSettingsType = {
+    [outputSettingsId: string]: { layoutIntents: LayoutIntent[] };
+};
+
+interface UserInterface {
+    id: string; // Unique identifier of the user interface
+    name: string; // Display name of the user interface
+    outputSettings: OutputSettingsType; // Output settings
+    formBuilder: FormBuilderSection[]; // Array of UI section configurations
+    default: boolean; // default user interface
+}
+
+interface FormBuilderSection {
+    type: 'layouts' | 'datasource' | 'variables'; // Type of the section
+    active: boolean; // Controls visibility of the section
+    header: string; // Title/header text for the section
+    helpText: string; // Helper text providing additional context
+
+    // Additional properties for 'layouts' type
+    layoutSelector: boolean; // Controls visibility of layout selection dropdown
+    showWidthHeightInputs: boolean; // Controls visibility of width/height input fields
+}
+```
+
+#### Example Usage
+
+```javascript
+const onFetchUserInterfaceDetails = async (userInterfaceId) => {
+    return {
+        id: '1',
+        name: 'Default Name',
+        outputSettings: {
+            1: {
+                layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'],
+            },
+        },
+        formBuilder: [
+            {
+                type: 'datasource',
+                active: true,
+                header: 'Data source',
+                helpText: '',
+            },
+            {
+                type: 'layouts',
+                active: true,
+                header: 'Available Layouts',
+                helpText: 'Select a layout for your template',
+                layoutSelector: true,
+                showWidthHeightInputs: true,
+            },
+            {
+                type: 'variables',
+                active: true,
+                header: 'Template Variables',
+                helpText: 'Customize variable values',
+            },
+        ],
+    };
+};
+```
 
 ## Advanced example using own documents
 

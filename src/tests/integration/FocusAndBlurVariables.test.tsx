@@ -30,6 +30,8 @@ const config = {
     projectName: '',
     onVariableFocus: (id: string) => variableFocusFn(id),
     onVariableBlur: (id: string) => variableBlurFn(id),
+    onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
+    userInterfaceID: mockUserInterface.id,
 };
 
 jest.mock('axios');

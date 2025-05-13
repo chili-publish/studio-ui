@@ -5,6 +5,10 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
+import { UiConfigContextProvider } from 'src/contexts/UiConfigContext';
+import { ProjectConfig, UserInterfaceWithOutputSettings } from 'src/types/types';
+import { mockUserInterface } from '@mocks/mockUserinterface';
+import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import MobileVariables from '../components/variables/MobileVariables';
 import * as AppProvider from '../contexts/AppProvider';
 import { IAppContext } from '../contexts/AppProvider';
@@ -12,6 +16,7 @@ import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
+import { ProjectConfigs } from './mocks/MockProjectConfig';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -51,6 +56,19 @@ describe('MobileVariableTrayLayout', () => {
     });
     window.StudioUISDK = mockSDK;
 
+    const projectConfig: ProjectConfig = {
+        ...ProjectConfigs.empty,
+        onFetchUserInterfaceDetails: () =>
+            Promise.resolve({
+                userInterface: { id: '1', name: 'name' },
+                outputSettings: [
+                    { ...mockOutputSetting, layoutIntents: ['print', 'digitalStatic', 'digitalAnimated'] },
+                ],
+                formBuilder: mockUserInterface.formBuilder,
+                outputSettingsFullList: [],
+            } as unknown as UserInterfaceWithOutputSettings),
+    };
+
     it('Layout is the title of the tray when no data source is available', async () => {
         jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
             dataSource: undefined,
@@ -58,17 +76,19 @@ describe('MobileVariableTrayLayout', () => {
 
         render(
             <UiThemeProvider theme="platform">
-                <MobileVariables
-                    variables={variables}
-                    selectedLayout={mockLayout}
-                    layouts={mockLayouts}
-                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                    layoutSectionUIOptions={{
-                        visible: true,
-                        layoutSwitcherVisible: true,
-                        title: 'Layout',
-                    }}
-                />
+                <UiConfigContextProvider projectConfig={projectConfig}>
+                    <MobileVariables
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: true,
+                            layoutSwitcherVisible: true,
+                            title: 'Layout',
+                        }}
+                    />
+                </UiConfigContextProvider>
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );

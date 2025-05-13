@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 import { BORDER_SIZE, PAGES_CONTAINER_HEIGHT, SCROLL_SIZE } from '../../utils/constants';
 
-export const Container = styled.div<{ isMobileSize: boolean }>`
+export const Container = styled.div<{ isMobileSize: boolean; leftPanelIsVisible: boolean }>`
     box-sizing: border-box;
     display: flex;
     justify-content: center;
-    max-width: ${({ isMobileSize }) => (!isMobileSize ? 'calc(100vw - 18.875rem)' : '100%')};
+    max-width: ${({ isMobileSize, leftPanelIsVisible }) => {
+        if (leftPanelIsVisible && !isMobileSize) {
+            return 'calc(100vw - 18.875rem)';
+        }
+        return '100%';
+    }};
     height: ${PAGES_CONTAINER_HEIGHT};
     background: ${({ theme }) => theme.panel.backgroundColor};
     border-top: ${BORDER_SIZE} solid ${({ theme }) => theme.panel.borderColor};
@@ -15,7 +20,6 @@ export const ScrollableContainer = styled.div<{ isMobileSize?: boolean }>`
     display: flex;
     height: calc(${PAGES_CONTAINER_HEIGHT} - ${SCROLL_SIZE} - ${BORDER_SIZE});
     align-items: center;
-    width: auto;
     white-space: nowrap;
     padding: 0.5rem 0.625rem 0 0.625rem;
     scrollbar-gutter: stable;
