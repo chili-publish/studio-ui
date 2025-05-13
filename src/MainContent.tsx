@@ -162,6 +162,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
         if (!eventSubscriber) {
             return;
         }
+        const shouldSaveDocument = () => {
+            return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+        };
         const sdk = new StudioSDK({
             editorId: EDITOR_ID,
             enableNextSubscribers: {
@@ -206,9 +209,8 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             onVariableListChanged: (variableList: Variable[]) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 setVariables(variableList);
-                // NOTE(@pkgacek): because `onDocumentLoaded` action is currently broken,
-                // we are using ref to keep track if the `onVariablesListChanged` was called second time.
-                if (enableAutoSaveRef.current === true && !projectConfig.sandboxMode) {
+
+                if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
 
@@ -236,6 +238,9 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 startTransition(() => {
                     zoomToPage();
                 });
+                if (shouldSaveDocument()) {
+                    saveDocumentDebounced();
+                }
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -261,10 +266,13 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                 setActivePageId(pageId);
                 zoomToPage(pageId);
             },
-            // eslint-disable-next-line @typescript-eslint/no-shadow
-            onPageSizeChanged: (pageSize) => {
-                zoomToPage(pageSize.id);
-                setPageSize(pageSize);
+
+            onPageSizeChanged: (size) => {
+                zoomToPage(size.id);
+                setPageSize(size);
+                if (shouldSaveDocument()) {
+                    saveDocumentDebounced();
+                }
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
