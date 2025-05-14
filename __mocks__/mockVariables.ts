@@ -12,7 +12,7 @@ import {
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 export const mockVariables: Variable[] = [
-    <ImageVariable>(<unknown>{
+    <ImageVariable>{
         id: 'variable1',
         name: 'Variable1',
         label: 'Variable1 Label',
@@ -24,9 +24,7 @@ export const mockVariables: Variable[] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
-        allowQuery: true,
-        allowUpload: true,
-    }),
+    },
     <ImageVariable>{
         id: 'image12',
         name: 'Variable12',
@@ -38,8 +36,6 @@ export const mockVariables: Variable[] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
-        allowQuery: true,
-        allowUpload: true,
     },
     <ShortTextVariable>{
         id: 'shortVariable 1',
