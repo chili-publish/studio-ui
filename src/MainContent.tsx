@@ -506,6 +506,11 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                                     activePageId={activePageId}
                                                     pagesToRefresh={pagesToRefresh}
                                                     setPagesToRefresh={setPagesToRefresh}
+                                                    layoutDetails={{
+                                                        selectedLayout: currentSelectedLayout,
+                                                        layouts,
+                                                        layoutSectionUIOptions,
+                                                    }}
                                                 />
                                             ) : null}
                                         </CanvasContainer>
@@ -515,7 +520,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     loadDocumentError={loadDocumentError}
                                     goBack={projectConfig?.onBack}
                                 />
-                                {pendingAuthentications.length &&
+                                {pendingAuthentications.length > 0 &&
                                     pendingAuthentications.map((authFlow) => (
                                         <ConnectorAuthenticationModal
                                             key={authFlow.connectorId}

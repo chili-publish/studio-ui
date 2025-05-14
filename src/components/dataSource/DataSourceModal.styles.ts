@@ -6,6 +6,6 @@ export const ModalStyle = createGlobalStyle`
         padding-bottom: 0;
     }
     &[data-id='gsc-modal-body'] {
-        overflow: auto !important;
+        overflow: auto;
     }
 `;

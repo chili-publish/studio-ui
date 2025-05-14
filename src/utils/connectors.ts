@@ -109,8 +109,11 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
             return m;
         }),
     );
-    return mappingValues.reduce((config, mapping) => {
-        config[mapping.name] = mapping.value;
-        return config;
-    }, {} as Record<string, string | boolean | null>);
+    return mappingValues.reduce(
+        (config, mapping) => {
+            config[mapping.name] = mapping.value;
+            return config;
+        },
+        {} as Record<string, string | boolean | null>,
+    );
 }

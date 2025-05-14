@@ -5,7 +5,8 @@ import {
     EmptyStateText,
     ErrorTextBox,
     ErrorTextMsg,
-    LoadingWrapper,
+    FullSizeCenter,
+    InfiniteScrollingContainer,
     TableWrapper,
 } from './DataSourceTable.styles';
 
@@ -39,7 +40,6 @@ function DataSourceTable({
             {!error && data.length > 0 && (
                 <TableWrapper>
                     <Table defaultSelectedRow={selectedRow} rows={data} onSelectedRowChanged={onSelectedRowChanged} />
-                    <LoadingWrapper ref={infiniteScrollingRef} />
                 </TableWrapper>
             )}
 
@@ -49,18 +49,19 @@ function DataSourceTable({
                 </Center>
             )}
             {!dataIsLoading && data.length === 0 && !error && (
-                <Center>
+                <FullSizeCenter>
                     <EmptyStateText>No data available.</EmptyStateText>
-                </Center>
+                </FullSizeCenter>
             )}
             {!dataIsLoading && error && (
-                <Center>
+                <FullSizeCenter>
                     <ErrorTextBox>
                         <Icon icon={AvailableIcons.faCircleExclamation} />
                         <ErrorTextMsg>{error}</ErrorTextMsg>
                     </ErrorTextBox>
-                </Center>
+                </FullSizeCenter>
             )}
+            <InfiniteScrollingContainer id="infinite-scrolling" ref={infiniteScrollingRef} />
         </>
     );
 }
