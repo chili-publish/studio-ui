@@ -111,7 +111,7 @@ beforeEach(() => {
                 observe: jest.fn(),
                 unobserve: jest.fn(),
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any),
+            }) as any,
     );
 });
 

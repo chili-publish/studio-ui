@@ -520,7 +520,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                     loadDocumentError={loadDocumentError}
                                     goBack={projectConfig?.onBack}
                                 />
-                                {pendingAuthentications.length &&
+                                {pendingAuthentications.length > 0 &&
                                     pendingAuthentications.map((authFlow) => (
                                         <ConnectorAuthenticationModal
                                             key={authFlow.connectorId}

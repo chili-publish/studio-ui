@@ -62,7 +62,7 @@ beforeAll(() => {
                 observe: jest.fn(),
                 unobserve: jest.fn(),
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any),
+            }) as any,
     );
 });
 
@@ -110,7 +110,7 @@ describe('Required text variable', () => {
             StudioUI.studioUILoaderConfig(config);
         });
         await act(async () => {
-            await (window.StudioUISDK as any).next.subscriber.onVariableListChanged(variablesStr);
+            await window.StudioUISDK.next.subscriber.onVariableListChanged(variablesStr);
         });
     });
     afterEach(() => {
