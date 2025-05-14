@@ -1,6 +1,7 @@
 import { ImagePicker, UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import type { ImageVariable as ImageVariableType } from '@chili-publish/studio-sdk';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
 import { useMediaDetails } from '../../../../components/variablesComponents/imageVariable/useMediaDetails';
 import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
@@ -53,7 +54,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = { ...variables[0], helpText };
         render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -65,7 +66,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -90,7 +91,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -114,7 +115,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -144,7 +145,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         const { container } = render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={handleRemove} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={handleRemove} />
             </UiThemeProvider>,
         );
 
@@ -182,7 +183,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         const { container } = render(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -222,7 +223,9 @@ describe('"ImageVariable" component ', () => {
         const showImagePanel = jest.fn();
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
         const imageVariable = variables[0];
-        const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        const { container } = render(
+            <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -261,7 +264,9 @@ describe('"ImageVariable" component ', () => {
         const showImagePanel = jest.fn();
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
         const imageVariable = variables[0];
-        const { container } = render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        const { container } = render(
+            <ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />,
+        );
 
         expect(ImagePicker).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -302,7 +307,7 @@ describe('"ImageVariable" component ', () => {
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel });
 
-        render(<ImageVariable variable={imageVariable} handleImageRemove={handleRemoveFn} />);
+        render(<ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={handleRemoveFn} />);
 
         expect(ImagePicker).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -316,7 +321,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = { ...variables[0], label: '' };
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
-        render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
+        render(<ImageVariable variable={imageVariable as ImageVariableType} handleImageRemove={jest.fn()} />);
 
         expect(ImagePicker).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -332,7 +337,7 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should display label as variable label', () => {
-        const imageVariable = { ...variables[0] };
+        const imageVariable = { ...variables[0] } as ImageVariableType;
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });
         render(<ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />);
@@ -350,7 +355,7 @@ describe('"ImageVariable" component ', () => {
         );
     });
     it('should display variable name as variable label if label does not exist', () => {
-        const imageVariable = { ...variables[0] };
+        const imageVariable = { ...variables[0] } as ImageVariableType;
         delete (imageVariable as unknown as { [key: string]: string }).label;
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
         (useVariablePanelContext as jest.Mock).mockReturnValueOnce({ showImagePanel: jest.fn() });

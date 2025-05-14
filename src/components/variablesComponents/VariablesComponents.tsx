@@ -75,7 +75,7 @@ function VariablesComponents(props: IVariablesComponents) {
             case VariableType.image: {
                 return isDocumentLoaded ? (
                     <ImageVariable
-                        variable={variable}
+                        variable={variable as ImageVariableType}
                         validationError={errMsg}
                         handleImageRemove={onImageVariableRemove}
                     />

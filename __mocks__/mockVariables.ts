@@ -24,6 +24,8 @@ export const mockVariables: Variable[] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
+        allowQuery: true,
+        allowUpload: true,
     }),
     <ImageVariable>{
         id: 'image12',
@@ -36,6 +38,8 @@ export const mockVariables: Variable[] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
+        allowQuery: true,
+        allowUpload: true,
     },
     <ShortTextVariable>{
         id: 'shortVariable 1',
