@@ -1,6 +1,6 @@
 # Studio UI
 
-![Coverage](https://img.shields.io/badge/coverage-77.84%25-red.svg)
+![Coverage](https://img.shields.io/badge/coverage-77.83%25-red.svg)
 
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
@@ -22,9 +22,9 @@ If you need help generating a token or would like code samples, please see our [
 
 ### Perquisites
 
--   A working (preferably new) project
--   Some way to serve an html file (webserver like nginx, mamp, apache, ...)
--   A little bit of html and javascript knowledge will come in handy
+- A working (preferably new) project
+- Some way to serve an html file (webserver like nginx, mamp, apache, ...)
+- A little bit of html and javascript knowledge will come in handy
 
 ### Basic, all in one example
 
@@ -98,20 +98,20 @@ for a more advanced example, and extra information about building an integration
 
 ### Tools setup
 
--   [Node LTS version](https://nodejs.org/en) is installed
+- [Node LTS version](https://nodejs.org/en) is installed
     > node -v # to check existing node version
--   [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed (yarn `major version 1` though)
+- [Yarn v1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/) or newer is installed (yarn `major version 1` though)
     > yarn -v # to check existing yarn version
 
 ### Configure .npmrc to access private npm repositories
 
 This step is only applicable if you have access to the CHILI publish organisation.
 
--   Setup access to `@chili-publish` registry
+- Setup access to `@chili-publish` registry
 
-    -   Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only necessary scopes (`read:packages`) and expiration time recommendation is `90 days`.
+    - Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only necessary scopes (`read:packages`) and expiration time recommendation is `90 days`.
 
-    -   Login to the repository
+    - Login to the repository
 
     ```bash
     npm login --scope=@chili-publish --registry=https://npm.pkg.github.com
@@ -175,8 +175,8 @@ If a new package will be installed,please check the package license information.
 
 #### Manual
 
--   run `yarn build && yarn link` inside grafx-shared-components repo
--   run `yarn link @chili-publish/grafx-shared-components` inside studio-ui (this) repo
+- run `yarn build && yarn link` inside grafx-shared-components repo
+- run `yarn link @chili-publish/grafx-shared-components` inside studio-ui (this) repo
 
 #### Alias in .bashrc
 

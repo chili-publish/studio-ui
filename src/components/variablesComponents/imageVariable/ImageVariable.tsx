@@ -29,11 +29,7 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(
-        variable.value?.connectorId,
-        mediaAssetId,
-        remoteConnector,
-    );
+    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
