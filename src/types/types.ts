@@ -37,7 +37,7 @@ export type ProjectConfig = {
     ) => Promise<DownloadLinkResult>;
     editorLink?: string;
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
-    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
