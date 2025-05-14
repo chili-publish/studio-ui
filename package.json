@@ -1,6 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
+    "version": "1.23.5",
     "version": "1.24.0-8",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
@@ -29,7 +30,7 @@
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
         "@chili-publish/grafx-shared-components": "^0.98.5",
-        "@chili-publish/studio-sdk": "1.23.0",
+        "@chili-publish/studio-sdk": "1.23.1",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",
         "@fortawesome/pro-regular-svg-icons": "^6.7.1",
