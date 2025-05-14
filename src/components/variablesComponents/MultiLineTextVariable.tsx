@@ -120,7 +120,6 @@ function MultiLineTextVariable(props: ITextVariable) {
                     onVariableBlur?.(variable.id);
                 }}
                 onChange={handleVariableChange}
-                isHighlightOnClick
                 required={variable.isRequired}
                 dataId={getDataIdForSUI('multi-line-variable')}
                 dataTestId={getDataTestIdForSUI('multi-line-variable')}
