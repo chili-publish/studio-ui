@@ -10,7 +10,7 @@ import { IImageVariable } from '../VariablesComponents.types';
 import { getImageVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
-import { useUploadAsset } from './useUploadAsset';
+import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 
 function ImageVariable(props: IImageVariable) {
@@ -114,9 +114,10 @@ function ImageVariable(props: IImageVariable) {
                 previewImage={previewImage}
                 validationErrorMessage={validationError || errorMsg}
                 onRemove={onRemove}
+                pending={isPending}
+                uploadFilesFormat={uploadFileMimeTypes.join(', ')}
                 onBrowse={allowQuery ? handleImageBrowse : undefined}
                 onUpload={allowUpload ? handleImageUpload : undefined}
-                pending={isPending}
             />
             {variable.helpText && !validationError ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
