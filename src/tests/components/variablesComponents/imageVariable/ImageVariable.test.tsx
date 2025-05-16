@@ -31,6 +31,7 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useMediaDeta
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useUploadAsset', () => ({
+    uploadFileMimeTypes: ['image/jpg' as const, 'image/jpeg' as const, 'image/png' as const],
     useUploadAsset: jest.fn().mockReturnValue({
         upload: jest.fn().mockImplementation(() => Promise.resolve(null)),
         pending: false,
