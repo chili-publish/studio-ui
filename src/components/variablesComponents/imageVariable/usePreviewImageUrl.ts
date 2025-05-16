@@ -1,15 +1,10 @@
 import { usePreviewImageUrl as coreHook } from '@chili-publish/grafx-shared-components';
 import { MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
-import { MediaRemoteConnector } from 'src/utils/ApiTypes';
 
-export const usePreviewImageUrl = (
-    connectorId: string | undefined,
-    mediaAssetId: string | undefined,
-    remoteConnector: MediaRemoteConnector | undefined,
-) => {
+export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId: string | undefined) => {
     const previewCall = useCallback(
-        async (id: string, retries = 3) => {
+        async (id: string) => {
             if (!connectorId) {
                 return null;
             }
@@ -18,21 +13,6 @@ export const usePreviewImageUrl = (
             };
             try {
                 const res = await downloadCall();
-                if (
-                    typeof res === 'object' &&
-                    'data' in res &&
-                    remoteConnector?.name === 'GraFx Media' &&
-                    remoteConnector?.ownerType === 'builtIn'
-                ) {
-                    if (JSON.parse((res as { data: string }).data).statusCode === 202) {
-                        if (retries > 0) {
-                            await new Promise((resolve) => {
-                                setTimeout(resolve, 1000);
-                            });
-                            return previewCall(id, retries - 1);
-                        }
-                    }
-                }
                 return res;
             } catch (e) {
                 const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
@@ -43,10 +23,8 @@ export const usePreviewImageUrl = (
                 return null;
             }
         },
-        [connectorId, remoteConnector?.name, remoteConnector?.ownerType],
+        [connectorId],
     );
 
-    const previewImageUrl = coreHook(mediaAssetId, previewCall);
-
-    return previewImageUrl;
+    return coreHook(mediaAssetId, previewCall);
 };

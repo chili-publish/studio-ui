@@ -80,7 +80,9 @@ import { EngineVersionManager } from './version-manager';
                 downloadButton: { visible: true },
             },
         },
-        featureFlags: {},
+        featureFlags: {
+            studioImageUpload: true,
+        },
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console
