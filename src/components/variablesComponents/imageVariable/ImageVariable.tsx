@@ -34,7 +34,8 @@ function ImageVariable(props: IImageVariable) {
     const {
         upload,
         pending: uploadPending,
-        errorMsg,
+        uploadError,
+        resetUploadError,
     } = useUploadAsset(remoteConnector?.id, variable.value?.connectorId);
 
     const previewImage = useMemo(() => {
@@ -50,7 +51,7 @@ function ImageVariable(props: IImageVariable) {
     }, [mediaDetails, previewImageUrl]);
 
     const handleImageUpload = async (files: FileList | null) => {
-        if (!files) {
+        if (!files?.length) {
             return;
         }
         onVariableFocus?.(variable.id);
@@ -67,6 +68,7 @@ function ImageVariable(props: IImageVariable) {
         if (!remoteConnector) {
             throw new Error('There is no remote connector for defined image variable');
         }
+        resetUploadError();
         try {
             if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                 await verifyAuthentication(variable.value.connectorId);
@@ -81,6 +83,7 @@ function ImageVariable(props: IImageVariable) {
     };
 
     const onRemove = () => {
+        resetUploadError();
         handleImageRemove();
         onVariableFocus?.(variable.id);
         onVariableBlur?.(variable.id);
@@ -88,6 +91,8 @@ function ImageVariable(props: IImageVariable) {
 
     // Calculate pending state
     const isPending = previewPending || uploadPending;
+
+    const validationErrorMessage = uploadError || validationError;
 
     // Determine if any operations are allowed based on feature flags
     const allowQuery = isImageUploadEnabled ? variable.allowQuery : true;
@@ -112,14 +117,14 @@ function ImageVariable(props: IImageVariable) {
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                validationErrorMessage={validationError || errorMsg}
+                validationErrorMessage={validationErrorMessage}
                 onRemove={onRemove}
                 pending={isPending}
                 uploadFilesFormat={uploadFileMimeTypes.join(', ')}
                 onBrowse={allowQuery ? handleImageBrowse : undefined}
                 onUpload={allowUpload ? handleImageUpload : undefined}
             />
-            {variable.helpText && !validationError ? (
+            {variable.helpText && !validationErrorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
             ) : null}
         </HelpTextWrapper>

@@ -5,7 +5,7 @@ export const uploadFileMimeTypes = ['image/jpg' as const, 'image/jpeg' as const,
 
 export const useUploadAsset = (remoteConnectorId: string | undefined, connectorId: string | undefined) => {
     const [pending, setPending] = useState(false);
-    const [errorMsg, setErrorMsg] = useState<string>();
+    const [uploadError, setUploadError] = useState<string>();
 
     const upload = useCallback(
         async (files: File[]): Promise<Media | null> => {
@@ -14,7 +14,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, connectorI
             }
             try {
                 setPending(true);
-                setErrorMsg(undefined);
+                setUploadError(undefined);
                 // 1. Stage selected files
                 const filePointers = await window.StudioUISDK.utils.stageFiles(files, remoteConnectorId, {
                     mimeTypes: uploadFileMimeTypes,
@@ -27,7 +27,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, connectorI
             } catch (error) {
                 // TODO: Implement the particular error message text in context of https://chilipublishintranet.atlassian.net/browse/PRODUCT-7142. Error type should be exported from SDK package
                 // setErrorMsg(error instanceof SDKAssetStageError ? error.message : 'Something went wrong.');
-                setErrorMsg('Something went wrong.');
+                setUploadError('Something went wrong.');
                 return null;
             } finally {
                 setPending(false);
@@ -36,9 +36,14 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, connectorI
         [connectorId, remoteConnectorId],
     );
 
+    const resetUploadError = useCallback(() => {
+        setUploadError(undefined);
+    }, []);
+
     return {
         upload,
         pending,
-        errorMsg,
+        uploadError,
+        resetUploadError,
     };
 };
