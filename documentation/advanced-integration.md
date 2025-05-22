@@ -19,7 +19,7 @@ Add your own theming to the Studio UI, to give the UI a little touch of your own
 
 ### outputSettings
 
--   **Deprecated**: Yes
+- **Deprecated**: Yes
 
 > Alpha
 
@@ -29,8 +29,8 @@ This setting allows you to fine grain which output types are possible within the
 
 Before we start, make sure the following bulletpoints are checked off:
 
--   [ ] Local webserver that can serve html
--   [ ] Little bit of JS knowledge, but don't let it scare you
+- [ ] Local webserver that can serve html
+- [ ] Little bit of JS knowledge, but don't let it scare you
 
 ## Advanced example using GraFx API for document retrieval
 
@@ -102,21 +102,21 @@ const uiOptions = {
     theme: {
         fontFamily: 'inherit',
         colors: {
-            "brandBackgroundColor": "#F40009", // Used for primary buttons, checkboxes, toggles, radio buttons, animation timeline, etc.
-            "primaryButtonTextColor": "#ffffff", // Used for primary button text, checkboxes, toggles, radio buttons.
-            "primaryButtonHoverColor": "#CB0007", // Used for primary button hover background.
-            "panelBackgroundColor": "#252525", // Used for panel and modal backgrounds.
-            "dropdownMenuBackgroundColor": "#2F2F2F", // Used for dropdown menu backgrounds.
-            "inputBackgroundColor": "#323232", // Used for input fields background.
-            "inputBorderColor": "#F5F5F5"; // Used for the border color of input fields.
-            "inputFocusBorderColor": "#ffffff", // Used for the border color of input fields when focused.
-            "canvasBackgroundColor": "#161616", // Used for canvas background.
-            "highlightedElementsColor": "#3E3E3E", // Used for highlighted elements.
-            "disabledElementsColor": "#6E6E6E", // Used for disabled text and buttons.
-            "placeholderTextColor": "#909090", // Used for text placeholders.
-            "primaryTextColor": "#ffffff" // Used for primary text.
-            "secondaryTextColor": "#B9B9B9", // Used for secondary text.
-        }
+            brandBackgroundColor: '#F40009', // Used for primary buttons, checkboxes, toggles, radio buttons, animation timeline, etc.
+            primaryButtonTextColor: '#ffffff', // Used for primary button text, checkboxes, toggles, radio buttons.
+            primaryButtonHoverColor: '#CB0007', // Used for primary button hover background.
+            panelBackgroundColor: '#252525', // Used for panel and modal backgrounds.
+            dropdownMenuBackgroundColor: '#2F2F2F', // Used for dropdown menu backgrounds.
+            inputBackgroundColor: '#323232', // Used for input fields background.
+            inputBorderColor: '#F5F5F5', // Used for the border color of input fields.
+            inputFocusBorderColor: '#ffffff', // Used for the border color of input fields when focused.
+            canvasBackgroundColor: '#161616', // Used for canvas background.
+            highlightedElementsColor: '#3E3E3E', // Used for highlighted elements.
+            disabledElementsColor: '#6E6E6E', // Used for disabled text and buttons.
+            placeholderTextColor: '#909090', // Used for text placeholders.
+            primaryTextColor: '#ffffff', // Used for primary text.
+            secondaryTextColor: '#B9B9B9', // Used for secondary text.
+        },
     },
     widgets: {
         downloadButton: {
@@ -165,7 +165,7 @@ window.StudioUI.studioUILoaderConfig({
     userInterfaceID: userInterfaceID,
 
     /* Callback function that fetches UI configuration details based on the provided userInterfaceId */
-    onFetchUserInterfaceDetails
+    onFetchUserInterfaceDetails,
 });
 ```
 
@@ -190,7 +190,7 @@ The theme field within uiOptions is used to customize various UI elements, speci
 
 #### outputSettings
 
--   **Deprecated**: Yes
+- **Deprecated**: Yes
 
 The outputSettings option, is quite a flexible way to set the available output types for your integrations, this option will be overridden when `userInterfaceID` is provided.
 
@@ -370,11 +370,11 @@ No it isn't, there are a bunch of loaders, the one more restricting than the oth
 
 Following callbacks are also available (in other loaders):
 
--   `onProjectLoaded`: callback that listens on when the project is completely loaded
--   `onAuthenticationRequested`: Basically the same as auth token action, but instead of using a string directly, it's a callback
--   `onAuthenticationExpired`: Basically the same as refreshTokenAction above
--   `onLogInfoRequested`: A callback used to generate some loading information in the console.
--   `onProjectGetDownloadLink`: A callback to get the output download link for the project.
+- `onProjectLoaded`: callback that listens on when the project is completely loaded
+- `onAuthenticationRequested`: Basically the same as auth token action, but instead of using a string directly, it's a callback
+- `onAuthenticationExpired`: Basically the same as refreshTokenAction above
+- `onLogInfoRequested`: A callback used to generate some loading information in the console.
+- `onProjectGetDownloadLink`: A callback to get the output download link for the project.
 
 ### Enable/Disable Connector Query Call Caching
 
