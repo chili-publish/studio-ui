@@ -8,7 +8,7 @@ import { IListVariable } from '../VariablesComponents.types';
 
 function ListVariable(props: IListVariable) {
     const { variable, validationError, onChange } = props;
-    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+    const { onVariableBlur, onVariableFocus, projectConfig } = useUiConfigContext();
 
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
@@ -23,7 +23,10 @@ function ListVariable(props: IListVariable) {
     const placeholder = getVariablePlaceholder(variable);
 
     const updateVariableValue = async (variableId: string, value: string) => {
-        await window.StudioUISDK.variable.setValue(variableId, value);
+        const result = await window.StudioUISDK.variable.setValue(variableId, value);
+        if (result.success) {
+            projectConfig.onVariableValueChangedCompleted?.(variableId, result.data);
+        }
         onChange({ ...variable, selected: { value } });
     };
 

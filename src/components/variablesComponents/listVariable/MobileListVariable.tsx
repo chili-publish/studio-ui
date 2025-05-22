@@ -25,7 +25,7 @@ function MobileListVariable({
     onMenuClose,
     onItemSelected,
 }: MobileListVariableProps) {
-    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+    const { onVariableBlur, onVariableFocus, projectConfig } = useUiConfigContext();
 
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
@@ -41,7 +41,10 @@ function MobileListVariable({
 
     const updateVariableValue = async (value: string) => {
         onItemSelected({ ...variable, selected: { value } });
-        await window.StudioUISDK.variable.setValue(variable.id, value);
+        const result = await window.StudioUISDK.variable.setValue(variable.id, value);
+        if (result.success) {
+            projectConfig.onVariableValueChangedCompleted?.(variable.id, result.data);
+        }
     };
 
     return (
