@@ -43,7 +43,7 @@ function MobileListVariable({
         onItemSelected({ ...variable, selected: { value } });
         const result = await window.StudioUISDK.variable.setValue(variable.id, value);
         if (result.success) {
-            projectConfig.onVariableValueChangedCompleted?.(variable.id, result.data);
+            projectConfig.onVariableValueChangedCompleted?.(variable.id, value);
         }
     };
 

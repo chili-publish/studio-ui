@@ -25,7 +25,7 @@ function ListVariable(props: IListVariable) {
     const updateVariableValue = async (variableId: string, value: string) => {
         const result = await window.StudioUISDK.variable.setValue(variableId, value);
         if (result.success) {
-            projectConfig.onVariableValueChangedCompleted?.(variableId, result.data);
+            projectConfig.onVariableValueChangedCompleted?.(variableId, value);
         }
         onChange({ ...variable, selected: { value } });
     };
