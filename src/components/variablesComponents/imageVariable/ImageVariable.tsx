@@ -7,7 +7,7 @@ import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/c
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
-import { getImageVariablePlaceholder } from '../variablePlaceholder.util';
+import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
@@ -37,6 +37,8 @@ function ImageVariable(props: IImageVariable) {
         uploadError,
         resetUploadError,
     } = useUploadAsset(remoteConnector?.id, variable.value?.connectorId);
+
+    const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
     const previewImage = useMemo(() => {
         if (!mediaDetails || !previewImageUrl) {
@@ -120,6 +122,7 @@ function ImageVariable(props: IImageVariable) {
                 validationErrorMessage={validationErrorMessage}
                 onRemove={onRemove}
                 pending={isPending}
+                pendingLabel={pendingLabel}
                 uploadFilesFormat={uploadFileMimeTypes.join(', ')}
                 onBrowse={allowQuery ? handleImageBrowse : undefined}
                 onUpload={allowUpload ? handleImageUpload : undefined}
