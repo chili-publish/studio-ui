@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
-import { PanelTitle } from '../shared/Panel.styles';
+import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import DataSourceInput from './DataSourceInput';
 import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
+import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
 function DataSource() {
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
+    const { formBuilder } = useUserInterfaceDetailsContext();
 
     const {
         currentInputRow,
@@ -53,7 +55,12 @@ function DataSource() {
 
     return (
         <>
-            <PanelTitle>Data source</PanelTitle>
+            <SectionWrapper id="datasource-section-header">
+                <PanelTitle margin="0">{formBuilder.datasource?.header}</PanelTitle>
+                {formBuilder.datasource?.helpText && (
+                    <SectionHelpText>{formBuilder.datasource?.helpText}</SectionHelpText>
+                )}
+            </SectionWrapper>
             <DataSourceInput
                 currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}

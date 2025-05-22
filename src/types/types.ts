@@ -37,8 +37,7 @@ export type ProjectConfig = {
     ) => Promise<DownloadLinkResult>;
     editorLink?: string;
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
@@ -228,7 +227,7 @@ export const defaultFormBuilder: FormBuilderType = {
     datasource: {
         type: 'datasource',
         active: true,
-        header: 'Datasource',
+        header: 'Data source',
         helpText: '',
     },
     layouts: {
@@ -244,7 +243,7 @@ export const defaultFormBuilder: FormBuilderType = {
     variables: {
         type: 'variables',
         active: true,
-        header: 'Variables',
+        header: 'Customize',
         helpText: '',
     },
 };
@@ -314,4 +313,15 @@ export interface IStudioUILoaderConfig {
 export type PageSnapshot = {
     id: string;
     snapshot: Uint8Array;
+};
+
+export type MobileTrayHeaderDetailsr = {
+    title: string;
+    helpText: string;
+};
+
+export type MobileTrayFormBuilderHeader = {
+    datasource: MobileTrayHeaderDetailsr;
+    variables: MobileTrayHeaderDetailsr;
+    layouts: MobileTrayHeaderDetailsr;
 };

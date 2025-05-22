@@ -3,6 +3,7 @@
 
 import StudioUI from '../main';
 import { TokenManager } from './token-manager';
+import { EngineVersionManager } from './version-manager';
 
 (async () => {
     const tokenManager = new TokenManager();
@@ -10,7 +11,7 @@ import { TokenManager } from './token-manager';
     let urlParams = new URLSearchParams(window.location.search);
 
     // state after redirection
-    if (urlParams.has('code') && urlParams.has('code')) {
+    if (urlParams.has('code')) {
         const res = await tokenManager.redirectCallback();
         if (res.appState) {
             window.history.replaceState(null, '', res.appState.returnTo);
@@ -18,22 +19,21 @@ import { TokenManager } from './token-manager';
         }
     }
 
+    let authToken = '';
+    if (import.meta.env.VITE_TOKEN) {
+        authToken = import.meta.env.VITE_TOKEN;
+    } else {
+        authToken = await tokenManager.getAccessToken();
+    }
+
+    const engineVersionManager = new EngineVersionManager(authToken);
+
     const engineVersion = urlParams.get('engine') ?? 'main';
-    // When devloping locally make sure you change the engine commit hash, you can get it from opening studio in platform
-    // or from engine github repo
-    const engineCommitSha = urlParams.get('engineCommitSha') ?? import.meta.env.VITE_ENGINE_COMMIT_SHA ?? '';
+    const engineCommitSha =
+        urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha(engineVersion));
+
     // The following will take released versions in consideration
     const engineRegex = /^\d+\.\d+\.\d+$/;
-    const engineSource =
-        engineRegex.test(engineVersion) || !engineCommitSha ? engineVersion : `${engineVersion}-${engineCommitSha}`;
-
-    // Set the values to the url
-    if (!urlParams.get('engine')) {
-        window.history.replaceState(null, '', `${window.location.href}?engine=${engineVersion}`);
-    }
-    if (!urlParams.get('engineCommitSha') && !engineRegex.test(engineVersion)) {
-        window.history.replaceState(null, '', `${window.location.href}&engineCommitSha=${engineCommitSha}`);
-    }
 
     const envName = import.meta.env.VITE_ENVIRONMENT_NAME;
     const projectId = import.meta.env.VITE_PROJECT_ID;
@@ -59,12 +59,8 @@ import { TokenManager } from './token-manager';
         return;
     }
 
-    let authToken = '';
-    if (import.meta.env.VITE_TOKEN) {
-        authToken = import.meta.env.VITE_TOKEN;
-    } else {
-        authToken = await tokenManager.getAccessToken();
-    }
+    const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
+
     StudioUI.studioUILoaderConfig({
         selector: 'sui-root',
         projectId,
