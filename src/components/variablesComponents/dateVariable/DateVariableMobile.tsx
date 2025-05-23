@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
 import { DateVariable as DateVariableType } from '@chili-publish/studio-sdk';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DateVariable from './DateVariable';
 import { DatePickerWrapper } from '../VariablesComponents.styles';
@@ -12,11 +13,15 @@ interface DateVariableMobileProps {
 }
 function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProps) {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
+    const { projectConfig } = useUiConfigContext();
 
     const handleDateSelection = useCallback(async () => {
         if (selectedDate) {
             const formattedDate = selectedDate?.toISOString().split('T')[0];
-            await window.StudioUISDK.variable.setValue(variable.id, formattedDate);
+            const result = await window.StudioUISDK.variable.setValue(variable.id, formattedDate);
+            if (result.success) {
+                projectConfig.onVariableValueChangedCompleted?.(variable.id, formattedDate);
+            }
             onDateSelected({ ...variable, value: formattedDate });
             setSelectedDate(null);
         }

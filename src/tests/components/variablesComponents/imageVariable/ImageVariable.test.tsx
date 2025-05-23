@@ -35,7 +35,8 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useUploadAss
     useUploadAsset: jest.fn().mockReturnValue({
         upload: jest.fn().mockImplementation(() => Promise.resolve(null)),
         pending: false,
-        errorMsg: undefined,
+        uploadError: undefined,
+        resetUploadError: jest.fn(),
     }),
 }));
 
@@ -497,5 +498,52 @@ describe('"ImageVariable" component ', () => {
         );
 
         expect(screen.getByTestId('pending-state')).toHaveTextContent('Loading...');
+    });
+
+    it('should call resetUploadError when browsing images', async () => {
+        (useVariableConnector as jest.Mock).mockReturnValueOnce({
+            remoteConnector: { supportedAuthentication: { browser: [] } },
+        });
+        const resetUploadError = jest.fn();
+        (useUploadAsset as jest.Mock).mockReturnValue({
+            upload: jest.fn(),
+            pending: false,
+            uploadError: undefined,
+            resetUploadError,
+        });
+
+        const imageVariable = variables[0];
+
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
+
+        fireEvent.click(screen.getByTestId('browse-button'));
+
+        expect(resetUploadError).toHaveBeenCalled();
+    });
+
+    it('should call resetUploadError when removing image', () => {
+        const resetUploadError = jest.fn();
+        (useUploadAsset as jest.Mock).mockReturnValue({
+            upload: jest.fn(),
+            pending: false,
+            uploadError: undefined,
+            resetUploadError,
+        });
+
+        const imageVariable = variables[0];
+
+        render(
+            <UiThemeProvider theme="platform">
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+            </UiThemeProvider>,
+        );
+
+        fireEvent.click(screen.getByTestId('remove-button'));
+
+        expect(resetUploadError).toHaveBeenCalled();
     });
 });

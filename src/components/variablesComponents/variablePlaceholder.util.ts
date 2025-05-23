@@ -36,3 +36,7 @@ export const getImageVariablePlaceholder = (imageVariable: ImageVariable): strin
     }
     return '';
 };
+
+export const getImageVariablePendingLabel = (uploadPending: boolean): string => {
+    return uploadPending ? 'Uploading image' : 'Loading preview...';
+};

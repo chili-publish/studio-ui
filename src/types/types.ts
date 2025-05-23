@@ -45,6 +45,10 @@ export type ProjectConfig = {
     onVariableBlur?: (variableId: string) => void;
     userInterfaceFormBuilderData?: FormBuilderType;
     onFetchUserInterfaceDetails?: (userInterfaceId?: string) => Promise<UserInterfaceWithOutputSettings | null>;
+    onVariableValueChangedCompleted?: (
+        variableId: string,
+        value: string | boolean | number | null | undefined,
+    ) => Promise<void>;
 };
 
 export interface DefaultStudioConfig {
@@ -300,6 +304,10 @@ export interface IStudioUILoaderConfig {
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
     onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
+    onVariableValueChangedCompleted?: (
+        variableId: string,
+        value: string | boolean | number | null | undefined,
+    ) => Promise<void>;
 }
 
 export type PageSnapshot = {

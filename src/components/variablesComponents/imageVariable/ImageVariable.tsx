@@ -7,7 +7,7 @@ import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/c
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
-import { getImageVariablePlaceholder } from '../variablePlaceholder.util';
+import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
@@ -34,8 +34,11 @@ function ImageVariable(props: IImageVariable) {
     const {
         upload,
         pending: uploadPending,
-        errorMsg,
+        uploadError,
+        resetUploadError,
     } = useUploadAsset(remoteConnector?.id, variable.value?.connectorId);
+
+    const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
     const previewImage = useMemo(() => {
         if (!mediaDetails || !previewImageUrl) {
@@ -50,7 +53,7 @@ function ImageVariable(props: IImageVariable) {
     }, [mediaDetails, previewImageUrl]);
 
     const handleImageUpload = async (files: FileList | null) => {
-        if (!files) {
+        if (!files?.length) {
             return;
         }
         onVariableFocus?.(variable.id);
@@ -70,6 +73,7 @@ function ImageVariable(props: IImageVariable) {
         if (!remoteConnector) {
             throw new Error('There is no remote connector for defined image variable');
         }
+        resetUploadError();
         try {
             if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                 await verifyAuthentication(variable.value.connectorId);
@@ -84,6 +88,7 @@ function ImageVariable(props: IImageVariable) {
     };
 
     const onRemove = () => {
+        resetUploadError();
         handleImageRemove();
         onVariableFocus?.(variable.id);
         onVariableBlur?.(variable.id);
@@ -91,6 +96,8 @@ function ImageVariable(props: IImageVariable) {
 
     // Calculate pending state
     const isPending = previewPending || uploadPending;
+
+    const validationErrorMessage = uploadError || validationError;
 
     // Determine if any operations are allowed based on feature flags
     const allowQuery = isImageUploadEnabled ? variable.allowQuery : true;
@@ -115,14 +122,15 @@ function ImageVariable(props: IImageVariable) {
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                validationErrorMessage={validationError || errorMsg}
+                validationErrorMessage={validationErrorMessage}
                 onRemove={onRemove}
                 pending={isPending}
+                pendingLabel={pendingLabel}
                 uploadFilesFormat={uploadFileMimeTypes.join(', ')}
                 onBrowse={allowQuery ? handleImageBrowse : undefined}
                 onUpload={allowUpload ? handleImageUpload : undefined}
             />
-            {variable.helpText && !validationError ? (
+            {variable.helpText && !validationErrorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
             ) : null}
         </HelpTextWrapper>
