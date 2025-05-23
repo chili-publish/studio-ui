@@ -36,7 +36,7 @@ function ImageVariable(props: IImageVariable) {
         pending: uploadPending,
         uploadError,
         resetUploadError,
-    } = useUploadAsset(remoteConnector?.id, variable.value?.connectorId);
+    } = useUploadAsset(remoteConnector?.id, variable);
 
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
@@ -57,7 +57,10 @@ function ImageVariable(props: IImageVariable) {
             return;
         }
         onVariableFocus?.(variable.id);
-        upload([...files]).then((media) => {
+        upload([...files], {
+            minWidthPixels: variable.uploadMinWidth,
+            minHeightPixels: variable.uploadMinHeight,
+        }).then((media) => {
             if (!media) {
                 return;
             }
