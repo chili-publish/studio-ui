@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-node_modules/pretty-quick/bin/pretty-quick.js --staged
+yarn pretty-quick --staged
 yarn lint
 yarn validate-versions

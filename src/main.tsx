@@ -132,6 +132,7 @@ export default class StudioUI extends StudioUILoader {
             onVariableBlur,
             userInterfaceFormBuilderData,
             onFetchUserInterfaceDetails,
+            onVariableValueChangedCompleted,
         } = config;
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -180,6 +181,7 @@ export default class StudioUI extends StudioUILoader {
             onSetMultiLayout,
             onVariableFocus,
             onVariableBlur,
+            onVariableValueChangedCompleted,
         });
     }
 }

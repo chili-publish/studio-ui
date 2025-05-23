@@ -85,5 +85,7 @@ import { EngineVersionManager } from './version-manager';
         onVariableFocus: (id) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console
         onVariableBlur: (id) => console.log('blurred var: ', id),
+        // eslint-disable-next-line no-console
+        onVariableValueChangedCompleted: async (id, value) => console.log('changed var: ', id, value),
     });
 })();

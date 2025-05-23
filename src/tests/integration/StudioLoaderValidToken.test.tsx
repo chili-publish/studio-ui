@@ -35,7 +35,7 @@ describe('StudioLoader integration - valid auth token', () => {
     });
 
     it('Should correctly get media details for the image variable when token is valid', async () => {
-        const imgVariable: ImageVariable = mockVariables[0];
+        const imgVariable: ImageVariable = mockVariables[0] as ImageVariable;
         const config = {
             selector: 'sui-root',
             projectDownloadUrl,

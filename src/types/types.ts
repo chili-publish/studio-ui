@@ -37,7 +37,7 @@ export type ProjectConfig = {
     ) => Promise<DownloadLinkResult>;
     editorLink?: string;
     onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
-    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>>;
+    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
@@ -45,6 +45,10 @@ export type ProjectConfig = {
     onVariableBlur?: (variableId: string) => void;
     userInterfaceFormBuilderData?: FormBuilderType;
     onFetchUserInterfaceDetails?: (userInterfaceId?: string) => Promise<UserInterfaceWithOutputSettings | null>;
+    onVariableValueChangedCompleted?: (
+        variableId: string,
+        value: string | boolean | number | null | undefined,
+    ) => Promise<void>;
 };
 
 export interface DefaultStudioConfig {
@@ -300,6 +304,10 @@ export interface IStudioUILoaderConfig {
     onVariableFocus?: (variableId: string) => void;
     onVariableBlur?: (variableId: string) => void;
     onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
+    onVariableValueChangedCompleted?: (
+        variableId: string,
+        value: string | boolean | number | null | undefined,
+    ) => Promise<void>;
 }
 
 export type PageSnapshot = {

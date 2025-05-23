@@ -34,7 +34,8 @@ describe('"useVariablesConnector" hook', () => {
     });
 
     it('should set connector from store', async () => {
-        const currentImageVariable: ImageVariable = mockVariables[0];
+        // Ensure the mock variable is of type ImageVariable
+        const currentImageVariable = mockVariables[0] as ImageVariable;
         const { result } = renderHookWithProviders(() => useVariableConnector(currentImageVariable), {
             preloadedState: {
                 media: {
