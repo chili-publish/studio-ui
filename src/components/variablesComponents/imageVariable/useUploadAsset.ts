@@ -13,13 +13,13 @@ function getUploadError(error: UploadAssetValidationError, imageVariable: ImageV
     switch (error.type) {
         case UploadAssetValidationErrorType.minDimension:
             if (imageVariable.uploadMinWidth && imageVariable.uploadMinHeight) {
-                return `The image needs to be at least ${imageVariable.uploadMinWidth}x${imageVariable.uploadMinHeight}.`;
+                return `The image needs to be at least ${imageVariable.uploadMinWidth}x${imageVariable.uploadMinHeight} px.`;
             }
             if (imageVariable.uploadMinWidth) {
-                return `The image needs to be at least ${imageVariable.uploadMinWidth} wide.`;
+                return `The image needs to be at least ${imageVariable.uploadMinWidth} px wide.`;
             }
             if (imageVariable.uploadMinHeight) {
-                return `The image needs to be at least ${imageVariable.uploadMinHeight} high.`;
+                return `The image needs to be at least ${imageVariable.uploadMinHeight} px high.`;
             }
             return 'Something went wrong.';
         default:
