@@ -31,17 +31,14 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
         const connectorGroups = connectors
             // Filter out the local connector
             .filter((connector) => connector.id !== 'grafx-media')
-            .reduce(
-                (groups, connector) => {
-                    const url = getConnectorUrl(connector, configuration.graFxStudioEnvironmentApiBaseUrl);
-                    if (!groups[url]) {
-                        groups[url] = [];
-                    }
-                    groups[url].push(connector.id);
-                    return groups;
-                },
-                {} as { [url: string]: string[] },
-            );
+            .reduce((groups, connector) => {
+                const url = getConnectorUrl(connector, configuration.graFxStudioEnvironmentApiBaseUrl);
+                if (!groups[url]) {
+                    groups[url] = [];
+                }
+                groups[url].push(connector.id);
+                return groups;
+            }, {} as { [url: string]: string[] });
 
         const remoteConnectors = await Promise.allSettled(
             Object.keys(connectorGroups).map((url) =>

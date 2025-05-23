@@ -20,13 +20,10 @@ export function useVariablesChange(variableIds: Array<string>) {
             }
             const variablesChangeToListen = documentVariables
                 .filter((v) => variableIds.includes(v.id))
-                .reduce(
-                    (all, vm) => {
-                        all[vm.id] = vm;
-                        return all;
-                    },
-                    {} as Record<string, Variable>,
-                );
+                .reduce((all, vm) => {
+                    all[vm.id] = vm;
+                    return all;
+                }, {} as Record<string, Variable>);
             // If we receive such condition as "true", it means the size of variable's list is dynamic
             // and we need to adjust the behavior - not a case right now
             if (variableIds.length !== Object.keys(variablesChangeToListen).length) {

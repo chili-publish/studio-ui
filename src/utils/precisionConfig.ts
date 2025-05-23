@@ -10,5 +10,5 @@ export const UNIT_PRECISIONS: Record<string, number> = {
 
 // the default precision will be 2 if not precised f.e for Magnification % or Rotation degrees...
 export const getPrecisionForUnit = (unit?: MeasurementUnit): number => {
-    return unit ? (UNIT_PRECISIONS[unit === ('in' as MeasurementUnit) ? MeasurementUnit.inch : unit] ?? 2) : 2;
+    return unit ? UNIT_PRECISIONS[unit === ('in' as MeasurementUnit) ? MeasurementUnit.inch : unit] ?? 2 : 2;
 };
