@@ -1,9 +1,33 @@
-import { Media, UploadValidationConfiguration } from '@chili-publish/studio-sdk';
+import {
+    ImageVariable,
+    Media,
+    UploadAssetValidationError,
+    UploadAssetValidationErrorType,
+    UploadValidationConfiguration,
+} from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 
 export const uploadFileMimeTypes = ['image/jpg' as const, 'image/jpeg' as const, 'image/png' as const];
 
-export const useUploadAsset = (remoteConnectorId: string | undefined, connectorId: string | undefined) => {
+function getUploadError(error: UploadAssetValidationError, imageVariable: ImageVariable) {
+    switch (error.type) {
+        case UploadAssetValidationErrorType.minDimension:
+            if (imageVariable.uploadMinWidth && imageVariable.uploadMinHeight) {
+                return `The image needs to be at least ${imageVariable.uploadMinWidth}x${imageVariable.uploadMinHeight}.`;
+            }
+            if (imageVariable.uploadMinWidth) {
+                return `The image needs to be at least ${imageVariable.uploadMinWidth} wide.`;
+            }
+            if (imageVariable.uploadMinHeight) {
+                return `The image needs to be at least ${imageVariable.uploadMinHeight} high.`;
+            }
+            return 'Something went wrong.';
+        default:
+            return 'Something went wrong.';
+    }
+}
+
+export const useUploadAsset = (remoteConnectorId: string | undefined, imageVariable: ImageVariable) => {
     const [pending, setPending] = useState(false);
     const [uploadError, setUploadError] = useState<string>();
 
@@ -12,7 +36,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, connectorI
             files: File[],
             validationConfiguration: Omit<UploadValidationConfiguration, 'mimeTypes'>,
         ): Promise<Media | null> => {
-            if (!remoteConnectorId || !connectorId) {
+            if (!remoteConnectorId || !imageVariable.value?.connectorId) {
                 return null;
             }
             try {
@@ -25,19 +49,24 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, connectorI
                 });
 
                 // // 2. Upload files through the connector
-                const { parsedData } = await window.StudioUISDK.mediaConnector.upload(connectorId, filePointers);
+                const { parsedData } = await window.StudioUISDK.mediaConnector.upload(
+                    imageVariable.value.connectorId,
+                    filePointers,
+                );
 
                 return parsedData?.[0] ?? null;
             } catch (error) {
-                // TODO: Implement the particular error message text in context of https://chilipublishintranet.atlassian.net/browse/WRS-2452. Error type should be exported from SDK package
-                // setErrorMsg(error instanceof SDKAssetStageError ? error.message : 'Something went wrong.');
-                setUploadError('Something went wrong.');
+                if (error instanceof UploadAssetValidationError) {
+                    setUploadError(getUploadError(error, imageVariable));
+                } else {
+                    setUploadError('Something went wrong.');
+                }
                 return null;
             } finally {
                 setPending(false);
             }
         },
-        [connectorId, remoteConnectorId],
+        [imageVariable.value?.connectorId, remoteConnectorId],
     );
 
     const resetUploadError = useCallback(() => {
