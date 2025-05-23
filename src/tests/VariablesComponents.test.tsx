@@ -32,6 +32,12 @@ describe('Variable Component', () => {
         window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
             parsedData: null,
         });
+        window.StudioUISDK.variable.setValue = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                success: true,
+                data: null,
+            }),
+        );
     });
     afterEach(() => {
         jest.clearAllMocks();
