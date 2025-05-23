@@ -1,21 +1,25 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
-import { getVariablePlaceholder } from '../variablePlaceholder.util';
+import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
 import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
+import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 
 function ImageVariable(props: IImageVariable) {
-    const { variable, validationError, handleImageRemove } = props;
+    const { variable, validationError, handleImageRemove, handleImageChange } = props;
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
+    const { featureFlags } = useFeatureFlagContext();
+    const isImageUploadEnabled = featureFlags?.studioImageUpload;
 
-    const placeholder = getVariablePlaceholder(variable);
+    const placeholder = getImageVariablePlaceholder(variable);
 
     const { remoteConnector } = useVariableConnector(variable);
 
@@ -25,8 +29,16 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const previewImageUrl = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId, remoteConnector);
+    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
+    const {
+        upload,
+        pending: uploadPending,
+        uploadError,
+        resetUploadError,
+    } = useUploadAsset(remoteConnector?.id, variable);
+
+    const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
     const previewImage = useMemo(() => {
         if (!mediaDetails || !previewImageUrl) {
@@ -39,6 +51,62 @@ function ImageVariable(props: IImageVariable) {
             url: previewImageUrl,
         };
     }, [mediaDetails, previewImageUrl]);
+
+    const handleImageUpload = async (files: FileList | null) => {
+        if (!files?.length) {
+            return;
+        }
+        onVariableFocus?.(variable.id);
+        upload([...files], {
+            minWidthPixels: variable.uploadMinWidth,
+            minHeightPixels: variable.uploadMinHeight,
+        }).then((media) => {
+            if (!media) {
+                return;
+            }
+            handleImageChange?.({ assetId: media.id, id: variable.id });
+            onVariableBlur?.(variable.id);
+        });
+    };
+
+    const handleImageBrowse = async () => {
+        if (!remoteConnector) {
+            throw new Error('There is no remote connector for defined image variable');
+        }
+        resetUploadError();
+        try {
+            if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
+                await verifyAuthentication(variable.value.connectorId);
+            }
+            onVariableFocus?.(variable.id);
+            showImagePanel(variable);
+        } catch (error) {
+            // TODO: We should handle connector's authorization issue accordingly
+            // eslint-disable-next-line no-console
+            console.error(error);
+        }
+    };
+
+    const onRemove = () => {
+        resetUploadError();
+        handleImageRemove();
+        onVariableFocus?.(variable.id);
+        onVariableBlur?.(variable.id);
+    };
+
+    // Calculate pending state
+    const isPending = previewPending || uploadPending;
+
+    const validationErrorMessage = uploadError || validationError;
+
+    // Determine if any operations are allowed based on feature flags
+    const allowQuery = isImageUploadEnabled ? variable.allowQuery : true;
+    const allowUpload = isImageUploadEnabled ? variable.allowUpload : false;
+
+    // If no operations are allowed, don't render the component
+    if (!allowQuery && !allowUpload) {
+        return null;
+    }
 
     return (
         <HelpTextWrapper>
@@ -54,30 +122,15 @@ function ImageVariable(props: IImageVariable) {
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                onRemove={() => {
-                    handleImageRemove();
-                    onVariableFocus?.(variable.id);
-                    onVariableBlur?.(variable.id);
-                }}
-                onBrowse={async () => {
-                    if (!remoteConnector) {
-                        throw new Error('There is no remote connector for defined image variable');
-                    }
-                    try {
-                        if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
-                            await verifyAuthentication(variable.value.connectorId);
-                        }
-                        onVariableFocus?.(variable.id);
-                        showImagePanel(variable);
-                    } catch (error) {
-                        // TODO: We should handle connector's authorization issue accordingly
-                        // eslint-disable-next-line no-console
-                        console.error(error);
-                    }
-                }}
-                validationErrorMessage={validationError}
+                validationErrorMessage={validationErrorMessage}
+                onRemove={onRemove}
+                pending={isPending}
+                pendingLabel={pendingLabel}
+                uploadFilesFormat={uploadFileMimeTypes.join(', ')}
+                onBrowse={allowQuery ? handleImageBrowse : undefined}
+                onUpload={allowUpload ? handleImageUpload : undefined}
             />
-            {variable.helpText && !validationError ? (
+            {variable.helpText && !validationErrorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
             ) : null}
         </HelpTextWrapper>

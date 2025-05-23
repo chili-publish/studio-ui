@@ -55,7 +55,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh, layoutD
     const { handleSelectPage } = useAttachArrowKeysListener({ pages, activePageId });
 
     useEffect(() => {
-        if (pages?.length && !pageSnapshots.length) {
+        if (pages.length > 0 && !pageSnapshots.length) {
             getPagesSnapshot(pages.map((i) => i.id));
         }
     }, [pages, pageSnapshots, getPagesSnapshot]);
@@ -103,7 +103,7 @@ function Pages({ pages, activePageId, pagesToRefresh, setPagesToRefresh, layoutD
                 scrollbarHeight={!isMobileSize ? '0.875rem' : '0'}
             >
                 <ScrollableContainer isMobileSize={isMobileSize}>
-                    {!!pages?.length &&
+                    {pages.length > 0 &&
                         pages.map((item, index) => (
                             <PreviewCardBadge badgeNumber={index + 1} key={`badge-${item.id}`}>
                                 <Card selected={item.id === activePageId} key={`card-${item.id}`}>

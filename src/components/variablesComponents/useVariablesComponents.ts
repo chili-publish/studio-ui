@@ -5,7 +5,7 @@ import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 export const useVariableComponents = (currentVariableId: Id) => {
     const { projectConfig } = useUiConfigContext();
     const handleImageChange = useCallback(
-        async (value: ConnectorImageVariableSource) => {
+        async (value: Omit<ConnectorImageVariableSource, 'connectorId' | 'id'>) => {
             if (currentVariableId) {
                 const assetId = value.resolved?.mediaId ?? value.assetId ?? null;
                 const result = await window.StudioUISDK.variable.setValue(currentVariableId, assetId);
