@@ -1,4 +1,4 @@
-name: Build and deploy to PRD
+name: Build and deploy to UAT
 on:
     release:
         types: [prereleased]
