@@ -30,7 +30,7 @@ describe('useConnectorAuthentication hook', () => {
 
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
-        expect(result.current.process('connectorId')).toEqual({
+        expect(result.current.getProcess('connectorId')).toEqual({
             __resolvers: {
                 resolve: expect.any(Function),
                 reject: expect.any(Function),
@@ -74,11 +74,11 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[1].connectorName === 'connectorName2');
 
         await act(async () => {
-            await result.current.process?.('connectorId2')?.start();
+            await result.current.getProcess('connectorId2')?.start();
         });
 
         await act(async () => {
-            await result.current.process?.('connectorId1')?.start();
+            await result.current.getProcess('connectorId1')?.start();
         });
 
         expect(result.current.pendingAuthentications.length).toEqual(0);
@@ -91,12 +91,12 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName1',
-                        connectorId: 'connectorId1',
+                        remoteConnectorId: 'connectorId1',
                         result: { type: 'error' },
                     },
                     {
                         connectorName: 'connectorName2',
-                        connectorId: 'connectorId2',
+                        remoteConnectorId: 'connectorId2',
                         result: { type: 'authentified' },
                     },
                 ]),
@@ -123,7 +123,7 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
-            await result.current.process?.('connectorId')?.start();
+            await result.current.getProcess('connectorId')?.start();
         });
 
         expect(processResult).toEqual(new RefreshedAuthCredendentials());
@@ -133,7 +133,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
-                        connectorId: 'connectorId',
+                        remoteConnectorId: 'connectorId',
                         result: { type: 'authentified' },
                     },
                 ]),
@@ -160,7 +160,7 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
-            await result.current.process?.('connectorId')?.start();
+            await result.current.getProcess('connectorId')?.start();
         });
 
         expect(processResult).toEqual(null);
@@ -171,7 +171,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
-                        connectorId: 'connectorId',
+                        remoteConnectorId: 'connectorId',
                         result: { type: 'error', error: '[Error]: Occured' },
                     },
                 ]),
@@ -198,7 +198,7 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
-            await result.current.process?.('connectorId')?.start();
+            await result.current.getProcess('connectorId')?.start();
         });
 
         expect(processResult).toEqual(null);
@@ -210,7 +210,7 @@ describe('useConnectorAuthentication hook', () => {
                 expect.arrayContaining([
                     {
                         connectorName: 'connectorName',
-                        connectorId: 'connectorId',
+                        remoteConnectorId: 'connectorId',
                         result: { type: 'timeout' },
                     },
                 ]),
@@ -237,7 +237,7 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
-            await result.current.process?.('connectorId')?.start();
+            await result.current.getProcess('connectorId')?.start();
         });
 
         expect(processResult).toEqual({ message: 'TestError' });
@@ -263,11 +263,50 @@ describe('useConnectorAuthentication hook', () => {
         await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
 
         await act(async () => {
-            await result.current.process?.('connectorId')?.cancel();
+            await result.current.getProcess('connectorId')?.cancel();
         });
 
         expect(executor).not.toHaveBeenCalled();
         expect(processResult).toEqual(null);
+        expect(result.current.pendingAuthentications.length).toBe(0);
+    });
+
+    it('should handle direct ConnectorAuthenticationResult input', async () => {
+        const { result } = renderHook(() => useConnectorAuthentication());
+        const authResult = { type: 'authentified' as const };
+
+        await act(async () => {
+            await result.current.createProcess(authResult, 'connectorName', 'connectorId');
+        });
+
+        await waitFor(() => {
+            expect(result.current.authResults).toEqual([
+                {
+                    connectorName: 'connectorName',
+                    remoteConnectorId: 'connectorId',
+                    result: authResult,
+                },
+            ]);
+        });
+
+        expect(result.current.pendingAuthentications.length).toBe(0);
+    });
+
+    it('should reset process correctly', async () => {
+        const { result } = renderHook(() => useConnectorAuthentication());
+        const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+
+        act(() => {
+            result.current.createProcess(executor, 'connectorName', 'connectorId');
+        });
+
+        await waitFor(() => result.current.pendingAuthentications[0].connectorName === 'connectorName');
+        expect(result.current.pendingAuthentications.length).toBe(1);
+
+        await act(async () => {
+            await result.current.getProcess('connectorId')?.cancel();
+        });
+
         expect(result.current.pendingAuthentications.length).toBe(0);
     });
 });

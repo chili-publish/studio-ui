@@ -3,5 +3,5 @@ import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthentication
 export type ConnectorAuthResult = {
     result: ConnectorAuthenticationResult | null;
     connectorName: string;
-    connectorId: string;
+    remoteConnectorId: string;
 };
