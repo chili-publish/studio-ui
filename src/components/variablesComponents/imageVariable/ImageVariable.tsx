@@ -1,6 +1,5 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { useFeatureFlagContext } from '../../../contexts/FeatureFlagProvider';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
@@ -16,8 +15,6 @@ import { useVariableConnector } from './useVariableConnector';
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
-    const { featureFlags } = useFeatureFlagContext();
-    const isImageUploadEnabled = featureFlags?.studioImageUpload;
 
     const placeholder = getImageVariablePlaceholder(variable);
 
@@ -99,12 +96,8 @@ function ImageVariable(props: IImageVariable) {
 
     const validationErrorMessage = uploadError || validationError;
 
-    // Determine if any operations are allowed based on feature flags
-    const allowQuery = isImageUploadEnabled ? variable.allowQuery : true;
-    const allowUpload = isImageUploadEnabled ? variable.allowUpload : false;
-
     // If no operations are allowed, don't render the component
-    if (!allowQuery && !allowUpload) {
+    if (!variable.allowQuery && !variable.allowUpload) {
         return null;
     }
 
@@ -127,8 +120,8 @@ function ImageVariable(props: IImageVariable) {
                 pending={isPending}
                 pendingLabel={pendingLabel}
                 uploadFilesFormat={uploadFileMimeTypes.join(', ')}
-                onBrowse={allowQuery ? handleImageBrowse : undefined}
-                onUpload={allowUpload ? handleImageUpload : undefined}
+                onBrowse={variable.allowQuery ? handleImageBrowse : undefined}
+                onUpload={variable.allowUpload ? handleImageUpload : undefined}
             />
             {variable.helpText && !validationErrorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
