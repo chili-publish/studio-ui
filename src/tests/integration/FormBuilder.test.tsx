@@ -1,9 +1,9 @@
-import { LayoutPropertiesType, ConfigType, ConnectorRegistrationSource } from '@chili-publish/studio-sdk';
+import { ConfigType, ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
+import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { mockProject } from '@mocks/mockProject';
 import axios from 'axios';
 import StudioUI from '../../main';
 import { IStudioUILoaderConfig, UserInterface } from '../../types/types';
@@ -508,11 +508,13 @@ describe('FormBuilder options', () => {
                     outputSettingsFullList: [],
                 } as unknown as UserInterface),
         });
-        expect(
-            screen.getByRole('combobox', {
-                name: /display name/i,
-            }),
-        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(
+                screen.getByRole('combobox', {
+                    name: /display name/i,
+                }),
+            ).toBeInTheDocument();
+        });
     });
 
     it('should show width/height inputs if set to true', async () => {
@@ -555,15 +557,17 @@ describe('FormBuilder options', () => {
                 } as unknown as UserInterface),
         });
 
-        expect(
-            screen.getByRole('textbox', {
-                name: /page-width-input/i,
-            }),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole('textbox', {
-                name: /page-height-input/i,
-            }),
-        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(
+                screen.getByRole('textbox', {
+                    name: /page-width-input/i,
+                }),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByRole('textbox', {
+                    name: /page-height-input/i,
+                }),
+            ).toBeInTheDocument();
+        });
     });
 });
