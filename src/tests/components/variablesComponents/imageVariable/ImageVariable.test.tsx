@@ -5,7 +5,6 @@ import { useMediaDetails } from '../../../../components/variablesComponents/imag
 import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
 import { useUploadAsset } from '../../../../components/variablesComponents/imageVariable/useUploadAsset';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
-import { useFeatureFlagContext } from '../../../../contexts/FeatureFlagProvider';
 import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
 import { variables } from '../../../mocks/mockVariables';
@@ -40,14 +39,6 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useUploadAss
     }),
 }));
 
-jest.mock('../../../../contexts/FeatureFlagProvider', () => ({
-    useFeatureFlagContext: jest.fn().mockReturnValue({
-        featureFlags: {
-            studioImageUpload: true,
-        },
-    }),
-}));
-
 jest.mock('@chili-publish/grafx-shared-components', () => {
     const original = jest.requireActual('@chili-publish/grafx-shared-components');
     return {
@@ -77,12 +68,6 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should not render anything when both allowQuery and allowUpload are false', () => {
-        (useFeatureFlagContext as jest.Mock).mockReturnValueOnce({
-            featureFlags: {
-                studioImageUpload: true,
-            },
-        });
-
         const imageVariable = {
             ...variables[0],
             allowQuery: false,
@@ -366,33 +351,6 @@ describe('"ImageVariable" component ', () => {
 
     it('should not include onUpload prop when allowUpload is false', () => {
         const imageVariable = variables[0];
-        const handleImageChange = jest.fn();
-
-        render(
-            <UiThemeProvider theme="platform">
-                <ImageVariable
-                    variable={imageVariable}
-                    handleImageRemove={jest.fn()}
-                    handleImageChange={handleImageChange}
-                />
-            </UiThemeProvider>,
-        );
-
-        expect(screen.queryByTestId('upload-button')).not.toBeInTheDocument();
-    });
-
-    it('should not include onUpload prop when feature flag is disabled', () => {
-        (useFeatureFlagContext as jest.Mock).mockReturnValueOnce({
-            featureFlags: {
-                studioImageUpload: false,
-            },
-        });
-
-        const imageVariable = {
-            ...variables[0],
-            allowUpload: true,
-            allowQuery: true,
-        };
         const handleImageChange = jest.fn();
 
         render(
