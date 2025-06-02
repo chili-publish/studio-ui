@@ -5,13 +5,13 @@ import { ConnectorAuthResult } from './types';
 
 const authorizationFailedToast = (connector: ConnectorAuthResult) => ({
     id: `connector-authorization-failed-${connector.remoteConnectorId}`,
-    message: `Authorization failed for ${connector.connectorName}.`,
+    message: `Authorization failed for "${connector.connectorName}" connector.`,
     type: ToastVariant.NEGATIVE,
 });
 
 const authorizationFailedTimeoutToast = (connector: ConnectorAuthResult) => ({
     id: `connector-authorization-failed-timeout-${connector.remoteConnectorId}`,
-    message: `Authorization failed (timeout) for ${connector.connectorName}.`,
+    message: `Authorization failed (timeout) for "${connector.connectorName}" connector.`,
     type: ToastVariant.NEGATIVE,
 });
 
