@@ -38,6 +38,8 @@ export const mockVariables: [ImageVariable, ...Variable[]] = [
             connectorId: 'grafx-media',
             assetId: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         },
+        allowQuery: true,
+        allowUpload: false,
     },
     <ShortTextVariable>{
         id: 'shortVariable 1',
