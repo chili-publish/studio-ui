@@ -508,7 +508,6 @@ describe('FormBuilder options', () => {
                     outputSettingsFullList: [],
                 } as unknown as UserInterface),
         });
-
         await waitFor(() => {
             expect(
                 screen.getByRole('combobox', {

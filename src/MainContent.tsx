@@ -1,9 +1,7 @@
 import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
-    AuthRefreshTypeEnum,
     ConnectorEvent,
     DocumentType,
-    GrafxTokenAuthCredentials,
     Layout,
     LayoutIntent,
     LayoutListItemType,
@@ -38,6 +36,7 @@ import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
+import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
 import { SuiCanvas } from './MainContent.styles';
 import { useAppDispatch } from './store';
@@ -60,7 +59,7 @@ interface MainContentProps {
     updateToken: (newValue: string) => void;
 }
 
-function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentProps) {
+function MainContent({ projectConfig, updateToken }: MainContentProps) {
     const dispatch = useAppDispatch();
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
     const [variables, setVariables] = useState<Variable[]>([]);
@@ -115,11 +114,18 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
     const {
         pendingAuthentications,
         authResults,
-        process: connectorAuthenticationProcess,
+        getProcess: getConnectorAuthenticationProcess,
         createProcess: createAuthenticationProcess,
     } = useConnectorAuthentication();
 
     useConnectorAuthenticationResult(authResults);
+
+    const handleAuthExpired = useEditorAuthExpired(
+        projectConfig.onAuthenticationExpired,
+        updateToken,
+        projectConfig?.onConnectorAuthenticationRequested,
+        createAuthenticationProcess,
+    );
 
     const zoomToPage = useCallback(async (pageId: string | null = null) => {
         const iframe = document.getElementById(EDITOR_ID)?.getElementsByTagName('iframe')?.[0]?.getBoundingClientRect();
@@ -170,42 +176,7 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
             enableNextSubscribers: {
                 onVariableListChanged: true,
             },
-            async onAuthExpired(request) {
-                try {
-                    if (request.type === AuthRefreshTypeEnum.grafxToken) {
-                        const newToken = await projectConfig.onAuthenticationExpired();
-                        setAuthToken(newToken);
-                        return new GrafxTokenAuthCredentials(newToken);
-                    }
-
-                    // "oAuth2AuthorizationCode" Environment API Connector's authorization entity type
-                    // NOTE: We apply .toLowerCase() for both header and entity type as header came with first capital letter where entity type is fully camelCase
-                    if (
-                        request.type === AuthRefreshTypeEnum.any &&
-                        !!request.headerValue?.toLowerCase().includes('oAuth2AuthorizationCode'.toLowerCase()) &&
-                        !!projectConfig?.onConnectorAuthenticationRequested
-                    ) {
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        const [_, remoteConnectorId] = request.headerValue.split(';').map((i) => i.trim());
-                        const connector = await window.StudioUISDK.next.connector.getById(request.connectorId);
-                        const result = await createAuthenticationProcess(
-                            async () => {
-                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                const res = await projectConfig.onConnectorAuthenticationRequested!(remoteConnectorId);
-                                return res;
-                            },
-                            connector.parsedData?.name ?? '',
-                            remoteConnectorId,
-                        );
-                        return result;
-                    }
-                } catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.error(error);
-                    return null;
-                }
-                return null;
-            },
+            onAuthExpired: handleAuthExpired,
             onVariableListChanged: (variableList: Variable[]) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 setVariables(variableList);
@@ -523,13 +494,13 @@ function MainContent({ projectConfig, updateToken: setAuthToken }: MainContentPr
                                 {pendingAuthentications.length > 0 &&
                                     pendingAuthentications.map((authFlow) => (
                                         <ConnectorAuthenticationModal
-                                            key={authFlow.connectorId}
+                                            key={authFlow.remoteConnectorId}
                                             name={authFlow.connectorName}
                                             onConfirm={() =>
-                                                connectorAuthenticationProcess(authFlow.connectorId)?.start()
+                                                getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.start()
                                             }
                                             onCancel={() =>
-                                                connectorAuthenticationProcess(authFlow.connectorId)?.cancel()
+                                                getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.cancel()
                                             }
                                         />
                                     ))}
