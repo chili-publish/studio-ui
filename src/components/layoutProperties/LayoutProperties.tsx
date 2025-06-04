@@ -39,24 +39,22 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         }
     };
     const renderInput = (id: string, inputValue: string, label: string, helpText?: string) => (
-        <>
-            <Input
-                type="number"
-                id={id}
-                dataId={getDataIdForSUI(id)}
-                dataTestId={getDataTestIdForSUI(id)}
-                value={inputValue}
-                placeholder={label}
-                onValueChange={(v) => {
-                    handleChange(PagePropertyMap[id as PageInputId], v);
-                }}
-                onFocus={() => handleFocus(id)}
-                onBlur={handleInputBlur(id)}
-                name={id}
-                label={label}
-                helpText={helpText}
-            />
-        </>
+        <Input
+            type="number"
+            id={id}
+            dataId={getDataIdForSUI(id)}
+            dataTestId={getDataTestIdForSUI(id)}
+            value={inputValue}
+            placeholder={label}
+            onValueChange={(v) => {
+                handleChange(PagePropertyMap[id as PageInputId], v);
+            }}
+            onFocus={() => handleFocus(id)}
+            onBlur={handleInputBlur(id)}
+            name={id}
+            label={label}
+            helpText={helpText}
+        />
     );
 
     return (
