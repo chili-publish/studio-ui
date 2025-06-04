@@ -1,5 +1,5 @@
+import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { LayoutPropertiesType, MeasurementUnit, PageSize } from '@chili-publish/studio-sdk';
 import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
 
 export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: PageSize) => {
@@ -7,7 +7,33 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
     const [pageHeight, setPageHeight] = useState<string>('');
 
     const measurementUnit = useMemo(() => {
-        return ((layout?.unit as Record<string, unknown>).value as MeasurementUnit) || '';
+        return layout?.unit.value;
+    }, [layout]);
+
+    const widthInputHelpText = useMemo(() => {
+        if (layout?.resizableByUser.minWidth && layout?.resizableByUser.maxWidth) {
+            return `Min: ${layout.resizableByUser.minWidth} Max: ${layout.resizableByUser.maxWidth}`;
+        }
+        if (layout?.resizableByUser.minWidth) {
+            return `Min: ${layout.resizableByUser.minWidth}`;
+        }
+        if (layout?.resizableByUser.maxWidth) {
+            return `Max: ${layout.resizableByUser.maxWidth}`;
+        }
+        return undefined;
+    }, [layout]);
+
+    const heightInputHelpText = useMemo(() => {
+        if (layout?.resizableByUser.minHeight && layout?.resizableByUser.maxHeight) {
+            return `Min: ${layout.resizableByUser.minHeight} Max: ${layout.resizableByUser.maxHeight}`;
+        }
+        if (layout?.resizableByUser.minHeight) {
+            return `Min: ${layout.resizableByUser.minHeight}`;
+        }
+        if (layout?.resizableByUser.maxHeight) {
+            return `Max: ${layout.resizableByUser.maxHeight}`;
+        }
+        return undefined;
     }, [layout]);
 
     const handleChange = useCallback(
@@ -96,5 +122,5 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
         }
     }, [activePageDetails, measurementUnit]);
 
-    return { handleChange, pageWidth, pageHeight };
+    return { handleChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText };
 };

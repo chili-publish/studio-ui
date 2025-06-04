@@ -1,5 +1,13 @@
 import '@tests/mocks/sdk.mock';
-import { DateVariable, ImageVariable, ShortTextVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
+import {
+    DateVariable,
+    ImageVariable,
+    ShortTextVariable,
+    Variable,
+    VariableType,
+    LayoutIntent,
+    LayoutPropertiesType,
+} from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
@@ -58,6 +66,13 @@ afterAll(() => {
 });
 
 const variableRequiredTest = async (variable: Variable) => {
+    act(() => {
+        window.StudioUISDK.config.events.onSelectedLayoutPropertiesChanged.trigger({
+            intent: { value: LayoutIntent.digitalAnimated },
+            timelineLengthMs: { value: 0 },
+        } as unknown as LayoutPropertiesType);
+    });
+
     const user = userEvent.setup();
 
     await user.click(screen.getByTestId('test-sui-navbar'));

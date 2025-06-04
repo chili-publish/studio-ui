@@ -1,5 +1,5 @@
-import { LayoutIntent } from '@chili-publish/studio-sdk';
-import { screen, waitFor } from '@testing-library/react';
+import { ConfigType, LayoutIntent, LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import { act, screen, waitFor } from '@testing-library/react';
 import App from '../App';
 import { ProjectConfig } from '../types/types';
 import { getDataTestIdForSUI } from '../utils/dataIds';
@@ -27,9 +27,11 @@ jest.mock('@chili-publish/studio-sdk', () => {
         __esModule: true,
         ...originalModule,
         /* eslint-disable */
-        default: function () {
+        default: function (config: ConfigType) {
+            const sdk = new originalModule.default(config);
             /* eslint-enable */
             return {
+                ...sdk,
                 loadEditor: () => '',
                 configuration: { setValue: jest.fn() },
                 next: {
@@ -59,6 +61,14 @@ jest.mock('@chili-publish/studio-sdk', () => {
 describe('AppDigitalIntent', () => {
     it('Timeline should not be shown if layout intent is not Digital animated', async () => {
         renderWithProviders(<App projectConfig={projectConfig as unknown as ProjectConfig} />);
+
+        act(() => {
+            const layoutProperties = {
+                intent: { value: LayoutIntent.digitalAnimated },
+                timelineLengthMs: { value: 0 },
+            } as unknown as LayoutPropertiesType;
+            window.StudioUISDK.config.events.onSelectedLayoutPropertiesChanged.trigger(layoutProperties);
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId(getDataTestIdForSUI('timeline-wrapper'))).toBeInTheDocument();
