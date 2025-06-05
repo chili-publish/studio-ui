@@ -91,7 +91,6 @@ describe('"useVariablesChange" hook', () => {
         await waitFor(() => expect(window.StudioUISDK.variable.getAll).toHaveBeenCalled());
 
         expect(window.console.warn).not.toHaveBeenCalledWith('Variables list is not loaded properly');
-        const current = result.current.currentVariables;
         await waitFor(() => {
             expect(result.current.currentVariables).toEqual({
                 '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2': {
@@ -108,7 +107,16 @@ describe('"useVariablesChange" hook', () => {
                 id: '1234',
             } as unknown as Variable,
         ]);
-        expect(current).toEqual(expect.objectContaining(result.current.currentVariables));
+        await waitFor(() => {
+            expect(result.current.currentVariables).toEqual({
+                '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2': {
+                    id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2',
+                },
+                '8A59BB89-898D-4BAC-9C8F-F40F6C83479E': {
+                    id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E',
+                },
+            });
+        });
     });
 
     it('should not apply change for variables if there are no changes when emit', async () => {
@@ -125,7 +133,6 @@ describe('"useVariablesChange" hook', () => {
         await waitFor(() => expect(window.StudioUISDK.variable.getAll).toHaveBeenCalled());
 
         expect(window.console.warn).not.toHaveBeenCalledWith('Variables list is not loaded properly');
-        const current = result.current.currentVariables;
         await waitFor(() => {
             expect(result.current.currentVariables).toEqual({
                 '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2': {
@@ -143,7 +150,16 @@ describe('"useVariablesChange" hook', () => {
             } as unknown as Variable,
         ]);
 
-        expect(current).toEqual(expect.objectContaining(result.current.currentVariables));
+        await waitFor(() => {
+            expect(result.current.currentVariables).toEqual({
+                '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2': {
+                    id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2',
+                },
+                '8A59BB89-898D-4BAC-9C8F-F40F6C83479E': {
+                    id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E',
+                },
+            });
+        });
     });
 
     it('should apply changes for all changed variables when emit', async () => {

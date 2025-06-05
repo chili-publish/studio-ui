@@ -226,9 +226,10 @@ describe('Required text variable', () => {
 
         expect(screen.getByText('This field is required')).toBeInTheDocument();
         const dateInput = screen.getByRole('textbox') as HTMLInputElement;
-        await act(() => user.click(dateInput));
+        await user.click(dateInput);
 
-        await act(() => user.click(screen.getByText('15')));
+        await user.click(screen.getByText('15'));
+
         expect(screen.queryByText('This field is required')).not.toBeInTheDocument();
     });
 
