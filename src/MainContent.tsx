@@ -65,7 +65,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
     const [variables, setVariables] = useState<Variable[]>([]);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
-    const [animationLength, setAnimationLength] = useState(0);
+    const [animationLength, setAnimationLength] = useState<number | undefined>();
     const [scrubberTimeMs, setScrubberTimeMs] = useState(0);
     const [animationStatus, setAnimationStatus] = useState(false);
     const [currentZoom, setCurrentZoom] = useState<number>(100);
@@ -76,7 +76,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
     const [currentSelectedLayout, setSelectedLayout] = useState<Layout | null>(null);
     const [pageSize, setPageSize] = useState<PageSize | null>(null);
-    const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType | null>(null);
+    const [layoutPropertiesState, setSelectedPropertiesState] = useState<LayoutPropertiesType>(null);
     const [layouts, setLayouts] = useState<LayoutListItemType[]>([]);
 
     const [multiLayoutMode, setMultiLayoutMode] = useState(false);
@@ -196,7 +196,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 if (layoutProperties) {
                     setSelectedPropertiesState(layoutProperties);
                     setAnimationLength(layoutProperties.timelineLengthMs.value);
-                    setLayoutIntent((layoutProperties?.intent as Record<string, unknown>)?.value as LayoutIntent);
+                    setLayoutIntent(layoutProperties.intent.value);
                 }
             },
             onSelectedLayoutIdChanged: async () => {
@@ -348,12 +348,6 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 window.StudioUISDK.dataSource.getDataSource().then((res) => {
                     setDataSource(res.parsedData ?? undefined);
                 });
-
-                // TODO: Consider to remove it from here, since set happens in different SDK event subscriptions
-                // Currently removal requires tests updates
-                const layoutIntentData =
-                    (await window.StudioUISDK.layout.getSelected()).parsedData?.intent.value || null;
-                setLayoutIntent(layoutIntentData);
             } catch (err: unknown) {
                 const errorCode = ((err as Error).cause as { name: string; message: string })?.name;
                 if (errorCode === '303011') {
@@ -464,7 +458,8 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                                             >
                                                 <div className="chili-editor" id={EDITOR_ID} />
                                             </SuiCanvas>
-                                            {layoutIntent === LayoutIntent.digitalAnimated ? (
+                                            {layoutIntent === LayoutIntent.digitalAnimated &&
+                                            typeof animationLength === 'number' ? (
                                                 <AnimationTimeline
                                                     scrubberTimeMs={scrubberTimeMs}
                                                     animationLength={animationLength}

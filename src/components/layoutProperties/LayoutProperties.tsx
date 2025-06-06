@@ -1,12 +1,12 @@
-import { ChangeEvent } from 'react';
 import { Input } from '@chili-publish/grafx-shared-components';
-import { LayoutPropertiesType, MeasurementUnit, PageSize } from '@chili-publish/studio-sdk';
-import { LayoutInputsContainer } from './Layout.styles';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
+import { ChangeEvent } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
-import { useLayoutProperties } from './useLayoutProperties';
-import { PageInputId, PagePropertyMap } from './types';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
+import { LayoutInputsContainer } from './Layout.styles';
+import { PageInputId, PagePropertyMap } from './types';
+import { useLayoutProperties } from './useLayoutProperties';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
@@ -15,7 +15,10 @@ interface LayoutPropertiesProps {
 
 function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
-    const { handleChange, pageWidth, pageHeight } = useLayoutProperties(layout, pageSize);
+    const { handleChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText } = useLayoutProperties(
+        layout,
+        pageSize,
+    );
 
     const handleFocus = (inputId: string) => {
         onVariableFocus?.(inputId);
@@ -30,15 +33,12 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         const property = PagePropertyMap[id as PageInputId]; // width or height
         const newValue = event.target.value;
         const oldValue = pageSize?.[property as keyof PageSize] as number;
-        const isSame =
-            `${formatNumber(oldValue as number, (layout?.unit as Record<string, unknown>).value as MeasurementUnit)} ${
-                (layout?.unit as Record<string, unknown>).value as MeasurementUnit
-            }` === newValue;
+        const isSame = `${formatNumber(oldValue, layout?.unit.value)} ${layout?.unit.value}` === newValue;
         if (!isSame) {
             handleBlur(id as PageInputId, newValue);
         }
     };
-    const renderInput = (id: string, inputValue: string, label: string) => (
+    const renderInput = (id: string, inputValue: string, label: string, helpText?: string) => (
         <Input
             type="number"
             id={id}
@@ -53,13 +53,14 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             onBlur={handleInputBlur(id)}
             name={id}
             label={label}
+            helpText={helpText}
         />
     );
 
     return (
         <LayoutInputsContainer>
-            {renderInput('page-width-input', pageWidth, 'Width')}
-            {renderInput('page-height-input', pageHeight, 'Height')}
+            {renderInput('page-width-input', pageWidth, 'Width', widthInputHelpText)}
+            {renderInput('page-height-input', pageHeight, 'Height', heightInputHelpText)}
         </LayoutInputsContainer>
     );
 }
