@@ -12,29 +12,29 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
 
     const widthInputHelpText = useMemo(() => {
         if (layout?.resizableByUser.minWidth && layout?.resizableByUser.maxWidth) {
-            return `Min: ${layout.resizableByUser.minWidth} Max: ${layout.resizableByUser.maxWidth}`;
+            return `Min: ${formatNumber(layout.resizableByUser.minWidth, measurementUnit)} Max: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
         }
         if (layout?.resizableByUser.minWidth) {
-            return `Min: ${layout.resizableByUser.minWidth}`;
+            return `Min: ${formatNumber(layout.resizableByUser.minWidth, measurementUnit)}`;
         }
         if (layout?.resizableByUser.maxWidth) {
-            return `Max: ${layout.resizableByUser.maxWidth}`;
+            return `Max: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
         }
         return undefined;
-    }, [layout]);
+    }, [layout, measurementUnit]);
 
     const heightInputHelpText = useMemo(() => {
         if (layout?.resizableByUser.minHeight && layout?.resizableByUser.maxHeight) {
-            return `Min: ${layout.resizableByUser.minHeight} Max: ${layout.resizableByUser.maxHeight}`;
+            return `Min: ${formatNumber(layout.resizableByUser.minHeight, measurementUnit)} Max: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
         }
         if (layout?.resizableByUser.minHeight) {
-            return `Min: ${layout.resizableByUser.minHeight}`;
+            return `Min: ${formatNumber(layout.resizableByUser.minHeight, measurementUnit)}`;
         }
         if (layout?.resizableByUser.maxHeight) {
-            return `Max: ${layout.resizableByUser.maxHeight}`;
+            return `Max: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
         }
         return undefined;
-    }, [layout]);
+    }, [layout, measurementUnit]);
 
     const handleChange = useCallback(
         async (name: string, value: string) => {
@@ -112,10 +112,10 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
     useEffect(() => {
         if (measurementUnit) {
             const formattedPageWidth = activePageDetails?.width
-                ? `${formatNumber(activePageDetails?.width as number, measurementUnit)} ${measurementUnit}`
+                ? `${formatNumber(activePageDetails.width, measurementUnit)} ${measurementUnit}`
                 : '';
             const formattedPageHeight = activePageDetails?.height
-                ? `${formatNumber(activePageDetails?.height as number, measurementUnit)} ${measurementUnit}`
+                ? `${formatNumber(activePageDetails.height, measurementUnit)} ${measurementUnit}`
                 : '';
             setPageWidth(formattedPageWidth);
             setPageHeight(formattedPageHeight);
