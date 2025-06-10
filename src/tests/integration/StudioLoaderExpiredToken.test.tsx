@@ -1,4 +1,5 @@
 import { connectorSourceUrl } from '@tests/mocks/sdk.mock';
+import { LayoutIntent, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
@@ -70,8 +71,15 @@ describe('StudioLoader integration - expired auth token', () => {
         };
 
         render(<div id="sui-root" />);
-        act(() => {
+        await act(() => {
             StudioUI.studioUILoaderConfig(config);
+        });
+
+        act(() => {
+            window.StudioUISDK.config.events.onSelectedLayoutPropertiesChanged.trigger({
+                intent: { value: LayoutIntent.digitalAnimated },
+                timelineLengthMs: { value: 0 },
+            } as unknown as LayoutPropertiesType);
         });
 
         await waitFor(() => {
@@ -137,8 +145,15 @@ describe('StudioLoader integration - expired auth token', () => {
         };
 
         render(<div id="sui-root" />);
-        act(() => {
+        await act(() => {
             StudioUI.studioUILoaderConfig(config);
+        });
+
+        act(() => {
+            window.StudioUISDK.config.events.onSelectedLayoutPropertiesChanged.trigger({
+                intent: { value: LayoutIntent.digitalAnimated },
+                timelineLengthMs: { value: 0 },
+            } as unknown as LayoutPropertiesType);
         });
 
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => null);

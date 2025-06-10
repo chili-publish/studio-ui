@@ -1,5 +1,6 @@
 import {
     AvailableIcons,
+    BreadCrumb,
     PreviewCard as ChiliPreview,
     Icon,
     Input,
@@ -7,10 +8,9 @@ import {
     PreviewCardVariant,
     PreviewType,
     ScrollbarWrapper,
+    SelectOptions,
     useInfiniteScrolling,
     useMobileSize,
-    BreadCrumb,
-    SelectOptions,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,16 +18,16 @@ import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 import {
     BreadCrumbsWrapper,
     EmptySearchResultContainer,
     LoadPageContainer,
     ResourcesContainer,
-    SearchInputWrapper,
     ScrollbarContainer,
+    SearchInputWrapper,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
-import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -53,7 +53,7 @@ function ItemBrowser<
         type: MediaType;
         name: string;
         relativePath: string;
-        extension: string | null;
+        extension?: string;
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;

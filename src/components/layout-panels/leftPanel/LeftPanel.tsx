@@ -6,12 +6,12 @@ import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
 import DataSource from '../../dataSource/DataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
-import LayoutProperties from '../../LayoutPanel/LayoutProperties';
+import LayoutProperties from '../../layoutProperties/LayoutProperties';
+import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.styles';
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
-import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 
 interface LeftPanelProps {
     variables: Variable[];
