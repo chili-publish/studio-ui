@@ -2,7 +2,8 @@ import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
 export const DownloadDropdownTitle = styled.div`
-    padding: 1rem 1.25rem 1rem;
+    padding-block: 1rem;
+    padding-inline: 1.25rem;
     font-weight: bold;
     color: ${({ theme }) => theme?.themeColors?.primaryTextColor};
 `;
@@ -20,7 +21,7 @@ export const DownloadPanelContainer = styled.div`
 `;
 
 export const DesktopDropdownContainer = styled.div`
-    padding: 0 1.25rem;
+    padding-inline: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -95,7 +96,7 @@ export const Content = styled.div<{ borderTop?: boolean }>`
 `;
 
 export const BtnContainer = styled.div<{ mobile?: boolean }>`
-    padding: ${(props) => (props.mobile ? '0' : '0 1.25rem;')};
+    padding-inline: ${(props) => (props.mobile ? '0' : '1.25rem')};
 `;
 export const SpinnerContainer = styled(BtnContainer)`
     margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto 1.25rem;')};
