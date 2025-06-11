@@ -15,13 +15,13 @@ export const getDirectionalClassName = (ltrClass: string, rtlClass: string, dire
 export const getDirectionalMargin = (
     direction: Direction,
     value: string | number,
-): { marginLeft?: string | number; marginRight?: string | number } => {
-    return direction === 'ltr' ? { marginRight: value } : { marginLeft: value };
+): { marginInlineStart?: string | number; marginInlineEnd?: string | number } => {
+    return direction === 'ltr' ? { marginInlineEnd: value } : { marginInlineStart: value };
 };
 
 export const getDirectionalPadding = (
     direction: Direction,
     value: string | number,
-): { paddingLeft?: string | number; paddingRight?: string | number } => {
-    return direction === 'ltr' ? { paddingRight: value } : { paddingLeft: value };
+): { paddingInlineStart?: string | number; paddingInlineEnd?: string | number } => {
+    return direction === 'ltr' ? { paddingInlineEnd: value } : { paddingInlineStart: value };
 };

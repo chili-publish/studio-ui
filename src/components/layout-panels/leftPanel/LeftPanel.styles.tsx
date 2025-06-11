@@ -6,7 +6,7 @@ export const LeftPanelWrapper = styled.div<{ overflowScroll: boolean }>`
     width: 18.75rem;
     background-color: ${({ theme }) => theme.panel.backgroundColor};
     border-right: 2px solid ${({ theme }) => theme.panel.borderColor};
-    padding-left: 0;
+    padding-inline-start: 0;
     scollbar-gutter: stable;
 `;
 

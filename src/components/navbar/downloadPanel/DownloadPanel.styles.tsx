@@ -52,7 +52,7 @@ export const DropdownOptionLabel = styled.div`
     gap: 0.5rem;
     align-items: center;
     overflow: hidden;
-    margin-right: 0.25rem;
+    margin-inline-end: 0.25rem;
     flex: 1;
     ${DropdownOptionDescription} {
         color: ${({ theme }) => theme.themeColors.secondaryTextColor};

@@ -14,10 +14,10 @@ interface DirectionState {
     styles: {
         start: 'left' | 'right';
         end: 'left' | 'right';
-        marginStart: 'margin-left' | 'margin-right';
-        marginEnd: 'margin-left' | 'margin-right';
-        paddingStart: 'padding-left' | 'padding-right';
-        paddingEnd: 'padding-left' | 'padding-right';
+        marginStart: 'margin-inline-start';
+        marginEnd: 'margin-inline-end';
+        paddingStart: 'padding-inline-start';
+        paddingEnd: 'padding-inline-end';
         textAlign: 'left' | 'right';
     };
 }
@@ -32,10 +32,10 @@ const initialState: DirectionState = {
     styles: {
         start: 'left',
         end: 'right',
-        marginStart: 'margin-left',
-        marginEnd: 'margin-right',
-        paddingStart: 'padding-left',
-        paddingEnd: 'padding-right',
+        marginStart: 'margin-inline-start',
+        marginEnd: 'margin-inline-end',
+        paddingStart: 'padding-inline-start',
+        paddingEnd: 'padding-inline-end',
         textAlign: 'left',
     },
 };
@@ -55,10 +55,10 @@ const directionSlice = createSlice({
             state.styles = {
                 start: isRTL ? 'right' : 'left',
                 end: isRTL ? 'left' : 'right',
-                marginStart: isRTL ? 'margin-right' : 'margin-left',
-                marginEnd: isRTL ? 'margin-left' : 'margin-right',
-                paddingStart: isRTL ? 'padding-right' : 'padding-left',
-                paddingEnd: isRTL ? 'padding-left' : 'padding-right',
+                marginStart: 'margin-inline-start',
+                marginEnd: 'margin-inline-end',
+                paddingStart: 'padding-inline-start',
+                paddingEnd: 'padding-inline-end',
                 textAlign: isRTL ? 'right' : 'left',
             };
         },

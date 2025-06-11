@@ -37,7 +37,7 @@ export const NavigationWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     position: relative;
-    margin-left: -0.75rem;
+    margin-inline-start: -0.75rem;
 
     svg {
         box-sizing: content-box !important;
@@ -61,7 +61,7 @@ export const NavigationWrapper = styled.div`
     }
 
     & svg.path-icon + .navigation-path {
-        margin-left: 1.5rem;
+        margin-inline-start: 1.5rem;
     }
 `;
 
