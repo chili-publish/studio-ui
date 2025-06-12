@@ -79,6 +79,7 @@ import { EngineVersionManager } from './version-manager';
                 bottomBar: { visible: true },
                 downloadButton: { visible: true },
             },
+            uiDirection: 'rtl',
         },
         featureFlags: {},
         // eslint-disable-next-line no-console
