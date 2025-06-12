@@ -44,7 +44,7 @@ const labelStyle = css<{ hideOnMobile?: boolean }>`
         max-width: 15ch;
     }
 `;
-export const NavbarText = styled(Text)`
+export const NavbarText = styled(Text)<{ hideOnMobile?: boolean }>`
     ${labelStyle};
 `;
 export const NavbarLabel = styled.span<{ hideOnMobile?: boolean }>`

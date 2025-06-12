@@ -35,7 +35,7 @@ const useDownload = ({
 
     const [downloadState, updateDownloadState] = useReducer(downloadStateReducer, initialDownloadState);
 
-    const downloadPanelRef = useRef<HTMLDivElement | null>(null);
+    const downloadPanelRef = useRef<HTMLDivElement>(null);
     useOnClickOutside(downloadPanelRef, hideDownloadPanel);
 
     const downloadOptions: SelectOptions[] = useMemo(() => {

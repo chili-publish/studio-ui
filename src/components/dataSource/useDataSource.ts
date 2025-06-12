@@ -41,7 +41,7 @@ const useDataSource = () => {
     const shouldUpdateDataRow = useRef(true);
     const shouldValidateVariables = useRef(false);
 
-    const processingDataRow = useRef<number | null>();
+    const processingDataRow = useRef<number>(null);
 
     const hasUserAuthorization = useAsyncMemo(async () => {
         if (!dataSource) {
