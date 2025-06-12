@@ -1297,7 +1297,7 @@
 
 "@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/518/grafx-shared-components.tgz":
   version "0.99.9"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/518/grafx-shared-components.tgz#651b1adfcab5353eac277d02c7e10ea4b2a7736d"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/518/grafx-shared-components.tgz#b5aed80f84186737b085a61a6165d291d62a7527"
 
 "@chili-publish/studio-sdk@1.25.2-alfa.1":
   version "1.25.2-alfa.1"
