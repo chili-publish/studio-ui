@@ -1,11 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import { AxiosResponse } from 'axios';
 import { mockUserInterface, mockUserInterface2 } from '@mocks/mockUserinterface';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -81,7 +82,7 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
         projectConfig,
         layoutIntent: LayoutIntent.digitalAnimated,
     };
-    render(
+    renderWithProviders(
         <UiConfigContextProvider projectConfig={projectConfig}>
             <UserInterfaceDetailsContextProvider
                 projectConfig={projectConfig}
