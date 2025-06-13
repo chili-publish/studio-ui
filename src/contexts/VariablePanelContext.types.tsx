@@ -1,6 +1,7 @@
 import { DateVariable, ImageVariable, Media, MediaConnectorCapabilities, Variable } from '@chili-publish/studio-sdk';
 
 import { Dispatch, SetStateAction } from 'react';
+import { VariableTranslations } from '../types/VariableTranslations';
 
 export const enum ContentType {
     DEFAULT = 'default',
@@ -44,6 +45,7 @@ export interface IVariablePanelContext {
     setSearchKeyWord: Dispatch<SetStateAction<string>>;
     searchQuery: string;
     setSearchQuery: Dispatch<SetStateAction<string>>;
+    variableTranslations: VariableTranslations;
 
     variablesValidation: VariableValidation;
     validateVariables: (_?: VariableValidationOptions) => boolean;

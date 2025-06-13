@@ -1,5 +1,6 @@
 import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
+import StudioUILoader from './deprecated-loaders';
 import './index.css';
 import {
     defaultBackFn,
@@ -9,7 +10,6 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
-import StudioUILoader from './deprecated-loaders';
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -98,6 +98,7 @@ export default class StudioUI extends StudioUILoader {
      * @param onVariableFocus - Callback which returns the id of the currently focused variable.
      * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
      * @param onFetchUserInterfaceDetails - Callback to get the user interface details if userInterfaceID is provided.
+     * @param variableTranslations - Translations for the variables.
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {
@@ -116,6 +117,7 @@ export default class StudioUI extends StudioUILoader {
             userInterfaceID,
             featureFlags,
             sandboxMode,
+            variableTranslations,
             onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -162,6 +164,7 @@ export default class StudioUI extends StudioUILoader {
             },
             featureFlags,
             sandboxMode: sandboxMode || false,
+            variableTranslations,
             onSandboxModeToggle,
             onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
             onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
