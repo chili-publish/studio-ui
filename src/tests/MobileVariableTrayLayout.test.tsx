@@ -2,7 +2,7 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { UiConfigContextProvider } from 'src/contexts/UiConfigContext';
@@ -17,6 +17,7 @@ import { getDataIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
+import { renderWithProviders } from './mocks/Provider';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -74,7 +75,7 @@ describe('MobileVariableTrayLayout', () => {
             dataSource: undefined,
         } as IAppContext);
 
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <UiConfigContextProvider projectConfig={projectConfig}>
                     <MobileVariables
@@ -106,7 +107,7 @@ describe('MobileVariableTrayLayout', () => {
         jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
             dataSource: mockDataSource,
         } as IAppContext);
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <FeatureFlagProvider>
                     <MobileVariables
@@ -142,7 +143,7 @@ describe('MobileVariableTrayLayout', () => {
         jest.spyOn(AppProvider, 'useAppContext').mockReturnValue({
             dataSource: mockDataSource,
         } as IAppContext);
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <MobileVariables
                     variables={variables}

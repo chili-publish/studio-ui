@@ -54,6 +54,6 @@ export const ErrorTextBox = styled.div`
     }
 
     ${ErrorTextMsg} {
-        margin-left: 0.313rem;
+        margin-inline-start: 0.313rem;
     }
 `;

@@ -13,6 +13,7 @@ interface MobileTrayHeaderProps {
     isAvailableLayoutsDisplayed: boolean;
     trayHeaderData: MobileTrayFormBuilderHeader;
 }
+
 function MobileTrayHeader({
     isDefaultPanelView,
     mobileListOpen,
@@ -56,7 +57,8 @@ function MobileTrayHeader({
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
                     styles={css`
-                        padding: 0 0.5rem 0 0;
+                        padding-block: 0;
+                        padding-inline: 0 0.5rem;
                     `}
                 />
                 <TrayPanelTitle margin="0">Select date</TrayPanelTitle>
@@ -75,7 +77,8 @@ function MobileTrayHeader({
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
                     styles={css`
-                        padding: 0 0.5rem 0 0;
+                        padding-block: 0;
+                        padding-inline: 0 0.5rem;
                     `}
                 />
                 <TrayPanelTitle margin="0">{datasource.title}</TrayPanelTitle>

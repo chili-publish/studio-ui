@@ -4,7 +4,7 @@ export class ProjectConfigs {
     static empty: ProjectConfig = {
         projectId: '00000000-0000-0000-0000-000000000000',
         projectName: '',
-        uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'light' },
+        uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'light', uiDirection: 'ltr' },
         outputSettings: defaultOutputSettings,
         graFxStudioEnvironmentApiBaseUrl: '',
         sandboxMode: false,

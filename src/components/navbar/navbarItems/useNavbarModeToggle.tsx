@@ -37,7 +37,7 @@ const useNavbarModeToggle = (projectConfig: ProjectConfig) => {
                 />
             ),
             styles: css`
-                padding-left: 0.125rem;
+                padding-inline-start: 0.125rem;
             `,
         }),
         [isDocumentLoaded, selectedMode, onToggle],

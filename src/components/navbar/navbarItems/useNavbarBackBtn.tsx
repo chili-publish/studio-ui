@@ -3,9 +3,13 @@ import { AvailableIcons } from '@chili-publish/grafx-shared-components';
 import { NavbarGroup, NavbarText } from '../Navbar.styles';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useDirection } from '../../../hooks/useDirection';
 
 const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => void) | undefined) => {
     const { isBackBtnVisible } = useUiConfigContext();
+    const { direction } = useDirection();
+
+    const backIcon = direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft;
 
     const navbarItem = useMemo(
         () =>
@@ -19,7 +23,7 @@ const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => v
                                   dataTestId="back-btn"
                                   dataIntercomId="Go back button"
                                   ariaLabel="Go back"
-                                  icon={AvailableIcons.faArrowLeft}
+                                  icon={backIcon}
                                   handleOnClick={onBackClick || (() => null)}
                               />
                               <NavbarText aria-label={`Project: ${projectName}`}>
@@ -27,10 +31,10 @@ const useNavbarBackBtn = (projectName: string | undefined, onBackClick: (() => v
                               </NavbarText>
                           </NavbarGroup>
                       ),
-                      styles: { marginRight: 'auto' },
+                      styles: { marginInlineEnd: 'auto' },
                   }
                 : null,
-        [isBackBtnVisible, projectName, onBackClick],
+        [isBackBtnVisible, projectName, onBackClick, backIcon],
     );
 
     return {

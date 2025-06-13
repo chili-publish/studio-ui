@@ -2,8 +2,9 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import MobileVariables from '../../../components/variables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';
@@ -67,7 +68,7 @@ describe('MobileDataSource test', () => {
         jest.useRealTimers();
     });
     it('Should display data connector first row', async () => {
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">
@@ -106,7 +107,7 @@ describe('MobileDataSource test', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
                     <UiThemeProvider theme="platform">

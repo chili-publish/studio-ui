@@ -4,7 +4,8 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { ProjectConfigs } from '@tests/mocks/MockProjectConfig';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import Navbar from '../../components/navbar/Navbar';
 import AppProvider from '../../contexts/AppProvider';
 import { FormBuilderType, ProjectConfig } from '../../types/types';
@@ -37,7 +38,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
     };
     const projectConfig = config || prjConfig;
 
-    render(
+    renderWithProviders(
         <AppProvider dataSource={dataSource || undefined}>
             <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
                 <UserInterfaceDetailsContextProvider
