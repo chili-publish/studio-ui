@@ -316,6 +316,7 @@ The `variableTranslations` object should map variable's label to translation obj
 - `label`: The display label for the variable
 - `placeholder`: The placeholder text for the variable input
 - `helpText`: Additional help text shown in the UI
+- `listItems`: (List variable only): Translates list item display value
 
 ##### Example Usage
 
@@ -336,6 +337,15 @@ const variableTranslations = {
         placeholder: 'Enter your company name',
         helpText: 'Optional field.',
     },
+    CountryListVariableLabel: {
+        label: 'Contry',
+        placeholder: 'Select country'
+        helpText: 'Optional field'
+        listItems: {
+            CountryListVariableListItem1DisplayValue: 'Belgium',
+            CountryListVariableListItem2DisplayValue: 'USA',
+        }
+    }
 };
 
 window.StudioUI.studioUILoaderConfig({
