@@ -1,3 +1,4 @@
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { renderHook } from '@testing-library/react';
 import { variables as mockVariables } from '@tests/mocks/mockVariables';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
@@ -25,6 +26,9 @@ describe('useVariableTranslations', () => {
             label: 'Translated List',
             placeholder: 'Select translated option',
             helpText: 'This is translated list help',
+            listItems: {
+                'Val 1': 'Translated Val 1',
+            },
         },
     };
 
@@ -93,5 +97,56 @@ describe('useVariableTranslations', () => {
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual(variable); // Should remain unchanged as there's no label to match translations
+    });
+
+    it('should translate list variable items when translations exist', () => {
+        // Mock the context to return our translations
+        (useVariablePanelContext as jest.Mock).mockReturnValue({ variableTranslations: mockTranslations });
+
+        const listVariable = mockVariables.find((v) => v.label === 'List label') as ListVariable;
+        if (!listVariable || !('items' in listVariable)) {
+            throw new Error('List variable not found in mock variables');
+        }
+
+        const { result } = renderHook(() => useVariableTranslations());
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+        });
+    });
+
+    it('should preserve original list item values when no translation exists', () => {
+        // Mock the context to return translations without list items
+        (useVariablePanelContext as jest.Mock).mockReturnValue({
+            variableTranslations: {
+                'List label': {
+                    label: 'Translated List',
+                    placeholder: 'Select translated option',
+                    helpText: 'This is translated list help',
+                    // listItems is undefined
+                },
+            },
+        });
+
+        const listVariable = mockVariables.find((v) => v.label === 'List label') as ListVariable;
+        if (!listVariable || !('items' in listVariable)) {
+            throw new Error('List variable not found in mock variables');
+        }
+
+        const { result } = renderHook(() => useVariableTranslations());
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: listVariable.items, // Original items preserved
+        });
     });
 });
