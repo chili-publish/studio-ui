@@ -80,6 +80,38 @@ import { EngineVersionManager } from './version-manager';
                 downloadButton: { visible: true },
             },
         },
+        // ['Background', 'Brand', 'Photo', 'Price', 'Description', 'Available from', 'List']
+        variableTranslations: {
+            Background: {
+                label: 'Фон',
+                placeholder: 'Выберите фон',
+            },
+            Photo: {
+                label: 'Фото товара',
+                placeholder: 'Выберите фото товара',
+            },
+            Brand: {
+                label: 'Название бренда',
+                placeholder: 'Предоставьте название бренда',
+                helpText: 'Это поможет нам идентифицировать ваш бренд',
+            },
+            Description: {
+                label: 'Описание товара',
+                placeholder: 'Опишите товар',
+            },
+            Price: {
+                label: 'Цена',
+                placeholder: 'Выберите цену товара',
+            },
+            'Available from': {
+                label: 'Доступно с',
+                placeholder: 'Выберите дату',
+            },
+            List: {
+                label: 'Список',
+                placeholder: 'Выберите элемент',
+            },
+        },
         featureFlags: {},
         // eslint-disable-next-line no-console
         onVariableFocus: (id) => console.log('focused var: ', id),
