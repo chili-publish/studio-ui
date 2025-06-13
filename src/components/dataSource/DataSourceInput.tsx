@@ -7,6 +7,7 @@ import {
     Label,
     LoadingIcon,
 } from '@chili-publish/grafx-shared-components';
+import { useDirection } from '../../hooks/useDirection';
 import { Text } from '../../styles/Main.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { DATA_SOURCE_ID, DataSourceInputStyle, RowInfoContainer } from './DataSource.styles';
@@ -35,6 +36,7 @@ function DataSourceInput({
     onPrevClick,
     onNextClick,
 }: DataSourceInputProps) {
+    const { direction } = useDirection();
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} />
@@ -74,7 +76,12 @@ function DataSourceInput({
                         disabled={isPrevDisabled}
                         dataId={getDataIdForSUI('data-row-prev')}
                         dataTestId={getDataTestIdForSUI('data-row-prev')}
-                        icon={<Icon icon={AvailableIcons.faArrowLeft} key="data-source-navigation-arrow-left" />}
+                        icon={
+                            <Icon
+                                icon={direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft}
+                                key="data-source-navigation-arrow-left"
+                            />
+                        }
                     />
                     <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
                     <Button
@@ -83,7 +90,12 @@ function DataSourceInput({
                         disabled={isNextDisabled}
                         dataId={getDataIdForSUI('data-row-next')}
                         dataTestId={getDataTestIdForSUI('data-row-next')}
-                        icon={<Icon icon={AvailableIcons.faArrowRight} key="data-source-navigation-arrow-right" />}
+                        icon={
+                            <Icon
+                                icon={direction === 'rtl' ? AvailableIcons.faArrowLeft : AvailableIcons.faArrowRight}
+                                key="data-source-navigation-arrow-right"
+                            />
+                        }
                     />
                 </RowInfoContainer>
             )}
