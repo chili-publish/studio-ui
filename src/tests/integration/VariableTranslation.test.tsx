@@ -11,7 +11,9 @@ import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting'
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, within } from '@testing-library/react';
-import { variables, variables as mockVariables } from '@tests/mocks/mockVariables';
+import userEvent from '@testing-library/user-event';
+import { variables as mockVariables, variables } from '@tests/mocks/mockVariables';
+
 import axios from 'axios';
 import { VariableTranslations } from 'src/types/VariableTranslations';
 import StudioUI from '../../main';
@@ -38,6 +40,9 @@ const mockTranslations: VariableTranslations = {
         label: 'Translated List',
         placeholder: 'Select translated option',
         helpText: 'This is translated list help',
+        listItems: {
+            'Val 1': 'Translated Val 1',
+        },
     },
     'Variable1 Label': {
         label: 'Translated Image',
@@ -120,6 +125,7 @@ jest.mock('../../components/variablesComponents/imageVariable/useVariableConnect
 }));
 
 describe('Variable Translations', () => {
+    const user = userEvent.setup();
     const textVariable = variables.find((item) => item.id === 'shortVariable 1') as ShortTextVariable;
     const dateVariable = variables.find((item) => item.id === 'date-variable') as DateVariable;
     const listVariable = variables.find((item) => item.id === '10') as ListVariableType;
@@ -170,13 +176,20 @@ describe('Variable Translations', () => {
         expect(input).toHaveAttribute('placeholder', translation.placeholder);
     });
 
-    it('Should render translated list variable', async () => {
+    it('Should render translated list variable with translated items', async () => {
         const translation = mockTranslations[listVariable.label!];
         const select = screen.getByTestId(getDataTestIdForSUI(`dropdown-${listVariable.id}`));
 
         expect(within(select).getByText(translation.label!)).toBeInTheDocument();
         expect(screen.getByText(translation.helpText!)).toBeInTheDocument();
         expect(within(select).getByText(translation.placeholder!)).toBeInTheDocument();
+
+        const selectIndicator = select.getElementsByClassName('grafx-select__dropdown-indicator')[0];
+        await act(async () => {
+            await user.click(selectIndicator);
+        });
+
+        expect(screen.getByText('Translated Val 1')).toBeInTheDocument();
     });
 
     it('Should render translated image variable', async () => {
