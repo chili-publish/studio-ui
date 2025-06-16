@@ -22,7 +22,6 @@ export type ProjectConfig = {
     graFxStudioEnvironmentApiBaseUrl: string;
     sandboxMode?: boolean;
     featureFlags?: FeatureFlagsType;
-    variableTranslations?: VariableTranslations;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;

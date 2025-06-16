@@ -1,13 +1,7 @@
-import { renderHook } from '@testing-library/react';
 import { variables as mockVariables } from '@tests/mocks/mockVariables';
-import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
+import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useVariableTranslations } from '../../../core/hooks/useVariableTranslations';
 import { VariableTranslations } from '../../../types/VariableTranslations';
-
-// Mock the VariablePanelContext
-jest.mock('../../../contexts/VariablePanelContext', () => ({
-    useVariablePanelContext: jest.fn(),
-}));
 
 describe('useVariableTranslations', () => {
     const mockTranslations: VariableTranslations = {
@@ -34,22 +28,28 @@ describe('useVariableTranslations', () => {
     });
 
     it('should return original variable when no translation exists', () => {
-        // Mock the context to return empty translations
-        (useVariablePanelContext as jest.Mock).mockReturnValue({ variableTranslations: {} });
-
         const variable = mockVariables[2]; // ShortTextVariable with label
-        const { result } = renderHook(() => useVariableTranslations());
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {},
+                },
+            },
+        });
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual(variable);
     });
 
     it('should update variable with translations when they exist', () => {
-        // Mock the context to return our translations
-        (useVariablePanelContext as jest.Mock).mockReturnValue({ variableTranslations: mockTranslations });
-
         const variable = mockVariables[2]; // ShortTextVariable with label
-        const { result } = renderHook(() => useVariableTranslations());
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual({
@@ -61,19 +61,20 @@ describe('useVariableTranslations', () => {
     });
 
     it('should handle partial translations', () => {
-        // Mock the context to return translations with some fields
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            variableTranslations: {
-                'Date Variable 1 Label': {
-                    label: 'Translated Date',
-                    helpText: 'This is translated date help',
-                    // placeholder is undefined
+        const variable = mockVariables[6]; // DateVariable
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'Date Variable 1 Label': {
+                            label: 'Translated Date',
+                            helpText: 'This is translated date help',
+                            // placeholder is undefined
+                        },
+                    },
                 },
             },
         });
-
-        const variable = mockVariables[6]; // DateVariable
-        const { result } = renderHook(() => useVariableTranslations());
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual({
@@ -85,11 +86,14 @@ describe('useVariableTranslations', () => {
     });
 
     it('should handle variables without labels', () => {
-        // Mock the context to return translations
-        (useVariablePanelContext as jest.Mock).mockReturnValue({ variableTranslations: mockTranslations });
-
         const variable = mockVariables[9]; // ShortTextVariable without label
-        const { result } = renderHook(() => useVariableTranslations());
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual(variable); // Should remain unchanged as there's no label to match translations

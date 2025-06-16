@@ -5,6 +5,7 @@ import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 import document from './reducers/documentReducer';
 import media from './reducers/mediaReducer';
+import appConfig from './reducers/appConfigReducer';
 
 const extraMiddlewares: Middleware[] = [errorHandlerMiddleware];
 
@@ -24,6 +25,7 @@ if (getEnvVariables().DEV && getEnvVariables().VITE_REDUX_LOGGER) {
 const rootReducer = combineReducers({
     document,
     media,
+    appConfig,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
