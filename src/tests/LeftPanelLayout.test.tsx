@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { Layout, LayoutIntent, LayoutListItemType, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockUserInterface } from '@mocks/mockUserinterface';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
@@ -23,6 +22,7 @@ import { getDataTestIdForSUI } from '../utils/dataIds';
 import { transformFormBuilderArrayToObject } from '../utils/helpers';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
+import { renderWithProviders } from './mocks/Provider';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -65,23 +65,21 @@ const renderComponent = (
         },
     };
 
-    render(
-        <UiThemeProvider theme="platform">
-            <VariablePanelContextProvider variables={variables}>
-                <UserInterfaceDetailsContextProvider
-                    projectConfig={projectConfig}
-                    layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
-                >
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={selectedLayout || mockLayout}
-                        layouts={layouts || mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={layoutSectionUIOptions}
-                    />
-                </UserInterfaceDetailsContextProvider>
-            </VariablePanelContextProvider>
-        </UiThemeProvider>,
+    renderWithProviders(
+        <VariablePanelContextProvider variables={variables}>
+            <UserInterfaceDetailsContextProvider
+                projectConfig={projectConfig}
+                layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
+            >
+                <LeftPanel
+                    variables={variables}
+                    selectedLayout={selectedLayout || mockLayout}
+                    layouts={layouts || mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={layoutSectionUIOptions}
+                />
+            </UserInterfaceDetailsContextProvider>
+        </VariablePanelContextProvider>,
         { container: document.body.appendChild(APP_WRAPPER) },
     );
 };
