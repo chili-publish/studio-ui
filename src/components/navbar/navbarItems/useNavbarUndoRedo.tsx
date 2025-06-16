@@ -1,11 +1,16 @@
 import { useMemo } from 'react';
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
+import { useDirection } from 'src/hooks/useDirection';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 
 const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boolean }) => {
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
+    const { direction } = useDirection();
+
+    const undoIcon = direction === 'rtl' ? AvailableIcons.faArrowTurnDownRight : AvailableIcons.faArrowTurnDownLeft;
+    const redoIcon = direction === 'rtl' ? AvailableIcons.faArrowTurnDownLeft : AvailableIcons.faArrowTurnDownRight;
 
     const navbarItem = useMemo(
         () => ({
@@ -15,7 +20,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                     <NavbarButton
                         dataId="undo-btn"
                         ariaLabel="Undo"
-                        icon={AvailableIcons.faArrowTurnDownLeft}
+                        icon={undoIcon}
                         flipIconY
                         disabled={!undoStackState.canUndo}
                         handleOnClick={handleUndo}
@@ -23,7 +28,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                     <NavbarButton
                         dataId="redo-btn"
                         ariaLabel="Redo"
-                        icon={AvailableIcons.faArrowTurnDownRight}
+                        icon={redoIcon}
                         flipIconY
                         disabled={!undoStackState.canRedo}
                         handleOnClick={handleRedo}
@@ -31,7 +36,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                 </NavbarGroup>
             ),
         }),
-        [undoStackState.canUndo, undoStackState.canRedo, handleUndo, handleRedo],
+        [undoIcon, undoStackState.canUndo, undoStackState.canRedo, handleUndo, redoIcon, handleRedo],
     );
 
     return {
