@@ -3,7 +3,8 @@ import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback } from 'react';
 import { isListVariable } from 'src/components/variablesComponents/Variable';
 import { BaseVariableTranslation, ListVariableTranslation } from 'src/types/VariableTranslations';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { useSelector } from 'react-redux';
+import { selectVariableTranslations } from 'src/store/reducers/appConfigReducer';
 
 function updateVariableWithTranslation<V extends Variable>(variable: V, translation: BaseVariableTranslation): V {
     return {
@@ -26,11 +27,11 @@ function updateListVariableWithTranslation(variable: ListVariable, translation: 
     };
 }
 export const useVariableTranslations = () => {
-    const { variableTranslations } = useVariablePanelContext();
+    const variableTranslations = useSelector(selectVariableTranslations);
 
     const updateWithTranslation = useCallback(
         (variable: Variable): Variable => {
-            const translation = variable.label ? variableTranslations[variable.label] : undefined;
+            const translation = variable.label ? variableTranslations?.[variable.label] : undefined;
             if (!translation) {
                 return variable;
             }

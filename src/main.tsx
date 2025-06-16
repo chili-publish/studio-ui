@@ -1,6 +1,6 @@
 import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
-import StudioUILoader from './deprecated-loaders';
+import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import './index.css';
 import {
     defaultBackFn,
@@ -20,8 +20,8 @@ export default class StudioUI extends StudioUILoader {
      * @param projectConfig - The configuration of the project
      * @returns
      */
-    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig) {
-        return new StudioUI(selector, projectConfig);
+    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig, appConfig?: AppConfig) {
+        return new StudioUI(selector, projectConfig, appConfig);
     }
 
     /**
@@ -151,40 +151,45 @@ export default class StudioUI extends StudioUILoader {
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const uiOptionsConfig = uiOptions ?? defaultPlatformUiOptions;
 
-        return this.fullStudioIntegrationConfig(selector, {
-            projectId,
-            projectName,
-            userInterfaceID,
-            userInterfaceFormBuilderData,
-            graFxStudioEnvironmentApiBaseUrl,
-            outputSettings: outputSettings ?? defaultOutputSettings,
-            uiOptions: {
-                ...uiOptionsConfig,
-                uiTheme: uiOptionsConfig.uiTheme || 'light',
+        return this.fullStudioIntegrationConfig(
+            selector,
+            {
+                projectId,
+                projectName,
+                userInterfaceID,
+                userInterfaceFormBuilderData,
+                graFxStudioEnvironmentApiBaseUrl,
+                outputSettings: outputSettings ?? defaultOutputSettings,
+                uiOptions: {
+                    ...uiOptionsConfig,
+                    uiTheme: uiOptionsConfig.uiTheme || 'light',
+                },
+                featureFlags,
+                sandboxMode: sandboxMode || false,
+                onSandboxModeToggle,
+                onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
+                onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
+                onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
+                onProjectLoaded: onProjectLoaded ?? projectLoader.onProjectLoaded,
+                onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
+                onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
+                onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
+                onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+                onFetchOutputSettings: projectLoader.onFetchOutputSettings,
+                onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
+                onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
+                onConnectorAuthenticationRequested,
+                editorLink,
+                onBack,
+                customElement,
+                onSetMultiLayout,
+                onVariableFocus,
+                onVariableBlur,
+                onVariableValueChangedCompleted,
             },
-            featureFlags,
-            sandboxMode: sandboxMode || false,
-            variableTranslations,
-            onSandboxModeToggle,
-            onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
-            onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
-            onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
-            onProjectLoaded: onProjectLoaded ?? projectLoader.onProjectLoaded,
-            onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
-            onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
-            onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
-            onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
-            onFetchOutputSettings: projectLoader.onFetchOutputSettings,
-            onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
-            onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
-            onConnectorAuthenticationRequested,
-            editorLink,
-            onBack,
-            customElement,
-            onSetMultiLayout,
-            onVariableFocus,
-            onVariableBlur,
-            onVariableValueChangedCompleted,
-        });
+            {
+                variableTranslations,
+            },
+        );
     }
 }

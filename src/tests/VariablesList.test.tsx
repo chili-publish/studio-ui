@@ -1,11 +1,11 @@
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import VariablesList from '../components/variables/VariablesList';
 import AppProvider from '../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
+import { renderWithProviders } from './mocks/Provider';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -30,11 +30,9 @@ describe('Variables List', () => {
         jest.clearAllMocks();
     });
     it('Hidden variables should not be shown', async () => {
-        render(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablesList variables={variables} />
-                </UiThemeProvider>
+                <VariablesList variables={variables} />
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
@@ -51,11 +49,9 @@ describe('Variables List', () => {
     });
 
     it('List variable should use "displayValue" for labels', async () => {
-        const { getByTestId } = render(
+        const { getByTestId } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablesList variables={variables} />
-                </UiThemeProvider>
+                <VariablesList variables={variables} />
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );

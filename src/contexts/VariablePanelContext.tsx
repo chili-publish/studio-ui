@@ -4,7 +4,6 @@ import { ReactNode, createContext, useCallback, useContext, useMemo, useState } 
 import { css } from 'styled-components';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
-import { VariableTranslations } from '../types/VariableTranslations';
 import { ContentType, ICapabilities, IVariablePanelContext } from './VariablePanelContext.types';
 import { useVariableValidation } from './useVariableValidation';
 
@@ -33,7 +32,6 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
     imagePanelTitle: <div />,
     connectorCapabilities: {},
     getCapabilitiesForConnector: async () => undefined,
-    variableTranslations: {},
 };
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
@@ -42,15 +40,7 @@ export const useVariablePanelContext = () => {
     return useContext(VariablePanelContext);
 };
 
-export function VariablePanelContextProvider({
-    children,
-    variables,
-    variableTranslations = {},
-}: {
-    children: ReactNode;
-    variables: Variable[];
-    variableTranslations?: VariableTranslations;
-}) {
+export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
@@ -150,7 +140,6 @@ export function VariablePanelContextProvider({
             imagePanelTitle,
             connectorCapabilities,
             getCapabilitiesForConnector,
-            variableTranslations,
             ...variableValidationData,
         }),
         [
@@ -165,7 +154,6 @@ export function VariablePanelContextProvider({
             imagePanelTitle,
             connectorCapabilities,
             getCapabilitiesForConnector,
-            variableTranslations,
             variableValidationData,
         ],
     );

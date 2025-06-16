@@ -390,10 +390,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container>
                     <UiConfigContextProvider projectConfig={projectConfig}>
-                        <VariablePanelContextProvider
-                            variables={variables}
-                            variableTranslations={projectConfig.variableTranslations}
-                        >
+                        <VariablePanelContextProvider variables={variables}>
                             <div id={APP_WRAPPER_ID} className="app">
                                 <UserInterfaceDetailsContextProvider
                                     projectConfig={projectConfig}
