@@ -9,6 +9,15 @@ const NAVIGATION_HEIGHT = '2.5rem';
 const SCROLLABLE_PANEL_MARGIN_TOP = '1rem';
 const NAVIGATION_MARGIN_BOTTOM = '0.5rem';
 
+interface ScrollbarContainerProps {
+    filteringEnabled?: boolean;
+    navigationBreadcrumbsEnabled?: boolean;
+    hasSearchQuery?: boolean;
+}
+interface StyledScrollbarContainerProps extends ScrollbarContainerProps {
+    height: string;
+}
+
 export const ResourcesContainer = styled.div`
     width: 100%;
     display: grid;
@@ -103,18 +112,16 @@ export const BreadCrumbsWrapper = styled.div`
     }
 `;
 
-export const ScrollbarContainer = styled.div.attrs(
-    (props: { filteringEnabled?: boolean; navigationBreadcrumbsEnabled?: boolean; hasSearchQuery?: boolean }) => {
-        const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_BOTTOM})`;
-        const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
+export const ScrollbarContainer = styled.div.attrs<ScrollbarContainerProps>((props) => {
+    const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_BOTTOM})`;
+    const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
 
-        const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
-            props.navigationBreadcrumbsEnabled ? navigationBarTotalHeight : '0px'
-        } - ${SCROLLABLE_PANEL_MARGIN_TOP} - 0.5rem)`;
+    const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
+        props.navigationBreadcrumbsEnabled ? navigationBarTotalHeight : '0px'
+    } - ${SCROLLABLE_PANEL_MARGIN_TOP} - 0.5rem)`;
 
-        return { ...props, height };
-    },
-)`
+    return { ...props, height };
+})<Partial<StyledScrollbarContainerProps>>`
     width: 100%;
     height: ${(props) => props.height};
     margin-top: ${SCROLLABLE_PANEL_MARGIN_TOP};
