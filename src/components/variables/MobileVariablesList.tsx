@@ -2,6 +2,7 @@ import { InputLabel } from '@chili-publish/grafx-shared-components';
 import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
@@ -10,7 +11,6 @@ import { isListVariable } from '../variablesComponents/Variable';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
-import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
 
 interface VariablesListProps {
     variables: Variable[];
