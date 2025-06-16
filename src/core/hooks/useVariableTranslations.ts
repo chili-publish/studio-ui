@@ -24,6 +24,14 @@ function updateListVariableWithTranslation(variable: ListVariable, translation: 
                 ? (translation.listItems?.[item.displayValue] ?? item.displayValue)
                 : item.displayValue,
         })),
+        selected:
+            variable.selected && variable.selected.displayValue
+                ? {
+                      ...variable.selected,
+                      displayValue:
+                          translation.listItems?.[variable.selected.displayValue] ?? variable.selected.displayValue,
+                  }
+                : variable.selected,
     };
 }
 export const useVariableTranslations = () => {

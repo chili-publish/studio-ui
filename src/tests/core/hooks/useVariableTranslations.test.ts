@@ -157,4 +157,56 @@ describe('useVariableTranslations', () => {
             items: listVariable.items, // Original items preserved
         });
     });
+
+    it('should translate selected list item displayValue when translation exists', () => {
+        // Clone the list variable and add a selected property
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            selected: { value: 'val 1', displayValue: 'Val 1' },
+        } as ListVariable;
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+            selected: { value: 'val 1', displayValue: 'Translated Val 1' },
+        });
+    });
+
+    it('should preserve original selected displayValue when no translation exists', () => {
+        // Clone the list variable and add a selected property
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            selected: { value: 'val 2', displayValue: 'Val 2' },
+        } as ListVariable;
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+            selected: { value: 'val 2', displayValue: 'Val 2' },
+        });
+    });
 });
