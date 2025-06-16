@@ -121,7 +121,7 @@ describe('"ImageVariable" component ', () => {
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
             }),
-            {},
+            undefined,
         );
     });
 
@@ -146,7 +146,7 @@ describe('"ImageVariable" component ', () => {
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
             }),
-            {},
+            undefined,
         );
     });
 
@@ -175,7 +175,7 @@ describe('"ImageVariable" component ', () => {
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
             }),
-            {},
+            undefined,
         );
     });
 
@@ -253,7 +253,7 @@ describe('"ImageVariable" component ', () => {
             expect.objectContaining({
                 placeholder: PLACEHOLDER,
             }),
-            {},
+            undefined,
         );
     });
 
@@ -278,7 +278,7 @@ describe('"ImageVariable" component ', () => {
                     },
                 }),
             }),
-            {},
+            undefined,
         );
     });
 
@@ -300,7 +300,7 @@ describe('"ImageVariable" component ', () => {
                     },
                 }),
             }),
-            {},
+            undefined,
         );
     });
 
@@ -325,7 +325,7 @@ describe('"ImageVariable" component ', () => {
                     },
                 }),
             }),
-            {},
+            undefined,
         );
     });
 
