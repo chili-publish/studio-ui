@@ -14,9 +14,9 @@ import { act, render, screen, within } from '@testing-library/react';
 import { variables, variables as mockVariables } from '@tests/mocks/mockVariables';
 import axios from 'axios';
 import { VariableTranslations } from 'src/types/VariableTranslations';
+import userEvent from '@testing-library/user-event';
 import StudioUI from '../../main';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import userEvent from '@testing-library/user-event';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
