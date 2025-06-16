@@ -5,10 +5,10 @@ import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, waitFor, screen } from '@testing-library/react';
 import axios from 'axios';
-import StudioUI from '../../main';
 import userEvent from '@testing-library/user-event';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import selectEvent from 'react-select-event';
+import StudioUI from '../../main';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
