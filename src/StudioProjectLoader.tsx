@@ -136,7 +136,7 @@ export class StudioProjectLoader {
         return getDownloadLink(
             extension as DownloadFormats,
             this.graFxStudioEnvironmentApiBaseUrl,
-            this.authToken,
+            () => this.authToken,
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,

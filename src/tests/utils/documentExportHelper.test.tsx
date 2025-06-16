@@ -23,7 +23,15 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
         });
         it('should return "Unexpected error"', async () => {
-            const res = await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', undefined, false);
+            const res = await getDownloadLink(
+                DownloadFormats.PDF,
+                '',
+                () => 'Token',
+                '1',
+                'projectId',
+                undefined,
+                false,
+            );
             expect(res).toEqual({
                 status: 500,
                 error: 'Unexpected error during polling',
@@ -40,7 +48,15 @@ describe('"getDownloadLink', () => {
                     detail: 'Api Error',
                 },
             });
-            const res = await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', undefined, false);
+            const res = await getDownloadLink(
+                DownloadFormats.PDF,
+                '',
+                () => 'Token',
+                '1',
+                'projectId',
+                undefined,
+                false,
+            );
             expect(res).toEqual({
                 status: 503,
                 error: 'Api Error',
@@ -61,7 +77,15 @@ describe('"getDownloadLink', () => {
                     status: 401,
                 },
             });
-            const res = await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', undefined, false);
+            const res = await getDownloadLink(
+                DownloadFormats.PDF,
+                '',
+                () => 'Token',
+                '1',
+                'projectId',
+                undefined,
+                false,
+            );
             expect(res).toEqual({
                 status: 500,
                 error: 'Error during polling',
@@ -91,7 +115,7 @@ describe('"getDownloadLink', () => {
             });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
-            await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', undefined, false);
+            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', undefined, false);
 
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
@@ -111,7 +135,7 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: null,
             });
-            await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', 'outputId', false);
+            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
 
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
@@ -133,7 +157,7 @@ describe('"getDownloadLink', () => {
                     dataSourceEnabled: false,
                 },
             });
-            await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', 'outputId', false);
+            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
 
             expect(axios.get).toHaveBeenCalledWith(`/output/settings/outputId`, {
                 headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' },
@@ -159,7 +183,7 @@ describe('"getDownloadLink', () => {
                     dataSourceEnabled: true,
                 },
             });
-            await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', 'outputId', false);
+            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
 
             expect(axios.get).toHaveBeenCalledWith(`/output/settings/outputId`, {
                 headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' },
@@ -203,7 +227,15 @@ describe('"getDownloadLink', () => {
                     },
                 },
             });
-            const res = await getDownloadLink(DownloadFormats.PDF, '', 'Token', '1', 'projectId', undefined, false);
+            const res = await getDownloadLink(
+                DownloadFormats.PDF,
+                '',
+                () => 'Token',
+                '1',
+                'projectId',
+                undefined,
+                false,
+            );
             expect(res).toEqual({
                 status: 200,
                 error: undefined,
