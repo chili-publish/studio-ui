@@ -2,6 +2,7 @@ import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/graf
 import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useDirection } from 'src/hooks/useDirection';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { ContentType, ICapabilities, IVariablePanelContext } from './VariablePanelContext.types';
@@ -41,6 +42,7 @@ export const useVariablePanelContext = () => {
 };
 
 export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
+    const { direction } = useDirection();
     const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
@@ -97,7 +99,12 @@ export function VariablePanelContextProvider({ children, variables }: { children
                         setSearchKeyWord('');
                         setSearchQuery('');
                     }}
-                    icon={<Icon key={navigationStack.length} icon={AvailableIcons.faArrowLeft} />}
+                    icon={
+                        <Icon
+                            key={navigationStack.length}
+                            icon={direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft}
+                        />
+                    }
                     styles={css`
                         padding: 0;
                     `}
@@ -105,7 +112,7 @@ export function VariablePanelContextProvider({ children, variables }: { children
                 <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack],
+        [direction, navigationStack],
     );
 
     const data = useMemo(
