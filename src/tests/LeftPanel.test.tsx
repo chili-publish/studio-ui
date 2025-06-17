@@ -1,11 +1,10 @@
-import { UiThemeProvider, getDataTestId } from '@chili-publish/grafx-shared-components';
+import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockAssets } from '@mocks/mockAssets';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { render, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
-import { act } from 'react-dom/test-utils';
 import { FormBuilderArray, ProjectConfig, UserInterfaceWithOutputSettings } from 'src/types/types';
 import { transformFormBuilderArrayToObject } from 'src/utils/helpers';
 import { mockUserInterface } from '@mocks/mockUserinterface';
@@ -18,6 +17,7 @@ import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
+import { renderWithProviders } from './mocks/Provider';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -143,25 +143,23 @@ const projectConfig = {
 describe('Image Panel', () => {
     test('Navigation to and from image panel works', async () => {
         const user = userEvent.setup();
-        const { getByText, getByRole } = render(
+        const { getByText, getByRole } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
-                            <LeftPanel
-                                variables={variables}
-                                selectedLayout={mockLayout}
-                                layouts={mockLayouts}
-                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                                layoutSectionUIOptions={{
-                                    visible: false,
-                                    layoutSwitcherVisible: false,
-                                    title: 'Layout',
-                                }}
-                            />
-                        </UiConfigContextProvider>
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
+                        <LeftPanel
+                            variables={variables}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                layoutSwitcherVisible: false,
+                                title: 'Layout',
+                            }}
+                        />
+                    </UiConfigContextProvider>
+                </VariablePanelContextProvider>
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
@@ -183,30 +181,28 @@ describe('Image Panel', () => {
 
     test('Media assets are correctly fetched', async () => {
         const user = userEvent.setup();
-        const { getByText, getByTestId, getAllByText } = render(
+        const { getByText, getByTestId, getAllByText } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </VariablePanelContextProvider>
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
-        await act(async () => {
-            await user.click(imagePicker[0]);
-        });
+
+        await user.click(imagePicker[0]);
+
         const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
         expect(folder).toBeInTheDocument();
 
@@ -221,34 +217,30 @@ describe('Image Panel', () => {
 
     test('Media asset folder navigation works', async () => {
         const user = userEvent.setup();
-        const { getByText } = render(
+        const { getByText } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </VariablePanelContextProvider>
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
-        await act(async () => {
-            await user.click(imagePicker[0]);
-        });
+        await user.click(imagePicker[0]);
+
         const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
-        await act(async () => {
-            await user.click(image);
-        });
+
+        await user.click(image);
 
         const breadCrumb = getByText('Home');
         expect(breadCrumb).toBeInTheDocument();
@@ -256,39 +248,34 @@ describe('Image Panel', () => {
 
     test.skip('Image Picker updates image after asset is selected', async () => {
         const user = userEvent.setup();
-        const { getByRole } = render(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </VariablePanelContextProvider>
             </AppProvider>,
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
-        await act(async () => {
-            await user.click(imagePicker[0]);
-        });
-        const image = getByRole('img', { name: mockAssets[1].name });
+        await user.click(imagePicker[0]);
 
-        await act(async () => {
-            await user.click(image);
-        });
+        const image = await screen.findByRole('img', { name: mockAssets[1].name });
+
+        await user.click(image);
 
         expect(window.StudioUISDK.variable.setImageVariableConnector).toHaveBeenCalledTimes(1);
         expect(window.StudioUISDK.variable.setValue).toHaveBeenCalledTimes(1);
     });
-    test('Do not render search input when filtering is not supported', async () => {
+    test('Do not renderWithProviders search input when filtering is not supported', async () => {
         const user = userEvent.setup();
         mockSDK.mediaConnector.getCapabilities = jest
             .fn()
@@ -306,75 +293,63 @@ describe('Image Panel', () => {
                 }),
             );
 
-        render(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </VariablePanelContextProvider>
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
-        await act(async () => {
-            await user.click(imagePicker[0]);
-        });
+        await user.click(imagePicker[0]);
 
         const image = await screen.findAllByRole('img', { name: /grafx/i });
         expect(image[0]).toBeInTheDocument();
 
-        await act(async () => {
-            await user.click(image[0]);
-        });
+        await user.click(image[0]);
 
         const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
         expect(input).toBeNull();
     });
-    test('Render search input when filtering is supported', async () => {
+    test('renderWithProviders search input when filtering is supported', async () => {
         const user = userEvent.setup();
-        const { getByTestId } = render(
+        const { getByTestId } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <UiThemeProvider theme="platform">
-                    <VariablePanelContextProvider variables={variables}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </VariablePanelContextProvider>
-                </UiThemeProvider>
+                <VariablePanelContextProvider variables={variables}>
+                    <LeftPanel
+                        variables={variables}
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </VariablePanelContextProvider>
             </AppProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
 
-        await act(async () => {
-            await user.click(imagePicker[0]);
-        });
+        await user.click(imagePicker[0]);
 
-        const image = await screen.findAllByRole('img', { name: /grafx/i });
+        const image = await screen.findAllByRole('img');
         expect(image[0]).toBeInTheDocument();
 
-        await act(async () => {
-            await user.click(image[0]);
-        });
+        await user.click(image[0]);
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));
         expect(input).toBeInTheDocument();

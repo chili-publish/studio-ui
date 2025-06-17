@@ -269,7 +269,7 @@ interface FormBuilderSection {
 }
 ```
 
-#### Example Usage
+##### Example Usage
 
 ```javascript
 const onFetchUserInterfaceDetails = async (userInterfaceId) => {
@@ -306,6 +306,55 @@ const onFetchUserInterfaceDetails = async (userInterfaceId) => {
     };
 };
 ```
+
+#### Variable Translations
+
+If you want to provide translations for your variables (such as labels, placeholders, or help texts), you can use the `variableTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for variables in the UI, making your integration more user-friendly and localized.
+
+The `variableTranslations` object should map variable's label to translation objects. Each translation object can include:
+
+- `label`: The display label for the variable
+- `placeholder`: The placeholder text for the variable input
+- `helpText`: Additional help text shown in the UI
+- `listItems`: (List variable only): Translates list item display value
+
+##### Example Usage
+
+```js
+const variableTranslations = {
+    FirstNameVariableLabel: {
+        label: 'First Name',
+        placeholder: 'Enter your first name',
+        helpText: 'This will appear on your badge.',
+    },
+    LastNameVariableLabel: {
+        label: 'Last Name',
+        placeholder: 'Enter your last name',
+        helpText: 'This will appear on your badge.',
+    },
+    CompanyVariableLabel: {
+        label: 'Company',
+        placeholder: 'Enter your company name',
+        helpText: 'Optional field.',
+    },
+    CountryListVariableLabel: {
+        label: 'Contry',
+        placeholder: 'Select country'
+        helpText: 'Optional field'
+        listItems: {
+            CountryListVariableListItem1DisplayValue: 'Belgium',
+            CountryListVariableListItem2DisplayValue: 'USA',
+        }
+    }
+};
+
+window.StudioUI.studioUILoaderConfig({
+    // ... other config options ...
+    variableTranslations: variableTranslations,
+});
+```
+
+You can provide translations for as many or as few variables as you like. Any fields you omit will fall back to the default values from variable's configuration.
 
 ## Advanced example using own documents
 

@@ -1,5 +1,6 @@
 import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
+import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import './index.css';
 import {
     defaultBackFn,
@@ -9,7 +10,6 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
-import StudioUILoader from './deprecated-loaders';
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -20,8 +20,8 @@ export default class StudioUI extends StudioUILoader {
      * @param projectConfig - The configuration of the project
      * @returns
      */
-    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig) {
-        return new StudioUI(selector, projectConfig);
+    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig, appConfig?: AppConfig) {
+        return new StudioUI(selector, projectConfig, appConfig);
     }
 
     /**
@@ -98,6 +98,7 @@ export default class StudioUI extends StudioUILoader {
      * @param onVariableFocus - Callback which returns the id of the currently focused variable.
      * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
      * @param onFetchUserInterfaceDetails - Callback to get the user interface details if userInterfaceID is provided.
+     * @param variableTranslations - Translations for the variables.
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {
@@ -116,6 +117,7 @@ export default class StudioUI extends StudioUILoader {
             userInterfaceID,
             featureFlags,
             sandboxMode,
+            variableTranslations,
             onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -149,39 +151,45 @@ export default class StudioUI extends StudioUILoader {
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const uiOptionsConfig = uiOptions ?? defaultPlatformUiOptions;
 
-        return this.fullStudioIntegrationConfig(selector, {
-            projectId,
-            projectName,
-            userInterfaceID,
-            userInterfaceFormBuilderData,
-            graFxStudioEnvironmentApiBaseUrl,
-            outputSettings: outputSettings ?? defaultOutputSettings,
-            uiOptions: {
-                ...uiOptionsConfig,
-                uiTheme: uiOptionsConfig.uiTheme || 'light',
+        return this.fullStudioIntegrationConfig(
+            selector,
+            {
+                projectId,
+                projectName,
+                userInterfaceID,
+                userInterfaceFormBuilderData,
+                graFxStudioEnvironmentApiBaseUrl,
+                outputSettings: outputSettings ?? defaultOutputSettings,
+                uiOptions: {
+                    ...uiOptionsConfig,
+                    uiTheme: uiOptionsConfig.uiTheme || 'light',
+                },
+                featureFlags,
+                sandboxMode: sandboxMode || false,
+                onSandboxModeToggle,
+                onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
+                onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
+                onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
+                onProjectLoaded: onProjectLoaded ?? projectLoader.onProjectLoaded,
+                onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
+                onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
+                onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
+                onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+                onFetchOutputSettings: projectLoader.onFetchOutputSettings,
+                onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
+                onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
+                onConnectorAuthenticationRequested,
+                editorLink,
+                onBack,
+                customElement,
+                onSetMultiLayout,
+                onVariableFocus,
+                onVariableBlur,
+                onVariableValueChangedCompleted,
             },
-            featureFlags,
-            sandboxMode: sandboxMode || false,
-            onSandboxModeToggle,
-            onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
-            onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
-            onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
-            onProjectLoaded: onProjectLoaded ?? projectLoader.onProjectLoaded,
-            onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
-            onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
-            onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
-            onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
-            onFetchOutputSettings: projectLoader.onFetchOutputSettings,
-            onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
-            onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
-            onConnectorAuthenticationRequested,
-            editorLink,
-            onBack,
-            customElement,
-            onSetMultiLayout,
-            onVariableFocus,
-            onVariableBlur,
-            onVariableValueChangedCompleted,
-        });
+            {
+                variableTranslations,
+            },
+        );
     }
 }

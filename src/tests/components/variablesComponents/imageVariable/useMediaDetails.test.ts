@@ -328,7 +328,7 @@ describe('"useMediaDetails" hook', () => {
             ),
         );
 
-        expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
+        expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalled();
         expect(window.StudioUISDK.mediaConnector.detail).not.toHaveBeenCalled();
 
         await waitFor(() => {

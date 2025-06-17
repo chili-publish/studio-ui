@@ -5,19 +5,6 @@ import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHel
 jest.mock('axios');
 
 describe('"getDownloadLink', () => {
-    beforeAll(() => {
-        Object.defineProperty(window, 'location', {
-            writable: true,
-            value: {
-                hostname: 'chiligrafx.com',
-            },
-        });
-    });
-
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
-
     describe('handle errors correctly', () => {
         beforeEach(() => {
             window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
@@ -120,7 +107,7 @@ describe('"getDownloadLink', () => {
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
                 {
-                    engineVersion: null,
+                    engineVersion: undefined,
                     dataConnectorConfig: undefined,
                     outputSettingsId: undefined,
                     layoutsToExport: ['1'],
@@ -140,7 +127,7 @@ describe('"getDownloadLink', () => {
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
                 {
-                    engineVersion: null,
+                    engineVersion: undefined,
                     dataConnectorConfig: undefined,
                     outputSettingsId: 'outputId',
                     layoutsToExport: ['1'],
@@ -166,7 +153,7 @@ describe('"getDownloadLink', () => {
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
                 {
-                    engineVersion: null,
+                    engineVersion: undefined,
                     dataConnectorConfig: undefined,
                     outputSettingsId: 'outputId',
                     layoutsToExport: ['1'],
@@ -192,7 +179,7 @@ describe('"getDownloadLink', () => {
             expect(axios.post).toHaveBeenCalledWith(
                 `/output/pdf`,
                 {
-                    engineVersion: null,
+                    engineVersion: undefined,
                     dataConnectorConfig: {
                         dataConnectorId: '123',
                         dataConnectorParameters: {

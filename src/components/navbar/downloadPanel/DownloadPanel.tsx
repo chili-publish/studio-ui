@@ -41,7 +41,7 @@ interface DownloadPanelProps {
         outputSettingsId: string | undefined,
     ) => Promise<void>;
     isSandBoxMode?: boolean;
-    exportButtonRef?: RefObject<HTMLLIElement>;
+    exportButtonRef?: RefObject<HTMLLIElement | null>;
 }
 
 const getCustomSelectedLabel = (option: SelectOptions) => {

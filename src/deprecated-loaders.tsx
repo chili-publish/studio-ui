@@ -24,13 +24,18 @@ import {
     UserInterface,
     UserInterfaceWithOutputSettings,
 } from './types/types';
+import { VariableTranslations } from './types/VariableTranslations';
 
 type UiThemeType = { uiTheme: ITheme['mode'] | 'system' };
+
+export type AppConfig = {
+    variableTranslations?: VariableTranslations;
+};
 
 export default class StudioUILoader {
     protected root: Root | undefined;
 
-    constructor(selector: string, projectConfig: ProjectConfig) {
+    constructor(selector: string, projectConfig: ProjectConfig, appConfig: AppConfig = {}) {
         const container = document.getElementById(selector || 'sui-root');
 
         if (this.root) {
@@ -39,7 +44,9 @@ export default class StudioUILoader {
             );
         }
 
-        const store = setupStore();
+        const store = setupStore({
+            appConfig,
+        });
         this.root = createRoot(container!);
         this.root.render(
             <React.StrictMode>
