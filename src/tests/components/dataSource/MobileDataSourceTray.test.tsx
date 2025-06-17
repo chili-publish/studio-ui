@@ -1,4 +1,3 @@
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
@@ -71,21 +70,19 @@ describe('MobileDataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <FeatureFlagProvider>
-                            <MobileVariables
-                                variables={[]}
-                                selectedLayout={mockLayout}
-                                layouts={mockLayouts}
-                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                                layoutSectionUIOptions={{
-                                    visible: false,
-                                    layoutSwitcherVisible: false,
-                                    title: 'Layout',
-                                }}
-                            />
-                        </FeatureFlagProvider>
-                    </UiThemeProvider>
+                    <FeatureFlagProvider>
+                        <MobileVariables
+                            variables={[]}
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                layoutSwitcherVisible: false,
+                                title: 'Layout',
+                            }}
+                        />
+                    </FeatureFlagProvider>
                 </div>
                 ,
             </AppProvider>,
@@ -110,23 +107,21 @@ describe('MobileDataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
-                    <UiThemeProvider theme="platform">
-                        <VariablePanelContextProvider variables={[]}>
-                            <FeatureFlagProvider>
-                                <MobileVariables
-                                    variables={[]}
-                                    selectedLayout={mockLayout}
-                                    layouts={mockLayouts}
-                                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                                    layoutSectionUIOptions={{
-                                        visible: false,
-                                        layoutSwitcherVisible: false,
-                                        title: 'Layout',
-                                    }}
-                                />
-                            </FeatureFlagProvider>
-                        </VariablePanelContextProvider>
-                    </UiThemeProvider>
+                    <VariablePanelContextProvider variables={[]}>
+                        <FeatureFlagProvider>
+                            <MobileVariables
+                                variables={[]}
+                                selectedLayout={mockLayout}
+                                layouts={mockLayouts}
+                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                                layoutSectionUIOptions={{
+                                    visible: false,
+                                    layoutSwitcherVisible: false,
+                                    title: 'Layout',
+                                }}
+                            />
+                        </FeatureFlagProvider>
+                    </VariablePanelContextProvider>
                 </div>
             </AppProvider>,
         );

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, screen, waitFor } from '@testing-library/react';
@@ -76,21 +75,19 @@ describe('MobileVariableTrayLayout', () => {
         } as IAppContext);
 
         renderWithProviders(
-            <UiThemeProvider theme="platform">
-                <UiConfigContextProvider projectConfig={projectConfig}>
-                    <MobileVariables
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
-                        }}
-                    />
-                </UiConfigContextProvider>
-            </UiThemeProvider>,
+            <UiConfigContextProvider projectConfig={projectConfig}>
+                <MobileVariables
+                    variables={variables}
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: true,
+                        layoutSwitcherVisible: true,
+                        title: 'Layout',
+                    }}
+                />
+            </UiConfigContextProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
@@ -108,21 +105,19 @@ describe('MobileVariableTrayLayout', () => {
             dataSource: mockDataSource,
         } as IAppContext);
         renderWithProviders(
-            <UiThemeProvider theme="platform">
-                <FeatureFlagProvider>
-                    <MobileVariables
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: true,
-                            layoutSwitcherVisible: true,
-                            title: 'Layout',
-                        }}
-                    />
-                </FeatureFlagProvider>
-            </UiThemeProvider>,
+            <FeatureFlagProvider>
+                <MobileVariables
+                    variables={variables}
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: true,
+                        layoutSwitcherVisible: true,
+                        title: 'Layout',
+                    }}
+                />
+            </FeatureFlagProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 
@@ -144,19 +139,17 @@ describe('MobileVariableTrayLayout', () => {
             dataSource: mockDataSource,
         } as IAppContext);
         renderWithProviders(
-            <UiThemeProvider theme="platform">
-                <MobileVariables
-                    variables={variables}
-                    selectedLayout={mockLayout}
-                    layouts={mockLayouts}
-                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                    layoutSectionUIOptions={{
-                        visible: true,
-                        layoutSwitcherVisible: true,
-                        title: 'Layout',
-                    }}
-                />
-            </UiThemeProvider>,
+            <MobileVariables
+                variables={variables}
+                selectedLayout={mockLayout}
+                layouts={mockLayouts}
+                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                layoutSectionUIOptions={{
+                    visible: true,
+                    layoutSwitcherVisible: true,
+                    title: 'Layout',
+                }}
+            />,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
 

@@ -6,6 +6,7 @@ import { errorHandlerMiddleware } from './middleware/errorHandler';
 import document from './reducers/documentReducer';
 import media from './reducers/mediaReducer';
 import direction from './reducers/directionReducer';
+import appConfig from './reducers/appConfigReducer';
 
 const extraMiddlewares: Middleware[] = [errorHandlerMiddleware];
 
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
     document,
     media,
     direction,
+    appConfig,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
