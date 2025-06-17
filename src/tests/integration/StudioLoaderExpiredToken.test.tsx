@@ -3,8 +3,11 @@ import { LayoutIntent, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, waitFor, screen } from '@testing-library/react';
 import axios from 'axios';
+import userEvent from '@testing-library/user-event';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
+import selectEvent from 'react-select-event';
 import StudioUI from '../../main';
 
 const environmentBaseURL = 'http://abc.com';
@@ -17,6 +20,14 @@ const refreshTokenData = 'refresh-token-data';
 
 jest.mock('axios');
 describe('StudioLoader integration - expired auth token', () => {
+    beforeEach(() => {
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
     it('Should correctly refresh the token when refreshToken action is provided', async () => {
         let onError: jest.Func;
 
@@ -173,5 +184,132 @@ describe('StudioLoader integration - expired auth token', () => {
                 expect.objectContaining(new Error('Project not found.')),
             ),
         ); */
+    });
+
+    it('Should retry polling with refreshed token if the first polling call fails due to expired token', async () => {
+        let onError: jest.Func;
+
+        (axios.interceptors.response.use as jest.Mock).mockImplementation((_, onRejected) => {
+            onError = jest.fn().mockImplementation(async (config) => {
+                await onRejected?.(config);
+            });
+        });
+
+        const user = userEvent.setup();
+
+        // Mock export POST to return polling link
+        const pollingUrl = `${environmentBaseURL}/output/task/123`;
+        (axios.post as jest.Mock).mockResolvedValueOnce({
+            data: {
+                links: { taskInfo: pollingUrl },
+            },
+        });
+
+        (axios.get as jest.Mock).mockImplementation((url, config) => {
+            if (url === pollingUrl) {
+                if (config.headers.Authorization === `Bearer ${token}`) {
+                    onError?.({
+                        url,
+                        config: {
+                            retry: false,
+                            headers: {},
+                        },
+                        response: {
+                            status: 401,
+                        },
+                    });
+                    return Promise.resolve({ status: 202 });
+                }
+                // This condition guarantees that the polling call will be made with the refreshed token
+                // and only in this situation download link will be returned
+                if (config.headers.Authorization === `Bearer ${refreshTokenData}`) {
+                    return Promise.resolve({ status: 200, data: { links: { download: 'http://download.com' } } });
+                }
+            }
+            // Fallback for other GETs
+            if (url === `${environmentBaseURL}/user-interfaces`)
+                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: mockUserInterface });
+            if (url === outputSettingsurl) return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
+            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
+            if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
+            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
+            return Promise.resolve({});
+        });
+
+        const refreshTokenFn = jest.fn().mockResolvedValue(refreshTokenData);
+        const config = {
+            selector: 'sui-root',
+            projectDownloadUrl,
+            projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
+            projectId: projectID,
+            graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
+            authToken: token,
+            projectName: '',
+            refreshTokenAction: refreshTokenFn,
+        };
+
+        render(<div id="sui-root" />);
+
+        // Wait for initial render and config
+        await act(() => {
+            StudioUI.studioUILoaderConfig(config);
+        });
+
+        act(() => {
+            window.StudioUISDK.config.events.onSelectedLayoutPropertiesChanged.trigger({
+                intent: { value: LayoutIntent.digitalAnimated },
+                timelineLengthMs: { value: 0 },
+            } as unknown as LayoutPropertiesType);
+        });
+
+        // Wait for the download button to be ready
+        const downloadBtn = await waitFor(() => screen.getByRole('button', { name: 'Download' }));
+        user.click(downloadBtn);
+
+        // Wait for the dropdown to be ready
+        const selectIndicator = await waitFor(
+            () =>
+                screen
+                    .getByTestId(getDataTestIdForSUI(`output-dropdown`))
+                    .getElementsByClassName('grafx-select__dropdown-indicator')[0],
+        );
+        expect(selectIndicator).toBeInTheDocument();
+
+        // Open the dropdown and select JPG
+        await act(() => {
+            selectEvent.openMenu(selectIndicator as unknown as HTMLElement);
+        });
+
+        const jpgOptions = await waitFor(() => screen.getAllByText(/jpg/i));
+        user.click(jpgOptions[0]);
+
+        // Wait for and click the download button
+        const panelDownloadButton = await waitFor(() => screen.getByTestId(getDataTestIdForSUI(`download-btn`)));
+        expect(panelDownloadButton).toBeInTheDocument();
+        user.click(panelDownloadButton);
+
+        await waitFor(() => {
+            expect(axios.get).toHaveBeenCalledWith(pollingUrl, {
+                method: 'GET',
+                body: null,
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            });
+        });
+
+        // Reset the timer to trigger the polling call with the refreshed token
+        await act(() => jest.runOnlyPendingTimers());
+
+        await waitFor(() => {
+            expect(axios.get).toHaveBeenCalledWith(pollingUrl, {
+                method: 'GET',
+                body: null,
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshTokenData}` },
+            });
+        });
+
+        // Assert refreshTokenFn was called
+        expect(refreshTokenFn).toHaveBeenCalled();
     });
 });
