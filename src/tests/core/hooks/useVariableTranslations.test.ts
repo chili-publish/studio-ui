@@ -1,3 +1,4 @@
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { variables as mockVariables } from '@tests/mocks/mockVariables';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useVariableTranslations } from '../../../core/hooks/useVariableTranslations';
@@ -19,6 +20,9 @@ describe('useVariableTranslations', () => {
             label: 'Translated List',
             placeholder: 'Select translated option',
             helpText: 'This is translated list help',
+            listItems: {
+                'Val 1': 'Translated Val 1',
+            },
         },
     };
 
@@ -97,5 +101,112 @@ describe('useVariableTranslations', () => {
         const updatedVariable = result.current.updateWithTranslation(variable);
 
         expect(updatedVariable).toEqual(variable); // Should remain unchanged as there's no label to match translations
+    });
+
+    it('should translate list variable items when translations exist', () => {
+        const listVariable = mockVariables.find((v) => v.label === 'List label') as ListVariable;
+        if (!listVariable || !('items' in listVariable)) {
+            throw new Error('List variable not found in mock variables');
+        }
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+        });
+    });
+
+    it('should preserve original list item values when no translation exists', () => {
+        const listVariable = mockVariables.find((v) => v.label === 'List label') as ListVariable;
+        if (!listVariable || !('items' in listVariable)) {
+            throw new Error('List variable not found in mock variables');
+        }
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'List label': {
+                            label: 'Translated List',
+                            placeholder: 'Select translated option',
+                            helpText: 'This is translated list help',
+                            // listItems is undefined
+                        },
+                    },
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: listVariable.items, // Original items preserved
+        });
+    });
+
+    it('should translate selected list item displayValue when translation exists', () => {
+        // Clone the list variable and add a selected property
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            selected: { value: 'val 1', displayValue: 'Val 1' },
+        } as ListVariable;
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+            selected: { value: 'val 1', displayValue: 'Translated Val 1' },
+        });
+    });
+
+    it('should preserve original selected displayValue when no translation exists', () => {
+        // Clone the list variable and add a selected property
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            selected: { value: 'val 2', displayValue: 'Val 2' },
+        } as ListVariable;
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: mockTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [{ value: 'val 1', displayValue: 'Translated Val 1' }, { value: 'val 2' }],
+            selected: { value: 'val 2', displayValue: 'Val 2' },
+        });
     });
 });
