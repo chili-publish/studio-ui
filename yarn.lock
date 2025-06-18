@@ -1279,9 +1279,9 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/520/grafx-shared-components.tgz?t=5":
-  version "0.101.1"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/520/grafx-shared-components.tgz?t=5#4561e8cfc99aedc7a2917614679a763b8b15f931"
+"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/520/grafx-shared-components.tgz?t=6":
+  version "0.101.2"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/520/grafx-shared-components.tgz?t=6#e4c11d4c291e4b1eb3dfa819232a31659ccaa9c9"
 
 "@chili-publish/studio-sdk@1.25.2-alfa.1":
   version "1.25.2-alfa.1"
