@@ -3,7 +3,7 @@ import { useDirection } from 'src/hooks/useDirection';
 import { NotificationWrapper } from './Notification.styles';
 import { INotificationComponent, TOAST_ID } from './Notification.types';
 
-const DEFAULT_NOTIFICATION_DURATION = 50000;
+const DEFAULT_NOTIFICATION_DURATION = 5000;
 
 function NotificationComponent(props: INotificationComponent) {
     const { currentNotification, removeNotification } = props;
