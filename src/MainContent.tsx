@@ -400,7 +400,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 <Container>
                     <UiConfigContextProvider projectConfig={projectConfig}>
                         <VariablePanelContextProvider variables={variables}>
-                            <div id={APP_WRAPPER_ID} className="app-wrapper" dir={direction}>
+                            <div id={APP_WRAPPER_ID} className="app" dir={direction}>
                                 <UserInterfaceDetailsContextProvider
                                     projectConfig={projectConfig}
                                     layoutIntent={layoutIntent}
