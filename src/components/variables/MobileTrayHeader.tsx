@@ -1,5 +1,6 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { useDirection } from 'src/hooks/useDirection';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { MobileTrayFormBuilderHeader } from '../../types/types';
@@ -24,6 +25,10 @@ function MobileTrayHeader({
     const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
 
     const { datasource, variables, layouts } = trayHeaderData;
+
+    const { direction } = useDirection();
+
+    const backIcon = direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft;
 
     if (isDefaultPanelView && isDataSourceDisplayed)
         return (
@@ -55,7 +60,7 @@ function MobileTrayHeader({
                     onClick={() => {
                         showVariablesPanel();
                     }}
-                    icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
+                    icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
                     styles={css`
                         padding-block: 0;
                         padding-inline: 0 0.5rem;
@@ -75,7 +80,7 @@ function MobileTrayHeader({
                     onClick={() => {
                         showVariablesPanel();
                     }}
-                    icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
+                    icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
                     styles={css`
                         padding-block: 0;
                         padding-inline: 0 0.5rem;
