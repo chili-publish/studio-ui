@@ -95,6 +95,7 @@ export type DownloadLinkResult = {
 export interface UiOptions {
     theme?: UiThemeConfig;
     uiTheme?: ITheme['mode'] | 'system';
+    uiDirection?: 'ltr' | 'rtl';
     widgets?: {
         downloadButton?: {
             visible?: boolean;
@@ -207,8 +208,8 @@ export const defaultUiOptions = {
             visible: false,
         },
     },
-
     uiTheme: 'light' as ITheme['mode'],
+    uiDirection: 'ltr' as const,
 };
 
 export const defaultPlatformUiOptions: UiOptions = {

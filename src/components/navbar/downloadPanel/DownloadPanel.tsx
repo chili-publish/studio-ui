@@ -29,6 +29,7 @@ import {
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
+import { useDirection } from '../../../hooks/useDirection';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -53,12 +54,13 @@ const getCustomSelectedLabel = (option: SelectOptions) => {
 const getCustomSelectedOption = (option?: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
+
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
-
+    const { direction } = useDirection();
     const isMobileSize = useMobileSize();
-    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const { themeColors } = useTheme();
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const {
         options,
         selectedValue,
@@ -117,6 +119,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                         &:hover {
                                             background-color: ${themeColors.disabledElementsColor};
                                         }
+                                        transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
                                     `}
                                 />
                             </SpinnerContainer>
@@ -142,7 +145,12 @@ function DownloadPanel(props: DownloadPanelProps) {
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
-                position={{ right: downloadMenuRightOffset, top: 3.75 * 16 } as unknown as DOMRect}
+                position={
+                    {
+                        [direction === 'rtl' ? 'left' : 'right']: downloadMenuRightOffset,
+                        top: 3.75 * 16,
+                    } as unknown as DOMRect
+                }
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
@@ -173,6 +181,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     &:hover {
                                         background-color: ${themeColors.disabledElementsColor};
                                     }
+                                    transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
                                 `}
                             />
                         </SpinnerContainer>
@@ -189,7 +198,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 label={isSandBoxMode ? 'Export' : 'Download'}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
-                                    margin: 1.25rem auto 1.25rem;
+                                    margin-block: 1.25rem;
+                                    margin-inline: auto;
                                     width: 100%;
                                 `}
                             />

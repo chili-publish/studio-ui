@@ -1,4 +1,5 @@
 import { Toast, ToastVariant } from '@chili-publish/grafx-shared-components';
+import { useDirection } from 'src/hooks/useDirection';
 import { NotificationWrapper } from './Notification.styles';
 import { INotificationComponent, TOAST_ID } from './Notification.types';
 
@@ -6,6 +7,7 @@ const DEFAULT_NOTIFICATION_DURATION = 5000;
 
 function NotificationComponent(props: INotificationComponent) {
     const { currentNotification, removeNotification } = props;
+    const { direction } = useDirection();
     return (
         <NotificationWrapper>
             <Toast
@@ -19,6 +21,7 @@ function NotificationComponent(props: INotificationComponent) {
                 content={currentNotification?.message || ''}
                 action={currentNotification?.action}
                 onClose={() => (currentNotification ? removeNotification(currentNotification) : null)}
+                direction={direction}
             />
         </NotificationWrapper>
     );

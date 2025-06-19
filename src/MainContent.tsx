@@ -45,6 +45,7 @@ import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
+import { useDirection } from './hooks/useDirection';
 
 declare global {
     interface Window {
@@ -98,6 +99,14 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
+
+    const { direction, updateDirection } = useDirection();
+
+    // Initialize direction from projectConfig
+    useEffect(() => {
+        const initialDirection = projectConfig.uiOptions.uiDirection || 'ltr';
+        updateDirection(initialDirection);
+    }, [projectConfig.uiOptions.uiDirection, updateDirection]);
 
     const saveDocumentDebounced = useDebounce(() =>
         projectConfig.onProjectSave(async () => {
@@ -391,7 +400,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 <Container>
                     <UiConfigContextProvider projectConfig={projectConfig}>
                         <VariablePanelContextProvider variables={variables}>
-                            <div id={APP_WRAPPER_ID} className="app">
+                            <div id={APP_WRAPPER_ID} className="app" dir={direction}>
                                 <UserInterfaceDetailsContextProvider
                                     projectConfig={projectConfig}
                                     layoutIntent={layoutIntent}

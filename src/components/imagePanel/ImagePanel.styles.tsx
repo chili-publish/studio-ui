@@ -10,6 +10,6 @@ export const Grid = styled.div`
 export const GridItem = styled.div<{ itemId: number }>`
     width: 7.5rem;
     height: 10.625rem;
-    margin-left: ${({ itemId }) => (itemId % 2 ? '0' : '1.25rem')};
-    margin-right: ${({ itemId }) => (itemId % 2 ? '1.25rem' : '0')};
+    margin-inline-start: ${({ itemId }) => (itemId % 2 ? '0' : '1.25rem')};
+    margin-inline-end: ${({ itemId }) => (itemId % 2 ? '1.25rem' : '0')};
 `;

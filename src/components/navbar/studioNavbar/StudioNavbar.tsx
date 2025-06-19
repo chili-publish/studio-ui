@@ -56,7 +56,7 @@ function StudioNavbar(props: INavbar) {
                 box-sizing: content-box;
                 height: ${STUDIO_NAVBAR_HEIGHT};
                 padding: 0;
-                padding-right: 0.5rem;
+                padding-inline-end: 0.5rem;
                 ul {
                     gap: 0.5rem;
                 }
