@@ -1,4 +1,4 @@
-import { AvailableIcons, Select } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Select, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useEffect, useMemo, useState } from 'react';
 import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -33,22 +33,24 @@ const useUserInterfaceSelector = () => {
         () => ({
             label: 'UserInterface',
             content: (
-                <Select
-                    dataId={getDataIdForSUI('dropdown-user-interface')}
-                    dataTestId={getDataTestIdForSUI('dropdown-user-interface')}
-                    options={options}
-                    value={options.find((op) => op.value === selectedUserInterface)}
-                    onChange={(option) => {
-                        onUserInterfaceChange(option?.value as unknown as string);
-                        sessionStorage.setItem(SESSION_USER_INTEFACE_ID_KEY, option?.value as string);
-                    }}
-                    noDropDownIcon
-                    controlShouldRenderValue={false}
-                    placeholderIcon={AvailableIcons.faTableLayout}
-                    isSearchable={false}
-                    useTruncatedOption
-                    width="10.875rem"
-                />
+                <Tooltip content={'User Interface'} position={TooltipPosition.BOTTOM}>
+                    <Select
+                        dataId={getDataIdForSUI('dropdown-user-interface')}
+                        dataTestId={getDataTestIdForSUI('dropdown-user-interface')}
+                        options={options}
+                        value={options.find((op) => op.value === selectedUserInterface)}
+                        onChange={(option) => {
+                            onUserInterfaceChange(option?.value as unknown as string);
+                            sessionStorage.setItem(SESSION_USER_INTEFACE_ID_KEY, option?.value as string);
+                        }}
+                        noDropDownIcon
+                        controlShouldRenderValue={false}
+                        placeholderIcon={AvailableIcons.faTableLayout}
+                        isSearchable={false}
+                        useTruncatedOption
+                        width="10.875rem"
+                    />
+                </Tooltip>
             ),
         }),
         [options, selectedUserInterface, onUserInterfaceChange],
