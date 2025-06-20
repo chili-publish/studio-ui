@@ -17,7 +17,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
             label: 'Actions',
             content: (
                 <NavbarGroup withGap>
-                    <Tooltip content={'Undo'} position={TooltipPosition.BOTTOM}>
+                    <Tooltip content="Undo" position={TooltipPosition.BOTTOM}>
                         <NavbarButton
                             dataId="undo-btn"
                             ariaLabel="Undo"
@@ -28,7 +28,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                         />
                     </Tooltip>
 
-                    <Tooltip content={'Redo'} position={TooltipPosition.BOTTOM}>
+                    <Tooltip content="Redo" position={TooltipPosition.BOTTOM}>
                         <NavbarButton
                             dataId="redo-btn"
                             ariaLabel="Redo"

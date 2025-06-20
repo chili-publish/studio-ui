@@ -33,7 +33,7 @@ const useUserInterfaceSelector = () => {
         () => ({
             label: 'UserInterface',
             content: (
-                <Tooltip content={'User Interface'} position={TooltipPosition.BOTTOM}>
+                <Tooltip content="User Interface" position={TooltipPosition.BOTTOM}>
                     <Select
                         dataId={getDataIdForSUI('dropdown-user-interface')}
                         dataTestId={getDataTestIdForSUI('dropdown-user-interface')}
