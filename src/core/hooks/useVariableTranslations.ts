@@ -6,7 +6,10 @@ import { BaseVariableTranslation, ListVariableTranslation } from 'src/types/Vari
 import { useSelector } from 'react-redux';
 import { selectVariableTranslations } from 'src/store/reducers/appConfigReducer';
 
-function updateVariableWithTranslation<V extends Variable>(variable: V, translation: BaseVariableTranslation): V {
+function updateGenericVariableWithTranslation<V extends Variable>(
+    variable: V,
+    translation: BaseVariableTranslation,
+): V {
     return {
         ...variable,
         label: translation.label ?? variable.label,
@@ -15,7 +18,20 @@ function updateVariableWithTranslation<V extends Variable>(variable: V, translat
     };
 }
 
-function updateListVariableWithTranslation(variable: ListVariable, translation: ListVariableTranslation): ListVariable {
+function updateVariableWithTranslation<V extends Variable>(variable: V, translation: BaseVariableTranslation): V {
+    const variableWithTranslation = updateGenericVariableWithTranslation(variable, translation);
+
+    if (isListVariable(variableWithTranslation)) {
+        return updateListVariableWithTranslation(variableWithTranslation, translation);
+    }
+
+    return variableWithTranslation;
+}
+
+function updateListVariableWithTranslation<V extends ListVariable>(
+    variable: V,
+    translation: ListVariableTranslation,
+): V {
     return {
         ...variable,
         items: variable.items.map((item) => ({
@@ -39,18 +55,13 @@ export const useVariableTranslations = () => {
 
     const updateWithTranslation = useCallback(
         (variable: Variable): Variable => {
-            const translation = variable.label ? variableTranslations?.[variable.label] : undefined;
+            let translation = variable.label ? variableTranslations?.[variable.label] : undefined;
             if (!translation) {
-                return variable;
+                // Try using variable.name if translation is not found with variable.label
+                translation = variableTranslations?.[variable.name];
             }
 
-            const variableWithTranslation = updateVariableWithTranslation(variable, translation);
-
-            if (isListVariable(variableWithTranslation)) {
-                return updateListVariableWithTranslation(variableWithTranslation, translation);
-            }
-
-            return variableWithTranslation;
+            return translation ? updateVariableWithTranslation(variable, translation) : variable;
         },
         [variableTranslations],
     );
