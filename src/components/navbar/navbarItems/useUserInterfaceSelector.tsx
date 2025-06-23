@@ -49,6 +49,7 @@ const useUserInterfaceSelector = () => {
                         isSearchable={false}
                         useTruncatedOption
                         width="10.875rem"
+                        fullDisplayOnOverflowParent
                     />
                 </Tooltip>
             ),
