@@ -3,7 +3,7 @@ import { useGetIframeAsync } from '@chili-publish/grafx-shared-components';
 import { useEffect, useRef } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DownloadPanel from '../downloadPanel/DownloadPanel';
-import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles';
+import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StudioRunModeGlobalStyle, StyledNavbar } from '../Navbar.styles';
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
@@ -48,44 +48,47 @@ function StudioNavbar(props: INavbar) {
     }, [hideDownloadPanel, iframe, isDownloadPanelVisible, showDownloadPanel]);
 
     return (
-        <StyledNavbar
-            id="sui-navbar"
-            data-id={getDataIdForSUI('navbar')}
-            data-testid={getDataTestIdForSUI('navbar')}
-            styles={css`
-                box-sizing: content-box;
-                height: ${STUDIO_NAVBAR_HEIGHT};
-                padding: 0;
-                padding-inline-end: 0.5rem;
-                ul {
-                    gap: 0.5rem;
-                }
-            `}
-        >
-            <ul>
-                {navbarItems.map((item) => (
-                    <NavbarItem
-                        data-id={getDataIdForSUI(`studio-navbar-item-${item.label}`)}
-                        data-testid={getDataTestIdForSUI(`studio-navbar-item-${item.label}`)}
-                        aria-label={item.label}
-                        key={item.label}
-                        hideOnMobile={item.hideOnMobile}
-                        styles={item.styles}
-                        ref={item.label === 'Export' || item.label === 'Download' ? exportButtonRef : undefined}
-                    >
-                        {item.content}
-                    </NavbarItem>
-                ))}
-            </ul>
+        <>
+            <StudioRunModeGlobalStyle />
+            <StyledNavbar
+                id="sui-navbar"
+                data-id={getDataIdForSUI('navbar')}
+                data-testid={getDataTestIdForSUI('navbar')}
+                styles={css`
+                    box-sizing: content-box;
+                    height: ${STUDIO_NAVBAR_HEIGHT};
+                    padding: 0;
+                    padding-inline-end: 0.5rem;
+                    ul {
+                        gap: 0.5rem;
+                    }
+                `}
+            >
+                <ul>
+                    {navbarItems.map((item) => (
+                        <NavbarItem
+                            data-id={getDataIdForSUI(`studio-navbar-item-${item.label}`)}
+                            data-testid={getDataTestIdForSUI(`studio-navbar-item-${item.label}`)}
+                            aria-label={item.label}
+                            key={item.label}
+                            hideOnMobile={item.hideOnMobile}
+                            styles={item.styles}
+                            ref={item.label === 'Export' || item.label === 'Download' ? exportButtonRef : undefined}
+                        >
+                            {item.content}
+                        </NavbarItem>
+                    ))}
+                </ul>
 
-            <DownloadPanel
-                isDownloadPanelVisible={isDownloadPanelVisible}
-                hideDownloadPanel={hideDownloadPanel}
-                handleDownload={handleDownload}
-                isSandBoxMode={projectConfig.sandboxMode}
-                exportButtonRef={exportButtonRef}
-            />
-        </StyledNavbar>
+                <DownloadPanel
+                    isDownloadPanelVisible={isDownloadPanelVisible}
+                    hideDownloadPanel={hideDownloadPanel}
+                    handleDownload={handleDownload}
+                    isSandBoxMode={projectConfig.sandboxMode}
+                    exportButtonRef={exportButtonRef}
+                />
+            </StyledNavbar>
+        </>
     );
 }
 

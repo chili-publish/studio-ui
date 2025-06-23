@@ -1,10 +1,16 @@
-import styled, { css, CSSProp } from 'styled-components';
+import styled, { createGlobalStyle, css, CSSProp } from 'styled-components';
 import { FontSizes } from '@chili-publish/grafx-shared-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
 import { Text } from '../../styles/Main.styles';
 
 export const STUDIO_NAVBAR_HEIGHT = '3rem';
 const NAVBAR_HEIGHT = '4rem';
+
+export const StudioRunModeGlobalStyle = createGlobalStyle`
+    [data-id="gsc-tooltip-body"] {
+        z-index: 99;
+    }
+`;
 
 export const StyledNavbar = styled.nav<{ styles?: CSSProp }>`
     box-sizing: border-box;
