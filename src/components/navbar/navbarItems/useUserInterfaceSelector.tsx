@@ -1,6 +1,6 @@
 import { AvailableIcons, Select, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useEffect, useMemo, useState } from 'react';
-import { SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
+import { APP_WRAPPER_ID, SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 import { UserInterface } from '../../../types/types';
@@ -33,7 +33,7 @@ const useUserInterfaceSelector = () => {
         () => ({
             label: 'UserInterface',
             content: (
-                <Tooltip content="User Interface" position={TooltipPosition.BOTTOM}>
+                <Tooltip content="User Interface" position={TooltipPosition.BOTTOM} anchorId={APP_WRAPPER_ID}>
                     <Select
                         dataId={getDataIdForSUI('dropdown-user-interface')}
                         dataTestId={getDataTestIdForSUI('dropdown-user-interface')}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { AvailableIcons, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useDirection } from 'src/hooks/useDirection';
+import { APP_WRAPPER_ID } from 'src/utils/constants';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
@@ -17,7 +18,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
             label: 'Actions',
             content: (
                 <NavbarGroup withGap>
-                    <Tooltip content="Undo" position={TooltipPosition.BOTTOM}>
+                    <Tooltip content="Undo" position={TooltipPosition.BOTTOM} anchorId={APP_WRAPPER_ID}>
                         <NavbarButton
                             dataId="undo-btn"
                             ariaLabel="Undo"
@@ -28,7 +29,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                         />
                     </Tooltip>
 
-                    <Tooltip content="Redo" position={TooltipPosition.BOTTOM}>
+                    <Tooltip content="Redo" position={TooltipPosition.BOTTOM} anchorId={APP_WRAPPER_ID}>
                         <NavbarButton
                             dataId="redo-btn"
                             ariaLabel="Redo"
