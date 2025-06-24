@@ -49,7 +49,7 @@ const useUserInterfaceSelector = () => {
                         isSearchable={false}
                         useTruncatedOption
                         width="10.875rem"
-                        fullDisplayOnOverflowParent
+                        anchorId={APP_WRAPPER_ID}
                     />
                 </Tooltip>
             ),
