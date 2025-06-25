@@ -25,11 +25,13 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 import { VariableTranslations } from './types/VariableTranslations';
+import { LayoutTranslations } from './types/LayoutTranslations';
 
 type UiThemeType = { uiTheme: ITheme['mode'] | 'system' };
 
 export type AppConfig = {
     variableTranslations?: VariableTranslations;
+    layoutTranslations?: LayoutTranslations;
 };
 
 export default class StudioUILoader {
