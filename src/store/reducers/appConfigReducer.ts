@@ -1,9 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { VariableTranslations } from 'src/types/VariableTranslations';
+import { LayoutTranslations } from 'src/types/LayoutTranslations';
 import type { RootState } from '../index';
 
 type AppConfigState = {
     variableTranslations?: VariableTranslations;
+    layoutTranslations?: LayoutTranslations;
 };
 const initialState: AppConfigState = {};
 
@@ -21,5 +23,8 @@ export const { setVariableTranslations } = appConfigSlice.actions;
 
 export const selectVariableTranslations = (state: RootState): AppConfigState['variableTranslations'] =>
     state.appConfig.variableTranslations;
+
+export const selectLayoutTranslations = (state: RootState): AppConfigState['layoutTranslations'] =>
+    state.appConfig.layoutTranslations;
 
 export default appConfigSlice.reducer;
