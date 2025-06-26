@@ -13,6 +13,7 @@ import {
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, RefObject, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -71,6 +72,9 @@ function DownloadPanel(props: DownloadPanelProps) {
         handleOutputFormatChange,
         selectedOutputSettingsId,
     } = useDownload({ hideDownloadPanel, isSandBoxMode });
+    const { getUITranslation } = useUITranslations();
+
+    const outputSelectorLabel = getUITranslation('toolBar', 'downloadButton', 'outputSelector', 'label') || 'Output';
 
     const downloadMenuRightOffset = useMemo(() => {
         if (exportButtonRef?.current) {
@@ -89,7 +93,12 @@ function DownloadPanel(props: DownloadPanelProps) {
                     hideDownloadPanel();
                     setMobileDropdownOpen(false);
                 }}
-                title={!mobileDropdownOpen && 'Download'}
+                title={
+                    !mobileDropdownOpen &&
+                    (isSandBoxMode
+                        ? getUITranslation('toolBar', 'downloadButton', 'label') || 'Export'
+                        : getUITranslation('toolBar', 'downloadButton', 'label') || 'Download')
+                }
                 styles={css`
                     ${mobileDropdownOpen ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
@@ -99,7 +108,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <Content borderTop={!mobileDropdownOpen}>
                     <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
-                        label="Output"
+                        label={outputSelectorLabel}
                         selectedValue={getCustomSelectedOption(selectedValue)}
                         options={options}
                         onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
@@ -155,10 +164,14 @@ function DownloadPanel(props: DownloadPanelProps) {
                 anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef}>
-                    <DownloadDropdownTitle>{isSandBoxMode ? 'Export' : 'Download'}</DownloadDropdownTitle>
+                    <DownloadDropdownTitle>
+                        {isSandBoxMode
+                            ? getUITranslation('toolBar', 'downloadButton', 'label') || 'Export'
+                            : getUITranslation('toolBar', 'downloadButton', 'label') || 'Download'}
+                    </DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <Select
-                            label="Output"
+                            label={outputSelectorLabel}
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={selectedValue}

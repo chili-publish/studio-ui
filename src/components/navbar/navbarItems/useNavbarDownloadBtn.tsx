@@ -1,3 +1,4 @@
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useMemo } from 'react';
 import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
@@ -9,8 +10,10 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
     const { isDownloadBtnVisible } = useUiConfigContext();
     const { userInterfaceOutputSettings, outputSettingsFullList } = useUserInterfaceDetailsContext();
     const isMobile = useMobileSize();
+    const { getUITranslation } = useUITranslations();
 
-    const label = isSandBoxMode ? 'Export' : 'Download';
+    const translatedLabel = getUITranslation('toolBar', 'downloadButton', 'label');
+    const label = translatedLabel || (isSandBoxMode ? 'Export' : 'Download');
     const isVisible = isSandBoxMode
         ? isDownloadBtnVisible
         : isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0;
