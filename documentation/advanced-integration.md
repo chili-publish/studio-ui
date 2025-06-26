@@ -118,6 +118,7 @@ const uiOptions = {
             secondaryTextColor: '#B9B9B9', // Used for secondary text.
         },
     },
+    uiDirection: 'ltr', // Sets the text direction of the UI. Accepts 'ltr' (left-to-right) or 'rtl' (right-to-left). Default is 'ltr'.
     widgets: {
         downloadButton: {
             visible: true,
@@ -187,6 +188,23 @@ The theme field within uiOptions is used to customize various UI elements, speci
 
     ** fontFamily: Optional. If the value 'inherit' is provided, the font family of the UI elements will be inherited. Otherwise, 'Roboto' is used as default.
     ** colors: Optional. The object can be provided partially. The defined fields will be used to customize the UI components.
+
+#### uiOptions, uiDirection
+
+The `uiDirection` field within `uiOptions` allows you to control the text and layout direction of the Studio UI. This is especially useful for supporting right-to-left (RTL) languages such as Arabic or Hebrew, or for enforcing a left-to-right (LTR) layout regardless of the user's browser or system settings.
+
+- **uiDirection**: Optional. Accepts either `'ltr'` (left-to-right) or `'rtl'` (right-to-left). If not provided, the default is `'ltr'`.
+    - `'ltr'`: The UI and text will be displayed from left to right (default).
+    - `'rtl'`: The UI and text will be displayed from right to left.
+
+Example usage:
+
+```js
+const uiOptions = {
+    // ... other options ...
+    uiDirection: 'rtl', // Forces the UI to use right-to-left layout
+};
+```
 
 #### outputSettings
 
