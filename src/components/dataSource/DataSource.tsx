@@ -1,3 +1,4 @@
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useCallback } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
@@ -9,6 +10,7 @@ import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsCo
 function DataSource() {
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
+    const { getUITranslation } = useUITranslations();
 
     const {
         currentInputRow,
@@ -51,15 +53,16 @@ function DataSource() {
         [requiresUserAuthorizationCheck, loadDataRows, setIsDataSourceModalOpen],
     );
 
+    const header = getUITranslation('formBuilder', 'datasource', 'header') || formBuilder.datasource?.header;
+    const helpText = getUITranslation('formBuilder', 'datasource', 'helpText') || formBuilder.datasource?.helpText;
+
     if (!hasDataConnector) return null;
 
     return (
         <>
             <SectionWrapper id="datasource-section-header">
-                <PanelTitle margin="0">{formBuilder.datasource?.header}</PanelTitle>
-                {formBuilder.datasource?.helpText && (
-                    <SectionHelpText>{formBuilder.datasource?.helpText}</SectionHelpText>
-                )}
+                <PanelTitle margin="0">{header}</PanelTitle>
+                {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
             <DataSourceInput
                 currentRow={currentInputRow}
