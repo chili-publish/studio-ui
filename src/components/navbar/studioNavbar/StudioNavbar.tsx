@@ -9,11 +9,12 @@ import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
 
 function StudioNavbar(props: INavbar) {
-    const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+    const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
         projectName,
+        selectedLayoutId,
     );
 
     const exportButtonRef = useRef<HTMLLIElement>(null);

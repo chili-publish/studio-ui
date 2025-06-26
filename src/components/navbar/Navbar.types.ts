@@ -8,6 +8,7 @@ export interface INavbar {
     zoom: number;
     undoStackState: { canRedo: boolean; canUndo: boolean };
     projectConfig: ProjectConfig;
+    selectedLayoutId: string | null;
 }
 export interface NavbarItemType {
     label: string;

@@ -55,6 +55,7 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                                     canRedo: false,
                                     canUndo: false,
                                 }}
+                                selectedLayoutId="123"
                             />
                         </UiThemeProvider>
                     </div>
