@@ -385,8 +385,9 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             projectConfig,
             undoStackState,
             zoom: currentZoom,
+            selectedLayoutId: currentSelectedLayout?.id ?? null,
         }),
-        [currentProject?.name, projectConfig, undoStackState, currentZoom],
+        [currentProject?.name, projectConfig, undoStackState, currentZoom, currentSelectedLayout?.id],
     );
 
     const layoutSectionUIOptions = {

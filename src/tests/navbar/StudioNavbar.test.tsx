@@ -81,6 +81,7 @@ const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
         undoStackState: { canRedo: true, canUndo: true },
         projectConfig,
         layoutIntent: LayoutIntent.digitalAnimated,
+        selectedLayoutId: '123',
     };
     renderWithProviders(
         <UiConfigContextProvider projectConfig={projectConfig}>
