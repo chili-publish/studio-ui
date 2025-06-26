@@ -374,6 +374,44 @@ window.StudioUI.studioUILoaderConfig({
 
 You can provide translations for as many or as few variables as you like. Any fields you omit will fall back to the default values from variable's configuration.
 
+#### UI Translations
+
+You can provide translations for UI labels and help texts using the `uiTranslations` option. This allows you to localize section headers, help texts, and toolbar labels.
+
+Example:
+
+```js
+const uiTranslations = {
+    formBuilder: {
+        variables: {
+            header: 'Variables',
+            helpText: 'Variables are used to store values that can be used in the form.',
+        },
+        datasource: {
+            header: 'Data Source',
+            helpText: 'Data Source is a tool that allows you to connect to a data source and use it in the form.',
+            row: 'Row',
+            inputLabel: 'Data row',
+        },
+        layouts: {
+            header: 'Layouts',
+            helpText: 'Layouts are used to organize the form.',
+            inputLabel: 'Select layout',
+            width: 'Width',
+            height: 'Height',
+        },
+    },
+    toolBar: {
+        downloadButton: { label: 'Download', outputSelector: { label: 'Output' } },
+    },
+};
+
+window.StudioUI.studioUILoaderConfig({
+    // ...other config,
+    uiTranslations,
+});
+```
+
 ## Advanced example using own documents
 
 In some cases, integrations will need to have the flexibility to load in the document from another source than the GraFx environments, also here we got you covered.
