@@ -40,6 +40,7 @@ function DataSourceInput({
     const { direction } = useDirection();
     const { getUITranslation } = useUITranslations();
     const inputLabel = getUITranslation('formBuilder', 'datasource', 'inputLabel') || 'Data row';
+    const rowLabel = getUITranslation('formBuilder', 'datasource', 'row') || 'Row';
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} />
@@ -86,7 +87,7 @@ function DataSourceInput({
                             />
                         }
                     />
-                    <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
+                    <Text>{currentRow ? `${rowLabel} ${currentRowIndex + 1}` : ''}</Text>
                     <Button
                         variant={ButtonVariant.tertiary}
                         onClick={onNextClick}
