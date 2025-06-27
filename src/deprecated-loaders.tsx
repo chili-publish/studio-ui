@@ -26,12 +26,14 @@ import {
 } from './types/types';
 import { VariableTranslations } from './types/VariableTranslations';
 import { UITranslations } from './types/UITranslations';
+import { LayoutTranslations } from './types/LayoutTranslations';
 
 type UiThemeType = { uiTheme: ITheme['mode'] | 'system' };
 
 export type AppConfig = {
     variableTranslations?: VariableTranslations;
     uiTranslations?: UITranslations;
+    layoutTranslations?: LayoutTranslations;
 };
 
 export default class StudioUILoader {

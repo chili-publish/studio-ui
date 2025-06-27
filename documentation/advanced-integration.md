@@ -325,6 +325,9 @@ const onFetchUserInterfaceDetails = async (userInterfaceId) => {
 };
 ```
 
+> [!IMPORTANT]  
+> All translatable interface properties below should be considered as experimental. We only recommend using them if you are pinned on a specific version.
+
 #### Variable Translations
 
 If you want to provide translations for your variables (such as labels, placeholders, or help texts), you can use the `variableTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for variables in the UI, making your integration more user-friendly and localized.
@@ -373,6 +376,36 @@ window.StudioUI.studioUILoaderConfig({
 ```
 
 You can provide translations for as many or as few variables as you like. Any fields you omit will fall back to the default values from variable's configuration.
+
+#### Layout Translations
+
+If you want to provide translations for your layouts' display names, you can use the `layoutTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for layouts in the UI, making your integration more user-friendly and localized.
+
+The `layoutTranslations` object should map either the layout's `displayName` or, if not present, the layout's `name` to a translation object. Each translation object can include:
+
+- `displayName`: The translated display name for the layout
+
+##### Example Usage
+
+```js
+const layoutTranslations = {
+    // Case 1: layout displayName key found
+    'L1 Display': {
+        displayName: 'Translated Display Name for L1',
+    },
+    // Case 2: layout displayName key not found, fallback to layoutName
+    L2: {
+        displayName: 'Translated Display Name for L2',
+    },
+};
+
+window.StudioUI.studioUILoaderConfig({
+    // ... other config options ...
+    layoutTranslations: layoutTranslations,
+});
+```
+
+You can provide translations for as many or as few layouts as you like. If a translation is not found for a layout's `displayName`, the loader will attempt to use the layout's `name` as a fallback. If neither is found, the original value will be used.
 
 #### UI Translations
 
