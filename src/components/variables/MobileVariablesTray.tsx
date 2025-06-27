@@ -2,6 +2,7 @@ import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
@@ -118,29 +119,35 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         setLayoutsMobileOptionsListOpen(false);
     }, [showVariablesPanel, setIsTrayVisible]);
 
+    const { getUITranslation } = useUITranslations();
+
+    const layoutSectionHeader = getUITranslation('formBuilder', 'layouts', 'header') || sectionTitle;
+    const layoutHelpText = getUITranslation('formBuilder', 'layouts', 'helpText') || helpText;
+
+    const datasourceHeader = getUITranslation('formBuilder', 'datasource', 'header') || formBuilder.datasource?.header;
+    const datasourceHelpText =
+        getUITranslation('formBuilder', 'datasource', 'helpText') || formBuilder.datasource?.helpText;
+
+    const variablesHeader = getUITranslation('formBuilder', 'variables', 'header') || formBuilder.variables.header;
+    const variablesHelpText =
+        getUITranslation('formBuilder', 'variables', 'helpText') || formBuilder.variables.helpText;
+
     const trayHeaderData: MobileTrayFormBuilderHeader = useMemo(
         () => ({
             layouts: {
-                title: sectionTitle,
-                helpText,
+                title: layoutSectionHeader,
+                helpText: layoutHelpText,
             },
             datasource: {
-                title: formBuilder.datasource?.header,
-                helpText: formBuilder.datasource?.helpText,
+                title: datasourceHeader,
+                helpText: datasourceHelpText,
             },
             variables: {
-                title: formBuilder.variables.header,
-                helpText: formBuilder.variables.helpText,
+                title: variablesHeader,
+                helpText: variablesHelpText,
             },
         }),
-        [
-            sectionTitle,
-            helpText,
-            formBuilder.datasource?.header,
-            formBuilder.datasource?.helpText,
-            formBuilder.variables.header,
-            formBuilder.variables.helpText,
-        ],
+        [layoutSectionHeader, layoutHelpText, datasourceHeader, datasourceHelpText, variablesHeader, variablesHelpText],
     );
 
     return (
@@ -193,8 +200,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                 <>
                                     {isAvailableLayoutSubtitleDisplayed && (
                                         <SectionWrapper>
-                                            <TrayPanelTitle margin="0">{sectionTitle}</TrayPanelTitle>
-                                            {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
+                                            <TrayPanelTitle margin="0">{layoutSectionHeader}</TrayPanelTitle>
+                                            {layoutHelpText && <SectionHelpText>{layoutHelpText}</SectionHelpText>}
                                         </SectionWrapper>
                                     )}
                                     {isLayoutSwitcherVisible && (
@@ -217,9 +224,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                 <>
                                     {isCustomizeSubtitleDisplayed && (
                                         <SectionWrapper id="variables-section-header">
-                                            <TrayPanelTitle margin="0">{formBuilder.variables?.header}</TrayPanelTitle>
-                                            {formBuilder.variables?.helpText && (
-                                                <SectionHelpText>{formBuilder.variables?.helpText}</SectionHelpText>
+                                            <TrayPanelTitle margin="0">{variablesHeader}</TrayPanelTitle>
+                                            {variablesHelpText && (
+                                                <SectionHelpText>{variablesHelpText}</SectionHelpText>
                                             )}
                                         </SectionWrapper>
                                     )}
