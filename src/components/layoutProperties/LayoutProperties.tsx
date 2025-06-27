@@ -7,6 +7,7 @@ import { formatNumber } from '../../utils/formatNumber';
 import { LayoutInputsContainer } from './Layout.styles';
 import { PageInputId, PagePropertyMap } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
@@ -19,6 +20,11 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         layout,
         pageSize,
     );
+
+    const { getUITranslation } = useUITranslations();
+
+    const widthLabel = getUITranslation('formBuilder', 'layouts', 'width') || 'Width';
+    const heightLabel = getUITranslation('formBuilder', 'layouts', 'height') || 'Height';
 
     const handleFocus = (inputId: string) => {
         onVariableFocus?.(inputId);
@@ -59,8 +65,8 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
 
     return (
         <LayoutInputsContainer>
-            {renderInput('page-width-input', pageWidth, 'Width', widthInputHelpText)}
-            {renderInput('page-height-input', pageHeight, 'Height', heightInputHelpText)}
+            {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
+            {renderInput('page-height-input', pageHeight, heightLabel, heightInputHelpText)}
         </LayoutInputsContainer>
     );
 }
