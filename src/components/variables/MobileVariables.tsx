@@ -2,7 +2,7 @@ import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon } from '@chili-p
 import { css } from 'styled-components';
 import { useState } from 'react';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
+import { useLeftPanelAndTrayVisibility } from '../../core/hooks/useLeftPanelAndTrayVisibility';
 import { EditButtonWrapper } from './VariablesPanel.styles';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { UiOptions } from '../../types/types';
