@@ -1,5 +1,5 @@
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useCallback } from 'react';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import DataSourceInput from './DataSourceInput';

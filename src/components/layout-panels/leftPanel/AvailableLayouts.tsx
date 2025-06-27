@@ -1,7 +1,7 @@
 import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useMemo } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 

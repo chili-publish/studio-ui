@@ -1,7 +1,7 @@
 import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';

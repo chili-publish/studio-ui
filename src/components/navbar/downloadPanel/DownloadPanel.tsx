@@ -13,7 +13,7 @@ import {
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, RefObject, useMemo, useState } from 'react';
 import { css } from 'styled-components';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';

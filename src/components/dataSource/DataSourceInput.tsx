@@ -7,7 +7,7 @@ import {
     Label,
     LoadingIcon,
 } from '@chili-publish/grafx-shared-components';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useDirection } from '../../hooks/useDirection';
 import { Text } from '../../styles/Main.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';

@@ -1,6 +1,6 @@
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useMemo } from 'react';
 import { AvailableIcons, ButtonVariant, useMobileSize } from '@chili-publish/grafx-shared-components';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarLabel } from '../Navbar.styles';
