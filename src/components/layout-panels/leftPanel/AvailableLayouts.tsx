@@ -1,6 +1,7 @@
 import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useMemo } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 
@@ -18,6 +19,9 @@ function AvailableLayouts({
     mobileDevice,
     onMobileOptionListToggle,
 }: AvailableLayoutsProp) {
+    const { getUITranslation } = useUITranslations();
+
+    const selectLabel = getUITranslation('formBuilder', 'layouts', 'inputLabel') || 'Select layout';
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({
             label: item.displayName ?? item.name,
@@ -44,6 +48,7 @@ function AvailableLayouts({
             onChange={(option) => handleLayoutChange(option as string)}
             onMenuOpen={() => onMobileOptionListToggle?.(true)}
             onMenuClose={() => onMobileOptionListToggle?.(false)}
+            label={selectLabel}
         />
     ) : (
         <Select
@@ -53,6 +58,7 @@ function AvailableLayouts({
             options={layoutOptions}
             isSearchable={false}
             onChange={(option) => handleLayoutChange(option?.value as string)}
+            label={selectLabel}
         />
     );
 }
