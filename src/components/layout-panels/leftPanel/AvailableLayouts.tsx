@@ -1,6 +1,7 @@
 import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useMemo } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
+import { useLayoutTranslations } from 'src/core/hooks/useLayoutTranslations';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 
@@ -18,15 +19,17 @@ function AvailableLayouts({
     mobileDevice,
     onMobileOptionListToggle,
 }: AvailableLayoutsProp) {
+    const { getTranslatedLayoutDisplayName } = useLayoutTranslations();
+
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({
-            label: item.displayName ?? item.name,
+            label: getTranslatedLayoutDisplayName(item),
             value: item.id,
         }));
         resultList.sort((item1, item2) => item1.label.localeCompare(item2.label));
 
         return resultList;
-    }, [availableForUserLayouts]);
+    }, [availableForUserLayouts, getTranslatedLayoutDisplayName]);
 
     const selectedLayoutOption = useMemo(() => {
         return layoutOptions.find((item) => item.value === selectedLayout?.id) || null;
