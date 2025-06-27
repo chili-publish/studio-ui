@@ -3,6 +3,7 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
+import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
 
@@ -288,6 +289,7 @@ export interface IStudioUILoaderConfig {
     sandboxMode?: boolean;
     featureFlags?: Record<string, boolean>;
     variableTranslations?: VariableTranslations;
+    layoutTranslations?: LayoutTranslations;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
