@@ -15,7 +15,6 @@ export const useUITranslations = () => {
     };
 
     return {
-        uiTranslations,
         getUITranslation,
     };
 };

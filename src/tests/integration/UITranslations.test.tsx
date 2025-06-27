@@ -21,7 +21,6 @@ const config = {
     authToken: 'token',
     projectName: '',
     uiTranslations: mockUITranslations,
-    // Add any other required config/mocks here
 };
 
 describe('UITranslations Integration', () => {
