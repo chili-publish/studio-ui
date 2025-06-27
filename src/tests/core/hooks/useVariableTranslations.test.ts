@@ -314,4 +314,48 @@ describe('useVariableTranslations', () => {
             helpText: 'Name help',
         });
     });
+
+    it('should use item value as a fallback for translation if displayValue is not present', () => {
+        // Only the value 'val 2' is present in translations, displayValue is missing
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            items: [
+                { value: 'val 1', displayValue: 'Val 1' }, // translation by displayValue
+                { value: 'val 2' }, // no displayValue, should fallback to value for translation
+            ],
+            selected: { value: 'val 2' }, // selected item with no displayValue
+        } as ListVariable;
+
+        const customTranslations = {
+            ...mockTranslations,
+            'List label': {
+                ...mockTranslations['List label'],
+                listItems: {
+                    'Val 1': 'Translated Val 1', // for displayValue
+                    'val 2': 'Translated Val 2', // for value fallback
+                },
+            },
+        };
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: customTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [
+                { value: 'val 1', displayValue: 'Translated Val 1' },
+                { value: 'val 2', displayValue: 'Translated Val 2' },
+            ],
+            selected: { value: 'val 2', displayValue: 'Translated Val 2' },
+        });
+    });
 });

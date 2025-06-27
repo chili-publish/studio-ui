@@ -1,4 +1,4 @@
-import { Variable } from '@chili-publish/studio-sdk';
+import { ListVariableItem, Variable } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback } from 'react';
 import { isListVariable } from 'src/components/variablesComponents/Variable';
@@ -32,22 +32,18 @@ function updateListVariableWithTranslation<V extends ListVariable>(
     variable: V,
     translation: ListVariableTranslation,
 ): V {
+    function updateItem(item: ListVariableItem) {
+        let listItemTranslation = item.displayValue ? translation.listItems?.[item.displayValue] : undefined;
+        if (!listItemTranslation) {
+            listItemTranslation = translation.listItems?.[item.value];
+        }
+        return listItemTranslation ? { ...item, displayValue: listItemTranslation } : item;
+    }
+
     return {
         ...variable,
-        items: variable.items.map((item) => ({
-            ...item,
-            displayValue: item.displayValue
-                ? (translation.listItems?.[item.displayValue] ?? item.displayValue)
-                : item.displayValue,
-        })),
-        selected:
-            variable.selected && variable.selected.displayValue
-                ? {
-                      ...variable.selected,
-                      displayValue:
-                          translation.listItems?.[variable.selected.displayValue] ?? variable.selected.displayValue,
-                  }
-                : variable.selected,
+        items: variable.items.map((item) => updateItem(item)),
+        selected: variable.selected ? updateItem(variable.selected) : variable.selected,
     };
 }
 export const useVariableTranslations = () => {
