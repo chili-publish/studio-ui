@@ -75,6 +75,8 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { getUITranslation } = useUITranslations();
 
     const outputSelectorLabel = getUITranslation('toolBar', 'downloadButton', 'outputSelector', 'label') || 'Output';
+    const DownloadButtonLabel =
+        getUITranslation('toolBar', 'downloadButton', 'label') || isSandBoxMode ? 'Export' : 'Download';
 
     const downloadMenuRightOffset = useMemo(() => {
         if (exportButtonRef?.current) {
@@ -93,12 +95,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     hideDownloadPanel();
                     setMobileDropdownOpen(false);
                 }}
-                title={
-                    !mobileDropdownOpen &&
-                    (isSandBoxMode
-                        ? getUITranslation('toolBar', 'downloadButton', 'label') || 'Export'
-                        : getUITranslation('toolBar', 'downloadButton', 'label') || 'Download')
-                }
+                title={!mobileDropdownOpen && DownloadButtonLabel}
                 styles={css`
                     ${mobileDropdownOpen ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
@@ -140,7 +137,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
-                                label="Download"
+                                label={DownloadButtonLabel}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     width: 100%;
@@ -164,11 +161,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef}>
-                    <DownloadDropdownTitle>
-                        {isSandBoxMode
-                            ? getUITranslation('toolBar', 'downloadButton', 'label') || 'Export'
-                            : getUITranslation('toolBar', 'downloadButton', 'label') || 'Download'}
-                    </DownloadDropdownTitle>
+                    <DownloadDropdownTitle>{DownloadButtonLabel}</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <Select
                             label={outputSelectorLabel}
@@ -208,7 +201,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
-                                label={isSandBoxMode ? 'Export' : 'Download'}
+                                label={DownloadButtonLabel}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     margin-block: 1.25rem;
