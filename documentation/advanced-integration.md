@@ -307,6 +307,9 @@ const onFetchUserInterfaceDetails = async (userInterfaceId) => {
 };
 ```
 
+> [!IMPORTANT]  
+> All translatable interface properties below should be considered as experimental. We only recommend using them if you are pinned on a specific version.
+
 #### Variable Translations
 
 If you want to provide translations for your variables (such as labels, placeholders, or help texts), you can use the `variableTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for variables in the UI, making your integration more user-friendly and localized.
