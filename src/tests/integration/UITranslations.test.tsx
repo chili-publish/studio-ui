@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
 import axios from 'axios';
@@ -174,28 +174,26 @@ describe('UITranslations Integration', () => {
             window.StudioUISDK.config.events.onSelectedLayoutIdChanged.trigger(mockLayout.id);
         });
 
-        await waitFor(async () => {
-            // datasource
-            expect(screen.getByText('DS translated')).toBeInTheDocument();
-            expect(screen.getByText('DS help translated')).toBeInTheDocument();
+        // datasource
+        expect(screen.getByText('DS translated')).toBeInTheDocument();
+        expect(screen.getByText('DS help translated')).toBeInTheDocument();
 
-            // layouts
-            expect(screen.getByText('Layouts translated')).toBeInTheDocument();
-            expect(screen.getByText('Layouts help translated')).toBeInTheDocument();
-            expect(screen.getByText('Select layout translated')).toBeInTheDocument();
-            expect(screen.getByText('Width translated')).toBeInTheDocument();
-            expect(screen.getByText('Height translated')).toBeInTheDocument();
+        // layouts
+        expect(screen.getByText('Layouts translated')).toBeInTheDocument();
+        expect(screen.getByText('Layouts help translated')).toBeInTheDocument();
+        expect(screen.getByText('Select layout translated')).toBeInTheDocument();
+        expect(screen.getByText('Width translated')).toBeInTheDocument();
+        expect(screen.getByText('Height translated')).toBeInTheDocument();
 
-            // variables
-            expect(screen.getByText('Vars translated')).toBeInTheDocument();
-            expect(screen.getByText('Vars help translated')).toBeInTheDocument();
+        // variables
+        expect(screen.getByText('Vars translated')).toBeInTheDocument();
+        expect(screen.getByText('Vars help translated')).toBeInTheDocument();
 
-            // toolBar
-            expect(screen.getByText('Download translated')).toBeInTheDocument();
-            const downloadBtn = screen.getByTestId(getDataTestIdForSUI('navbar-item-download-translated'))
-                .firstChild as HTMLButtonElement;
-            await user.click(downloadBtn);
-            expect(screen.getByText('Output translated')).toBeInTheDocument();
-        });
+        // toolBar
+        expect(screen.getByText('Download translated')).toBeInTheDocument();
+        const downloadBtn = screen.getByTestId(getDataTestIdForSUI('navbar-item-download-translated'))
+            .firstChild as HTMLButtonElement;
+        await user.click(downloadBtn);
+        expect(screen.getByText('Output translated')).toBeInTheDocument();
     });
 });
