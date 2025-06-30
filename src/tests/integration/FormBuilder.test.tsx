@@ -61,7 +61,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
             /* eslint-enable */
             return {
                 ...sdk,
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
+                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: false })) },
                 loadEditor: jest.fn(),
                 configuration: {
                     setValue: jest.fn(),
