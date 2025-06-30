@@ -70,7 +70,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
             /* eslint-enable */
             return {
                 ...sdk,
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
+                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 configuration: {
                     setValue: jest.fn(),
                 },
@@ -80,7 +80,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 layout: {
                     getSelected: jest
                         .fn()
-                        .mockImplementation(() => Promise.resolve({ sucess: true, parsedData: mockLayout })),
+                        .mockImplementation(() => Promise.resolve({ success: true, parsedData: mockLayout })),
                 },
                 dataSource: {
                     getDataSource: jest.fn().mockImplementation(() =>

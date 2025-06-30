@@ -61,7 +61,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
             /* eslint-enable */
             return {
                 ...sdk,
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
+                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 loadEditor: jest.fn(),
                 configuration: {
                     setValue: jest.fn(),
@@ -70,12 +70,12 @@ jest.mock('@chili-publish/studio-sdk', () => {
                     setHand: jest.fn(),
                 },
                 canvas: {
-                    zoomToPage: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })),
+                    zoomToPage: jest.fn().mockImplementation(() => Promise.resolve({ success: true })),
                 },
                 layout: {
                     getSelected: jest
                         .fn()
-                        .mockImplementation(() => Promise.resolve({ sucess: true, parsedData: mockLayout })),
+                        .mockImplementation(() => Promise.resolve({ success: true, parsedData: mockLayout })),
                 },
                 dataSource: {
                     getDataSource: jest.fn().mockImplementation(() =>

@@ -48,7 +48,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                             Promise.resolve({ parsedData: { intent: { value: LayoutIntent.digitalAnimated } } }),
                         ),
                 },
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
+                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
                 animation: { pause: jest.fn() },
