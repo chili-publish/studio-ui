@@ -27,26 +27,32 @@ describe('useUITranslations', () => {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(result.current.getUITranslation('formBuilder', 'variables', 'nonexistent' as any)).toBeUndefined();
+        expect(result.current.getUITranslation(['formBuilder', 'variables', 'nonexistent' as any], 'fallback')).toBe(
+            'fallback',
+        );
     });
 
     it('should return correct translation for formBuilder.layouts.header', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'layouts', 'header')).toBe('Layouts translated');
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'header'], 'fallback')).toBe(
+            'Layouts translated',
+        );
     });
     it('should return correct translation for formBuilder.layouts.helpText', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'layouts', 'helpText')).toBe('Layouts help translated');
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'helpText'], 'fallback')).toBe(
+            'Layouts help translated',
+        );
     });
     it('should return correct translation for formBuilder.layouts.inputLabel', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'layouts', 'inputLabel')).toBe(
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'inputLabel'], 'fallback')).toBe(
             'Select layout translated',
         );
     });
@@ -54,59 +60,67 @@ describe('useUITranslations', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'layouts', 'width')).toBe('Width translated');
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'width'], 'fallback')).toBe(
+            'Width translated',
+        );
     });
     it('should return correct translation for formBuilder.layouts.height', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'layouts', 'height')).toBe('Height translated');
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'height'], 'fallback')).toBe(
+            'Height translated',
+        );
     });
     it('should return correct translation for formBuilder.datasource.header', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'datasource', 'header')).toBe('DS');
+        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'header'], 'fallback')).toBe('DS');
     });
     it('should return correct translation for formBuilder.datasource.helpText', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'datasource', 'helpText')).toBe('DS help');
+        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'helpText'], 'fallback')).toBe('DS help');
     });
     it('should return correct translation for formBuilder.datasource.row', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'datasource', 'row')).toBe('Row');
+        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'row'], 'fallback')).toBe('Row');
     });
     it('should return correct translation for formBuilder.datasource.inputLabel', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'datasource', 'inputLabel')).toBe('Data row');
+        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'fallback')).toBe(
+            'Data row',
+        );
     });
 
     it('should return correct translation for formBuilder.variables.header', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('formBuilder', 'variables', 'header')).toBe('Vars');
+        expect(result.current.getUITranslation(['formBuilder', 'variables', 'header'], 'fallback')).toBe('Vars');
     });
 
     it('should return correct translation for toolBar.downloadButton.label', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('toolBar', 'downloadButton', 'label')).toBe('Download translated');
+        expect(result.current.getUITranslation(['toolBar', 'downloadButton', 'label'], 'fallback')).toBe(
+            'Download translated',
+        );
     });
 
     it('should return correct translation for toolBar.downloadButton.outputSelector.label', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation('toolBar', 'downloadButton', 'outputSelector', 'label')).toBe(
-            'Output translated',
-        );
+        expect(
+            result.current.getUITranslation(['toolBar', 'downloadButton', 'outputSelector', 'label'], 'fallback'),
+        ).toBe('Output translated');
     });
 });

@@ -121,16 +121,20 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const { getUITranslation } = useUITranslations();
 
-    const layoutSectionHeader = getUITranslation('formBuilder', 'layouts', 'header') || sectionTitle;
-    const layoutHelpText = getUITranslation('formBuilder', 'layouts', 'helpText') || helpText;
+    const layoutSectionHeader = getUITranslation(['formBuilder', 'layouts', 'header'], sectionTitle);
+    const layoutHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
-    const datasourceHeader = getUITranslation('formBuilder', 'datasource', 'header') || formBuilder.datasource?.header;
-    const datasourceHelpText =
-        getUITranslation('formBuilder', 'datasource', 'helpText') || formBuilder.datasource?.helpText;
+    const datasourceHeader = getUITranslation(['formBuilder', 'datasource', 'header'], formBuilder.datasource?.header);
+    const datasourceHelpText = getUITranslation(
+        ['formBuilder', 'datasource', 'helpText'],
+        formBuilder.datasource?.helpText,
+    );
 
-    const variablesHeader = getUITranslation('formBuilder', 'variables', 'header') || formBuilder.variables.header;
-    const variablesHelpText =
-        getUITranslation('formBuilder', 'variables', 'helpText') || formBuilder.variables.helpText;
+    const variablesHeader = getUITranslation(['formBuilder', 'variables', 'header'], formBuilder.variables.header);
+    const variablesHelpText = getUITranslation(
+        ['formBuilder', 'variables', 'helpText'],
+        formBuilder.variables.helpText,
+    );
 
     const trayHeaderData: MobileTrayFormBuilderHeader = useMemo(
         () => ({

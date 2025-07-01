@@ -15,13 +15,7 @@ type ValidTranslationPaths = Path<UITranslations>;
 export const useUITranslations = () => {
     const uiTranslations = useSelector(selectUITranslations);
 
-    function getUITranslation({
-        path,
-        fallback,
-    }: {
-        path: ValidTranslationPaths;
-        fallback?: string;
-    }): string | undefined {
+    function getUITranslation(path: ValidTranslationPaths, fallback: string): string {
         const result = path.reduce((obj, key) => {
             if (obj && typeof obj === 'object' && key in obj) {
                 return (obj as Record<string, unknown>)[key];

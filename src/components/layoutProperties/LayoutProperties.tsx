@@ -23,8 +23,8 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
 
     const { getUITranslation } = useUITranslations();
 
-    const widthLabel = getUITranslation('formBuilder', 'layouts', 'width') || 'Width';
-    const heightLabel = getUITranslation('formBuilder', 'layouts', 'height') || 'Height';
+    const widthLabel = getUITranslation(['formBuilder', 'layouts', 'width'], 'Width');
+    const heightLabel = getUITranslation(['formBuilder', 'layouts', 'height'], 'Height');
 
     const handleFocus = (inputId: string) => {
         onVariableFocus?.(inputId);

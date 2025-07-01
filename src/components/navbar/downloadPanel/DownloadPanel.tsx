@@ -74,9 +74,11 @@ function DownloadPanel(props: DownloadPanelProps) {
     } = useDownload({ hideDownloadPanel, isSandBoxMode });
     const { getUITranslation } = useUITranslations();
 
-    const outputSelectorLabel = getUITranslation('toolBar', 'downloadButton', 'outputSelector', 'label') || 'Output';
-    const DownloadButtonLabel =
-        getUITranslation('toolBar', 'downloadButton', 'label') || isSandBoxMode ? 'Export' : 'Download';
+    const outputSelectorLabel = getUITranslation(['toolBar', 'downloadButton', 'outputSelector', 'label'], 'Output');
+    const DownloadButtonLabel = getUITranslation(
+        ['toolBar', 'downloadButton', 'label'],
+        isSandBoxMode ? 'Export' : 'Download',
+    );
 
     const downloadMenuRightOffset = useMemo(() => {
         if (exportButtonRef?.current) {

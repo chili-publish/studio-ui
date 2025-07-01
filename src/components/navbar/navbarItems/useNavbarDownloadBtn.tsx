@@ -12,7 +12,10 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
     const isMobile = useMobileSize();
     const { getUITranslation } = useUITranslations();
 
-    const translatedLabel = getUITranslation('toolBar', 'downloadButton', 'label');
+    const translatedLabel = getUITranslation(
+        ['toolBar', 'downloadButton', 'label'],
+        isSandBoxMode ? 'Export' : 'Download',
+    );
     const label = translatedLabel || (isSandBoxMode ? 'Export' : 'Download');
     const isVisible = isSandBoxMode
         ? isDownloadBtnVisible

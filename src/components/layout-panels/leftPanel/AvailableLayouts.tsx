@@ -23,7 +23,7 @@ function AvailableLayouts({
     const { getUITranslation } = useUITranslations();
     const { getTranslatedLayoutDisplayName } = useLayoutTranslations();
 
-    const selectLabel = getUITranslation('formBuilder', 'layouts', 'inputLabel') || 'Select layout';
+    const selectLabel = getUITranslation(['formBuilder', 'layouts', 'inputLabel'], 'Select layout');
 
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({

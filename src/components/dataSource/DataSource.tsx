@@ -53,8 +53,8 @@ function DataSource() {
         [requiresUserAuthorizationCheck, loadDataRows, setIsDataSourceModalOpen],
     );
 
-    const header = getUITranslation('formBuilder', 'datasource', 'header') || formBuilder.datasource?.header;
-    const helpText = getUITranslation('formBuilder', 'datasource', 'helpText') || formBuilder.datasource?.helpText;
+    const header = getUITranslation(['formBuilder', 'datasource', 'header'], formBuilder.datasource?.header);
+    const helpText = getUITranslation(['formBuilder', 'datasource', 'helpText'], formBuilder.datasource?.helpText);
 
     if (!hasDataConnector) return null;
 

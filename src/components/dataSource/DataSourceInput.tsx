@@ -39,8 +39,8 @@ function DataSourceInput({
 }: DataSourceInputProps) {
     const { direction } = useDirection();
     const { getUITranslation } = useUITranslations();
-    const inputLabel = getUITranslation('formBuilder', 'datasource', 'inputLabel') || 'Data row';
-    const rowLabel = getUITranslation('formBuilder', 'datasource', 'row') || 'Row';
+    const inputLabel = getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'Data row');
+    const rowLabel = getUITranslation(['formBuilder', 'datasource', 'row'], 'Row');
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} />

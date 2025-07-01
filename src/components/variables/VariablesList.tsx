@@ -33,8 +33,8 @@ function VariablesList({ variables }: VariablesListProps) {
         return variables.map((variable) => updateWithTranslation(variable));
     }, [variables, updateWithTranslation]);
 
-    const header = getUITranslation('formBuilder', 'variables', 'header') || formBuilder.variables.header;
-    const helpText = getUITranslation('formBuilder', 'variables', 'helpText') || formBuilder.variables.helpText;
+    const header = getUITranslation(['formBuilder', 'variables', 'header'], formBuilder.variables.header);
+    const helpText = getUITranslation(['formBuilder', 'variables', 'helpText'], formBuilder.variables.helpText);
 
     return (
         <ListWrapper>

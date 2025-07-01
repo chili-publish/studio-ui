@@ -49,8 +49,8 @@ function LeftPanel({
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { getUITranslation } = useUITranslations();
 
-    const layoutsHeader = getUITranslation('formBuilder', 'layouts', 'header') || sectionTitle;
-    const layoutsHelpText = getUITranslation('formBuilder', 'layouts', 'helpText') || helpText;
+    const layoutsHeader = getUITranslation(['formBuilder', 'layouts', 'header'], sectionTitle);
+    const layoutsHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
