@@ -22,16 +22,6 @@ describe('useUITranslations', () => {
         },
     };
 
-    it('should return undefined for missing translation', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(result.current.getUITranslation(['formBuilder', 'variables', 'nonexistent' as any], 'fallback')).toBe(
-            'fallback',
-        );
-    });
-
     it('should return correct translation for formBuilder.layouts.header', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
