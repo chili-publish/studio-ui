@@ -2,7 +2,7 @@ import { InputLabel } from '@chili-publish/grafx-shared-components';
 import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
+import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';

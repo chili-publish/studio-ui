@@ -1,6 +1,7 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
-import { useLeftPanelAndTrayVisibility } from 'src/core/hooks/useLeftPanelAndTrayVisibility';
+import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { ContentType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
@@ -46,6 +47,10 @@ function LeftPanel({
     } = useLeftPanelAndTrayVisibility({ layouts, selectedLayout, layoutSectionUIOptions });
 
     const { formBuilder } = useUserInterfaceDetailsContext();
+    const { getUITranslation } = useUITranslations();
+
+    const layoutsHeader = getUITranslation(['formBuilder', 'layouts', 'header'], sectionTitle);
+    const layoutsHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={contentType !== ContentType.IMAGE_PANEL}>
@@ -55,8 +60,8 @@ function LeftPanel({
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <SectionWrapper id="layout-section-header">
-                                <PanelTitle margin="0">{sectionTitle}</PanelTitle>
-                                {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
+                                <PanelTitle margin="0">{layoutsHeader}</PanelTitle>
+                                {layoutsHelpText && <SectionHelpText>{layoutsHelpText}</SectionHelpText>}
                             </SectionWrapper>
                             {isLayoutSwitcherVisible && (
                                 <AvailableLayouts

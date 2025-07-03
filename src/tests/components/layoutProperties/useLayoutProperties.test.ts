@@ -6,8 +6,9 @@ import EditorSDK, {
     MeasurementUnit,
     PageSize,
 } from '@chili-publish/studio-sdk';
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
+import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useLayoutProperties } from '../../../components/layoutProperties/useLayoutProperties';
 
 describe('useLayoutProperties', () => {
@@ -64,7 +65,7 @@ describe('useLayoutProperties', () => {
     });
 
     it('should initialize with correct values', () => {
-        const { result } = renderHook(() => useLayoutProperties(mockLayout, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         expect(result.current.pageWidth).toBe('500 px');
         expect(result.current.pageHeight).toBe('800 px');
@@ -73,7 +74,7 @@ describe('useLayoutProperties', () => {
     });
 
     it('should handle width change correctly', async () => {
-        const { result } = renderHook(() => useLayoutProperties(mockLayout, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         await act(async () => {
             await result.current.handleChange('width', '600');
@@ -83,7 +84,7 @@ describe('useLayoutProperties', () => {
     });
 
     it('should handle height change correctly', async () => {
-        const { result } = renderHook(() => useLayoutProperties(mockLayout, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         await act(async () => {
             await result.current.handleChange('height', '900');
@@ -126,7 +127,9 @@ describe('useLayoutProperties', () => {
             },
         };
 
-        const { result } = renderHook(() => useLayoutProperties(layoutWithoutConstraints, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() =>
+            useLayoutProperties(layoutWithoutConstraints, mockActivePageDetails),
+        );
 
         expect(result.current.widthInputHelpText).toBeUndefined();
         expect(result.current.heightInputHelpText).toBeUndefined();
@@ -147,7 +150,7 @@ describe('useLayoutProperties', () => {
             },
         };
 
-        const { result } = renderHook(() => useLayoutProperties(layoutWithMinOnly, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(layoutWithMinOnly, mockActivePageDetails));
 
         expect(result.current.widthInputHelpText).toBe('Min: 100');
         expect(result.current.heightInputHelpText).toBe('Min: 200');
@@ -168,14 +171,14 @@ describe('useLayoutProperties', () => {
             },
         };
 
-        const { result } = renderHook(() => useLayoutProperties(layoutWithMaxOnly, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(layoutWithMaxOnly, mockActivePageDetails));
 
         expect(result.current.widthInputHelpText).toBe('Max: 1000');
         expect(result.current.heightInputHelpText).toBe('Max: 2000');
     });
 
     it('should handle SDK setWidth errors gracefully', async () => {
-        const { result } = renderHook(() => useLayoutProperties(mockLayout, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         // Mock SDK error
         (window.StudioUISDK.page.setWidth as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
@@ -189,7 +192,7 @@ describe('useLayoutProperties', () => {
     });
 
     it('should handle SDK setHeight errors gracefully', async () => {
-        const { result } = renderHook(() => useLayoutProperties(mockLayout, mockActivePageDetails));
+        const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         // Mock SDK error
         (window.StudioUISDK.page.setHeight as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));

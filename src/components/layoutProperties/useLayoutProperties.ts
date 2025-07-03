@@ -1,10 +1,18 @@
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 
 export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDetails?: PageSize) => {
+    const { getUITranslation } = useUITranslations();
+
     const [pageWidth, setPageWidth] = useState<string>('');
     const [pageHeight, setPageHeight] = useState<string>('');
+
+    const minWidthLabel = getUITranslation(['formBuilder', 'layouts', 'minWidth'], 'Min');
+    const minHeightLabel = getUITranslation(['formBuilder', 'layouts', 'minHeight'], 'Min');
+    const maxWidthLabel = getUITranslation(['formBuilder', 'layouts', 'maxWidth'], 'Max');
+    const maxHeightLabel = getUITranslation(['formBuilder', 'layouts', 'maxHeight'], 'Max');
 
     const measurementUnit = useMemo(() => {
         return layout?.unit.value;
@@ -12,29 +20,35 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
 
     const widthInputHelpText = useMemo(() => {
         if (layout?.resizableByUser.minWidth && layout?.resizableByUser.maxWidth) {
-            return `Min: ${formatNumber(layout.resizableByUser.minWidth, measurementUnit)} Max: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
+            return `${minWidthLabel}: ${formatNumber(
+                layout.resizableByUser.minWidth,
+                measurementUnit,
+            )} ${maxWidthLabel}: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
         }
         if (layout?.resizableByUser.minWidth) {
-            return `Min: ${formatNumber(layout.resizableByUser.minWidth, measurementUnit)}`;
+            return `${minWidthLabel}: ${formatNumber(layout.resizableByUser.minWidth, measurementUnit)}`;
         }
         if (layout?.resizableByUser.maxWidth) {
-            return `Max: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
+            return `${maxWidthLabel}: ${formatNumber(layout.resizableByUser.maxWidth, measurementUnit)}`;
         }
         return undefined;
-    }, [layout, measurementUnit]);
+    }, [layout, measurementUnit, minWidthLabel, maxWidthLabel]);
 
     const heightInputHelpText = useMemo(() => {
         if (layout?.resizableByUser.minHeight && layout?.resizableByUser.maxHeight) {
-            return `Min: ${formatNumber(layout.resizableByUser.minHeight, measurementUnit)} Max: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
+            return `${minHeightLabel}: ${formatNumber(
+                layout.resizableByUser.minHeight,
+                measurementUnit,
+            )} ${maxHeightLabel}: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
         }
         if (layout?.resizableByUser.minHeight) {
-            return `Min: ${formatNumber(layout.resizableByUser.minHeight, measurementUnit)}`;
+            return `${minHeightLabel}: ${formatNumber(layout.resizableByUser.minHeight, measurementUnit)}`;
         }
         if (layout?.resizableByUser.maxHeight) {
-            return `Max: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
+            return `${maxHeightLabel}: ${formatNumber(layout.resizableByUser.maxHeight, measurementUnit)}`;
         }
         return undefined;
-    }, [layout, measurementUnit]);
+    }, [layout, measurementUnit, minHeightLabel, maxHeightLabel]);
 
     const handleChange = useCallback(
         async (name: string, value: string) => {
