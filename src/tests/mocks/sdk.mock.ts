@@ -42,7 +42,10 @@ jest.mock('@chili-publish/studio-sdk', () => {
                         getMappings: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: [] })),
                     },
                 },
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
+                document: {
+                    load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })),
+                    getCurrentState: jest.fn().mockImplementation(() => Promise.resolve({ data: '{}' })),
+                },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
                 variable: {
