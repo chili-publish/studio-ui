@@ -14,8 +14,13 @@ export interface LayoutsTranslations {
     header?: string;
     helpText?: string;
     inputLabel?: string;
+    inputPlaceholder?: string;
     width?: string;
     height?: string;
+    minWidth?: string;
+    minHeight?: string;
+    maxWidth?: string;
+    maxHeight?: string;
 }
 
 export interface ToolBarTranslations {
