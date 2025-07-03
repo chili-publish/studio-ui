@@ -24,6 +24,7 @@ function AvailableLayouts({
     const { getTranslatedLayoutDisplayName } = useLayoutTranslations();
 
     const selectLabel = getUITranslation(['formBuilder', 'layouts', 'inputLabel'], 'Select layout');
+    const placeholder = getUITranslation(['formBuilder', 'layouts', 'inputPlaceholder'], 'Select layout');
 
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({
@@ -62,6 +63,7 @@ function AvailableLayouts({
             isSearchable={false}
             onChange={(option) => handleLayoutChange(option?.value as string)}
             label={selectLabel}
+            placeholder={placeholder}
         />
     );
 }
