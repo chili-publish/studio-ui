@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import StudioDropdown from '../../shared/StudioDropdown';
@@ -9,6 +10,8 @@ import { IListVariable } from '../VariablesComponents.types';
 function ListVariable(props: IListVariable) {
     const { variable, validationError, onChange } = props;
     const { onVariableBlur, onVariableFocus, projectConfig } = useUiConfigContext();
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean | null>(null);
 
     const options = variable.items.map((item) => ({
         label: item.displayValue || item.value,
@@ -23,12 +26,24 @@ function ListVariable(props: IListVariable) {
     const placeholder = getVariablePlaceholder(variable);
 
     const updateVariableValue = async (variableId: string, value: string) => {
+        if (variable.selected?.value === value) return;
         const result = await window.StudioUISDK.variable.setValue(variableId, value);
         if (result.success) {
             projectConfig.onVariableValueChangedCompleted?.(variableId, value);
         }
         onChange({ ...variable, selected: { value } });
     };
+
+    useEffect(() => {
+        if (isDropdownOpen === null) {
+            return;
+        }
+        if (isDropdownOpen) {
+            onVariableFocus?.(variable.id);
+        } else {
+            onVariableBlur?.(variable.id);
+        }
+    }, [isDropdownOpen, onVariableFocus, onVariableBlur, variable.id]);
 
     return (
         <ComponentWrapper
@@ -38,6 +53,7 @@ function ListVariable(props: IListVariable) {
             <HelpTextWrapper>
                 <div>
                     <StudioDropdown
+                        id={variable.id}
                         dataId={variable.id}
                         label={variable.label ?? variable.name}
                         selectedValue={selectedValue || ''}
@@ -45,9 +61,15 @@ function ListVariable(props: IListVariable) {
                         placeholder={placeholder}
                         required={variable.isRequired}
                         validationError={validationError}
-                        onChange={(val) => updateVariableValue(variable.id, val)}
-                        onMenuOpen={() => onVariableFocus?.(variable.id)}
-                        onMenuClose={() => onVariableBlur?.(variable.id)}
+                        onChange={(val) => {
+                            updateVariableValue(variable.id, val);
+                        }}
+                        onMenuOpen={() => {
+                            setIsDropdownOpen(true);
+                        }}
+                        onMenuClose={() => {
+                            setIsDropdownOpen(false);
+                        }}
                     />
                 </div>
                 {variable.helpText && !validationError ? (
