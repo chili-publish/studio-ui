@@ -3,6 +3,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 
 interface StudioDropdownProps {
     dataId: string;
+    id?: string;
     label?: string;
     selectedValue?: SelectOptions;
     options: SelectOptions[];
@@ -26,9 +27,11 @@ function StudioDropdown({
     onChange,
     onMenuOpen,
     onMenuClose,
+    id,
 }: StudioDropdownProps) {
     return (
         <Select
+            id={id}
             dataId={getDataIdForSUI(`dropdown-${dataId}`)}
             dataTestId={getDataTestIdForSUI(`dropdown-${dataId}`)}
             value={selectedValue}
