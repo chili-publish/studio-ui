@@ -25,7 +25,9 @@ function NumberVariable(props: INumberVariable) {
                 dataId={getDataIdForSUI(`input-number-${variable.id}`)}
                 dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
                 dataIntercomId={`input-variable-${variable.name}`}
-                onFocus={() => onVariableFocus?.(variable.id)}
+                onFocus={() => {
+                    onVariableFocus?.(variable.id);
+                }}
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                     const currentValue = parseFloat(event.target.value.replace(',', '.'));
                     const prevValue = variable.value;
@@ -35,7 +37,16 @@ function NumberVariable(props: INumberVariable) {
                 onValueChange={(value: string) => {
                     const currentValue = parseFloat(value.replace(',', '.'));
                     const prevValue = variable.value;
-                    onValueChange(currentValue, { changed: prevValue !== currentValue });
+                    const hasChanged = prevValue !== currentValue;
+
+                    // if value changed via stepper, ensure focus/blur handlers are called
+                    if (hasChanged) {
+                        onVariableFocus?.(variable.id);
+                        onValueChange(currentValue, { changed: true });
+                        onVariableBlur?.(variable.id);
+                    } else {
+                        onValueChange(currentValue, { changed: false });
+                    }
                 }}
                 disabled={variable.isReadonly}
                 required={variable.isRequired}
