@@ -54,7 +54,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 layout: {
                     getSelected: jest
                         .fn()
-                        .mockImplementation(() => Promise.resolve({ sucess: true, parsedData: mockLayout })),
+                        .mockImplementation(() => Promise.resolve({ success: true, parsedData: mockLayout })),
                 },
             };
         },

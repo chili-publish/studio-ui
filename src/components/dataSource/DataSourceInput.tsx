@@ -7,6 +7,7 @@ import {
     Label,
     LoadingIcon,
 } from '@chili-publish/grafx-shared-components';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useDirection } from '../../hooks/useDirection';
 import { Text } from '../../styles/Main.styles';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -37,6 +38,9 @@ function DataSourceInput({
     onNextClick,
 }: DataSourceInputProps) {
     const { direction } = useDirection();
+    const { getUITranslation } = useUITranslations();
+    const inputLabel = getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'Data row');
+    const rowLabel = getUITranslation(['formBuilder', 'datasource', 'row'], 'Row');
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} />
@@ -50,7 +54,7 @@ function DataSourceInput({
                 name="data-source-input"
                 value={currentRow}
                 placeholder="Select data row"
-                label={<Label translationKey="dataRow" value="Data row" />}
+                label={<Label translationKey="dataRow" value={inputLabel} />}
                 onClick={onInputClick}
                 rightIcon={{
                     label: '',
@@ -83,7 +87,7 @@ function DataSourceInput({
                             />
                         }
                     />
-                    <Text>{currentRow ? `Row ${currentRowIndex + 1}` : ''}</Text>
+                    <Text>{currentRow ? `${rowLabel} ${currentRowIndex + 1}` : ''}</Text>
                     <Button
                         variant={ButtonVariant.tertiary}
                         onClick={onNextClick}

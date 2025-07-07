@@ -3,6 +3,7 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
+import { UITranslations } from './UITranslations';
 import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
@@ -313,6 +314,7 @@ export interface IStudioUILoaderConfig {
         variableId: string,
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
+    uiTranslations?: UITranslations;
 }
 
 export type PageSnapshot = {

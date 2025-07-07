@@ -1,5 +1,6 @@
 import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { MODAL_ID, ModalStyle } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
@@ -28,6 +29,10 @@ function DataSourceModal({
     selectedRow,
     onSelectedRowChanged,
 }: TableModalProps) {
+    const { getUITranslation } = useUITranslations();
+
+    const title = getUITranslation(['formBuilder', 'datasource', 'header'], 'Data source');
+
     return (
         <>
             <ModalStyle />
@@ -40,7 +45,7 @@ function DataSourceModal({
                 isDraggable
                 onClose={onClose}
             >
-                <ModalLayout.Title>Data source</ModalLayout.Title>
+                <ModalLayout.Title>{title}</ModalLayout.Title>
                 <ModalLayout.Body>
                     <DataSourceTable
                         data={data}
