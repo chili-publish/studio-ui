@@ -53,6 +53,7 @@ function AvailableLayouts({
             onMenuOpen={() => onMobileOptionListToggle?.(true)}
             onMenuClose={() => onMobileOptionListToggle?.(false)}
             label={selectLabel}
+            placeholder={placeholder}
         />
     ) : (
         <Select
