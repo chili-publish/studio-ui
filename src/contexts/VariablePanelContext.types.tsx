@@ -1,8 +1,8 @@
-import { DateVariable, ImageVariable, Media, MediaConnectorCapabilities, Variable } from '@chili-publish/studio-sdk';
+import { Media, MediaConnectorCapabilities, Variable } from '@chili-publish/studio-sdk';
 
 import { Dispatch, SetStateAction } from 'react';
 
-export const enum ContentType {
+export const enum PanelType {
     DEFAULT = 'default',
     IMAGE_PANEL = 'image_panel',
     DATE_VARIABLE_PICKER = 'date_variable_picker',
@@ -25,13 +25,6 @@ export interface VariableValidationOptions {
 }
 
 export interface IVariablePanelContext {
-    showVariablesPanel: () => void;
-    showDatePicker: (_: DateVariable) => void;
-    showImagePanel: (_: ImageVariable) => void;
-    showDataSourcePanel: () => void;
-    contentType: ContentType;
-    currentVariableId: string;
-    currentVariableConnectorId: string;
     handleUpdateImage: (_: Media) => Promise<void>;
     selectedItems: Media[];
     navigationStack: string[];

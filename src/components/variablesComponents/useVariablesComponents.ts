@@ -16,7 +16,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
             }
             return null;
         },
-        [currentVariableId],
+        [currentVariableId, projectConfig],
     );
 
     const handleImageRemove = useCallback(async () => {
@@ -28,7 +28,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
             return result;
         }
         return null;
-    }, [currentVariableId]);
+    }, [currentVariableId, projectConfig]);
 
     const handleValueChange = useCallback(
         async (value: string | boolean | number) => {
@@ -39,7 +39,7 @@ export const useVariableComponents = (currentVariableId: Id) => {
             }
             return result;
         },
-        [currentVariableId],
+        [currentVariableId, projectConfig],
     );
 
     return {

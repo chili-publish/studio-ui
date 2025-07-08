@@ -2,9 +2,9 @@ import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useSelector } from 'react-redux';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
@@ -22,6 +22,8 @@ import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { selectCurrentPanel, showVariablesPanel, showDataSourcePanel } from '../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../store';
 
 interface VariablesPanelProps {
     isTrayVisible: boolean;
@@ -54,7 +56,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         layoutSectionUIOptions,
     } = props;
 
-    const { contentType, showVariablesPanel, showDataSourcePanel } = useVariablePanelContext();
+    const currentPanel = useSelector(selectCurrentPanel);
+    const dispatch = useAppDispatch();
+
     const { formBuilder } = useUserInterfaceDetailsContext();
     const [variablesMobileOptionsListOpen, setVariablesMobileOptionsListOpen] = useState(false);
     const [layoutsMobileOptionsListOpen, setLayoutsMobileOptionsListOpen] = useState(false);
@@ -80,8 +84,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         requiresUserAuthorizationCheck,
         onDataRowsLoad: loadDataRows,
         onRowConfirmed: updateSelectedRow,
-        onDataSourcePanelOpen: showDataSourcePanel,
-        onDataSourcePanelClose: showVariablesPanel,
+        onDataSourcePanelOpen: () => dispatch(showDataSourcePanel()),
+        onDataSourcePanelClose: () => dispatch(showVariablesPanel()),
     });
 
     const closeTray = () => setIsTrayVisible(false);
@@ -97,9 +101,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         selectedLayout,
         layoutSectionUIOptions,
     });
-    const isDateVariablePanelOpen = contentType === ContentType.DATE_VARIABLE_PICKER;
-    const isImageBrowsePanelOpen = contentType === ContentType.IMAGE_PANEL;
-    const isDataSourcePanelOpen = contentType === ContentType.DATA_SOURCE_TABLE;
+    const isDateVariablePanelOpen = currentPanel === PanelType.DATE_VARIABLE_PICKER;
+    const isImageBrowsePanelOpen = currentPanel === PanelType.IMAGE_PANEL;
+    const isDataSourcePanelOpen = currentPanel === PanelType.DATA_SOURCE_TABLE;
     const isDefaultPanelView = !(isDateVariablePanelOpen || isImageBrowsePanelOpen || isDataSourcePanelOpen);
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
@@ -113,10 +117,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const showImagePanel = !(isDefaultPanelView || isDateVariablePanelOpen);
 
     const onTrayHidden = useCallback(() => {
-        showVariablesPanel();
+        dispatch(showVariablesPanel());
         setIsTrayVisible(false);
         setLayoutsMobileOptionsListOpen(false);
-    }, [showVariablesPanel, setIsTrayVisible]);
+    }, [dispatch, setIsTrayVisible]);
 
     const trayHeaderData: MobileTrayFormBuilderHeader = useMemo(
         () => ({
@@ -163,9 +167,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 onTrayHidden={onTrayHidden}
                 hideCloseButton={variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen}
                 styles={css`
-                    height: ${contentType === ContentType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
+                    height: ${currentPanel === PanelType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
                     overflow: ${isDefaultPanelView ? 'auto' : 'hidden'};
-                    ${contentType === ContentType.IMAGE_PANEL && `padding-bottom: 0`};
+                    ${currentPanel === PanelType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
                     &::-webkit-scrollbar {
                         width: 0;

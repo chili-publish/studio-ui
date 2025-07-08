@@ -1,26 +1,31 @@
-import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { DateVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
+import { useSelector } from 'react-redux';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
+import { selectCurrentPanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../store';
 
 interface VariablesListProps {
     variables: Variable[];
 }
 
 function VariablesList({ variables }: VariablesListProps) {
-    const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
+    const currentPanel = useSelector(selectCurrentPanel);
+    const dispatch = useAppDispatch();
+    const { validateUpdatedVariables } = useVariablePanelContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { updateWithTranslation } = useVariableTranslations();
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
-            if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
+            if (variable.type === VariableType.date) dispatch(showDatePickerPanel({ variableId: variable.id }));
         },
-        [showDatePicker],
+        [dispatch],
     );
 
     useEffect(() => {
@@ -39,7 +44,7 @@ function VariablesList({ variables }: VariablesListProps) {
             </SectionWrapper>
             {variablesWithTranslation.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
-                return contentType !== ContentType.DATE_VARIABLE_PICKER ? (
+                return currentPanel !== PanelType.DATE_VARIABLE_PICKER ? (
                     <ComponentWrapper key={`variable-component-${variable.id}`}>
                         <VariablesComponents
                             type={variable.type}

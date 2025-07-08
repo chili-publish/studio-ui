@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { DateVariable, ShortTextVariable, Variable } from '@chili-publish/studio-sdk';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import VariableComponent from '../components/variablesComponents/VariablesComponents';
 import AppProvider from '../contexts/AppProvider';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
+import { renderWithProviders } from './mocks/Provider';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -43,7 +44,7 @@ describe('Variable Component', () => {
         jest.clearAllMocks();
     });
     it('Shows the image picker component for image variable', async () => {
-        render(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
@@ -60,7 +61,7 @@ describe('Variable Component', () => {
     });
 
     it('Shows the input component for short text variables', () => {
-        const container = render(
+        const container = renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
@@ -83,7 +84,7 @@ describe('Variable Component', () => {
         const user = userEvent.setup();
         const longText = variables.find((variable) => variable.id === 'multi-line-text-variable-1') as Variable;
 
-        render(
+        renderWithProviders(
             <AppProvider>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
@@ -106,7 +107,7 @@ describe('Variable Component', () => {
         expect(screen.getByText(/i am tying in the second line/i)).toBeInTheDocument();
     });
     it('Shows the number component for number variables', () => {
-        const { getByRole, getAllByRole } = render(
+        const { getByRole, getAllByRole } = renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariableComponent
@@ -132,7 +133,7 @@ describe('Variable Component', () => {
 
     describe('Shows date component for date date variable', () => {
         it('Correctly renders the date component for date variables', () => {
-            render(
+            renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <UiThemeProvider theme="platform">
                         <VariableComponent
@@ -150,7 +151,7 @@ describe('Variable Component', () => {
         });
         it('Calls the onchange function when date is changed with correct params', async () => {
             const user = userEvent.setup();
-            const { getByRole, getByText } = render(
+            const { getByRole, getByText } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <UiThemeProvider theme="platform">
                         <VariableComponent
@@ -173,7 +174,7 @@ describe('Variable Component', () => {
 
         it('Can set date to null by clearing the input field', async () => {
             const user = userEvent.setup();
-            const { getByRole } = render(
+            const { getByRole } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <UiThemeProvider theme="platform">
                         <VariableComponent
@@ -194,7 +195,7 @@ describe('Variable Component', () => {
         it('Select the correct date after clearing the input', async () => {
             // Regression test after QA found the selected date is 1 day before what user selects
             const user = userEvent.setup();
-            const { getByRole, getByText } = render(
+            const { getByRole, getByText } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <UiThemeProvider theme="platform">
                         <VariableComponent
@@ -217,7 +218,7 @@ describe('Variable Component', () => {
         });
         it('Correctly shows the excluded dates', async () => {
             const user = userEvent.setup();
-            const { getByRole, getByText } = render(
+            const { getByRole, getByText } = renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <UiThemeProvider theme="platform">
                         <VariableComponent
@@ -242,7 +243,7 @@ describe('Variable Component', () => {
             (item) => item.id === 'shortVariable-without-label',
         ) as ShortTextVariable;
 
-        render(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <UiThemeProvider theme="platform">
                     <VariableComponent

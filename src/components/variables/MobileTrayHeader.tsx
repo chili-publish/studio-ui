@@ -1,10 +1,13 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { css } from 'styled-components';
+import { useSelector } from 'react-redux';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { MobileTrayFormBuilderHeader } from '../../types/types';
 import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
+import { selectCurrentPanel, showVariablesPanel } from '../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../store';
 
 interface MobileTrayHeaderProps {
     isDefaultPanelView: boolean;
@@ -20,8 +23,10 @@ function MobileTrayHeader({
     isAvailableLayoutsDisplayed,
     trayHeaderData,
 }: MobileTrayHeaderProps) {
-    const { contentType, showVariablesPanel, imagePanelTitle } = useVariablePanelContext();
+    const dispatch = useAppDispatch();
+    const currentPanel = useSelector(selectCurrentPanel);
 
+    const { imagePanelTitle } = useVariablePanelContext();
     const { datasource, variables, layouts } = trayHeaderData;
 
     if (isDefaultPanelView && isDataSourceDisplayed)
@@ -38,21 +43,21 @@ function MobileTrayHeader({
                 {layouts.helpText && <SectionHelpText>{layouts.helpText}</SectionHelpText>}
             </SectionWrapper>
         );
-    if (contentType === ContentType.DEFAULT || mobileListOpen)
+    if (currentPanel === PanelType.DEFAULT || mobileListOpen)
         return (
             <SectionWrapper id="layout-section-header">
                 <TrayPanelTitle margin="0">{variables.title}</TrayPanelTitle>
                 {variables.helpText && <SectionHelpText>{variables.helpText}</SectionHelpText>}
             </SectionWrapper>
         );
-    if (contentType === ContentType.DATE_VARIABLE_PICKER)
+    if (currentPanel === PanelType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
                     onClick={() => {
-                        showVariablesPanel();
+                        dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
                     styles={css`
@@ -63,15 +68,15 @@ function MobileTrayHeader({
             </DatePickerTrayTitle>
         );
 
-    if (contentType === ContentType.IMAGE_PANEL) return imagePanelTitle;
-    if (contentType === ContentType.DATA_SOURCE_TABLE)
+    if (currentPanel === PanelType.IMAGE_PANEL) return imagePanelTitle;
+    if (currentPanel === PanelType.DATA_SOURCE_TABLE)
         return (
             <DatePickerTrayTitle>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
                     onClick={() => {
-                        showVariablesPanel();
+                        dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={AvailableIcons.faArrowLeft} />}
                     styles={css`

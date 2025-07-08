@@ -1,12 +1,17 @@
 import { Media, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { convertToPreviewType } from '../../utils/mediaUtils';
 import ItemBrowser from '../itemBrowser/ItemBrowser';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
+import { selectCurrentVariableConnectorId, selectCurrentVariableId } from '../../store/reducers/panelReducer';
 
 function ImagePanel() {
-    const { handleUpdateImage, currentVariableConnectorId, currentVariableId } = useVariablePanelContext();
+    const currentVariableId = useSelector(selectCurrentVariableId);
+    const currentVariableConnectorId = useSelector(selectCurrentVariableConnectorId);
+
+    const { handleUpdateImage } = useVariablePanelContext();
     const { onVariableBlur } = useUiConfigContext();
 
     const previewCall = (id: string): Promise<Uint8Array> =>
@@ -17,7 +22,7 @@ function ImagePanel() {
             await handleUpdateImage(asset);
             onVariableBlur?.(currentVariableId);
         },
-        [handleUpdateImage, onVariableBlur],
+        [handleUpdateImage, onVariableBlur, currentVariableId],
     );
 
     if (!currentVariableConnectorId) return null;
