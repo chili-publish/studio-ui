@@ -9,6 +9,7 @@ import { useUploadAsset } from '../../../../components/variablesComponents/image
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
 import { variables } from '../../../mocks/mockVariables';
+import * as panelReducer from '../../../../store/reducers/panelReducer';
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: jest.fn().mockReturnValue({ remoteConnector: null }),

@@ -9,11 +9,12 @@ import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
 
 function StudioNavbar(props: INavbar) {
-    const { projectName, goBack, projectConfig, zoom, undoStackState } = props;
+    const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
         projectName,
+        selectedLayoutId,
     );
 
     const exportButtonRef = useRef<HTMLLIElement>(null);
@@ -56,7 +57,7 @@ function StudioNavbar(props: INavbar) {
                 box-sizing: content-box;
                 height: ${STUDIO_NAVBAR_HEIGHT};
                 padding: 0;
-                padding-right: 0.5rem;
+                padding-inline-end: 0.5rem;
                 ul {
                     gap: 0.5rem;
                 }

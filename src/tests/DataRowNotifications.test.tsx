@@ -38,7 +38,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                             Promise.resolve({ success: true, intent: { value: LayoutIntent.print } }),
                         ),
                 },
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ sucess: true })) },
+                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: true })) },
                 tool: { setHand: jest.fn() },
                 canvas: { zoomToPage: jest.fn() },
                 dataSource: { getDataSource: jest.fn().mockResolvedValue({ parsedData: null }) },

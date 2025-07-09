@@ -1,7 +1,8 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSource from '../../../components/dataSource/DataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -47,7 +48,7 @@ describe('DataSource test', () => {
             parsedData: { data: [{ id: '1', name: 'Joe', age: 15 }] },
         });
 
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
                     <DataSource />
@@ -61,7 +62,7 @@ describe('DataSource test', () => {
     it('Data source row should be hidden if data connector is not available', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
 
-        render(
+        renderWithProviders(
             <AppProvider>
                 <UiThemeProvider theme="platform">
                     <DataSource />
@@ -77,7 +78,7 @@ describe('DataSource test', () => {
     it('Should display data connector placeholder when there is an error during page request', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
 
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
                     <DataSource />
@@ -97,7 +98,7 @@ describe('DataSource test', () => {
             },
         });
 
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
                     <DataSource />
@@ -125,7 +126,7 @@ describe('DataSource test', () => {
             },
         });
 
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
                     <DataSource />
@@ -207,7 +208,7 @@ describe('DataSource test', () => {
                 },
             });
 
-        render(
+        renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
                     <DataSource />

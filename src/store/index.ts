@@ -5,6 +5,7 @@ import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 import document from './reducers/documentReducer';
 import media from './reducers/mediaReducer';
+import direction from './reducers/directionReducer';
 import appConfig from './reducers/appConfigReducer';
 import panel from './reducers/panelReducer';
 
@@ -26,6 +27,7 @@ if (getEnvVariables().DEV && getEnvVariables().VITE_REDUX_LOGGER) {
 const rootReducer = combineReducers({
     document,
     media,
+    direction,
     appConfig,
     panel,
 });

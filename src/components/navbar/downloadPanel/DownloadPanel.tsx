@@ -13,6 +13,7 @@ import {
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, RefObject, useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { UserInterfaceOutputSettings } from '../../../types/types';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -29,6 +30,7 @@ import {
 import { outputTypesIcons } from './DownloadPanel.types';
 import DropdownOption from './DropdownOption';
 import useDownload from './useDownload';
+import { useDirection } from '../../../hooks/useDirection';
 
 type SelectOptionType = SelectOptions & { item: UserInterfaceOutputSettings };
 
@@ -53,12 +55,13 @@ const getCustomSelectedLabel = (option: SelectOptions) => {
 const getCustomSelectedOption = (option?: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
+
 function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
-
+    const { direction } = useDirection();
     const isMobileSize = useMobileSize();
-    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const { themeColors } = useTheme();
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const {
         options,
         selectedValue,
@@ -69,6 +72,13 @@ function DownloadPanel(props: DownloadPanelProps) {
         handleOutputFormatChange,
         selectedOutputSettingsId,
     } = useDownload({ hideDownloadPanel, isSandBoxMode });
+    const { getUITranslation } = useUITranslations();
+
+    const outputSelectorLabel = getUITranslation(['toolBar', 'downloadButton', 'outputSelector', 'label'], 'Output');
+    const DownloadButtonLabel = getUITranslation(
+        ['toolBar', 'downloadButton', 'label'],
+        isSandBoxMode ? 'Export' : 'Download',
+    );
 
     const downloadMenuRightOffset = useMemo(() => {
         if (exportButtonRef?.current) {
@@ -87,7 +97,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                     hideDownloadPanel();
                     setMobileDropdownOpen(false);
                 }}
-                title={!mobileDropdownOpen && 'Download'}
+                title={!mobileDropdownOpen && DownloadButtonLabel}
                 styles={css`
                     ${mobileDropdownOpen ? 'padding: 0;' : 'padding-bottom: 1rem;'}
                     overflow: hidden;
@@ -97,7 +107,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                 <Content borderTop={!mobileDropdownOpen}>
                     <StudioMobileDropdown
                         dataId={getDataIdForSUI(`output-dropdown`)}
-                        label="Output"
+                        label={outputSelectorLabel}
                         selectedValue={getCustomSelectedOption(selectedValue)}
                         options={options}
                         onChange={(val) => handleOutputFormatChange(val as typeof selectedOptionFormat)}
@@ -117,6 +127,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                         &:hover {
                                             background-color: ${themeColors.disabledElementsColor};
                                         }
+                                        transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
                                     `}
                                 />
                             </SpinnerContainer>
@@ -128,7 +139,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
-                                label="Download"
+                                label={DownloadButtonLabel}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
                                     width: 100%;
@@ -142,15 +153,20 @@ function DownloadPanel(props: DownloadPanelProps) {
             <Menu
                 isVisible={!isMobileSize && isDownloadPanelVisible}
                 onClose={() => undefined}
-                position={{ right: downloadMenuRightOffset, top: 3.75 * 16 } as unknown as DOMRect}
+                position={
+                    {
+                        [direction === 'rtl' ? 'left' : 'right']: downloadMenuRightOffset,
+                        top: 3.75 * 16,
+                    } as unknown as DOMRect
+                }
                 style={{ width: 19 * 16 - 3 }}
                 anchorId={APP_WRAPPER_ID}
             >
                 <DownloadPanelContainer ref={downloadPanelRef}>
-                    <DownloadDropdownTitle>{isSandBoxMode ? 'Export' : 'Download'}</DownloadDropdownTitle>
+                    <DownloadDropdownTitle>{DownloadButtonLabel}</DownloadDropdownTitle>
                     <DesktopDropdownContainer>
                         <Select
-                            label="Output"
+                            label={outputSelectorLabel}
                             dataId={getDataIdForSUI(`output-dropdown`)}
                             dataTestId={getDataTestIdForSUI(`output-dropdown`)}
                             defaultValue={selectedValue}
@@ -173,6 +189,7 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     &:hover {
                                         background-color: ${themeColors.disabledElementsColor};
                                     }
+                                    transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
                                 `}
                             />
                         </SpinnerContainer>
@@ -186,10 +203,11 @@ function DownloadPanel(props: DownloadPanelProps) {
                                     handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
                                 }}
                                 variant={ButtonVariant.primary}
-                                label={isSandBoxMode ? 'Export' : 'Download'}
+                                label={DownloadButtonLabel}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
                                 styles={css`
-                                    margin: 1.25rem auto 1.25rem;
+                                    margin-block: 1.25rem;
+                                    margin-inline: auto;
                                     width: 100%;
                                 `}
                             />

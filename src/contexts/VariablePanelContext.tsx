@@ -3,6 +3,7 @@ import { ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
+import { useDirection } from 'src/hooks/useDirection';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { ICapabilities, IVariablePanelContext } from './VariablePanelContext.types';
@@ -42,6 +43,7 @@ export const useVariablePanelContext = () => {
 };
 
 export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
+    const { direction } = useDirection();
     const dispatch = useAppDispatch();
     const currentVariableId = useSelector(selectCurrentVariableId);
     const currentVariableConnectorId = useSelector(selectCurrentVariableConnectorId);
@@ -99,7 +101,12 @@ export function VariablePanelContextProvider({ children, variables }: { children
                         setSearchKeyWord('');
                         setSearchQuery('');
                     }}
-                    icon={<Icon key={navigationStack.length} icon={AvailableIcons.faArrowLeft} />}
+                    icon={
+                        <Icon
+                            key={navigationStack.length}
+                            icon={direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft}
+                        />
+                    }
                     styles={css`
                         padding: 0;
                     `}
@@ -107,7 +114,7 @@ export function VariablePanelContextProvider({ children, variables }: { children
                 <NavigationTitle className="navigation-path">Select image</NavigationTitle>
             </NavigationWrapper>
         ),
-        [navigationStack, dispatch],
+        [direction, navigationStack, dispatch],
     );
 
     const data = useMemo(

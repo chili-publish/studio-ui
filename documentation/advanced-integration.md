@@ -118,6 +118,7 @@ const uiOptions = {
             secondaryTextColor: '#B9B9B9', // Used for secondary text.
         },
     },
+    uiDirection: 'ltr', // Sets the text direction of the UI. Accepts 'ltr' (left-to-right) or 'rtl' (right-to-left). Default is 'ltr'.
     widgets: {
         downloadButton: {
             visible: true,
@@ -187,6 +188,23 @@ The theme field within uiOptions is used to customize various UI elements, speci
 
     ** fontFamily: Optional. If the value 'inherit' is provided, the font family of the UI elements will be inherited. Otherwise, 'Roboto' is used as default.
     ** colors: Optional. The object can be provided partially. The defined fields will be used to customize the UI components.
+
+#### uiOptions, uiDirection
+
+The `uiDirection` field within `uiOptions` allows you to control the text and layout direction of the Studio UI. This is especially useful for supporting right-to-left (RTL) languages such as Arabic or Hebrew, or for enforcing a left-to-right (LTR) layout regardless of the user's browser or system settings.
+
+- **uiDirection**: Optional. Accepts either `'ltr'` (left-to-right) or `'rtl'` (right-to-left). If not provided, the default is `'ltr'`.
+    - `'ltr'`: The UI and text will be displayed from left to right (default).
+    - `'rtl'`: The UI and text will be displayed from right to left.
+
+Example usage:
+
+```js
+const uiOptions = {
+    // ... other options ...
+    uiDirection: 'rtl', // Forces the UI to use right-to-left layout
+};
+```
 
 #### outputSettings
 
@@ -307,6 +325,9 @@ const onFetchUserInterfaceDetails = async (userInterfaceId) => {
 };
 ```
 
+> [!IMPORTANT]  
+> All translatable interface properties below should be considered as experimental. We only recommend using them if you are pinned on a specific version.
+
 #### Variable Translations
 
 If you want to provide translations for your variables (such as labels, placeholders, or help texts), you can use the `variableTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for variables in the UI, making your integration more user-friendly and localized.
@@ -316,6 +337,7 @@ The `variableTranslations` object should map variable's label to translation obj
 - `label`: The display label for the variable
 - `placeholder`: The placeholder text for the variable input
 - `helpText`: Additional help text shown in the UI
+- `listItems`: (List variable only): Translates list item display value
 
 ##### Example Usage
 
@@ -336,6 +358,15 @@ const variableTranslations = {
         placeholder: 'Enter your company name',
         helpText: 'Optional field.',
     },
+    CountryListVariableLabel: {
+        label: 'Contry',
+        placeholder: 'Select country'
+        helpText: 'Optional field'
+        listItems: {
+            CountryListVariableListItem1DisplayValue: 'Belgium',
+            CountryListVariableListItem2DisplayValue: 'USA',
+        }
+    }
 };
 
 window.StudioUI.studioUILoaderConfig({
@@ -345,6 +376,74 @@ window.StudioUI.studioUILoaderConfig({
 ```
 
 You can provide translations for as many or as few variables as you like. Any fields you omit will fall back to the default values from variable's configuration.
+
+#### Layout Translations
+
+If you want to provide translations for your layouts' display names, you can use the `layoutTranslations` option when configuring the Studio UI Loader. This allows you to customize the display text for layouts in the UI, making your integration more user-friendly and localized.
+
+The `layoutTranslations` object should map either the layout's `displayName` or, if not present, the layout's `name` to a translation object. Each translation object can include:
+
+- `displayName`: The translated display name for the layout
+
+##### Example Usage
+
+```js
+const layoutTranslations = {
+    // Case 1: layout displayName key found
+    'L1 Display': {
+        displayName: 'Translated Display Name for L1',
+    },
+    // Case 2: layout displayName key not found, fallback to layoutName
+    L2: {
+        displayName: 'Translated Display Name for L2',
+    },
+};
+
+window.StudioUI.studioUILoaderConfig({
+    // ... other config options ...
+    layoutTranslations: layoutTranslations,
+});
+```
+
+You can provide translations for as many or as few layouts as you like. If a translation is not found for a layout's `displayName`, the loader will attempt to use the layout's `name` as a fallback. If neither is found, the original value will be used.
+
+#### UI Translations
+
+You can provide translations for UI labels and help texts using the `uiTranslations` option. This allows you to localize section headers, help texts, and toolbar labels.
+
+Example:
+
+```js
+const uiTranslations = {
+    formBuilder: {
+        variables: {
+            header: 'Variables',
+            helpText: 'Variables are used to store values that can be used in the form.',
+        },
+        datasource: {
+            header: 'Data Source',
+            helpText: 'Data Source is a tool that allows you to connect to a data source and use it in the form.',
+            row: 'Row',
+            inputLabel: 'Data row',
+        },
+        layouts: {
+            header: 'Layouts',
+            helpText: 'Layouts are used to organize the form.',
+            inputLabel: 'Select layout',
+            width: 'Width',
+            height: 'Height',
+        },
+    },
+    toolBar: {
+        downloadButton: { label: 'Download', outputSelector: { label: 'Output' } },
+    },
+};
+
+window.StudioUI.studioUILoaderConfig({
+    // ...other config,
+    uiTranslations,
+});
+```
 
 ## Advanced example using own documents
 

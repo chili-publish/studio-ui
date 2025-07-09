@@ -3,7 +3,7 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from 'src/tests/mocks/Provider';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import MobileVariables from '../../../components/variables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';

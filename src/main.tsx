@@ -99,6 +99,8 @@ export default class StudioUI extends StudioUILoader {
      * @param onVariableBlur - Callback which returns the id of the currently blurred variable.
      * @param onFetchUserInterfaceDetails - Callback to get the user interface details if userInterfaceID is provided.
      * @param variableTranslations - Translations for the variables.
+     * @param uiTranslations - Translations for the UI.
+     * @param layoutTranslations - Translations for the layout.
      * @returns
      */
     static studioUILoaderConfig(config: IStudioUILoaderConfig) {
@@ -118,6 +120,8 @@ export default class StudioUI extends StudioUILoader {
             featureFlags,
             sandboxMode,
             variableTranslations,
+            uiTranslations,
+            layoutTranslations,
             onSandboxModeToggle,
             onProjectInfoRequested,
             onProjectDocumentRequested,
@@ -189,6 +193,8 @@ export default class StudioUI extends StudioUILoader {
             },
             {
                 variableTranslations,
+                uiTranslations,
+                layoutTranslations,
             },
         );
     }

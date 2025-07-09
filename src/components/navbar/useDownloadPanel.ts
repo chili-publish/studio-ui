@@ -1,7 +1,7 @@
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
-import { Dispatch, useState } from 'react';
+import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
@@ -17,20 +17,21 @@ const mimeToExt: { [key in MimeType]: string } = {
     'image/gif': 'gif',
 };
 
-const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => {
+const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, selectedLayoutId: string | null) => {
     const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
+    const previousSelectedLayoutId = useRef<string | null>(selectedLayoutId);
 
     const { validateVariables } = useVariablePanelContext();
     const { addNotification } = useNotificationManager();
 
-    const hideDownloadPanel = () => {
+    const hideDownloadPanel = useCallback(() => {
         setIsDownloadPanelVisible(false);
-    };
+    }, []);
 
-    const showDownloadPanel = () => {
+    const showDownloadPanel = useCallback(() => {
         setIsDownloadPanelVisible(true);
-    };
+    }, []);
 
     const handleDownload = async (
         extension: DownloadFormats,
@@ -92,6 +93,13 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string) => 
         }
         hideDownloadPanel();
     };
+
+    useEffect(() => {
+        if (selectedLayoutId !== previousSelectedLayoutId.current && isDownloadPanelVisible) {
+            hideDownloadPanel();
+        }
+        previousSelectedLayoutId.current = selectedLayoutId;
+    }, [selectedLayoutId, hideDownloadPanel, isDownloadPanelVisible]);
 
     return {
         isDownloadPanelVisible,

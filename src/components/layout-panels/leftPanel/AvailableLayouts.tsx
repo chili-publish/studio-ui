@@ -1,6 +1,8 @@
 import { Select, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useMemo } from 'react';
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
+import { useLayoutTranslations } from 'src/core/hooks/useLayoutTranslations';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 
@@ -18,15 +20,21 @@ function AvailableLayouts({
     mobileDevice,
     onMobileOptionListToggle,
 }: AvailableLayoutsProp) {
+    const { getUITranslation } = useUITranslations();
+    const { getTranslatedLayoutDisplayName } = useLayoutTranslations();
+
+    const selectLabel = getUITranslation(['formBuilder', 'layouts', 'inputLabel'], 'Select layout');
+    const placeholder = getUITranslation(['formBuilder', 'layouts', 'inputPlaceholder'], 'Select layout');
+
     const layoutOptions = useMemo(() => {
         const resultList = availableForUserLayouts.map((item) => ({
-            label: item.displayName ?? item.name,
+            label: getTranslatedLayoutDisplayName(item),
             value: item.id,
         }));
         resultList.sort((item1, item2) => item1.label.localeCompare(item2.label));
 
         return resultList;
-    }, [availableForUserLayouts]);
+    }, [availableForUserLayouts, getTranslatedLayoutDisplayName]);
 
     const selectedLayoutOption = useMemo(() => {
         return layoutOptions.find((item) => item.value === selectedLayout?.id) || null;
@@ -44,6 +52,8 @@ function AvailableLayouts({
             onChange={(option) => handleLayoutChange(option as string)}
             onMenuOpen={() => onMobileOptionListToggle?.(true)}
             onMenuClose={() => onMobileOptionListToggle?.(false)}
+            label={selectLabel}
+            placeholder={placeholder}
         />
     ) : (
         <Select
@@ -53,6 +63,8 @@ function AvailableLayouts({
             options={layoutOptions}
             isSearchable={false}
             onChange={(option) => handleLayoutChange(option?.value as string)}
+            label={selectLabel}
+            placeholder={placeholder}
         />
     );
 }
