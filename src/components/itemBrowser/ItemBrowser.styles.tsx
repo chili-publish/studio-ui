@@ -46,11 +46,12 @@ export const NavigationWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     position: relative;
-    margin-left: -0.75rem;
+    margin-inline-start: -0.75rem;
 
     svg {
         box-sizing: content-box !important;
-        padding: 0.5rem 0.5625rem !important;
+        padding-block: 0.5rem;
+        padding-inline: 0.5625rem !important;
         ${({ theme }) => `color: ${theme.themeColors.primaryTextColor} !important`};
     }
 
@@ -70,7 +71,7 @@ export const NavigationWrapper = styled.div`
     }
 
     & svg.path-icon + .navigation-path {
-        margin-left: 1.5rem;
+        margin-inline-start: 1.5rem;
     }
 `;
 
@@ -141,7 +142,8 @@ export const SearchInputWrapper = styled.div<{ hasSearchQuery?: boolean; isMobil
 `;
 
 export const EmptySearchResultContainer = styled.div`
-    padding: 0 3.75rem 0 calc(3.75rem - 1.25rem);
+    padding-block: 0;
+    padding-inline: calc(3.75rem - 1.25rem) 3.75rem;
     color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     font-size: 0.875rem;
     text-align: center;

@@ -1,6 +1,7 @@
 import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useVariableTranslations } from 'src/core/hooks/useVariableTranslations';
+import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
@@ -16,6 +17,7 @@ function VariablesList({ variables }: VariablesListProps) {
     const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { updateWithTranslation } = useVariableTranslations();
+    const { getUITranslation } = useUITranslations();
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
             if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
@@ -31,11 +33,14 @@ function VariablesList({ variables }: VariablesListProps) {
         return variables.map((variable) => updateWithTranslation(variable));
     }, [variables, updateWithTranslation]);
 
+    const header = getUITranslation(['formBuilder', 'variables', 'header'], formBuilder.variables.header);
+    const helpText = getUITranslation(['formBuilder', 'variables', 'helpText'], formBuilder.variables.helpText);
+
     return (
         <ListWrapper>
             <SectionWrapper id="variables-section-header">
-                <PanelTitle margin="0">{formBuilder.variables.header}</PanelTitle>
-                {formBuilder.variables.helpText && <SectionHelpText>{formBuilder.variables.helpText}</SectionHelpText>}
+                <PanelTitle margin="0">{header}</PanelTitle>
+                {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
             {variablesWithTranslation.map((variable: Variable) => {
                 if (!variable.isVisible) return null;

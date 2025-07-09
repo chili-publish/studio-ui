@@ -23,7 +23,9 @@ export const DataSourceInputStyle = createGlobalStyle<{ disabled: boolean }>`
         }
         button {
             flex: 1 1 auto;
-            padding: ${({ theme }) => `0 ${theme.icon.padding} 0 0.25rem`};
+            padding-block: 0 ;
+            padding-inline: ${({ theme }) => `0.25rem ${theme.icon.padding}`};
+
         }
         &:hover {
             svg {

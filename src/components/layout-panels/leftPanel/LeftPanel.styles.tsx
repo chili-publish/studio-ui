@@ -6,19 +6,21 @@ export const LeftPanelWrapper = styled.div<{ overflowScroll: boolean }>`
     width: 18.75rem;
     background-color: ${({ theme }) => theme.panel.backgroundColor};
     border-right: 2px solid ${({ theme }) => theme.panel.borderColor};
-    padding-left: 0;
+    padding-inline-start: 0;
     scollbar-gutter: stable;
 `;
 
 export const LeftPanelContainer = styled.div<{ hidden: boolean }>`
-    padding: 0 0 0 1.25rem;
+    padding-block: 0;
+    padding-inline: 1.25rem 0;
     box-sizing: border-box;
     width: calc(18.75rem - 1.5625rem - ${SCROLL_SIZE} + 1.25rem);
     ${({ hidden }) => hidden && 'display: none;'};
 `;
 
 export const ImagePanelContainer = styled.div<{ hidden: boolean }>`
-    padding: 0 0 0 1.25rem;
+    padding-block: 0;
+    padding-inline: 1.25rem 0;
     height: calc(100% - ${BORDER_SIZE});
     width: calc(18.75rem - ${BORDER_SIZE});
     ${({ hidden }) => hidden && 'display: none;'};

@@ -209,4 +209,153 @@ describe('useVariableTranslations', () => {
             selected: { value: 'val 2', displayValue: 'Val 2' },
         });
     });
+
+    it('should use variable name for translation if label translation is missing', () => {
+        // variable with label and name, but only name is present in translations
+        const variable = { ...mockVariables[2], label: 'Nonexistent Label', name: 'Short Variable 1' };
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'Short Variable 1': {
+                            label: 'Translated by Name',
+                            placeholder: 'Name placeholder',
+                            helpText: 'Name help',
+                        },
+                    },
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(variable);
+        expect(updatedVariable).toEqual({
+            ...variable,
+            label: 'Translated by Name',
+            placeholder: 'Name placeholder',
+            helpText: 'Name help',
+        });
+    });
+
+    it('should prefer label translation over name translation if both exist', () => {
+        // variable with label and name, both present in translations
+        const variable = { ...mockVariables[2], label: 'Short Variable 1 Label', name: 'Short Variable 1' };
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'Short Variable 1 Label': {
+                            label: 'Translated by Label',
+                            placeholder: 'Label placeholder',
+                            helpText: 'Label help',
+                        },
+                        'Short Variable 1': {
+                            label: 'Translated by Name',
+                            placeholder: 'Name placeholder',
+                            helpText: 'Name help',
+                        },
+                    },
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(variable);
+        expect(updatedVariable).toEqual({
+            ...variable,
+            label: 'Translated by Label',
+            placeholder: 'Label placeholder',
+            helpText: 'Label help',
+        });
+    });
+
+    it('should use variable name for translation if label is undefined', () => {
+        // variable with label undefined, but name present in translations
+        const variable = { ...mockVariables[9], label: undefined, name: 'Short Var name' };
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'Short Var name': {
+                            label: 'Translated by Name',
+                            placeholder: 'Name placeholder',
+                            helpText: 'Name help',
+                        },
+                    },
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(variable);
+        expect(updatedVariable).toEqual({
+            ...variable,
+            label: 'Translated by Name',
+            placeholder: 'Name placeholder',
+            helpText: 'Name help',
+        });
+    });
+
+    it('should use variable name for translation if label is empty', () => {
+        // variable with label empty, but name present in translations
+        const variable = { ...mockVariables[9], label: '', name: 'Short Var name' };
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: {
+                        'Short Var name': {
+                            label: 'Translated by Name',
+                            placeholder: 'Name placeholder',
+                            helpText: 'Name help',
+                        },
+                    },
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(variable);
+        expect(updatedVariable).toEqual({
+            ...variable,
+            label: 'Translated by Name',
+            placeholder: 'Name placeholder',
+            helpText: 'Name help',
+        });
+    });
+
+    it('should use item value as a fallback for translation if displayValue is not present', () => {
+        // Only the value 'val 2' is present in translations, displayValue is missing
+        const listVariable = {
+            ...mockVariables.find((v) => v.label === 'List label'),
+            items: [
+                { value: 'val 1', displayValue: 'Val 1' }, // translation by displayValue
+                { value: 'val 2' }, // no displayValue, should fallback to value for translation
+            ],
+            selected: { value: 'val 2' }, // selected item with no displayValue
+        } as ListVariable;
+
+        const customTranslations = {
+            ...mockTranslations,
+            'List label': {
+                ...mockTranslations['List label'],
+                listItems: {
+                    'Val 1': 'Translated Val 1', // for displayValue
+                    'val 2': 'Translated Val 2', // for value fallback
+                },
+            },
+        };
+
+        const { result } = renderHookWithProviders(() => useVariableTranslations(), {
+            preloadedState: {
+                appConfig: {
+                    variableTranslations: customTranslations,
+                },
+            },
+        });
+        const updatedVariable = result.current.updateWithTranslation(listVariable);
+
+        expect(updatedVariable).toEqual({
+            ...listVariable,
+            label: 'Translated List',
+            placeholder: 'Select translated option',
+            helpText: 'This is translated list help',
+            items: [
+                { value: 'val 1', displayValue: 'Translated Val 1' },
+                { value: 'val 2', displayValue: 'Translated Val 2' },
+            ],
+            selected: { value: 'val 2', displayValue: 'Translated Val 2' },
+        });
+    });
 });

@@ -3,6 +3,8 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
+import { UITranslations } from './UITranslations';
+import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
 
@@ -95,6 +97,7 @@ export type DownloadLinkResult = {
 export interface UiOptions {
     theme?: UiThemeConfig;
     uiTheme?: ITheme['mode'] | 'system';
+    uiDirection?: 'ltr' | 'rtl';
     widgets?: {
         downloadButton?: {
             visible?: boolean;
@@ -207,8 +210,8 @@ export const defaultUiOptions = {
             visible: false,
         },
     },
-
     uiTheme: 'light' as ITheme['mode'],
+    uiDirection: 'ltr' as const,
 };
 
 export const defaultPlatformUiOptions: UiOptions = {
@@ -287,6 +290,7 @@ export interface IStudioUILoaderConfig {
     sandboxMode?: boolean;
     featureFlags?: Record<string, boolean>;
     variableTranslations?: VariableTranslations;
+    layoutTranslations?: LayoutTranslations;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
@@ -310,6 +314,7 @@ export interface IStudioUILoaderConfig {
         variableId: string,
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
+    uiTranslations?: UITranslations;
 }
 
 export type PageSnapshot = {

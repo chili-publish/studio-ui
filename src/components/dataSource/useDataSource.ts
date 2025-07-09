@@ -9,6 +9,7 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
+import { useDirection } from '../../hooks/useDirection';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -29,6 +30,7 @@ const useDataSource = () => {
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
+    const { direction } = useDirection();
 
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
@@ -67,12 +69,17 @@ const useDataSource = () => {
     }
 
     const currentInputRow = useMemo(() => {
-        return currentRow
-            ? Object.values(currentRow)
-                  .map((v) => formatCell(v))
-                  .join(' | ')
-            : '';
-    }, [currentRow]);
+        if (!currentRow) return '';
+
+        const formattedValues = Object.values(currentRow).map((v) => formatCell(v));
+
+        // For RTL, add directional formatting to each value
+        if (direction === 'rtl') {
+            return formattedValues.map((value) => `\u200F${value}`).join(' | ');
+        }
+
+        return formattedValues.join(' | ');
+    }, [currentRow, direction]);
 
     const isPrevDisabled = useMemo(() => isLoading || currentRowIndex === 0, [currentRowIndex, isLoading]);
     const isNextDisabled = useMemo(

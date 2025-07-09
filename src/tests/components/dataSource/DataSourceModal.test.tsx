@@ -1,9 +1,10 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { ConnectorHttpError } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/mocks/app';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSource from '../../../components/dataSource/DataSource';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import AppProvider from '../../../contexts/AppProvider';
@@ -70,7 +71,7 @@ describe('DataSourceModal test', () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
             parsedData: { data: [] },
         });
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
@@ -96,7 +97,7 @@ describe('DataSourceModal test', () => {
 
     it('Should show "401" state correctly', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(401));
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
@@ -122,7 +123,7 @@ describe('DataSourceModal test', () => {
 
     it('Should show "404" state correctly', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(404));
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
@@ -148,7 +149,7 @@ describe('DataSourceModal test', () => {
 
     it('Should show "error" state correctly', async () => {
         window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new Error());
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
@@ -178,7 +179,7 @@ describe('DataSourceModal test', () => {
             subscriber: mockSubscriber,
         });
 
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
@@ -238,7 +239,7 @@ describe('DataSourceModal test', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        render(
+        renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>

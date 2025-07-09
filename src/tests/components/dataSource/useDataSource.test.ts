@@ -1,5 +1,6 @@
 import { ConnectorEventType } from '@chili-publish/studio-sdk';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
+import { renderHookWithProviders } from '@tests/mocks/Provider';
 import useDataSource, { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import { useAppContext } from '../../../contexts/AppProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
@@ -47,7 +48,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHookWithProviders(() => useDataSource());
 
         act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { arbitaryKey: '333' });
@@ -68,7 +69,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHookWithProviders(() => useDataSource());
 
         await act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
@@ -95,7 +96,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHookWithProviders(() => useDataSource());
 
         await act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
@@ -129,7 +130,7 @@ describe('"useDataSource" hook tests', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        const { result } = await renderHook(() => useDataSource());
+        const { result } = await renderHookWithProviders(() => useDataSource());
 
         await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
 
