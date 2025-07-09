@@ -3,13 +3,13 @@ import { PanelType } from 'src/contexts/VariablePanelContext.types';
 import type { RootState } from '../index';
 
 type PanelState = {
-    currentPanel: PanelType;
+    activePanel: PanelType;
     currentVariableId: string;
     currentVariableConnectorId: string;
 };
 
 const initialState: PanelState = {
-    currentPanel: PanelType.DEFAULT,
+    activePanel: PanelType.DEFAULT,
     currentVariableId: '',
     currentVariableConnectorId: '',
 };
@@ -19,26 +19,26 @@ export const panelSlice = createSlice({
     initialState,
     reducers: {
         showVariablesPanel: (state) => {
-            state.currentPanel = PanelType.DEFAULT;
+            state.activePanel = PanelType.DEFAULT;
         },
         showDatePickerPanel: (state, action: PayloadAction<{ variableId: string }>) => {
-            state.currentPanel = PanelType.DATE_VARIABLE_PICKER;
+            state.activePanel = PanelType.DATE_VARIABLE_PICKER;
             state.currentVariableId = action.payload.variableId;
         },
         showDataSourcePanel: (state) => {
-            state.currentPanel = PanelType.DATA_SOURCE_TABLE;
+            state.activePanel = PanelType.DATA_SOURCE_TABLE;
         },
         showImagePanel: (state, action: PayloadAction<{ variableId: string; connectorId: string }>) => {
             state.currentVariableId = action.payload.variableId;
             state.currentVariableConnectorId = action.payload.connectorId;
-            state.currentPanel = PanelType.IMAGE_PANEL;
+            state.activePanel = PanelType.IMAGE_PANEL;
         },
     },
 });
 
 export const { showVariablesPanel, showDatePickerPanel, showDataSourcePanel, showImagePanel } = panelSlice.actions;
 
-export const selectCurrentPanel = (state: RootState): PanelState['currentPanel'] => state.panel.currentPanel;
+export const selectActivePanel = (state: RootState): PanelState['activePanel'] => state.panel.activePanel;
 export const selectCurrentVariableId = (state: RootState): PanelState['currentVariableId'] =>
     state.panel.currentVariableId;
 export const selectCurrentVariableConnectorId = (state: RootState): PanelState['currentVariableConnectorId'] =>

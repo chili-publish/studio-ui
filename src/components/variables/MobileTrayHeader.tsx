@@ -7,7 +7,7 @@ import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { MobileTrayFormBuilderHeader } from '../../types/types';
 import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import { selectCurrentPanel, showVariablesPanel } from '../../store/reducers/panelReducer';
+import { selectActivePanel, showVariablesPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
 interface MobileTrayHeaderProps {
@@ -26,7 +26,7 @@ function MobileTrayHeader({
     trayHeaderData,
 }: MobileTrayHeaderProps) {
     const dispatch = useAppDispatch();
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
 
     const { imagePanelTitle } = useVariablePanelContext();
     const { datasource, variables, layouts } = trayHeaderData;
@@ -49,14 +49,14 @@ function MobileTrayHeader({
                 {layouts.helpText && <SectionHelpText>{layouts.helpText}</SectionHelpText>}
             </SectionWrapper>
         );
-    if (currentPanel === PanelType.DEFAULT || mobileListOpen)
+    if (activePanel === PanelType.DEFAULT || mobileListOpen)
         return (
             <SectionWrapper id="layout-section-header">
                 <TrayPanelTitle margin="0">{variables.title}</TrayPanelTitle>
                 {variables.helpText && <SectionHelpText>{variables.helpText}</SectionHelpText>}
             </SectionWrapper>
         );
-    if (currentPanel === PanelType.DATE_VARIABLE_PICKER)
+    if (activePanel === PanelType.DATE_VARIABLE_PICKER)
         return (
             <DatePickerTrayTitle>
                 <Button
@@ -75,8 +75,8 @@ function MobileTrayHeader({
             </DatePickerTrayTitle>
         );
 
-    if (currentPanel === PanelType.IMAGE_PANEL) return imagePanelTitle;
-    if (currentPanel === PanelType.DATA_SOURCE_TABLE)
+    if (activePanel === PanelType.IMAGE_PANEL) return imagePanelTitle;
+    if (activePanel === PanelType.DATA_SOURCE_TABLE)
         return (
             <DatePickerTrayTitle>
                 <Button

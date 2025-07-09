@@ -29,7 +29,7 @@ import {
     SearchInputWrapper,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
-import { selectCurrentPanel } from '../../store/reducers/panelReducer';
+import { selectActivePanel } from '../../store/reducers/panelReducer';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -67,7 +67,7 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
     const {
         connectorCapabilities,
         imagePanelTitle,
@@ -101,7 +101,7 @@ function ItemBrowser<
         setBreadcrumbStack([]);
         setNavigationStack([]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPanel]);
+    }, [activePanel]);
 
     // nextPagetoken is first set with 'requested: false' whenever we know the next
     // pagetoken. When the last item of the previous page comes into view (in html)
@@ -115,7 +115,7 @@ function ItemBrowser<
         setIsLoading(true);
         // declare the async data fetching function
         const fetchData = async () => {
-            if (currentPanel !== PanelType.IMAGE_PANEL) return;
+            if (activePanel !== PanelType.IMAGE_PANEL) return;
             if (connectorCapabilities[connectorId]?.query) {
                 const data = await queryCall(
                     connectorId,
@@ -169,7 +169,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken.requested, nextPageToken.token, currentPanel, searchQuery]);
+    }, [nextPageToken.requested, nextPageToken.token, activePanel, searchQuery]);
 
     useEffect(() => {
         return () => {
@@ -262,7 +262,7 @@ function ItemBrowser<
     }
 
     // eslint-disable-next-line no-nested-ternary
-    const panelTitle = isMobileSize ? null : currentPanel === PanelType.IMAGE_PANEL ? imagePanelTitle : null;
+    const panelTitle = isMobileSize ? null : activePanel === PanelType.IMAGE_PANEL ? imagePanelTitle : null;
     const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
     const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 

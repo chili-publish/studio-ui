@@ -1,8 +1,8 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
+import { useSelector } from 'react-redux';
 import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
 import { useUITranslations } from '../../../core/hooks/useUITranslations';
-import { useSelector } from 'react-redux';
 import { PanelType } from '../../../contexts/VariablePanelContext.types';
 import { UiOptions } from '../../../types/types';
 import DataSource from '../../dataSource/DataSource';
@@ -13,7 +13,7 @@ import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
-import { selectCurrentPanel } from '../../../store/reducers/panelReducer';
+import { selectActivePanel } from '../../../store/reducers/panelReducer';
 
 interface LeftPanelProps {
     variables: Variable[];
@@ -33,7 +33,7 @@ function LeftPanel({
     pageSize,
     layoutSectionUIOptions,
 }: LeftPanelProps) {
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
     const {
         shouldHide: shouldHideLeftPanel,
         layoutSection: {
@@ -54,9 +54,9 @@ function LeftPanel({
     const layoutsHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
     return !shouldHideLeftPanel ? (
-        <LeftPanelWrapper id="left-panel" overflowScroll={currentPanel !== PanelType.IMAGE_PANEL}>
+        <LeftPanelWrapper id="left-panel" overflowScroll={activePanel !== PanelType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
-                <LeftPanelContainer hidden={currentPanel === PanelType.IMAGE_PANEL}>
+                <LeftPanelContainer hidden={activePanel === PanelType.IMAGE_PANEL}>
                     {isDataSourceDisplayed && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
@@ -79,7 +79,7 @@ function LeftPanel({
                     {formBuilder.variables.active && <VariablesList variables={variables} />}
                 </LeftPanelContainer>
 
-                <ImagePanelContainer hidden={currentPanel !== PanelType.IMAGE_PANEL}>
+                <ImagePanelContainer hidden={activePanel !== PanelType.IMAGE_PANEL}>
                     <ImagePanel />
                 </ImagePanelContainer>
             </ScrollbarWrapper>

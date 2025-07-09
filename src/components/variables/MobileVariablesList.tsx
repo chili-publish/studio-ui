@@ -13,7 +13,7 @@ import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
 import {
-    selectCurrentPanel,
+    selectActivePanel,
     showVariablesPanel,
     showDatePickerPanel,
     selectCurrentVariableId,
@@ -28,7 +28,7 @@ interface VariablesListProps {
 function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
     const dispatch = useAppDispatch();
 
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
     const currentVariableId = useSelector(selectCurrentVariableId);
 
     const { validateUpdatedVariables } = useVariablePanelContext();
@@ -70,7 +70,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                 if (
                     isListVariable(variable) &&
                     isListVariabledDisplayed &&
-                    currentPanel !== PanelType.DATE_VARIABLE_PICKER
+                    activePanel !== PanelType.DATE_VARIABLE_PICKER
                 ) {
                     return (
                         <ComponentWrapper
@@ -96,7 +96,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                 }
                 const isDateVariableOpen =
                     variable.type === VariableType.date &&
-                    currentPanel === PanelType.DATE_VARIABLE_PICKER &&
+                    activePanel === PanelType.DATE_VARIABLE_PICKER &&
                     currentVariableId === variable.id;
 
                 if (isDateVariableOpen && !listVariableOpen) {
@@ -108,7 +108,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                         />
                     );
                 }
-                return !listVariableOpen && currentPanel !== PanelType.DATE_VARIABLE_PICKER ? (
+                return !listVariableOpen && activePanel !== PanelType.DATE_VARIABLE_PICKER ? (
                     <ComponentWrapper key={`variable-component-${variable.id}`}>
                         <VariablesComponents
                             type={variable.type}

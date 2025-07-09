@@ -1,15 +1,15 @@
 import { DateVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { useSelector } from 'react-redux';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
-import { selectCurrentPanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
+import { selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
 interface VariablesListProps {
@@ -17,7 +17,7 @@ interface VariablesListProps {
 }
 
 function VariablesList({ variables }: VariablesListProps) {
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
     const dispatch = useAppDispatch();
     const { validateUpdatedVariables } = useVariablePanelContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
@@ -49,7 +49,7 @@ function VariablesList({ variables }: VariablesListProps) {
             </SectionWrapper>
             {variablesWithTranslation.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
-                return currentPanel !== PanelType.DATE_VARIABLE_PICKER ? (
+                return activePanel !== PanelType.DATE_VARIABLE_PICKER ? (
                     <ComponentWrapper key={`variable-component-${variable.id}`}>
                         <VariablesComponents
                             type={variable.type}

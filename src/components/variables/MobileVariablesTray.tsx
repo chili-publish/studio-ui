@@ -2,8 +2,8 @@ import { Tray } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
-import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useSelector } from 'react-redux';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
 import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
@@ -23,7 +23,7 @@ import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
-import { selectCurrentPanel, showVariablesPanel, showDataSourcePanel } from '../../store/reducers/panelReducer';
+import { selectActivePanel, showVariablesPanel, showDataSourcePanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
 interface VariablesPanelProps {
@@ -57,7 +57,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         layoutSectionUIOptions,
     } = props;
 
-    const currentPanel = useSelector(selectCurrentPanel);
+    const activePanel = useSelector(selectActivePanel);
     const dispatch = useAppDispatch();
 
     const { formBuilder } = useUserInterfaceDetailsContext();
@@ -102,9 +102,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
         selectedLayout,
         layoutSectionUIOptions,
     });
-    const isDateVariablePanelOpen = currentPanel === PanelType.DATE_VARIABLE_PICKER;
-    const isImageBrowsePanelOpen = currentPanel === PanelType.IMAGE_PANEL;
-    const isDataSourcePanelOpen = currentPanel === PanelType.DATA_SOURCE_TABLE;
+    const isDateVariablePanelOpen = activePanel === PanelType.DATE_VARIABLE_PICKER;
+    const isImageBrowsePanelOpen = activePanel === PanelType.IMAGE_PANEL;
+    const isDataSourcePanelOpen = activePanel === PanelType.DATA_SOURCE_TABLE;
     const isDefaultPanelView = !(isDateVariablePanelOpen || isImageBrowsePanelOpen || isDataSourcePanelOpen);
 
     const mobileOptionListOpen = variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen;
@@ -178,9 +178,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 onTrayHidden={onTrayHidden}
                 hideCloseButton={variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen}
                 styles={css`
-                    height: ${currentPanel === PanelType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
+                    height: ${activePanel === PanelType.IMAGE_PANEL ? 'calc(100% - 4rem)' : 'auto'};
                     overflow: ${isDefaultPanelView ? 'auto' : 'hidden'};
-                    ${currentPanel === PanelType.IMAGE_PANEL && `padding-bottom: 0`};
+                    ${activePanel === PanelType.IMAGE_PANEL && `padding-bottom: 0`};
                     ${isDataSourcePanelOpen && dataSourceTrayStyles}
                     &::-webkit-scrollbar {
                         width: 0;
