@@ -1,17 +1,12 @@
 import { ConnectorMappingDirection, Variable } from '@chili-publish/studio-sdk';
-import { renderHook, waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, waitFor } from '@testing-library/react';
+import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useMediaDetails } from '../../../../components/variablesComponents/imageVariable/useMediaDetails';
 import { useSubscriberContext } from '../../../../contexts/Subscriber';
-import { useVariablePanelContext } from '../../../../contexts/VariablePanelContext';
 import { Subscriber } from '../../../../utils/subscriber';
-
-jest.mock('../../../../contexts/VariablePanelContext', () => ({
-    useVariablePanelContext: jest.fn().mockReturnValue({
-        connectorCapabilities: {},
-        getCapabilitiesForConnector: jest.fn(),
-    }),
-}));
+import { setupStore } from '../../../../store';
+import * as mediaReducer from '../../../../store/reducers/mediaReducer';
+import { setConnectorCapabilities } from '../../../../store/reducers/mediaReducer';
 
 jest.mock('../../../../contexts/Subscriber', () => ({
     useSubscriberContext: jest.fn().mockReturnValue({
@@ -58,6 +53,13 @@ describe('"useMediaDetails" hook', () => {
                 },
             ],
         });
+        window.StudioUISDK.mediaConnector.getCapabilities = jest.fn().mockResolvedValue({
+            parsedData: {
+                query: true,
+                detail: true,
+                filtering: true,
+            },
+        });
         window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
             parsedData: [
                 {
@@ -68,6 +70,8 @@ describe('"useMediaDetails" hook', () => {
                 },
             ],
         });
+
+        jest.spyOn(mediaReducer, 'getCapabilitiesForConnector');
     });
 
     afterEach(() => {
@@ -75,7 +79,8 @@ describe('"useMediaDetails" hook', () => {
     });
 
     it('should not request getState if no connector is provided', async () => {
-        const { result } = renderHook(() => useMediaDetails(undefined, 'media'));
+        const reduxStore = setupStore();
+        const { result } = renderHookWithProviders(() => useMediaDetails(undefined, 'media'), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.variable.getAll).toHaveBeenCalled());
         expect(window.StudioUISDK.connector.getState).not.toHaveBeenCalledWith('grafx-media');
@@ -89,7 +94,8 @@ describe('"useMediaDetails" hook', () => {
                 type: 'loading',
             },
         });
-        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media'));
+        const reduxStore = setupStore();
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', 'media'), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         expect(window.StudioUISDK.connector.waitToBeReady).toHaveBeenCalledWith('grafx-media');
@@ -97,15 +103,11 @@ describe('"useMediaDetails" hook', () => {
     });
 
     it('should request connector capabilities', async () => {
+        const reduxStore = setupStore();
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
             parsedData: [],
         });
-        const getCapabilitiesForConnector = jest.fn();
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {},
-            getCapabilitiesForConnector,
-        });
-        const { result } = renderHook(() => useMediaDetails('grafx-media', undefined));
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', undefined), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
@@ -117,24 +119,29 @@ describe('"useMediaDetails" hook', () => {
                 ConnectorMappingDirection.engineToConnector,
             ),
         );
-        await waitFor(() => expect(getCapabilitiesForConnector).toHaveBeenCalledWith('grafx-media'));
+        await waitFor(() =>
+            expect(mediaReducer.getCapabilitiesForConnector).toHaveBeenCalledWith({ connectorId: 'grafx-media' }),
+        );
 
         expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
         expect(result.current).toEqual(null);
     });
 
     it('should not request connector capabilities', async () => {
+        const reduxStore = setupStore();
+        reduxStore.dispatch(
+            setConnectorCapabilities({
+                'grafx-media': {
+                    query: true,
+                    detail: true,
+                    filtering: true,
+                },
+            }),
+        );
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValueOnce({
             parsedData: null,
         });
-        const getCapabilitiesForConnector = jest.fn();
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {
-                'grafx-media': {},
-            },
-            getCapabilitiesForConnector,
-        });
-        const { result } = renderHook(() => useMediaDetails('grafx-media', undefined));
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', undefined), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
@@ -145,25 +152,28 @@ describe('"useMediaDetails" hook', () => {
             ),
         );
 
-        expect(getCapabilitiesForConnector).not.toHaveBeenCalledWith('grafx-media');
+        expect(mediaReducer.getCapabilitiesForConnector).not.toHaveBeenCalledWith('grafx-media');
         expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
         expect(result.current).toEqual(null);
     });
 
     it('should not request media details if emits on "connectorToEngine" variables', async () => {
         const mockSubscriber = new Subscriber();
+        const reduxStore = setupStore();
+        reduxStore.dispatch(
+            setConnectorCapabilities({
+                'grafx-media': {
+                    query: true,
+                    detail: false,
+                    filtering: false,
+                },
+            }),
+        );
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {
-                'grafx-media': {
-                    query: true,
-                },
-            },
-            getCapabilitiesForConnector: jest.fn(),
-        });
-        renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+
+        renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() =>
@@ -174,7 +184,9 @@ describe('"useMediaDetails" hook', () => {
         );
 
         const variableChange = { id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2', value: '1234' } as unknown as Variable;
-        mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        await act(() => {
+            mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        });
 
         await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
@@ -186,15 +198,17 @@ describe('"useMediaDetails" hook', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {
+        const reduxStore = setupStore();
+        reduxStore.dispatch(
+            setConnectorCapabilities({
                 'grafx-media': {
                     query: true,
+                    detail: true,
+                    filtering: false,
                 },
-            },
-            getCapabilitiesForConnector: jest.fn(),
-        });
-        renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+            }),
+        );
+        renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), { reduxStore });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() =>
@@ -217,15 +231,19 @@ describe('"useMediaDetails" hook', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {
+        const reduxStore = setupStore();
+        reduxStore.dispatch(
+            setConnectorCapabilities({
                 'grafx-media': {
                     query: false,
+                    detail: false,
+                    filtering: false,
                 },
-            },
-            getCapabilitiesForConnector: jest.fn(),
+            }),
+        );
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), {
+            reduxStore,
         });
-        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() =>
@@ -236,7 +254,9 @@ describe('"useMediaDetails" hook', () => {
         );
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
-        mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        act(() => {
+            mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        });
 
         await waitFor(() => {
             expect(window.StudioUISDK.mediaConnector.query).not.toHaveBeenCalled();
@@ -249,19 +269,22 @@ describe('"useMediaDetails" hook', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: mockSubscriber,
         });
-        (useVariablePanelContext as jest.Mock).mockReturnValue({
-            connectorCapabilities: {
+        const reduxStore = setupStore();
+        reduxStore.dispatch(
+            setConnectorCapabilities({
                 'grafx-media': {
                     query: true,
+                    detail: false,
                     filtering: true,
                 },
-            },
-            getCapabilitiesForConnector: jest.fn(),
-        });
+            }),
+        );
         window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValue({
             parsedData: null,
         });
-        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), {
+            reduxStore,
+        });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() =>
@@ -304,8 +327,11 @@ describe('"useMediaDetails" hook', () => {
             },
             getCapabilitiesForConnector: jest.fn(),
         };
-        (useVariablePanelContext as jest.Mock).mockReturnValue(mockValue);
-        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+        const reduxStore = setupStore();
+        reduxStore.dispatch(setConnectorCapabilities(mockValue.connectorCapabilities));
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), {
+            reduxStore,
+        });
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
         await waitFor(() =>
@@ -354,11 +380,16 @@ describe('"useMediaDetails" hook', () => {
             },
             getCapabilitiesForConnector: jest.fn(),
         };
-        (useVariablePanelContext as jest.Mock).mockReturnValue(mockValue);
-        const { result } = renderHook(() => useMediaDetails('grafx-media', 'media-asset-id'));
+        const reduxStore = setupStore();
+        reduxStore.dispatch(setConnectorCapabilities(mockValue.connectorCapabilities));
+        const { result } = renderHookWithProviders(() => useMediaDetails('grafx-media', 'media-asset-id'), {
+            reduxStore,
+        });
 
         const variableChange = { id: '8A59BB89-898D-4BAC-9C8F-F40F6C83479E', value: '1234' } as unknown as Variable;
-        mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        await act(() => {
+            mockSubscriber.emit('onVariableListChanged', [variableChange]);
+        });
 
         await waitFor(() =>
             expect(window.StudioUISDK.mediaConnector.detail).toHaveBeenCalledWith('grafx-media', 'media-asset-id'),

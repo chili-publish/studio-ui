@@ -1,33 +1,36 @@
-import { DateVariable, DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
+import { DateVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
+import { PanelType, selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../store';
+import { selectVariables, validateUpdatedVariables } from '../../store/reducers/variableReducer';
+import { useVariableHistory } from '../dataSource/useVariableHistory';
 
-interface VariablesListProps {
-    variables: Variable[];
-}
+function VariablesList() {
+    const activePanel = useSelector(selectActivePanel);
+    const variables = useSelector(selectVariables);
 
-function VariablesList({ variables }: VariablesListProps) {
-    const { contentType, showDatePicker, validateUpdatedVariables } = useVariablePanelContext();
+    const dispatch = useAppDispatch();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { updateWithTranslation } = useVariableTranslations();
     const { getUITranslation } = useUITranslations();
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
-            if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
+            if (variable.type === VariableType.date) dispatch(showDatePickerPanel({ variableId: variable.id }));
         },
-        [showDatePicker],
+        [dispatch],
     );
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
-        validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+        if (variablesChanged) dispatch(validateUpdatedVariables());
+    }, [variablesChanged, dispatch]);
 
     const variablesWithTranslation = useMemo(() => {
         return variables.map((variable) => updateWithTranslation(variable));
@@ -44,7 +47,7 @@ function VariablesList({ variables }: VariablesListProps) {
             </SectionWrapper>
             {variablesWithTranslation.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
-                return contentType !== ContentType.DATE_VARIABLE_PICKER ? (
+                return activePanel !== PanelType.DATE_VARIABLE_PICKER ? (
                     <ComponentWrapper key={`variable-component-${variable.id}`}>
                         <VariablesComponents
                             type={variable.type}

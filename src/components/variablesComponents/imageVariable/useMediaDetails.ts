@@ -1,17 +1,19 @@
 import { ConnectorMappingDirection, ConnectorStateType, Media } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useState } from 'react';
-import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
+import { useSelector } from 'react-redux';
 import { useVariablesChange } from '../../../core/hooks/useVariablesChange';
 import { fromLinkToVariableId, isLinkToVariable } from '../../../utils/connectors';
+import { useAppDispatch } from '../../../store';
+import { getCapabilitiesForConnector, selectConnectorCapabilities } from '../../../store/reducers/mediaReducer';
 
 export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: string | undefined) => {
-    const { connectorCapabilities, getCapabilitiesForConnector } = useVariablePanelContext();
-
+    const dispatch = useAppDispatch();
     const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
     const [mediaConnectorState, setMediaConnectorState] = useState<ConnectorStateType.ready | null>(null);
     const [variableIdsInMapping, setVariableIdsInMapping] = useState<Array<string>>([]);
     const { currentVariables } = useVariablesChange(variableIdsInMapping);
 
+    const connectorCapabilities = useSelector(selectConnectorCapabilities);
     const getMediaDetails = useCallback(async () => {
         if (!connectorId || !mediaAssetId) {
             return null;
@@ -67,9 +69,9 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
                 return;
             }
 
-            await getCapabilitiesForConnector(connectorId);
+            await dispatch(getCapabilitiesForConnector({ connectorId }));
         })();
-    }, [getCapabilitiesForConnector, connectorId, connectorCapabilities, mediaConnectorState]);
+    }, [connectorId, connectorCapabilities, mediaConnectorState, dispatch]);
 
     useEffect(() => {
         getMediaDetails().then((media) => setMediaDetails(media));

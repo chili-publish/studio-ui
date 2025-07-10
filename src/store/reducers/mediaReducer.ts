@@ -1,4 +1,4 @@
-import { ConnectorType } from '@chili-publish/studio-sdk';
+import { ConnectorType, MediaConnectorCapabilities } from '@chili-publish/studio-sdk';
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axios from 'axios';
@@ -7,12 +7,17 @@ import { getConnectorUrl } from '../../utils/connectors';
 import type { RootState } from '../index';
 
 type MediaConnectors = { [connectorId: string]: MediaRemoteConnector };
+export interface ICapabilities {
+    [index: string]: MediaConnectorCapabilities | undefined;
+}
 
 type MediaState = {
     connectors: MediaConnectors;
+    connectorCapabilities: ICapabilities;
 };
 const initialState: MediaState = {
     connectors: {},
+    connectorCapabilities: {},
 };
 
 export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
@@ -66,6 +71,18 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
     },
 );
 
+export const getCapabilitiesForConnector = createAsyncThunk(
+    'media/getCapabilitiesForConnector',
+    async ({ connectorId }: { connectorId: string }) => {
+        if (!connectorId) throw new Error('ConnectorId is not defined');
+        const res = await window.StudioUISDK.mediaConnector.getCapabilities(connectorId);
+        if (!res.parsedData) throw new Error('Connector capabilities are not defined');
+        return {
+            [connectorId]: res.parsedData,
+        } as ICapabilities;
+    },
+);
+
 export const mediaSlice = createSlice({
     name: 'media',
     initialState,
@@ -73,10 +90,20 @@ export const mediaSlice = createSlice({
         setMediaConnectors: (state, action: PayloadAction<MediaConnectors>) => {
             state.connectors = action.payload;
         },
+        setConnectorCapabilities: (state, action: PayloadAction<ICapabilities>) => {
+            state.connectorCapabilities = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getCapabilitiesForConnector.fulfilled, (state, action) => {
+            state.connectorCapabilities = { ...state.connectorCapabilities, ...action.payload };
+        });
     },
 });
 
-export const { setMediaConnectors } = mediaSlice.actions;
+export const { setMediaConnectors, setConnectorCapabilities } = mediaSlice.actions;
 
 export const selectMediaConnectors = (state: RootState): MediaState['connectors'] => state.media.connectors;
+export const selectConnectorCapabilities = (state: RootState): MediaState['connectorCapabilities'] =>
+    state.media.connectorCapabilities;
 export default mediaSlice.reducer;

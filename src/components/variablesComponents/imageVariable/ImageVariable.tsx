@@ -1,7 +1,6 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
-import { useVariablePanelContext } from '../../../contexts/VariablePanelContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
@@ -11,16 +10,16 @@ import { useMediaDetails } from './useMediaDetails';
 import { usePreviewImageUrl } from './usePreviewImageUrl';
 import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
+import { useAppDispatch } from '../../../store';
+import { showImagePanel } from '../../../store/reducers/panelReducer';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
-
+    const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
 
     const { remoteConnector } = useVariableConnector(variable);
-
-    const { showImagePanel } = useVariablePanelContext();
 
     const mediaAssetId = useMemo(() => {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
@@ -76,7 +75,7 @@ function ImageVariable(props: IImageVariable) {
                 await verifyAuthentication(variable.value.connectorId);
             }
             onVariableFocus?.(variable.id);
-            showImagePanel(variable);
+            dispatch(showImagePanel({ variableId: variable.id, connectorId: variable.value?.connectorId ?? '' }));
         } catch (error) {
             // TODO: We should handle connector's authorization issue accordingly
             // eslint-disable-next-line no-console

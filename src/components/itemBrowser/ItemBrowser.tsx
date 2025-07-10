@@ -12,10 +12,10 @@ import {
     useInfiniteScrolling,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
-import { EditorResponse, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
+import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
+import { useSelector } from 'react-redux';
+import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
@@ -28,6 +28,8 @@ import {
     SearchInputWrapper,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
+import { PanelType, selectActivePanel } from '../../store/reducers/panelReducer';
+import ImagePanelTitle from './ImagePanelTitle';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -57,6 +59,13 @@ function ItemBrowser<
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const activePanel = useSelector(selectActivePanel);
+
+    const [selectedItems, setSelectedItems] = useState<Media[]>([]);
+    const [navigationStack, setNavigationStack] = useState<string[]>([]);
+    const [searchKeyWord, setSearchKeyWord] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
@@ -65,21 +74,8 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-
-    const {
-        connectorCapabilities,
-        contentType,
-        imagePanelTitle,
-        navigationStack,
-        selectedItems,
-        setNavigationStack,
-        setSelectedItems,
-        searchKeyWord,
-        setSearchKeyWord,
-        searchQuery,
-        setSearchQuery,
-    } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
+    const connectorCapabilities = useSelector(selectConnectorCapabilities);
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -100,7 +96,7 @@ function ItemBrowser<
         setBreadcrumbStack([]);
         setNavigationStack([]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contentType]);
+    }, [activePanel]);
 
     // nextPagetoken is first set with 'requested: false' whenever we know the next
     // pagetoken. When the last item of the previous page comes into view (in html)
@@ -114,7 +110,7 @@ function ItemBrowser<
         setIsLoading(true);
         // declare the async data fetching function
         const fetchData = async () => {
-            if (contentType !== ContentType.IMAGE_PANEL) return;
+            if (activePanel !== PanelType.IMAGE_PANEL) return;
             if (connectorCapabilities[connectorId]?.query) {
                 const data = await queryCall(
                     connectorId,
@@ -168,7 +164,7 @@ function ItemBrowser<
             ignore = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextPageToken.requested, nextPageToken.token, contentType, searchQuery]);
+    }, [nextPageToken.requested, nextPageToken.token, activePanel, searchQuery]);
 
     useEffect(() => {
         return () => {
@@ -261,7 +257,8 @@ function ItemBrowser<
     }
 
     // eslint-disable-next-line no-nested-ternary
-    const panelTitle = isMobileSize ? null : contentType === ContentType.IMAGE_PANEL ? imagePanelTitle : null;
+    const panelTitle = isMobileSize ? null : activePanel === PanelType.IMAGE_PANEL ? <ImagePanelTitle /> : null;
+
     const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
     const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 

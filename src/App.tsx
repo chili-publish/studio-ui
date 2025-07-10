@@ -1,8 +1,10 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import axios, { AxiosError } from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import { StyleSheetManager } from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
 import { SubscriberContextProvider } from './contexts/Subscriber';
 import MainContent from './MainContent';
@@ -24,6 +26,16 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         }
         return projectConfig.uiOptions.uiTheme;
     }, [projectConfig.uiOptions.uiTheme]);
+
+    // temporary fix for the warnings of props being attached to HTML elements thrown by styled-components migration from v5 to v6
+    const shouldForwardProp = useCallback((propName: string, target: unknown) => {
+        if (typeof target === 'string') {
+            // For HTML elements, forward the prop if it is a valid HTML attribute
+            return isPropValid(propName);
+        }
+        // For other elements, forward all props
+        return true;
+    }, []);
 
     // This interceptor will resend the request after refreshing the token in case it is no longer valid
     useEffect(() => {
@@ -63,18 +75,20 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     return (
         <div id="studio-ui-root-wrapper">
-            <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
-            <SubscriberContextProvider subscriber={eventSubscriber}>
-                <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
-                    <NotificationManagerProvider>
-                        <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                            <AuthTokenProvider authToken={authToken}>
-                                <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
-                            </AuthTokenProvider>
-                        </FeatureFlagProvider>
-                    </NotificationManagerProvider>
-                </UiThemeProvider>
-            </SubscriberContextProvider>
+            <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+                <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
+                <SubscriberContextProvider subscriber={eventSubscriber}>
+                    <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
+                        <NotificationManagerProvider>
+                            <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
+                                <AuthTokenProvider authToken={authToken}>
+                                    <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                                </AuthTokenProvider>
+                            </FeatureFlagProvider>
+                        </NotificationManagerProvider>
+                    </UiThemeProvider>
+                </SubscriberContextProvider>
+            </StyleSheetManager>
         </div>
     );
 }

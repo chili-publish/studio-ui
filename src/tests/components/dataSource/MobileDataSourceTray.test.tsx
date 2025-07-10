@@ -9,7 +9,6 @@ import MobileVariables from '../../../components/variables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
-import { VariablePanelContextProvider } from '../../../contexts/VariablePanelContext';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
@@ -72,7 +71,6 @@ describe('MobileDataSource test', () => {
                 <div id={APP_WRAPPER_ID}>
                     <FeatureFlagProvider>
                         <MobileVariables
-                            variables={[]}
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
                             layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
@@ -107,21 +105,18 @@ describe('MobileDataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
-                    <VariablePanelContextProvider variables={[]}>
-                        <FeatureFlagProvider>
-                            <MobileVariables
-                                variables={[]}
-                                selectedLayout={mockLayout}
-                                layouts={mockLayouts}
-                                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                                layoutSectionUIOptions={{
-                                    visible: false,
-                                    layoutSwitcherVisible: false,
-                                    title: 'Layout',
-                                }}
-                            />
-                        </FeatureFlagProvider>
-                    </VariablePanelContextProvider>
+                    <FeatureFlagProvider>
+                        <MobileVariables
+                            selectedLayout={mockLayout}
+                            layouts={mockLayouts}
+                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                            layoutSectionUIOptions={{
+                                visible: false,
+                                layoutSwitcherVisible: false,
+                                title: 'Layout',
+                            }}
+                        />
+                    </FeatureFlagProvider>
                 </div>
             </AppProvider>,
         );

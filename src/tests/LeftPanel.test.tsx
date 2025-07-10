@@ -2,7 +2,7 @@ import { getDataTestId } from '@chili-publish/grafx-shared-components';
 import EditorSDK, { LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockAssets } from '@mocks/mockAssets';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import { FormBuilderArray, ProjectConfig, UserInterfaceWithOutputSettings } from 'src/types/types';
@@ -12,12 +12,15 @@ import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { UiConfigContextProvider } from 'src/contexts/UiConfigContext';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import AppProvider from '../contexts/AppProvider';
-import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
 import { renderWithProviders } from './mocks/Provider';
+import { setupStore } from '../store';
+import { setVariables } from '../store/reducers/variableReducer';
+import { showVariablesPanel } from '../store/reducers/panelReducer';
+import * as panelReducer from '../store/reducers/panelReducer';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -113,6 +116,8 @@ beforeEach(() => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }) as any,
     );
+
+    jest.spyOn(panelReducer, 'showVariablesPanel');
 });
 
 afterEach(() => {
@@ -141,27 +146,31 @@ const projectConfig = {
     },
 };
 describe('Image Panel', () => {
+    const reduxStore = setupStore();
+
+    beforeEach(() => {
+        reduxStore.dispatch(setVariables(variables));
+        reduxStore.dispatch(showVariablesPanel());
+    });
+
     test('Navigation to and from image panel works', async () => {
         const user = userEvent.setup();
         const { getByText, getByRole } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
-                        <LeftPanel
-                            variables={variables}
-                            selectedLayout={mockLayout}
-                            layouts={mockLayouts}
-                            layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                            layoutSectionUIOptions={{
-                                visible: false,
-                                layoutSwitcherVisible: false,
-                                title: 'Layout',
-                            }}
-                        />
-                    </UiConfigContextProvider>
-                </VariablePanelContextProvider>
+                <UiConfigContextProvider projectConfig={projectConfig as ProjectConfig}>
+                    <LeftPanel
+                        selectedLayout={mockLayout}
+                        layouts={mockLayouts}
+                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                        layoutSectionUIOptions={{
+                            visible: false,
+                            layoutSwitcherVisible: false,
+                            title: 'Layout',
+                        }}
+                    />
+                </UiConfigContextProvider>
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         expect(imagePicker[0]).toBeInTheDocument();
@@ -183,21 +192,18 @@ describe('Image Panel', () => {
         const user = userEvent.setup();
         const { getByText, getByTestId, getAllByText } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: false,
-                            layoutSwitcherVisible: false,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
+                <LeftPanel
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: false,
+                        layoutSwitcherVisible: false,
+                        title: 'Layout',
+                    }}
+                />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
 
@@ -219,29 +225,29 @@ describe('Image Panel', () => {
         const user = userEvent.setup();
         const { getByText } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: false,
-                            layoutSwitcherVisible: false,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
+                <LeftPanel
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: false,
+                        layoutSwitcherVisible: false,
+                        title: 'Layout',
+                    }}
+                />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
+        await waitFor(() => {
+            expect(screen.getAllByTestId(getDataTestId('image-picker-content'))).not.toHaveLength(0);
+        });
+
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await user.click(imagePicker[0]);
 
-        const image = (await screen.findAllByRole('img', { name: /grafx/i }, { timeout: 5000 }))[0];
+        const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
 
         await user.click(image);
-
         const breadCrumb = getByText('Home');
         expect(breadCrumb).toBeInTheDocument();
     });
@@ -250,20 +256,18 @@ describe('Image Panel', () => {
         const user = userEvent.setup();
         renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: false,
-                            layoutSwitcherVisible: false,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
+                <LeftPanel
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: false,
+                        layoutSwitcherVisible: false,
+                        title: 'Layout',
+                    }}
+                />
             </AppProvider>,
+            { reduxStore },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await user.click(imagePicker[0]);
@@ -295,22 +299,22 @@ describe('Image Panel', () => {
 
         renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: false,
-                            layoutSwitcherVisible: false,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
+                <LeftPanel
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: false,
+                        layoutSwitcherVisible: false,
+                        title: 'Layout',
+                    }}
+                />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
+        await waitFor(() => {
+            expect(screen.getAllByTestId(getDataTestId('image-picker-content'))).not.toHaveLength(0);
+        });
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await user.click(imagePicker[0]);
 
@@ -319,28 +323,26 @@ describe('Image Panel', () => {
 
         await user.click(image[0]);
 
-        const input = screen.queryByTestId(getDataTestIdForSUI('media-panel-search-input'));
-        expect(input).toBeNull();
+        await waitFor(() => {
+            expect(panelReducer.showVariablesPanel).toHaveBeenCalledTimes(1);
+        });
     });
     test('renderWithProviders search input when filtering is supported', async () => {
         const user = userEvent.setup();
         const { getByTestId } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablePanelContextProvider variables={variables}>
-                    <LeftPanel
-                        variables={variables}
-                        selectedLayout={mockLayout}
-                        layouts={mockLayouts}
-                        layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                        layoutSectionUIOptions={{
-                            visible: false,
-                            layoutSwitcherVisible: false,
-                            title: 'Layout',
-                        }}
-                    />
-                </VariablePanelContextProvider>
+                <LeftPanel
+                    selectedLayout={mockLayout}
+                    layouts={mockLayouts}
+                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                    layoutSectionUIOptions={{
+                        visible: false,
+                        layoutSwitcherVisible: false,
+                        title: 'Layout',
+                    }}
+                />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
 

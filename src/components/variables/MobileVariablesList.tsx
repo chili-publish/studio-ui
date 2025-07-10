@@ -2,28 +2,45 @@ import { InputLabel } from '@chili-publish/grafx-shared-components';
 import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { ContentType } from '../../contexts/VariablePanelContext.types';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
 import MobileListVariable from '../variablesComponents/listVariable/MobileListVariable';
 import { isListVariable } from '../variablesComponents/Variable';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
+import {
+    selectActivePanel,
+    showVariablesPanel,
+    showDatePickerPanel,
+    PanelType,
+} from '../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../store';
+import {
+    selectCurrentVariableId,
+    selectVariables,
+    selectVariablesValidation,
+    validateUpdatedVariables,
+    validateVariable,
+} from '../../store/reducers/variableReducer';
+import { useVariableHistory } from '../dataSource/useVariableHistory';
 
 interface VariablesListProps {
-    variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
 }
 
-function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
-    const { contentType, showVariablesPanel, showDatePicker, currentVariableId, validateUpdatedVariables } =
-        useVariablePanelContext();
-    const { variablesValidation, validateVariable } = useVariablePanelContext();
+function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
+    const dispatch = useAppDispatch();
+    const variables = useSelector(selectVariables);
+    const variablesValidation = useSelector(selectVariablesValidation);
+
+    const activePanel = useSelector(selectActivePanel);
+    const currentVariableId = useSelector(selectCurrentVariableId);
 
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
     const { updateWithTranslation } = useVariableTranslations();
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
         if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
@@ -31,15 +48,15 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
     }, [listVariableOpen]);
 
     useEffect(() => {
-        validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+        if (variablesChanged) dispatch(validateUpdatedVariables());
+    }, [variablesChanged, dispatch]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {
-            validateVariable(variable);
-            showVariablesPanel();
+            dispatch(validateVariable(variable));
+            dispatch(showVariablesPanel());
         },
-        [showVariablesPanel, validateVariable],
+        [dispatch],
     );
 
     const variablesWithTranslation = useMemo(() => {
@@ -58,7 +75,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                 if (
                     isListVariable(variable) &&
                     isListVariabledDisplayed &&
-                    contentType !== ContentType.DATE_VARIABLE_PICKER
+                    activePanel !== PanelType.DATE_VARIABLE_PICKER
                 ) {
                     return (
                         <ComponentWrapper
@@ -84,7 +101,7 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                 }
                 const isDateVariableOpen =
                     variable.type === VariableType.date &&
-                    contentType === ContentType.DATE_VARIABLE_PICKER &&
+                    activePanel === PanelType.DATE_VARIABLE_PICKER &&
                     currentVariableId === variable.id;
 
                 if (isDateVariableOpen && !listVariableOpen) {
@@ -96,13 +113,14 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
                         />
                     );
                 }
-                return !listVariableOpen && contentType !== ContentType.DATE_VARIABLE_PICKER ? (
+                return !listVariableOpen && activePanel !== PanelType.DATE_VARIABLE_PICKER ? (
                     <ComponentWrapper key={`variable-component-${variable.id}`}>
                         <VariablesComponents
                             type={variable.type}
                             variable={variable}
                             onCalendarOpen={() => {
-                                if (variable.type === VariableType.date) showDatePicker(variable as DateVariableType);
+                                if (variable.type === VariableType.date)
+                                    dispatch(showDatePickerPanel({ variableId: variable.id }));
                             }}
                         />
                     </ComponentWrapper>

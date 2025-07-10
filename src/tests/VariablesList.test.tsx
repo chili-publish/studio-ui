@@ -6,6 +6,8 @@ import { getDataTestIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
 import { renderWithProviders } from './mocks/Provider';
+import { setupStore } from '../store';
+import { setVariables } from '../store/reducers/variableReducer';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -18,6 +20,8 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 }));
 
 describe('Variables List', () => {
+    const reduxStore = setupStore();
+    reduxStore.dispatch(setVariables(variables));
     beforeEach(() => {
         window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
             parsedData: null,
@@ -32,9 +36,9 @@ describe('Variables List', () => {
     it('Hidden variables should not be shown', async () => {
         renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablesList variables={variables} />
+                <VariablesList />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
 
         const variable1 = await screen.findByText(variables[0].label ?? variables[0].name);
@@ -51,9 +55,9 @@ describe('Variables List', () => {
     it('List variable should use "displayValue" for labels', async () => {
         const { getByTestId } = renderWithProviders(
             <AppProvider isDocumentLoaded>
-                <VariablesList variables={variables} />
+                <VariablesList />
             </AppProvider>,
-            { container: document.body.appendChild(APP_WRAPPER) },
+            { container: document.body.appendChild(APP_WRAPPER), reduxStore },
         );
 
         const selectIndicator = getByTestId(getDataTestIdForSUI(`dropdown-10`)).getElementsByClassName(

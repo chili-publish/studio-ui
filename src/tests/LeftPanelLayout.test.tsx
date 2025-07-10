@@ -9,7 +9,6 @@ import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
 import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
 import { UserInterfaceDetailsContextProvider } from '../components/navbar/UserInterfaceDetailsContext';
-import { VariablePanelContextProvider } from '../contexts/VariablePanelContext';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -21,7 +20,6 @@ import {
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { transformFormBuilderArrayToObject } from '../utils/helpers';
 import { APP_WRAPPER } from './mocks/app';
-import { variables } from './mocks/mockVariables';
 import { renderWithProviders } from './mocks/Provider';
 
 afterEach(() => {
@@ -66,20 +64,17 @@ const renderComponent = (
     };
 
     renderWithProviders(
-        <VariablePanelContextProvider variables={variables}>
-            <UserInterfaceDetailsContextProvider
-                projectConfig={projectConfig}
-                layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
-            >
-                <LeftPanel
-                    variables={variables}
-                    selectedLayout={selectedLayout || mockLayout}
-                    layouts={layouts || mockLayouts}
-                    layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
-                    layoutSectionUIOptions={layoutSectionUIOptions}
-                />
-            </UserInterfaceDetailsContextProvider>
-        </VariablePanelContextProvider>,
+        <UserInterfaceDetailsContextProvider
+            projectConfig={projectConfig}
+            layoutIntent={layoutIntent || LayoutIntent.digitalAnimated}
+        >
+            <LeftPanel
+                selectedLayout={selectedLayout || mockLayout}
+                layouts={layouts || mockLayouts}
+                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                layoutSectionUIOptions={layoutSectionUIOptions}
+            />
+        </UserInterfaceDetailsContextProvider>,
         { container: document.body.appendChild(APP_WRAPPER) },
     );
 };
