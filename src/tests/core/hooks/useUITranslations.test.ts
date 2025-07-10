@@ -4,25 +4,66 @@ import { useUITranslations } from '../../../core/hooks/useUITranslations';
 describe('useUITranslations', () => {
     const mockUITranslations = {
         formBuilder: {
-            variables: { header: 'Vars', helpText: 'Vars help' },
-            datasource: { header: 'DS', helpText: 'DS help', row: 'Row', inputLabel: 'Data row' },
             layouts: {
                 header: 'Layouts translated',
-                helpText: 'Layouts help translated',
-                inputLabel: 'Select layout translated',
-                width: 'Width translated',
-                height: 'Height translated',
             },
         },
-        toolBar: {
-            downloadButton: {
-                label: 'Download translated',
-                outputSelector: { label: 'Output translated' },
+        modals: {
+            connectorAuthorization: {
+                description: '{{name}} needs to be authorized translated',
             },
         },
-    };
+        toast: {
+            connectorAuthorization: {
+                error: "Authorization failed for '{{connectorName}}' connector translated",
+                timeoutError: "Authorization failed (timeout) for '{{connectorName}}' connector translated",
+            },
+        },
+        panels: {
+            media: {
+                title: 'Select Image translated',
+                searchPlaceholder: 'Search translated',
+                noSearchResults: 'No search results found translated',
+            },
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
-    it('should return correct translation for formBuilder.layouts.header', () => {
+    // Test 1: Non-existing path
+    it('should return fallback when translation path does not exist', () => {
+        const { result } = renderHookWithProviders(() => useUITranslations(), {
+            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(result.current.getUITranslation(['nonExistent', 'path'] as any, 'fallback value')).toBe(
+            'fallback value',
+        );
+    });
+
+    // Test 2: Existing path with no translation (with and without replacement)
+    it('should return fallback when translation exists but value is not provided', () => {
+        const { result } = renderHookWithProviders(() => useUITranslations(), {
+            preloadedState: { appConfig: { uiTranslations: {} } },
+        });
+        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'header'], 'fallback value')).toBe(
+            'fallback value',
+        );
+    });
+
+    it('should return fallback with replacements when translation exists but value is not provided', () => {
+        const { result } = renderHookWithProviders(() => useUITranslations(), {
+            preloadedState: { appConfig: { uiTranslations: {} } },
+        });
+        const translation = result.current.getUITranslation(
+            ['modals', 'connectorAuthorization', 'description'],
+            'Hello {{name}}',
+            { name: 'World' },
+        );
+        expect(translation).toBe('Hello World');
+    });
+
+    // Test 3: Existing path with translation
+    it('should return correct translation for existing path', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
@@ -30,87 +71,53 @@ describe('useUITranslations', () => {
             'Layouts translated',
         );
     });
-    it('should return correct translation for formBuilder.layouts.helpText', () => {
+
+    // Test 4: All translation keys that support dynamic parts
+    it('should replace {{name}} placeholder in translation', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'helpText'], 'fallback')).toBe(
-            'Layouts help translated',
+        const translation = result.current.getUITranslation(
+            ['modals', 'connectorAuthorization', 'description'],
+            '{{name}} needs to be authorized',
+            { name: 'TestConnector' },
         );
-    });
-    it('should return correct translation for formBuilder.layouts.inputLabel', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'inputLabel'], 'fallback')).toBe(
-            'Select layout translated',
-        );
-    });
-    it('should return correct translation for formBuilder.layouts.width', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'width'], 'fallback')).toBe(
-            'Width translated',
-        );
-    });
-    it('should return correct translation for formBuilder.layouts.height', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'layouts', 'height'], 'fallback')).toBe(
-            'Height translated',
-        );
-    });
-    it('should return correct translation for formBuilder.datasource.header', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'header'], 'fallback')).toBe('DS');
-    });
-    it('should return correct translation for formBuilder.datasource.helpText', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'helpText'], 'fallback')).toBe('DS help');
-    });
-    it('should return correct translation for formBuilder.datasource.row', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'row'], 'fallback')).toBe('Row');
-    });
-    it('should return correct translation for formBuilder.datasource.inputLabel', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'fallback')).toBe(
-            'Data row',
-        );
+        expect(translation).toBe('TestConnector needs to be authorized translated');
     });
 
-    it('should return correct translation for formBuilder.variables.header', () => {
+    it('should replace {{connectorName}} placeholder in translation', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(result.current.getUITranslation(['formBuilder', 'variables', 'header'], 'fallback')).toBe('Vars');
-    });
-
-    it('should return correct translation for toolBar.downloadButton.label', () => {
-        const { result } = renderHookWithProviders(() => useUITranslations(), {
-            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
-        });
-        expect(result.current.getUITranslation(['toolBar', 'downloadButton', 'label'], 'fallback')).toBe(
-            'Download translated',
+        const translation = result.current.getUITranslation(
+            ['toast', 'connectorAuthorization', 'error'],
+            "Authorization failed for '{{connectorName}}' connector",
+            { connectorName: 'TestConnector' },
         );
+        expect(translation).toBe("Authorization failed for 'TestConnector' connector translated");
     });
 
-    it('should return correct translation for toolBar.downloadButton.outputSelector.label', () => {
+    it('should handle multiple placeholders in translation', () => {
         const { result } = renderHookWithProviders(() => useUITranslations(), {
             preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
         });
-        expect(
-            result.current.getUITranslation(['toolBar', 'downloadButton', 'outputSelector', 'label'], 'fallback'),
-        ).toBe('Output translated');
+        const translation = result.current.getUITranslation(
+            ['toast', 'connectorAuthorization', 'timeoutError'],
+            "Authorization failed (timeout) for '{{connectorName}}' connector",
+            { connectorName: 'TestConnector' },
+        );
+        expect(translation).toBe("Authorization failed (timeout) for 'TestConnector' connector translated");
+    });
+
+    it('should handle empty replacements object', () => {
+        const { result } = renderHookWithProviders(() => useUITranslations(), {
+            preloadedState: { appConfig: { uiTranslations: mockUITranslations } },
+        });
+        const translation = result.current.getUITranslation(
+            ['modals', 'connectorAuthorization', 'description'],
+            '{{name}} needs to be authorized',
+            {},
+        );
+        expect(translation).toBe('{{name}} needs to be authorized translated');
     });
 });

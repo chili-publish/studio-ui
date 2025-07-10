@@ -1,15 +1,19 @@
 import { Button, ButtonVariant, ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { MessageWrapper, TitleWrapper } from './LoadDocumentErrorDialog.styles';
 import { APP_WRAPPER_ID } from '../../utils/constants';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { LoadDocumentError } from '../../types/types';
+import { MessageWrapper, TitleWrapper } from './LoadDocumentErrorDialog.styles';
 
 interface LoadDocumentErrorDialog {
-    loadDocumentError?: { isOpen: boolean; error: LoadDocumentError };
+    loadDocumentError: { isOpen: boolean; error: LoadDocumentError } | undefined;
     goBack: () => void;
 }
+
 function LoadDocumentErrorDialog({ loadDocumentError, goBack }: LoadDocumentErrorDialog) {
+    const { getUITranslation } = useUITranslations();
+
     const onClose = () => {
         goBack();
     };
@@ -17,19 +21,42 @@ function LoadDocumentErrorDialog({ loadDocumentError, goBack }: LoadDocumentErro
     const modalTitle = useMemo(() => {
         if (!loadDocumentError?.error) return '';
         const { error } = loadDocumentError;
-        return error === LoadDocumentError.VERSION_ERROR ? 'Incompatible project' : 'Project error';
-    }, [loadDocumentError]);
+        if (error === LoadDocumentError.VERSION_ERROR) {
+            return getUITranslation(
+                ['modals', 'loadDocumentError', 'versionMismatch', 'title'],
+                'Incompatible project',
+            );
+        }
+        return getUITranslation(['modals', 'loadDocumentError', 'projectError', 'title'], 'Project error');
+    }, [loadDocumentError, getUITranslation]);
 
     const modalContent = useMemo(() => {
         if (!loadDocumentError?.error) return '';
         const { error } = loadDocumentError;
 
-        if (error === LoadDocumentError.VERSION_ERROR)
-            return 'This project cannot be opened. Please contact your Admin.';
-        if (error === LoadDocumentError.PARSING_ERROR || error === LoadDocumentError.FORMAT_ERROR)
-            return "It seems like this project is corrupt and can't be loaded. For further assistance, please contact your Admin.";
-        return 'A technical error has occurred. Please try again later. For further assistance, please contact your Admin.';
-    }, [loadDocumentError]);
+        if (error === LoadDocumentError.VERSION_ERROR) {
+            return getUITranslation(
+                ['modals', 'loadDocumentError', 'versionMismatch', 'description'],
+                'This project cannot be opened. Please contact your Admin.',
+            );
+        }
+        if (error === LoadDocumentError.PARSING_ERROR) {
+            return getUITranslation(
+                ['modals', 'loadDocumentError', 'parsingError', 'description'],
+                "It seems like this project is corrupt and can't be loaded. For further assistance, please contact your Admin.",
+            );
+        }
+        if (error === LoadDocumentError.FORMAT_ERROR) {
+            return getUITranslation(
+                ['modals', 'loadDocumentError', 'formatError', 'description'],
+                "It seems like this project is corrupt and can't be loaded. For further assistance, please contact your Admin.",
+            );
+        }
+        return getUITranslation(
+            ['modals', 'loadDocumentError', 'technicalError', 'description'],
+            'A technical error has occurred. Please try again later. For further assistance, please contact your Admin.',
+        );
+    }, [loadDocumentError, getUITranslation]);
 
     return (
         <ModalLayout.Container
@@ -54,7 +81,7 @@ function LoadDocumentErrorDialog({ loadDocumentError, goBack }: LoadDocumentErro
                     dataTestId={getDataTestIdForSUI(`dismiss-btn`)}
                     variant={ButtonVariant.primary}
                     onClick={onClose}
-                    label="Close"
+                    label={getUITranslation(['modals', 'loadDocumentError', 'btnLabel'], 'Close')}
                 />
             </ModalLayout.Footer>
         </ModalLayout.Container>

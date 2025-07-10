@@ -15,6 +15,7 @@ import {
 import { EditorResponse, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { ContentType } from '../../contexts/VariablePanelContext.types';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -79,6 +80,7 @@ function ItemBrowser<
         searchQuery,
         setSearchQuery,
     } = useVariablePanelContext();
+    const { getUITranslation } = useUITranslations();
     const isMobileSize = useMobileSize();
 
     const onScroll = () => {
@@ -221,7 +223,13 @@ function ItemBrowser<
             name: listItem.instance.name,
             type: itemType as unknown as PreviewType,
             path: getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance)),
-            metaData: listItem?.instance?.extension?.toUpperCase() ?? (itemType?.replace('collection', 'Folder') || ''),
+            metaData:
+                listItem?.instance?.extension?.toUpperCase() ??
+                (itemType?.replace(
+                    'collection',
+                    getUITranslation(['panels', 'media', 'folderAssetsLabel'], 'Folder'),
+                ) ||
+                    ''),
             renameItem: () => null,
             options: [],
             padding: '0',
@@ -285,7 +293,7 @@ function ItemBrowser<
                     <BreadCrumb
                         dataId={getDataIdForSUI('toolbar-breadcrumb')}
                         dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
-                        path={`Home${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                        path={`${getUITranslation(['panels', 'media', 'rootNavPathLabel'], 'Home')}${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                         onClick={updateNavigationStack}
                     />
                 </BreadCrumbsWrapper>
@@ -295,7 +303,7 @@ function ItemBrowser<
                     <Input
                         type="text"
                         name="search"
-                        placeholder="Search"
+                        placeholder={getUITranslation(['panels', 'media', 'searchPlaceholder'], 'Search')}
                         value={searchKeyWord}
                         onChange={(e) => setSearchKeyWord(e.target.value)}
                         onKeyDown={(e) => {
@@ -344,7 +352,10 @@ function ItemBrowser<
                 <ScrollbarWrapper height="100%">
                     {elements.length === 0 && !isLoading && searchQuery && (
                         <EmptySearchResultContainer>
-                            No search results found. Maybe try another keyword?
+                            {getUITranslation(
+                                ['panels', 'media', 'noSearchResults'],
+                                'No search results found. Maybe try another keyword?',
+                            )}
                         </EmptySearchResultContainer>
                     )}
                     <ResourcesContainer

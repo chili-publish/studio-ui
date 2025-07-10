@@ -30,6 +30,60 @@ export interface ToolBarTranslations {
             label?: string;
         };
     };
+    undoBtn?: {
+        tooltip?: string;
+    };
+    redoBtn?: {
+        tooltip?: string;
+    };
+}
+
+export interface LoadDocumentErrorTranslations {
+    versionMismatch?: {
+        title?: string;
+        description?: string;
+    };
+    projectError?: {
+        title?: string;
+        description?: string;
+    };
+    parsingError?: {
+        description?: string;
+    };
+    formatError?: {
+        description?: string;
+    };
+    technicalError?: {
+        description?: string;
+    };
+    btnLabel?: string;
+}
+
+export interface ModalsTranslations {
+    connectorAuthorization?: {
+        title?: string;
+        description?: string;
+        approveBtnLabel?: string;
+        cancelBtnLabel?: string;
+    };
+    loadDocumentError?: LoadDocumentErrorTranslations;
+}
+
+export interface ToastTranslations {
+    connectorAuthorization?: {
+        error?: string;
+        timeoutError?: string;
+    };
+}
+
+export interface PanelsTranslations {
+    media?: {
+        title?: string;
+        searchPlaceholder?: string;
+        noSearchResults?: string;
+        rootNavPathLabel?: string;
+        folderAssetsLabel?: string;
+    };
 }
 
 export interface UITranslations {
@@ -39,4 +93,7 @@ export interface UITranslations {
         layouts?: LayoutsTranslations;
     };
     toolBar?: ToolBarTranslations;
+    modals?: ModalsTranslations;
+    toast?: ToastTranslations;
+    panels?: PanelsTranslations;
 }

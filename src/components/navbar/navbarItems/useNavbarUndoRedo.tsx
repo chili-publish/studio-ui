@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { AvailableIcons, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useDirection } from 'src/hooks/useDirection';
 import { APP_WRAPPER_ID } from 'src/utils/constants';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
@@ -9,6 +10,7 @@ import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boolean }) => {
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { direction } = useDirection();
+    const { getUITranslation } = useUITranslations();
 
     const undoIcon = direction === 'rtl' ? AvailableIcons.faArrowTurnDownRight : AvailableIcons.faArrowTurnDownLeft;
     const redoIcon = direction === 'rtl' ? AvailableIcons.faArrowTurnDownLeft : AvailableIcons.faArrowTurnDownRight;
@@ -18,7 +20,11 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
             label: 'Actions',
             content: (
                 <NavbarGroup withGap>
-                    <Tooltip content="Undo" position={TooltipPosition.BOTTOM} anchorId={APP_WRAPPER_ID}>
+                    <Tooltip
+                        content={getUITranslation(['toolBar', 'undoBtn', 'tooltip'], 'Undo')}
+                        position={TooltipPosition.BOTTOM}
+                        anchorId={APP_WRAPPER_ID}
+                    >
                         <NavbarButton
                             dataId="undo-btn"
                             ariaLabel="Undo"
@@ -29,7 +35,11 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                         />
                     </Tooltip>
 
-                    <Tooltip content="Redo" position={TooltipPosition.BOTTOM} anchorId={APP_WRAPPER_ID}>
+                    <Tooltip
+                        content={getUITranslation(['toolBar', 'redoBtn', 'tooltip'], 'Redo')}
+                        position={TooltipPosition.BOTTOM}
+                        anchorId={APP_WRAPPER_ID}
+                    >
                         <NavbarButton
                             dataId="redo-btn"
                             ariaLabel="Redo"
@@ -42,7 +52,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                 </NavbarGroup>
             ),
         }),
-        [undoIcon, undoStackState.canUndo, undoStackState.canRedo, handleUndo, redoIcon, handleRedo],
+        [undoIcon, undoStackState.canUndo, undoStackState.canRedo, handleUndo, redoIcon, handleRedo, getUITranslation],
     );
 
     return {

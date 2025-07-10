@@ -3,6 +3,7 @@ import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/stu
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useDirection } from 'src/hooks/useDirection';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { NavigationTitle, NavigationWrapper } from '../components/itemBrowser/ItemBrowser.styles';
 import { useVariableComponents } from '../components/variablesComponents/useVariablesComponents';
 import { ContentType, ICapabilities, IVariablePanelContext } from './VariablePanelContext.types';
@@ -37,12 +38,11 @@ const VariablePanelContextDefaultValues: IVariablePanelContext = {
 
 export const VariablePanelContext = createContext<IVariablePanelContext>(VariablePanelContextDefaultValues);
 
-export const useVariablePanelContext = () => {
-    return useContext(VariablePanelContext);
-};
+export const useVariablePanelContext = () => useContext(VariablePanelContext);
 
 export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
     const { direction } = useDirection();
+    const { getUITranslation } = useUITranslations();
     const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
@@ -109,10 +109,12 @@ export function VariablePanelContextProvider({ children, variables }: { children
                         padding: 0;
                     `}
                 />
-                <NavigationTitle className="navigation-path">Select image</NavigationTitle>
+                <NavigationTitle className="navigation-path">
+                    {getUITranslation(['panels', 'media', 'title'], 'Select image')}
+                </NavigationTitle>
             </NavigationWrapper>
         ),
-        [direction, navigationStack],
+        [direction, navigationStack, getUITranslation],
     );
 
     const data = useMemo(
