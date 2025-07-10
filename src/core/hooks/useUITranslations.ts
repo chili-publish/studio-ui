@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectUITranslations } from 'src/store/reducers/appConfigReducer';
-import { UITranslations } from '../../types/UITranslations';
 import { useCallback } from 'react';
+import { UITranslations } from '../../types/UITranslations';
 
 type Primitive = string | number | boolean | symbol | null | undefined;
 
