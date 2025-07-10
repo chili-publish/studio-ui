@@ -225,10 +225,7 @@ function ItemBrowser<
             path: getPreviewThumbnail(itemType as unknown as PreviewType, formatRelativePath(listItem.instance)),
             metaData:
                 listItem?.instance?.extension?.toUpperCase() ??
-                (itemType?.replace(
-                    'collection',
-                    getUITranslation(['panels', 'media', 'folderAssetsLabel'], 'Folder'),
-                ) ||
+                (itemType?.replace('collection', getUITranslation(['panels', 'media', 'folderAssetLabel'], 'Folder')) ||
                     ''),
             renameItem: () => null,
             options: [],

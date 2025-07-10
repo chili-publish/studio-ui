@@ -82,7 +82,7 @@ export interface PanelsTranslations {
         searchPlaceholder?: string;
         noSearchResults?: string;
         rootNavPathLabel?: string;
-        folderAssetsLabel?: string;
+        folderAssetLabel?: string;
     };
 }
 
