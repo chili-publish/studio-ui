@@ -15,9 +15,10 @@ import {
 import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
 
 function ImagePanel() {
+    const dispatch = useAppDispatch();
+
     const currentVariableId = useSelector(selectCurrentVariableId);
     const currentVariableConnectorId = useSelector(selectCurrentVariableConnectorId);
-    const dispatch = useAppDispatch();
     const variables = useSelector(selectVariables);
 
     const { handleImageChange } = useVariableComponents(currentVariableId);

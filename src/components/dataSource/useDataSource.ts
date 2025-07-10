@@ -11,6 +11,7 @@ import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connec
 import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
 import { validateVariableList } from '../../store/reducers/variableReducer';
+import { useVariableHistory } from './useVariableHistory';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -44,6 +45,7 @@ const useDataSource = () => {
 
     const shouldUpdateDataRow = useRef(true);
     const shouldValidateVariables = useRef(false);
+    const { hasChanged } = useVariableHistory();
 
     const processingDataRow = useRef<number>(null);
 
@@ -215,7 +217,7 @@ const useDataSource = () => {
             shouldValidateVariables.current = false;
             dispatch(validateVariableList());
         }
-    }, [dispatch, currentRow]);
+    }, [currentRow, hasChanged, dispatch]);
 
     return {
         currentInputRow,
