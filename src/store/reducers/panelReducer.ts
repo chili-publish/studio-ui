@@ -1,17 +1,35 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { PanelType } from 'src/contexts/VariablePanelContext.types';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '../index';
+import { setCurrentSelectedVariableConnectorId, setCurrentSelectedVariableId } from './variableReducer';
+
+export const enum PanelType {
+    DEFAULT = 'default',
+    IMAGE_PANEL = 'image_panel',
+    DATE_VARIABLE_PICKER = 'date_variable_picker',
+    DATA_SOURCE_TABLE = 'data_source_table',
+}
 
 type PanelState = {
     activePanel: PanelType;
-    currentVariableId: string;
-    currentVariableConnectorId: string;
 };
+
+export const showDatePickerPanel = createAsyncThunk(
+    'panel/showDatePickerPanel',
+    ({ variableId }: { variableId: string }, { dispatch }) => {
+        dispatch(setCurrentSelectedVariableId(variableId));
+    },
+);
+
+export const showImagePanel = createAsyncThunk(
+    'panel/showImagePanel',
+    ({ variableId, connectorId }: { variableId: string; connectorId: string }, { dispatch }) => {
+        dispatch(setCurrentSelectedVariableId(variableId));
+        dispatch(setCurrentSelectedVariableConnectorId(connectorId));
+    },
+);
 
 const initialState: PanelState = {
     activePanel: PanelType.DEFAULT,
-    currentVariableId: '',
-    currentVariableConnectorId: '',
 };
 
 export const panelSlice = createSlice({
@@ -21,27 +39,22 @@ export const panelSlice = createSlice({
         showVariablesPanel: (state) => {
             state.activePanel = PanelType.DEFAULT;
         },
-        showDatePickerPanel: (state, action: PayloadAction<{ variableId: string }>) => {
-            state.activePanel = PanelType.DATE_VARIABLE_PICKER;
-            state.currentVariableId = action.payload.variableId;
-        },
         showDataSourcePanel: (state) => {
             state.activePanel = PanelType.DATA_SOURCE_TABLE;
         },
-        showImagePanel: (state, action: PayloadAction<{ variableId: string; connectorId: string }>) => {
-            state.currentVariableId = action.payload.variableId;
-            state.currentVariableConnectorId = action.payload.connectorId;
+    },
+    extraReducers: (builder) => {
+        builder.addCase(showDatePickerPanel.fulfilled, (state) => {
+            state.activePanel = PanelType.DATE_VARIABLE_PICKER;
+        });
+        builder.addCase(showImagePanel.fulfilled, (state) => {
             state.activePanel = PanelType.IMAGE_PANEL;
-        },
+        });
     },
 });
 
-export const { showVariablesPanel, showDatePickerPanel, showDataSourcePanel, showImagePanel } = panelSlice.actions;
+export const { showVariablesPanel, showDataSourcePanel } = panelSlice.actions;
 
 export const selectActivePanel = (state: RootState): PanelState['activePanel'] => state.panel.activePanel;
-export const selectCurrentVariableId = (state: RootState): PanelState['currentVariableId'] =>
-    state.panel.currentVariableId;
-export const selectCurrentVariableConnectorId = (state: RootState): PanelState['currentVariableConnectorId'] =>
-    state.panel.currentVariableConnectorId;
 
 export default panelSlice.reducer;

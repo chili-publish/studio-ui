@@ -1,11 +1,10 @@
 import { Tray } from '@chili-publish/grafx-shared-components';
-import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize, Variable } from '@chili-publish/studio-sdk';
+import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
-import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
 import { APP_WRAPPER_ID } from '../../utils/constants';
@@ -23,14 +22,18 @@ import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
 import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
-import { selectActivePanel, showVariablesPanel, showDataSourcePanel } from '../../store/reducers/panelReducer';
+import {
+    selectActivePanel,
+    showVariablesPanel,
+    showDataSourcePanel,
+    PanelType,
+} from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
 interface VariablesPanelProps {
     isTrayVisible: boolean;
     setIsTrayVisible: (_: boolean) => void;
 
-    variables: Variable[];
     selectedLayout: Layout | null;
     layouts: LayoutListItemType[];
     layoutPropertiesState: LayoutPropertiesType;
@@ -49,7 +52,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const {
         isTrayVisible,
         setIsTrayVisible,
-        variables,
         selectedLayout,
         layouts,
         layoutPropertiesState,
@@ -238,10 +240,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                             )}
                                         </SectionWrapper>
                                     )}
-                                    <MobileVariablesList
-                                        variables={variables}
-                                        onMobileOptionListToggle={setVariablesMobileOptionsListOpen}
-                                    />
+                                    <MobileVariablesList onMobileOptionListToggle={setVariablesMobileOptionsListOpen} />
                                 </>
                             )}
                         </>

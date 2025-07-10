@@ -6,10 +6,11 @@ import { useAppContext } from '../../contexts/AppProvider';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
 import { useDirection } from '../../hooks/useDirection';
+import { useAppDispatch } from '../../store';
+import { validateVariableList } from '../../store/reducers/variableReducer';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -26,7 +27,8 @@ function getDataSourceErrorText(status?: number) {
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
-    const { validateVariables } = useVariablePanelContext();
+    const dispatch = useAppDispatch();
+
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
@@ -211,9 +213,9 @@ const useDataSource = () => {
         // since validateVariables is a callback that has a dependency on the "variables" value.
         if (shouldValidateVariables.current) {
             shouldValidateVariables.current = false;
-            validateVariables();
+            dispatch(validateVariableList());
         }
-    }, [validateVariables, currentRow]);
+    }, [dispatch, currentRow]);
 
     return {
         currentInputRow,

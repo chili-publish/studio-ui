@@ -15,10 +15,6 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useVariableC
     useVariableConnector: jest.fn().mockReturnValue({ remoteConnector: null }),
 }));
 
-jest.mock('../../../../contexts/VariablePanelContext', () => ({
-    useVariablePanelContext: jest.fn().mockReturnValue({ showImagePanel: jest.fn() }),
-}));
-
 jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImageUrl', () => ({
     usePreviewImageUrl: jest.fn().mockReturnValue({ previewImageUrl: 'http://image-url.com', pending: false }),
 }));

@@ -3,23 +3,19 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
-import { selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
+import { PanelType, selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
+import { selectVariables, validateUpdatedVariables } from '../../store/reducers/variableReducer';
 
-interface VariablesListProps {
-    variables: Variable[];
-}
-
-function VariablesList({ variables }: VariablesListProps) {
+function VariablesList() {
     const activePanel = useSelector(selectActivePanel);
+    const variables = useSelector(selectVariables);
+
     const dispatch = useAppDispatch();
-    const { validateUpdatedVariables } = useVariablePanelContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { updateWithTranslation } = useVariableTranslations();
     const { getUITranslation } = useUITranslations();
@@ -31,8 +27,8 @@ function VariablesList({ variables }: VariablesListProps) {
     );
 
     useEffect(() => {
-        validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+        dispatch(validateUpdatedVariables());
+    }, [dispatch]);
 
     const variablesWithTranslation = useMemo(() => {
         return variables.map((variable) => updateWithTranslation(variable));

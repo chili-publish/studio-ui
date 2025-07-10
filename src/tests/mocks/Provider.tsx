@@ -11,11 +11,20 @@ import {
 } from '@testing-library/react';
 import { PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { Provider } from 'react-redux';
+import { StyleSheetManager } from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
 import { RootState, setupStore } from '../../store';
 
 export interface WrapperProps {
     children: Element | ReactNode;
 }
+
+const shouldForwardProp = (propName: string, target: unknown) => {
+    if (typeof target === 'string') {
+        return isPropValid(propName);
+    }
+    return true;
+};
 
 // Used to render test components with new instance of redux store.
 export const renderWithProviders = <
@@ -37,7 +46,9 @@ export const renderWithProviders = <
     function Wrapper({ children }: PropsWithChildren<WrapperProps>) {
         return (
             <Provider store={reduxStore}>
-                <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                </StyleSheetManager>
             </Provider>
         );
     }

@@ -12,11 +12,10 @@ import {
     useInfiniteScrolling,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
-import { EditorResponse, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
+import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { PanelType } from '../../contexts/VariablePanelContext.types';
+import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
@@ -29,7 +28,8 @@ import {
     SearchInputWrapper,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
-import { selectActivePanel } from '../../store/reducers/panelReducer';
+import { PanelType, selectActivePanel } from '../../store/reducers/panelReducer';
+import ImagePanelTitle from './ImagePanelTitle';
 
 type ItemBrowserProps<T extends { id: string }> = {
     isPanelOpen: boolean;
@@ -59,6 +59,13 @@ function ItemBrowser<
     },
 >(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
+    const activePanel = useSelector(selectActivePanel);
+
+    const [selectedItems, setSelectedItems] = useState<Media[]>([]);
+    const [navigationStack, setNavigationStack] = useState<string[]>([]);
+    const [searchKeyWord, setSearchKeyWord] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
     const [breadcrumbStack, setBreadcrumbStack] = useState<string[]>([]);
     const [nextPageToken, setNextPageToken] = useState<{ token: string | null; requested: boolean }>({
         token: null,
@@ -67,20 +74,8 @@ function ItemBrowser<
     const [isLoading, setIsLoading] = useState(false);
     const [list, setList] = useState<ItemCache<T>[]>([]);
     const moreData = !!nextPageToken?.token;
-    const activePanel = useSelector(selectActivePanel);
-    const {
-        connectorCapabilities,
-        imagePanelTitle,
-        navigationStack,
-        selectedItems,
-        setNavigationStack,
-        setSelectedItems,
-        searchKeyWord,
-        setSearchKeyWord,
-        searchQuery,
-        setSearchQuery,
-    } = useVariablePanelContext();
     const isMobileSize = useMobileSize();
+    const connectorCapabilities = useSelector(selectConnectorCapabilities);
 
     const onScroll = () => {
         setNextPageToken((t) => {
@@ -262,7 +257,8 @@ function ItemBrowser<
     }
 
     // eslint-disable-next-line no-nested-ternary
-    const panelTitle = isMobileSize ? null : activePanel === PanelType.IMAGE_PANEL ? imagePanelTitle : null;
+    const panelTitle = isMobileSize ? null : activePanel === PanelType.IMAGE_PANEL ? <ImagePanelTitle /> : null;
+
     const filteringEnabled = connectorCapabilities[connectorId]?.filtering;
     const navigationEnabled = !searchQuery && breadcrumbStack.length > 0;
 

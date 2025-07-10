@@ -4,8 +4,6 @@ import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { PanelType } from '../../contexts/VariablePanelContext.types';
 import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
 import MobileListVariable from '../variablesComponents/listVariable/MobileListVariable';
 import { isListVariable } from '../variablesComponents/Variable';
@@ -16,23 +14,28 @@ import {
     selectActivePanel,
     showVariablesPanel,
     showDatePickerPanel,
-    selectCurrentVariableId,
+    PanelType,
 } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
+import {
+    selectCurrentVariableId,
+    selectVariables,
+    selectVariablesValidation,
+    validateUpdatedVariables,
+    validateVariable,
+} from '../../store/reducers/variableReducer';
 
 interface VariablesListProps {
-    variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
 }
 
-function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesListProps) {
+function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
     const dispatch = useAppDispatch();
+    const variables = useSelector(selectVariables);
+    const variablesValidation = useSelector(selectVariablesValidation);
 
     const activePanel = useSelector(selectActivePanel);
     const currentVariableId = useSelector(selectCurrentVariableId);
-
-    const { validateUpdatedVariables } = useVariablePanelContext();
-    const { variablesValidation, validateVariable } = useVariablePanelContext();
 
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
     const { updateWithTranslation } = useVariableTranslations();
@@ -43,15 +46,15 @@ function MobileVariablesList({ variables, onMobileOptionListToggle }: VariablesL
     }, [listVariableOpen]);
 
     useEffect(() => {
-        validateUpdatedVariables();
-    }, [validateUpdatedVariables]);
+        dispatch(validateUpdatedVariables());
+    }, [dispatch]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {
-            validateVariable(variable);
+            dispatch(validateVariable(variable));
             dispatch(showVariablesPanel());
         },
-        [dispatch, validateVariable],
+        [dispatch],
     );
 
     const variablesWithTranslation = useMemo(() => {

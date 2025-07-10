@@ -2,13 +2,12 @@ import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/graf
 import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useDirection } from 'src/hooks/useDirection';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
-import { PanelType } from '../../contexts/VariablePanelContext.types';
 import { MobileTrayFormBuilderHeader } from '../../types/types';
 import { DatePickerTrayTitle, TrayPanelTitle } from './VariablesPanel.styles';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import { selectActivePanel, showVariablesPanel } from '../../store/reducers/panelReducer';
+import { PanelType, selectActivePanel, showVariablesPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
+import ImagePanelTitle from '../itemBrowser/ImagePanelTitle';
 
 interface MobileTrayHeaderProps {
     isDefaultPanelView: boolean;
@@ -27,8 +26,6 @@ function MobileTrayHeader({
 }: MobileTrayHeaderProps) {
     const dispatch = useAppDispatch();
     const activePanel = useSelector(selectActivePanel);
-
-    const { imagePanelTitle } = useVariablePanelContext();
     const { datasource, variables, layouts } = trayHeaderData;
 
     const { direction } = useDirection();
@@ -75,7 +72,7 @@ function MobileTrayHeader({
             </DatePickerTrayTitle>
         );
 
-    if (activePanel === PanelType.IMAGE_PANEL) return imagePanelTitle;
+    if (activePanel === PanelType.IMAGE_PANEL) return <ImagePanelTitle />;
     if (activePanel === PanelType.DATA_SOURCE_TABLE)
         return (
             <DatePickerTrayTitle>
