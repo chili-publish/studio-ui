@@ -24,6 +24,7 @@ import {
     validateUpdatedVariables,
     validateVariable,
 } from '../../store/reducers/variableReducer';
+import { useVariableHistory } from '../dataSource/useVariableHistory';
 
 interface VariablesListProps {
     onMobileOptionListToggle?: (_: boolean) => void;
@@ -39,6 +40,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
 
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
     const { updateWithTranslation } = useVariableTranslations();
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
         if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
@@ -46,8 +48,8 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
     }, [listVariableOpen]);
 
     useEffect(() => {
-        dispatch(validateUpdatedVariables());
-    }, [dispatch]);
+        if (variablesChanged) dispatch(validateUpdatedVariables());
+    }, [variablesChanged, dispatch]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {

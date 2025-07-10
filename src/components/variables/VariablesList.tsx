@@ -10,6 +10,7 @@ import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
 import { PanelType, selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 import { selectVariables, validateUpdatedVariables } from '../../store/reducers/variableReducer';
+import { useVariableHistory } from '../dataSource/useVariableHistory';
 
 function VariablesList() {
     const activePanel = useSelector(selectActivePanel);
@@ -25,10 +26,11 @@ function VariablesList() {
         },
         [dispatch],
     );
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
-        dispatch(validateUpdatedVariables());
-    }, [dispatch]);
+        if (variablesChanged) dispatch(validateUpdatedVariables());
+    }, [variablesChanged, dispatch]);
 
     const variablesWithTranslation = useMemo(() => {
         return variables.map((variable) => updateWithTranslation(variable));
