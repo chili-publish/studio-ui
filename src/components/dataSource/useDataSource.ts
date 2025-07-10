@@ -45,7 +45,7 @@ const useDataSource = () => {
 
     const shouldUpdateDataRow = useRef(true);
     const shouldValidateVariables = useRef(false);
-    const { hasChanged } = useVariableHistory();
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     const processingDataRow = useRef<number>(null);
 
@@ -213,11 +213,11 @@ const useDataSource = () => {
         // we check the ref that will be updated only after the execution of the `setDataRow` method above.
         // The result of setDataRow leads to changing the variables, which will lead to the re-execution of this useEffect,
         // since validateVariables is a callback that has a dependency on the "variables" value.
-        if (shouldValidateVariables.current) {
+        if (variablesChanged) {
             shouldValidateVariables.current = false;
             dispatch(validateVariableList());
         }
-    }, [currentRow, hasChanged, dispatch]);
+    }, [currentRow, variablesChanged, dispatch]);
 
     return {
         currentInputRow,
