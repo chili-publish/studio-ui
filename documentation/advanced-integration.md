@@ -409,7 +409,9 @@ You can provide translations for as many or as few layouts as you like. If a tra
 
 #### UI Translations
 
-You can provide translations for UI labels and help texts using the `uiTranslations` option. This allows you to localize section headers, help texts, and toolbar labels.
+You can provide translations for UI labels and help texts using the `uiTranslations` option. This allows you to localize section headers, help texts, toolbar labels, modal content, toast notifications, and panel labels.
+
+The `uiTranslations` object supports dynamic replacements using `{{placeholder}}` syntax for values that need to be inserted at runtime.
 
 Example:
 
@@ -436,6 +438,54 @@ const uiTranslations = {
     },
     toolBar: {
         downloadButton: { label: 'Download', outputSelector: { label: 'Output' } },
+        undoBtn: { tooltip: 'Undo' },
+        redoBtn: { tooltip: 'Redo' },
+    },
+    modals: {
+        connectorAuthorization: {
+            title: 'Authorize connector',
+            description: "{{name}} needs to be authorized. Click 'Authorize' to redirect and grant permissions.",
+            approveBtnLabel: 'Authorize',
+            cancelBtnLabel: 'Cancel',
+        },
+        loadDocumentError: {
+            versionMismatch: {
+                title: 'Incompatible project',
+                description: 'This project cannot be opened. Please contact your Admin.',
+            },
+            projectError: {
+                title: 'Project error',
+                description: 'A project error has occurred.',
+            },
+            parsingError: {
+                description:
+                    'It seems like this project is corrupt and cannot be loaded. For further assistance, please contact your Admin.',
+            },
+            formatError: {
+                description:
+                    'It seems like this project is corrupt and cannot be loaded. For further assistance, please contact your Admin.',
+            },
+            technicalError: {
+                description:
+                    'A technical error has occurred. Please try again later. For further assistance, please contact your Admin.',
+            },
+            btnLabel: 'Close',
+        },
+    },
+    toast: {
+        connectorAuthorization: {
+            error: "Authorization failed for '{{connectorName}}' connector.",
+            timeoutError: "Authorization failed (timeout) for '{{connectorName}}' connector.",
+        },
+    },
+    panels: {
+        media: {
+            title: 'Select Image',
+            searchPlaceholder: 'Search',
+            noSearchResults: 'No search results found. Maybe try another keyword?',
+            rootNavPathLabel: 'Home',
+            folderAssetLabel: 'Folder',
+        },
     },
 };
 
@@ -444,6 +494,15 @@ window.StudioUI.studioUILoaderConfig({
     uiTranslations,
 });
 ```
+
+##### Dynamic Replacements
+
+For translations that contain dynamic parts like `{{name}}` or `{{connectorName}}`, the system will automatically replace these placeholders with the provided values when the translation is used. For example:
+
+- `{{name}}` in modal descriptions will be replaced with the connector name
+- `{{connectorName}}` in toast messages will be replaced with the actual connector name
+
+All translations are optional. If a translation is not provided, the system will use sensible defaults.
 
 ## Advanced example using own documents
 
