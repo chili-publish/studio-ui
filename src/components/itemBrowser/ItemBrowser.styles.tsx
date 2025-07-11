@@ -40,13 +40,15 @@ export const ModalResourcesContainer = styled.div<{ width?: string }>`
     padding: 0.75rem;
 `;
 
-export const NavigationWrapper = styled.div`
+export const NavigationWrapper = styled.div<{ isMobile: boolean }>`
     display: flex;
     align-items: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     position: relative;
     margin-inline-start: -0.75rem;
+    margin-inline-end: ${(props) => (props.isMobile ? '0' : '1.25rem')};
+
+    flex: 1;
+    overflow: hidden;
 
     svg {
         box-sizing: content-box !important;
@@ -76,13 +78,11 @@ export const NavigationWrapper = styled.div`
 `;
 
 export const NavigationTitle = styled.div`
-    display: flex;
-    align-items: center;
-    max-width: 75%;
     overflow: hidden;
     font-weight: 500;
     text-overflow: ellipsis;
     font-size: ${FontSizes.header};
+    white-space: nowrap;
 `;
 
 export const ResourcesPreview = styled.div<{ width?: string }>`

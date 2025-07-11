@@ -1,4 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Button, ButtonVariant, Icon, useMobileSize } from '@chili-publish/grafx-shared-components';
 import { DateVariable, ImageVariable, Media, Variable } from '@chili-publish/studio-sdk';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { css } from 'styled-components';
@@ -43,6 +43,7 @@ export const useVariablePanelContext = () => useContext(VariablePanelContext);
 export function VariablePanelContextProvider({ children, variables }: { children: ReactNode; variables: Variable[] }) {
     const { direction } = useDirection();
     const { getUITranslation } = useUITranslations();
+    const isMobileSize = useMobileSize();
     const [contentType, setContentType] = useState<ContentType>(ContentType.DEFAULT);
     const [currentVariableId, setCurrentVariableId] = useState<string>('');
     const [currentVariableConnectorId, setCurrentVariableConnectorId] = useState<string>('');
@@ -89,7 +90,7 @@ export function VariablePanelContextProvider({ children, variables }: { children
 
     const imagePanelTitle = useMemo(
         () => (
-            <NavigationWrapper>
+            <NavigationWrapper isMobile={isMobileSize}>
                 <Button
                     type="button"
                     variant={ButtonVariant.tertiary}
