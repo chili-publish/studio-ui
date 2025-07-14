@@ -161,7 +161,6 @@ export type DataSourceForm = BaseFormBuilderType<'datasource'>;
 export type VariablesForm = BaseFormBuilderType<'variables'>;
 
 export type FormBuilderArray = Array<DataSourceForm | VariablesForm | LayoutForm>;
-export type DataSourceAndVariablesForm = DataSourceForm | VariablesForm;
 
 export type FormKeys = 'datasource' | 'layouts' | 'variables';
 
@@ -178,7 +177,7 @@ export type APIUserInteface = {
     id: string;
     name: string;
     outputSettings: OutputSettingsType;
-    // Stringified JSON
+    // Stringified JSON array of form builder
     formBuilder?: string;
     default: boolean;
 };
