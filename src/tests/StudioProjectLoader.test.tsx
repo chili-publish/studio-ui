@@ -324,21 +324,33 @@ describe('StudioProjectLoader', () => {
     });
 
     describe('onFetchStudioUserInterfaceDetails', () => {
-        it('should call endpoint for "default" user interface with correct params', async () => {
+        beforeEach(() => {
+            // Clear sessionStorage before each test
+            sessionStorage.clear();
+        });
+
+        it('should call endpoint for "default" user interface with correct params in sandbox mode', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockUserInterfaces = {
+                data: { data: [{ id: 'default-id', name: 'Default UI', default: true, outputSettings: {} }] },
+                status: 200,
+            };
+
             (axios.get as jest.Mock)
-                .mockResolvedValueOnce({ data: {} }) // output settings request
-                .mockResolvedValueOnce({ data: { data: [{ default: true, outputSettings: {} }] }, status: 200 }); // user interface request
+                .mockResolvedValueOnce(mockOutputSettings) // output settings request
+                .mockResolvedValueOnce(mockUserInterfaces); // user interface request
+
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
-                true,
+                true, // sandbox mode
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
 
-            await loader.onFetchStudioUserInterfaceDetails();
+            const result = await loader.onFetchStudioUserInterfaceDetails();
 
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
                 headers: {
@@ -350,26 +362,30 @@ describe('StudioProjectLoader', () => {
                     Authorization: `Bearer ${mockAuthToken}`,
                 },
             });
+            expect(result).toEqual({
+                userInterface: { id: 'default-id', name: 'Default UI' },
+                outputSettings: [],
+                formBuilder: undefined,
+                outputSettingsFullList: [],
+            });
         });
+
         it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockUserInterface = {
+                data: {
+                    id: '1234',
+                    name: 'Test UI',
+                    outputSettings: {},
+                    formBuilder: JSON.stringify([]),
+                },
+                status: 200,
+            };
+
             (axios.get as jest.Mock)
-                .mockResolvedValueOnce({ data: {} }) // output settings request
-                .mockResolvedValueOnce({
-                    data: {
-                        outputSettings: {},
-                        formBuilder: [
-                            {
-                                type: 'layouts',
-                                active: true,
-                                header: 'Layouts',
-                                helpText: '',
-                                layoutSelector: true,
-                                showWidthHeightInputs: true,
-                            },
-                        ],
-                    },
-                    status: 200,
-                }); // user interface request
+                .mockResolvedValueOnce(mockOutputSettings) // output settings request
+                .mockResolvedValueOnce(mockUserInterface); // user interface request
+
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -380,18 +396,146 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
                 '1234',
             );
-            await loader.onFetchStudioUserInterfaceDetails();
+
+            const result = await loader.onFetchStudioUserInterfaceDetails();
 
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
                 headers: {
                     Authorization: `Bearer ${mockAuthToken}`,
                 },
             });
-
             expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
                 headers: {
                     Authorization: `Bearer ${mockAuthToken}`,
                 },
+            });
+            expect(result).toEqual({
+                userInterface: { id: '1234', name: 'Test UI' },
+                outputSettings: [],
+                formBuilder: undefined,
+                outputSettingsFullList: [],
+            });
+        });
+
+        it('should use sessionStorage userInterfaceId when no userInterfaceId is provided', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockUserInterface = {
+                data: {
+                    id: 'session-id',
+                    name: 'Session UI',
+                    outputSettings: {},
+                    formBuilder: JSON.stringify([]),
+                },
+                status: 200,
+            };
+
+            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings).mockResolvedValueOnce(mockUserInterface);
+
+            // Set sessionStorage
+            sessionStorage.setItem('userInterfaceId', 'session-id');
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            const result = await loader.onFetchStudioUserInterfaceDetails();
+
+            expect(axios.get).toHaveBeenCalledWith(
+                `${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/session-id`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${mockAuthToken}`,
+                    },
+                },
+            );
+            expect(result).toEqual({
+                userInterface: { id: 'session-id', name: 'Session UI' },
+                outputSettings: [],
+                formBuilder: undefined,
+                outputSettingsFullList: [],
+            });
+        });
+
+        it('should use custom onFetchUserInterfaceDetails callback when provided', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockUserInterface = {
+                id: 'custom-id',
+                name: 'Custom UI',
+                outputSettings: {},
+                formBuilder: [],
+            };
+
+            const mockOnFetchUserInterfaceDetails = jest.fn().mockResolvedValue(mockUserInterface);
+
+            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings);
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                'custom-id',
+                mockOnFetchUserInterfaceDetails,
+            );
+
+            const result = await loader.onFetchStudioUserInterfaceDetails();
+
+            expect(mockOnFetchUserInterfaceDetails).toHaveBeenCalledWith('custom-id');
+            expect(result).toEqual({
+                userInterface: { id: 'custom-id', name: 'Custom UI' },
+                outputSettings: [],
+                formBuilder: undefined,
+                outputSettingsFullList: [],
+            });
+        });
+
+        it('should fallback to default user interface when 404 error occurs', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockDefaultUserInterface = {
+                data: { data: [{ id: 'default-id', name: 'Default UI', default: true, outputSettings: {} }] },
+                status: 200,
+            };
+
+            (axios.get as jest.Mock)
+                .mockResolvedValueOnce(mockOutputSettings) // output settings request
+                .mockRejectedValueOnce({ response: { status: 404 } }) // user interface request fails with 404
+                .mockResolvedValueOnce(mockDefaultUserInterface); // fallback to default user interface
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                'non-existent-id',
+            );
+
+            const result = await loader.onFetchStudioUserInterfaceDetails();
+
+            expect(axios.get).toHaveBeenCalledWith(
+                `${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/non-existent-id`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${mockAuthToken}`,
+                    },
+                },
+            );
+            expect(result).toEqual({
+                userInterface: { id: 'default-id', name: 'Default UI' },
+                outputSettings: [],
+                formBuilder: undefined,
+                outputSettingsFullList: [],
             });
         });
     });

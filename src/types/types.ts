@@ -145,6 +145,7 @@ export type UserInterfaceWithOutputSettings = {
 };
 
 export interface BaseFormBuilderType<T extends FormKeys> {
+    id: string;
     type: T;
     active: boolean;
     header: string;
@@ -153,8 +154,6 @@ export interface BaseFormBuilderType<T extends FormKeys> {
 
 export interface LayoutForm extends BaseFormBuilderType<'layouts'> {
     layoutSelector: boolean;
-    multipleLayouts: boolean;
-    allowNewProjectFromLayout: boolean;
     showWidthHeightInputs: boolean;
 }
 
@@ -174,13 +173,16 @@ export type FormBuilderType = {
 export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
 };
-export type UserInterface = {
+
+export type APIUserInteface = {
     id: string;
     name: string;
     outputSettings: OutputSettingsType;
-    formBuilder: FormBuilderArray;
+    // Stringified JSON
+    formBuilder?: string;
     default: boolean;
 };
+export type UserInterface = Omit<APIUserInteface, 'formBuilder'> & { formBuilder: FormBuilderArray };
 
 export type PaginatedResponse<T> = {
     data: T[];
@@ -229,22 +231,23 @@ export const defaultOutputSettings: OutputSettings = {
 
 export const defaultFormBuilder: FormBuilderType = {
     datasource: {
+        id: 'Datasource',
         type: 'datasource',
         active: true,
         header: 'Data source',
         helpText: '',
     },
     layouts: {
+        id: 'Layouts',
         type: 'layouts',
         active: true,
         header: 'Layouts',
         helpText: '',
         layoutSelector: true,
         showWidthHeightInputs: true,
-        multipleLayouts: true,
-        allowNewProjectFromLayout: true,
     },
     variables: {
+        id: 'Variables',
         type: 'variables',
         active: true,
         header: 'Customize',

@@ -154,7 +154,13 @@ describe('Required text variable', () => {
                         formBuilder: [
                             mockUserInterface.formBuilder[0], // data source
                             mockUserInterface.formBuilder[1], // layouts
-                            { type: 'variables', active: false, header: 'Variables', helpText: 'Variables help text' },
+                            {
+                                id: 'Variables',
+                                type: 'variables',
+                                active: false,
+                                header: 'Variables',
+                                helpText: 'Variables help text',
+                            },
                         ],
                     }),
             });
