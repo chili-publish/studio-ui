@@ -498,7 +498,38 @@ describe('StudioProjectLoader', () => {
             });
         });
 
-        it('should fallback to default user interface when 404 error occurs', async () => {
+        it('should return error when custom onFetchUserInterfaceDetails callback fails without fallback', async () => {
+            const mockOutputSettings = { data: { data: [] } };
+            const mockError = new Error('Custom callback failed');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (mockError as any).response = {
+                status: 404,
+            };
+
+            const mockOnFetchUserInterfaceDetails = jest.fn().mockRejectedValue(mockError);
+
+            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings);
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                mockAuthToken,
+                false,
+                mockRefreshTokenAction,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                'custom-id',
+                mockOnFetchUserInterfaceDetails,
+            );
+
+            await expect(loader.onFetchStudioUserInterfaceDetails()).rejects.toThrow('Custom callback failed');
+
+            expect(mockOnFetchUserInterfaceDetails).toHaveBeenCalledWith('custom-id');
+            // Verify that no fallback calls were made
+            expect(axios.get).toHaveBeenCalledTimes(1); // Only the output settings call
+        });
+
+        it('should fallback to default user interface when 404 error occurs for built-in implementation', async () => {
             const mockOutputSettings = { data: { data: [] } };
             const mockDefaultUserInterface = {
                 data: { data: [{ id: 'default-id', name: 'Default UI', default: true, outputSettings: {} }] },

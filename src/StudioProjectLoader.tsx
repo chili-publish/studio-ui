@@ -262,6 +262,8 @@ export class StudioProjectLoader {
         if (currentUserInterfaceId) {
             let userInterfaceData: UserInterface | undefined;
             if (this.onFetchUserInterfaceDetails) {
+                // There is no any fallback behaviour for custom implementation as it might not be intended by the integrators
+                // So for any error happening we just return the failure
                 userInterfaceData = await this.onFetchUserInterfaceDetails(currentUserInterfaceId);
             } else {
                 userInterfaceData = await fetchUserInterfaceDetails(currentUserInterfaceId);
