@@ -1,18 +1,91 @@
 name: Build and deploy PR
 on: [pull_request]
+env:
+    NODE_VERSION: 20
 jobs:
-    build:
+    run-tests:
         runs-on: ubuntu-latest
+        timeout-minutes: 30
         strategy:
             matrix:
-                node-version: [20]
+                shard: [1, 2, 3, 4, 5]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
-            - name: Use Node ${{ matrix.node-version }}
+            - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: run tests
+              run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --coverage
+            - name: Rename coverage to shard coverage
+              run: |
+                  mv coverage/junit.xml coverage/junit-${{matrix.shard}}.xml
+                  mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
+                  mv coverage/coverage-summary.json coverage/coverage-summary-${{matrix.shard}}.json
+            - name: Use UploadArtifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-artifacts-${{ matrix.shard }}
+                  path: |
+                      coverage/**/*.xml
+                      coverage/**/*.json
+                      coverage/**/*.info
+    report-coverage:
+        runs-on: ubuntu-latest
+        needs: [run-tests]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - uses: actions/upload-artifact/merge@v4
+              with:
+                  name: coverage-artifacts
+                  path: coverage
+            - uses: actions/download-artifact@v4
+              with:
+                  name: coverage-artifacts
+                  path: coverage
+            - name: Process Coverage
+              run: npx nyc report --reporter lcov --reporter json --reporter html -t coverage
+            - name: Publish Unit Test Results
+              uses: EnricoMi/publish-unit-test-result-action@v2
+              if: always()
+              with:
+                  files: coverage/**/*.xml
+            - name: SonarQube analysis
+              uses: docker://sonarsource/sonar-scanner-cli:latest
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+            - name: copy coverage reports
+              run: |
+                  coveragePath=upload/coverage_reports/$CI_REF_NAME
+                  mkdir -p ${coveragePath%"/merge"}
+                  cp -R coverage/* ${coveragePath%"/merge"}
+            - name: Copy to Azure Blob Storage
+              uses: azure/CLI@v1
+              with:
+                  inlineScript: |
+                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v3
+            - name: Use Node ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
@@ -24,16 +97,8 @@ jobs:
               run: yarn validate-licenses
             - name: run linting
               run: yarn ci-lint
-            - name: run tests
-              run: yarn cover
-            - name: Publish Unit Test Results
-              uses: EnricoMi/publish-unit-test-result-action@v2
-              if: always()
-              with:
-                  files: coverage/**/*.xml
             - name: build code
               run: yarn build
-
             - name: 'Comment on PR'
               uses: actions/github-script@0.3.0
               if: github.event_name == 'pull_request'
@@ -70,13 +135,8 @@ jobs:
                       github.issues.createComment({ issue_number, owner, repo, body: 'PR bundle size is ' + formattedSize+ ' and ' +getSizeDif()+'.'  });
             - name: copy file branch
               run: |
-                  coveragePath=upload/coverage_reports/$CI_REF_NAME
                   buildPath=upload/pr_builds/$CI_REF_NAME
-
-                  mkdir -p ${coveragePath%"/merge"}
                   mkdir -p ${buildPath%"/merge"}
-
-                  cp -R coverage ${coveragePath%"/merge"}
                   cp -R dist/* ${buildPath%"/merge"}
             - name: Copy to Azure Blob Storage
               uses: azure/CLI@v1
