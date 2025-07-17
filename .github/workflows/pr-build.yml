@@ -29,7 +29,7 @@ jobs:
               run: |
                   mv coverage/junit.xml coverage/junit-${{matrix.shard}}.xml
                   mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
-                  mv coverage/coverage-summary.json coverage/coverage-summary-${{matrix.shard}}.json
+                  mv coverage/coverage-final.json coverage/coverage-final-${{matrix.shard}}.json
             - name: Use UploadArtifact
               uses: actions/upload-artifact@v4
               with:
