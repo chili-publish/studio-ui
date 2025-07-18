@@ -66,7 +66,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+                  SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
             - name: copy coverage reports
               run: |
                   coveragePath=upload/coverage_reports/$CI_REF_NAME
