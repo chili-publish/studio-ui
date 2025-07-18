@@ -2,7 +2,7 @@ import { ConfigType, ConnectorRegistrationSource, LayoutPropertiesType } from '@
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import { mockApiUserInterface, mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import StudioUI from '../../main';
@@ -157,12 +157,12 @@ describe('FormBuilder options', () => {
             },
         ];
 
-        const ui = { ...mockUserInterface, formBuilder };
+        const ui = { ...mockApiUserInterface, formBuilder: JSON.stringify(formBuilder) };
 
         (axios.get as jest.Mock).mockImplementation((url) => {
             if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
                 return Promise.resolve({ status: 200, data: ui });
             if (url === `${environmentBaseURL}/output/settings`)
                 return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
@@ -192,12 +192,12 @@ describe('FormBuilder options', () => {
         expect(screen.getByText('Layouts from user interface')).toBeInTheDocument();
     });
     it('should fallback to default form builder if form builder data of the user interface is undefined and onFetchUserInterfaceDetails is not provided', async () => {
-        const ui = { ...mockUserInterface, formBuilder: undefined };
+        const ui = { ...mockApiUserInterface, formBuilder: undefined };
 
         (axios.get as jest.Mock).mockImplementation((url) => {
             if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
+                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
+            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
                 return Promise.resolve({ status: 200, data: ui });
             if (url === `${environmentBaseURL}/output/settings`)
                 return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
