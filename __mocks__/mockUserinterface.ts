@@ -11,22 +11,23 @@ export const mockUserInterface = {
     },
     formBuilder: [
         {
+            id: 'Datasource',
             type: 'datasource' as const,
             active: true,
             header: 'Data source',
             helpText: 'Select a data source',
         },
         {
+            id: 'Layouts',
             type: 'layouts' as const,
             active: true,
             header: 'Layouts',
             helpText: 'Layouts help text',
             layoutSelector: true,
-            multipleLayouts: true,
-            allowNewProjectFromLayout: true,
             showWidthHeightInputs: true,
         },
         {
+            id: 'Variables',
             type: 'variables' as const,
             active: true,
             header: 'Variables',
@@ -34,6 +35,11 @@ export const mockUserInterface = {
         },
     ],
     default: true,
+};
+
+export const mockApiUserInterface = {
+    ...mockUserInterface,
+    formBuilder: JSON.stringify(mockUserInterface.formBuilder),
 };
 
 export const mockUserInterface2 = {
@@ -49,22 +55,23 @@ export const mockUserInterface2 = {
     },
     formBuilder: [
         {
+            id: 'Datasource',
             type: 'datasource' as const,
             active: true,
             header: 'Data source',
             helpText: 'Select a data source',
         },
         {
+            id: 'Layouts',
             type: 'layouts' as const,
             active: false,
             header: 'Layouts',
             helpText: 'Layouts help text',
             layoutSelector: false,
-            multipleLayouts: true,
-            allowNewProjectFromLayout: true,
             showWidthHeightInputs: false,
         },
         {
+            id: 'Variables',
             type: 'variables' as const,
             active: true,
             header: 'Variables',
