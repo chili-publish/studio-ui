@@ -1,6 +1,6 @@
 # Studio UI
 
-![Coverage](https://img.shields.io/badge/coverage-80.82%25-yellow.svg)
+![Coverage](https://img.shields.io/badge/coverage-80.96%25-yellow.svg)
 
 This repository includes the source code for the Studio UI application, which will be used by CHILI GraFx end users.
 This application is intended to be used with CHILI GraFx (My) Projects, which uses a subset of features from the [studio-sdk](https://github.com/chili-publish/studio-sdk).
