@@ -20,7 +20,7 @@ module.exports = {
         '^src/(.*)$': '<rootDir>/src/$1',
     },
     collectCoverageFrom: ['src/**', '!src/styles/specials/winter/snow/LetItSnow.tsx'],
-    coverageReporters: ['json-summary', 'text-summary', 'lcov'],
+    coverageReporters: ['lcov', 'text', 'json'],
     reporters: [
         'default',
         ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', outputName: 'junit.xml' }],
