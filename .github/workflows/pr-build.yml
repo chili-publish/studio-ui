@@ -79,7 +79,7 @@ jobs:
                       az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
     build:
         runs-on: ubuntu-latest
-        name: build
+        name: build (20)
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
