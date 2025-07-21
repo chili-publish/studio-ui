@@ -1,7 +1,7 @@
 import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled, { createGlobalStyle } from 'styled-components';
+import { getDataIdForSUI } from '../../utils/dataIds';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
-import { getDataIdForSUI } from 'src/utils/dataIds';
 
 const FILTER_HEIGHT = '2.5rem';
 const FILTER_MARGIN_BOTTOM = '1rem';
