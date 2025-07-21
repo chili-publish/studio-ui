@@ -1,6 +1,7 @@
 import { FontSizes } from '@chili-publish/grafx-shared-components';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import { mobileMediaQuery } from '../../utils/mediaUtils';
+import { getDataIdForSUI } from 'src/utils/dataIds';
 
 const FILTER_HEIGHT = '2.5rem';
 const FILTER_MARGIN_BOTTOM = '1rem';
@@ -9,6 +10,7 @@ const NAVIGATION_HEIGHT = '2.5rem';
 const SCROLLABLE_PANEL_MARGIN_TOP = '1rem';
 const NAVIGATION_MARGIN_BOTTOM = '0.5rem';
 
+const PANEL_DATA_ID = getDataIdForSUI('widget-media-panel');
 interface ScrollbarContainerProps {
     filteringEnabled?: boolean;
     navigationBreadcrumbsEnabled?: boolean;
@@ -17,6 +19,12 @@ interface ScrollbarContainerProps {
 interface StyledScrollbarContainerProps extends ScrollbarContainerProps {
     height: string;
 }
+
+export const StyledPanelTitle = createGlobalStyle`
+    [data-id=${PANEL_DATA_ID}-header] {
+        padding: 0;
+    }
+`;
 
 export const ResourcesContainer = styled.div`
     width: 100%;
