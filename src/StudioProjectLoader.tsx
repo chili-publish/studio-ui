@@ -1,6 +1,7 @@
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
+    APIUserInteface,
     DownloadLinkResult,
     HttpHeaders,
     IOutputSetting,
@@ -214,6 +215,23 @@ export class StudioProjectLoader {
             }
             throw new Error(`Default user interface not found`);
         };
+
+        const fetchUserInterfaceDetails = async (requestedUserInterfaceId: string) => {
+            return axios
+                .get<APIUserInteface>(
+                    `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${requestedUserInterfaceId}`,
+                    {
+                        headers: { Authorization: `Bearer ${this.authToken}` },
+                    },
+                )
+                .then((res) => StudioProjectLoader.toUserInterface(res.data))
+                .catch((err) => {
+                    if (err.response && err.response.status === 404) {
+                        return fetchDefaultUserInterface();
+                    }
+                    throw new Error(`${err}`);
+                });
+        };
         const outputSettings = await axios.get<{ data: IOutputSetting[] }>(
             `${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`,
             {
@@ -240,33 +258,28 @@ export class StudioProjectLoader {
             return mappedOutputSettings;
         };
         // userInterfaceID from projectConfig or session-stored userInterfaceId
-        const userInterface = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
-        if (userInterface) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const handleError = async (err: any) => {
-                if (err.response && err.response.status === 404) {
-                    return fetchDefaultUserInterface();
-                }
-                throw new Error(`${err}`);
-            };
+        const currentUserInterfaceId = userInterfaceId || sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
+        if (currentUserInterfaceId) {
+            let userInterfaceData: UserInterface | undefined;
+            if (this.onFetchUserInterfaceDetails) {
+                // There is no any fallback behaviour for custom implementation as it might not be intended by the integrators
+                // So for any error happening we just return the failure
+                userInterfaceData = await this.onFetchUserInterfaceDetails(currentUserInterfaceId);
+            } else {
+                userInterfaceData = await fetchUserInterfaceDetails(currentUserInterfaceId);
+            }
 
-            const userInterfaceData: UserInterface =
-                (await this.onFetchUserInterfaceDetails?.(userInterface).catch(handleError)) ??
-                (await axios
-                    .get(`${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${userInterface}`, {
-                        headers: { Authorization: `Bearer ${this.authToken}` },
-                    })
-                    .then((res) => res.data)
-                    .catch(handleError));
+            if (!userInterfaceData) {
+                return null;
+            }
 
-            const formBuilderAsObject = transformFormBuilderArrayToObject(userInterfaceData?.formBuilder);
             return {
                 userInterface: {
                     id: userInterfaceData.id,
                     name: userInterfaceData.name,
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
-                formBuilder: userInterfaceData?.formBuilder?.length ? formBuilderAsObject : undefined,
+                formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
                 outputSettingsFullList: outputSettings.data.data,
             };
         }
@@ -274,7 +287,7 @@ export class StudioProjectLoader {
             const defaultUserInterface = await fetchDefaultUserInterface();
             return defaultUserInterface
                 ? {
-                      userInterface: { id: defaultUserInterface?.id, name: defaultUserInterface?.name },
+                      userInterface: { id: defaultUserInterface.id, name: defaultUserInterface.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
                       outputSettingsFullList: outputSettings.data.data,
@@ -297,12 +310,25 @@ export class StudioProjectLoader {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>> => {
-        const res = await axios.get<PaginatedResponse<UserInterface>>(
+        const res = await axios.get<PaginatedResponse<APIUserInteface>>(
             `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
             {
                 headers: { Authorization: `Bearer ${this.authToken}` },
             },
         );
-        return res;
+        return {
+            ...res,
+            data: {
+                ...res.data,
+                data: res.data.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
+            },
+        };
     };
+
+    private static toUserInterface(apiUserInterface: APIUserInteface): UserInterface {
+        return {
+            ...apiUserInterface,
+            formBuilder: apiUserInterface.formBuilder ? JSON.parse(apiUserInterface.formBuilder) : undefined,
+        };
+    }
 }

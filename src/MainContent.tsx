@@ -84,7 +84,6 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
     const [pages, setPages] = useState<Page[]>([]);
     const [activePageId, setActivePageId] = useState<string | null>(null);
-    const [pagesToRefresh, setPagesToRefresh] = useState<string[]>([]);
     const [loadDocumentError, setLoadDocumentError] = useState<{ isOpen: boolean; error: LoadDocumentError }>();
 
     const undoStackState = useMemo(() => ({ canUndo, canRedo }), [canUndo, canRedo]);
@@ -233,11 +232,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             onZoomChanged: (zoom) => {
                 setCurrentZoom(zoom);
             },
-            onPageSnapshotInvalidated: (invalidatedPageId) => {
-                setPagesToRefresh((prev) => {
-                    return prev.includes(String(invalidatedPageId)) ? prev : [...prev, String(invalidatedPageId)];
-                });
-            },
+
             onPagesChanged: (changedPages) => {
                 const visiblePages = changedPages?.filter((i) => i.isVisible);
                 setPages(visiblePages);
@@ -480,8 +475,6 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                                                 <Pages
                                                     pages={pages}
                                                     activePageId={activePageId}
-                                                    pagesToRefresh={pagesToRefresh}
-                                                    setPagesToRefresh={setPagesToRefresh}
                                                     layoutDetails={{
                                                         selectedLayout: currentSelectedLayout,
                                                         layouts,
