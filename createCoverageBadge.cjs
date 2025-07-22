@@ -13,7 +13,7 @@ const getCoverageColor = (coverage) => {
 const createCoverageBadgeURL = (coverage, color) =>
     `https://img.shields.io/badge/coverage-${coverage}${encodeURI('%')}-${color}.svg`;
 
-const coverageFile = fs.readFileSync('coverage/coverage-final.json', 'utf8');
+const coverageFile = fs.readFileSync('coverage/coverage-summary.json', 'utf8');
 
 const parsedCoverageResults = JSON.parse(coverageFile).total;
 
