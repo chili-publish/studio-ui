@@ -1,3 +1,5 @@
+import { PropsWithChildren, ReactElement, ReactNode } from 'react';
+import { StyleSheetManager } from 'styled-components';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import {
     queries,
@@ -9,22 +11,13 @@ import {
     RenderOptions,
     RenderResult,
 } from '@testing-library/react';
-import { PropsWithChildren, ReactElement, ReactNode } from 'react';
-import { Provider } from 'react-redux';
-import { StyleSheetManager } from 'styled-components';
+import { Provider as ReduxProvider } from 'react-redux';
 import isPropValid from '@emotion/is-prop-valid';
 import { RootState, setupStore } from '../../store';
 
 export interface WrapperProps {
     children: Element | ReactNode;
 }
-
-const shouldForwardProp = (propName: string, target: unknown) => {
-    if (typeof target === 'string') {
-        return isPropValid(propName);
-    }
-    return true;
-};
 
 // Used to render test components with new instance of redux store.
 export const renderWithProviders = <
@@ -45,11 +38,11 @@ export const renderWithProviders = <
 ): RenderResult<Q, Container, BaseElement> & { reduxStore: ReturnType<typeof setupStore> } => {
     function Wrapper({ children }: PropsWithChildren<WrapperProps>) {
         return (
-            <Provider store={reduxStore}>
-                <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+            <StyleSheetManager shouldForwardProp={isPropValid}>
+                <ReduxProvider store={reduxStore}>
                     <UiThemeProvider theme="platform">{children}</UiThemeProvider>
-                </StyleSheetManager>
-            </Provider>
+                </ReduxProvider>
+            </StyleSheetManager>
         );
     }
 
@@ -82,9 +75,11 @@ export const renderHookWithProviders = <
 ): RenderHookResult<Result, Props> =>
     renderHook(hook, {
         wrapper: ({ children }: { children: ReactNode }) => (
-            <Provider store={reduxStore}>
-                <UiThemeProvider theme="platform">{children}</UiThemeProvider>
-            </Provider>
+            <StyleSheetManager shouldForwardProp={isPropValid}>
+                <ReduxProvider store={reduxStore}>
+                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                </ReduxProvider>
+            </StyleSheetManager>
         ),
         ...renderOptions,
     });
