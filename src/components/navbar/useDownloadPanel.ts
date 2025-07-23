@@ -5,7 +5,8 @@ import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
+import { validateVariableList } from '../../store/reducers/variableReducer';
+import { useAppDispatch } from '../../store';
 
 type MimeType = 'image/png' | 'image/jpeg' | 'application/pdf' | 'application/zip' | 'video/mp4' | 'image/gif';
 const mimeToExt: { [key in MimeType]: string } = {
@@ -18,11 +19,12 @@ const mimeToExt: { [key in MimeType]: string } = {
 };
 
 const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, selectedLayoutId: string | null) => {
+    const dispatch = useAppDispatch();
+
     const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
     const previousSelectedLayoutId = useRef<string | null>(selectedLayoutId);
 
-    const { validateVariables } = useVariablePanelContext();
     const { addNotification } = useNotificationManager();
 
     const hideDownloadPanel = useCallback(() => {
@@ -38,7 +40,8 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
         updateDownloadState: Dispatch<Partial<Record<DownloadFormats, boolean>>>,
         outputSettingsId: string | undefined,
     ) => {
-        const hasErrors = validateVariables();
+        const { hasErrors } = await dispatch(validateVariableList()).unwrap();
+
         if (hasErrors) {
             addNotification({
                 id: 'variable-validation',

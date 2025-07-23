@@ -66,7 +66,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, imageVaria
                 setPending(false);
             }
         },
-        [imageVariable.value?.connectorId, remoteConnectorId],
+        [remoteConnectorId, imageVariable],
     );
 
     const resetUploadError = useCallback(() => {

@@ -25,7 +25,7 @@ function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProp
             onDateSelected({ ...variable, value: formattedDate });
             setSelectedDate(null);
         }
-    }, [selectedDate, onDateSelected, variable]);
+    }, [selectedDate, onDateSelected, variable, projectConfig]);
 
     return (
         <>

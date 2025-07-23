@@ -7,6 +7,8 @@ import document from './reducers/documentReducer';
 import media from './reducers/mediaReducer';
 import direction from './reducers/directionReducer';
 import appConfig from './reducers/appConfigReducer';
+import panel from './reducers/panelReducer';
+import variable from './reducers/variableReducer';
 
 const extraMiddlewares: Middleware[] = [errorHandlerMiddleware];
 
@@ -28,6 +30,8 @@ const rootReducer = combineReducers({
     media,
     direction,
     appConfig,
+    panel,
+    variable,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

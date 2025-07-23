@@ -14,7 +14,6 @@ import { IAppContext } from '../contexts/AppProvider';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';
 import { getDataIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
-import { variables } from './mocks/mockVariables';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
 import { renderWithProviders } from './mocks/Provider';
 
@@ -77,7 +76,6 @@ describe('MobileVariableTrayLayout', () => {
         renderWithProviders(
             <UiConfigContextProvider projectConfig={projectConfig}>
                 <MobileVariables
-                    variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
@@ -107,7 +105,6 @@ describe('MobileVariableTrayLayout', () => {
         renderWithProviders(
             <FeatureFlagProvider>
                 <MobileVariables
-                    variables={variables}
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}
                     layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
@@ -140,7 +137,6 @@ describe('MobileVariableTrayLayout', () => {
         } as IAppContext);
         renderWithProviders(
             <MobileVariables
-                variables={variables}
                 selectedLayout={mockLayout}
                 layouts={mockLayouts}
                 layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
