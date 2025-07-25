@@ -36,7 +36,7 @@ export interface ToolBarTranslations {
     redoBtn?: {
         tooltip?: string;
     };
-    humburgerMenu?: {
+    hamburgerMenu?: {
         backToTemplatesItemLabel?: string;
         fileMenuItem?: {
             label?: string;
