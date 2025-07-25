@@ -13,6 +13,7 @@ import { MenuOption } from '../Navbar.styles';
 import { getShortcut } from '../../../contexts/ShortcutManager/shortcuts';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 import useZoom from '../../../contexts/ShortcutManager/useZoom';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 
 interface NavbarMenuProps {
     zoom: number;
@@ -25,16 +26,26 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
     const { handleUndo, handleRedo } = useUndoRedo(undoStackState);
     const { zoomIn, zoomOut } = useZoom(zoom);
     const { panel } = useTheme();
+    const { getUITranslation } = useUITranslations();
 
     const fileMenuOptions: ContextMenuItem = useMemo(
         () => ({
-            label: { key: 'file', value: 'File' },
+            label: {
+                key: 'file',
+                value: getUITranslation(['toolBar', 'humburgerMenu', 'fileMenuItem', 'label'], 'File'),
+            },
             hasSeparator: true,
             children: [
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Save" translationKey="save" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'fileMenuItem', 'options', 'saveItemLabel'],
+                                    'Save',
+                                )}
+                                translationKey="save"
+                            />
                             <div>{getShortcut('save')}</div>
                         </MenuOption>
                     ),
@@ -44,7 +55,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Save as" translationKey="save" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'fileMenuItem', 'options', 'saveAsItemLabel'],
+                                    'Save as',
+                                )}
+                                translationKey="save"
+                            />
                             <div>{getShortcut('saveAs')}</div>
                         </MenuOption>
                     ),
@@ -52,23 +69,42 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                     onClick: () => null,
                 },
                 {
-                    label: <Label value="Rename" translationKey="rename" />,
+                    label: (
+                        <Label
+                            value={getUITranslation(
+                                ['toolBar', 'humburgerMenu', 'fileMenuItem', 'options', 'renameItemLabel'],
+                                'Rename',
+                            )}
+                            translationKey="rename"
+                        />
+                    ),
                     isDisabled: true,
                     onClick: () => null,
                 },
             ],
         }),
-        [],
+        [getUITranslation],
     );
 
     const editMenuOptions: ContextMenuItem = useMemo(
         () => ({
-            label: <Label value="Edit" translationKey="edit" />,
+            label: (
+                <Label
+                    value={getUITranslation(['toolBar', 'humburgerMenu', 'editMenuItem', 'label'], 'Edit')}
+                    translationKey="edit"
+                />
+            ),
             children: [
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Undo" translationKey="undo" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'undoItemLabel'],
+                                    'Undo',
+                                )}
+                                translationKey="undo"
+                            />
                             <div>{getShortcut('undo')}</div>
                         </MenuOption>
                     ),
@@ -81,7 +117,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Redo" translationKey="redo" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'redoItemLabel'],
+                                    'Redo',
+                                )}
+                                translationKey="redo"
+                            />
                             <div>{getShortcut('redo')}</div>
                         </MenuOption>
                     ),
@@ -94,7 +136,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Cut" translationKey="cut" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'cutItemLabel'],
+                                    'Cut',
+                                )}
+                                translationKey="cut"
+                            />
                             <div>{getShortcut('cut')}</div>
                         </MenuOption>
                     ),
@@ -105,7 +153,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Copy" translationKey="copy" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'copyItemLabel'],
+                                    'Copy',
+                                )}
+                                translationKey="copy"
+                            />
                             <div>{getShortcut('copy')}</div>
                         </MenuOption>
                     ),
@@ -115,7 +169,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Paste" translationKey="paste" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'pasteItemLabel'],
+                                    'Paste',
+                                )}
+                                translationKey="paste"
+                            />
                             <div>{getShortcut('paste')}</div>
                         </MenuOption>
                     ),
@@ -125,7 +185,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Duplicate" translationKey="duplicate" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'duplicateItemLabel'],
+                                    'Duplicate',
+                                )}
+                                translationKey="duplicate"
+                            />
                             <div>{getShortcut('duplicate')}</div>
                         </MenuOption>
                     ),
@@ -135,7 +201,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Delete" translationKey="delete" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'editMenuItem', 'options', 'deleteItemLabel'],
+                                    'Delete',
+                                )}
+                                translationKey="delete"
+                            />
                             <div>⌫</div>
                         </MenuOption>
                     ),
@@ -144,46 +216,94 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 },
             ],
         }),
-        [handleUndo, handleRedo, undoStackState],
+        [handleUndo, handleRedo, undoStackState, getUITranslation],
     );
 
     const frameMenuOptions: ContextMenuItem = useMemo(
         () => ({
-            label: <Label value="Frames" translationKey="frames" />,
+            label: (
+                <Label
+                    value={getUITranslation(['toolBar', 'humburgerMenu', 'framesMenuItem', 'label'], 'Frames')}
+                    translationKey="frames"
+                />
+            ),
             children: [
                 {
-                    label: <Label value="Bring to front" translationKey="bringToFront" />,
+                    label: (
+                        <Label
+                            value={getUITranslation(
+                                ['toolBar', 'humburgerMenu', 'framesMenuItem', 'options', 'bringToFrontItemLabel'],
+                                'Bring to front',
+                            )}
+                            translationKey="bringToFront"
+                        />
+                    ),
                     isDisabled: true,
                     onClick: () => null,
                 },
                 {
-                    label: <Label value="Bring forward" translationKey="bringForward" />,
+                    label: (
+                        <Label
+                            value={getUITranslation(
+                                ['toolBar', 'humburgerMenu', 'framesMenuItem', 'options', 'bringForwardItemLabel'],
+                                'Bring forward',
+                            )}
+                            translationKey="bringForward"
+                        />
+                    ),
                     isDisabled: true,
                     onClick: () => null,
                 },
                 {
-                    label: <Label value="Send backward" translationKey="sendBackward" />,
+                    label: (
+                        <Label
+                            value={getUITranslation(
+                                ['toolBar', 'humburgerMenu', 'framesMenuItem', 'options', 'sendBackwardItemLabel'],
+                                'Send backward',
+                            )}
+                            translationKey="sendBackward"
+                        />
+                    ),
                     isDisabled: true,
                     onClick: () => null,
                 },
                 {
-                    label: <Label value="Send to back" translationKey="sendToBack" />,
+                    label: (
+                        <Label
+                            value={getUITranslation(
+                                ['toolBar', 'humburgerMenu', 'framesMenuItem', 'options', 'sendToBackItemLabel'],
+                                'Send to back',
+                            )}
+                            translationKey="sendToBack"
+                        />
+                    ),
                     isDisabled: true,
                     onClick: () => null,
                 },
             ],
         }),
-        [],
+        [getUITranslation],
     );
 
     const viewMenuOptions: ContextMenuItem = useMemo(
         () => ({
-            label: <Label value="View" translationKey="view" />,
+            label: (
+                <Label
+                    value={getUITranslation(['toolBar', 'humburgerMenu', 'viewMenuItem', 'label'], 'View')}
+                    translationKey="view"
+                />
+            ),
             children: [
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Preview mode" translationKey="previewMode" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'viewMenuItem', 'options', 'previewModeItemLabel'],
+                                    'Preview mode',
+                                )}
+                                translationKey="previewMode"
+                            />
                             <div>W</div>
                         </MenuOption>
                     ),
@@ -193,7 +313,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Zoom in" translationKey="zoomIn" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'viewMenuItem', 'options', 'zoomInItemLabel'],
+                                    'Zoom in',
+                                )}
+                                translationKey="zoomIn"
+                            />
                             <div>{getShortcut('zoomIn')}</div>
                         </MenuOption>
                     ),
@@ -203,7 +329,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Zoom out" translationKey="zoomOut" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'viewMenuItem', 'options', 'zoomOutItemLabel'],
+                                    'Zoom out',
+                                )}
+                                translationKey="zoomOut"
+                            />
                             <div>{getShortcut('zoomOut')}</div>
                         </MenuOption>
                     ),
@@ -212,7 +344,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Zoom to page" translationKey="zoomToPage" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'viewMenuItem', 'options', 'zoomToPageItemLabel'],
+                                    'Zoom to page',
+                                )}
+                                translationKey="zoomToPage"
+                            />
                             <div>{getShortcut('zoomToPage')}</div>
                         </MenuOption>
                     ),
@@ -222,7 +360,13 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 {
                     label: (
                         <MenuOption>
-                            <Label value="Zoom to 100%" translationKey="zoomTo100" />
+                            <Label
+                                value={getUITranslation(
+                                    ['toolBar', 'humburgerMenu', 'viewMenuItem', 'options', 'zoomTo100ItemLabel'],
+                                    'Zoom to 100%',
+                                )}
+                                translationKey="zoomTo100"
+                            />
                             <div>{getShortcut('zoomTo100')}</div>
                         </MenuOption>
                     ),
@@ -231,13 +375,19 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 },
             ],
         }),
-        [zoomIn, zoomOut],
+        [zoomIn, zoomOut, getUITranslation],
     );
 
     const menuItems = useMemo(
         () => [
             {
-                label: { key: 'backToTemplates', value: 'Back to templates' },
+                label: {
+                    key: 'backToTemplates',
+                    value: getUITranslation(
+                        ['toolBar', 'humburgerMenu', 'backToTemplatesItemLabel'],
+                        'Back to templates',
+                    ),
+                },
                 onClick: onBackClick,
             },
             fileMenuOptions,
@@ -245,7 +395,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
             frameMenuOptions,
             viewMenuOptions,
         ],
-        [onBackClick, fileMenuOptions, editMenuOptions, frameMenuOptions, viewMenuOptions],
+        [onBackClick, fileMenuOptions, editMenuOptions, frameMenuOptions, viewMenuOptions, getUITranslation],
     );
 
     const openMenu = () => {
