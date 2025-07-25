@@ -8,12 +8,12 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
 import { css } from 'styled-components';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { MenuOption } from '../Navbar.styles';
 import { getShortcut } from '../../../contexts/ShortcutManager/shortcuts';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
 import useZoom from '../../../contexts/ShortcutManager/useZoom';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
 
 interface NavbarMenuProps {
     zoom: number;
