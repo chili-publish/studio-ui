@@ -2,8 +2,8 @@ import {
     AvailableIcons,
     ContextMenu,
     ContextMenuItem,
-    GraFxIcon,
     Label,
+    Icon,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { useMemo, useState } from 'react';
@@ -416,7 +416,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                     onClick={isMenuOpen ? closeMenu : openMenu}
                     onKeyDown={isMenuOpen ? closeMenu : openMenu}
                 >
-                    <GraFxIcon icon={AvailableIcons.faBars} />
+                    <Icon icon={AvailableIcons.faBars} />
                     <ContextMenu
                         isVisible={isMenuOpen}
                         isDismissible
@@ -433,7 +433,7 @@ const useNavbarMenu = ({ zoom, undoStackState, onBackClick }: NavbarMenuProps) =
                 display: flex;
                 align-items: center;
                 margin: auto 0;
-                padding: 0 0.5rem;
+                padding: 0 1rem;
                 position: relative;
                 height: 100%;
                 border-right: 2px solid ${panel.borderColor};
