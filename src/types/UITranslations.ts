@@ -36,6 +36,48 @@ export interface ToolBarTranslations {
     redoBtn?: {
         tooltip?: string;
     };
+    hamburgerMenu?: {
+        backToTemplatesItemLabel?: string;
+        fileMenuItem?: {
+            label?: string;
+            options?: {
+                saveItemLabel?: string;
+                saveAsItemLabel?: string;
+                renameItemLabel?: string;
+            };
+        };
+        editMenuItem?: {
+            label?: string;
+            options?: {
+                undoItemLabel?: string;
+                redoItemLabel?: string;
+                cutItemLabel?: string;
+                copyItemLabel?: string;
+                pasteItemLabel?: string;
+                duplicateItemLabel?: string;
+                deleteItemLabel?: string;
+            };
+        };
+        framesMenuItem?: {
+            label?: string;
+            options?: {
+                bringToFrontItemLabel?: string;
+                bringForwardItemLabel?: string;
+                sendBackwardItemLabel?: string;
+                sendToBackItemLabel?: string;
+            };
+        };
+        viewMenuItem?: {
+            label?: string;
+            options?: {
+                previewModeItemLabel?: string;
+                zoomInItemLabel?: string;
+                zoomOutItemLabel?: string;
+                zoomToPageItemLabel?: string;
+                zoomTo100ItemLabel?: string;
+            };
+        };
+    };
 }
 
 export interface LoadDocumentErrorTranslations {

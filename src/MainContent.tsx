@@ -35,7 +35,6 @@ import { useAuthToken } from './contexts/AuthTokenProvider';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
-import { VariablePanelContextProvider } from './contexts/VariablePanelContext';
 import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
 import { SuiCanvas } from './MainContent.styles';
@@ -46,6 +45,7 @@ import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { useDirection } from './hooks/useDirection';
+import { setVariables } from './store/reducers/variableReducer';
 
 declare global {
     interface Window {
@@ -63,7 +63,8 @@ interface MainContentProps {
 function MainContent({ projectConfig, updateToken }: MainContentProps) {
     const dispatch = useAppDispatch();
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
-    const [variables, setVariables] = useState<Variable[]>([]);
+    // const [variables, setVariables] = useState<Variable[]>([]);
+
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
     const [animationLength, setAnimationLength] = useState<number | undefined>();
@@ -187,7 +188,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             onAuthExpired: handleAuthExpired,
             onVariableListChanged: (variableList: Variable[]) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
-                setVariables(variableList);
+                dispatch(setVariables(variableList));
 
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
@@ -395,115 +396,109 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             <ShortcutProvider projectConfig={projectConfig} undoStackState={undoStackState} zoom={currentZoom}>
                 <Container>
                     <UiConfigContextProvider projectConfig={projectConfig}>
-                        <VariablePanelContextProvider variables={variables}>
-                            <div id={APP_WRAPPER_ID} className="app" dir={direction}>
-                                <UserInterfaceDetailsContextProvider
-                                    projectConfig={projectConfig}
-                                    layoutIntent={layoutIntent}
-                                >
-                                    {/* eslint-disable-next-line no-nested-ternary */}
-                                    {projectConfig.uiOptions.widgets?.navBar?.visible ===
-                                    false ? null : projectConfig.sandboxMode ? (
-                                        <UiThemeProvider theme="studio" mode="dark">
-                                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                            <StudioNavbar {...navbarProps} />
-                                        </UiThemeProvider>
-                                    ) : (
-                                        // eslint-disable-next-line react/jsx-props-no-spreading
-                                        <Navbar {...navbarProps} />
-                                    )}
+                        <div id={APP_WRAPPER_ID} className="app" dir={direction}>
+                            <UserInterfaceDetailsContextProvider
+                                projectConfig={projectConfig}
+                                layoutIntent={layoutIntent}
+                            >
+                                {/* eslint-disable-next-line no-nested-ternary */}
+                                {projectConfig.uiOptions.widgets?.navBar?.visible ===
+                                false ? null : projectConfig.sandboxMode ? (
+                                    <UiThemeProvider theme="studio" mode="dark">
+                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                        <StudioNavbar {...navbarProps} />
+                                    </UiThemeProvider>
+                                ) : (
+                                    // eslint-disable-next-line react/jsx-props-no-spreading
+                                    <Navbar {...navbarProps} />
+                                )}
 
-                                    <MainContentContainer
-                                        sandboxMode={projectConfig.sandboxMode}
-                                        fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
-                                    >
-                                        {!isMobileSize && (
-                                            <LeftPanel
-                                                variables={variables}
+                                <MainContentContainer
+                                    sandboxMode={projectConfig.sandboxMode}
+                                    fullHeight={projectConfig.uiOptions.widgets?.navBar?.visible === false}
+                                >
+                                    {!isMobileSize && (
+                                        <LeftPanel
+                                            selectedLayout={currentSelectedLayout}
+                                            layouts={layouts}
+                                            layoutPropertiesState={layoutPropertiesState}
+                                            pageSize={pageSize ?? undefined}
+                                            layoutSectionUIOptions={layoutSectionUIOptions}
+                                        />
+                                    )}
+                                    <CanvasContainer>
+                                        {isMobileSize && (
+                                            <MobileVariables
                                                 selectedLayout={currentSelectedLayout}
                                                 layouts={layouts}
                                                 layoutPropertiesState={layoutPropertiesState}
                                                 pageSize={pageSize ?? undefined}
                                                 layoutSectionUIOptions={layoutSectionUIOptions}
-                                            />
-                                        )}
-                                        <CanvasContainer>
-                                            {isMobileSize && (
-                                                <MobileVariables
-                                                    selectedLayout={currentSelectedLayout}
-                                                    layouts={layouts}
-                                                    variables={variables}
-                                                    layoutPropertiesState={layoutPropertiesState}
-                                                    pageSize={pageSize ?? undefined}
-                                                    layoutSectionUIOptions={layoutSectionUIOptions}
-                                                    isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
-                                                    isPagesPanelDisplayed={
-                                                        layoutIntent === LayoutIntent.print && pages?.length > 1
-                                                    }
-                                                />
-                                            )}
-                                            {projectConfig.customElement && (
-                                                <HtmlRenderer
-                                                    content={projectConfig.customElement}
-                                                    isVisible={multiLayoutMode}
-                                                />
-                                            )}
-                                            <SuiCanvas
-                                                // intent prop to calculate pages container
-                                                hasMultiplePages={
+                                                isTimelineDisplayed={layoutIntent === LayoutIntent.digitalAnimated}
+                                                isPagesPanelDisplayed={
                                                     layoutIntent === LayoutIntent.print && pages?.length > 1
                                                 }
-                                                hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
-                                                isBottomBarHidden={
-                                                    projectConfig.uiOptions.widgets?.bottomBar?.visible === false
-                                                }
-                                                data-id={getDataIdForSUI('canvas')}
-                                                data-testid={getDataTestIdForSUI('canvas')}
-                                                isVisible={!multiLayoutMode}
-                                            >
-                                                <div className="chili-editor" id={EDITOR_ID} />
-                                            </SuiCanvas>
-                                            {layoutIntent === LayoutIntent.digitalAnimated &&
-                                            typeof animationLength === 'number' ? (
-                                                <AnimationTimeline
-                                                    scrubberTimeMs={scrubberTimeMs}
-                                                    animationLength={animationLength}
-                                                    isAnimationPlaying={animationStatus}
-                                                />
-                                            ) : null}
-                                            {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
-                                                <Pages
-                                                    pages={pages}
-                                                    activePageId={activePageId}
-                                                    layoutDetails={{
-                                                        selectedLayout: currentSelectedLayout,
-                                                        layouts,
-                                                        layoutSectionUIOptions,
-                                                    }}
-                                                />
-                                            ) : null}
-                                        </CanvasContainer>
-                                    </MainContentContainer>
-                                </UserInterfaceDetailsContextProvider>
-                                <LoadDocumentErrorDialog
-                                    loadDocumentError={loadDocumentError}
-                                    goBack={projectConfig?.onBack}
-                                />
-                                {pendingAuthentications.length > 0 &&
-                                    pendingAuthentications.map((authFlow) => (
-                                        <ConnectorAuthenticationModal
-                                            key={authFlow.remoteConnectorId}
-                                            name={authFlow.connectorName}
-                                            onConfirm={() =>
-                                                getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.start()
+                                            />
+                                        )}
+                                        {projectConfig.customElement && (
+                                            <HtmlRenderer
+                                                content={projectConfig.customElement}
+                                                isVisible={multiLayoutMode}
+                                            />
+                                        )}
+                                        <SuiCanvas
+                                            // intent prop to calculate pages container
+                                            hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
+                                            hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
+                                            isBottomBarHidden={
+                                                projectConfig.uiOptions.widgets?.bottomBar?.visible === false
                                             }
-                                            onCancel={() =>
-                                                getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.cancel()
-                                            }
-                                        />
-                                    ))}
-                            </div>
-                        </VariablePanelContextProvider>
+                                            data-id={getDataIdForSUI('canvas')}
+                                            data-testid={getDataTestIdForSUI('canvas')}
+                                            isVisible={!multiLayoutMode}
+                                        >
+                                            <div className="chili-editor" id={EDITOR_ID} />
+                                        </SuiCanvas>
+                                        {layoutIntent === LayoutIntent.digitalAnimated &&
+                                        typeof animationLength === 'number' ? (
+                                            <AnimationTimeline
+                                                scrubberTimeMs={scrubberTimeMs}
+                                                animationLength={animationLength}
+                                                isAnimationPlaying={animationStatus}
+                                            />
+                                        ) : null}
+                                        {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                            <Pages
+                                                pages={pages}
+                                                activePageId={activePageId}
+                                                layoutDetails={{
+                                                    selectedLayout: currentSelectedLayout,
+                                                    layouts,
+                                                    layoutSectionUIOptions,
+                                                }}
+                                            />
+                                        ) : null}
+                                    </CanvasContainer>
+                                </MainContentContainer>
+                            </UserInterfaceDetailsContextProvider>
+                            <LoadDocumentErrorDialog
+                                loadDocumentError={loadDocumentError}
+                                goBack={projectConfig?.onBack}
+                            />
+                            {pendingAuthentications.length > 0 &&
+                                pendingAuthentications.map((authFlow) => (
+                                    <ConnectorAuthenticationModal
+                                        key={authFlow.remoteConnectorId}
+                                        name={authFlow.connectorName}
+                                        onConfirm={() =>
+                                            getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.start()
+                                        }
+                                        onCancel={() =>
+                                            getConnectorAuthenticationProcess(authFlow.remoteConnectorId)?.cancel()
+                                        }
+                                    />
+                                ))}
+                        </div>
                     </UiConfigContextProvider>
                 </Container>
             </ShortcutProvider>

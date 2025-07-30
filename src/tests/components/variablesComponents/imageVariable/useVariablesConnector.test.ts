@@ -42,6 +42,7 @@ describe('"useVariablesConnector" hook', () => {
                     connectors: {
                         [currentImageVariable.value!.connectorId]: { id: 'remote-connector-1' } as MediaRemoteConnector,
                     },
+                    connectorCapabilities: {},
                 },
             },
         });

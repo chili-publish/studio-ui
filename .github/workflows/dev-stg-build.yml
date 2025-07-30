@@ -34,7 +34,7 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   name: coverage-artifact
-                  path: coverage/coverage-summary.json
+                  path: coverage/coverage-final.json
 
     build-deploy-dev:
         needs: build-preflight

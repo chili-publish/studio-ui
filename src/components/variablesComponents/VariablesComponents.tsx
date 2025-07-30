@@ -8,8 +8,8 @@ import {
     VariableType,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
+import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppProvider';
-import { useVariablePanelContext } from '../../contexts/VariablePanelContext';
 import BooleanVariable from './BooleanVariable';
 import MultiLineTextVariable from './MultiLineTextVariable';
 import NumberVariable from './NumberVariable';
@@ -20,40 +20,45 @@ import DateVariable from './dateVariable/DateVariable';
 import ImageVariable from './imageVariable/ImageVariable';
 import ListVariable from './listVariable/ListVariable';
 import { useVariableComponents } from './useVariablesComponents';
+import { useAppDispatch } from '../../store';
+import { selectVariablesValidation, validateVariable } from '../../store/reducers/variableReducer';
 
 function VariablesComponents(props: IVariablesComponents) {
     const { type, variable, onCalendarOpen } = props;
     const { handleValueChange, handleImageRemove, handleImageChange } = useVariableComponents(variable.id);
-    const { variablesValidation, validateVariable } = useVariablePanelContext();
     const { isDocumentLoaded } = useAppContext();
+    const dispatch = useAppDispatch();
+    const variablesValidation = useSelector(selectVariablesValidation);
 
     const errMsg = variablesValidation?.[variable.id]?.errorMsg;
 
     const onValidate = useCallback(
         (val: string | null | undefined) => {
-            validateVariable({ ...variable, value: val } as Variable);
+            dispatch(validateVariable({ ...variable, value: val } as Variable));
         },
-        [validateVariable, variable],
+        [dispatch, variable],
     );
 
     const onVariableValueChange = useCallback(
         (val: string | number, { changed }: { changed: boolean }) => {
             if (isTextVariable(variable) || isNumberVariable(variable) || isDateVariable(variable)) {
-                validateVariable({ ...variable, value: val } as
-                    | TextVariableType
-                    | NumberVariableType
-                    | DateVariableType);
+                dispatch(
+                    validateVariable({ ...variable, value: val } as
+                        | TextVariableType
+                        | NumberVariableType
+                        | DateVariableType),
+                );
                 if (changed) return handleValueChange(val);
             }
             return null;
         },
-        [handleValueChange, validateVariable, variable],
+        [handleValueChange, variable, dispatch],
     );
 
     const onImageVariableRemove = useCallback(async () => {
         await handleImageRemove();
-        validateVariable({ ...variable, value: { assetId: '', resolved: undefined } } as ImageVariableType);
-    }, [handleImageRemove, validateVariable, variable]);
+        dispatch(validateVariable({ ...variable, value: { assetId: '', resolved: undefined } } as ImageVariableType));
+    }, [handleImageRemove, variable, dispatch]);
 
     const RenderComponents = useMemo(() => {
         switch (type) {
@@ -116,7 +121,7 @@ function VariablesComponents(props: IVariablesComponents) {
                     <ListVariable
                         variable={variable as ListVariableType}
                         validationError={errMsg}
-                        onChange={validateVariable}
+                        onChange={(val) => dispatch(validateVariable(val))}
                     />
                 );
             }
@@ -131,10 +136,10 @@ function VariablesComponents(props: IVariablesComponents) {
         onVariableValueChange,
         onValidate,
         onCalendarOpen,
-        validateVariable,
         handleValueChange,
         handleImageChange,
         errMsg,
+        dispatch,
     ]);
 
     return <div style={{ width: '100%' }}>{RenderComponents}</div>;

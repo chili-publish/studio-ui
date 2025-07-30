@@ -33,16 +33,16 @@ const useStudioNavbar = ({
         }
         return undefined;
     }, [onBackClick]);
-    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick: handleOnBack });
 
-    const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
-    const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen, projectConfig.sandboxMode);
-    const { zoomNavbarItem } = useNavbarZoom(zoom);
+    const { menuNavbarItem } = useNavbarMenu({ undoStackState, zoom, onBackClick: handleOnBack });
     const { modeToggleNavbarItem } = useNavbarModeToggle(projectConfig);
     const { userInterfaceDropdownNavbarItem } = useUserInterfaceSelector();
+    const { undoRedoNavbarItem } = useNavbarUndoRedoItems(undoStackState);
+    const { downloadNavbarItem } = useNavbarDownloadBtn(onDownloadPanelOpen, true);
+    const { zoomNavbarItem } = useNavbarZoom(zoom);
 
-    const navbarItems = useMemo((): NavbarItemType[] => {
-        const projectNameItem = {
+    const projectNameItem = useMemo(
+        () => ({
             label: 'Project information',
             content: (
                 <NavbarGroup>
@@ -50,8 +50,11 @@ const useStudioNavbar = ({
                 </NavbarGroup>
             ),
             styles: { margin: 'auto' },
-        };
+        }),
+        [projectName],
+    );
 
+    const navbarItems = useMemo((): NavbarItemType[] => {
         const items = [
             menuNavbarItem,
             modeToggleNavbarItem,
@@ -67,7 +70,7 @@ const useStudioNavbar = ({
         downloadNavbarItem,
         zoomNavbarItem,
         menuNavbarItem,
-        projectName,
+        projectNameItem,
         modeToggleNavbarItem,
         userInterfaceDropdownNavbarItem,
     ]);

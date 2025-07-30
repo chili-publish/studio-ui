@@ -108,7 +108,7 @@ const useDownload = ({
                 item: val,
             };
         });
-    }, [isSandBoxMode, outputSettingsFullList]);
+    }, [outputSettingsFullList]);
 
     const getFormatFromId = useCallback(
         (id: string, availableOutputs: UserInterfaceOutputSettings[] | IOutputSetting[]) => {
@@ -119,7 +119,7 @@ const useDownload = ({
 
     const options = useMemo(
         () => (isSandBoxMode ? outputSettingsFullListOptions : userInterfaceDownloadOptions) ?? downloadOptions,
-        [isSandBoxMode, outputSettingsFullList, userInterfaceOutputSettings, downloadOptions],
+        [isSandBoxMode, outputSettingsFullListOptions, userInterfaceDownloadOptions, downloadOptions],
     );
 
     const selectedValue = useMemo(() => {
@@ -151,7 +151,7 @@ const useDownload = ({
                 setSelectedOutputSettingsId(undefined);
             }
         },
-        [getFormatFromId, userInterfaceOutputSettings, outputSettingsFullList],
+        [getFormatFromId, userInterfaceDownloadOptions, outputSettingsFullListOptions, isSandBoxMode],
     );
 
     useEffect(() => {
