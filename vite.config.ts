@@ -28,6 +28,7 @@ export default ({ mode }) => {
         },
         build: {
             emptyOutDir: true,
+            sourcemap: true,
             rollupOptions: {
                 preserveEntrySignatures: 'exports-only',
                 input:

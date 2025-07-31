@@ -78,6 +78,8 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
+        // eslint-disable-next-line no-console
+        console.log('polling on endpoint', data.links.taskInfo);
         const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken);
 
         if (pollingResult === null) {
@@ -118,11 +120,14 @@ const startPollingOnEndpoint = async (
     getToken: () => string,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
+        const token = getToken();
+        // eslint-disable-next-line no-console
+        console.log('token is in polling', token);
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
+                Authorization: `Bearer ${token}`,
             },
             body: null,
         };
