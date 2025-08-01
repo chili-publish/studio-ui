@@ -1,8 +1,9 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
-import { DownloadLinkResult, ProjectConfig } from '../types/types';
+import { DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
+import type { StudioProjectLoader } from '../StudioProjectLoader';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -18,7 +19,7 @@ export const getDownloadLink = async (
     format: DownloadFormats,
     baseUrl: string,
     getToken: () => string,
-    projectLoader: ProjectConfig,
+    projectLoader: StudioProjectLoader,
     layoutId: Id,
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
@@ -120,7 +121,7 @@ export const getDownloadLink = async (
  */
 const startPollingOnEndpoint = async (
     endpoint: string,
-    projectLoader: ProjectConfig,
+    projectLoader: StudioProjectLoader,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
         const token = projectLoader.onAuthenticationRequested();
