@@ -7,9 +7,12 @@ import { NavbarItem, STUDIO_NAVBAR_HEIGHT, StyledNavbar } from '../Navbar.styles
 import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
 function StudioNavbar(props: INavbar) {
-    const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
+    const { projectName, goBack, zoom, undoStackState, selectedLayoutId } = props;
+
+    const { projectConfig } = useUiConfigContext();
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,

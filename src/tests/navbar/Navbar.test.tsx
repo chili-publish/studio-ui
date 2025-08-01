@@ -49,7 +49,6 @@ const renderComponent = (config?: ProjectConfig, layoutIntent?: LayoutIntent, da
                         <UiThemeProvider theme="platform">
                             <Navbar
                                 projectName=""
-                                projectConfig={projectConfig as ProjectConfig}
                                 zoom={100}
                                 undoStackState={{
                                     canRedo: false,

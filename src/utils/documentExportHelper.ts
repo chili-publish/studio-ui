@@ -84,7 +84,7 @@ export const getDownloadLink = async (
         const data = response as GenerateAnimationResponse;
         // eslint-disable-next-line no-console
         console.log('polling on endpoint', data.links.taskInfo);
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, projectLoader);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken, projectLoader);
 
         if (pollingResult === null) {
             return {
@@ -121,12 +121,13 @@ export const getDownloadLink = async (
  */
 const startPollingOnEndpoint = async (
     endpoint: string,
+    getToken: () => string,
     projectLoader: StudioProjectLoader,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
         const token = projectLoader.onAuthenticationRequested();
         // eslint-disable-next-line no-console
-        console.log('token is in polling', token, projectLoader);
+        console.log('token is in polling', token, projectLoader, getToken());
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
@@ -140,7 +141,7 @@ const startPollingOnEndpoint = async (
         if (httpResponse.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, projectLoader);
+            return await startPollingOnEndpoint(endpoint, getToken, projectLoader);
         }
         if (httpResponse.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;

@@ -5,9 +5,12 @@ import { INavbar } from './Navbar.types';
 import DownloadPanel from './downloadPanel/DownloadPanel';
 import useDownloadPanel from './useDownloadPanel';
 import useNavbar from './useNavbar';
+import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
 function Navbar(props: INavbar) {
-    const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
+    const { projectName, goBack, zoom, undoStackState, selectedLayoutId } = props;
+
+    const { projectConfig } = useUiConfigContext();
 
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
