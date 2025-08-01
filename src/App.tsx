@@ -75,6 +75,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         console.table(projectConfig.onLogInfoRequested());
     }, [projectConfig]);
 
+    // eslint-disable-next-line no-console
+    console.log('projectConfig updated - App', projectConfig);
     return (
         <div id="studio-ui-root-wrapper">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>

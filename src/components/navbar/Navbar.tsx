@@ -12,6 +12,9 @@ function Navbar(props: INavbar) {
 
     const { projectConfig } = useUiConfigContext();
 
+    // eslint-disable-next-line no-console
+    console.log('projectConfig updated - Navbar', projectConfig);
+
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
         projectConfig,
         projectName,
