@@ -146,6 +146,7 @@ export class StudioProjectLoader {
                 console.log('authToken in onProjectGetDownloadLink inner fn', this.authToken);
                 return this.authToken;
             },
+            this,
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,
