@@ -50,6 +50,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                         .onAuthenticationExpired()
                         .then((token) => {
                             setAuthToken(token);
+                            // eslint-disable-next-line no-console
+                            console.log('setting authToken in interceptor', token);
                             originalRequest.headers.Authorization = `Bearer ${token}`;
                             return axios(originalRequest);
                         })
@@ -73,6 +75,8 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         console.table(projectConfig.onLogInfoRequested());
     }, [projectConfig]);
 
+    // eslint-disable-next-line no-console
+    console.log('projectConfig updated - App', projectConfig);
     return (
         <div id="studio-ui-root-wrapper">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>

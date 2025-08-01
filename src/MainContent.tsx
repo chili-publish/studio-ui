@@ -378,12 +378,11 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
         () => ({
             projectName: currentProject?.name || projectConfig.projectName || '',
             goBack: projectConfig.onBack,
-            projectConfig,
             undoStackState,
             zoom: currentZoom,
             selectedLayoutId: currentSelectedLayout?.id ?? null,
         }),
-        [currentProject?.name, projectConfig, undoStackState, currentZoom, currentSelectedLayout?.id],
+        [currentProject?.name, undoStackState, currentZoom, currentSelectedLayout?.id, projectConfig],
     );
 
     const layoutSectionUIOptions = {

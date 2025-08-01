@@ -116,6 +116,8 @@ export class StudioProjectLoader {
         if (result instanceof Error) {
             throw result;
         }
+        // eslint-disable-next-line no-console
+        console.log('setting authToken in onAuthenticationExpired', result);
         this.authToken = result;
         return result;
     };
@@ -134,10 +136,17 @@ export class StudioProjectLoader {
         selectedLayoutID: string | undefined,
         outputSettingsId: string | undefined,
     ): Promise<DownloadLinkResult> => {
+        // eslint-disable-next-line no-console
+        console.log('authToken in onProjectGetDownloadLink', this.authToken);
         return getDownloadLink(
             extension as DownloadFormats,
             this.graFxStudioEnvironmentApiBaseUrl,
-            () => this.authToken,
+            () => {
+                // eslint-disable-next-line no-console
+                console.log('authToken in onProjectGetDownloadLink inner fn', this.authToken);
+                return this.authToken;
+            },
+            this,
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,

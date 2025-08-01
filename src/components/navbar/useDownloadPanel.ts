@@ -3,7 +3,6 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import axios from 'axios';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
-import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { validateVariableList } from '../../store/reducers/variableReducer';
 import { useAppDispatch } from '../../store';
@@ -21,7 +20,6 @@ const mimeToExt: { [key in MimeType]: string } = {
 const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, selectedLayoutId: string | null) => {
     const dispatch = useAppDispatch();
 
-    const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
     const previousSelectedLayoutId = useRef<string | null>(selectedLayoutId);
 
@@ -63,7 +61,7 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
             }
             const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
-                headers: { Authorization: `Bearer ${authToken}` },
+                headers: { Authorization: `Bearer ${projectConfig.onAuthenticationRequested()}` },
             });
 
             if (response.status !== 200) return;
