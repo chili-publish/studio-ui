@@ -434,6 +434,11 @@ const uiTranslations = {
             inputLabel: 'Select layout',
             width: 'Width',
             height: 'Height',
+            inputPlaceholder: 'Select',
+            minWidth: 'Min',
+            minHeight: 'Min',
+            maxWidth: 'Max',
+            maxHeight: 'Max',
         },
     },
     toolBar: {
