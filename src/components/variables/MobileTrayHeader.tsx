@@ -2,13 +2,13 @@ import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/graf
 import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useDirection } from 'src/hooks/useDirection';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { MobileTrayFormBuilderHeader } from '../../types/types';
 import { TrayTitleWithBtn, TrayPanelTitle } from './VariablesPanel.styles';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import { PanelType, selectActivePanel, showVariablesPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 import ImagePanelTitle from '../itemBrowser/ImagePanelTitle';
-import { getDataTestIdForSUI } from 'src/utils/dataIds';
 
 interface MobileTrayHeaderProps {
     isDefaultPanelView: boolean;
