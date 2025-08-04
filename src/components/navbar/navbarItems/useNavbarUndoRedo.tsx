@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { AvailableIcons, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useDirection } from 'src/hooks/useDirection';
-import { APP_WRAPPER_ID } from 'src/utils/constants';
+import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constants';
 import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
@@ -26,7 +26,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                         anchorId={APP_WRAPPER_ID}
                     >
                         <NavbarButton
-                            dataId="undo-btn"
+                            dataId={UNDO_BTN_ID}
                             ariaLabel="Undo"
                             icon={undoIcon}
                             flipIconY
@@ -41,7 +41,7 @@ const useNavbarUndoRedoItems = (undoStackState: { canRedo: boolean; canUndo: boo
                         anchorId={APP_WRAPPER_ID}
                     >
                         <NavbarButton
-                            dataId="redo-btn"
+                            dataId={REDO_BTN_ID}
                             ariaLabel="Redo"
                             icon={redoIcon}
                             flipIconY
