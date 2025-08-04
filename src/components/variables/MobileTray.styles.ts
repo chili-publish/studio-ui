@@ -14,7 +14,17 @@ export const DataSourceTableWrapper = styled.div`
 
 export const TrayStyle = createGlobalStyle`
     &[data-id='gsc-tray-header'] {
-        padding: 0.5rem 1.25rem;
+        padding: 0.5rem 0;
         padding-bottom: 0;
+    }
+    &[data-id='gsc-tray-body'] {
+        padding: 0;
+    }
+`;
+
+export const VariablesListTrayStyle = createGlobalStyle`
+    &[data-id='gsc-tray-body'] {
+        padding: 0;
+        padding-top: 0.5rem;
     }
 `;
