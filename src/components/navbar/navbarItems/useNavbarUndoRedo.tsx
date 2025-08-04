@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { AvailableIcons, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { useDirection } from 'src/hooks/useDirection';
-import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constants';
 import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constants';
 import NavbarButton from '../../navbarButton/NavbarButton';
 import { NavbarGroup } from '../Navbar.styles';
 import useUndoRedo from '../../../contexts/ShortcutManager/useUndoRedo';
