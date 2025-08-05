@@ -17,6 +17,7 @@ function NavbarButton(props: NavbarButtonProps) {
     } = props;
     return (
         <Button
+            id={dataId}
             dataId={getDataIdForSUI(dataId)}
             dataTestId={dataTestId && getDataTestId(dataTestId)}
             dataIntercomId={dataIntercomId}
