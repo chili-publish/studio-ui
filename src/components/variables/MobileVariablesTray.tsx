@@ -17,7 +17,12 @@ import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
 import LayoutProperties from '../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle, VariablesListTrayStyle } from './MobileTray.styles';
+import {
+    DataSourceTableWrapper,
+    dataSourceTrayStyles,
+    DataSourceTrayStyle,
+    VariablesListTrayStyle,
+} from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
@@ -159,7 +164,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     return (
         <>
-            {isDataSourcePanelOpen ? <TrayStyle /> : null}
+            {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
             {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray
                 dataTestId={getDataTestIdForSUI('tray-panel')}

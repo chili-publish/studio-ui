@@ -24,6 +24,7 @@ import {
     BreadCrumbsWrapper,
     EmptySearchResultContainer,
     LoadPageContainer,
+    PanelContentWrapper,
     ResourcesContainer,
     ScrollbarContainer,
     SearchInputWrapper,
@@ -283,100 +284,98 @@ function ItemBrowser<
                 height="100%"
                 showHeaderSeparator={false}
             >
-                {navigationEnabled ? (
-                    <BreadCrumbsWrapper>
-                        <BreadCrumb
-                            dataId={getDataIdForSUI('toolbar-breadcrumb')}
-                            dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
-                            path={`${getUITranslation(['panels', 'media', 'rootNavPathLabel'], 'Home')}${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
-                            onClick={updateNavigationStack}
-                        />
-                    </BreadCrumbsWrapper>
-                ) : null}
-                {filteringEnabled ? (
-                    <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
-                        <Input
-                            type="text"
-                            name="search"
-                            placeholder={getUITranslation(['panels', 'media', 'searchPlaceholder'], 'Search')}
-                            value={searchKeyWord}
-                            onChange={(e) => setSearchKeyWord(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSearch(searchKeyWord);
-                            }}
-                            width="260px"
-                            leftIcon={{
-                                icon: (
-                                    <Icon
-                                        dataId={getDataIdForSUI('media-panel-search-icon')}
-                                        dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
-                                        icon={AvailableIcons.faMagnifyingGlass}
-                                    />
-                                ),
-                                label: 'Search icon',
-                            }}
-                            dataId={getDataIdForSUI('media-panel-search-input')}
-                            dataTestId={getDataTestIdForSUI('media-panel-search-input')}
-                            rightIcon={
-                                searchKeyWord
-                                    ? {
-                                          label: 'Clear search icon',
-                                          icon: (
-                                              <Icon
-                                                  dataId={getDataIdForSUI('media-panel-clear-search-icon')}
-                                                  dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
-                                                  icon={AvailableIcons.faXmark}
-                                              />
-                                          ),
-                                          onClick: () => {
-                                              setSearchKeyWord('');
-                                              setSearchQuery('');
-                                          },
-                                      }
-                                    : undefined
-                            }
-                            isHighlightOnClick
-                        />
-                    </SearchInputWrapper>
-                ) : null}
-                <ScrollbarContainer
-                    filteringEnabled={filteringEnabled}
-                    hasSearchQuery={!!searchQuery}
-                    navigationBreadcrumbsEnabled={navigationEnabled}
-                >
-                    <ScrollbarWrapper height="100%">
-                        {elements.length === 0 && !isLoading && searchQuery && (
-                            <EmptySearchResultContainer>
-                                {getUITranslation(
-                                    ['panels', 'media', 'noSearchResults'],
-                                    'No search results found. Maybe try another keyword?',
-                                )}
-                            </EmptySearchResultContainer>
-                        )}
-                        <ResourcesContainer
-                            data-id={getDataIdForSUI('resources-container')}
-                            data-testid={getDataTestIdForSUI('resources-container')}
-                        >
-                            {elements}
-                            {isLoading &&
-                                SKELETONS.map((el) => (
-                                    <ChiliPreview
-                                        key={el}
-                                        itemId={el.toString()}
-                                        variant={PreviewCardVariant.GRID}
-                                        padding="0"
-                                        type={PreviewType.COLLECTION}
-                                        isSkeleton
-                                        onClickCard={() => null}
-                                        renamingDisabled
-                                    />
-                                ))}
-                            <LoadPageContainer>
-                                <div ref={infiniteScrollingRef} />
-                            </LoadPageContainer>
-                        </ResourcesContainer>
-                    </ScrollbarWrapper>
-                </ScrollbarContainer>
+                <PanelContentWrapper>
+                    {navigationEnabled ? (
+                        <BreadCrumbsWrapper>
+                            <BreadCrumb
+                                dataId={getDataIdForSUI('toolbar-breadcrumb')}
+                                dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
+                                path={`${getUITranslation(['panels', 'media', 'rootNavPathLabel'], 'Home')}${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
+                                onClick={updateNavigationStack}
+                            />
+                        </BreadCrumbsWrapper>
+                    ) : null}
+                    {filteringEnabled ? (
+                        <SearchInputWrapper hasSearchQuery={!!searchQuery} isMobile={isMobileSize}>
+                            <Input
+                                type="text"
+                                name="search"
+                                placeholder={getUITranslation(['panels', 'media', 'searchPlaceholder'], 'Search')}
+                                value={searchKeyWord}
+                                onChange={(e) => setSearchKeyWord(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSearch(searchKeyWord);
+                                }}
+                                width="260px"
+                                leftIcon={{
+                                    icon: (
+                                        <Icon
+                                            dataId={getDataIdForSUI('media-panel-search-icon')}
+                                            dataTestId={getDataTestIdForSUI('media-panel-search-icon')}
+                                            icon={AvailableIcons.faMagnifyingGlass}
+                                        />
+                                    ),
+                                    label: 'Search icon',
+                                }}
+                                dataId={getDataIdForSUI('media-panel-search-input')}
+                                dataTestId={getDataTestIdForSUI('media-panel-search-input')}
+                                rightIcon={
+                                    searchKeyWord
+                                        ? {
+                                              label: 'Clear search icon',
+                                              icon: (
+                                                  <Icon
+                                                      dataId={getDataIdForSUI('media-panel-clear-search-icon')}
+                                                      dataTestId={getDataTestIdForSUI('media-panel-clear-search-icon')}
+                                                      icon={AvailableIcons.faXmark}
+                                                  />
+                                              ),
+                                              onClick: () => {
+                                                  setSearchKeyWord('');
+                                                  setSearchQuery('');
+                                              },
+                                          }
+                                        : undefined
+                                }
+                                isHighlightOnClick
+                            />
+                        </SearchInputWrapper>
+                    ) : null}
+                    <ScrollbarContainer>
+                        <ScrollbarWrapper height="100%">
+                            {elements.length === 0 && !isLoading && searchQuery && (
+                                <EmptySearchResultContainer>
+                                    {getUITranslation(
+                                        ['panels', 'media', 'noSearchResults'],
+                                        'No search results found. Maybe try another keyword?',
+                                    )}
+                                </EmptySearchResultContainer>
+                            )}
+                            <ResourcesContainer
+                                data-id={getDataIdForSUI('resources-container')}
+                                data-testid={getDataTestIdForSUI('resources-container')}
+                            >
+                                {elements}
+                                {isLoading &&
+                                    SKELETONS.map((el) => (
+                                        <ChiliPreview
+                                            key={el}
+                                            itemId={el.toString()}
+                                            variant={PreviewCardVariant.GRID}
+                                            padding="0"
+                                            type={PreviewType.COLLECTION}
+                                            isSkeleton
+                                            onClickCard={() => null}
+                                            renamingDisabled
+                                        />
+                                    ))}
+                                <LoadPageContainer>
+                                    <div ref={infiniteScrollingRef} />
+                                </LoadPageContainer>
+                            </ResourcesContainer>
+                        </ScrollbarWrapper>
+                    </ScrollbarContainer>
+                </PanelContentWrapper>
             </Panel>
         </>
     );
