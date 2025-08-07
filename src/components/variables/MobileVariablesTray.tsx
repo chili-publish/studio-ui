@@ -35,6 +35,7 @@ import {
 } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
+const preventCloseElementIds = [TOAST_ID];
 interface VariablesPanelProps {
     isTrayVisible: boolean;
     setIsTrayVisible: (_: boolean) => void;
@@ -191,7 +192,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                         width: 0;
                     }
                 `}
-                ignoreCloseOnParentId={TOAST_ID}
+                preventCloseElementIds={preventCloseElementIds}
             >
                 <VariablesContainer>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
