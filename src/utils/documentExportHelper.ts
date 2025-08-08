@@ -3,6 +3,7 @@ import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
+import type { StudioProjectLoader } from '../StudioProjectLoader';
 
 type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
 
@@ -18,12 +19,15 @@ export const getDownloadLink = async (
     format: DownloadFormats,
     baseUrl: string,
     getToken: () => string,
+    projectLoader: StudioProjectLoader,
     layoutId: Id,
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
 ): Promise<DownloadLinkResult> => {
     try {
+        // eslint-disable-next-line no-console
+        console.log('projectLoader in getDownloadLink', projectLoader);
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
         const generateExportUrl = `${baseUrl}/output/${format}`;
         let engineVersion: string | null = null;
@@ -78,7 +82,9 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken);
+        // eslint-disable-next-line no-console
+        console.log('polling on endpoint', data.links.taskInfo);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken, projectLoader);
 
         if (pollingResult === null) {
             return {
@@ -116,13 +122,17 @@ export const getDownloadLink = async (
 const startPollingOnEndpoint = async (
     endpoint: string,
     getToken: () => string,
+    projectLoader: StudioProjectLoader,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
+        const token = projectLoader.onAuthenticationRequested();
+        // eslint-disable-next-line no-console
+        console.log('token is in polling', token, projectLoader, getToken());
         const config: HttpHeaders = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
+                Authorization: `Bearer ${token}`,
             },
             body: null,
         };
@@ -131,7 +141,7 @@ const startPollingOnEndpoint = async (
         if (httpResponse.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, getToken);
+            return await startPollingOnEndpoint(endpoint, getToken, projectLoader);
         }
         if (httpResponse.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;
