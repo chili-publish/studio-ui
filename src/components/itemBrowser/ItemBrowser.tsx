@@ -292,6 +292,10 @@ function ItemBrowser<
                                 dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
                                 path={`${getUITranslation(['panels', 'media', 'rootNavPathLabel'], 'Home')}${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                                 onClick={updateNavigationStack}
+                                folderDropdownConfig={{
+                                    fullDisplayOnOverflowParent: true,
+                                    style: { width: '11rem' },
+                                }}
                             />
                         </BreadCrumbsWrapper>
                     ) : null}
