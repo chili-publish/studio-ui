@@ -1,33 +1,53 @@
 import { ConnectorImageVariableSource, Id } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
+import { SEARCH_IN_UPLOAD_FOLDER_FIELD_NAME } from 'src/utils/constants';
+
+interface ChangeImageVariableValue {
+    id: string;
+    value: string | null;
+    context: {
+        [SEARCH_IN_UPLOAD_FOLDER_FIELD_NAME]: boolean;
+    };
+}
+
+async function changeImageVariableValue({ id, value, context }: ChangeImageVariableValue) {
+    await window.StudioUISDK.undoManager.record('changeImageVariableValue', async (sdk) => {
+        await sdk.variable.setImageVariableConnectorContext(id, context);
+        await sdk.variable.setValue(id, value);
+    });
+}
 
 export const useVariableComponents = (currentVariableId: Id) => {
     const { projectConfig } = useUiConfigContext();
     const handleImageChange = useCallback(
-        async (value: Omit<ConnectorImageVariableSource, 'connectorId' | 'id'>) => {
+        async (
+            value: Omit<ConnectorImageVariableSource, 'connectorId' | 'id' | 'context'> & {
+                context: { searchInUploadFolder: boolean };
+            },
+        ) => {
             if (currentVariableId) {
                 const assetId = value.resolved?.mediaId ?? value.assetId ?? null;
-                const result = await window.StudioUISDK.variable.setValue(currentVariableId, assetId);
-                if (result.success) {
-                    projectConfig.onVariableValueChangedCompleted?.(currentVariableId, assetId);
-                }
-                return result;
+                await changeImageVariableValue({
+                    id: currentVariableId,
+                    value: assetId,
+                    context: value.context,
+                });
+                projectConfig.onVariableValueChangedCompleted?.(currentVariableId, assetId);
             }
-            return null;
         },
         [currentVariableId, projectConfig],
     );
 
     const handleImageRemove = useCallback(async () => {
         if (currentVariableId) {
-            const result = await window.StudioUISDK.variable.setValue(currentVariableId, null);
-            if (result.success) {
-                projectConfig.onVariableValueChangedCompleted?.(currentVariableId, null);
-            }
-            return result;
+            await changeImageVariableValue({
+                id: currentVariableId,
+                value: null,
+                context: { searchInUploadFolder: false },
+            });
+            projectConfig.onVariableValueChangedCompleted?.(currentVariableId, null);
         }
-        return null;
     }, [currentVariableId, projectConfig]);
 
     const handleValueChange = useCallback(
