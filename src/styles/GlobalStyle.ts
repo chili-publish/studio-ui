@@ -1,9 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle<{ fontFamily?: string }>`
-    body {
-        font-family: ${(props) => props.fontFamily || 'Roboto'};
-    }
     /* Target the root element of your injected app */
     #studio-ui-root-wrapper {
         /* Isolate from external styles */
