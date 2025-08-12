@@ -16,6 +16,7 @@ import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } f
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
+import { APP_WRAPPER_ID } from 'src/utils/constants';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -292,6 +293,11 @@ function ItemBrowser<
                                 dataTestId={getDataTestIdForSUI('toolbar-breadcrumb')}
                                 path={`${getUITranslation(['panels', 'media', 'rootNavPathLabel'], 'Home')}${breacrumbStackString.length ? '\\' : ''}${breacrumbStackString}`}
                                 onClick={updateNavigationStack}
+                                folderDropdownConfig={{
+                                    fullDisplayOnOverflowParent: false,
+                                    style: { width: '11rem' },
+                                    anchorId: APP_WRAPPER_ID,
+                                }}
                             />
                         </BreadCrumbsWrapper>
                     ) : null}
