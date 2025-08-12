@@ -13,7 +13,7 @@ export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean; isP
 
 export const VariablesContainer = styled.div<{ height?: string }>`
     position: relative;
-    height: ${(props) => props.height ?? '100%'};
+    height: 100%;
 `;
 export const TrayPanelTitle = styled.h2<{ margin?: string }>`
     font-size: ${FontSizes.header};
