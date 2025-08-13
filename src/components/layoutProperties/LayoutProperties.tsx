@@ -1,6 +1,7 @@
 import { AvailableIcons, Icon, Input, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
 import { ConstraintMode, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent } from 'react';
+import { APP_WRAPPER_ID } from '../../utils/constants';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
@@ -8,7 +9,6 @@ import { IconWrapper, LayoutInputsContainer } from './Layout.styles';
 import { PageInputId, PagePropertyMap } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { APP_WRAPPER_ID } from 'src/utils/constants';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
