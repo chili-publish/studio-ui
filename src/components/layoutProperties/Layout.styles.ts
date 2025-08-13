@@ -6,3 +6,9 @@ export const LayoutInputsContainer = styled.div`
     display: flex;
     gap: 1rem;
 `;
+
+export const IconWrapper = styled.div`
+    display: flex;
+    align-self: flex-end;
+    margin-bottom: 0.75rem;
+`;

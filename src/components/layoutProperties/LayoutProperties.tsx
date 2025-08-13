@@ -1,13 +1,14 @@
-import { Input } from '@chili-publish/grafx-shared-components';
-import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
+import { AvailableIcons, Icon, Input, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
+import { ConstraintMode, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
-import { LayoutInputsContainer } from './Layout.styles';
+import { IconWrapper, LayoutInputsContainer } from './Layout.styles';
 import { PageInputId, PagePropertyMap } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
+import { APP_WRAPPER_ID } from 'src/utils/constants';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
@@ -66,6 +67,26 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     return (
         <LayoutInputsContainer>
             {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
+            {layout?.resizableByUser.constraintMode === ConstraintMode.locked ? (
+                <IconWrapper>
+                    <Tooltip
+                        content={getUITranslation(
+                            ['formBuilder', 'layouts', 'lockConstraintTooltip'],
+                            'Proportions are locked',
+                        )}
+                        position={TooltipPosition.TOP}
+                        anchorId={APP_WRAPPER_ID}
+                    >
+                        <Icon
+                            icon={AvailableIcons.faLock}
+                            dataId={getDataIdForSUI(`layout-constraint-icon-${layout.resizableByUser.constraintMode}`)}
+                            dataTestId={getDataTestIdForSUI(
+                                `layout-constraint-icon-${layout.resizableByUser.constraintMode}`,
+                            )}
+                        />
+                    </Tooltip>
+                </IconWrapper>
+            ) : null}
             {renderInput('page-height-input', pageHeight, heightLabel, heightInputHelpText)}
         </LayoutInputsContainer>
     );

@@ -439,6 +439,7 @@ const uiTranslations = {
             minHeight: 'Min',
             maxWidth: 'Max',
             maxHeight: 'Max',
+            lockConstraintTooltip: 'Proportions are locked',
         },
     },
     toolBar: {
