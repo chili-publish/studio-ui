@@ -68,7 +68,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         <LayoutInputsContainer>
             {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
             {layout?.resizableByUser.constraintMode === ConstraintMode.locked ? (
-                <IconWrapper>
+                <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
                     <Tooltip
                         content={getUITranslation(
                             ['formBuilder', 'layouts', 'lockConstraintTooltip'],
