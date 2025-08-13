@@ -22,6 +22,9 @@ export interface LayoutsTranslations {
     maxWidth?: string;
     maxHeight?: string;
     lockConstraintTooltip?: string;
+    rangeConstraintTooltip?: string;
+    minRangeConstraintTooltip?: string;
+    maxRangeConstraintTooltip?: string;
 }
 
 export interface ToolBarTranslations {

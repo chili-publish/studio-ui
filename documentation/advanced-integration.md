@@ -440,6 +440,8 @@ const uiTranslations = {
             maxWidth: 'Max',
             maxHeight: 'Max',
             lockConstraintTooltip: 'Proportions are locked',
+            rangeConstraintTooltip:
+                'Proportions are limited — only aspect ratios between {{minHorizontal}}:{{minVertical}} and {{maxHorizontal}}:{{maxVertical}} are allowed.',
         },
     },
     toolBar: {
