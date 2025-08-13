@@ -77,7 +77,7 @@ const renderComponent = (
             <LeftPanel
                 selectedLayout={selectedLayout || mockLayout}
                 layouts={layouts || mockLayouts}
-                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                layoutPropertiesState={(selectedLayout || mockLayout) as unknown as LayoutPropertiesType}
                 layoutSectionUIOptions={layoutSectionUIOptions}
             />
         </UserInterfaceDetailsContextProvider>,
@@ -122,7 +122,7 @@ describe('Layout selection', () => {
 
         renderComponent(LayoutIntent.print, mockLayouts, layout);
 
-        expect(screen.getByTestId(getDataTestIdForSUI('layout-constraint-icon-lock'))).toBeInTheDocument();
+        expect(screen.getByTestId(getDataTestIdForSUI('layout-constraint-icon-locked'))).toBeInTheDocument();
     });
 
     test('lock icon should be hidden when layout constraint mode is not locked', async () => {
@@ -133,7 +133,7 @@ describe('Layout selection', () => {
 
         renderComponent(LayoutIntent.print, mockLayouts, layout);
 
-        expect(screen.queryByTestId(getDataTestIdForSUI('layout-constraint-icon-lock'))).not.toBeInTheDocument();
+        expect(screen.queryByTestId(getDataTestIdForSUI('layout-constraint-icon-locked'))).not.toBeInTheDocument();
     });
 
     test('Layout dropdown input and title are rendered based on uiOptions', async () => {
