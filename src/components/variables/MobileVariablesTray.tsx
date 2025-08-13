@@ -35,7 +35,9 @@ import {
 } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
-const preventCloseElementIds = [TOAST_ID];
+// TODO: replace 'select-input-menu' with proper id, after the shared components are updated, and the breadcrumb id is aggregated
+// through <BreadcrumbNavigationDropdown> to the Select
+const preventCloseElementIds = [TOAST_ID, 'select-input-menu'];
 interface VariablesPanelProps {
     isTrayVisible: boolean;
     setIsTrayVisible: (_: boolean) => void;
