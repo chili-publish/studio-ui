@@ -77,7 +77,7 @@ describe('"ImageVariable" component ', () => {
 
         const { container } = renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -94,7 +94,7 @@ describe('"ImageVariable" component ', () => {
         };
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -106,7 +106,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -131,7 +131,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -155,7 +155,7 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -185,7 +185,11 @@ describe('"ImageVariable" component ', () => {
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={handleRemove} />
+                <ImageVariable
+                    variable={imageVariable}
+                    handleImageRemove={handleRemove}
+                    handleImageChange={jest.fn()}
+                />
             </UiThemeProvider>,
         );
 
@@ -203,7 +207,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -225,7 +229,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -248,7 +252,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -268,7 +272,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -290,7 +294,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -315,7 +319,11 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariableWithoutLabel} handleImageRemove={jest.fn()} />
+                <ImageVariable
+                    variable={imageVariableWithoutLabel}
+                    handleImageRemove={jest.fn()}
+                    handleImageChange={jest.fn()}
+                />
             </UiThemeProvider>,
         );
 
@@ -337,15 +345,10 @@ describe('"ImageVariable" component ', () => {
             ...variables[0],
             allowUpload: true,
         };
-        const handleImageChange = jest.fn();
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable
-                    variable={imageVariable}
-                    handleImageRemove={jest.fn()}
-                    handleImageChange={handleImageChange}
-                />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -398,7 +401,11 @@ describe('"ImageVariable" component ', () => {
 
         await waitFor(() => {
             expect(uploadMock).toHaveBeenCalled();
-            expect(handleImageChange).toHaveBeenCalledWith({ assetId: 'media-123', id: imageVariable.id });
+            expect(handleImageChange).toHaveBeenCalledWith({
+                assetId: 'media-123',
+                id: imageVariable.id,
+                context: { searchInUploadFolder: true },
+            });
         });
     });
 
@@ -407,7 +414,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -422,7 +429,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -436,7 +443,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -454,7 +461,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -477,7 +484,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 
@@ -499,7 +506,7 @@ describe('"ImageVariable" component ', () => {
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
-                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} />
+                <ImageVariable variable={imageVariable} handleImageRemove={jest.fn()} handleImageChange={jest.fn()} />
             </UiThemeProvider>,
         );
 

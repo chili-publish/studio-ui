@@ -20,11 +20,10 @@ export const useMediaDetails = (connectorId: string | undefined, mediaAssetId: s
         }
 
         if (connectorCapabilities[connectorId]?.query && connectorCapabilities[connectorId]?.filtering) {
-            const { parsedData } = await window.StudioUISDK.mediaConnector.query(
-                connectorId,
-                { filter: [mediaAssetId], pageSize: 1 },
-                {},
-            );
+            const { parsedData } = await window.StudioUISDK.mediaConnector.query(connectorId, {
+                filter: [mediaAssetId],
+                pageSize: 1,
+            });
             return parsedData?.data[0] ?? null;
         }
         if (connectorCapabilities[connectorId]?.detail) {

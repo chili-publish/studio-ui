@@ -18,7 +18,11 @@ export interface IImageVariable {
     variable: ImageVariable;
     validationError?: string;
     handleImageRemove: () => void;
-    handleImageChange?: (payload: { assetId: string; id: string }) => void;
+    handleImageChange: (payload: {
+        assetId: string;
+        id: string;
+        context: { searchInUploadFolder: boolean };
+    }) => Promise<void>;
 }
 
 export interface ITextVariable {
