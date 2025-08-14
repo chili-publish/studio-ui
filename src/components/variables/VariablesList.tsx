@@ -6,7 +6,7 @@ import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
+import { ComponentWrapper } from './VariablesPanel.styles';
 import { PanelType, selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 import { selectVariables, validateUpdatedVariables } from '../../store/reducers/variableReducer';
@@ -40,7 +40,7 @@ function VariablesList() {
     const helpText = getUITranslation(['formBuilder', 'variables', 'helpText'], formBuilder.variables.helpText);
 
     return (
-        <ListWrapper>
+        <div>
             <SectionWrapper id="variables-section-header">
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
@@ -57,7 +57,7 @@ function VariablesList() {
                     </ComponentWrapper>
                 ) : null;
             })}
-        </ListWrapper>
+        </div>
     );
 }
 

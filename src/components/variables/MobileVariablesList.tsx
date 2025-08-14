@@ -9,7 +9,7 @@ import MobileListVariable from '../variablesComponents/listVariable/MobileListVa
 import { isListVariable } from '../variablesComponents/Variable';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
-import { ComponentWrapper, ListWrapper } from './VariablesPanel.styles';
+import { ComponentWrapper } from './VariablesPanel.styles';
 import {
     selectActivePanel,
     showVariablesPanel,
@@ -64,7 +64,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
     }, [variables, updateWithTranslation]);
 
     return (
-        <ListWrapper optionsListOpen={!!listVariableOpen}>
+        <div>
             {variablesWithTranslation.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
 
@@ -78,7 +78,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
                     activePanel !== PanelType.DATE_VARIABLE_PICKER
                 ) {
                     return (
-                        <ComponentWrapper
+                        <div
                             key={`variable-component-${variable.id}`}
                             data-intercom-target={`dropdown-variable-${variable.name}`}
                         >
@@ -96,7 +96,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
                                     <InputLabel labelFor={variable.id} label={variable.helpText} />
                                 ) : null}
                             </HelpTextWrapper>
-                        </ComponentWrapper>
+                        </div>
                     );
                 }
                 const isDateVariableOpen =
@@ -126,7 +126,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
                     </ComponentWrapper>
                 ) : null;
             })}
-        </ListWrapper>
+        </div>
     );
 }
 

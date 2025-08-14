@@ -11,14 +11,6 @@ const SCROLLABLE_PANEL_MARGIN_TOP = '1rem';
 const NAVIGATION_MARGIN_BOTTOM = '0.5rem';
 
 const PANEL_DATA_ID = getDataIdForSUI('widget-media-panel');
-interface ScrollbarContainerProps {
-    filteringEnabled?: boolean;
-    navigationBreadcrumbsEnabled?: boolean;
-    hasSearchQuery?: boolean;
-}
-interface StyledScrollbarContainerProps extends ScrollbarContainerProps {
-    height: string;
-}
 
 export const StyledPanelTitle = createGlobalStyle`
     [data-id=${PANEL_DATA_ID}-header] {
@@ -120,22 +112,23 @@ export const BreadCrumbsWrapper = styled.div`
     }
 `;
 
-export const ScrollbarContainer = styled.div.attrs<ScrollbarContainerProps>((props) => {
-    const navigationBarTotalHeight = `calc(${NAVIGATION_HEIGHT} + ${NAVIGATION_MARGIN_BOTTOM})`;
-    const searchBarTotalHeight = `calc(${FILTER_HEIGHT} + ${props.hasSearchQuery ? FILTER_MARGIN_BOTTOM : '0px'})`;
+export const PanelContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+`;
 
-    const height = `calc(100% - ${props.filteringEnabled ? searchBarTotalHeight : '0px'} - ${
-        props.navigationBreadcrumbsEnabled ? navigationBarTotalHeight : '0px'
-    } - ${SCROLLABLE_PANEL_MARGIN_TOP} - 0.5rem)`;
-
-    return { ...props, height };
-})<Partial<StyledScrollbarContainerProps>>`
+export const ScrollbarContainer = styled.div`
     width: 100%;
-    height: ${(props) => props.height};
     margin-top: ${SCROLLABLE_PANEL_MARGIN_TOP};
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: none;
     @media (hover: none), (hover: on-demand) {
         > div {
-            overflow-y: auto;
+            &::-webkit-scrollbar {
+                display: none;
+            }
         }
     }
 `;

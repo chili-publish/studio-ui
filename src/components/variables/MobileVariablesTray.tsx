@@ -17,11 +17,16 @@ import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
 import LayoutProperties from '../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import { DataSourceTableWrapper, dataSourceTrayStyles, TrayStyle } from './MobileTray.styles';
+import {
+    DataSourceTableWrapper,
+    dataSourceTrayStyles,
+    DataSourceTrayStyle,
+    VariablesListTrayStyle,
+} from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
 import useDataSourceInputHandler from './useDataSourceInputHandler';
-import { ListWrapper, TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
 import {
     selectActivePanel,
     showVariablesPanel,
@@ -30,6 +35,9 @@ import {
 } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 
+// TODO: replace 'select-input-menu' with proper id, after the shared components are updated, and the breadcrumb id is aggregated
+// through <BreadcrumbNavigationDropdown> to the Select
+const preventCloseElementIds = [TOAST_ID, UNDO_BTN_ID, REDO_BTN_ID, 'select-input-menu'];
 interface VariablesPanelProps {
     isTrayVisible: boolean;
     setIsTrayVisible: (_: boolean) => void;
@@ -40,16 +48,6 @@ interface VariablesPanelProps {
     pageSize?: PageSize;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
 }
-
-const MEDIA_PANEL_TOOLBAR_HEIGHT_REM = '3rem';
-
-const imagePanelHeight = `
-    calc(100%
-        - ${MEDIA_PANEL_TOOLBAR_HEIGHT_REM}
-    )`;
-
-const IGNORE_CLOSE_ON_CLICK_ID = [TOAST_ID, UNDO_BTN_ID, REDO_BTN_ID];
-
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const {
         isTrayVisible,
@@ -117,9 +115,13 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
-    const isCustomizeSubtitleDisplayed = isDataSourceDisplayed || isAvailableLayoutsDisplayed;
+    const isCustomizeSubtitleDisplayed =
+        (isDataSourceDisplayed || isAvailableLayoutsDisplayed) &&
+        !variablesMobileOptionsListOpen &&
+        !isDateVariablePanelOpen;
 
-    const showImagePanel = !(isDefaultPanelView || isDateVariablePanelOpen);
+    const isAvailableLayoutsSectionDisplayed =
+        isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && !variablesMobileOptionsListOpen;
 
     const onTrayHidden = useCallback(() => {
         dispatch(showVariablesPanel());
@@ -164,7 +166,8 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
 
     return (
         <>
-            {isDataSourcePanelOpen ? <TrayStyle /> : null}
+            {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
+            {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray
                 dataTestId={getDataTestIdForSUI('tray-panel')}
                 isOpen={isTrayVisible}
@@ -190,9 +193,9 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                         width: 0;
                     }
                 `}
-                preventCloseElementIds={IGNORE_CLOSE_ON_CLICK_ID}
+                preventCloseElementIds={preventCloseElementIds}
             >
-                <VariablesContainer height={showImagePanel ? imagePanelHeight : undefined}>
+                <VariablesContainer>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
                             {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
@@ -208,23 +211,25 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                                     onNextClick={getNextRow}
                                 />
                             ) : null}
-                            {isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && (
+                            {isAvailableLayoutsSectionDisplayed && (
                                 <>
                                     {isAvailableLayoutSubtitleDisplayed && (
-                                        <SectionWrapper>
+                                        <SectionWrapper
+                                            data-testid={`${getDataTestIdForSUI('available-layouts-section-header')}`}
+                                        >
                                             <TrayPanelTitle margin="0">{layoutSectionHeader}</TrayPanelTitle>
                                             {layoutHelpText && <SectionHelpText>{layoutHelpText}</SectionHelpText>}
                                         </SectionWrapper>
                                     )}
                                     {isLayoutSwitcherVisible && (
-                                        <ListWrapper optionsListOpen={layoutsMobileOptionsListOpen}>
+                                        <div>
                                             <AvailableLayouts
                                                 selectedLayout={selectedLayout}
                                                 availableForUserLayouts={availableLayouts}
                                                 mobileDevice
                                                 onMobileOptionListToggle={setLayoutsMobileOptionsListOpen}
                                             />
-                                        </ListWrapper>
+                                        </div>
                                     )}
                                     {isLayoutResizableVisible && !layoutsMobileOptionsListOpen && (
                                         <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
@@ -235,7 +240,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                             {!layoutsMobileOptionsListOpen && formBuilder.variables.active && (
                                 <>
                                     {isCustomizeSubtitleDisplayed && (
-                                        <SectionWrapper id="variables-section-header">
+                                        <SectionWrapper
+                                            id="variables-section-header"
+                                            data-testid={`${getDataTestIdForSUI('variables-section-header')}`}
+                                        >
                                             <TrayPanelTitle margin="0">{variablesHeader}</TrayPanelTitle>
                                             {variablesHelpText && (
                                                 <SectionHelpText>{variablesHelpText}</SectionHelpText>

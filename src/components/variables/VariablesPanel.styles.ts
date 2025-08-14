@@ -26,11 +26,7 @@ export const ComponentWrapper = styled.div`
     margin-bottom: 1rem;
 `;
 
-export const ListWrapper = styled.div<{ optionsListOpen?: boolean }>`
-    ${(props) => props.optionsListOpen && 'margin: 0 -1.25rem -3rem -1.25rem'};
-`;
-
-export const DatePickerTrayTitle = styled.div`
+export const TrayTitleWithBtn = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
