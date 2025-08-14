@@ -1,7 +1,7 @@
 const packageJson = require('./package.json');
 
 const SDKVersion = packageJson.dependencies['@chili-publish/studio-sdk'].replace('^', '');
-const semverRegex = /^(\d+)\.(\d+)\.(\d+)(?:-([\da-z\-]+(?:\.[\da-z\-]+)*))?(?:\+([\da-z\-]+(?:\.[\da-z\-]+)*))?$/i;
+const semverRegex = /^(\d+)\.(\d+)\.(\d+)(?:-(alpha|alfa|rc)(?:\.(\d+))?)?$/i;
 
 if (semverRegex.test(SDKVersion)) {
     console.log(`${SDKVersion} is a valid semver version.`);
