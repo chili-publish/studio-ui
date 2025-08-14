@@ -26,6 +26,9 @@ export const mockVariables: [ImageVariable, ...Variable[]] = [
         },
         allowQuery: true,
         allowUpload: false,
+        context: {
+            searchInUploadFolder: false,
+        },
     }),
     <ImageVariable>{
         id: 'image12',

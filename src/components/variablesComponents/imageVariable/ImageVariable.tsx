@@ -60,7 +60,7 @@ function ImageVariable(props: IImageVariable) {
             if (!media) {
                 return;
             }
-            handleImageChange?.({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
+            handleImageChange({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
             onVariableBlur?.(variable.id);
         });
     };

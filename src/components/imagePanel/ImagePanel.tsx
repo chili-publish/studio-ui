@@ -1,4 +1,4 @@
-import { ImageVariable, Media, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { ImageVariable, Media, MediaDownloadType, MetaData, QueryOptions } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { convertToPreviewType } from '../../utils/mediaUtils';
@@ -13,6 +13,7 @@ import {
     validateVariable,
 } from '../../store/reducers/variableReducer';
 import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
+import { SEARCH_IN_UPLOAD_FOLDER_FIELD_NAME } from '../../utils/constants';
 
 function ImagePanel() {
     const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ function ImagePanel() {
             const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
+                context: { searchInUploadFolder: false },
             };
             // TODO: remove after WRS-2570 is merged
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,13 +59,20 @@ function ImagePanel() {
         [handleUpdateImage, onVariableBlur, currentVariableId],
     );
 
+    const queryCall = useCallback(async (connectorId: string, options: QueryOptions, context: MetaData) => {
+        return window.StudioUISDK.mediaConnector.query(connectorId, options, {
+            ...context,
+            [SEARCH_IN_UPLOAD_FOLDER_FIELD_NAME]: false,
+        });
+    }, []);
+
     if (!currentVariableConnectorId) return null;
 
     return (
         <ItemBrowser<Media>
             isPanelOpen
             connectorId={currentVariableConnectorId}
-            queryCall={window.StudioUISDK.mediaConnector.query}
+            queryCall={queryCall}
             previewCall={previewCall}
             onSelect={handleAssetSelection}
             convertToPreviewType={convertToPreviewType}
