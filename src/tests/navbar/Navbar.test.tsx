@@ -135,7 +135,7 @@ describe('Navbar', () => {
         });
         await waitFor(() => {
             const navbarItems = Array.from(screen.getByTestId(getDataTestIdForSUI('navbar')).children[0].children);
-            expect(navbarItems).toHaveLength(3);
+            expect(navbarItems).toHaveLength(4); // 3 items + 1 spacer
         });
     });
 
