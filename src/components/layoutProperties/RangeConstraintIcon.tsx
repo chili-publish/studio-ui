@@ -33,7 +33,7 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
             );
         }
         return null;
-    }, [layout]);
+    }, [layout, getUITranslation]);
 
     if (!layout) {
         return null;

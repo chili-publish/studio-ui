@@ -1,15 +1,18 @@
-import { Input } from '@chili-publish/grafx-shared-components';
+import { Button, ButtonVariant, Input, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ConstraintMode, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { formatNumber } from '../../utils/formatNumber';
-import { IconWrapper, LayoutInputsContainer } from './Layout.styles';
-import { PageInputId, PagePropertyMap } from './types';
+import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
+import { ButtonsWrapper, IconWrapper, LayoutInputsContainer } from './Layout.styles';
+import { PageInputId, PagePropertyMap, PagePropertyType } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import RangeConstraintIcon from './RangeConstraintIcon';
 import LockedConstraintIcon from './LockedConstraintIcon';
+import { useLayoutConstraintProportions } from './useLayoutConstraintProportions';
+import { withMeasurementUnit } from './util';
+import RangeConstraintErrorMessage from './RangeConstraintErrorMessage';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
@@ -18,15 +21,21 @@ interface LayoutPropertiesProps {
 
 function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
-    const { handleChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText } = useLayoutProperties(
-        layout,
+    const { saveChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText, setPageWidth, setPageHeight } =
+        useLayoutProperties(layout, pageSize);
+
+    const { formHasChanges, setFormHasChanges, formHasError, setFormHasError } = useLayoutConstraintProportions(
         pageSize,
+        pageWidth,
+        pageHeight,
     );
 
     const hasLockedConstraint = layout?.resizableByUser.constraintMode === ConstraintMode.locked;
     const hasRangeConstraint =
         layout?.resizableByUser.constraintMode === ConstraintMode.range &&
         (layout?.resizableByUser.minAspect || layout?.resizableByUser.maxAspect);
+    const submitOnBlur = !hasRangeConstraint;
+
     const { getUITranslation } = useUITranslations();
 
     const widthLabel = getUITranslation(['formBuilder', 'layouts', 'width'], 'Width');
@@ -38,7 +47,18 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
 
     const handleBlur = (inputId: PageInputId, value: string) => {
         onVariableBlur?.(inputId);
-        handleChange(PagePropertyMap[inputId], value);
+
+        if (submitOnBlur) {
+            saveChange(PagePropertyMap[inputId], value);
+        } else {
+            setFormHasChanges(true);
+            // update state with new value to reflect it in the inputs before submit
+            if (PagePropertyMap[inputId] === PagePropertyType.Width) {
+                setPageWidth(!Number.isNaN(Number(value)) ? withMeasurementUnit(value, layout?.unit.value) : value);
+            } else {
+                setPageHeight(!Number.isNaN(Number(value)) ? withMeasurementUnit(value, layout?.unit.value) : value);
+            }
+        }
     };
 
     const handleInputBlur = (id: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +66,42 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         const newValue = event.target.value;
         const oldValue = pageSize?.[property as keyof PageSize] as number;
         const isSame = `${formatNumber(oldValue, layout?.unit.value)} ${layout?.unit.value}` === newValue;
+
         if (!isSame) {
             handleBlur(id as PageInputId, newValue);
         }
     };
-    const renderInput = (id: string, inputValue: string, label: string, helpText?: string) => (
+
+    const handleRevertChanges = () => {
+        setFormHasError(false);
+        setFormHasChanges(false);
+
+        setPageWidth(pageSize?.width ? withMeasurementUnit(pageSize.width, layout?.unit.value) : '');
+        setPageHeight(pageSize?.height ? withMeasurementUnit(pageSize.height, layout?.unit.value) : '');
+    };
+
+    const handleApplyChanges = async () => {
+        setFormHasError(false);
+        setFormHasChanges(false);
+
+        handleSetProperty(
+            async () => {
+                await window.StudioUISDK.page.setSize(pageWidth, pageHeight);
+                return null;
+            },
+            () => {
+                setFormHasError(true);
+            },
+        );
+    };
+
+    const renderInput = (
+        id: string,
+        inputValue: string,
+        label: string,
+        helpText?: string,
+        submitOnBlur: boolean = true,
+    ) => (
         <Input
             type="number"
             id={id}
@@ -59,31 +110,71 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             value={inputValue}
             placeholder={label}
             onValueChange={(v) => {
-                handleChange(PagePropertyMap[id as PageInputId], v);
+                setFormHasChanges(true);
+                if (submitOnBlur) saveChange(PagePropertyMap[id as PageInputId], v);
             }}
             onFocus={() => handleFocus(id)}
             onBlur={handleInputBlur(id)}
             name={id}
             label={label}
             helpText={helpText}
+            validation={formHasError ? ValidationTypes.ERROR : undefined}
         />
     );
 
     return (
-        <LayoutInputsContainer>
-            {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
-            {hasLockedConstraint && (
-                <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
-                    <LockedConstraintIcon layout={layout} />
-                </IconWrapper>
-            )}
+        <>
+            <LayoutInputsContainer>
+                {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
+                {hasLockedConstraint && (
+                    <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
+                        <LockedConstraintIcon layout={layout} />
+                    </IconWrapper>
+                )}
+                {hasRangeConstraint && (
+                    <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
+                        <RangeConstraintIcon layout={layout} />
+                    </IconWrapper>
+                )}
+                {renderInput('page-height-input', pageHeight, heightLabel, heightInputHelpText)}
+            </LayoutInputsContainer>
             {hasRangeConstraint && (
-                <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
-                    <RangeConstraintIcon layout={layout} />
-                </IconWrapper>
+                <>
+                    <ButtonsWrapper>
+                        <Button
+                            disabled={!formHasChanges}
+                            variant={ButtonVariant.secondary}
+                            onClick={handleRevertChanges}
+                            label={
+                                <Label
+                                    translationKey="cancelLabel"
+                                    value={getUITranslation(['formBuilder', 'layouts', 'cancelLabel'], 'Cancel')}
+                                />
+                            }
+                        />
+                        <Button
+                            disabled={!formHasChanges}
+                            variant={ButtonVariant.primary}
+                            onClick={handleApplyChanges}
+                            label={
+                                <Label
+                                    translationKey="applyLabel"
+                                    value={getUITranslation(['formBuilder', 'layouts', 'applyLabel'], 'Apply')}
+                                />
+                            }
+                        />
+                    </ButtonsWrapper>
+                    {formHasError && (
+                        <RangeConstraintErrorMessage
+                            currentWidth={pageWidth}
+                            currentHeight={pageHeight}
+                            unit={layout.unit.value}
+                            layout={layout}
+                        />
+                    )}
+                </>
             )}
-            {renderInput('page-height-input', pageHeight, heightLabel, heightInputHelpText)}
-        </LayoutInputsContainer>
+        </>
     );
 }
 export default LayoutProperties;

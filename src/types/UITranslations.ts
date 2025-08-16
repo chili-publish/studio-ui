@@ -21,10 +21,18 @@ export interface LayoutsTranslations {
     minHeight?: string;
     maxWidth?: string;
     maxHeight?: string;
+    cancelLabel?: string;
+    applyLabel?: string;
     lockConstraintTooltip?: string;
+
     rangeConstraintTooltip?: string;
     minRangeConstraintTooltip?: string;
     maxRangeConstraintTooltip?: string;
+
+    errorRangeConstraintMessage?: string;
+    errorRangeConstraintTooltip?: string;
+    errorMinRangeConstraintTooltip?: string;
+    errorMaxRangeConstraintTooltip?: string;
 }
 
 export interface ToolBarTranslations {
