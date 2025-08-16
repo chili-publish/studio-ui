@@ -21,6 +21,7 @@ export interface LayoutsTranslations {
     minHeight?: string;
     maxWidth?: string;
     maxHeight?: string;
+    lockConstraintTooltip?: string;
 }
 
 export interface ToolBarTranslations {
