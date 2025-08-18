@@ -1,7 +1,6 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
 
-import axios from 'axios';
 import StudioUI from '../main';
 import { TokenManager } from './token-manager';
 import { EngineVersionManager } from './version-manager';
@@ -73,30 +72,14 @@ import { EngineVersionManager } from './version-manager';
         onConnectorAuthenticationRequested: (connectorId) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
-        userInterfaceID: undefined,
-        sandboxMode: true,
         uiOptions: {
-            uiTheme: 'dark',
             widgets: {
+                backButton: { visible: true },
+                navBar: { visible: true },
+                bottomBar: { visible: true },
                 downloadButton: { visible: true },
-                backButton: { visible: true, event: () => null },
             },
-        },
-        onProjectInfoRequested: async () => ({
-            id: '',
-            name: '',
-            template: {
-                id: '',
-            },
-        }),
-        onProjectDocumentRequested: async () => {
-            const document = await axios.get(`${baseUrl}/templates/${projectId}/download`, {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            });
-            // in order to be compatible with the studioUi, we need to return a string
-            return JSON.stringify(document.data);
+            uiDirection: 'ltr',
         },
         featureFlags: {},
         // eslint-disable-next-line no-console
