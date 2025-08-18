@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConstraintMode, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { handleSetProperty } from '../../utils/formatNumber';
 
@@ -10,6 +10,11 @@ export const useLayoutConstraintProportions = (layout: LayoutPropertiesType, pag
 
     const [formHasError, setFormHasError] = useState(false);
     const [formHasChanges, setFormHasChanges] = useState(false);
+
+    useEffect(() => {
+        setFormHasError(false);
+        setFormHasChanges(false);
+    }, [layout]);
 
     const handleSubmitChanges = async () => {
         handleSetProperty(

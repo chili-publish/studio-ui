@@ -119,7 +119,8 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
             setPageWidth(formattedPageWidth);
             setPageHeight(formattedPageHeight);
         }
-    }, [activePageDetails, measurementUnit]);
+        // reset input values also when layout changes
+    }, [activePageDetails, measurementUnit, layout]);
 
     return { saveChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText, setPageWidth, setPageHeight };
 };
