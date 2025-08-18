@@ -53,9 +53,9 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             setFormHasChanges(true);
             // update state with new value to reflect it in the inputs before submit
             if (PagePropertyMap[inputId] === PagePropertyType.Width) {
-                setPageWidth(!Number.isNaN(Number(value)) ? withMeasurementUnit(value, layout?.unit.value) : value);
+                setPageWidth(value);
             } else {
-                setPageHeight(!Number.isNaN(Number(value)) ? withMeasurementUnit(value, layout?.unit.value) : value);
+                setPageHeight(value);
             }
         }
     };
@@ -79,13 +79,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         setPageHeight(pageSize?.height ? withMeasurementUnit(pageSize.height, layout?.unit.value) : '');
     };
 
-    const renderInput = (
-        id: string,
-        inputValue: string,
-        label: string,
-        helpText?: string,
-        submitOnBlur: boolean = true,
-    ) => (
+    const renderInput = (id: string, inputValue: string, label: string, helpText?: string) => (
         <Input
             type="number"
             id={id}

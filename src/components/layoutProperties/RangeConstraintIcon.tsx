@@ -13,23 +13,48 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
 
     const uiTranslation = useMemo(() => {
         if (layout?.resizableByUser.minAspect && layout?.resizableByUser.maxAspect) {
+            const minHorizontal = layout.resizableByUser.minAspect?.horizontal.toString();
+            const minVertical = layout.resizableByUser.minAspect?.vertical.toString();
+            const maxHorizontal = layout.resizableByUser.maxAspect?.horizontal.toString();
+            const maxVertical = layout.resizableByUser.maxAspect?.vertical.toString();
+
             return getUITranslation(
                 ['formBuilder', 'layouts', 'rangeConstraintTooltip'],
-                `Proportions are limited — only aspect ratios between ${layout.resizableByUser.minAspect?.horizontal}:${layout.resizableByUser.minAspect?.vertical} and ${layout.resizableByUser.maxAspect?.horizontal}:${layout.resizableByUser.maxAspect?.vertical} are allowed.`,
+                `Proportions are limited — only aspect ratios between ${minHorizontal}:${minVertical} and ${maxHorizontal}:${maxVertical} are allowed.`,
+                {
+                    minHorizontal,
+                    minVertical,
+                    maxHorizontal,
+                    maxVertical,
+                },
             );
         }
 
         if (layout?.resizableByUser.minAspect) {
+            const minHorizontal = layout.resizableByUser.minAspect?.horizontal.toString();
+            const minVertical = layout.resizableByUser.minAspect?.vertical.toString();
+
             return getUITranslation(
                 ['formBuilder', 'layouts', 'minRangeConstraintTooltip'],
-                `Proportions are limited — only aspect ratios greater than ${layout.resizableByUser.minAspect?.horizontal}:${layout.resizableByUser.minAspect?.vertical} are allowed.`,
+                `Proportions are limited — only aspect ratios greater than ${minHorizontal}:${minVertical} are allowed.`,
+                {
+                    minHorizontal,
+                    minVertical,
+                },
             );
         }
 
         if (layout?.resizableByUser.maxAspect) {
+            const maxHorizontal = layout.resizableByUser.maxAspect?.horizontal.toString();
+            const maxVertical = layout.resizableByUser.maxAspect?.vertical.toString();
+
             return getUITranslation(
                 ['formBuilder', 'layouts', 'maxRangeConstraintTooltip'],
-                `Proportions are limited — only aspect ratios lower than ${layout.resizableByUser.maxAspect?.horizontal}:${layout.resizableByUser.maxAspect?.vertical} are allowed.`,
+                `Proportions are limited — only aspect ratios lower than ${maxHorizontal}:${maxVertical} are allowed.`,
+                {
+                    maxHorizontal,
+                    maxVertical,
+                },
             );
         }
         return null;

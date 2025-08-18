@@ -12,12 +12,11 @@ export const useLayoutConstraintProportions = (layout: LayoutPropertiesType, pag
     const [formHasChanges, setFormHasChanges] = useState(false);
 
     const handleSubmitChanges = async () => {
-        setFormHasError(false);
-        setFormHasChanges(false);
-
         handleSetProperty(
             async () => {
                 await window.StudioUISDK.page.setSize(pageWidth, pageHeight);
+                setFormHasError(false);
+                setFormHasChanges(false);
                 return null;
             },
             () => {
