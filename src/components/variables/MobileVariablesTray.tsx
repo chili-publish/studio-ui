@@ -7,7 +7,7 @@ import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
 import { useLayoutSection } from '../../core/hooks/useLayoutSection';
 import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
-import { APP_WRAPPER_ID } from '../../utils/constants';
+import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../utils/constants';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import DataSourceInput from '../dataSource/DataSourceInput';
 import DataSourceTable from '../dataSource/DataSourceTable';
@@ -37,7 +37,7 @@ import { useAppDispatch } from '../../store';
 
 // TODO: replace 'select-input-menu' with proper id, after the shared components are updated, and the breadcrumb id is aggregated
 // through <BreadcrumbNavigationDropdown> to the Select
-const preventCloseElementIds = [TOAST_ID, 'select-input-menu'];
+const preventCloseElementIds = [TOAST_ID, UNDO_BTN_ID, REDO_BTN_ID, 'select-input-menu'];
 interface VariablesPanelProps {
     isTrayVisible: boolean;
     setIsTrayVisible: (_: boolean) => void;
@@ -48,7 +48,6 @@ interface VariablesPanelProps {
     pageSize?: PageSize;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
 }
-
 function MobileVariablesPanel(props: VariablesPanelProps) {
     const {
         isTrayVisible,

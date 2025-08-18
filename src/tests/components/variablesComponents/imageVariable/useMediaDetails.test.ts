@@ -298,11 +298,10 @@ describe('"useMediaDetails" hook', () => {
         mockSubscriber.emit('onVariableListChanged', [variableChange]);
 
         await waitFor(() =>
-            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
-                'grafx-media',
-                { filter: ['media-asset-id'], pageSize: 1 },
-                {},
-            ),
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {
+                filter: ['media-asset-id'],
+                pageSize: 1,
+            }),
         );
 
         expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledTimes(2);
@@ -347,11 +346,10 @@ describe('"useMediaDetails" hook', () => {
         });
 
         await waitFor(() =>
-            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith(
-                'grafx-media',
-                { filter: ['media-asset-id'], pageSize: 1 },
-                {},
-            ),
+            expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalledWith('grafx-media', {
+                filter: ['media-asset-id'],
+                pageSize: 1,
+            }),
         );
 
         expect(window.StudioUISDK.mediaConnector.query).toHaveBeenCalled();
