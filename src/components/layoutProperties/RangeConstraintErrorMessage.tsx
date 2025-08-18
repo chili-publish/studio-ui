@@ -11,7 +11,7 @@ import { roundValue } from './util';
 interface RangeConstraintErrorMessageProps {
     currentWidth: string;
     currentHeight: string;
-    unit: MeasurementUnit;
+    unit: MeasurementUnit | undefined;
     layout: LayoutPropertiesType;
 }
 function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout }: RangeConstraintErrorMessageProps) {

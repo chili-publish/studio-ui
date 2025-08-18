@@ -1,9 +1,9 @@
 import { Button, ButtonVariant, Input, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
-import { ConstraintMode, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
+import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { formatNumber, handleSetProperty } from '../../utils/formatNumber';
+import { formatNumber } from '../../utils/formatNumber';
 import { ButtonsWrapper, IconWrapper, LayoutInputsContainer } from './Layout.styles';
 import { PageInputId, PagePropertyMap, PagePropertyType } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
@@ -24,16 +24,15 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     const { saveChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText, setPageWidth, setPageHeight } =
         useLayoutProperties(layout, pageSize);
 
-    const { formHasChanges, setFormHasChanges, formHasError, setFormHasError } = useLayoutConstraintProportions(
-        pageSize,
-        pageWidth,
-        pageHeight,
-    );
-
-    const hasLockedConstraint = layout?.resizableByUser.constraintMode === ConstraintMode.locked;
-    const hasRangeConstraint =
-        layout?.resizableByUser.constraintMode === ConstraintMode.range &&
-        (layout?.resizableByUser.minAspect || layout?.resizableByUser.maxAspect);
+    const {
+        formHasChanges,
+        setFormHasChanges,
+        formHasError,
+        setFormHasError,
+        handleSubmitChanges,
+        hasLockedConstraint,
+        hasRangeConstraint,
+    } = useLayoutConstraintProportions(layout, pageWidth, pageHeight);
     const submitOnBlur = !hasRangeConstraint;
 
     const { getUITranslation } = useUITranslations();
@@ -78,21 +77,6 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
 
         setPageWidth(pageSize?.width ? withMeasurementUnit(pageSize.width, layout?.unit.value) : '');
         setPageHeight(pageSize?.height ? withMeasurementUnit(pageSize.height, layout?.unit.value) : '');
-    };
-
-    const handleApplyChanges = async () => {
-        setFormHasError(false);
-        setFormHasChanges(false);
-
-        handleSetProperty(
-            async () => {
-                await window.StudioUISDK.page.setSize(pageWidth, pageHeight);
-                return null;
-            },
-            () => {
-                setFormHasError(true);
-            },
-        );
     };
 
     const renderInput = (
@@ -155,7 +139,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
                         <Button
                             disabled={!formHasChanges}
                             variant={ButtonVariant.primary}
-                            onClick={handleApplyChanges}
+                            onClick={handleSubmitChanges}
                             label={
                                 <Label
                                     translationKey="applyLabel"
@@ -168,7 +152,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
                         <RangeConstraintErrorMessage
                             currentWidth={pageWidth}
                             currentHeight={pageHeight}
-                            unit={layout.unit.value}
+                            unit={layout?.unit.value}
                             layout={layout}
                         />
                     )}
