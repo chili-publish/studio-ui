@@ -13,8 +13,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
-import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
-import { UserInterfaceDetailsContextProvider } from '../components/navbar/UserInterfaceDetailsContext';
+import LeftPanel from '../../components/layout-panels/leftPanel/LeftPanel';
+import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -22,11 +22,11 @@ import {
     ProjectConfig,
     UiOptions,
     UserInterfaceWithOutputSettings,
-} from '../types/types';
-import { getDataTestIdForSUI } from '../utils/dataIds';
-import { transformFormBuilderArrayToObject } from '../utils/helpers';
-import { APP_WRAPPER } from './mocks/app';
-import { renderWithProviders } from './mocks/Provider';
+} from '../../types/types';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { transformFormBuilderArrayToObject } from '../../utils/helpers';
+import { APP_WRAPPER } from '../mocks/app';
+import { renderWithProviders } from '../mocks/Provider';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -134,6 +134,22 @@ describe('Layout selection', () => {
         renderComponent(LayoutIntent.print, mockLayouts, layout);
 
         expect(screen.queryByTestId(getDataTestIdForSUI('layout-constraint-icon-locked'))).not.toBeInTheDocument();
+    });
+
+    test('range icon should be shown when layout constraint mode is range', async () => {
+        const layout = {
+            ...mockLayout,
+            resizableByUser: {
+                ...mockLayout.resizableByUser,
+                enabled: true,
+                constraintMode: ConstraintMode.range,
+                minAspect: { horizontal: 1, vertical: 3 },
+            },
+        };
+
+        renderComponent(LayoutIntent.print, mockLayouts, layout);
+
+        expect(screen.getByTestId(getDataTestIdForSUI('layout-constraint-icon-range'))).toBeInTheDocument();
     });
 
     test('Layout dropdown input and title are rendered based on uiOptions', async () => {
