@@ -44,7 +44,7 @@ function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout
             return getUITranslation(
                 ['formBuilder', 'layouts', 'errorRangeConstraintTooltip'],
                 `To respect the allowed proportions (${minHorizontal}:${minVertical} to ${maxHorizontal}:${maxVertical}):
-                \n\r• If the width is ${numericCurrentWidth} ${currentWidthUnit}, the height must be between ${minHeight} ${currentWidthUnit} and ${maxHeight} ${currentWidthUnit}
+                \n• If the width is ${numericCurrentWidth} ${currentWidthUnit}, the height must be between ${minHeight} ${currentWidthUnit} and ${maxHeight} ${currentWidthUnit}
                 \n• If the height is ${numericCurrentHeight} ${currentHeightUnit}, the width must be between ${minWidth} ${currentHeightUnit} and ${maxWidth} ${currentHeightUnit}`,
                 {
                     minHorizontal: minHorizontal.toString(),
