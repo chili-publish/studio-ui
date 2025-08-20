@@ -7,7 +7,7 @@ export const PanelTitle = styled.h2<{ margin?: string }>`
     ${(props) => props.margin && `margin: ${props.margin};`};
     color: ${({ theme }) => theme.panel.color};
 
-    white-space: normal;
+    white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-word;
 `;
@@ -17,7 +17,7 @@ export const SectionHelpText = styled.p`
     font-size: ${FontSizes.small};
     color: ${({ theme }) => theme.label.color};
 
-    white-space: normal;
+    white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-word;
 `;
