@@ -21,7 +21,7 @@ export const TrayPanelTitle = styled.h2<{ margin?: string }>`
     ${(props) => props.margin && `margin: ${props.margin};`};
     color: ${(props) => props.theme.panel.color};
 
-    white-space: normal;
+    white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-word;
 `;

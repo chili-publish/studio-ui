@@ -135,7 +135,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const layoutSectionHeader = getUITranslation(['formBuilder', 'layouts', 'header'], sectionTitle);
     const layoutHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
-    const datasourceHeader = getUITranslation(['formBuilder', 'datasource', 'header'], formBuilder.datasource?.header);
+    const datasourceHeader = getUITranslation(
+        ['formBuilder', 'datasource', 'header'],
+        formBuilder.datasource?.header ?? 'Data source',
+    );
     const datasourceHelpText = getUITranslation(
         ['formBuilder', 'datasource', 'helpText'],
         formBuilder.datasource?.helpText,
