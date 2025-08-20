@@ -22,6 +22,7 @@ import {
     dataSourceTrayStyles,
     DataSourceTrayStyle,
     VariablesListTrayStyle,
+    DataSourceDefaultTrayStyle,
 } from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
@@ -170,6 +171,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     return (
         <>
             {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
+            {isDataSourceDisplayed && isDefaultPanelView && <DataSourceDefaultTrayStyle />}
             {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray
                 dataTestId={getDataTestIdForSUI('tray-panel')}

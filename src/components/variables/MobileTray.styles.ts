@@ -22,10 +22,13 @@ export const DataSourceTrayStyle = createGlobalStyle`
     }
 `;
 
-export const VariablesListTrayStyle = createGlobalStyle`
+export const DataSourceDefaultTrayStyle = createGlobalStyle`
     &[data-id='gsc-tray-header'] {
         margin: 1rem 0;
     }
+`;
+
+export const VariablesListTrayStyle = createGlobalStyle`
     &[data-id='gsc-tray-body'] {
         padding: 0 !important;
         padding-top: 0.5rem;
