@@ -16,7 +16,6 @@ export const DataSourceTrayStyle = createGlobalStyle`
     &[data-id='gsc-tray-header'] {
         padding: 0.5rem 0;
         padding-bottom: 0;
-        margin: 1rem 0;
     }
     &[data-id='gsc-tray-body'] {
         padding: 0;
@@ -24,6 +23,9 @@ export const DataSourceTrayStyle = createGlobalStyle`
 `;
 
 export const VariablesListTrayStyle = createGlobalStyle`
+    &[data-id='gsc-tray-header'] {
+        margin: 1rem 0;
+    }
     &[data-id='gsc-tray-body'] {
         padding: 0 !important;
         padding-top: 0.5rem;
