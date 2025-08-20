@@ -34,7 +34,9 @@ export const TrayTitleWithBtn = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-
+    button {
+        align-self: flex-start;
+    }
     svg {
         ${({ theme }) => theme.mode === 'light' && `color: ${theme.themeColors.primaryTextColor} !important`};
     }
