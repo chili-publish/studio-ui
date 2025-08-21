@@ -2,7 +2,16 @@ import { useEffect, useState } from 'react';
 import { ConstraintMode, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { handleSetProperty } from '../../utils/formatNumber';
 
-export const useLayoutConstraintProportions = (layout: LayoutPropertiesType, pageWidth: string, pageHeight: string) => {
+interface UseLayoutConstraintProportionsProps {
+    layout: LayoutPropertiesType;
+    pageWidth: string;
+    pageHeight: string;
+}
+export const useLayoutConstraintProportions = ({
+    layout,
+    pageWidth,
+    pageHeight,
+}: UseLayoutConstraintProportionsProps) => {
     const hasLockedConstraint = layout?.resizableByUser.constraintMode === ConstraintMode.locked;
     const hasRangeConstraint =
         layout?.resizableByUser.constraintMode === ConstraintMode.range &&
@@ -20,11 +29,13 @@ export const useLayoutConstraintProportions = (layout: LayoutPropertiesType, pag
         handleSetProperty(
             async () => {
                 await window.StudioUISDK.page.setSize(pageWidth, pageHeight);
+
                 setFormHasError(false);
                 setFormHasChanges(false);
+
                 return null;
             },
-            () => {
+            async () => {
                 setFormHasError(true);
             },
         );

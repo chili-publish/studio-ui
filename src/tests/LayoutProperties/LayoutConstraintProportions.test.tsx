@@ -16,6 +16,7 @@ const mockSDK = mock<EditorSDK>();
 
 describe('Layout constraint proportions', () => {
     mockSDK.page.setSize = jest.fn().mockRejectedValue(new Error('Error'));
+    mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 100 });
     window.StudioUISDK = mockSDK;
 
     const createMockLayout = (resizableByUser: ResizableLayoutProperties): LayoutPropertiesType =>

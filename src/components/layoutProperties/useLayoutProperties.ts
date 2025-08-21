@@ -68,7 +68,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                             return null;
                         },
                         // reset to previous valid width with measurement unit
-                        () =>
+                        async () =>
                             setPageWidth(
                                 activePageDetails?.width
                                     ? withMeasurementUnit(activePageDetails?.width as number, measurementUnit)
@@ -91,7 +91,7 @@ export const useLayoutProperties = (layout: LayoutPropertiesType, activePageDeta
                             return null;
                         },
                         // reset to previous valid width with measurement unit
-                        () =>
+                        async () =>
                             setPageHeight(
                                 activePageDetails?.height
                                     ? withMeasurementUnit(activePageDetails?.height as number, measurementUnit)

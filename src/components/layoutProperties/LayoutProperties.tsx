@@ -32,7 +32,11 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         handleSubmitChanges,
         hasLockedConstraint,
         hasRangeConstraint,
-    } = useLayoutConstraintProportions(layout, pageWidth, pageHeight);
+    } = useLayoutConstraintProportions({
+        layout,
+        pageWidth,
+        pageHeight,
+    });
     const submitOnBlur = !hasRangeConstraint;
 
     const { getUITranslation } = useUITranslations();
@@ -44,7 +48,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         onVariableFocus?.(inputId);
     };
 
-    const handleBlur = (inputId: PageInputId, value: string) => {
+    const handleBlur = async (inputId: PageInputId, value: string) => {
         onVariableBlur?.(inputId);
 
         if (submitOnBlur) {
@@ -53,9 +57,11 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             setFormHasChanges(true);
             // update state with new value to reflect it in the inputs before submit
             if (PagePropertyMap[inputId] === PagePropertyType.Width) {
-                setPageWidth(value);
+                const width = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
+                setPageWidth(withMeasurementUnit(formatNumber(width ?? 0, layout?.unit.value), layout?.unit.value));
             } else {
-                setPageHeight(value);
+                const height = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
+                setPageHeight(withMeasurementUnit(formatNumber(height ?? 0, layout?.unit.value), layout?.unit.value));
             }
         }
     };
