@@ -3,10 +3,10 @@ import { APP_WRAPPER_ID } from 'src/utils/constants';
 import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useMemo } from 'react';
 import { LayoutPropertiesType, MeasurementUnit } from '@chili-publish/studio-sdk';
+import { formatNumber } from 'src/utils/formatNumber';
 import { ErrorMessage } from '../shared/ErrorMessage.styles';
 import { ErrorMessageContainer } from './Layout.styles';
 import { roundValue } from './util';
-import { formatNumber } from 'src/utils/formatNumber';
 
 interface RangeConstraintErrorMessageProps {
     currentWidth: string;
