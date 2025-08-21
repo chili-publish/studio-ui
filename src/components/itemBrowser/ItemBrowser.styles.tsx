@@ -50,6 +50,10 @@ export const NavigationWrapper = styled.div<{ isMobile: boolean }>`
     flex: 1;
     overflow: hidden;
 
+    button {
+        align-self: flex-start;
+    }
+
     svg {
         box-sizing: content-box !important;
         padding-block: 0.5rem;

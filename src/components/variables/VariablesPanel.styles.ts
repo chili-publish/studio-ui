@@ -20,6 +20,10 @@ export const TrayPanelTitle = styled.h2<{ margin?: string }>`
     font-weight: 500;
     ${(props) => props.margin && `margin: ${props.margin};`};
     color: ${(props) => props.theme.panel.color};
+
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
 `;
 
 export const ComponentWrapper = styled.div`
@@ -30,7 +34,9 @@ export const TrayTitleWithBtn = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-
+    button {
+        align-self: flex-start;
+    }
     svg {
         ${({ theme }) => theme.mode === 'light' && `color: ${theme.themeColors.primaryTextColor} !important`};
     }
