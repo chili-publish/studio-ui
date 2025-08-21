@@ -29,34 +29,6 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
                 },
             );
         }
-
-        if (layout?.resizableByUser.minAspect) {
-            const minHorizontal = layout.resizableByUser.minAspect?.horizontal.toString();
-            const minVertical = layout.resizableByUser.minAspect?.vertical.toString();
-
-            return getUITranslation(
-                ['formBuilder', 'layouts', 'minRangeConstraintTooltip'],
-                `Proportions are limited — only aspect ratios greater than ${minHorizontal}:${minVertical} are allowed.`,
-                {
-                    minHorizontal,
-                    minVertical,
-                },
-            );
-        }
-
-        if (layout?.resizableByUser.maxAspect) {
-            const maxHorizontal = layout.resizableByUser.maxAspect?.horizontal.toString();
-            const maxVertical = layout.resizableByUser.maxAspect?.vertical.toString();
-
-            return getUITranslation(
-                ['formBuilder', 'layouts', 'maxRangeConstraintTooltip'],
-                `Proportions are limited — only aspect ratios lower than ${maxHorizontal}:${maxVertical} are allowed.`,
-                {
-                    maxHorizontal,
-                    maxVertical,
-                },
-            );
-        }
         return null;
     }, [layout, getUITranslation]);
 

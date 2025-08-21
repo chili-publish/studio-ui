@@ -8,7 +8,7 @@ import EditorSDK, {
 import { APP_WRAPPER } from '@tests/mocks/app';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import LayoutProperties from 'src/components/layoutProperties/LayoutProperties';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import userEvent from '@testing-library/user-event';
 
@@ -71,6 +71,89 @@ describe('Layout constraint proportions', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Only specific aspect ratios are supported.')).toBeInTheDocument();
+        });
+    });
+
+    it('should convert width and height to the unit of the layout', async () => {
+        mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 1889.763 });
+
+        const user = userEvent.setup();
+
+        const layout = createMockLayout({
+            enabled: true,
+            constraintMode: ConstraintMode.range,
+            minAspect: { horizontal: 1, vertical: 2 },
+            maxAspect: { horizontal: 3, vertical: 4 },
+        });
+
+        const pageSize = {
+            id: 'page-size-id',
+            width: 300,
+            height: 600,
+        };
+
+        renderWithProviders(<LayoutProperties layout={layout} pageSize={pageSize} />, {
+            container: document.body.appendChild(APP_WRAPPER),
+        });
+
+        const widthInput = screen.getByLabelText('Width');
+        const heightInput = screen.getByLabelText('Height');
+
+        expect(widthInput).toBeInTheDocument();
+        expect(heightInput).toBeInTheDocument();
+
+        await user.clear(heightInput);
+
+        await user.type(heightInput, '500 mm');
+        fireEvent.blur(heightInput);
+
+        await waitFor(() => {
+            expect(widthInput).toHaveValue('300 px');
+            expect(heightInput).toHaveValue('1889.76 px');
+        });
+
+        const applyButton = screen.getByRole('button', { name: 'Apply' });
+        await user.click(applyButton);
+
+        await waitFor(() => {
+            expect(widthInput).toHaveValue('300 px');
+            expect(heightInput).toHaveValue('1889.76 px');
+        });
+    });
+
+    it('should fallback to 0 when width is undefined', async () => {
+        mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 0 });
+
+        const user = userEvent.setup();
+        const layout = createMockLayout({
+            enabled: true,
+            constraintMode: ConstraintMode.range,
+            minAspect: { horizontal: 1, vertical: 2 },
+            maxAspect: { horizontal: 3, vertical: 4 },
+        });
+
+        const pageSize = {
+            id: 'page-size-id',
+            width: 100,
+            height: 300,
+        };
+
+        renderWithProviders(<LayoutProperties layout={layout} pageSize={pageSize} />, {
+            container: document.body.appendChild(APP_WRAPPER),
+        });
+
+        const widthInput = screen.getByLabelText('Width');
+        const heightInput = screen.getByLabelText('Height');
+
+        expect(widthInput).toBeInTheDocument();
+        expect(heightInput).toBeInTheDocument();
+
+        await user.clear(widthInput);
+        fireEvent.blur(widthInput);
+
+        await waitFor(() => {
+            expect(widthInput).toHaveValue('0 px');
+            expect(heightInput).toHaveValue('300 px');
         });
     });
 

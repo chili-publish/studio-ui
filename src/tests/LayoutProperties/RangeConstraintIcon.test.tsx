@@ -61,40 +61,4 @@ describe('RangeConstraintIcon', () => {
         );
         expect(tooltip).toHaveAttribute('data-position', 'top');
     });
-
-    it('should render icon with tooltip when only min aspect constraint is defined', () => {
-        const layout = createMockLayout({
-            enabled: true,
-            constraintMode: ConstraintMode.range,
-            minAspect: { horizontal: 1, vertical: 4 },
-        });
-
-        renderWithProviders(<RangeConstraintIcon layout={layout} />);
-
-        const tooltip = screen.getByTestId('tooltip');
-
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toHaveAttribute(
-            'data-content',
-            'Proportions are limited — only aspect ratios greater than 1:4 are allowed.',
-        );
-    });
-
-    it('should render icon with tooltip when only max aspect constraint is defined', () => {
-        const layout = createMockLayout({
-            enabled: true,
-            constraintMode: ConstraintMode.range,
-            maxAspect: { horizontal: 3, vertical: 4 },
-        });
-
-        renderWithProviders(<RangeConstraintIcon layout={layout} />);
-
-        const tooltip = screen.getByTestId('tooltip');
-
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toHaveAttribute(
-            'data-content',
-            'Proportions are limited — only aspect ratios lower than 3:4 are allowed.',
-        );
-    });
 });

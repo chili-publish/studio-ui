@@ -26,15 +26,10 @@ export interface LayoutsTranslations {
     applyLabel?: string;
 
     lockConstraintTooltip?: string;
-
     rangeConstraintTooltip?: string;
-    minRangeConstraintTooltip?: string;
-    maxRangeConstraintTooltip?: string;
 
     errorRangeConstraintMessage?: string;
     errorRangeConstraintTooltip?: string;
-    errorMinRangeConstraintTooltip?: string;
-    errorMaxRangeConstraintTooltip?: string;
 }
 
 export interface ToolBarTranslations {

@@ -445,12 +445,9 @@ const uiTranslations = {
             lockConstraintTooltip: 'Proportions are locked',
             rangeConstraintTooltip:
                 'Proportions are limited — only aspect ratios between {{minHorizontal}}:{{minVertical}} and {{maxHorizontal}}:{{maxVertical}} are allowed.',
-            minRangeConstraintTooltip: 'Proportions are limited — only aspect ratios greater than {{minHorizontal}}:{{minVertical}} are allowed.',
-            maxRangeConstraintTooltip: 'Proportions are limited — only aspect ratios lower than {{maxHorizontal}}:{{maxVertical}} are allowed.',
             errorRangeConstraintMessage: 'Only specific aspect ratios are supported.',
-            errorRangeConstraintTooltip: 'To respect the allowed proportions ({{minHorizontal}}:{{minVertical}} to {{maxHorizontal}}:{{maxVertical}}):\n• If the width is {{currentWidth}} {{currentWidthUnit}}, the height must be between {{minHeight}} {{currentWidthUnit}} and {{maxHeight}} {{currentWidthUnit}}\n• If the height is {{currentHeight}} {{currentHeightUnit}}, the width must be between {{minWidth}} {{currentHeightUnit}} and {{maxWidth}} {{currentHeightUnit}}',
-            errorMinRangeConstraintTooltip: 'To respect the allowed proportions (min {{minHorizontal}}:{{minVertical}}):\n• If the width is {{currentWidth}} {{currentWidthUnit}}, the height must be lower than {{maxHeight}} {{currentWidthUnit}}\n• If the height is {{currentHeight}} {{currentHeightUnit}}, the width must be higher than {{minWidth}} {{currentHeightUnit}}',
-            errorMaxRangeConstraintTooltip: 'To respect the allowed proportions (max ${maxHorizontal}:${maxVertical}):\n• If the width is ${currentWidth} ${currentWidthUnit}, the height must be higher than ${minHeight} ${currentWidthUnit}\n• If the height is ${currentHeight} ${currentHeightUnit}, the width must be lower than ${maxWidth} ${currentHeightUnit}',
+            errorRangeConstraintTooltip:
+                'To respect the allowed proportions ({{minHorizontal}}:{{minVertical}} to {{maxHorizontal}}:{{maxVertical}}):\n• If the width is {{currentWidth}} {{unit}}, the height must be between {{minHeight}} {{unit}} and {{maxHeight}} {{unit}}\n• If the height is {{currentHeight}} {{unit}}, the width must be between {{minWidth}} {{unit}} and {{maxWidth}} {{unit}}',
         },
     },
     toolBar: {

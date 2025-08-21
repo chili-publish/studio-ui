@@ -58,10 +58,10 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             // update state with new value to reflect it in the inputs before submit
             if (PagePropertyMap[inputId] === PagePropertyType.Width) {
                 const width = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                setPageWidth(withMeasurementUnit(formatNumber(width ?? 0, layout?.unit.value), layout?.unit.value));
+                setPageWidth(withMeasurementUnit(width ?? 0, layout?.unit.value));
             } else {
                 const height = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                setPageHeight(withMeasurementUnit(formatNumber(height ?? 0, layout?.unit.value), layout?.unit.value));
+                setPageHeight(withMeasurementUnit(height ?? 0, layout?.unit.value));
             }
         }
     };
