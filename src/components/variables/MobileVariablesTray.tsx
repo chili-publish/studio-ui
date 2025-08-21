@@ -22,6 +22,7 @@ import {
     dataSourceTrayStyles,
     DataSourceTrayStyle,
     VariablesListTrayStyle,
+    DataSourceDefaultTrayStyle,
 } from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
@@ -134,7 +135,10 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     const layoutSectionHeader = getUITranslation(['formBuilder', 'layouts', 'header'], sectionTitle);
     const layoutHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
-    const datasourceHeader = getUITranslation(['formBuilder', 'datasource', 'header'], formBuilder.datasource?.header);
+    const datasourceHeader = getUITranslation(
+        ['formBuilder', 'datasource', 'header'],
+        formBuilder.datasource?.header ?? 'Data source',
+    );
     const datasourceHelpText = getUITranslation(
         ['formBuilder', 'datasource', 'helpText'],
         formBuilder.datasource?.helpText,
@@ -167,6 +171,7 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
     return (
         <>
             {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
+            {isDataSourceDisplayed && isDefaultPanelView && <DataSourceDefaultTrayStyle />}
             {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray
                 dataTestId={getDataTestIdForSUI('tray-panel')}

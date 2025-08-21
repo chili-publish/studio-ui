@@ -39,6 +39,7 @@ function MobileTrayHeader({
             <SectionWrapper
                 id="datasource-section-header"
                 data-testid={`${getDataTestIdForSUI('datasource-section-header')}`}
+                margin="0"
             >
                 <TrayPanelTitle margin="0">{datasource.title}</TrayPanelTitle>
                 {datasource.helpText && <SectionHelpText>{datasource.helpText}</SectionHelpText>}
