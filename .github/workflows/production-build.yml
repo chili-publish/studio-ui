@@ -4,7 +4,9 @@ on:
         types: [released]
 jobs:
     build:
-        runs-on: ubuntu-latest
+        runs-on:
+            group: k8s-runners-default
+            labels: default
         strategy:
             matrix:
                 node-version: [20]
@@ -77,7 +79,9 @@ jobs:
 
     bump-version:
         needs: build
-        runs-on: ubuntu-latest
+        runs-on:
+            group: k8s-runners-default
+            labels: default
         strategy:
             matrix:
                 node-version: [20]

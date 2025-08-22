@@ -5,7 +5,9 @@ on:
             - main
 jobs:
     update-bundle-size:
-        runs-on: ubuntu-latest
+        runs-on:
+            group: k8s-runners-default
+            labels: default
         strategy:
             matrix:
                 node-version: [20]
