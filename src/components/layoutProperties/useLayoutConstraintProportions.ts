@@ -15,7 +15,7 @@ export const useLayoutConstraintProportions = ({
     const hasLockedConstraint = layout?.resizableByUser.constraintMode === ConstraintMode.locked;
     const hasRangeConstraint =
         layout?.resizableByUser.constraintMode === ConstraintMode.range &&
-        (layout?.resizableByUser.minAspect || layout?.resizableByUser.maxAspect);
+        (layout?.resizableByUser.aspectRange?.min || layout?.resizableByUser.aspectRange?.max);
 
     const [formHasError, setFormHasError] = useState(false);
     const [formHasChanges, setFormHasChanges] = useState(false);

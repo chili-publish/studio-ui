@@ -1,5 +1,5 @@
 import { AvailableIcons, Icon, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
-import { LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import { ConstraintMode, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -12,11 +12,11 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
     const { getUITranslation } = useUITranslations();
 
     const uiTranslation = useMemo(() => {
-        if (layout?.resizableByUser.minAspect && layout?.resizableByUser.maxAspect) {
-            const minHorizontal = layout.resizableByUser.minAspect?.horizontal.toString();
-            const minVertical = layout.resizableByUser.minAspect?.vertical.toString();
-            const maxHorizontal = layout.resizableByUser.maxAspect?.horizontal.toString();
-            const maxVertical = layout.resizableByUser.maxAspect?.vertical.toString();
+        if (layout?.resizableByUser.aspectRange && layout?.resizableByUser.constraintMode === ConstraintMode.range) {
+            const minHorizontal = layout.resizableByUser.aspectRange.min.horizontal.toString();
+            const minVertical = layout.resizableByUser.aspectRange.min.vertical.toString();
+            const maxHorizontal = layout.resizableByUser.aspectRange.max.horizontal.toString();
+            const maxVertical = layout.resizableByUser.aspectRange.max.vertical.toString();
 
             return getUITranslation(
                 ['formBuilder', 'layouts', 'rangeConstraintTooltip'],

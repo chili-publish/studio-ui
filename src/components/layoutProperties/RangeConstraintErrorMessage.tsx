@@ -18,17 +18,17 @@ function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout
     const { getUITranslation } = useUITranslations();
 
     const uiTranslation = useMemo(() => {
-        if (!layout?.resizableByUser.minAspect || !layout?.resizableByUser.maxAspect) {
+        if (!layout?.resizableByUser.aspectRange?.min || !layout?.resizableByUser.aspectRange?.max) {
             return null;
         }
 
         const numericCurrentWidth = Number(formatNumber(currentWidth, unit));
         const numericCurrentHeight = Number(formatNumber(currentHeight, unit));
 
-        const minHorizontal = layout.resizableByUser.minAspect.horizontal;
-        const minVertical = layout.resizableByUser.minAspect.vertical;
-        const maxHorizontal = layout.resizableByUser.maxAspect.horizontal;
-        const maxVertical = layout.resizableByUser.maxAspect.vertical;
+        const minHorizontal = layout.resizableByUser.aspectRange.min.horizontal;
+        const minVertical = layout.resizableByUser.aspectRange.min.vertical;
+        const maxHorizontal = layout.resizableByUser.aspectRange.max.horizontal;
+        const maxVertical = layout.resizableByUser.aspectRange.max.vertical;
 
         const heightRange = [
             (numericCurrentWidth / minHorizontal) * minVertical,

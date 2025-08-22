@@ -143,7 +143,10 @@ describe('Layout selection', () => {
                 ...mockLayout.resizableByUser,
                 enabled: true,
                 constraintMode: ConstraintMode.range,
-                minAspect: { horizontal: 1, vertical: 3 },
+                aspectRange: {
+                    min: { horizontal: 1, vertical: 3 },
+                    max: { horizontal: 3, vertical: 4 },
+                },
             },
         };
 
