@@ -5,9 +5,7 @@ on:
             - main
 jobs:
     build-preflight:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         strategy:
             matrix:
                 node-version: [20]
@@ -40,9 +38,7 @@ jobs:
 
     build-deploy-dev:
         needs: build-preflight
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         strategy:
             matrix:
                 node-version: [20]
@@ -89,9 +85,7 @@ jobs:
 
     bump-version:
         needs: build-preflight
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         strategy:
             matrix:
                 node-version: [20]

@@ -4,9 +4,7 @@ on:
         types: [opened, labeled]
 jobs:
     check-description:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         steps:
             - name: Check description of the Pull Request
               if: ${{!contains(github.event.pull_request.labels.*.name, 'No JIRA ticket')}}

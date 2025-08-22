@@ -5,9 +5,7 @@ on:
             - main
 jobs:
     update-bundle-size:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         strategy:
             matrix:
                 node-version: [20]

@@ -4,9 +4,7 @@ env:
     NODE_VERSION: 20
 jobs:
     run-tests:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         timeout-minutes: 30
         strategy:
             matrix:
@@ -41,9 +39,7 @@ jobs:
                       coverage/**/*.json
                       coverage/**/*.info
     report-coverage:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         needs: [run-tests]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
@@ -82,9 +78,7 @@ jobs:
                   inlineScript: |
                       az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
     build:
-        runs-on:
-            group: k8s-runners-default
-            labels: default
+        runs-on: k8s-rss-default
         name: build (20)
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
