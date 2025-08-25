@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
+        "@chili-publish/environment-client-api": "^0.24.0",
         "@chili-publish/grafx-shared-components": "0.103.12",
         "@chili-publish/studio-sdk": "1.28.1-alfa.0",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
