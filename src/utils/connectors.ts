@@ -6,7 +6,6 @@ import {
     ConnectorRegistrationSource,
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
-import axios from 'axios';
 import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
 import { RemoteConnector } from './ApiTypes';
 
@@ -32,16 +31,40 @@ export async function getRemoteConnector<RC extends RemoteConnector = RemoteConn
     graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
     authToken: string,
+    environmentClientApiMethod?: (connectorId: string) => Promise<RC>,
 ): Promise<RC> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (!engineConnector) {
         throw new Error(`Connector is not found by ${connectorId}`);
     }
+
+    // If environment client API method is provided and this is a GraFx connector, try using it first
+    if (
+        environmentClientApiMethod &&
+        !isConnectorUrlRegistration(engineConnector.source) &&
+        !isConnectorLocalRegistration(engineConnector.source)
+    ) {
+        try {
+            // Use the connector ID from the engine connector (engineConnector.source.id)
+            // This matches the logic in getConnectorUrl function
+            const result = await environmentClientApiMethod(engineConnector.source.id);
+            return result;
+        } catch (error) {
+            // If environment client API fails, fall back to the original method
+            // eslint-disable-next-line no-console
+            console.warn('Environment client API failed, falling back to direct HTTP call:', error);
+        }
+    }
+
+    // Original logic for external connectors or fallback
     const connectorRequestUrl = getConnectorUrl(engineConnector, graFxStudioEnvironmentApiBaseUrl);
-    const res = await axios.get<RC>(connectorRequestUrl, {
+    const response = await fetch(connectorRequestUrl, {
         headers: { Authorization: `Bearer ${authToken}` },
     });
-    return res.data;
+    if (!response.ok) {
+        throw new Error(`Failed to fetch connector: ${response.statusText}`);
+    }
+    return response.json();
 }
 
 export function isAuthenticationRequired(connector: RemoteConnector) {

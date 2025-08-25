@@ -29,7 +29,6 @@ export function useEnvironmentClientApi() {
             if (!apisRef.current.connectorsApi) {
                 throw new Error('Connectors API not initialized');
             }
-
             const result = await apisRef.current.connectorsApi.apiV1EnvironmentEnvironmentConnectorsConnectorIdGet({
                 environment,
                 connectorId,

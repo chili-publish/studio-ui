@@ -2,12 +2,13 @@ import { formatCell } from '@chili-publish/grafx-shared-components';
 import { ConnectorEvent, ConnectorEventType, ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
-import { useAppContext } from '../../contexts/AppProvider';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
+import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
+import { useEnvironmentClientApi } from '../../hooks/useEnvironmentClientApi';
 import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
 import { validateVariableList } from '../../store/reducers/variableReducer';
@@ -34,6 +35,16 @@ const useDataSource = () => {
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
     const { direction } = useDirection();
+    const { getConnectorById } = useEnvironmentClientApi();
+
+    // Wrapper function to convert ConnectorDefinition to DataRemoteConnector
+    const getConnectorByIdWrapper = useCallback(
+        async (connectorId: string): Promise<DataRemoteConnector> => {
+            const connector = await getConnectorById(connectorId);
+            return connector as unknown as DataRemoteConnector;
+        },
+        [getConnectorById],
+    );
 
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
@@ -52,13 +63,18 @@ const useDataSource = () => {
         if (!dataSource) {
             return false;
         }
-        const connector = await getRemoteConnector<DataRemoteConnector>(
-            graFxStudioEnvironmentApiBaseUrl,
-            dataSource.id,
-            authToken,
-        );
-        return isAuthenticationRequired(connector);
-    }, [dataSource, authToken, graFxStudioEnvironmentApiBaseUrl]);
+        try {
+            const connector = await getRemoteConnector<DataRemoteConnector>(
+                graFxStudioEnvironmentApiBaseUrl,
+                dataSource.id,
+                authToken,
+                getConnectorByIdWrapper, // Pass the environment client API method
+            );
+            return isAuthenticationRequired(connector);
+        } catch (connectorError) {
+            return false;
+        }
+    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken, getConnectorByIdWrapper]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];

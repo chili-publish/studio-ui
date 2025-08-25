@@ -51,8 +51,22 @@ export function EnvironmentApiProvider({ children, environment, authToken, baseU
             return;
         }
 
+        // The basePath should be the base URL without the /api/v1 part
+        // From: https://cp-qeb-191.cpstaging.online/grafx/api/v1/environment/cp-qeb-191
+        // To: https://cp-qeb-191.cpstaging.online/grafx
+        let apiBasePath = baseUrl;
+        if (!apiBasePath) {
+            if (environment.includes('/environment/')) {
+                const [baseUrlPart] = environment.split('/environment/');
+                // Remove /api/v1 from the base URL
+                apiBasePath = baseUrlPart.replace('/api/v1', '');
+            } else {
+                apiBasePath = environment.replace('/api/v1', '');
+            }
+        }
+
         const config = new Configuration({
-            basePath: baseUrl || `${environment}/grafx/api/v1`,
+            basePath: apiBasePath,
             accessToken: authToken,
         });
 
@@ -68,13 +82,22 @@ export function EnvironmentApiProvider({ children, environment, authToken, baseU
         setIsInitialized(true);
     }, [environment, authToken, baseUrl]);
 
+    // Extract environment name for the context value
+    const environmentName = useMemo(() => {
+        if (environment.includes('/environment/')) {
+            const [, ...rest] = environment.split('/environment/');
+            return rest.pop() || environment;
+        }
+        return environment;
+    }, [environment]);
+
     const value: EnvironmentApiContextType = useMemo(
         () => ({
             apisRef,
-            environment,
+            environment: environmentName,
             isInitialized,
         }),
-        [apisRef, environment, isInitialized],
+        [apisRef, environmentName, isInitialized],
     );
 
     return <EnvironmentApiContext.Provider value={value}>{children}</EnvironmentApiContext.Provider>;
