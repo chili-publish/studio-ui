@@ -1,5 +1,8 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { selectImageChangePendingId, setImageChangePendingId } from 'src/store/reducers/variableReducer';
+import { useSelector } from 'react-redux';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -12,12 +15,16 @@ import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
 import { showImagePanel } from '../../../store/reducers/panelReducer';
+import { ImageVariableError } from './ImageVariableError';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
+    const { getUITranslation } = useUITranslations();
+
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
+    const imageChangePendingId = useSelector(selectImageChangePendingId);
 
     const { remoteConnector } = useVariableConnector(variable);
 
@@ -25,7 +32,23 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
+    const {
+        previewImageUrl,
+        pending: previewPending,
+        error: previewError,
+        mediaAssetId: previewMediaAssetId,
+    } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
+
+    const previewErrorMessage = useMemo(() => {
+        if (!previewError) return undefined;
+
+        const code = previewError instanceof ImageVariableError ? previewError.statusCode : null;
+        if (code === 202 || code === 404)
+            return getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Asset is missing');
+
+        return 'Something went wrong. Please try again';
+    }, [previewError, getUITranslation]);
+
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
@@ -37,7 +60,7 @@ function ImageVariable(props: IImageVariable) {
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
     const previewImage = useMemo(() => {
-        if (!mediaDetails || !previewImageUrl) {
+        if (!mediaDetails || !previewImageUrl || previewMediaAssetId !== mediaDetails.id) {
             return undefined;
         }
         return {
@@ -46,7 +69,7 @@ function ImageVariable(props: IImageVariable) {
             format: mediaDetails.extension ?? '',
             url: previewImageUrl,
         };
-    }, [mediaDetails, previewImageUrl]);
+    }, [mediaDetails, previewImageUrl, previewMediaAssetId]);
 
     const handleImageUpload = async (files: FileList | null) => {
         if (!files?.length) {
@@ -60,6 +83,7 @@ function ImageVariable(props: IImageVariable) {
             if (!media) {
                 return;
             }
+            dispatch(setImageChangePendingId(variable.id));
             handleImageChange({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
             onVariableBlur?.(variable.id);
         });
@@ -91,7 +115,7 @@ function ImageVariable(props: IImageVariable) {
     };
 
     // Calculate pending state
-    const isPending = previewPending || uploadPending;
+    const isPending = previewPending || uploadPending || variable.id === imageChangePendingId;
 
     const validationErrorMessage = uploadError || validationError;
 
@@ -112,7 +136,7 @@ function ImageVariable(props: IImageVariable) {
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}
-                errorMsg="Something went wrong. Please try again"
+                errorMsg={previewErrorMessage}
                 previewImage={previewImage}
                 validationErrorMessage={validationErrorMessage}
                 onRemove={onRemove}

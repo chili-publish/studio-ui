@@ -1,6 +1,7 @@
 import { usePreviewImageUrl as coreHook } from '@chili-publish/grafx-shared-components';
-import { MediaDownloadType } from '@chili-publish/studio-sdk';
+import { EditorResponse, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
+import { ImageVariableError } from './ImageVariableError';
 
 export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId: string | undefined) => {
     const previewCall = useCallback(
@@ -13,6 +14,11 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
             };
             try {
                 const res = await downloadCall();
+                if ('success' in res && !res.success) {
+                    const httpErrorCode = JSON.parse((res as unknown as EditorResponse<string>)?.data ?? '{}');
+                    if (httpErrorCode?.statusCode)
+                        throw new ImageVariableError(httpErrorCode.statusCode, httpErrorCode.error);
+                }
                 return res;
             } catch (e) {
                 const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
@@ -20,11 +26,11 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
                     await window.StudioUISDK.connector.waitToBeReady(connectorId);
                     return downloadCall();
                 }
-                return null;
+                throw e;
             }
         },
         [connectorId],
     );
 
-    return coreHook(mediaAssetId, previewCall);
+    return { mediaAssetId, ...coreHook(mediaAssetId, previewCall) };
 };

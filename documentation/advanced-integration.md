@@ -421,6 +421,9 @@ const uiTranslations = {
         variables: {
             header: 'Variables',
             helpText: 'Variables are used to store values that can be used in the form.',
+            imageVariable: {
+                error: 'Asset is missing',
+            },
         },
         datasource: {
             header: 'Data Source',
