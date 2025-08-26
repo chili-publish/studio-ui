@@ -28,43 +28,22 @@ export function getConnectorUrl(connector: ConnectorInstance, graFxStudioEnviron
 
 // NOTE: Works for Grafx only connectors so far
 export async function getRemoteConnector<RC extends RemoteConnector = RemoteConnector>(
-    graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
-    authToken: string,
-    environmentClientApiMethod?: (connectorId: string) => Promise<RC>,
+    environmentClientApiMethod: (connectorId: string) => Promise<RC>,
 ): Promise<RC> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (!engineConnector) {
         throw new Error(`Connector is not found by ${connectorId}`);
     }
 
-    // If environment client API method is provided and this is a GraFx connector, try using it first
-    if (
-        environmentClientApiMethod &&
-        !isConnectorUrlRegistration(engineConnector.source) &&
-        !isConnectorLocalRegistration(engineConnector.source)
-    ) {
-        try {
-            // Use the connector ID from the engine connector (engineConnector.source.id)
-            // This matches the logic in getConnectorUrl function
-            const result = await environmentClientApiMethod(engineConnector.source.id);
-            return result;
-        } catch (error) {
-            // If environment client API fails, fall back to the original method
-            // eslint-disable-next-line no-console
-            console.warn('Environment client API failed, falling back to direct HTTP call:', error);
-        }
+    try {
+        const result = await environmentClientApiMethod((engineConnector.source as ConnectorGrafxRegistration).id);
+        return result;
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to fetch connector:', error);
+        throw error;
     }
-
-    // Original logic for external connectors or fallback
-    const connectorRequestUrl = getConnectorUrl(engineConnector, graFxStudioEnvironmentApiBaseUrl);
-    const response = await fetch(connectorRequestUrl, {
-        headers: { Authorization: `Bearer ${authToken}` },
-    });
-    if (!response.ok) {
-        throw new Error(`Failed to fetch connector: ${response.statusText}`);
-    }
-    return response.json();
 }
 
 export function isAuthenticationRequired(connector: RemoteConnector) {

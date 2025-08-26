@@ -65,9 +65,7 @@ const useDataSource = () => {
         }
         try {
             const connector = await getRemoteConnector<DataRemoteConnector>(
-                graFxStudioEnvironmentApiBaseUrl,
                 dataSource.id,
-                authToken,
                 getConnectorByIdWrapper, // Pass the environment client API method
             );
             return isAuthenticationRequired(connector);
