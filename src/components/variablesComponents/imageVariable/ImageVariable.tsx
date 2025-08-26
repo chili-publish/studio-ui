@@ -46,7 +46,7 @@ function ImageVariable(props: IImageVariable) {
         if (code === 202 || code === 404)
             return getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Asset is missing');
 
-        return 'Something went wrong. Please try again';
+        return undefined;
     }, [previewError, getUITranslation]);
 
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
@@ -117,7 +117,7 @@ function ImageVariable(props: IImageVariable) {
     // Calculate pending state
     const isPending = previewPending || uploadPending || variable.id === imageChangePendingId;
 
-    const validationErrorMessage = uploadError || validationError;
+    const validationErrorMessage = uploadError || validationError || previewErrorMessage;
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {
@@ -136,7 +136,7 @@ function ImageVariable(props: IImageVariable) {
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}
-                errorMsg={previewErrorMessage}
+                errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
                 validationErrorMessage={validationErrorMessage}
                 onRemove={onRemove}
