@@ -14,6 +14,7 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
             };
             try {
                 const res = await downloadCall();
+
                 if ('success' in res && !res.success) {
                     const httpErrorCode = JSON.parse((res as unknown as EditorResponse<string>)?.data ?? '{}');
                     if (httpErrorCode?.statusCode)

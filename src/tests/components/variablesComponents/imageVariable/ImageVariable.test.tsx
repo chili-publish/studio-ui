@@ -16,7 +16,9 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useVariableC
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImageUrl', () => ({
-    usePreviewImageUrl: jest.fn().mockReturnValue({ previewImageUrl: 'http://image-url.com', pending: false }),
+    usePreviewImageUrl: jest
+        .fn()
+        .mockReturnValue({ mediaAssetId: 'mediaId', previewImageUrl: 'http://image-url.com', pending: false }),
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useMediaDetails', () => ({
@@ -117,7 +119,6 @@ describe('"ImageVariable" component ', () => {
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
                 placeholder: 'Select image',
-                errorMsg: 'Something went wrong. Please try again',
                 previewImage: undefined,
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
@@ -142,7 +143,6 @@ describe('"ImageVariable" component ', () => {
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
                 placeholder: 'Select image',
-                errorMsg: 'Something went wrong. Please try again',
                 previewImage: undefined,
                 onRemove: expect.any(Function),
                 onBrowse: expect.any(Function),
@@ -166,7 +166,7 @@ describe('"ImageVariable" component ', () => {
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
                 placeholder: 'Select image',
-                errorMsg: 'Something went wrong. Please try again',
+                errorMsg: undefined,
                 previewImage: {
                     id: 'mediaId',
                     name: 'mediaName',
