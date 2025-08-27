@@ -84,6 +84,9 @@ export function EnvironmentApiProvider({ children, environment, authToken, baseU
 
     // Extract environment name for the context value
     const environmentName = useMemo(() => {
+        if (!environment) {
+            return 'test-environment';
+        }
         if (environment.includes('/environment/')) {
             const [, ...rest] = environment.split('/environment/');
             return rest.pop() || environment;

@@ -14,6 +14,7 @@ import {
 import { Provider as ReduxProvider } from 'react-redux';
 import isPropValid from '@emotion/is-prop-valid';
 import { RootState, setupStore } from '../../store';
+import { EnvironmentApiProvider } from '../../contexts/EnvironmentApiProvider';
 
 export interface WrapperProps {
     children: Element | ReactNode;
@@ -40,7 +41,9 @@ export const renderWithProviders = <
         return (
             <StyleSheetManager shouldForwardProp={isPropValid}>
                 <ReduxProvider store={reduxStore}>
-                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    <EnvironmentApiProvider environment="test-environment" authToken="test-token">
+                        <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    </EnvironmentApiProvider>
                 </ReduxProvider>
             </StyleSheetManager>
         );
@@ -77,7 +80,9 @@ export const renderHookWithProviders = <
         wrapper: ({ children }: { children: ReactNode }) => (
             <StyleSheetManager shouldForwardProp={isPropValid}>
                 <ReduxProvider store={reduxStore}>
-                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    <EnvironmentApiProvider environment="test-environment" authToken="test-token">
+                        <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    </EnvironmentApiProvider>
                 </ReduxProvider>
             </StyleSheetManager>
         ),

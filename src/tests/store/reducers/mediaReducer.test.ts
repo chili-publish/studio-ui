@@ -86,10 +86,27 @@ describe("'media' reducer", () => {
         });
 
         const mockGetConnectorById = jest.fn().mockImplementation(async (connectorId: string) => {
-            if (connectorId === 'broken') {
-                throw new Error('Not found');
+            if (connectorId === 'grafx-connector-2') {
+                return { id: 'grafx-connector-2' };
             }
-            return { id: connectorId };
+            throw new Error('Not found');
+        });
+
+        // Mock fetch for URL connectors
+        global.fetch = jest.fn().mockImplementation(async (url: string) => {
+            if (url.includes('grafx-connector-1')) {
+                return {
+                    ok: true,
+                    json: async () => ({ id: 'grafx-connector-1' }),
+                } as Response;
+            }
+            if (url.includes('grafx-connector-2')) {
+                return {
+                    ok: true,
+                    json: async () => ({ id: 'grafx-connector-2' }),
+                } as Response;
+            }
+            throw new Error('Not found');
         });
 
         const result = await store
@@ -101,18 +118,16 @@ describe("'media' reducer", () => {
             )
             .unwrap();
 
-        // The broken connector should fail with environment client API and fall back to fetch
-        // The other connectors should succeed with environment client API
+        // GraFx connector (2-grafx) uses environment client API with grafx-connector-2
+        // URL connectors (1-url, 3-url) use fetch with their URLs
         expect(result).toEqual({
-            '1-url': { id: '1-url' },
-            '2-grafx': { id: '2-grafx' },
-            '3-url': { id: '3-url' },
+            '1-url': { id: 'grafx-connector-1' },
+            '2-grafx': { id: 'grafx-connector-2' },
+            '3-url': { id: 'grafx-connector-2' },
         });
 
-        expect(mockGetConnectorById).toHaveBeenCalledTimes(4);
-        expect(mockGetConnectorById).toHaveBeenCalledWith('broken');
-        expect(mockGetConnectorById).toHaveBeenCalledWith('1-url');
-        expect(mockGetConnectorById).toHaveBeenCalledWith('2-grafx');
-        expect(mockGetConnectorById).toHaveBeenCalledWith('3-url');
+        // Environment client API should be called once for the GraFx connector
+        expect(mockGetConnectorById).toHaveBeenCalledTimes(1);
+        expect(mockGetConnectorById).toHaveBeenCalledWith('grafx-connector-2');
     });
 });
