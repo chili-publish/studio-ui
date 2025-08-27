@@ -1,8 +1,8 @@
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
+import axios from 'axios';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { validateVariableList } from '../../store/reducers/variableReducer';
@@ -58,9 +58,13 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
                 selectedLayoutID,
                 outputSettingsId,
             );
+
             if (downloadLinkData.status !== 200) {
                 throw new Error('Error getting download link');
             }
+
+            // eslint-disable-next-line no-console
+            console.log('%c⧭ downloadLinkData.data', 'color: #807160', downloadLinkData.data);
             const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
                 headers: { Authorization: `Bearer ${authToken}` },

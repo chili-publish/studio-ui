@@ -12,6 +12,7 @@ import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { AuthTokenProvider } from './contexts/AuthTokenProvider';
+import { EnvironmentApiProvider } from './contexts/EnvironmentApiProvider';
 import GlobalStyle from './styles/GlobalStyle';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
@@ -82,7 +83,12 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                         <NotificationManagerProvider>
                             <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
                                 <AuthTokenProvider authToken={authToken}>
-                                    <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                                    <EnvironmentApiProvider
+                                        environment={projectConfig.graFxStudioEnvironmentApiBaseUrl}
+                                        authToken={authToken}
+                                    >
+                                        <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                                    </EnvironmentApiProvider>
                                 </AuthTokenProvider>
                             </FeatureFlagProvider>
                         </NotificationManagerProvider>
