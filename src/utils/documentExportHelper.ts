@@ -1,10 +1,28 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 
-type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
+// Environment API methods interface
+interface EnvironmentApiMethods {
+    generatePngOutput: (requestBody: {
+        [key: string]: unknown;
+    }) => Promise<{ data: { taskId: string }; links: { taskInfo: string } }>;
+    generateJpgOutput: (requestBody: {
+        [key: string]: unknown;
+    }) => Promise<{ data: { taskId: string }; links: { taskInfo: string } }>;
+    generatePdfOutput: (requestBody: {
+        [key: string]: unknown;
+    }) => Promise<{ data: { taskId: string }; links: { taskInfo: string } }>;
+    generateMp4Output: (requestBody: {
+        [key: string]: unknown;
+    }) => Promise<{ data: { taskId: string }; links: { taskInfo: string } }>;
+    generateGifOutput: (requestBody: {
+        [key: string]: unknown;
+    }) => Promise<{ data: { taskId: string }; links: { taskInfo: string } }>;
+    getTaskStatus: (taskId: string) => Promise<{ data: { taskId: string }; links: { download: string } }>;
+    getOutputSettingById: (outputSettingsId: string) => Promise<{ dataSourceEnabled: boolean }>;
+}
 
 /**
  * This method will call an external api to create a download url
@@ -22,6 +40,7 @@ export const getDownloadLink = async (
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
+    environmentApiMethods: EnvironmentApiMethods,
 ): Promise<DownloadLinkResult> => {
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
@@ -43,7 +62,7 @@ export const getDownloadLink = async (
             if (engineCommitSha) engineVersion += `-${engineCommitSha}`;
         }
 
-        const dataConnectorConfig = await getDataSourceConfig(baseUrl, getToken(), outputSettingsId);
+        const dataConnectorConfig = await getDataSourceConfig(outputSettingsId, environmentApiMethods);
 
         const body = documentResponse.data as string;
         const requestBody = {
@@ -55,16 +74,46 @@ export const getDownloadLink = async (
             ...(isSandboxMode ? { templateId: projectId } : { projectId }),
         };
 
-        const httpResponse = await axios.post(generateExportUrl, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-        });
+        // Use environment client API based on format
+        let response: GenerateAnimationResponse | ApiError;
 
-        const response: GenerateAnimationResponse | ApiError = httpResponse.data as
-            | GenerateAnimationResponse
-            | ApiError;
+        try {
+            switch (format) {
+                case 'png':
+                    response = await environmentApiMethods.generatePngOutput(requestBody);
+                    break;
+                case 'jpg':
+                    response = await environmentApiMethods.generateJpgOutput(requestBody);
+                    break;
+                case 'pdf':
+                    response = await environmentApiMethods.generatePdfOutput(requestBody);
+                    break;
+                case 'mp4':
+                    response = await environmentApiMethods.generateMp4Output(requestBody);
+                    break;
+                case 'gif':
+                    response = await environmentApiMethods.generateGifOutput(requestBody);
+                    break;
+                default:
+                    throw new Error(`Unsupported format: ${format}`);
+            }
+        } catch (error) {
+            // Fallback to direct fetch if environment client API fails
+            const fetchResponse = await fetch(generateExportUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getToken()}`,
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!fetchResponse.ok) {
+                throw new Error(`Failed to generate output: ${fetchResponse.statusText}`);
+            }
+
+            response = await fetchResponse.json();
+        }
 
         if ('status' in response) {
             const err = response as ApiError;
@@ -78,7 +127,7 @@ export const getDownloadLink = async (
         }
 
         const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken);
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken, environmentApiMethods);
 
         if (pollingResult === null) {
             return {
@@ -116,54 +165,70 @@ export const getDownloadLink = async (
 const startPollingOnEndpoint = async (
     endpoint: string,
     getToken: () => string,
+    environmentApiMethods: EnvironmentApiMethods,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
-        const config: HttpHeaders = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-            body: null,
-        };
-        const httpResponse = await axios.get(endpoint, config);
+        // Extract task ID from the endpoint URL
+        const taskId = endpoint.split('/').pop();
+        if (!taskId) {
+            throw new Error('Could not extract task ID from endpoint');
+        }
 
-        if (httpResponse.status === 202) {
-            // eslint-disable-next-line no-promise-executor-return
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, getToken);
+        // Use environment client API to get task status
+        const result = await environmentApiMethods.getTaskStatus(taskId);
+
+        // Check if task is still processing (202) or completed (200)
+        if (result.data?.taskId) {
+            // Task is completed, return the result
+            return result as GenerateAnimationTaskPollingResponse;
         }
-        if (httpResponse.status === 200) {
-            return httpResponse.data as GenerateAnimationTaskPollingResponse;
-        }
-        return null;
+
+        // Task is still processing, wait and retry
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        return await startPollingOnEndpoint(endpoint, getToken, environmentApiMethods);
     } catch (err) {
+        // Fallback to direct fetch if environment client API fails
+        try {
+            const response = await fetch(endpoint, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
+
+            if (response.status === 202) {
+                // eslint-disable-next-line no-promise-executor-return
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                return await startPollingOnEndpoint(endpoint, getToken, environmentApiMethods);
+            }
+            if (response.status === 200) {
+                return (await response.json()) as GenerateAnimationTaskPollingResponse;
+            }
+        } catch (fetchErr) {
+            // eslint-disable-next-line no-console
+            console.warn('Both environment client API and fetch failed:', fetchErr);
+        }
         return null;
     }
 };
 
 const getDataSourceConfig = async (
-    baseUrl: string,
-    token: string,
     outputSettingsId: string | undefined,
+    environmentApiMethods: EnvironmentApiMethods,
 ): Promise<DataConnectorConfiguration | undefined> => {
     if (!outputSettingsId) {
         return undefined;
     }
     const { parsedData: dataSource } = await window.StudioUISDK.dataSource.getDataSource();
+
     if (!dataSource) {
         return undefined;
     }
 
-    const { data: setting } = await axios.get<{ dataSourceEnabled: boolean }>(
-        `${baseUrl}/output/settings/${outputSettingsId}`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        },
-    );
+    // Use environment client API to get output setting
+    const setting = await environmentApiMethods.getOutputSettingById(outputSettingsId);
+
     if (!setting.dataSourceEnabled) {
         return undefined;
     }
