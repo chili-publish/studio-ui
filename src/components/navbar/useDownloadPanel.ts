@@ -2,6 +2,7 @@ import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
+import axios from 'axios';
 import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { validateVariableList } from '../../store/reducers/variableReducer';
@@ -62,19 +63,17 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
                 throw new Error('Error getting download link');
             }
 
-            // Download the file using fetch
-            const downloadUrl = downloadLinkData.data ?? '';
-            const response = await fetch(downloadUrl, {
+            const response = await axios.get(downloadLinkData.data ?? '', {
+                responseType: 'blob',
                 headers: { Authorization: `Bearer ${authToken}` },
             });
 
             if (response.status !== 200) return;
 
-            const contentType: MimeType = response.headers.get('content-type') as MimeType;
+            const contentType: MimeType = response.headers['content-type'];
             const extensionType = mimeToExt[contentType];
 
-            const blob = await response.blob();
-            const objectUrl = window.URL.createObjectURL(blob);
+            const objectUrl = window.URL.createObjectURL(response.data);
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',
