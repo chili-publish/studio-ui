@@ -1,5 +1,6 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -15,6 +16,8 @@ import { showImagePanel } from '../../../store/reducers/panelReducer';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
+    const { getUITranslation } = useUITranslations();
+
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
@@ -25,7 +28,11 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
+    const {
+        previewImageUrl,
+        pending: previewPending,
+        error: previewError,
+    } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
@@ -93,7 +100,12 @@ function ImageVariable(props: IImageVariable) {
     // Calculate pending state
     const isPending = previewPending || uploadPending;
 
-    const validationErrorMessage = uploadError || validationError;
+    const validationErrorMessage =
+        uploadError ||
+        validationError ||
+        (previewError
+            ? getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Preview is missing')
+            : '');
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {
