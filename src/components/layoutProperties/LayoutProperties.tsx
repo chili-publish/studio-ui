@@ -11,7 +11,7 @@ import { useUITranslations } from '../../core/hooks/useUITranslations';
 import RangeConstraintIcon from './RangeConstraintIcon';
 import LockedConstraintIcon from './LockedConstraintIcon';
 import { useLayoutConstraintProportions } from './useLayoutConstraintProportions';
-import { withMeasurementUnit } from './util';
+import { clampValue, withMeasurementUnit } from './util';
 import RangeConstraintErrorMessage from './RangeConstraintErrorMessage';
 
 interface LayoutPropertiesProps {
@@ -58,10 +58,20 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             // update state with new value to reflect it in the inputs before submit
             if (PagePropertyMap[inputId] === PagePropertyType.Width) {
                 const width = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                setPageWidth(withMeasurementUnit(width ?? 0, layout?.unit.value));
+                const clampedWidth = clampValue(
+                    width,
+                    layout?.resizableByUser.minWidth,
+                    layout?.resizableByUser.maxWidth,
+                );
+                setPageWidth(withMeasurementUnit(clampedWidth ?? 0, layout?.unit.value));
             } else {
                 const height = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                setPageHeight(withMeasurementUnit(height ?? 0, layout?.unit.value));
+                const clampedHeight = clampValue(
+                    height,
+                    layout?.resizableByUser.minHeight,
+                    layout?.resizableByUser.maxHeight,
+                );
+                setPageHeight(withMeasurementUnit(clampedHeight ?? 0, layout?.unit.value));
             }
         }
     };

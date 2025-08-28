@@ -20,3 +20,35 @@ export const withMeasurementUnit = (value: number | string, measurementUnit?: Me
 export const roundValue = (value: number, decimals: number = 2): string => {
     return (Math.round(value * 10 ** decimals) / 10 ** decimals).toString();
 };
+
+export const clampValue = (value: number | null, min?: number | null, max?: number | null) => {
+    const minValue = normalizeValue(min);
+    const maxValue = normalizeValue(max);
+
+    // If value is null, return it
+    if (value === null) {
+        return value;
+    }
+
+    if (minValue === null && maxValue === null) {
+        return value;
+    }
+
+    if (minValue !== null && maxValue === null && value < minValue) {
+        return minValue;
+    }
+
+    if (minValue === null && maxValue !== null && value > maxValue) {
+        return maxValue;
+    }
+
+    if (minValue !== null && maxValue !== null && value < minValue) {
+        return minValue;
+    }
+
+    if (minValue !== null && maxValue !== null && value > maxValue) {
+        return maxValue;
+    }
+
+    return value;
+};
