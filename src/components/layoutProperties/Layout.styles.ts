@@ -9,9 +9,9 @@ export const LayoutInputsContainer = styled.div`
 
 export const IconWrapper = styled.div<{ hasHelpText: boolean }>`
     display: flex;
-    align-self: flex-end;
+    align-self: flex-start;
     cursor: pointer;
-    margin-bottom: ${(props) => (props.hasHelpText ? '2rem' : '0.75rem')};
+    margin-top: 2.25rem;
 `;
 
 export const ButtonsWrapper = styled.div`
