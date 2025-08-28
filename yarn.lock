@@ -1283,11 +1283,6 @@
   version "0.103.12"
   resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/552/grafx-shared-components.tgz#a119b5916d6216965f7fd86678e5bb0f886c8901"
 
-"@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/668/studio-sdk.tgz":
-  version "1.29.1-alfa.2"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/668/studio-sdk.tgz#dae0ec935abbd095353724c3d2de33045e5e72ab"
-  dependencies:
-    penpal "6.1.0"
 
 "@csstools/color-helpers@^5.0.2":
   version "5.0.2"
