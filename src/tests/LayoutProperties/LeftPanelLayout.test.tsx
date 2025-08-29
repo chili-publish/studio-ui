@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import EditorSDK, { Layout, LayoutIntent, LayoutListItemType, LayoutPropertiesType } from '@chili-publish/studio-sdk';
+import EditorSDK, {
+    ConstraintMode,
+    Layout,
+    LayoutIntent,
+    LayoutListItemType,
+    LayoutPropertiesType,
+} from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockUserInterface } from '@mocks/mockUserinterface';
@@ -7,8 +13,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
-import LeftPanel from '../components/layout-panels/leftPanel/LeftPanel';
-import { UserInterfaceDetailsContextProvider } from '../components/navbar/UserInterfaceDetailsContext';
+import LeftPanel from '../../components/layout-panels/leftPanel/LeftPanel';
+import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -16,11 +22,11 @@ import {
     ProjectConfig,
     UiOptions,
     UserInterfaceWithOutputSettings,
-} from '../types/types';
-import { getDataTestIdForSUI } from '../utils/dataIds';
-import { transformFormBuilderArrayToObject } from '../utils/helpers';
-import { APP_WRAPPER } from './mocks/app';
-import { renderWithProviders } from './mocks/Provider';
+} from '../../types/types';
+import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { transformFormBuilderArrayToObject } from '../../utils/helpers';
+import { APP_WRAPPER } from '../mocks/app';
+import { renderWithProviders } from '../mocks/Provider';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -71,7 +77,7 @@ const renderComponent = (
             <LeftPanel
                 selectedLayout={selectedLayout || mockLayout}
                 layouts={layouts || mockLayouts}
-                layoutPropertiesState={mockLayout as unknown as LayoutPropertiesType}
+                layoutPropertiesState={(selectedLayout || mockLayout) as unknown as LayoutPropertiesType}
                 layoutSectionUIOptions={layoutSectionUIOptions}
             />
         </UserInterfaceDetailsContextProvider>,
@@ -107,6 +113,48 @@ describe('Layout selection', () => {
         expect(screen.queryByLabelText('Width')).not.toBeInTheDocument();
         expect(screen.queryByLabelText('Height')).not.toBeInTheDocument();
     });
+
+    test('should display lock icon when layout constraints are enabled', async () => {
+        const layout = {
+            ...mockLayout,
+            resizableByUser: { ...mockLayout.resizableByUser, enabled: true, constraintMode: ConstraintMode.locked },
+        };
+
+        renderComponent(LayoutIntent.print, mockLayouts, layout);
+
+        expect(screen.getByTestId(getDataTestIdForSUI('layout-constraint-icon-locked'))).toBeInTheDocument();
+    });
+
+    test('lock icon should be hidden when layout constraint mode is not locked', async () => {
+        const layout = {
+            ...mockLayout,
+            resizableByUser: { ...mockLayout.resizableByUser, enabled: true, constraintMode: ConstraintMode.none },
+        };
+
+        renderComponent(LayoutIntent.print, mockLayouts, layout);
+
+        expect(screen.queryByTestId(getDataTestIdForSUI('layout-constraint-icon-locked'))).not.toBeInTheDocument();
+    });
+
+    test('range icon should be shown when layout constraint mode is range', async () => {
+        const layout = {
+            ...mockLayout,
+            resizableByUser: {
+                ...mockLayout.resizableByUser,
+                enabled: true,
+                constraintMode: ConstraintMode.range,
+                aspectRange: {
+                    min: { horizontal: 1, vertical: 3 },
+                    max: { horizontal: 3, vertical: 4 },
+                },
+            },
+        };
+
+        renderComponent(LayoutIntent.print, mockLayouts, layout);
+
+        expect(screen.getByTestId(getDataTestIdForSUI('layout-constraint-icon-range'))).toBeInTheDocument();
+    });
+
     test('Layout dropdown input and title are rendered based on uiOptions', async () => {
         renderComponent(LayoutIntent.print, mockLayouts, mockLayout, {
             visible: true,
