@@ -8,19 +8,19 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
             if (!connectorId) {
                 return null;
             }
-            const downloadCall = (): Promise<Uint8Array> => {
+            const downloadCall = () => {
                 return window.StudioUISDK.mediaConnector.download(connectorId, id, MediaDownloadType.thumbnail, {});
             };
             try {
                 const res = await downloadCall();
-                return res;
+                return res.parsedData;
             } catch (e) {
                 const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.StudioUISDK.connector.waitToBeReady(connectorId);
-                    return downloadCall();
+                    return downloadCall().then((res) => res.parsedData);
                 }
-                return null;
+                throw e;
             }
         },
         [connectorId],

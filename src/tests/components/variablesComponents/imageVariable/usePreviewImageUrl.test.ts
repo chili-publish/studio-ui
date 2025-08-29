@@ -1,18 +1,24 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
-import { act } from 'react-dom/test-utils';
 import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
 
 jest.mock('@chili-publish/grafx-shared-components', () => ({
     usePreviewImageUrl: jest.fn((_, previewCall) => {
         const [url, setUrl] = useState<string | null>(null);
+        const [error, setError] = useState<Error | null>(null);
         useEffect(() => {
             (async () => {
-                const result = await previewCall(_).then((res: string | null) => res);
-                return !result ? setUrl(result) : setUrl('http://url.com');
+                try {
+                    const result = await previewCall(_).then((res: string | null) => res);
+                    return !result ? setUrl(result) : setUrl('http://url.com');
+                } catch (err) {
+                    setError(err as Error);
+                    setUrl(null);
+                    return err;
+                }
             })();
         }, [_, previewCall]);
-        return url;
+        return { previewImageUrl: url, error };
     }),
 }));
 
@@ -25,10 +31,8 @@ describe('"usePreviewImageUrl" hook', () => {
         window.StudioUISDK.mediaConnector.download = jest.fn().mockResolvedValueOnce(new Uint8Array());
         const { result } = renderHook(() => usePreviewImageUrl(undefined, 'media-asset-id'));
 
-        act(() => {
-            expect(window.StudioUISDK.mediaConnector.download).not.toHaveBeenCalled();
-            expect(result.current).toEqual(null);
-        });
+        expect(window.StudioUISDK.mediaConnector.download).not.toHaveBeenCalled();
+        expect(result.current).toEqual({ previewImageUrl: null, error: null });
     });
 
     it('should call "download" with "ready" state check', async () => {
@@ -42,10 +46,15 @@ describe('"usePreviewImageUrl" hook', () => {
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
-        act(() => {
-            expect(window.StudioUISDK.connector.waitToBeReady).not.toHaveBeenCalled();
-            expect(window.StudioUISDK.mediaConnector.download).toHaveBeenCalledTimes(1);
-            expect(result.current).toEqual(null);
+        expect(window.StudioUISDK.connector.waitToBeReady).not.toHaveBeenCalled();
+        expect(window.StudioUISDK.mediaConnector.download).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(result.current).toEqual(
+                expect.objectContaining({
+                    error: 'Random Error',
+                    previewImageUrl: null,
+                }),
+            );
         });
     });
 
@@ -53,7 +62,7 @@ describe('"usePreviewImageUrl" hook', () => {
         window.StudioUISDK.mediaConnector.download = jest
             .fn()
             .mockRejectedValueOnce('Random Error')
-            .mockResolvedValueOnce(new Uint8Array());
+            .mockResolvedValueOnce({ parsedData: new Uint8Array() });
         window.StudioUISDK.connector.getState = jest.fn().mockResolvedValueOnce({
             parsedData: {
                 type: 'loading',
@@ -63,10 +72,13 @@ describe('"usePreviewImageUrl" hook', () => {
 
         await waitFor(() => expect(window.StudioUISDK.connector.getState).toHaveBeenCalledWith('grafx-media'));
 
-        act(() => {
+        await waitFor(() => {
             expect(window.StudioUISDK.connector.waitToBeReady).toHaveBeenCalledWith('grafx-media');
             expect(window.StudioUISDK.mediaConnector.download).toHaveBeenCalledTimes(2);
-            expect(result.current).toEqual('http://url.com');
+            expect(result.current).toEqual({
+                error: null,
+                previewImageUrl: 'http://url.com',
+            });
         });
     });
 });

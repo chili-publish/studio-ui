@@ -65,6 +65,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                         ),
                 },
                 mediaConnector: {
+                    download: jest.fn().mockResolvedValue({ parsedData: new Uint8Array() }),
                     query: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: { data: mockMedia } })),
                     getCapabilities: jest
                         .fn()

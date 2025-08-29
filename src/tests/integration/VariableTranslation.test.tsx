@@ -104,6 +104,7 @@ beforeAll(() => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }) as any,
     );
+    global.URL.createObjectURL = jest.fn();
 });
 
 afterAll(() => {

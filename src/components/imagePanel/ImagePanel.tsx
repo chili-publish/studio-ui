@@ -26,7 +26,9 @@ function ImagePanel() {
     const { onVariableBlur } = useUiConfigContext();
 
     const previewCall = (id: string): Promise<Uint8Array> =>
-        window.StudioUISDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
+        window.StudioUISDK.mediaConnector
+            .download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {})
+            .then((res) => res.parsedData as Uint8Array);
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
