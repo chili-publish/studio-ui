@@ -22,31 +22,27 @@ export const roundValue = (value: number, decimals: number = 2): string => {
 };
 
 export const clampValue = (value: number | null, min?: number | null, max?: number | null) => {
+    const normalizedValue = value ?? 0;
     const minValue = normalizeValue(min);
     const maxValue = normalizeValue(max);
-
-    // If value is null, return it
-    if (value === null) {
-        return value;
-    }
 
     if (minValue === null && maxValue === null) {
         return value;
     }
 
-    if (minValue !== null && maxValue === null && value < minValue) {
+    if (minValue !== null && maxValue === null && normalizedValue < minValue) {
         return minValue;
     }
 
-    if (minValue === null && maxValue !== null && value > maxValue) {
+    if (minValue === null && maxValue !== null && normalizedValue > maxValue) {
         return maxValue;
     }
 
-    if (minValue !== null && maxValue !== null && value < minValue) {
+    if (minValue !== null && maxValue !== null && normalizedValue < minValue) {
         return minValue;
     }
 
-    if (minValue !== null && maxValue !== null && value > maxValue) {
+    if (minValue !== null && maxValue !== null && normalizedValue > maxValue) {
         return maxValue;
     }
 

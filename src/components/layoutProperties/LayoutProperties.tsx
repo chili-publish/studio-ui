@@ -1,6 +1,6 @@
 import { Button, ButtonVariant, Input, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
@@ -57,21 +57,29 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             setFormHasChanges(true);
             // update state with new value to reflect it in the inputs before submit
             if (PagePropertyMap[inputId] === PagePropertyType.Width) {
-                const width = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                const clampedWidth = clampValue(
-                    width,
-                    layout?.resizableByUser.minWidth,
-                    layout?.resizableByUser.maxWidth,
-                );
-                setPageWidth(withMeasurementUnit(clampedWidth ?? 0, layout?.unit.value));
+                try {
+                    const width = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
+                    const clampedWidth = clampValue(
+                        width,
+                        layout?.resizableByUser.minWidth,
+                        layout?.resizableByUser.maxWidth,
+                    );
+                    setPageWidth(withMeasurementUnit(clampedWidth ?? pageSize?.width ?? 0, layout?.unit.value));
+                } catch (err) {
+                    setPageWidth(withMeasurementUnit(pageSize?.width ?? 0, layout?.unit.value));
+                }
             } else {
-                const height = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
-                const clampedHeight = clampValue(
-                    height,
-                    layout?.resizableByUser.minHeight,
-                    layout?.resizableByUser.maxHeight,
-                );
-                setPageHeight(withMeasurementUnit(clampedHeight ?? 0, layout?.unit.value));
+                try {
+                    const height = (await window.StudioUISDK.utils.unitEvaluate(value, layout?.unit.value)).parsedData;
+                    const clampedHeight = clampValue(
+                        height,
+                        layout?.resizableByUser.minHeight,
+                        layout?.resizableByUser.maxHeight,
+                    );
+                    setPageHeight(withMeasurementUnit(clampedHeight ?? pageSize?.height ?? 0, layout?.unit.value));
+                } catch (err) {
+                    setPageHeight(withMeasurementUnit(pageSize?.height ?? 0, layout?.unit.value));
+                }
             }
         }
     };
@@ -95,7 +103,13 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
         setPageHeight(pageSize?.height ? withMeasurementUnit(pageSize.height, layout?.unit.value) : '');
     };
 
-    const renderInput = (id: string, inputValue: string, label: string, helpText?: string) => (
+    const renderInput = (
+        id: string,
+        inputValue: string,
+        setValue: Dispatch<SetStateAction<string>>,
+        label: string,
+        helpText?: string,
+    ) => (
         <Input
             type="number"
             id={id}
@@ -106,6 +120,9 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             onValueChange={(v) => {
                 setFormHasChanges(true);
                 if (submitOnBlur) saveChange(PagePropertyMap[id as PageInputId], v);
+            }}
+            onChange={(ev) => {
+                if (!submitOnBlur) setValue(ev.target.value);
             }}
             onFocus={() => handleFocus(id)}
             onBlur={handleInputBlur(id)}
@@ -119,7 +136,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     return (
         <>
             <LayoutInputsContainer>
-                {renderInput('page-width-input', pageWidth, widthLabel, widthInputHelpText)}
+                {renderInput('page-width-input', pageWidth, setPageWidth, widthLabel, widthInputHelpText)}
                 {hasLockedConstraint && (
                     <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>
                         <LockedConstraintIcon layout={layout} />
@@ -130,7 +147,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
                         <RangeConstraintIcon layout={layout} />
                     </IconWrapper>
                 )}
-                {renderInput('page-height-input', pageHeight, heightLabel, heightInputHelpText)}
+                {renderInput('page-height-input', pageHeight, setPageHeight, heightLabel, heightInputHelpText)}
             </LayoutInputsContainer>
             {hasRangeConstraint && (
                 <>
