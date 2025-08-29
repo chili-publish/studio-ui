@@ -13,7 +13,7 @@ export interface VariableValidation {
 type VariableState = {
     currentSelectedVariableId: string;
     currentSelectedVariableConnectorId: string;
-
+    imageChangePendingId: string;
     variables: Variable[];
     validation: VariableValidation;
     hasErrors: boolean;
@@ -22,6 +22,7 @@ type VariableState = {
 const initialState: VariableState = {
     currentSelectedVariableId: '',
     currentSelectedVariableConnectorId: '',
+    imageChangePendingId: '',
     variables: [],
     validation: {},
     hasErrors: false,
@@ -59,6 +60,10 @@ export const variableSlice = createSlice({
         },
         setVariables: (state, action: PayloadAction<Variable[]>) => {
             state.variables = action.payload;
+            state.imageChangePendingId = '';
+        },
+        setImageChangePendingId: (state, action: PayloadAction<string>) => {
+            state.imageChangePendingId = action.payload;
         },
         setVariablesValidation: (state, action: PayloadAction<VariableValidation>) => {
             state.validation = action.payload;
@@ -111,6 +116,7 @@ export const {
     validateVariable,
     setCurrentSelectedVariableId,
     setCurrentSelectedVariableConnectorId,
+    setImageChangePendingId,
 } = variableSlice.actions;
 
 export const selectVariables = (state: RootState): Variable[] => state.variable.variables;
@@ -124,4 +130,5 @@ export const selectCurrentVariableId = (state: RootState): string => state.varia
 export const selectCurrentVariableConnectorId = (state: RootState): string =>
     state.variable.currentSelectedVariableConnectorId;
 
+export const selectImageChangePendingId = (state: RootState): string => state.variable.imageChangePendingId;
 export default variableSlice.reducer;

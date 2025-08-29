@@ -1,6 +1,9 @@
 export interface VariablesTranslations {
     header?: string;
     helpText?: string;
+    imageVariable?: {
+        error?: string;
+    };
 }
 
 export interface DataSourceTranslations {

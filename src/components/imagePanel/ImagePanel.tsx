@@ -10,6 +10,7 @@ import {
     selectCurrentVariableConnectorId,
     selectCurrentVariableId,
     selectVariables,
+    setImageChangePendingId,
     validateVariable,
 } from '../../store/reducers/variableReducer';
 import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
@@ -30,14 +31,19 @@ function ImagePanel() {
 
     const handleUpdateImage = useCallback(
         async (source: Media) => {
-            dispatch(showVariablesPanel());
             const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
                 context: { searchInUploadFolder: false },
             };
-            await handleImageChange(imgSrc);
             const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable | undefined;
+
+            if (variable?.value?.assetId !== source.id) {
+                dispatch(setImageChangePendingId(currentVariableId));
+            }
+            dispatch(showVariablesPanel());
+            await handleImageChange(imgSrc);
+
             if (variable)
                 dispatch(
                     validateVariable({
