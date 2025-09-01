@@ -13,8 +13,7 @@ interface ChangeImageVariableValue {
 
 async function changeImageVariableValue({ id, value, context }: ChangeImageVariableValue) {
     await window.StudioUISDK.undoManager.record('changeImageVariableValue', async (sdk) => {
-        await sdk.variable.setImageVariableConnectorContext(id, context);
-        await sdk.variable.setValue(id, value);
+        await sdk.variable.setImageVariableValueWithContext(id, value, context);
     });
 }
 
