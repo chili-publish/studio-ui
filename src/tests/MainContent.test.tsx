@@ -109,7 +109,8 @@ describe('MainContent', () => {
             ...jest.requireMock('@chili-publish/studio-sdk').default(),
             canvas: { zoomToPage: mockZoomToPage },
         };
-        jest.spyOn(window, 'StudioUISDK', 'get').mockReturnValue(mockSDK);
+        // @ts-expect-error: StudioUISDK is not a real property on window, but is used in the app
+        window.StudioUISDK = jest.fn().mockReturnValue(mockSDK);
 
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
