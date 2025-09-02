@@ -13,9 +13,11 @@ jest.mock('@chili-publish/studio-sdk', () => {
         __esModule: true,
         ...originalModule,
         /* eslint-disable */
-        default: function () {
+        default: function (config: any) {
+            const sdk = new originalModule.default(config);
             /* eslint-enable */
             return {
+                ...sdk,
                 loadEditor: () => '',
                 configuration: { setValue: jest.fn() },
                 next: {

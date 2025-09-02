@@ -27,7 +27,7 @@ export type ProjectConfig = {
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;
-    onEngineInitialized: (project: Project) => void;
+    onEngineInitialized?: (project: Project) => void;
     onProjectLoaded: () => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;

@@ -288,9 +288,9 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
         setSDKRef(sdk);
         window.StudioUISDK.loadEditor();
 
-        // loadEditor is a synchronous call after which we are sure
-        // the connection to the engine is established
-        projectConfig.onEngineInitialized(currentProject as Project);
+        if (projectConfig.onEngineInitialized) {
+            projectConfig.onEngineInitialized(currentProject as Project);
+        }
 
         projectConfig
             .onProjectDocumentRequested(projectConfig.projectId)

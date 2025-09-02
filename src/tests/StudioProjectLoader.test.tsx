@@ -134,7 +134,7 @@ describe('StudioProjectLoader', () => {
         });
     });
 
-    describe('onProjectLoaded', () => {
+    describe('onEngineInitialized', () => {
         it('should set GraFxStudioEnvironmentApiUrl configuration value', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
@@ -147,7 +147,7 @@ describe('StudioProjectLoader', () => {
             );
             window.StudioUISDK.configuration.setValue = jest.fn();
 
-            loader.onProjectLoaded();
+            loader.onEngineInitialized();
 
             expect(window.StudioUISDK.configuration.setValue).toHaveBeenCalledWith(
                 WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
