@@ -1,9 +1,10 @@
 export interface VariablesTranslations {
     header?: string;
     helpText?: string;
-    imageVariable?: {
-        error?: string;
-    };
+    // TODO: Will be implemented in context of WRS-2610
+    // imageVariable?: {
+    //     error?: string;
+    // };
 }
 
 export interface DataSourceTranslations {

@@ -62,7 +62,7 @@ describe('"usePreviewImageUrl" hook', () => {
         window.StudioUISDK.mediaConnector.download = jest
             .fn()
             .mockRejectedValueOnce('Random Error')
-            .mockResolvedValueOnce({ parsedData: new Uint8Array() });
+            .mockResolvedValueOnce(new Uint8Array());
         window.StudioUISDK.connector.getState = jest.fn().mockResolvedValueOnce({
             parsedData: {
                 type: 'loading',

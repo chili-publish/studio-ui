@@ -12,13 +12,12 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
                 return window.StudioUISDK.mediaConnector.download(connectorId, id, MediaDownloadType.thumbnail, {});
             };
             try {
-                const res = await downloadCall();
-                return res.parsedData;
+                return await downloadCall();
             } catch (e) {
                 const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.StudioUISDK.connector.waitToBeReady(connectorId);
-                    return downloadCall().then((res) => res.parsedData);
+                    return downloadCall();
                 }
                 throw e;
             }
