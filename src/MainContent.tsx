@@ -276,9 +276,8 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             enableQueryCallCache: true,
         });
 
-        sdk.config.events.onDocumentLoaded.registerCallback(() => {
-            // loadEditor is a synchronous call after which we are sure
-            // the connection to the engine is established
+        // call onProjectLoaded when the document is loaded
+        const onDocumentLoadedUnsubscribe = sdk.config.events.onDocumentLoaded.registerCallback(() => {
             projectConfig.onProjectLoaded();
         });
 
@@ -315,6 +314,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
             enableAutoSaveRef.current = false;
+            onDocumentLoadedUnsubscribe();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventSubscriber]);

@@ -53,6 +53,7 @@ describe('MainContent', () => {
         onProjectInfoRequested: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
         onProjectDocumentRequested: () => Promise.resolve('{}'),
         onProjectLoaded: () => null,
+        onEngineInitialized: () => null,
         onProjectSave: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
         onAuthenticationRequested: () => 'authToken',
         onAuthenticationExpired: () => Promise.resolve(''),
