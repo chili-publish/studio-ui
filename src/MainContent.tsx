@@ -215,9 +215,11 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 setSelectedLayout(layout);
                 setLayoutIntent(layoutIntentData);
 
-                startTransition(() => {
-                    zoomToPage();
-                });
+                if (!multiLayoutMode) {
+                    startTransition(() => {
+                        zoomToPage();
+                    });
+                }
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
@@ -240,11 +242,15 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             },
             onSelectedPageIdChanged: (pageId) => {
                 setActivePageId(pageId);
-                zoomToPage(pageId);
+                if (!multiLayoutMode) {
+                    zoomToPage(pageId);
+                }
             },
 
             onPageSizeChanged: (size) => {
-                zoomToPage(size.id);
+                if (!multiLayoutMode) {
+                    zoomToPage(size.id);
+                }
                 setPageSize(size);
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
