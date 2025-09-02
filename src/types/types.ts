@@ -27,7 +27,8 @@ export type ProjectConfig = {
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;
-    onProjectLoaded: (project: Project) => void;
+    onEngineInitialized: (project: Project) => void;
+    onProjectLoaded: () => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
     onAuthenticationExpired: () => Promise<string>;
@@ -297,7 +298,8 @@ export interface IStudioUILoaderConfig {
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
-    onProjectLoaded?: (project: Project) => void;
+    onEngineInitialized?: (project: Project) => void;
+    onProjectLoaded?: () => void;
     onAuthenticationRequested?: () => string;
     onAuthenticationExpired?: () => Promise<string>;
     onLogInfoRequested?: () => void;

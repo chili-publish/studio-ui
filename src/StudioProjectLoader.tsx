@@ -92,7 +92,12 @@ export class StudioProjectLoader {
         return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
     };
 
+    // eslint-disable-next-line class-methods-use-this
     public onProjectLoaded = (): void => {
+        // ignored
+    };
+
+    public onEngineInitialized = (): void => {
         window.StudioUISDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
             addTrailingSlash(this.graFxStudioEnvironmentApiBaseUrl),

@@ -276,6 +276,12 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             enableQueryCallCache: true,
         });
 
+        sdk.config.events.onDocumentLoaded.registerCallback(() => {
+            // loadEditor is a synchronous call after which we are sure
+            // the connection to the engine is established
+            projectConfig.onProjectLoaded();
+        });
+
         // Connect to ths SDK
         window.StudioUISDK = sdk;
         window.SDK = sdk;
@@ -285,7 +291,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
         // loadEditor is a synchronous call after which we are sure
         // the connection to the engine is established
-        projectConfig.onProjectLoaded(currentProject as Project);
+        projectConfig.onEngineInitialized(currentProject as Project);
 
         projectConfig
             .onProjectDocumentRequested(projectConfig.projectId)
