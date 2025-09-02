@@ -1283,7 +1283,6 @@
   version "0.103.12"
   resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/552/grafx-shared-components.tgz#a119b5916d6216965f7fd86678e5bb0f886c8901"
 
-
 "@csstools/color-helpers@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@csstools/color-helpers/-/color-helpers-5.0.2.tgz#82592c9a7c2b83c293d9161894e2a6471feb97b8"
