@@ -284,7 +284,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
         // call onProjectLoaded when the document is loaded
         const onDocumentLoadedUnsubscribe = sdk.config.events.onDocumentLoaded.registerCallback(() => {
-            projectConfig.onProjectLoaded();
+            projectConfig.onProjectLoaded?.();
         });
 
         // Connect to ths SDK

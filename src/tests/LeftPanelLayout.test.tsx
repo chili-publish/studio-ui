@@ -162,6 +162,9 @@ class ProjectConfigs {
         onProjectLoaded: () => {
             // ignored
         },
+        onEngineInitialized: () => {
+            // ignored
+        },
         onProjectSave: async () => {
             return {
                 name: '',
