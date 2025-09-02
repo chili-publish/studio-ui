@@ -53,7 +53,6 @@ export default class StudioUI extends StudioUILoader {
             onProjectInfoRequested: projectLoader.onProjectInfoRequested,
             onProjectDocumentRequested: projectLoader.onProjectDocumentRequested,
             onProjectSave: projectLoader.onProjectSave,
-            onProjectLoaded: projectLoader.onProjectLoaded,
             onEngineInitialized: projectLoader.onEngineInitialized,
             onAuthenticationRequested: projectLoader.onAuthenticationRequested,
             onAuthenticationExpired: projectLoader.onAuthenticationExpired,
@@ -192,7 +191,7 @@ export default class StudioUI extends StudioUILoader {
                 onVariableFocus,
                 onVariableBlur,
                 onVariableValueChangedCompleted,
-                onProjectLoaded: onProjectLoaded ?? projectLoader.onProjectLoaded,
+                onProjectLoaded,
             },
             {
                 variableTranslations,
