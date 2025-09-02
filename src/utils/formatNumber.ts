@@ -16,12 +16,12 @@ export const formatNumber = (value: number | string, measurementUnit?: Measureme
 
 export const handleSetProperty = async (
     sdkMethod: () => Promise<EditorResponse<null> | null>,
-    localStateUpdater: () => void,
+    localStateUpdater: () => Promise<void>,
 ) => {
     try {
         await sdkMethod();
     } catch (error) {
-        localStateUpdater();
+        await localStateUpdater();
         // eslint-disable-next-line no-console
         console.error('SDK set properties error:', error);
     }
