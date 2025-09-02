@@ -77,7 +77,7 @@ describe('useLayoutProperties', () => {
         const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         await act(async () => {
-            await result.current.handleChange('width', '600');
+            await result.current.saveChange('width', '600');
         });
 
         expect(window.StudioUISDK.page.setWidth).toHaveBeenCalledWith('page1', '600');
@@ -87,7 +87,7 @@ describe('useLayoutProperties', () => {
         const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         await act(async () => {
-            await result.current.handleChange('height', '900');
+            await result.current.saveChange('height', '900');
         });
 
         expect(window.StudioUISDK.page.setHeight).toHaveBeenCalledWith('page1', '900');
@@ -184,7 +184,7 @@ describe('useLayoutProperties', () => {
         (window.StudioUISDK.page.setWidth as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
 
         await act(async () => {
-            await result.current.handleChange('width', '600');
+            await result.current.saveChange('width', '600');
         });
 
         // Should revert to previous valid value
@@ -198,7 +198,7 @@ describe('useLayoutProperties', () => {
         (window.StudioUISDK.page.setHeight as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
 
         await act(async () => {
-            await result.current.handleChange('height', '900');
+            await result.current.saveChange('height', '900');
         });
 
         // Should revert to previous valid value
