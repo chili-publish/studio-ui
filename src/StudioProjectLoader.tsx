@@ -92,7 +92,7 @@ export class StudioProjectLoader {
         return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
     };
 
-    public onProjectLoaded = (): void => {
+    public onEngineInitialized = (): void => {
         window.StudioUISDK.configuration.setValue(
             WellKnownConfigurationKeys.GraFxStudioEnvironmentApiUrl,
             addTrailingSlash(this.graFxStudioEnvironmentApiBaseUrl),

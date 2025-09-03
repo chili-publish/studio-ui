@@ -14,7 +14,7 @@ export class ProjectConfigs {
         onProjectDocumentRequested: async () => {
             return '';
         },
-        onProjectLoaded: () => {
+        onEngineInitialized: () => {
             // ignored
         },
         onProjectSave: async () => {
