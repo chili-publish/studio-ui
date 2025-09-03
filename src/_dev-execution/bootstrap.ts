@@ -77,9 +77,7 @@ import { EngineVersionManager } from './version-manager';
                 backButton: { visible: true },
                 navBar: { visible: true },
                 bottomBar: { visible: true },
-                downloadButton: { visible: true },
             },
-            uiDirection: 'ltr',
         },
         featureFlags: {},
         // eslint-disable-next-line no-console

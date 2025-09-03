@@ -76,3 +76,7 @@ if (Promise.withResolvers === undefined) {
     } as any;
 }
 /* eslint-enable */
+
+// Mock URL.createObjectURL and URL.revokeObjectURL
+window.URL.createObjectURL = jest.fn();
+window.URL.revokeObjectURL = jest.fn();
