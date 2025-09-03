@@ -36,9 +36,6 @@ function ImagePanel() {
                 connectorId: currentVariableConnectorId,
                 context: { searchInUploadFolder: false },
             };
-            //             // TODO: remove after WRS-2570 is merged
-            //             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            //             await handleImageChange(imgSrc as any);
             const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable | undefined;
 
             if (variable?.value?.assetId !== source.id) {

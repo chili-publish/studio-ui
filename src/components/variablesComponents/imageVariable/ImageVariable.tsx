@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { selectImageChangePendingId, setImageChangePendingId } from 'src/store/reducers/variableReducer';
 import { useSelector } from 'react-redux';
 import { useUITranslations } from 'src/core/hooks/useUITranslations';
+import { ConnectorHttpError } from '@chili-publish/studio-sdk';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -15,7 +16,6 @@ import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
 import { showImagePanel } from '../../../store/reducers/panelReducer';
-import { ImageVariableError } from './ImageVariableError';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
@@ -43,11 +43,26 @@ function ImageVariable(props: IImageVariable) {
     const previewErrorMessage = useMemo(() => {
         if (!previewError) return undefined;
 
-        const code = previewError instanceof ImageVariableError ? previewError.statusCode : null;
-        if (code === 202 || code === 404)
-            return getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Asset is missing');
-
-        return undefined;
+        if (previewError instanceof ConnectorHttpError) {
+            switch (previewError.statusCode) {
+                case 401:
+                    return getUITranslation(
+                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'unauthorized'],
+                        'You don’t have access.',
+                    );
+                case 404:
+                    return getUITranslation(
+                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'missingAsset'],
+                        'Asset is missing.',
+                    );
+                default:
+                    return getUITranslation(
+                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'default'],
+                        'Unable to load.',
+                    );
+            }
+        }
+        return getUITranslation(['formBuilder', 'variables', 'imageVariable', 'errors', 'default'], 'Unable to load.');
     }, [previewError, getUITranslation]);
 
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
@@ -137,9 +152,9 @@ function ImageVariable(props: IImageVariable) {
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}
-                errorMsg="Something went wrong. Please try again"
+                loadPreviewImageErrorMessage="Something went wrong. Please try again"
                 previewImage={previewImage}
-                validationErrorMessage={errorMessage}
+                errorMessage={errorMessage}
                 onRemove={onRemove}
                 pending={isPending}
                 pendingLabel={pendingLabel}

@@ -166,7 +166,7 @@ describe('"ImageVariable" component ', () => {
                 dataIntercomId: `image-picker-${imageVariable.name}`,
                 id: imageVariable.id,
                 placeholder: 'Select image',
-                errorMsg: 'Something went wrong. Please try again',
+                loadPreviewImageErrorMessage: 'Something went wrong. Please try again',
                 previewImage: {
                     id: 'mediaId',
                     name: 'mediaName',

@@ -422,8 +422,12 @@ const uiTranslations = {
             header: 'Variables',
             helpText: 'Variables are used to store values that can be used in the form.',
             imageVariable: {
-                error: 'Asset is missing',
-            },
+                errors: {
+                    unauthorized: 'Unathorized asset';
+                    missingAsset: 'Asset is missing';
+                    default: 'Unable to load';
+                };
+            };
         },
         datasource: {
             header: 'Data Source',

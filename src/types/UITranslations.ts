@@ -2,7 +2,11 @@ export interface VariablesTranslations {
     header?: string;
     helpText?: string;
     imageVariable?: {
-        error?: string;
+        errors?: {
+            unauthorized?: string;
+            missingAsset?: string;
+            default?: string;
+        };
     };
 }
 
