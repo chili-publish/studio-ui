@@ -88,8 +88,6 @@ import { EngineVersionManager } from './version-manager';
         // eslint-disable-next-line no-console
         onVariableValueChangedCompleted: async (id, value) => console.log('changed var: ', id, value),
         // eslint-disable-next-line no-console
-        onEngineInitialized: () => console.log('engine initialized'),
-        // eslint-disable-next-line no-console
         onProjectLoaded: () => console.log('project loaded'),
     });
 })();
