@@ -73,7 +73,6 @@ import { EngineVersionManager } from './version-manager';
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
         uiOptions: {
-            uiTheme: 'dark',
             widgets: {
                 backButton: { visible: true },
                 navBar: { visible: true },
