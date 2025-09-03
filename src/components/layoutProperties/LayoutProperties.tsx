@@ -4,7 +4,7 @@ import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
-import { ButtonsWrapper, IconWrapper, LayoutInputsContainer } from './Layout.styles';
+import { ButtonsWrapper, ErrorMessageContainer, IconWrapper, LayoutInputsContainer } from './Layout.styles';
 import { PageInputId, PagePropertyMap, PagePropertyType } from './types';
 import { useLayoutProperties } from './useLayoutProperties';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
@@ -12,6 +12,7 @@ import RangeConstraintIcon from './RangeConstraintIcon';
 import LockedConstraintIcon from './LockedConstraintIcon';
 import { useLayoutConstraintProportions } from './useLayoutConstraintProportions';
 import { clampValue, withMeasurementUnit } from './util';
+import { ErrorMessage } from '../shared/ErrorMessage.styles';
 import RangeConstraintErrorMessage from './RangeConstraintErrorMessage';
 
 interface LayoutPropertiesProps {
@@ -130,6 +131,16 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             label={label}
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
+            customErrorComponent={
+                formHasError ? (
+                    <RangeConstraintErrorMessage
+                        currentWidth={pageWidth}
+                        currentHeight={pageHeight}
+                        unit={layout?.unit.value}
+                        layout={layout}
+                    />
+                ) : undefined
+            }
         />
     );
 
@@ -176,12 +187,14 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
                         />
                     </ButtonsWrapper>
                     {formHasError && (
-                        <RangeConstraintErrorMessage
-                            currentWidth={pageWidth}
-                            currentHeight={pageHeight}
-                            unit={layout?.unit.value}
-                            layout={layout}
-                        />
+                        <ErrorMessageContainer>
+                            <ErrorMessage>
+                                {getUITranslation(
+                                    ['formBuilder', 'layouts', 'errorRangeConstraintMessage'],
+                                    'Only specific aspect ratios are supported.',
+                                )}
+                            </ErrorMessage>
+                        </ErrorMessageContainer>
                     )}
                 </>
             )}
