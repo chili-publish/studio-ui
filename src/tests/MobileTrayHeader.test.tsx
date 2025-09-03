@@ -47,7 +47,6 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
     }),
 }));
 
-global.URL.createObjectURL = jest.fn();
 mockSDK.mediaConnector.query = jest
     .fn()
     .mockImplementation()
