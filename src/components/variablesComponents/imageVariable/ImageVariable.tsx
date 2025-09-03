@@ -19,6 +19,7 @@ import { ImageVariableError } from './ImageVariableError';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
+
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
     const { getUITranslation } = useUITranslations();
 
@@ -117,7 +118,7 @@ function ImageVariable(props: IImageVariable) {
     // Calculate pending state
     const isPending = previewPending || uploadPending || variable.id === imageChangePendingId;
 
-    const validationErrorMessage = uploadError || validationError || previewErrorMessage;
+    const errorMessage = uploadError || validationError || previewErrorMessage;
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {
@@ -138,7 +139,7 @@ function ImageVariable(props: IImageVariable) {
                 placeholder={placeholder}
                 errorMsg="Something went wrong. Please try again"
                 previewImage={previewImage}
-                validationErrorMessage={validationErrorMessage}
+                validationErrorMessage={errorMessage}
                 onRemove={onRemove}
                 pending={isPending}
                 pendingLabel={pendingLabel}
@@ -146,7 +147,7 @@ function ImageVariable(props: IImageVariable) {
                 onBrowse={variable.allowQuery ? handleImageBrowse : undefined}
                 onUpload={variable.allowUpload ? handleImageUpload : undefined}
             />
-            {variable.helpText && !validationErrorMessage ? (
+            {variable.helpText && !errorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
             ) : null}
         </HelpTextWrapper>

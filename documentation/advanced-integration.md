@@ -442,6 +442,15 @@ const uiTranslations = {
             minHeight: 'Min',
             maxWidth: 'Max',
             maxHeight: 'Max',
+
+            cancelLabel: 'Cancel',
+            applyLabel: 'Apply',
+            lockConstraintTooltip: 'Proportions are locked',
+            rangeConstraintTooltip:
+                'Proportions are limited — only aspect ratios between {{minHorizontal}}:{{minVertical}} and {{maxHorizontal}}:{{maxVertical}} are allowed.',
+            errorRangeConstraintMessage: 'Only specific aspect ratios are supported.',
+            errorRangeConstraintTooltip:
+                'To respect the allowed proportions ({{minHorizontal}}:{{minVertical}} to {{maxHorizontal}}:{{maxVertical}}):\n• If the width is {{currentWidth}} {{unit}}, the height must be between {{minHeight}} {{unit}} and {{maxHeight}} {{unit}}\n• If the height is {{currentHeight}} {{unit}}, the width must be between {{minWidth}} {{unit}} and {{maxWidth}} {{unit}}',
         },
     },
     toolBar: {

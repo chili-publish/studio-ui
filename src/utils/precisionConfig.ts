@@ -12,3 +12,7 @@ export const UNIT_PRECISIONS: Record<string, number> = {
 export const getPrecisionForUnit = (unit?: MeasurementUnit): number => {
     return unit ? (UNIT_PRECISIONS[unit === ('in' as MeasurementUnit) ? MeasurementUnit.inch : unit] ?? 2) : 2;
 };
+
+export const getMeasurementUnits = (): string[] => {
+    return [...Object.values(MeasurementUnit), 'in'];
+};

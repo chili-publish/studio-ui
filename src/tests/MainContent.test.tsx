@@ -96,4 +96,36 @@ describe('MainContent', () => {
         const appWrapper = document.getElementById(APP_WRAPPER_ID);
         expect(appWrapper).toHaveAttribute('dir', 'rtl');
     });
+
+    it('should not call zoomToPage when in multiLayout mode', async () => {
+        const mockZoomToPage = jest.fn();
+        const multiLayoutConfig = {
+            ...mockProjectConfig,
+            onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(true)),
+        };
+
+        // Mock the SDK canvas.zoomToPage method
+        const mockSDK = {
+            ...jest.requireMock('@chili-publish/studio-sdk').default(),
+            canvas: { zoomToPage: mockZoomToPage },
+        };
+        // @ts-expect-error: StudioUISDK is not a real property on window, but is used in the app
+        window.StudioUISDK = jest.fn().mockReturnValue(mockSDK);
+
+        await renderWithProviders(
+            <AppProvider isDocumentLoaded>
+                <SubscriberContextProvider subscriber={new Subscriber()}>
+                    <MainContent updateToken={jest.fn()} projectConfig={multiLayoutConfig} />
+                </SubscriberContextProvider>
+            </AppProvider>,
+        );
+
+        // Wait for the component to initialize and trigger the onSelectedLayoutIdChanged event
+        await new Promise((resolve) => {
+            setTimeout(resolve, 0);
+        });
+
+        // Verify that zoomToPage was not called
+        expect(mockZoomToPage).not.toHaveBeenCalled();
+    });
 });

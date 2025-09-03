@@ -1,5 +1,5 @@
 import { usePreviewImageUrl as coreHook } from '@chili-publish/grafx-shared-components';
-import { EditorResponse, MediaDownloadType } from '@chili-publish/studio-sdk';
+import { ConnectorHttpError, MediaDownloadType } from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
 import { ImageVariableError } from './ImageVariableError';
 
@@ -9,19 +9,15 @@ export const usePreviewImageUrl = (connectorId: string | undefined, mediaAssetId
             if (!connectorId) {
                 return null;
             }
-            const downloadCall = (): Promise<Uint8Array> => {
+            const downloadCall = () => {
                 return window.StudioUISDK.mediaConnector.download(connectorId, id, MediaDownloadType.thumbnail, {});
             };
             try {
-                const res = await downloadCall();
-
-                if ('success' in res && !res.success) {
-                    const httpErrorCode = JSON.parse((res as unknown as EditorResponse<string>)?.data ?? '{}');
-                    if (httpErrorCode?.statusCode)
-                        throw new ImageVariableError(httpErrorCode.statusCode, httpErrorCode.error);
-                }
-                return res;
+                return await downloadCall();
             } catch (e) {
+                if (e instanceof ConnectorHttpError) {
+                    throw new ImageVariableError(e.statusCode, e.message);
+                }
                 const mediaConnectorState = await window.StudioUISDK.connector.getState(connectorId);
                 if (mediaConnectorState.parsedData?.type !== 'ready') {
                     await window.StudioUISDK.connector.waitToBeReady(connectorId);
