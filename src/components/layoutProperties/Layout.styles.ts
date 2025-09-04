@@ -28,7 +28,7 @@ export const ErrorMessageContainer = styled.div`
     align-items: center;
     gap: 0.3125rem;
     margin-top: 0.5rem;
-    cursor: pointer;
+    cursor: default;
     svg {
         width: 0.75rem;
         color: ${({ theme }) => theme.themeColors.errorColor};
