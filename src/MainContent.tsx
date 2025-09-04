@@ -215,9 +215,11 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
                 setSelectedLayout(layout);
                 setLayoutIntent(layoutIntentData);
 
-                startTransition(() => {
-                    zoomToPage();
-                });
+                if (!multiLayoutMode) {
+                    startTransition(() => {
+                        zoomToPage();
+                    });
+                }
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
@@ -240,11 +242,15 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             },
             onSelectedPageIdChanged: (pageId) => {
                 setActivePageId(pageId);
-                zoomToPage(pageId);
+                if (!multiLayoutMode) {
+                    zoomToPage(pageId);
+                }
             },
 
             onPageSizeChanged: (size) => {
-                zoomToPage(size.id);
+                if (!multiLayoutMode) {
+                    zoomToPage(size.id);
+                }
                 setPageSize(size);
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
@@ -276,6 +282,11 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             enableQueryCallCache: true,
         });
 
+        // call onProjectLoaded when the document is loaded
+        const onDocumentLoadedUnsubscribe = sdk.config.events.onDocumentLoaded.registerCallback(() => {
+            projectConfig.onProjectLoaded?.();
+        });
+
         // Connect to ths SDK
         window.StudioUISDK = sdk;
         window.SDK = sdk;
@@ -283,9 +294,9 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
         setSDKRef(sdk);
         window.StudioUISDK.loadEditor();
 
-        // loadEditor is a synchronous call after which we are sure
-        // the connection to the engine is established
-        projectConfig.onProjectLoaded(currentProject as Project);
+        if (projectConfig.onEngineInitialized) {
+            projectConfig.onEngineInitialized(currentProject as Project);
+        }
 
         projectConfig
             .onProjectDocumentRequested(projectConfig.projectId)
@@ -309,6 +320,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
             const iframeContainer = document.getElementsByTagName('iframe')[0];
             iframeContainer?.remove();
             enableAutoSaveRef.current = false;
+            onDocumentLoadedUnsubscribe();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventSubscriber]);

@@ -13,9 +13,11 @@ jest.mock('@chili-publish/studio-sdk', () => {
         __esModule: true,
         ...originalModule,
         /* eslint-disable */
-        default: function () {
+        default: function (config: any) {
+            const sdk = new originalModule.default(config);
             /* eslint-enable */
             return {
+                ...sdk,
                 loadEditor: () => '',
                 configuration: { setValue: jest.fn() },
                 next: {
@@ -53,6 +55,7 @@ describe('MainContent', () => {
         onProjectInfoRequested: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
         onProjectDocumentRequested: () => Promise.resolve('{}'),
         onProjectLoaded: () => null,
+        onEngineInitialized: () => null,
         onProjectSave: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
         onAuthenticationRequested: () => 'authToken',
         onAuthenticationExpired: () => Promise.resolve(''),
@@ -95,5 +98,65 @@ describe('MainContent', () => {
         );
         const appWrapper = document.getElementById(APP_WRAPPER_ID);
         expect(appWrapper).toHaveAttribute('dir', 'rtl');
+    });
+
+    it('should not call zoomToPage when in multiLayout mode', async () => {
+        const mockZoomToPage = jest.fn();
+        const multiLayoutConfig = {
+            ...mockProjectConfig,
+            onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(true)),
+        };
+
+        // Create a mock SDK instance with proper structure
+        const mockSDK = {
+            loadEditor: () => '',
+            configuration: { setValue: jest.fn() },
+            config: {
+                events: {
+                    onDocumentLoaded: { registerCallback: jest.fn().mockReturnValue(() => {}) },
+                    onVariableListChanged: { trigger: jest.fn() },
+                    onLayoutsChanged: { trigger: jest.fn() },
+                    onSelectedLayoutIdChanged: { trigger: jest.fn() },
+                    onSelectedLayoutPropertiesChanged: { trigger: jest.fn() },
+                },
+            },
+            canvas: { zoomToPage: mockZoomToPage },
+            tool: { setHand: jest.fn() },
+            animation: { pause: jest.fn() },
+            next: {
+                connector: {
+                    getAllByType: jest.fn().mockResolvedValue({ success: true, parsedData: [] }),
+                },
+            },
+            layout: {
+                getSelected: jest.fn().mockResolvedValue({
+                    parsedData: { intent: { value: 'print' } },
+                }),
+            },
+            document: {
+                load: jest.fn().mockRejectedValue({ cause: { name: '303001' } }),
+            },
+            dataSource: {
+                getDataSource: jest.fn().mockResolvedValue({ parsedData: null }),
+            },
+        };
+        // @ts-expect-error: StudioUISDK is not a real property on window, but is used in the app
+        window.StudioUISDK = mockSDK;
+
+        await renderWithProviders(
+            <AppProvider isDocumentLoaded>
+                <SubscriberContextProvider subscriber={new Subscriber()}>
+                    <MainContent updateToken={jest.fn()} projectConfig={multiLayoutConfig} />
+                </SubscriberContextProvider>
+            </AppProvider>,
+        );
+
+        // Wait for the component to initialize and trigger the onSelectedLayoutIdChanged event
+        await new Promise((resolve) => {
+            setTimeout(resolve, 0);
+        });
+
+        // Verify that zoomToPage was not called
+        expect(mockZoomToPage).not.toHaveBeenCalled();
     });
 });

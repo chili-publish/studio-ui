@@ -35,7 +35,6 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 const mockSDK = mock<EditorSDK>();
 
 beforeEach(() => {
-    global.URL.createObjectURL = jest.fn();
     mockSDK.mediaConnector.query = jest
         .fn()
         .mockImplementation()

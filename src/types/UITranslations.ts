@@ -1,6 +1,10 @@
 export interface VariablesTranslations {
     header?: string;
     helpText?: string;
+    // TODO: Will be implemented in context of WRS-2610
+    // imageVariable?: {
+    //     error?: string;
+    // };
 }
 
 export interface DataSourceTranslations {
@@ -21,6 +25,15 @@ export interface LayoutsTranslations {
     minHeight?: string;
     maxWidth?: string;
     maxHeight?: string;
+
+    cancelLabel?: string;
+    applyLabel?: string;
+
+    lockConstraintTooltip?: string;
+    rangeConstraintTooltip?: string;
+
+    errorRangeConstraintMessage?: string;
+    errorRangeConstraintTooltip?: string;
 }
 
 export interface ToolBarTranslations {

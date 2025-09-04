@@ -15,6 +15,7 @@ import { showImagePanel } from '../../../store/reducers/panelReducer';
 
 function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
+
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
@@ -25,7 +26,12 @@ function ImageVariable(props: IImageVariable) {
         return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
-    const { previewImageUrl, pending: previewPending } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
+    const {
+        previewImageUrl,
+        pending: previewPending,
+        // TODO: Will be implemented in context of WRS-2610
+        // error: previewError,
+    } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
@@ -94,6 +100,10 @@ function ImageVariable(props: IImageVariable) {
     const isPending = previewPending || uploadPending;
 
     const validationErrorMessage = uploadError || validationError;
+    // TODO: Will be implemented in context of WRS-2610
+    // || (previewError
+    //     ? getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Preview is missing')
+    //     : '');
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {

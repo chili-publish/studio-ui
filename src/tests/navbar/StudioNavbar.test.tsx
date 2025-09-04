@@ -58,6 +58,9 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onLogInfoRequested: () => {
         // ignored
     },
+    onEngineInitialized: () => {
+        // ignored
+    },
     onProjectGetDownloadLink: async () => {
         return { status: 0, error: '', success: false, parsedData: '', data: '' };
     },

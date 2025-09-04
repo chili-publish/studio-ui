@@ -37,15 +37,6 @@ jest.mock('../../../components/pagesPanel/useAttachArrowKeysListener', () => ({
     }),
 }));
 
-// Mock URL.createObjectURL
-Object.defineProperty(window, 'URL', {
-    value: {
-        ...window.URL,
-        createObjectURL: jest.fn(() => 'mocked-url'),
-    },
-    writable: true,
-});
-
 const mockPages: Page[] = [
     { id: 'page1', name: 'Page 1', isVisible: true, number: 1, width: 100, height: 100 } as Page,
     { id: 'page2', name: 'Page 2', isVisible: true, number: 2, width: 100, height: 100 } as Page,
