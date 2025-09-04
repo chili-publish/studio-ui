@@ -2,8 +2,6 @@ import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-comp
 import { useMemo } from 'react';
 import { selectImageChangePendingId, setImageChangePendingId } from 'src/store/reducers/variableReducer';
 import { useSelector } from 'react-redux';
-import { useUITranslations } from 'src/core/hooks/useUITranslations';
-import { ConnectorHttpError } from '@chili-publish/studio-sdk';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
@@ -21,7 +19,6 @@ function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
 
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
-    const { getUITranslation } = useUITranslations();
 
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
@@ -36,34 +33,8 @@ function ImageVariable(props: IImageVariable) {
     const {
         previewImageUrl,
         pending: previewPending,
-        error: previewError,
-        mediaAssetId: previewMediaAssetId,
+        previewError,
     } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
-
-    const previewErrorMessage = useMemo(() => {
-        if (!previewError) return undefined;
-
-        if (previewError instanceof ConnectorHttpError) {
-            switch (previewError.statusCode) {
-                case 401:
-                    return getUITranslation(
-                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'unauthorized'],
-                        'You don’t have access.',
-                    );
-                case 404:
-                    return getUITranslation(
-                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'missingAsset'],
-                        'Asset is missing.',
-                    );
-                default:
-                    return getUITranslation(
-                        ['formBuilder', 'variables', 'imageVariable', 'errors', 'default'],
-                        'Unable to load.',
-                    );
-            }
-        }
-        return getUITranslation(['formBuilder', 'variables', 'imageVariable', 'errors', 'default'], 'Unable to load.');
-    }, [previewError, getUITranslation]);
 
     const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
     const {
@@ -76,7 +47,7 @@ function ImageVariable(props: IImageVariable) {
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
     const previewImage = useMemo(() => {
-        if (!mediaDetails || !previewImageUrl || previewMediaAssetId !== mediaDetails.id) {
+        if (!mediaDetails || !previewImageUrl || mediaAssetId !== mediaDetails.id) {
             return undefined;
         }
         return {
@@ -85,7 +56,7 @@ function ImageVariable(props: IImageVariable) {
             format: mediaDetails.extension ?? '',
             url: previewImageUrl,
         };
-    }, [mediaDetails, previewImageUrl, previewMediaAssetId]);
+    }, [mediaDetails, previewImageUrl, mediaAssetId]);
 
     const handleImageUpload = async (files: FileList | null) => {
         if (!files?.length) {
@@ -133,7 +104,7 @@ function ImageVariable(props: IImageVariable) {
     // Calculate pending state
     const isPending = previewPending || uploadPending || variable.id === imageChangePendingId;
 
-    const errorMessage = uploadError || validationError || previewErrorMessage;
+    const errorMessage = uploadError || validationError || previewError;
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {

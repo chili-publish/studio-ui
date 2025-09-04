@@ -29,38 +29,33 @@ function ImagePanel() {
     const previewCall = (id: string): Promise<Uint8Array> =>
         window.StudioUISDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
 
-    const handleUpdateImage = useCallback(
-        async (source: Media) => {
+    const updateValueForVariable = useCallback(
+        async (source: Media, variable: ImageVariable) => {
             const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
                 context: { searchInUploadFolder: false },
             };
-            const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable | undefined;
 
-            if (variable?.value?.assetId !== source.id) {
-                dispatch(setImageChangePendingId(currentVariableId));
-            }
-            dispatch(showVariablesPanel());
             await handleImageChange(imgSrc);
-
-            if (variable)
-                dispatch(
-                    validateVariable({
-                        ...variable,
-                        value: { ...variable.value, ...imgSrc },
-                    } as ImageVariable),
-                );
+            return { ...variable, value: { ...variable.value, ...imgSrc } };
         },
-        [currentVariableConnectorId, handleImageChange, currentVariableId, variables, dispatch],
+        [currentVariableConnectorId, handleImageChange],
     );
 
     const handleAssetSelection = useCallback(
         async (asset: Media) => {
-            await handleUpdateImage(asset);
+            const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable;
+
+            if (variable.value?.assetId !== asset.id) {
+                dispatch(setImageChangePendingId(currentVariableId));
+            }
+            dispatch(showVariablesPanel());
+            const updatedVariable = await updateValueForVariable(asset, variable);
+            dispatch(validateVariable(updatedVariable));
             onVariableBlur?.(currentVariableId);
         },
-        [handleUpdateImage, onVariableBlur, currentVariableId],
+        [updateValueForVariable, onVariableBlur, currentVariableId, variables, dispatch],
     );
 
     const queryCall = useCallback(async (connectorId: string, options: QueryOptions, context: MetaData) => {

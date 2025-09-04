@@ -16,14 +16,12 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useVariableC
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImageUrl', () => ({
-    usePreviewImageUrl: jest
-        .fn()
-        .mockReturnValue({ mediaAssetId: 'mediaId', previewImageUrl: 'http://image-url.com', pending: false }),
+    usePreviewImageUrl: jest.fn().mockReturnValue({ previewImageUrl: 'http://image-url.com', pending: false }),
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useMediaDetails', () => ({
     useMediaDetails: jest.fn().mockReturnValue({
-        id: 'mediaId',
+        id: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
         name: 'mediaName',
         extension: 'png',
     }),
@@ -168,7 +166,7 @@ describe('"ImageVariable" component ', () => {
                 placeholder: 'Select image',
                 loadPreviewImageErrorMessage: 'Something went wrong. Please try again',
                 previewImage: {
-                    id: 'mediaId',
+                    id: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
                     name: 'mediaName',
                     format: 'png',
                     url: 'http://image-url.com',
