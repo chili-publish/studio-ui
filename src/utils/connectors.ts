@@ -6,7 +6,6 @@ import {
     ConnectorRegistrationSource,
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
-import axios from 'axios';
 import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
 import { RemoteConnector } from './ApiTypes';
 
@@ -29,19 +28,22 @@ export function getConnectorUrl(connector: ConnectorInstance, graFxStudioEnviron
 
 // NOTE: Works for Grafx only connectors so far
 export async function getRemoteConnector<RC extends RemoteConnector = RemoteConnector>(
-    graFxStudioEnvironmentApiBaseUrl: string,
     connectorId: string,
-    authToken: string,
+    environmentClientApiMethod: (connectorId: string) => Promise<RC>,
 ): Promise<RC> {
     const { parsedData: engineConnector } = await window.StudioUISDK.next.connector.getById(connectorId);
     if (!engineConnector) {
         throw new Error(`Connector is not found by ${connectorId}`);
     }
-    const connectorRequestUrl = getConnectorUrl(engineConnector, graFxStudioEnvironmentApiBaseUrl);
-    const res = await axios.get<RC>(connectorRequestUrl, {
-        headers: { Authorization: `Bearer ${authToken}` },
-    });
-    return res.data;
+
+    try {
+        const result = await environmentClientApiMethod((engineConnector.source as ConnectorGrafxRegistration).id);
+        return result;
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to fetch connector:', error);
+        throw error;
+    }
 }
 
 export function isAuthenticationRequired(connector: RemoteConnector) {
