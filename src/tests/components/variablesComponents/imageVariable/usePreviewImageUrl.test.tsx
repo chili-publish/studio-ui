@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
-import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { ConnectorHttpError } from '@chili-publish/studio-sdk';
+import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
 
 jest.mock('@chili-publish/grafx-shared-components', () => {
     const original = jest.requireActual('@chili-publish/grafx-shared-components');
