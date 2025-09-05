@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAuthToken } from '../contexts/AuthTokenProvider';
-import { useEnvironmentClientApi } from '../hooks/useEnvironmentClientApi';
+import { useEnvironmentClientApiContext } from '../contexts/EnvironmentClientApiContext';
 import { useAppDispatch } from '../store';
 import { getEnvironmentConnectorsFromDocument, setMediaConnectors } from '../store/reducers/mediaReducer';
 import { MediaRemoteConnector } from '../utils/ApiTypes';
@@ -8,11 +8,14 @@ import { MediaRemoteConnector } from '../utils/ApiTypes';
 export const useMediaConnectors = () => {
     const dispatch = useAppDispatch();
     const { authToken } = useAuthToken();
-    const { getConnectorById } = useEnvironmentClientApi();
+    const { connectorsApi, environment } = useEnvironmentClientApiContext();
 
     const getConnectorByIdWrapper = useCallback(
         async (connectorId: string): Promise<MediaRemoteConnector> => {
-            const connector = await getConnectorById(connectorId);
+            const connector = await connectorsApi.apiV1EnvironmentEnvironmentConnectorsConnectorIdGet({
+                environment,
+                connectorId,
+            });
             // Convert ConnectorDefinition to MediaRemoteConnector
             return {
                 id: connector.id || connectorId,
@@ -29,7 +32,7 @@ export const useMediaConnectors = () => {
                 ownerType: 'builtIn' as const,
             };
         },
-        [getConnectorById],
+        [connectorsApi, environment],
     );
 
     const loadConnectors = useCallback(() => {

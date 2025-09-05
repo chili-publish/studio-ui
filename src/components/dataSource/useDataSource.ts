@@ -8,7 +8,7 @@ import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
-import { useEnvironmentClientApi } from '../../hooks/useEnvironmentClientApi';
+import { useEnvironmentClientApiContext } from '../../contexts/EnvironmentClientApiContext';
 import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
 import { validateVariableList } from '../../store/reducers/variableReducer';
@@ -35,15 +35,18 @@ const useDataSource = () => {
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
     const { direction } = useDirection();
-    const { getConnectorById } = useEnvironmentClientApi();
+    const { connectorsApi, environment } = useEnvironmentClientApiContext();
 
     // Wrapper function to convert ConnectorDefinition to DataRemoteConnector
     const getConnectorByIdWrapper = useCallback(
         async (connectorId: string): Promise<DataRemoteConnector> => {
-            const connector = await getConnectorById(connectorId);
+            const connector = await connectorsApi.apiV1EnvironmentEnvironmentConnectorsConnectorIdGet({
+                environment,
+                connectorId,
+            });
             return connector as unknown as DataRemoteConnector;
         },
-        [getConnectorById],
+        [connectorsApi, environment],
     );
 
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
