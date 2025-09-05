@@ -48,6 +48,7 @@ function ImageVariable(props: IImageVariable) {
         if (!files?.length) {
             return;
         }
+        resetMediaError();
         onVariableFocus?.(variable.id);
         upload([...files], {
             minWidthPixels: variable.uploadMinWidth,
