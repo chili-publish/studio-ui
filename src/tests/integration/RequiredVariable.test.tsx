@@ -9,14 +9,39 @@ import {
     LayoutPropertiesType,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import { mockUserInterface, mockApiUserInterface } from '@mocks/mockUserinterface';
+import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
+import { mockProject } from '@mocks/mockProject';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { variables } from '@tests/mocks/mockVariables';
 import selectEvent from 'react-select-event';
 import StudioUI from '../../main';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { createMockEnvironmentClientApis, mockEnvironmentClientApiModule } from '../mocks/environmentClientApi';
+import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
+
+// Mock the entire environment client API module at the top level
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
@@ -35,12 +60,8 @@ const config = {
     userInterfaceID: mockUserInterface.id,
     onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
     environmentClientApis: mockEnvironmentClientApis,
+    // projectDownloadUrl: undefined, // Force use of environment client API
 };
-
-jest.mock('axios');
-
-// Mock the entire environment client API module
-mockEnvironmentClientApiModule();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let originalAnimateFunction: any;
 
