@@ -3,26 +3,50 @@ import { DateVariable, ImageVariable, NumberVariable, ShortTextVariable } from '
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
-import { mockUserInterface } from '@mocks/mockUserinterface';
+import { mockUserInterface, mockApiUserInterface } from '@mocks/mockUserinterface';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { variables } from '@tests/mocks/mockVariables';
-import axios from 'axios';
 import StudioUI from '../../main';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
+import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
+
+// Mock the entire environment client API module at the top level
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'auth-token';
+
+// Mock environment client APIs for testing
+const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const variableFocusFn = jest.fn();
 const variableBlurFn = jest.fn();
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+    // projectDownloadUrl, // Force use of environment client API
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -32,9 +56,9 @@ const config = {
     onVariableBlur: (id: string) => variableBlurFn(id),
     onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
     userInterfaceID: mockUserInterface.id,
+    environmentClientApis: mockEnvironmentClientApis,
 };
 
-jest.mock('axios');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let originalAnimateFunction: any;
 
@@ -94,17 +118,6 @@ describe('Required text variable', () => {
     const variablesStr = JSON.stringify(variables);
 
     beforeEach(async () => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: mockUserInterface });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            return Promise.resolve({ data: {} });
-        });
         render(<div id="sui-root" />);
         await act(() => {
             StudioUI.studioUILoaderConfig(config);

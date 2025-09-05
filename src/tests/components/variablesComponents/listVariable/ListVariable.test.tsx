@@ -6,20 +6,48 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import StudioUI from 'src/main';
-import axios from 'axios';
+import { createMockEnvironmentClientApis } from '@tests/mocks/environmentClientApi';
+import { mockApiUserInterface } from '@mocks/mockUserinterface';
+import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
+import { mockProject } from '@mocks/mockProject';
 import ListVariable from '../../../../components/variablesComponents/listVariable/ListVariable';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('axios');
 
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
+
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const token = 'token';
+
+// Mock environment client APIs for testing
+const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+    // projectDownloadUrl, // Force use of environment client API
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -30,6 +58,7 @@ const config = {
     onVariableValueChangedCompleted: jest.fn().mockImplementation(async () => {
         return Promise.resolve();
     }),
+    environmentClientApis: mockEnvironmentClientApis,
 };
 
 jest.mock('@chili-publish/studio-sdk', () => {
@@ -101,9 +130,6 @@ describe('ListVariable', () => {
     });
 
     it('should focus and blur  if stepper is used', async () => {
-        (axios.get as jest.Mock).mockImplementation(() => {
-            return Promise.resolve({ data: [] });
-        });
         render(<div id="sui-root" />);
         const user = userEvent.setup();
         await act(() => {
