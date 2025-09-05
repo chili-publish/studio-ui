@@ -4,8 +4,6 @@ import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useMemo } from 'react';
 import { LayoutPropertiesType, MeasurementUnit } from '@chili-publish/studio-sdk';
 import { formatNumber } from 'src/utils/formatNumber';
-import { ErrorMessage } from '../shared/ErrorMessage.styles';
-import { ErrorMessageContainer } from './Layout.styles';
 import { roundValue } from './util';
 
 interface RangeConstraintErrorMessageProps {
@@ -71,16 +69,9 @@ function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout
                 width: '15rem',
                 whiteSpace: 'pre-line',
             }}
+            centerArrowOnElement
         >
-            <ErrorMessageContainer>
-                <Icon icon={AvailableIcons.faCircleExclamation} />
-                <ErrorMessage>
-                    {getUITranslation(
-                        ['formBuilder', 'layouts', 'errorRangeConstraintMessage'],
-                        'Only specific aspect ratios are supported.',
-                    )}
-                </ErrorMessage>
-            </ErrorMessageContainer>
+            <Icon icon={AvailableIcons.faCircleExclamation} />
         </Tooltip>
     );
 }
