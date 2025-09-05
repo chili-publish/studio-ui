@@ -60,12 +60,7 @@ export class StudioProjectLoader {
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
         sandboxMode: boolean,
-        refreshTokenAction?: () => Promise<string | AxiosError>,
-        projectDownloadUrl?: string,
-        projectUploadUrl?: string,
-        userInterfaceID?: string,
-        onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
-        environmentClientApis?: {
+        environmentClientApis: {
             connectorsApi: ConnectorsApi;
             projectsApi: ProjectsApi;
             userInterfacesApi: UserInterfacesApi;
@@ -73,6 +68,11 @@ export class StudioProjectLoader {
             outputApi: OutputApi;
             environment: string;
         },
+        refreshTokenAction?: () => Promise<string | AxiosError>,
+        projectDownloadUrl?: string,
+        projectUploadUrl?: string,
+        userInterfaceID?: string,
+        onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
@@ -83,10 +83,6 @@ export class StudioProjectLoader {
         this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
-
-        if (!environmentClientApis) {
-            throw new Error('Environment client APIs must be provided to StudioProjectLoader');
-        }
 
         // Use provided API instances
         this.connectorsApi = environmentClientApis.connectorsApi;

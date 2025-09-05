@@ -95,12 +95,8 @@ export default class StudioUI extends StudioUILoader {
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             false,
+            environmentClientApis,
             refreshTokenAction,
-            undefined, // projectDownloadUrl
-            undefined, // projectUploadUrl
-            undefined, // userInterfaceID
-            undefined, // onFetchUserInterfaceDetails
-            environmentClientApis, // environmentClientApis
         );
 
         return this.fullStudioIntegrationConfig(selector, {
@@ -207,12 +203,12 @@ export default class StudioUI extends StudioUILoader {
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             sandboxMode || false,
+            environmentClientApis,
             refreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
             userInterfaceID,
             onFetchUserInterfaceDetails,
-            environmentClientApis,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;

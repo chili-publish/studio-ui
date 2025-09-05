@@ -1,6 +1,13 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
+import {
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    SettingsApi,
+    OutputApi,
+} from '@chili-publish/environment-client-api';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
 import { UITranslations } from './UITranslations';
@@ -53,6 +60,15 @@ export type ProjectConfig = {
         variableId: string,
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
+    // Environment Client API instances
+    environmentClientApis: {
+        connectorsApi: ConnectorsApi;
+        projectsApi: ProjectsApi;
+        userInterfacesApi: UserInterfacesApi;
+        settingsApi: SettingsApi;
+        outputApi: OutputApi;
+        environment: string;
+    };
 };
 
 export interface DefaultStudioConfig {
