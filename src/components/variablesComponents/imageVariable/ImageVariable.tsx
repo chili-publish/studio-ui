@@ -8,8 +8,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
 import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
-import { useMediaDetails } from './useMediaDetails';
-import { usePreviewImageUrl } from './usePreviewImageUrl';
+import { usePreviewImage } from './usePreviewImage';
 import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
@@ -31,12 +30,11 @@ function ImageVariable(props: IImageVariable) {
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
     const {
-        previewImageUrl,
-        pending: previewPending,
-        previewError,
-    } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
-
-    const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
+        previewImage,
+        pending: mediaPending,
+        error: mediaError,
+        resetError: resetMediaError,
+    } = usePreviewImage(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
         pending: uploadPending,
@@ -45,18 +43,6 @@ function ImageVariable(props: IImageVariable) {
     } = useUploadAsset(remoteConnector?.id, variable);
 
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
-
-    const previewImage = useMemo(() => {
-        if (!mediaDetails || !previewImageUrl || mediaAssetId !== mediaDetails.id) {
-            return undefined;
-        }
-        return {
-            id: mediaDetails.id,
-            name: mediaDetails.name,
-            format: mediaDetails.extension ?? '',
-            url: previewImageUrl,
-        };
-    }, [mediaDetails, previewImageUrl, mediaAssetId]);
 
     const handleImageUpload = async (files: FileList | null) => {
         if (!files?.length) {
@@ -96,15 +82,16 @@ function ImageVariable(props: IImageVariable) {
 
     const onRemove = () => {
         resetUploadError();
+        resetMediaError();
         handleImageRemove();
         onVariableFocus?.(variable.id);
         onVariableBlur?.(variable.id);
     };
 
     // Calculate pending state
-    const isPending = previewPending || uploadPending || variable.id === imageChangePendingId;
+    const isPending = mediaPending || uploadPending || variable.id === imageChangePendingId;
 
-    const errorMessage = uploadError || validationError || previewError;
+    const errorMessage = uploadError || validationError || mediaError;
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {

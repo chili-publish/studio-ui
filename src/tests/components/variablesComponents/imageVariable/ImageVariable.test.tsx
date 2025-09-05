@@ -3,8 +3,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import userEvent from '@testing-library/user-event';
 import ImageVariable from '../../../../components/variablesComponents/imageVariable/ImageVariable';
-import { useMediaDetails } from '../../../../components/variablesComponents/imageVariable/useMediaDetails';
-import { usePreviewImageUrl } from '../../../../components/variablesComponents/imageVariable/usePreviewImageUrl';
+import { usePreviewImage } from '../../../../components/variablesComponents/imageVariable/usePreviewImage';
 import { useUploadAsset } from '../../../../components/variablesComponents/imageVariable/useUploadAsset';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
@@ -15,15 +14,17 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useVariableC
     useVariableConnector: jest.fn().mockReturnValue({ remoteConnector: null }),
 }));
 
-jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImageUrl', () => ({
-    usePreviewImageUrl: jest.fn().mockReturnValue({ previewImageUrl: 'http://image-url.com', pending: false }),
-}));
-
-jest.mock('../../../../components/variablesComponents/imageVariable/useMediaDetails', () => ({
-    useMediaDetails: jest.fn().mockReturnValue({
-        id: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
-        name: 'mediaName',
-        extension: 'png',
+jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImage', () => ({
+    usePreviewImage: jest.fn().mockReturnValue({
+        previewImage: {
+            id: 'f7951442-822e-4a3e-9a9c-2fe56bae2241',
+            name: 'mediaName',
+            format: 'png',
+            url: 'http://image-url.com',
+        },
+        pending: false,
+        error: undefined,
+        resetError: jest.fn(),
     }),
 }));
 
@@ -86,7 +87,12 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should display help text', () => {
-        (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
+        (usePreviewImage as jest.Mock).mockReturnValueOnce({
+            previewImage: undefined,
+            pending: false,
+            error: undefined,
+            resetError: jest.fn(),
+        });
         const helpText = 'helpText info';
         const imageVariable = {
             ...variables[0],
@@ -102,7 +108,12 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should produce "undefined" preview image if no media details are available', () => {
-        (useMediaDetails as jest.Mock).mockReturnValueOnce(null);
+        (usePreviewImage as jest.Mock).mockReturnValueOnce({
+            previewImage: undefined,
+            pending: false,
+            error: undefined,
+            resetError: jest.fn(),
+        });
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
@@ -126,7 +137,12 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should produce "undefined" preview image if no previewImageUrl is available', () => {
-        (usePreviewImageUrl as jest.Mock).mockReturnValueOnce({ previewImageUrl: null, pending: false });
+        (usePreviewImage as jest.Mock).mockReturnValueOnce({
+            previewImage: undefined,
+            pending: false,
+            error: undefined,
+            resetError: jest.fn(),
+        });
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
@@ -435,7 +451,17 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should show pending state when previewPending is true', () => {
-        (usePreviewImageUrl as jest.Mock).mockReturnValue({ previewImageUrl: 'http://image-url.com', pending: true });
+        (usePreviewImage as jest.Mock).mockReturnValue({
+            previewImage: {
+                id: 'test-id',
+                name: 'test-name',
+                format: 'png',
+                url: 'http://image-url.com',
+            },
+            pending: true,
+            error: undefined,
+            resetError: jest.fn(),
+        });
 
         const imageVariable = variables[0];
 
