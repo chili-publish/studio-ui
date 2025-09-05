@@ -83,9 +83,7 @@ function VariablesComponents(props: IVariablesComponents) {
                         variable={variable as ImageVariableType}
                         validationError={errMsg}
                         handleImageRemove={onImageVariableRemove}
-                        // TODO: remove after WRS-2570 is merged
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        handleImageChange={handleImageChange as any}
+                        handleImageChange={handleImageChange}
                     />
                 ) : null;
             }

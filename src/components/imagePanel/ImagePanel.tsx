@@ -10,6 +10,7 @@ import {
     selectCurrentVariableConnectorId,
     selectCurrentVariableId,
     selectVariables,
+    setImageChangePendingId,
     validateVariable,
 } from '../../store/reducers/variableReducer';
 import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
@@ -28,35 +29,33 @@ function ImagePanel() {
     const previewCall = (id: string): Promise<Uint8Array> =>
         window.StudioUISDK.mediaConnector.download(currentVariableConnectorId, id, MediaDownloadType.mediumres, {});
 
-    const handleUpdateImage = useCallback(
-        async (source: Media) => {
-            dispatch(showVariablesPanel());
+    const updateValueForVariable = useCallback(
+        async (source: Media, variable: ImageVariable) => {
             const imgSrc = {
                 assetId: source.id,
                 connectorId: currentVariableConnectorId,
                 context: { searchInUploadFolder: false },
             };
-            // TODO: remove after WRS-2570 is merged
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await handleImageChange(imgSrc as any);
-            const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable | undefined;
-            if (variable)
-                dispatch(
-                    validateVariable({
-                        ...variable,
-                        value: { ...variable.value, ...imgSrc },
-                    } as ImageVariable),
-                );
+
+            await handleImageChange(imgSrc);
+            return { ...variable, value: { ...variable.value, ...imgSrc } };
         },
-        [currentVariableConnectorId, handleImageChange, currentVariableId, variables, dispatch],
+        [currentVariableConnectorId, handleImageChange],
     );
 
     const handleAssetSelection = useCallback(
         async (asset: Media) => {
-            await handleUpdateImage(asset);
+            const variable = variables.find((item) => item.id === currentVariableId) as ImageVariable;
+
+            if (variable.value?.assetId !== asset.id) {
+                dispatch(setImageChangePendingId(currentVariableId));
+            }
+            dispatch(showVariablesPanel());
+            const updatedVariable = await updateValueForVariable(asset, variable);
+            dispatch(validateVariable(updatedVariable));
             onVariableBlur?.(currentVariableId);
         },
-        [handleUpdateImage, onVariableBlur, currentVariableId],
+        [updateValueForVariable, onVariableBlur, currentVariableId, variables, dispatch],
     );
 
     const queryCall = useCallback(async (connectorId: string, options: QueryOptions, context: MetaData) => {
