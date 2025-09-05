@@ -8,7 +8,7 @@ import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { DataRemoteConnector } from '../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../utils/connectors';
-import { useEnvironmentClientApiContext } from '../../contexts/EnvironmentClientApiContext';
+import { useEnvironmentClientApi } from '../../hooks/useEnvironmentClientApi';
 import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
 import { validateVariableList } from '../../store/reducers/variableReducer';
@@ -35,18 +35,35 @@ const useDataSource = () => {
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { authToken } = useAuthToken();
     const { direction } = useDirection();
-    const { connectorsApi, environment } = useEnvironmentClientApiContext();
+    const { connectors } = useEnvironmentClientApi();
 
     // Wrapper function to convert ConnectorDefinition to DataRemoteConnector
     const getConnectorByIdWrapper = useCallback(
         async (connectorId: string): Promise<DataRemoteConnector> => {
-            const connector = await connectorsApi.apiV1EnvironmentEnvironmentConnectorsConnectorIdGet({
-                environment,
-                connectorId,
-            });
-            return connector as unknown as DataRemoteConnector;
+            try {
+                const connector = await connectors.getById(connectorId);
+                return connector as unknown as DataRemoteConnector;
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error(`Failed to fetch data connector ${connectorId}:`, error);
+                // Return a fallback connector to prevent the entire process from failing
+                return {
+                    id: connectorId,
+                    name: `Unknown Data Connector (${connectorId})`,
+                    type: 'data' as const,
+                    scriptSource: 'external' as const,
+                    description: 'Data connector not found or inaccessible',
+                    iconUrl: null,
+                    default: false,
+                    enabled: false, // Disable failed connectors
+                    supportedAuthentication: {
+                        browser: ['none'],
+                    },
+                    ownerType: 'builtIn' as const,
+                } as DataRemoteConnector;
+            }
         },
-        [connectorsApi, environment],
+        [connectors],
     );
 
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
