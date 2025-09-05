@@ -4,24 +4,80 @@ import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting'
 import { mockProject } from '@mocks/mockProject';
 import { mockApiUserInterface, mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
 import StudioUI from '../../main';
 import { IStudioUILoaderConfig, UserInterface } from '../../types/types';
+import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 
 import { variables } from '../mocks/mockVariables';
 
-jest.mock('axios');
 jest.mock('@chili-publish/studio-sdk');
+
+// Mock the entire environment client API module
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockImplementation((params) => {
+            // Return custom UI data for specific test cases
+            if (params.userInterfaceId === mockApiUserInterface.id) {
+                // Return UI with custom formBuilder for most tests
+                const formBuilder = [
+                    {
+                        type: 'datasource' as const,
+                        active: true,
+                        header: 'Data source active',
+                        helpText: 'Select a data source',
+                    },
+                    {
+                        type: 'layouts' as const,
+                        active: true,
+                        header: 'Layouts from user interface',
+                        helpText: 'Layouts help text',
+                        layoutSelector: true,
+                        showWidthHeightInputs: true,
+                        multipleLayouts: true,
+                        allowNewProjectFromLayout: true,
+                    },
+                    {
+                        type: 'variables' as const,
+                        active: true,
+                        header: 'Variables from user interface',
+                        helpText: 'Change the variables',
+                    },
+                ];
+                const customUI = { ...mockApiUserInterface, formBuilder: JSON.stringify(formBuilder) };
+                return Promise.resolve(customUI);
+            }
+            return Promise.resolve(mockApiUserInterface);
+        }),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'token';
+
+// Mock environment client APIs for testing
+const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+    // Remove projectDownloadUrl so it uses environment client API instead of direct axios call
+    // projectDownloadUrl,
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -30,6 +86,7 @@ const config = {
     onVariableFocus: () => jest.fn(),
     onVariableBlur: () => jest.fn(),
     userInterfaceID: mockUserInterface.id,
+    environmentClientApis: mockEnvironmentClientApis,
 };
 const LoadStudioUI = async (loaderConfig: IStudioUILoaderConfig) => {
     render(<div id="sui-root" />);
@@ -61,7 +118,12 @@ jest.mock('@chili-publish/studio-sdk', () => {
             /* eslint-enable */
             return {
                 ...sdk,
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: false })) },
+                document: {
+                    load: jest.fn().mockImplementation(() => Promise.resolve({ success: false })),
+                    getCurrentState: jest
+                        .fn()
+                        .mockImplementation(() => Promise.resolve({ parsedData: {}, data: '{}' })),
+                },
                 loadEditor: jest.fn(),
                 configuration: {
                     setValue: jest.fn(),
@@ -132,98 +194,33 @@ describe('FormBuilder options', () => {
         jest.resetAllMocks();
     });
     it('should fallback to form builder data of the user interface if onFetchUserInterfaceDetails is not provided', async () => {
-        const formBuilder = [
-            {
-                type: 'datasource' as const,
-                active: true,
-                header: 'Data source active',
-                helpText: 'Select a data source',
-            },
-            {
-                type: 'layouts' as const,
-                active: true,
-                header: 'Layouts from user interface',
-                helpText: 'Layouts help text',
-                layoutSelector: true,
-                showWidthHeightInputs: true,
-                multipleLayouts: true,
-                allowNewProjectFromLayout: true,
-            },
-            {
-                type: 'variables' as const,
-                active: true,
-                header: 'Variables from user interface',
-                helpText: 'Change the variables',
-            },
-        ];
-
-        const ui = { ...mockApiUserInterface, formBuilder: JSON.stringify(formBuilder) };
-
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: ui });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'data-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            if (url === 'http://deploy.com/media-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'media-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-            return Promise.resolve({ data: {} });
-        });
-
         await LoadStudioUI(config);
 
         expect(screen.getByText('Variables from user interface')).toBeInTheDocument();
         expect(screen.getByText('Layouts from user interface')).toBeInTheDocument();
     });
     it('should fallback to default form builder if form builder data of the user interface is undefined and onFetchUserInterfaceDetails is not provided', async () => {
-        const ui = { ...mockApiUserInterface, formBuilder: undefined };
+        // Temporarily override the mock for this specific test
+        const originalMock = jest.requireMock('@chili-publish/environment-client-api').UserInterfacesApi;
+        // eslint-disable-next-line new-cap
+        const mockInstance = new originalMock();
+        mockInstance.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet = jest
+            .fn()
+            .mockImplementation((params) => {
+                if (params.userInterfaceId === mockApiUserInterface.id) {
+                    // Return UI with undefined formBuilder for this specific test
+                    const customUI = { ...mockApiUserInterface, formBuilder: undefined };
+                    return Promise.resolve(customUI);
+                }
+                return Promise.resolve(mockApiUserInterface);
+            });
 
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: ui });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'data-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            if (url === 'http://deploy.com/media-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'media-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            return Promise.resolve({ data: {} });
-        });
+        // Override the constructor to return our custom instance
+        jest.requireMock('@chili-publish/environment-client-api').UserInterfacesApi.mockImplementation(
+            () => mockInstance,
+        );
 
         await LoadStudioUI(config);
-
         expect(screen.getByText('Customize')).toBeInTheDocument();
         expect(screen.getByText('Layouts')).toBeInTheDocument();
     });

@@ -2,6 +2,7 @@ import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import axios, { AxiosError } from 'axios';
 import { StudioProjectLoader } from '../StudioProjectLoader';
 import { Project } from '../types/types';
+import { createMockEnvironmentClientApis } from './mocks/environmentClientApi';
 
 jest.mock('axios');
 
@@ -27,6 +28,9 @@ describe('StudioProjectLoader', () => {
     const mockDocument = { data: { mock: 'data' } };
     const mockGenerateJson = jest.fn().mockResolvedValue(Promise.resolve(JSON.stringify(mockDocument)));
 
+    // Mock environment client APIs
+    const mockEnvironmentClientApis = createMockEnvironmentClientApis();
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -39,6 +43,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -62,6 +67,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -79,6 +85,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 undefined,
                 mockProjectUploadUrl,
@@ -100,6 +107,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -120,6 +128,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -141,6 +150,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -164,6 +174,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -183,6 +194,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 undefined,
                 undefined,
@@ -204,6 +216,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -224,6 +237,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -243,6 +257,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -257,6 +272,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 undefined,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -275,6 +291,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -308,6 +325,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -345,6 +363,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 true, // sandbox mode
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -391,6 +410,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -439,6 +459,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -480,6 +501,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -515,6 +537,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -546,6 +569,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
