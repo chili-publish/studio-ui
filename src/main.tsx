@@ -1,4 +1,12 @@
 import { Root } from 'react-dom/client';
+import {
+    Configuration,
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    SettingsApi,
+    OutputApi,
+} from '@chili-publish/environment-client-api';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import './index.css';
@@ -10,6 +18,47 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
+
+// Helper function to initialize environment client APIs
+function initializeEnvironmentClientApis(
+    graFxStudioEnvironmentApiBaseUrl: string,
+    authToken: string,
+): {
+    connectorsApi: ConnectorsApi;
+    projectsApi: ProjectsApi;
+    userInterfacesApi: UserInterfacesApi;
+    settingsApi: SettingsApi;
+    outputApi: OutputApi;
+    environment: string;
+} {
+    // Extract environment name from the base URL
+    const [, ...rest] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+    const environment = rest.pop() ?? '';
+
+    let apiBasePath: string;
+    if (graFxStudioEnvironmentApiBaseUrl.includes('/environment/')) {
+        const [baseUrlPart] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+        // Remove /api/v1 from the base URL
+        apiBasePath = baseUrlPart.replace('/api/v1', '');
+    } else {
+        apiBasePath = graFxStudioEnvironmentApiBaseUrl.replace('/api/v1', '');
+    }
+
+    const config = new Configuration({
+        basePath: apiBasePath,
+        accessToken: authToken,
+    });
+
+    // Initialize all API instances
+    return {
+        connectorsApi: new ConnectorsApi(config),
+        projectsApi: new ProjectsApi(config),
+        userInterfacesApi: new UserInterfacesApi(config),
+        settingsApi: new SettingsApi(config),
+        outputApi: new OutputApi(config),
+        environment,
+    };
+}
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -38,12 +87,20 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
+        // Initialize environment client APIs
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, authToken);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             false,
             refreshTokenAction,
+            undefined, // projectDownloadUrl
+            undefined, // projectUploadUrl
+            undefined, // userInterfaceID
+            undefined, // onFetchUserInterfaceDetails
+            environmentClientApis, // environmentClientApis
         );
 
         return this.fullStudioIntegrationConfig(selector, {
@@ -63,6 +120,7 @@ export default class StudioUI extends StudioUILoader {
             onBack: defaultBackFn,
             graFxStudioEnvironmentApiBaseUrl,
             editorLink,
+            environmentClientApis,
         });
     }
 
@@ -141,6 +199,9 @@ export default class StudioUI extends StudioUILoader {
             onFetchUserInterfaceDetails,
             onVariableValueChangedCompleted,
         } = config;
+        // Initialize environment client APIs
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, authToken);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
@@ -151,6 +212,7 @@ export default class StudioUI extends StudioUILoader {
             projectUploadUrl,
             userInterfaceID,
             onFetchUserInterfaceDetails,
+            environmentClientApis,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -192,6 +254,7 @@ export default class StudioUI extends StudioUILoader {
                 onVariableBlur,
                 onVariableValueChangedCompleted,
                 onProjectLoaded,
+                environmentClientApis,
             },
             {
                 variableTranslations,

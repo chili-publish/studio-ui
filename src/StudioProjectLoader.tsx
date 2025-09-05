@@ -1,9 +1,15 @@
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    SettingsApi,
+    OutputApi,
+} from '@chili-publish/environment-client-api';
+import {
     APIUserInteface,
     DownloadLinkResult,
-    HttpHeaders,
     IOutputSetting,
     PaginatedResponse,
     Project,
@@ -36,6 +42,19 @@ export class StudioProjectLoader {
 
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 
+    // Environment Client API instances
+    private connectorsApi!: ConnectorsApi;
+
+    private projectsApi!: ProjectsApi;
+
+    private userInterfacesApi!: UserInterfacesApi;
+
+    private settingsApi!: SettingsApi;
+
+    private outputApi!: OutputApi;
+
+    private environment!: string;
+
     constructor(
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
@@ -46,6 +65,14 @@ export class StudioProjectLoader {
         projectUploadUrl?: string,
         userInterfaceID?: string,
         onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
+        environmentClientApis?: {
+            connectorsApi: ConnectorsApi;
+            projectsApi: ProjectsApi;
+            userInterfacesApi: UserInterfacesApi;
+            settingsApi: SettingsApi;
+            outputApi: OutputApi;
+            environment: string;
+        },
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
@@ -56,6 +83,18 @@ export class StudioProjectLoader {
         this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
+
+        if (!environmentClientApis) {
+            throw new Error('Environment client APIs must be provided to StudioProjectLoader');
+        }
+
+        // Use provided API instances
+        this.connectorsApi = environmentClientApis.connectorsApi;
+        this.projectsApi = environmentClientApis.projectsApi;
+        this.userInterfacesApi = environmentClientApis.userInterfacesApi;
+        this.settingsApi = environmentClientApis.settingsApi;
+        this.outputApi = environmentClientApis.outputApi;
+        this.environment = environmentClientApis.environment;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -65,22 +104,22 @@ export class StudioProjectLoader {
             return this.cachedProject;
         }
 
-        const intermediate = axios
-            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`, {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            })
-            .then((res) => {
-                return res.data;
+        try {
+            const result = await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdGet({
+                environment: this.environment,
+                projectId: this.projectId,
             });
 
-        // cache for subsequent calls
-        this.cachedProject = await intermediate;
+            this.cachedProject = result as Project;
 
-        if (!this.cachedProject) {
+            if (!this.cachedProject) {
+                throw new Error('Project not found');
+            }
+
+            return this.cachedProject;
+        } catch (error) {
             throw new Error('Project not found');
         }
-
-        return this.cachedProject;
     };
 
     public onProjectDocumentRequested = async (): Promise<string | null> => {
@@ -88,8 +127,15 @@ export class StudioProjectLoader {
 
         if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
-        const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
+        try {
+            const result = await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet({
+                environment: this.environment,
+                projectId: this.projectId,
+            });
+            return JSON.stringify(result);
+        } catch (error) {
+            return null;
+        }
     };
 
     public onEngineInitialized = (): void => {
@@ -162,21 +208,13 @@ export class StudioProjectLoader {
 
     private saveDocument = async (
         generateJson: () => Promise<string>,
-        projectUploadUrl: string | undefined,
-        projectDownloadUrl: string | undefined,
-        token: string,
-    ) => {
-        // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
-        let url =
-            projectDownloadUrl || (projectUploadUrl ? `${projectUploadUrl}/assets/assets/documents/demo.json` : null);
-
-        if (!url) {
-            if (!this.projectId) throw new Error('Project id was not provided');
-
-            const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-            url = fallbackDownloadUrl;
-        }
-
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _projectUploadUrl: string | undefined,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _projectDownloadUrl: string | undefined,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _token: string,
+    ): Promise<void> => {
         try {
             const document = await generateJson().then((res) => {
                 if (res) {
@@ -184,23 +222,24 @@ export class StudioProjectLoader {
                 }
                 throw new Error();
             });
-            const config: HttpHeaders = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            };
 
-            if (document) {
-                axios.put(url, JSON.parse(document), config).catch((err) => {
+            if (document && this.projectId) {
+                try {
+                    await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut({
+                        environment: this.environment,
+                        projectId: this.projectId,
+                        requestBody: JSON.parse(document),
+                    });
+                } catch (err) {
                     // eslint-disable-next-line no-console
                     console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                    return err;
-                });
+                    throw err;
+                }
             }
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
+            throw error;
         }
     };
 
@@ -217,41 +256,39 @@ export class StudioProjectLoader {
         };
 
         const fetchUserInterfaceDetails = async (requestedUserInterfaceId: string) => {
-            return axios
-                .get<APIUserInteface>(
-                    `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${requestedUserInterfaceId}`,
+            try {
+                const result = await this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet(
                     {
-                        headers: { Authorization: `Bearer ${this.authToken}` },
+                        environment: this.environment,
+                        userInterfaceId: requestedUserInterfaceId,
                     },
-                )
-                .then((res) => StudioProjectLoader.toUserInterface(res.data))
-                .catch((err) => {
-                    if (err.response && err.response.status === 404) {
-                        return fetchDefaultUserInterface();
-                    }
-                    throw new Error(`${err}`);
-                });
+                );
+                return StudioProjectLoader.toUserInterface(result as APIUserInteface);
+            } catch (err: unknown) {
+                if ((err as { status?: number }).status === 404) {
+                    return fetchDefaultUserInterface();
+                }
+                throw new Error(`${err}`);
+            }
         };
-        const outputSettings = await axios.get<{ data: IOutputSetting[] }>(
-            `${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`,
-            {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            },
-        );
+        const outputSettings = await this.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet({
+            environment: this.environment,
+        });
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
             if (!userInterface.outputSettings) return mappedOutputSettings;
 
             Object.keys(userInterface.outputSettings).forEach((outputSettingId) => {
-                const matchedOutputSetting = outputSettings.data.data.find(
-                    (outputSetting: IOutputSetting) => outputSetting.id === outputSettingId,
+                const matchedOutputSetting = outputSettings.data?.find(
+                    (outputSetting) => outputSetting.id === outputSettingId,
                 );
                 if (matchedOutputSetting) {
                     const final = {
                         ...matchedOutputSetting,
+                        id: matchedOutputSetting.id || '',
                         layoutIntents: userInterface.outputSettings[outputSettingId].layoutIntents,
-                    };
+                    } as UserInterfaceOutputSettings;
                     mappedOutputSettings.push(final);
                 }
             });
@@ -280,7 +317,7 @@ export class StudioProjectLoader {
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
-                outputSettingsFullList: outputSettings.data.data,
+                outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[],
             };
         }
         if (this.sandboxMode) {
@@ -290,7 +327,7 @@ export class StudioProjectLoader {
                       userInterface: { id: defaultUserInterface.id, name: defaultUserInterface.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
-                      outputSettingsFullList: outputSettings.data.data,
+                      outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[],
                   }
                 : null;
         }
@@ -308,21 +345,26 @@ export class StudioProjectLoader {
         return userInterfaceDetails;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>> => {
-        const res = await axios.get<PaginatedResponse<APIUserInteface>>(
-            `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
-            {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            },
-        );
-        return {
-            ...res,
-            data: {
-                ...res.data,
-                data: res.data.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
-            },
+    public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>> => {
+        const res = await this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
+            environment: this.environment,
+        });
+
+        // Transform the response to match the expected format
+        const transformedData = {
+            data:
+                res.data?.map((apiUserInterface) =>
+                    StudioProjectLoader.toUserInterface(apiUserInterface as APIUserInteface),
+                ) || [],
         };
+
+        return {
+            data: transformedData,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {},
+        } as AxiosResponse<PaginatedResponse<UserInterface>, unknown>;
     };
 
     private static toUserInterface(apiUserInterface: APIUserInteface): UserInterface {
