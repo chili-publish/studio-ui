@@ -1,43 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { connectorSourceUrl } from '@tests/mocks/sdk.mock';
-import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import StudioUI from '../../main';
+
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({
+        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: connectorSourceUrl } } }),
+        getAll: jest.fn().mockResolvedValue({ parsedData: [] }),
+    })),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
-const outputSettingsurl = `${environmentBaseURL}/output/settings`;
 const token = 'auth-token';
 const refreshToken = 'refresh-token';
 
 jest.mock('axios');
 
 describe('StudioLoader integration - SDK expired auth token', () => {
-    beforeEach(() => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: mockUserInterface });
-            if (url === outputSettingsurl) return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-
-            return Promise.resolve({});
-        });
-    });
     it('Should correctly refresh the token when refreshToken action is provided', async () => {
         const refreshTokenFn = jest.fn().mockResolvedValue(refreshToken);
         const config = {
             selector: 'sui-root',
-            projectDownloadUrl,
+            projectDownloadUrl, // Keep this to use axios path for now
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -69,7 +76,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         const config = {
             selector: 'sui-root',
-            projectDownloadUrl,
+            projectDownloadUrl, // Keep this to use axios path for now
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

@@ -7,10 +7,40 @@ import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting'
 import { mockProject } from '@mocks/mockProject';
 import userEvent from '@testing-library/user-event';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
+import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 import StudioUI from '../../main';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('axios');
+
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({
+        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: 'http://deploy.com/data-connector' } } }),
+        getAll: jest.fn().mockResolvedValue({ parsedData: [] }),
+    })),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
+
+// Mock environment client APIs for testing
+const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
@@ -49,13 +79,14 @@ const mockUITranslations = {
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl: 'http://abc.com/projects/projectId/document',
+    // projectDownloadUrl: 'http://abc.com/projects/projectId/document', // Commented out to use environment client API
     projectUploadUrl: 'http://abc.com/projects/projectId',
     projectId: 'projectId',
     graFxStudioEnvironmentApiBaseUrl: 'http://abc.com',
     authToken: 'token',
     projectName: '',
     uiTranslations: mockUITranslations,
+    environmentClientApis: mockEnvironmentClientApis,
 };
 
 jest.mock('@chili-publish/studio-sdk', () => {

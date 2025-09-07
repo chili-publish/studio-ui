@@ -1,50 +1,58 @@
-import { connectorSourceUrl, onVariableListChangedCallback } from '@tests/mocks/sdk.mock';
+import { onVariableListChangedCallback } from '@tests/mocks/sdk.mock';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockVariables } from '@mocks/mockVariables';
 import { act, render, screen, waitFor } from '@testing-library/react';
-
-import axios from 'axios';
-
 import { ImageVariable } from '@chili-publish/studio-sdk';
+import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
+
 import StudioUI from '../../main';
+
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
+
+// Mock environment client APIs for testing
+const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const environmentBaseURL = 'environmentBaseURL';
 const projectID = 'projectId';
 const projectName = 'projectName';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'auth-token';
 
-jest.mock('axios');
+// Remove axios mock to force environment client API usage
 
 describe('StudioLoader integration - valid auth token', () => {
-    beforeAll(() => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
-
-            return Promise.resolve({ data: {} });
-        });
-    });
-
     it('Should correctly get media details for the image variable when token is valid', async () => {
         const imgVariable: ImageVariable = mockVariables[0] as ImageVariable;
         const config = {
             selector: 'sui-root',
-            projectDownloadUrl,
+            // projectDownloadUrl, // Commented out to use environment client API
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
             authToken: token,
             projectName,
             refreshTokenAction: () => Promise.resolve(''),
+            environmentClientApis: mockEnvironmentClientApis,
         };
 
         render(<div id="sui-root" />);
@@ -55,7 +63,6 @@ describe('StudioLoader integration - valid auth token', () => {
         await waitFor(() => {
             expect(screen.getByText(projectName)).toBeInTheDocument();
         });
-        expect(axios.get).toHaveBeenCalledWith(projectInfoUrl, { headers: { Authorization: `Bearer ${token}` } });
 
         act(() => {
             onVariableListChangedCallback?.(mockVariables);
