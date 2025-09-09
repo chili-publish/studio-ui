@@ -7,6 +7,9 @@ import {
     UserInterfacesApi,
     SettingsApi,
     OutputApi,
+    UserInterface as EnvironmentUserInterface,
+    Project as EnvironmentProject,
+    OutputSettings as EnvironmentOutputSettings,
 } from '@chili-publish/environment-client-api';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
@@ -190,15 +193,11 @@ export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
 };
 
-export type APIUserInteface = {
-    id: string;
-    name: string;
-    outputSettings: OutputSettingsType;
-    // Stringified JSON array of form builder
-    formBuilder?: string;
+export type APIUserInterface = EnvironmentUserInterface & {
+    // TODO: Remove this override when environment client API UserInterface updates _default to become default
     default: boolean;
 };
-export type UserInterface = Omit<APIUserInteface, 'formBuilder'> & { formBuilder: FormBuilderArray };
+export type UserInterface = Omit<APIUserInterface, 'formBuilder'> & { formBuilder: FormBuilderArray };
 
 export type PaginatedResponse<T> = {
     data: T[];
@@ -208,16 +207,19 @@ export type PaginatedResponse<T> = {
     };
 };
 
-export interface IOutputSetting {
+// TODO: Remove this override when environment client API OutputSettings updates id, watermarkText, _default, description, type, dataSourceEnabled, watermark to become required
+export type IOutputSetting = Omit<
+    EnvironmentOutputSettings,
+    'id' | 'watermarkText' | '_default' | 'description' | 'type' | 'dataSourceEnabled' | 'watermark'
+> & {
     watermarkText: string;
     default: boolean;
     description: string;
-    id: string;
-    name: string;
-    type: DownloadFormats;
     watermark: boolean;
+    id: string;
+    type: DownloadFormats;
     dataSourceEnabled: boolean;
-}
+};
 
 export const defaultUiOptions = {
     widgets: {
@@ -276,7 +278,12 @@ export const defaultBackFn = () => history.back();
 
 export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
-export type Project = { name: string; id: string; template: { id: string } };
+export type Project = Omit<EnvironmentProject, 'name' | 'id' | 'template'> & {
+    // TODO: Remove this override when environment client API Project updates name, id, template to become required
+    name: string;
+    id: string;
+    template: { id: string };
+};
 
 export interface IDefaultStudioUILoaderConfig {
     selector: string;

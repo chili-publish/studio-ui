@@ -85,11 +85,6 @@ export function useEnvironmentClientApi() {
         // User Interfaces API wrapper
         userInterfaces,
 
-        // Settings API wrapper
-        settings: {
-            // Add settings methods as needed
-        },
-
         // Output API wrapper
         output,
     };

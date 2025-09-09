@@ -44,9 +44,6 @@ const useDataSource = () => {
                 const connector = await connectors.getById(connectorId);
                 return connector as unknown as DataRemoteConnector;
             } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error(`Failed to fetch data connector ${connectorId}:`, error);
-                // Return a fallback connector to prevent the entire process from failing
                 return {
                     id: connectorId,
                     name: `Unknown Data Connector (${connectorId})`,

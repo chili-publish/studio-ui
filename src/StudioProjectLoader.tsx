@@ -6,13 +6,13 @@ import {
     UserInterfacesApi,
     SettingsApi,
     OutputApi,
-    Project,
 } from '@chili-publish/environment-client-api';
 import {
-    APIUserInteface,
+    APIUserInterface,
     DownloadLinkResult,
     IOutputSetting,
     PaginatedResponse,
+    Project,
     UserInterface,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
@@ -111,7 +111,12 @@ export class StudioProjectLoader {
                 projectId: this.projectId,
             });
 
-            this.cachedProject = result;
+            // Transform environment client API Project to our consolidated Project type
+            this.cachedProject = {
+                id: result.id || '',
+                name: result.name || '',
+                template: { id: result.template?.id || '' },
+            };
 
             if (!this.cachedProject) {
                 throw new Error('Project not found');
@@ -264,7 +269,7 @@ export class StudioProjectLoader {
                         userInterfaceId: requestedUserInterfaceId,
                     },
                 );
-                return StudioProjectLoader.toUserInterface(result as APIUserInteface);
+                return StudioProjectLoader.toUserInterface(result as APIUserInterface); // TODO: Remove casting when APIUserInterface is updated
             } catch (err: unknown) {
                 if ((err as { status?: number }).status === 404) {
                     return fetchDefaultUserInterface();
@@ -288,7 +293,7 @@ export class StudioProjectLoader {
                     const final = {
                         ...matchedOutputSetting,
                         id: matchedOutputSetting.id || '',
-                        layoutIntents: userInterface.outputSettings[outputSettingId].layoutIntents,
+                        layoutIntents: userInterface.outputSettings?.[outputSettingId].layoutIntents,
                     } as UserInterfaceOutputSettings;
                     mappedOutputSettings.push(final);
                 }
@@ -313,19 +318,19 @@ export class StudioProjectLoader {
 
             return {
                 userInterface: {
-                    id: userInterfaceData.id,
+                    id: userInterfaceData.id || '',
                     name: userInterfaceData.name,
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
-                outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[],
+                outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[], // TODO: Remove casting IOutputSetting override is removed
             };
         }
         if (this.sandboxMode) {
             const defaultUserInterface = await fetchDefaultUserInterface();
             return defaultUserInterface
                 ? {
-                      userInterface: { id: defaultUserInterface.id, name: defaultUserInterface.name },
+                      userInterface: { id: defaultUserInterface.id || '', name: defaultUserInterface.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
                       outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[],
@@ -354,8 +359,8 @@ export class StudioProjectLoader {
         // Transform the response to match the expected format
         const transformedData = {
             data:
-                res.data?.map((apiUserInterface) =>
-                    StudioProjectLoader.toUserInterface(apiUserInterface as APIUserInteface),
+                res.data?.map(
+                    (apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface as APIUserInterface), // TODO: Remove casting when APIUserInterface is updated
                 ) || [],
         };
 
@@ -368,7 +373,7 @@ export class StudioProjectLoader {
         } as AxiosResponse<PaginatedResponse<UserInterface>, unknown>;
     };
 
-    private static toUserInterface(apiUserInterface: APIUserInteface): UserInterface {
+    private static toUserInterface(apiUserInterface: APIUserInterface): UserInterface {
         return {
             ...apiUserInterface,
             formBuilder: apiUserInterface.formBuilder ? JSON.parse(apiUserInterface.formBuilder) : undefined,

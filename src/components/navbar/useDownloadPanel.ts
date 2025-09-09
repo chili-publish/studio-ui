@@ -63,8 +63,6 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
                 throw new Error('Error getting download link');
             }
 
-            // eslint-disable-next-line no-console
-            console.log('%c⧭ downloadLinkData.data', 'color: #807160', downloadLinkData.data);
             const response = await axios.get(downloadLinkData.data ?? '', {
                 responseType: 'blob',
                 headers: { Authorization: `Bearer ${authToken}` },
