@@ -1,10 +1,13 @@
 export interface VariablesTranslations {
     header?: string;
     helpText?: string;
-    // TODO: Will be implemented in context of WRS-2610
-    // imageVariable?: {
-    //     error?: string;
-    // };
+    imageVariable?: {
+        errors?: {
+            unauthorized?: string;
+            missingAsset?: string;
+            default?: string;
+        };
+    };
 }
 
 export interface DataSourceTranslations {

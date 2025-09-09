@@ -1,13 +1,14 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
 import { useMemo } from 'react';
+import { selectImageChangePendingId, setImageChangePendingId } from 'src/store/reducers/variableReducer';
+import { useSelector } from 'react-redux';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { isAuthenticationRequired, verifyAuthentication } from '../../../utils/connectors';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
 import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
-import { useMediaDetails } from './useMediaDetails';
-import { usePreviewImageUrl } from './usePreviewImageUrl';
+import { usePreviewImage } from './usePreviewImage';
 import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
@@ -17,8 +18,10 @@ function ImageVariable(props: IImageVariable) {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
 
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
+
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
+    const imageChangePendingId = useSelector(selectImageChangePendingId);
 
     const { remoteConnector } = useVariableConnector(variable);
 
@@ -27,12 +30,11 @@ function ImageVariable(props: IImageVariable) {
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
     const {
-        previewImageUrl,
-        pending: previewPending,
-        // TODO: Will be implemented in context of WRS-2610
-        // error: previewError,
-    } = usePreviewImageUrl(variable.value?.connectorId, mediaAssetId);
-    const mediaDetails = useMediaDetails(variable.value?.connectorId, mediaAssetId);
+        previewImage,
+        pending: mediaPending,
+        error: mediaError,
+        resetError: resetMediaError,
+    } = usePreviewImage(variable.value?.connectorId, mediaAssetId);
     const {
         upload,
         pending: uploadPending,
@@ -42,22 +44,11 @@ function ImageVariable(props: IImageVariable) {
 
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
 
-    const previewImage = useMemo(() => {
-        if (!mediaDetails || !previewImageUrl) {
-            return undefined;
-        }
-        return {
-            id: mediaDetails.id,
-            name: mediaDetails.name,
-            format: mediaDetails.extension ?? '',
-            url: previewImageUrl,
-        };
-    }, [mediaDetails, previewImageUrl]);
-
     const handleImageUpload = async (files: FileList | null) => {
         if (!files?.length) {
             return;
         }
+        resetMediaError();
         onVariableFocus?.(variable.id);
         upload([...files], {
             minWidthPixels: variable.uploadMinWidth,
@@ -66,6 +57,7 @@ function ImageVariable(props: IImageVariable) {
             if (!media) {
                 return;
             }
+            dispatch(setImageChangePendingId(variable.id));
             handleImageChange({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
             onVariableBlur?.(variable.id);
         });
@@ -91,19 +83,16 @@ function ImageVariable(props: IImageVariable) {
 
     const onRemove = () => {
         resetUploadError();
+        resetMediaError();
         handleImageRemove();
         onVariableFocus?.(variable.id);
         onVariableBlur?.(variable.id);
     };
 
     // Calculate pending state
-    const isPending = previewPending || uploadPending;
+    const isPending = mediaPending || uploadPending || variable.id === imageChangePendingId;
 
-    const validationErrorMessage = uploadError || validationError;
-    // TODO: Will be implemented in context of WRS-2610
-    // || (previewError
-    //     ? getUITranslation(['formBuilder', 'variables', 'imageVariable', 'error'], 'Preview is missing')
-    //     : '');
+    const errorMessage = uploadError || validationError || mediaError;
 
     // If no operations are allowed, don't render the component
     if (!variable.allowQuery && !variable.allowUpload) {
@@ -122,9 +111,9 @@ function ImageVariable(props: IImageVariable) {
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}
-                errorMsg="Something went wrong. Please try again"
+                loadPreviewImageErrorMessage="Something went wrong. Please try again"
                 previewImage={previewImage}
-                validationErrorMessage={validationErrorMessage}
+                errorMessage={errorMessage}
                 onRemove={onRemove}
                 pending={isPending}
                 pendingLabel={pendingLabel}
@@ -132,7 +121,7 @@ function ImageVariable(props: IImageVariable) {
                 onBrowse={variable.allowQuery ? handleImageBrowse : undefined}
                 onUpload={variable.allowUpload ? handleImageUpload : undefined}
             />
-            {variable.helpText && !validationErrorMessage ? (
+            {variable.helpText && !errorMessage ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
             ) : null}
         </HelpTextWrapper>

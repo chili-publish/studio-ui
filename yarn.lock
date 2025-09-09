@@ -1284,7 +1284,7 @@
   resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.24.0/221a0be43e940c4430550935136a33d683fb38d2#221a0be43e940c4430550935136a33d683fb38d2"
   integrity sha512-LVjeeL/qLmu3ufOpRfC5Gyia8xW4SvI2HcPeCw+hy3V2AA0atRZZ2pAaynYQLCQ2dJcRMb9C/OYXBt/1naVXDQ==
 
-"@chili-publish/grafx-shared-components@0.103.14":
+"@chili-publish/grafx-shared-components@0.103.15":
   version "0.103.14"
   resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.103.14/34911b95c9c53561057951e97789d519315be38d#34911b95c9c53561057951e97789d519315be38d"
   integrity sha512-PwiA2Qy7PgIsrTD2Z8aBRIrHFzZAYidKlOFTlQ9AVghq96zpuoUGk/VMDH8MsztvP7FcoA8JA2KRTXA92qu0BQ==
