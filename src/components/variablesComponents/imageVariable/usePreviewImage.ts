@@ -122,12 +122,7 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
         [connectorId],
     );
 
-    const {
-        previewImageUrl,
-        pending: previewPending,
-        error: previewError,
-        resetError: resetPreviewError,
-    } = coreHook(
+    const { previewImageUrl, pending: previewPending } = coreHook(
         mediaDetails ? mediaAssetId : undefined, // Only fetch preview if media details exist
         previewCall,
     );
@@ -137,12 +132,8 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
             return getErrorTranslation(mediaDetailsError);
         }
 
-        if (previewError) {
-            return getErrorTranslation(previewError);
-        }
-
         return undefined;
-    }, [mediaDetailsError, previewError, getErrorTranslation]);
+    }, [mediaDetailsError, getErrorTranslation]);
 
     const previewImage = useMemo(() => {
         if (!mediaDetails || !previewImageUrl) {
@@ -158,8 +149,7 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
 
     const resetError = useCallback(() => {
         setMediaDetailsError(null);
-        resetPreviewError();
-    }, [resetPreviewError]);
+    }, []);
 
     // Connector state management
     useEffect(() => {
@@ -207,11 +197,6 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
     useEffect(() => {
         getMediaDetails();
     }, [linkedVariables, getMediaDetails]);
-
-    // Reset preview error when connector id changes
-    useEffect(() => {
-        resetPreviewError();
-    }, [connectorId, resetPreviewError]);
 
     return {
         previewImage,

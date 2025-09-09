@@ -111,9 +111,7 @@ function ImageVariable(props: IImageVariable) {
                 }
                 required={variable.isRequired}
                 placeholder={placeholder}
-                loadPreviewImageErrorMessage="Something went wrong. Please try again"
                 previewImage={previewImage}
-                errorMessage={errorMessage}
                 onRemove={onRemove}
                 pending={isPending}
                 pendingLabel={pendingLabel}
