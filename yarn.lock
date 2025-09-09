@@ -1285,9 +1285,9 @@
   integrity sha512-LVjeeL/qLmu3ufOpRfC5Gyia8xW4SvI2HcPeCw+hy3V2AA0atRZZ2pAaynYQLCQ2dJcRMb9C/OYXBt/1naVXDQ==
 
 "@chili-publish/grafx-shared-components@0.103.15":
-  version "0.103.14"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.103.14/34911b95c9c53561057951e97789d519315be38d#34911b95c9c53561057951e97789d519315be38d"
-  integrity sha512-PwiA2Qy7PgIsrTD2Z8aBRIrHFzZAYidKlOFTlQ9AVghq96zpuoUGk/VMDH8MsztvP7FcoA8JA2KRTXA92qu0BQ==
+  version "0.103.15"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.103.15/0721cd263fe249d0cb8f1771f85cd7666f020aa4#0721cd263fe249d0cb8f1771f85cd7666f020aa4"
+  integrity sha512-WXKfvhyKC7c/CGBS6kCD8Pl9MOBtslr4KBVZiwm5t7mIcj0EsZV2TmurJAz97OMHH9TaNuMZgyao6e4zn4JlRQ==
 
 "@chili-publish/studio-sdk@1.30.0":
   version "1.30.0"

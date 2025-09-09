@@ -294,6 +294,7 @@ describe('usePreviewImage', () => {
 
         await waitFor(() => {
             expect(result.current.previewImage).toBeUndefined();
+            expect(result.current.error).toBeDefined();
         });
     });
 });
