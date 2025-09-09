@@ -193,9 +193,13 @@ export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
 };
 
-export type APIUserInterface = EnvironmentUserInterface & {
+export type APIUserInterface = Omit<EnvironmentUserInterface, 'id' | 'outputSettings' | '_default' | 'formBuilder'> & {
     // TODO: Remove this override when environment client API UserInterface updates _default to become default
     default: boolean;
+    id: string;
+    outputSettings: OutputSettingsType;
+    // Stringified JSON array of form builder
+    formBuilder?: string;
 };
 export type UserInterface = Omit<APIUserInterface, 'formBuilder'> & { formBuilder: FormBuilderArray };
 
