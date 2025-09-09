@@ -6,13 +6,13 @@ import {
     UserInterfacesApi,
     SettingsApi,
     OutputApi,
+    Project,
 } from '@chili-publish/environment-client-api';
 import {
     APIUserInteface,
     DownloadLinkResult,
     IOutputSetting,
     PaginatedResponse,
-    Project,
     UserInterface,
     UserInterfaceOutputSettings,
     UserInterfaceWithOutputSettings,
@@ -36,7 +36,7 @@ export class StudioProjectLoader {
 
     private refreshTokenAction?: () => Promise<string | AxiosError>;
 
-    private cachedProject: Project | undefined;
+    private cachedProject: Project;
 
     private userInterfaceID?: string;
 
@@ -91,6 +91,11 @@ export class StudioProjectLoader {
         this.settingsApi = environmentClientApis.settingsApi;
         this.outputApi = environmentClientApis.outputApi;
         this.environment = environmentClientApis.environment;
+        this.cachedProject = {
+            name: '',
+            id: '',
+            template: { id: '' },
+        };
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -106,7 +111,7 @@ export class StudioProjectLoader {
                 projectId: this.projectId,
             });
 
-            this.cachedProject = result as Project;
+            this.cachedProject = result;
 
             if (!this.cachedProject) {
                 throw new Error('Project not found');
