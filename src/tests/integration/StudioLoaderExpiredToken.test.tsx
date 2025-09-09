@@ -97,7 +97,7 @@ describe('StudioLoader integration - expired auth token', () => {
         const refreshTokenFn = jest.fn().mockResolvedValue(refreshTokenData);
         const config = {
             selector: 'sui-root',
-            // projectDownloadUrl, // Force use of environment client API
+
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -169,7 +169,7 @@ describe('StudioLoader integration - expired auth token', () => {
 
         const config = {
             selector: 'sui-root',
-            // projectDownloadUrl, // Force use of environment client API
+
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -252,7 +252,7 @@ describe('StudioLoader integration - expired auth token', () => {
         const refreshTokenFn = jest.fn().mockResolvedValue(refreshTokenData);
         const config = {
             selector: 'sui-root',
-            // projectDownloadUrl, // Force use of environment client API
+
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

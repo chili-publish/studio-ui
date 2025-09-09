@@ -45,7 +45,6 @@ describe('StudioLoader integration - valid auth token', () => {
         const imgVariable: ImageVariable = mockVariables[0] as ImageVariable;
         const config = {
             selector: 'sui-root',
-            // projectDownloadUrl, // Commented out to use environment client API
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

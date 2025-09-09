@@ -79,7 +79,6 @@ const mockUITranslations = {
 
 const config = {
     selector: 'sui-root',
-    // projectDownloadUrl: 'http://abc.com/projects/projectId/document', // Commented out to use environment client API
     projectUploadUrl: 'http://abc.com/projects/projectId',
     projectId: 'projectId',
     graFxStudioEnvironmentApiBaseUrl: 'http://abc.com',

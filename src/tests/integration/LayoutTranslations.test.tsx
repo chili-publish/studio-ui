@@ -54,7 +54,6 @@ const layoutTranslations = {
 
 const config = {
     selector: 'sui-root',
-    // projectDownloadUrl, // Commented out to use environment client API
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

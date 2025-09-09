@@ -47,7 +47,7 @@ const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const config = {
     selector: 'sui-root',
-    // projectDownloadUrl, // Force use of environment client API
+
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

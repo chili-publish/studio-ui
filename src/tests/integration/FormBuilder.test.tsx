@@ -76,8 +76,6 @@ const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const config = {
     selector: 'sui-root',
-    // Remove projectDownloadUrl so it uses environment client API instead of direct axios call
-    // projectDownloadUrl,
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

@@ -60,7 +60,6 @@ const config = {
     userInterfaceID: mockUserInterface.id,
     onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
     environmentClientApis: mockEnvironmentClientApis,
-    // projectDownloadUrl: undefined, // Force use of environment client API
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let originalAnimateFunction: any;
