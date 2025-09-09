@@ -36,7 +36,7 @@ export class StudioProjectLoader {
 
     private refreshTokenAction?: () => Promise<string | AxiosError>;
 
-    private cachedProject: Project;
+    private cachedProject: Project | undefined;
 
     private userInterfaceID?: string;
 
@@ -91,11 +91,6 @@ export class StudioProjectLoader {
         this.settingsApi = environmentClientApis.settingsApi;
         this.outputApi = environmentClientApis.outputApi;
         this.environment = environmentClientApis.environment;
-        this.cachedProject = {
-            name: '',
-            id: '',
-            template: { id: '' },
-        };
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -116,6 +111,8 @@ export class StudioProjectLoader {
                 id: result.id || '',
                 name: result.name || '',
                 template: { id: result.template?.id || '' },
+                collectionId: result.collectionId,
+                userInterfaceId: result.userInterfaceId,
             };
 
             if (!this.cachedProject) {
