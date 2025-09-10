@@ -10,7 +10,6 @@ import {
 import {
     APIUserInterface,
     DownloadLinkResult,
-    IOutputSetting,
     PaginatedResponse,
     Project,
     UserInterface,
@@ -20,6 +19,7 @@ import {
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
 import { addTrailingSlash, getDownloadLink } from './utils/documentExportHelper';
 import { transformFormBuilderArrayToObject } from './utils/helpers';
+import { EnvironmentApiService } from './services/EnvironmentApiService';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -42,18 +42,8 @@ export class StudioProjectLoader {
 
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 
-    // Environment Client API instances
-    private connectorsApi!: ConnectorsApi;
-
-    private projectsApi!: ProjectsApi;
-
-    private userInterfacesApi!: UserInterfacesApi;
-
-    private settingsApi!: SettingsApi;
-
-    private outputApi!: OutputApi;
-
-    private environment!: string;
+    // Centralized Environment API Service
+    private environmentApiService!: EnvironmentApiService;
 
     constructor(
         projectId: string | undefined,
@@ -84,13 +74,14 @@ export class StudioProjectLoader {
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
 
-        // Use provided API instances
-        this.connectorsApi = environmentClientApis.connectorsApi;
-        this.projectsApi = environmentClientApis.projectsApi;
-        this.userInterfacesApi = environmentClientApis.userInterfacesApi;
-        this.settingsApi = environmentClientApis.settingsApi;
-        this.outputApi = environmentClientApis.outputApi;
-        this.environment = environmentClientApis.environment;
+        // Initialize centralized API service
+        this.environmentApiService = new EnvironmentApiService(
+            environmentClientApis.connectorsApi,
+            environmentClientApis.projectsApi,
+            environmentClientApis.userInterfacesApi,
+            environmentClientApis.outputApi,
+            environmentClientApis.environment,
+        );
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -101,10 +92,7 @@ export class StudioProjectLoader {
         }
 
         try {
-            const result = await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdGet({
-                environment: this.environment,
-                projectId: this.projectId,
-            });
+            const result = await this.environmentApiService.getProjectById(this.projectId);
 
             // Transform environment client API Project to our consolidated Project type
             this.cachedProject = {
@@ -131,10 +119,7 @@ export class StudioProjectLoader {
         if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
         try {
-            const result = await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet({
-                environment: this.environment,
-                projectId: this.projectId,
-            });
+            const result = await this.environmentApiService.getProjectDocument(this.projectId);
             return JSON.stringify(result);
         } catch (error) {
             return null;
@@ -228,11 +213,7 @@ export class StudioProjectLoader {
 
             if (document && this.projectId) {
                 try {
-                    await this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut({
-                        environment: this.environment,
-                        projectId: this.projectId,
-                        requestBody: JSON.parse(document),
-                    });
+                    await this.environmentApiService.saveProjectDocument(this.projectId, JSON.parse(document));
                 } catch (err) {
                     // eslint-disable-next-line no-console
                     console.error(`[${this.saveDocument.name}] There was an issue saving document`);
@@ -260,13 +241,8 @@ export class StudioProjectLoader {
 
         const fetchUserInterfaceDetails = async (requestedUserInterfaceId: string) => {
             try {
-                const result = await this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet(
-                    {
-                        environment: this.environment,
-                        userInterfaceId: requestedUserInterfaceId,
-                    },
-                );
-                return StudioProjectLoader.toUserInterface(result as APIUserInterface); // TODO: Remove casting when APIUserInterface is updated
+                const result = await this.environmentApiService.getUserInterfaceById(requestedUserInterfaceId);
+                return StudioProjectLoader.toUserInterface(result);
             } catch (err: unknown) {
                 if ((err as { status?: number }).status === 404) {
                     return fetchDefaultUserInterface();
@@ -274,9 +250,7 @@ export class StudioProjectLoader {
                 throw new Error(`${err}`);
             }
         };
-        const outputSettings = await this.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet({
-            environment: this.environment,
-        });
+        const outputSettings = await this.environmentApiService.getOutputSettings();
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
@@ -291,7 +265,7 @@ export class StudioProjectLoader {
                         ...matchedOutputSetting,
                         id: matchedOutputSetting.id || '',
                         layoutIntents: userInterface.outputSettings?.[outputSettingId].layoutIntents,
-                    } as UserInterfaceOutputSettings;
+                    };
                     mappedOutputSettings.push(final);
                 }
             });
@@ -320,7 +294,7 @@ export class StudioProjectLoader {
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
-                outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[], // TODO: Remove casting IOutputSetting override is removed
+                outputSettingsFullList: outputSettings.data || [],
             };
         }
         if (this.sandboxMode) {
@@ -330,7 +304,7 @@ export class StudioProjectLoader {
                       userInterface: { id: defaultUserInterface.id || '', name: defaultUserInterface.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
-                      outputSettingsFullList: (outputSettings.data || []) as IOutputSetting[],
+                      outputSettingsFullList: outputSettings.data || [],
                   }
                 : null;
         }
@@ -349,16 +323,11 @@ export class StudioProjectLoader {
     };
 
     public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>> => {
-        const res = await this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
-            environment: this.environment,
-        });
+        const res = await this.environmentApiService.getAllUserInterfaces();
 
         // Transform the response to match the expected format
         const transformedData = {
-            data:
-                res.data?.map(
-                    (apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface as APIUserInterface), // TODO: Remove casting when APIUserInterface is updated
-                ) || [],
+            data: res.data?.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)) || [],
         };
 
         return {

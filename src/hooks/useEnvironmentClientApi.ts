@@ -1,76 +1,50 @@
 import { useMemo } from 'react';
 import { useEnvironmentClientApiContext } from '../contexts/EnvironmentClientApiContext';
+import { EnvironmentApiService } from '../services/EnvironmentApiService';
 
 /**
  * Custom hook that provides a wrapper around the environment client APIs
  * with more intuitive method names for better developer experience
+ * Now uses the centralized EnvironmentApiService for consistency
  */
 export function useEnvironmentClientApi() {
     const { connectorsApi, projectsApi, userInterfacesApi, outputApi, environment } = useEnvironmentClientApiContext();
 
+    const apiService = useMemo(
+        () => new EnvironmentApiService(connectorsApi, projectsApi, userInterfacesApi, outputApi, environment),
+        [connectorsApi, projectsApi, userInterfacesApi, outputApi, environment],
+    );
+
     const connectors = useMemo(
         () => ({
-            getAll: () =>
-                connectorsApi.apiV1EnvironmentEnvironmentConnectorsGet({
-                    environment,
-                }),
-            getById: (connectorId: string) =>
-                connectorsApi.apiV1EnvironmentEnvironmentConnectorsConnectorIdGet({
-                    environment,
-                    connectorId,
-                }),
+            getAll: () => apiService.getAllConnectors(),
+            getById: (connectorId: string) => apiService.getConnectorById(connectorId),
         }),
-        [connectorsApi, environment],
+        [apiService],
     );
 
     const projects = useMemo(
         () => ({
-            getById: (projectId: string) =>
-                projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdGet({
-                    environment,
-                    projectId,
-                }),
-            getDocument: (projectId: string) =>
-                projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet({
-                    environment,
-                    projectId,
-                }),
-            saveDocument: (
-                projectId: string,
-                document: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-            ) =>
-                projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut({
-                    environment,
-                    projectId,
-                    requestBody: document,
-                }),
+            getById: (projectId: string) => apiService.getProjectById(projectId),
+            getDocument: (projectId: string) => apiService.getProjectDocument(projectId),
+            saveDocument: (projectId: string, document: any) => apiService.saveProjectDocument(projectId, document), // eslint-disable-line @typescript-eslint/no-explicit-any
         }),
-        [projectsApi, environment],
+        [apiService],
     );
 
     const userInterfaces = useMemo(
         () => ({
-            getAll: () =>
-                userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
-                    environment,
-                }),
-            getById: (userInterfaceId: string) =>
-                userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet({
-                    environment,
-                    userInterfaceId,
-                }),
+            getAll: () => apiService.getAllUserInterfaces(),
+            getById: (userInterfaceId: string) => apiService.getUserInterfaceById(userInterfaceId),
         }),
-        [userInterfacesApi, environment],
+        [apiService],
     );
 
     const output = useMemo(
         () => ({
-            getSettings: () =>
-                outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet({
-                    environment,
-                }),
+            getSettings: () => apiService.getOutputSettings(),
         }),
-        [outputApi, environment],
+        [apiService],
     );
 
     return {
