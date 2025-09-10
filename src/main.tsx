@@ -22,7 +22,7 @@ import {
 // Helper function to initialize environment client APIs
 function initializeEnvironmentClientApis(
     graFxStudioEnvironmentApiBaseUrl: string,
-    authToken: string,
+    tokenProvider: () => string,
 ): {
     connectorsApi: ConnectorsApi;
     projectsApi: ProjectsApi;
@@ -46,7 +46,7 @@ function initializeEnvironmentClientApis(
 
     const config = new Configuration({
         basePath: apiBasePath,
-        accessToken: authToken,
+        accessToken: tokenProvider,
     });
 
     // Initialize all API instances
@@ -87,8 +87,25 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
-        // Initialize environment client APIs
-        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, authToken);
+        // Create a token provider that will always return the current token
+        let currentToken = authToken;
+        const tokenProvider = () => currentToken;
+
+        // Create a refresh token action that also updates the token provider
+        const enhancedRefreshTokenAction = refreshTokenAction
+            ? async () => {
+                  const result = await refreshTokenAction();
+                  if (result instanceof Error) {
+                      return result;
+                  }
+                  // Update the current token so the token provider returns the new token
+                  currentToken = result;
+                  return result;
+              }
+            : undefined;
+
+        // Initialize environment client APIs with token provider
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
 
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -96,7 +113,7 @@ export default class StudioUI extends StudioUILoader {
             authToken,
             false,
             environmentClientApis,
-            refreshTokenAction,
+            enhancedRefreshTokenAction,
         );
 
         return this.fullStudioIntegrationConfig(selector, {
@@ -195,8 +212,26 @@ export default class StudioUI extends StudioUILoader {
             onFetchUserInterfaceDetails,
             onVariableValueChangedCompleted,
         } = config;
-        // Initialize environment client APIs
-        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, authToken);
+
+        // Create a token provider that will always return the current token
+        let currentToken = authToken;
+        const tokenProvider = () => currentToken;
+
+        // Create a refresh token action that also updates the token provider
+        const enhancedRefreshTokenAction = refreshTokenAction
+            ? async () => {
+                  const result = await refreshTokenAction();
+                  if (result instanceof Error) {
+                      return result;
+                  }
+                  // Update the current token so the token provider returns the new token
+                  currentToken = result;
+                  return result;
+              }
+            : undefined;
+
+        // Initialize environment client APIs with token provider
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
 
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -204,7 +239,7 @@ export default class StudioUI extends StudioUILoader {
             authToken,
             sandboxMode || false,
             environmentClientApis,
-            refreshTokenAction,
+            enhancedRefreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
             userInterfaceID,
