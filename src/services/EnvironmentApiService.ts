@@ -35,12 +35,12 @@ export class EnvironmentApiService {
     // Specialized connector methods with proper type transformations
     async getDataConnectorById(connectorId: string): Promise<DataRemoteConnector> {
         const connector = await this.getConnectorById(connectorId);
-        return connector as unknown as DataRemoteConnector; // TODO: Remove casting when environment client API types are aligned
+        return connector as unknown as DataRemoteConnector; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
     }
 
     async getMediaConnectorById(connectorId: string): Promise<MediaRemoteConnector> {
         const connector = await this.getConnectorById(connectorId);
-        return connector as unknown as MediaRemoteConnector; // TODO: Remove casting when environment client API types are aligned
+        return connector as unknown as MediaRemoteConnector; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
     }
 
     // Projects API methods
@@ -60,7 +60,6 @@ export class EnvironmentApiService {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async saveProjectDocument(projectId: string, document: any) {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
         return this.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut({
             environment: this.environment,
             projectId,
@@ -73,14 +72,14 @@ export class EnvironmentApiService {
         const userInterfaces = this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
             environment: this.environment,
         });
-        return userInterfaces as unknown as { data: APIUserInterface[] }; // TODO: Remove casting when APIUserInterface is updated
+        return userInterfaces as unknown as { data: APIUserInterface[] }; // TODO: Remove casting when  env api or our code is updated
     }
 
     async getUserInterfaceById(userInterfaceId: string) {
         return this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet({
             environment: this.environment,
             userInterfaceId,
-        }) as unknown as APIUserInterface; // TODO: Remove casting when APIUserInterface is updated
+        }) as unknown as APIUserInterface; // TODO: Remove casting when env api or our code is updated
     }
 
     // Output API methods

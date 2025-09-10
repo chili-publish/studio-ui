@@ -179,6 +179,8 @@ export class StudioProjectLoader {
         );
     };
 
+    // We kept this because integrators can send any url to fetch the document
+    // And we need to support that, there is no way to do that with the new environment client API
     private static fetchDocument = async (templateUrl: string, token: string): Promise<string | null> => {
         const url = templateUrl;
         if (url) {
