@@ -41,8 +41,7 @@ const useDataSource = () => {
     const getConnectorByIdWrapper = useCallback(
         async (connectorId: string): Promise<DataRemoteConnector> => {
             try {
-                const connector = await connectors.getById(connectorId);
-                return connector as unknown as DataRemoteConnector;
+                return await connectors.getDataConnectorById(connectorId);
             } catch (error) {
                 return {
                     id: connectorId,

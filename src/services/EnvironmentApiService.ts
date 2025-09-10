@@ -1,5 +1,6 @@
 import { ConnectorsApi, ProjectsApi, UserInterfacesApi, OutputApi } from '@chili-publish/environment-client-api';
 import { APIUserInterface, IOutputSetting } from 'src/types/types';
+import { DataRemoteConnector, MediaRemoteConnector } from '../utils/ApiTypes';
 
 /**
  * Centralized service for environment client API operations
@@ -29,6 +30,17 @@ export class EnvironmentApiService {
             environment: this.environment,
             connectorId,
         });
+    }
+
+    // Specialized connector methods with proper type transformations
+    async getDataConnectorById(connectorId: string): Promise<DataRemoteConnector> {
+        const connector = await this.getConnectorById(connectorId);
+        return connector as unknown as DataRemoteConnector; // TODO: Remove casting when environment client API types are aligned
+    }
+
+    async getMediaConnectorById(connectorId: string): Promise<MediaRemoteConnector> {
+        const connector = await this.getConnectorById(connectorId);
+        return connector as unknown as MediaRemoteConnector; // TODO: Remove casting when environment client API types are aligned
     }
 
     // Projects API methods
