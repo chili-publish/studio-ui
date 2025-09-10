@@ -145,13 +145,23 @@ export interface UiOptions {
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
 
-export type UserInterfaceOutputSettings = {
-    name: string;
-    id: string;
-    description: string;
+// TODO: Remove this override when environment client API types are properly aligned
+// This type combines OutputSettings and UserInterfaceOutputSettings from environment client API
+export type UserInterfaceOutputSettings = Omit<
+    EnvironmentOutputSettings,
+    'type' | '_default' | 'watermark' | 'watermarkText'
+> & {
+    // Override type to use DownloadFormats instead of string
     type: DownloadFormats;
-    dataSourceEnabled: boolean;
+    // Override layoutIntents to use string[] instead of Array<LayoutIntent> from environment client API
+    // Note: Environment client API uses "Print", "DigitalStatic", "DigitalAnimated"
+    // while we use "print", "digitalStatic", "digitalAnimated"
     layoutIntents: string[];
+    // Make required fields that are optional in environment client API
+    id: string;
+    name: string;
+    description: string;
+    dataSourceEnabled: boolean;
 };
 
 export type UserInterfaceWithOutputSettings = {
@@ -353,13 +363,13 @@ export type PageSnapshot = {
     snapshot: Uint8Array;
 };
 
-export type MobileTrayHeaderDetailsr = {
+export type MobileTrayHeaderDetails = {
     title: string;
     helpText: string;
 };
 
 export type MobileTrayFormBuilderHeader = {
-    datasource: MobileTrayHeaderDetailsr;
-    variables: MobileTrayHeaderDetailsr;
-    layouts: MobileTrayHeaderDetailsr;
+    datasource: MobileTrayHeaderDetails;
+    variables: MobileTrayHeaderDetails;
+    layouts: MobileTrayHeaderDetails;
 };
