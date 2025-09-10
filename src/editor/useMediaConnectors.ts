@@ -10,7 +10,7 @@ export const useMediaConnectors = () => {
 
     const getConnectorByIdWrapper = useCallback(
         async (connectorId: string): Promise<MediaRemoteConnector> => {
-            return connectors.getMediaConnectorById(connectorId);
+            return connectors.getByIdAs<MediaRemoteConnector>(connectorId);
         },
         [connectors],
     );

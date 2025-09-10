@@ -32,15 +32,19 @@ export class EnvironmentApiService {
         });
     }
 
-    // Specialized connector methods with proper type transformations
-    async getDataConnectorById(connectorId: string): Promise<DataRemoteConnector> {
+    // Generic connector method with proper type transformations
+    async getConnectorByIdAs<T>(connectorId: string): Promise<T> {
         const connector = await this.getConnectorById(connectorId);
-        return connector as unknown as DataRemoteConnector; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
+        return connector as unknown as T; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
+    }
+
+    // Convenience methods for specific connector types
+    async getDataConnectorById(connectorId: string): Promise<DataRemoteConnector> {
+        return this.getConnectorByIdAs<DataRemoteConnector>(connectorId);
     }
 
     async getMediaConnectorById(connectorId: string): Promise<MediaRemoteConnector> {
-        const connector = await this.getConnectorById(connectorId);
-        return connector as unknown as MediaRemoteConnector; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
+        return this.getConnectorByIdAs<MediaRemoteConnector>(connectorId);
     }
 
     // Projects API methods
