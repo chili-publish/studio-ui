@@ -112,7 +112,6 @@ describe("'media' reducer", () => {
         const result = await store
             .dispatch(
                 getEnvironmentConnectorsFromDocument({
-                    authToken: 'Token',
                     getConnectorById: mockGetConnectorById,
                 }),
             )

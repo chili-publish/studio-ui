@@ -23,10 +23,8 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
     'media/getEnvironmentConnectorsFromDocument',
     async (
         {
-            authToken,
             getConnectorById,
         }: {
-            authToken: string;
             getConnectorById: (connectorId: string) => Promise<MediaRemoteConnector>;
         },
         { getState },
@@ -76,9 +74,8 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
                 }
 
                 // For URL connectors, use direct fetch
-                const response = await fetch(url, {
-                    headers: { Authorization: `Bearer ${authToken}` },
-                });
+                // for security purpose removed sending of token for none-grafx connectors
+                const response = await fetch(url);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch connector: ${response.statusText}`);
