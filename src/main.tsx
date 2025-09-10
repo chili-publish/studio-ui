@@ -60,6 +60,37 @@ function initializeEnvironmentClientApis(
     };
 }
 
+// Helper function to create token provider and enhanced refresh token action
+function createTokenProviderAndRefreshAction(
+    authToken: string,
+    refreshTokenAction?: () => Promise<string | import('axios').AxiosError>,
+): {
+    tokenProvider: () => string;
+    enhancedRefreshTokenAction?: () => Promise<string | import('axios').AxiosError>;
+} {
+    // Create a token provider that will always return the current token
+    let currentToken = authToken;
+    const tokenProvider = () => currentToken;
+
+    // Create a refresh token action that also updates the token provider
+    const enhancedRefreshTokenAction = refreshTokenAction
+        ? async () => {
+              const result = await refreshTokenAction();
+              if (result instanceof Error) {
+                  return result;
+              }
+              // Update the current token so the token provider returns the new token
+              currentToken = result;
+              return result;
+          }
+        : undefined;
+
+    return {
+        tokenProvider,
+        enhancedRefreshTokenAction,
+    };
+}
+
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
 
@@ -87,22 +118,11 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
-        // Create a token provider that will always return the current token
-        let currentToken = authToken;
-        const tokenProvider = () => currentToken;
-
-        // Create a refresh token action that also updates the token provider
-        const enhancedRefreshTokenAction = refreshTokenAction
-            ? async () => {
-                  const result = await refreshTokenAction();
-                  if (result instanceof Error) {
-                      return result;
-                  }
-                  // Update the current token so the token provider returns the new token
-                  currentToken = result;
-                  return result;
-              }
-            : undefined;
+        // Create token provider and enhanced refresh token action
+        const { tokenProvider, enhancedRefreshTokenAction } = createTokenProviderAndRefreshAction(
+            authToken,
+            refreshTokenAction,
+        );
 
         // Initialize environment client APIs with token provider
         const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
@@ -213,22 +233,11 @@ export default class StudioUI extends StudioUILoader {
             onVariableValueChangedCompleted,
         } = config;
 
-        // Create a token provider that will always return the current token
-        let currentToken = authToken;
-        const tokenProvider = () => currentToken;
-
-        // Create a refresh token action that also updates the token provider
-        const enhancedRefreshTokenAction = refreshTokenAction
-            ? async () => {
-                  const result = await refreshTokenAction();
-                  if (result instanceof Error) {
-                      return result;
-                  }
-                  // Update the current token so the token provider returns the new token
-                  currentToken = result;
-                  return result;
-              }
-            : undefined;
+        // Create token provider and enhanced refresh token action
+        const { tokenProvider, enhancedRefreshTokenAction } = createTokenProviderAndRefreshAction(
+            authToken,
+            refreshTokenAction,
+        );
 
         // Initialize environment client APIs with token provider
         const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
