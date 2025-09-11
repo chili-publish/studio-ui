@@ -82,4 +82,46 @@ export class EnvironmentApiService {
             environment: this.environment,
         }) as unknown as { data: IOutputSetting[] }; // TODO: Remove casting when env api is updated
     }
+
+    async getOutputSettingsById(outputSettingsId: string) {
+        return this.outputApi.apiV1EnvironmentEnvironmentOutputSettingsOutputSettingsIdGet({
+            environment: this.environment,
+            outputSettingsId,
+        });
+    }
+
+    // Generic output generation method
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async generateOutput(format: string, requestBody: any) {
+        // Map format to the appropriate API method
+        switch (format.toLowerCase()) {
+            case 'gif':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputGifPost({
+                    environment: this.environment,
+                    generateGifOutputRequest: requestBody,
+                });
+            case 'jpg':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputJpgPost({
+                    environment: this.environment,
+                    generateJpgOutputRequest: requestBody,
+                });
+            case 'mp4':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputMp4Post({
+                    environment: this.environment,
+                    generateMp4OutputRequest: requestBody,
+                });
+            case 'pdf':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputPdfPost({
+                    environment: this.environment,
+                    generatePdfOutputRequest: requestBody,
+                });
+            case 'png':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputPngPost({
+                    environment: this.environment,
+                    generatePngOutputRequest: requestBody,
+                });
+            default:
+                throw new Error(`Unsupported output format: ${format}`);
+        }
+    }
 }

@@ -44,6 +44,8 @@ export function useEnvironmentClientApi() {
     const output = useMemo(
         () => ({
             getSettings: () => apiService.getOutputSettings(),
+            getSettingsById: (outputSettingsId: string) => apiService.getOutputSettingsById(outputSettingsId),
+            generateOutput: (format: string, requestBody: any) => apiService.generateOutput(format, requestBody), // eslint-disable-line @typescript-eslint/no-explicit-any
         }),
         [apiService],
     );

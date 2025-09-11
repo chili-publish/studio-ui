@@ -170,12 +170,12 @@ export class StudioProjectLoader {
     ): Promise<DownloadLinkResult> => {
         return getDownloadLink(
             extension as DownloadFormats,
-            this.graFxStudioEnvironmentApiBaseUrl,
             () => this.authToken,
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,
             this.sandboxMode,
+            this.environmentApiService,
         );
     };
 
