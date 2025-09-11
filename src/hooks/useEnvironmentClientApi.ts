@@ -20,8 +20,6 @@ export function useEnvironmentClientApi() {
             getAll: () => apiService.getAllConnectors(),
             getById: (connectorId: string) => apiService.getConnectorById(connectorId),
             getByIdAs: <T>(connectorId: string) => apiService.getConnectorByIdAs<T>(connectorId),
-            getDataConnectorById: (connectorId: string) => apiService.getDataConnectorById(connectorId),
-            getMediaConnectorById: (connectorId: string) => apiService.getMediaConnectorById(connectorId),
         }),
         [apiService],
     );
