@@ -1,9 +1,7 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
-jest.mock('axios');
 jest.mock('../../services/EnvironmentApiService');
 
 describe('"getDownloadLink', () => {
@@ -17,6 +15,11 @@ describe('"getDownloadLink', () => {
             }),
             getOutputSettingsById: jest.fn().mockResolvedValue({
                 dataSourceEnabled: true,
+            }),
+            getTaskStatus: jest.fn().mockResolvedValue({
+                status: 200,
+                data: { taskId: 'test-task-id' },
+                links: { download: 'http://test.com/download' },
             }),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
@@ -81,12 +84,8 @@ describe('"getDownloadLink', () => {
                 links: { taskInfo: 'http://test.com/task-info' },
             });
 
-            // Mock axios.get to return a 401 error for polling
-            (axios.get as jest.Mock).mockResolvedValueOnce({
-                data: {
-                    status: 401,
-                },
-            });
+            // Mock getTaskStatus to return null (simulating an error)
+            mockEnvironmentApiService.getTaskStatus.mockResolvedValue(null);
 
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
@@ -118,12 +117,6 @@ describe('"getDownloadLink', () => {
                 },
             });
             window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
-            (axios.post as jest.Mock).mockResolvedValue({
-                data: {
-                    status: '503',
-                    detail: 'Api Error',
-                },
-            });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
             await getDownloadLink(
@@ -241,14 +234,6 @@ describe('"getDownloadLink', () => {
             });
         });
         it('should return 200 status if all passed', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce({
-                status: 200,
-                data: {
-                    links: {
-                        download: 'http://download.com',
-                    },
-                },
-            });
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
                 () => 'Token',
@@ -262,8 +247,8 @@ describe('"getDownloadLink', () => {
                 status: 200,
                 error: undefined,
                 success: true,
-                parsedData: 'http://download.com',
-                data: 'http://download.com',
+                parsedData: 'http://test.com/download',
+                data: 'http://test.com/download',
             });
         });
     });

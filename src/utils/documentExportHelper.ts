@@ -1,5 +1,4 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
@@ -102,36 +101,42 @@ export const getDownloadLink = async (
 };
 
 /**
- * This method will call an external api endpoint using environment client API, until the api endpoint returns a status code 200
- * @param endpoint api endpoint to start polling on
+ * This method will call the environment client API to check task status until the task is completed
+ * @param taskInfoUrl URL containing the task info endpoint
  * @param environmentApiService Environment API service instance
- * @returns true when the endpoint call has successfully been resolved
+ * @returns task result when completed
  */
 const startPollingOnEndpoint = async (
-    endpoint: string,
+    taskInfoUrl: string,
     environmentApiService: EnvironmentApiService,
     getToken: () => string,
 ): Promise<GenerateAnimationTaskPollingResponse | null> => {
     try {
-        // For polling, we still need to use axios since the environment client API doesn't have a generic GET method
-        // and the polling endpoint is dynamic
-        const httpResponse = await axios.get(endpoint, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-        });
+        // Extract task ID from the task info URL
+        // The URL format is typically: https://api.example.com/v1/environment/{environment}/output/tasks/{taskId}
+        const urlParts = taskInfoUrl.split('/');
+        const taskId = urlParts[urlParts.length - 1];
 
-        if (httpResponse.status === 202) {
+        if (!taskId) {
+            // eslint-disable-next-line no-console
+            console.error('Could not extract task ID from URL:', taskInfoUrl);
+            return null;
+        }
+
+        // Use environment client API to get task status
+        const taskStatus = await environmentApiService.getTaskStatus(taskId);
+
+        if (taskStatus === null) {
+            // Task is still in progress, wait and poll again
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, environmentApiService, getToken);
+            return await startPollingOnEndpoint(taskInfoUrl, environmentApiService, getToken);
         }
-        if (httpResponse.status === 200) {
-            return httpResponse.data as GenerateAnimationTaskPollingResponse;
-        }
-        return null;
+
+        return taskStatus as GenerateAnimationTaskPollingResponse;
     } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error polling task status:', err);
         return null;
     }
 };

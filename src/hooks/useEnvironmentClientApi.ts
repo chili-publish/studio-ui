@@ -48,6 +48,7 @@ export function useEnvironmentClientApi() {
             getSettingsById: (outputSettingsId: string) => apiService.getOutputSettingsById(outputSettingsId),
             generateOutput: (format: string, requestBody: OutputGenerationRequest) =>
                 apiService.generateOutput(format, requestBody),
+            getTaskStatus: (taskId: string) => apiService.getTaskStatus(taskId),
         }),
         [apiService],
     );

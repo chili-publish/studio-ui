@@ -90,6 +90,13 @@ export class EnvironmentApiService {
         });
     }
 
+    async getTaskStatus(taskId: string) {
+        return this.outputApi.apiV1EnvironmentEnvironmentOutputTasksTaskIdGet({
+            environment: this.environment,
+            taskId,
+        });
+    }
+
     // Generic output generation method
     async generateOutput(format: string, requestBody: OutputGenerationRequest) {
         // Map format to the appropriate API method
