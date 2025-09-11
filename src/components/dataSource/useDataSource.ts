@@ -37,31 +37,6 @@ const useDataSource = () => {
     const { direction } = useDirection();
     const { connectors } = useEnvironmentClientApi();
 
-    // Wrapper function to convert ConnectorDefinition to DataRemoteConnector
-    const getConnectorByIdWrapper = useCallback(
-        async (connectorId: string): Promise<DataRemoteConnector> => {
-            try {
-                return await connectors.getByIdAs<DataRemoteConnector>(connectorId);
-            } catch (error) {
-                return {
-                    id: connectorId,
-                    name: `Unknown Data Connector (${connectorId})`,
-                    type: 'data' as const,
-                    scriptSource: 'external' as const,
-                    description: 'Data connector not found or inaccessible',
-                    iconUrl: null,
-                    default: false,
-                    enabled: false, // Disable failed connectors
-                    supportedAuthentication: {
-                        browser: ['none'],
-                    },
-                    ownerType: 'builtIn' as const,
-                } as DataRemoteConnector;
-            }
-        },
-        [connectors],
-    );
-
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
@@ -82,13 +57,13 @@ const useDataSource = () => {
         try {
             const connector = await getRemoteConnector<DataRemoteConnector>(
                 dataSource.id,
-                getConnectorByIdWrapper, // Pass the environment client API method
+                (connectorId) => connectors.getByIdAs<DataRemoteConnector>(connectorId), // Pass the environment client API method
             );
             return isAuthenticationRequired(connector);
         } catch (connectorError) {
             return false;
         }
-    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken, getConnectorByIdWrapper]);
+    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];
