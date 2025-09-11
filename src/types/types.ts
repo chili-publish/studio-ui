@@ -10,6 +10,11 @@ import {
     UserInterface as EnvironmentUserInterface,
     Project as EnvironmentProject,
     OutputSettings as EnvironmentOutputSettings,
+    GenerateGifOutputRequest,
+    GenerateJpgOutputRequest,
+    GenerateMp4OutputRequest,
+    GeneratePdfOutputRequest,
+    GeneratePngOutputRequest,
 } from '@chili-publish/environment-client-api';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
@@ -17,6 +22,14 @@ import { UITranslations } from './UITranslations';
 import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
+
+// Union type for all possible output generation request types
+export type OutputGenerationRequest =
+    | GenerateGifOutputRequest
+    | GenerateJpgOutputRequest
+    | GenerateMp4OutputRequest
+    | GeneratePdfOutputRequest
+    | GeneratePngOutputRequest;
 
 export enum LoadDocumentError {
     PARSING_ERROR = 'PARSING_ERROR',

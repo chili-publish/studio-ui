@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useEnvironmentClientApiContext } from '../contexts/EnvironmentClientApiContext';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
+import { OutputGenerationRequest } from '../types/types';
 
 /**
  * Custom hook that provides a wrapper around the environment client APIs
@@ -45,7 +46,8 @@ export function useEnvironmentClientApi() {
         () => ({
             getSettings: () => apiService.getOutputSettings(),
             getSettingsById: (outputSettingsId: string) => apiService.getOutputSettingsById(outputSettingsId),
-            generateOutput: (format: string, requestBody: any) => apiService.generateOutput(format, requestBody), // eslint-disable-line @typescript-eslint/no-explicit-any
+            generateOutput: (format: string, requestBody: OutputGenerationRequest) =>
+                apiService.generateOutput(format, requestBody),
         }),
         [apiService],
     );

@@ -1,5 +1,5 @@
 import { ConnectorsApi, ProjectsApi, UserInterfacesApi, OutputApi } from '@chili-publish/environment-client-api';
-import { APIUserInterface, IOutputSetting } from 'src/types/types';
+import { APIUserInterface, IOutputSetting, OutputGenerationRequest } from 'src/types/types';
 
 /**
  * Centralized service for environment client API operations
@@ -91,8 +91,7 @@ export class EnvironmentApiService {
     }
 
     // Generic output generation method
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async generateOutput(format: string, requestBody: any) {
+    async generateOutput(format: string, requestBody: OutputGenerationRequest) {
         // Map format to the appropriate API method
         switch (format.toLowerCase()) {
             case 'gif':
