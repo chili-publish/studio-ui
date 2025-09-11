@@ -8,18 +8,15 @@ export const useMediaConnectors = () => {
     const dispatch = useAppDispatch();
     const { connectors } = useEnvironmentClientApi();
 
-    const getConnectorByIdWrapper = useCallback(
-        async (connectorId: string): Promise<MediaRemoteConnector> => {
-            return connectors.getByIdAs<MediaRemoteConnector>(connectorId);
-        },
-        [connectors],
-    );
-
     const loadConnectors = useCallback(() => {
-        dispatch(getEnvironmentConnectorsFromDocument({ getConnectorById: getConnectorByIdWrapper }))
+        dispatch(
+            getEnvironmentConnectorsFromDocument({
+                getConnectorById: (connectorId) => connectors.getByIdAs<MediaRemoteConnector>(connectorId),
+            }),
+        )
             .unwrap()
             .then((connectorsList) => dispatch(setMediaConnectors(connectorsList)));
-    }, [dispatch, getConnectorByIdWrapper]);
+    }, [connectors, dispatch]);
 
     return {
         loadConnectors,

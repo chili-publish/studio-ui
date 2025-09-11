@@ -63,7 +63,7 @@ const useDataSource = () => {
         } catch (connectorError) {
             return false;
         }
-    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken]);
+    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken, connectors]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];
