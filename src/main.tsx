@@ -1,4 +1,5 @@
 import { Root } from 'react-dom/client';
+import { AxiosError } from 'axios';
 import {
     Configuration,
     ConnectorsApi,
@@ -63,10 +64,10 @@ function initializeEnvironmentClientApis(
 // Helper function to create token provider and enhanced refresh token action
 function createTokenProviderAndRefreshAction(
     authToken: string,
-    refreshTokenAction?: () => Promise<string | import('axios').AxiosError>,
+    refreshTokenAction?: () => Promise<string | AxiosError>,
 ): {
     tokenProvider: () => string;
-    enhancedRefreshTokenAction?: () => Promise<string | import('axios').AxiosError>;
+    enhancedRefreshTokenAction?: () => Promise<string | AxiosError>;
 } {
     // Create a token provider that will always return the current token
     let currentToken = authToken;
