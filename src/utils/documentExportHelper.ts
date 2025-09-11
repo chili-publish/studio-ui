@@ -71,11 +71,7 @@ export const getDownloadLink = async (
         }
 
         const data = response as { links: { taskInfo: string } }; // TODO: Type this properly when environment client API types are updated
-        const pollingResult = await startPollingOnEndpointWithEnvironmentApi(
-            data.links.taskInfo,
-            environmentApiService,
-            getToken,
-        );
+        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, environmentApiService, getToken);
 
         if (pollingResult === null) {
             return {
@@ -111,7 +107,7 @@ export const getDownloadLink = async (
  * @param environmentApiService Environment API service instance
  * @returns true when the endpoint call has successfully been resolved
  */
-const startPollingOnEndpointWithEnvironmentApi = async (
+const startPollingOnEndpoint = async (
     endpoint: string,
     environmentApiService: EnvironmentApiService,
     getToken: () => string,
@@ -129,7 +125,7 @@ const startPollingOnEndpointWithEnvironmentApi = async (
         if (httpResponse.status === 202) {
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpointWithEnvironmentApi(endpoint, environmentApiService, getToken);
+            return await startPollingOnEndpoint(endpoint, environmentApiService, getToken);
         }
         if (httpResponse.status === 200) {
             return httpResponse.data as GenerateAnimationTaskPollingResponse;
