@@ -85,7 +85,7 @@ describe('"getDownloadLink', () => {
             });
 
             // Mock getTaskStatus to return null (simulating an error)
-            mockEnvironmentApiService.getTaskStatus.mockResolvedValue(null);
+            mockEnvironmentApiService.getTaskStatus.mockRejectedValue(null);
 
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
