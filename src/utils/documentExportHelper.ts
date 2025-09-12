@@ -1,6 +1,6 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
-import { DownloadLinkResult } from '../types/types';
+import { ApiError, DownloadLinkResult, GenerateOutputTaskPollingResponse } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
 
@@ -59,7 +59,7 @@ export const getDownloadLink = async (
         const response = await environmentApiService.generateOutput(format, requestBody);
 
         if ('status' in response) {
-            const err = response as { status: string; detail: string }; // TODO: Type this properly when environment client API types are updated
+            const err = response as unknown as ApiError;
             return {
                 status: Number.parseInt(err.status),
                 error: err.detail,
@@ -69,8 +69,7 @@ export const getDownloadLink = async (
             };
         }
 
-        const data = response as { links: { taskInfo: string } }; // TODO: Type this properly when environment client API types are updated
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, environmentApiService, getToken);
+        const pollingResult = await startPollingOnEndpoint(response.data.taskId, environmentApiService);
 
         if (pollingResult === null) {
             return {
@@ -107,19 +106,13 @@ export const getDownloadLink = async (
  * @returns task result when completed
  */
 const startPollingOnEndpoint = async (
-    taskInfoUrl: string,
+    taskId: string,
     environmentApiService: EnvironmentApiService,
-    getToken: () => string,
-): Promise<GenerateAnimationTaskPollingResponse | null> => {
+): Promise<GenerateOutputTaskPollingResponse> => {
     try {
-        // Extract task ID from the task info URL
-        // The URL format is typically: https://api.example.com/v1/environment/{environment}/output/tasks/{taskId}
-        const urlParts = taskInfoUrl.split('/');
-        const taskId = urlParts[urlParts.length - 1];
-
         if (!taskId) {
             // eslint-disable-next-line no-console
-            console.error('Could not extract task ID from URL:', taskInfoUrl);
+            console.error('No task ID provided');
             return null;
         }
 
@@ -130,10 +123,10 @@ const startPollingOnEndpoint = async (
             // Task is still in progress, wait and poll again
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(taskInfoUrl, environmentApiService, getToken);
+            return await startPollingOnEndpoint(taskId, environmentApiService);
         }
 
-        return taskStatus as GenerateAnimationTaskPollingResponse;
+        return taskStatus;
     } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Error polling task status:', err);
@@ -164,15 +157,6 @@ const getDataSourceConfigWithEnvironmentApi = async (
         dataConnectorParameters: {
             context: await getConnectorConfigurationOptions(dataSource.id),
         },
-    };
-};
-
-type GenerateAnimationTaskPollingResponse = {
-    data: {
-        taskId: string;
-    };
-    links: {
-        download: string;
     };
 };
 
