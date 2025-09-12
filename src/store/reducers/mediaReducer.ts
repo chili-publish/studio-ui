@@ -1,7 +1,6 @@
 import { ConnectorType, MediaConnectorCapabilities } from '@chili-publish/studio-sdk';
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import axios from 'axios';
 import { MediaRemoteConnector } from '../../utils/ApiTypes';
 import { getConnectorUrl } from '../../utils/connectors';
 import type { RootState } from '../index';
@@ -22,7 +21,14 @@ const initialState: MediaState = {
 
 export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
     'media/getEnvironmentConnectorsFromDocument',
-    async ({ authToken }: { authToken: string }, { getState }) => {
+    async (
+        {
+            getConnectorById,
+        }: {
+            getConnectorById: (connectorId: string) => Promise<MediaRemoteConnector>;
+        },
+        { getState },
+    ) => {
         const {
             document: { configuration },
         } = getState() as RootState;
@@ -32,6 +38,7 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
         if (!connectors?.length || !configuration?.graFxStudioEnvironmentApiBaseUrl) {
             return {};
         }
+
         // Group connectors by URL to minimize API calls
         const connectorGroups = connectors
             // Filter out the local connector
@@ -48,20 +55,43 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
                 {} as { [url: string]: string[] },
             );
 
+        // Use environment client API to get connectors, grouped by URL
         const remoteConnectors = await Promise.allSettled(
-            Object.keys(connectorGroups).map((url) =>
-                axios
-                    .get<MediaRemoteConnector>(url, { headers: { Authorization: `Bearer ${authToken}` } })
-                    .then((res) => ({
+            Object.keys(connectorGroups).map(async (url) => {
+                // For GraFx connectors, use environment client API
+                const connectorIds = connectorGroups[url];
+                const connector = connectors.find((c) => c.id === connectorIds[0]);
+
+                if (connector && connector.source.source === 'grafx') {
+                    // Use environment client API for GraFx connectors
+                    const grafxConnector = connector.source as { id: string };
+                    const data = await getConnectorById(grafxConnector.id);
+
+                    return {
                         url,
-                        data: res.data,
-                    })),
-            ),
+                        data,
+                    };
+                }
+
+                // For URL connectors, use direct fetch
+                // for security purpose removed sending of token for none-grafx connectors
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch connector: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return {
+                    url,
+                    data,
+                };
+            }),
         );
 
         return remoteConnectors.reduce((state, result) => {
             if (result.status === 'fulfilled') {
                 const { url, data } = result.value;
+                // Apply the data to all connectors that share this URL
                 connectorGroups[url].forEach((connectorId) => {
                     state[connectorId] = data;
                 });

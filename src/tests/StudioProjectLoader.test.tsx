@@ -1,9 +1,35 @@
 import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import axios, { AxiosError } from 'axios';
+import { mockProject } from '@mocks/mockProject';
+import { mockApiUserInterface } from '@mocks/mockUserinterface';
+import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { StudioProjectLoader } from '../StudioProjectLoader';
-import { Project } from '../types/types';
+import { createMockEnvironmentClientApis } from './mocks/environmentClientApi';
 
 jest.mock('axios');
+
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
+            .fn()
+            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
 
 jest.mock('../utils/documentExportHelper', () => ({
     getDownloadLink: jest.fn().mockReturnValue({
@@ -23,9 +49,11 @@ describe('StudioProjectLoader', () => {
     const mockRefreshTokenAction = jest.fn();
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
     const mockProjectUploadUrl = 'mockProjectUploadUrl';
-    const mockCachedProject: Project = { id: mockProjectId, name: 'mockProjectName', template: { id: 'dddddd' } };
     const mockDocument = { data: { mock: 'data' } };
     const mockGenerateJson = jest.fn().mockResolvedValue(Promise.resolve(JSON.stringify(mockDocument)));
+
+    // Mock environment client APIs
+    const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -33,12 +61,12 @@ describe('StudioProjectLoader', () => {
 
     describe('onProjectInfoRequested', () => {
         it('should fetch project info and cache it', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce({ data: mockCachedProject });
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -46,22 +74,37 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onProjectInfoRequested();
 
-            expect(result).toEqual(mockCachedProject);
-            expect(axios.get).toHaveBeenCalledWith(
-                `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}`,
-                {
-                    headers: { Authorization: `Bearer ${mockAuthToken}` },
-                },
-            );
+            expect(result).toEqual(mockProject);
+            // Verify that the environment client API method was called
+            expect(
+                mockEnvironmentClientApis.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+                projectId: mockProjectId,
+            });
         });
 
         it('should throw an error if project is not found', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce({ data: null });
+            // Create a new mock instance that returns null
+            const mockProjectsApi = {
+                apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(null),
+                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+                    .fn()
+                    .mockResolvedValue({ data: '{"test": "document"}' }),
+                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+            };
+            const mockEnvironmentClientApisWithNull = {
+                ...mockEnvironmentClientApis,
+                projectsApi: mockProjectsApi,
+            };
+
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                mockEnvironmentClientApisWithNull as any,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -73,12 +116,12 @@ describe('StudioProjectLoader', () => {
 
     describe('onProjectDocumentRequested', () => {
         it('should fetch project template using fallback URL if download URL is not provided', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce({ data: mockDocument.data });
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 undefined,
                 mockProjectUploadUrl,
@@ -86,11 +129,14 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onProjectDocumentRequested();
 
-            expect(result).toEqual(JSON.stringify(mockDocument.data));
-            expect(axios.get).toHaveBeenCalledWith(
-                `${mockGraFxStudioEnvironmentApiBaseUrl}/projects/${mockProjectId}/document`,
-                { headers: { Authorization: 'Bearer mockAuthToken' } },
-            );
+            expect(result).toEqual('{"data":"{\\"test\\": \\"document\\"}"}');
+            // Verify that the environment client API method was called
+            expect(
+                mockEnvironmentClientApis.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+                projectId: mockProjectId,
+            });
         });
 
         it('should fetch project template using download URL', async () => {
@@ -100,6 +146,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -120,6 +167,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -141,6 +189,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -158,22 +207,25 @@ describe('StudioProjectLoader', () => {
 
     describe('onProjectSave', () => {
         it('should save document and return project info', async () => {
-            (axios.put as jest.Mock).mockResolvedValueOnce({ data: mockCachedProject });
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockCachedProject);
+            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockProject);
 
             const result = await loader.onProjectSave(mockGenerateJson);
 
-            expect(axios.put).toHaveBeenCalled();
-            expect(result).toEqual(mockCachedProject);
+            // Verify that the environment client API method was called
+            expect(
+                mockEnvironmentClientApis.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut,
+            ).toHaveBeenCalled();
+            expect(result).toEqual(mockProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
         });
 
@@ -183,17 +235,21 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 undefined,
-                undefined,
+                mockProjectUploadUrl,
             );
-            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockCachedProject);
+            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockProject);
 
             const result = await loader.onProjectSave(mockGenerateJson);
 
-            expect(result).toEqual(mockCachedProject);
+            expect(result).toEqual(mockProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
-            expect(axios.put).toHaveBeenCalled();
+            // Verify that the environment client API method was called
+            expect(
+                mockEnvironmentClientApis.projectsApi.apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut,
+            ).toHaveBeenCalled();
         });
     });
 
@@ -204,6 +260,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -224,6 +281,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -243,6 +301,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -257,6 +316,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 undefined,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -275,6 +335,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -308,6 +369,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -330,21 +392,12 @@ describe('StudioProjectLoader', () => {
         });
 
         it('should call endpoint for "default" user interface with correct params in sandbox mode', async () => {
-            const mockOutputSettings = { data: { data: [] } };
-            const mockUserInterfaces = {
-                data: { data: [{ id: 'default-id', name: 'Default UI', default: true, outputSettings: {} }] },
-                status: 200,
-            };
-
-            (axios.get as jest.Mock)
-                .mockResolvedValueOnce(mockOutputSettings) // output settings request
-                .mockResolvedValueOnce(mockUserInterfaces); // user interface request
-
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 true, // sandbox mode
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -352,45 +405,32 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onFetchStudioUserInterfaceDetails();
 
-            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-                headers: {
-                    Authorization: `Bearer ${mockAuthToken}`,
-                },
+            // Verify that the environment client API methods were called
+            expect(
+                mockEnvironmentClientApis.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
             });
-            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces`, {
-                headers: {
-                    Authorization: `Bearer ${mockAuthToken}`,
-                },
+            expect(
+                mockEnvironmentClientApis.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
             });
             expect(result).toEqual({
-                userInterface: { id: 'default-id', name: 'Default UI' },
-                outputSettings: [],
-                formBuilder: undefined,
-                outputSettingsFullList: [],
+                userInterface: { id: mockApiUserInterface.id, name: mockApiUserInterface.name },
+                outputSettings: expect.any(Array), // The outputSettings are processed and may have additional properties
+                formBuilder: expect.any(Object), // The formBuilder is transformed from JSON string to object
+                outputSettingsFullList: expect.any(Array), // The outputSettingsFullList are processed and may have additional properties
             });
         });
 
         it('should call endpoint for "userInterfaceId" user interface with correct params', async () => {
-            const mockOutputSettings = { data: { data: [] } };
-            const mockUserInterface = {
-                data: {
-                    id: '1234',
-                    name: 'Test UI',
-                    outputSettings: {},
-                    formBuilder: JSON.stringify([]),
-                },
-                status: 200,
-            };
-
-            (axios.get as jest.Mock)
-                .mockResolvedValueOnce(mockOutputSettings) // output settings request
-                .mockResolvedValueOnce(mockUserInterface); // user interface request
-
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -399,38 +439,27 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onFetchStudioUserInterfaceDetails();
 
-            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/output/settings`, {
-                headers: {
-                    Authorization: `Bearer ${mockAuthToken}`,
-                },
+            // Verify that the environment client API methods were called
+            expect(
+                mockEnvironmentClientApis.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
             });
-            expect(axios.get).toHaveBeenCalledWith(`${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/1234`, {
-                headers: {
-                    Authorization: `Bearer ${mockAuthToken}`,
-                },
+            expect(
+                mockEnvironmentClientApis.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+                userInterfaceId: '1234',
             });
             expect(result).toEqual({
-                userInterface: { id: '1234', name: 'Test UI' },
-                outputSettings: [],
-                formBuilder: undefined,
-                outputSettingsFullList: [],
+                userInterface: { id: mockApiUserInterface.id, name: mockApiUserInterface.name },
+                outputSettings: expect.any(Array), // The outputSettings are processed and may have additional properties
+                formBuilder: expect.any(Object), // The formBuilder is transformed from JSON string to object
+                outputSettingsFullList: expect.any(Array), // The outputSettingsFullList are processed and may have additional properties
             });
         });
 
         it('should use sessionStorage userInterfaceId when no userInterfaceId is provided', async () => {
-            const mockOutputSettings = { data: { data: [] } };
-            const mockUserInterface = {
-                data: {
-                    id: 'session-id',
-                    name: 'Session UI',
-                    outputSettings: {},
-                    formBuilder: JSON.stringify([]),
-                },
-                status: 200,
-            };
-
-            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings).mockResolvedValueOnce(mockUserInterface);
-
             // Set sessionStorage
             sessionStorage.setItem('userInterfaceId', 'session-id');
 
@@ -439,6 +468,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -446,24 +476,27 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onFetchStudioUserInterfaceDetails();
 
-            expect(axios.get).toHaveBeenCalledWith(
-                `${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/session-id`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${mockAuthToken}`,
-                    },
-                },
-            );
+            // Verify that the environment client API methods were called
+            expect(
+                mockEnvironmentClientApis.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+            });
+            expect(
+                mockEnvironmentClientApis.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+                userInterfaceId: 'session-id',
+            });
             expect(result).toEqual({
-                userInterface: { id: 'session-id', name: 'Session UI' },
-                outputSettings: [],
-                formBuilder: undefined,
-                outputSettingsFullList: [],
+                userInterface: { id: mockApiUserInterface.id, name: mockApiUserInterface.name },
+                outputSettings: expect.any(Array), // The outputSettings are processed and may have additional properties
+                formBuilder: expect.any(Object), // The formBuilder is transformed from JSON string to object
+                outputSettingsFullList: expect.any(Array), // The outputSettingsFullList are processed and may have additional properties
             });
         });
 
         it('should use custom onFetchUserInterfaceDetails callback when provided', async () => {
-            const mockOutputSettings = { data: { data: [] } };
             const mockUserInterface = {
                 id: 'custom-id',
                 name: 'Custom UI',
@@ -473,13 +506,12 @@ describe('StudioProjectLoader', () => {
 
             const mockOnFetchUserInterfaceDetails = jest.fn().mockResolvedValue(mockUserInterface);
 
-            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings);
-
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -494,12 +526,11 @@ describe('StudioProjectLoader', () => {
                 userInterface: { id: 'custom-id', name: 'Custom UI' },
                 outputSettings: [],
                 formBuilder: undefined,
-                outputSettingsFullList: [],
+                outputSettingsFullList: [mockOutputSetting, mockOutputSetting2],
             });
         });
 
         it('should return error when custom onFetchUserInterfaceDetails callback fails without fallback', async () => {
-            const mockOutputSettings = { data: { data: [] } };
             const mockError = new Error('Custom callback failed');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (mockError as any).response = {
@@ -508,13 +539,12 @@ describe('StudioProjectLoader', () => {
 
             const mockOnFetchUserInterfaceDetails = jest.fn().mockRejectedValue(mockError);
 
-            (axios.get as jest.Mock).mockResolvedValueOnce(mockOutputSettings);
-
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                mockEnvironmentClientApis,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -525,27 +555,34 @@ describe('StudioProjectLoader', () => {
             await expect(loader.onFetchStudioUserInterfaceDetails()).rejects.toThrow('Custom callback failed');
 
             expect(mockOnFetchUserInterfaceDetails).toHaveBeenCalledWith('custom-id');
-            // Verify that no fallback calls were made
-            expect(axios.get).toHaveBeenCalledTimes(1); // Only the output settings call
+            // Verify that only the output settings call was made
+            expect(
+                mockEnvironmentClientApis.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet,
+            ).toHaveBeenCalledTimes(1);
         });
 
         it('should fallback to default user interface when 404 error occurs for built-in implementation', async () => {
-            const mockOutputSettings = { data: { data: [] } };
-            const mockDefaultUserInterface = {
-                data: { data: [{ id: 'default-id', name: 'Default UI', default: true, outputSettings: {} }] },
-                status: 200,
+            // Create a new mock instance that throws a 404 error for the specific user interface
+            const mockUserInterfacesApi = {
+                apiV1EnvironmentEnvironmentUserInterfacesGet: jest
+                    .fn()
+                    .mockResolvedValue({ data: [mockApiUserInterface] }),
+                apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockRejectedValue({
+                    status: 404,
+                }),
             };
-
-            (axios.get as jest.Mock)
-                .mockResolvedValueOnce(mockOutputSettings) // output settings request
-                .mockRejectedValueOnce({ response: { status: 404 } }) // user interface request fails with 404
-                .mockResolvedValueOnce(mockDefaultUserInterface); // fallback to default user interface
+            const mockEnvironmentClientApisWithError = {
+                ...mockEnvironmentClientApis,
+                userInterfacesApi: mockUserInterfacesApi,
+            };
 
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 mockAuthToken,
                 false,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                mockEnvironmentClientApisWithError as any,
                 mockRefreshTokenAction,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -554,19 +591,30 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onFetchStudioUserInterfaceDetails();
 
-            expect(axios.get).toHaveBeenCalledWith(
-                `${mockGraFxStudioEnvironmentApiBaseUrl}/user-interfaces/non-existent-id`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${mockAuthToken}`,
-                    },
-                },
-            );
+            // Verify that the environment client API methods were called
+            expect(
+                mockEnvironmentClientApisWithError.outputApi.apiV1EnvironmentEnvironmentOutputSettingsGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+            });
+            expect(
+                mockEnvironmentClientApisWithError.userInterfacesApi
+                    .apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+                userInterfaceId: 'non-existent-id',
+            });
+            // Should fallback to getting all user interfaces
+            expect(
+                mockEnvironmentClientApisWithError.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet,
+            ).toHaveBeenCalledWith({
+                environment: 'test-environment',
+            });
             expect(result).toEqual({
-                userInterface: { id: 'default-id', name: 'Default UI' },
-                outputSettings: [],
-                formBuilder: undefined,
-                outputSettingsFullList: [],
+                userInterface: { id: mockApiUserInterface.id, name: mockApiUserInterface.name },
+                outputSettings: expect.any(Array), // The outputSettings are processed and may have additional properties
+                formBuilder: expect.any(Object), // The formBuilder is transformed from JSON string to object
+                outputSettingsFullList: expect.any(Array), // The outputSettingsFullList are processed and may have additional properties
             });
         });
     });

@@ -1,4 +1,13 @@
 import { Root } from 'react-dom/client';
+import { AxiosError } from 'axios';
+import {
+    Configuration,
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    SettingsApi,
+    OutputApi,
+} from '@chili-publish/environment-client-api';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import './index.css';
@@ -10,6 +19,78 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
+
+// Helper function to initialize environment client APIs
+function initializeEnvironmentClientApis(
+    graFxStudioEnvironmentApiBaseUrl: string,
+    tokenProvider: () => string,
+): {
+    connectorsApi: ConnectorsApi;
+    projectsApi: ProjectsApi;
+    userInterfacesApi: UserInterfacesApi;
+    settingsApi: SettingsApi;
+    outputApi: OutputApi;
+    environment: string;
+} {
+    // Extract environment name from the base URL
+    const [, ...rest] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+    const environment = rest.pop() ?? '';
+
+    let apiBasePath: string;
+    if (graFxStudioEnvironmentApiBaseUrl.includes('/environment/')) {
+        const [baseUrlPart] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+        // Remove /api/v1 from the base URL
+        apiBasePath = baseUrlPart.replace('/api/v1', '');
+    } else {
+        apiBasePath = graFxStudioEnvironmentApiBaseUrl.replace('/api/v1', '');
+    }
+
+    const config = new Configuration({
+        basePath: apiBasePath,
+        accessToken: tokenProvider,
+    });
+
+    // Initialize all API instances
+    return {
+        connectorsApi: new ConnectorsApi(config),
+        projectsApi: new ProjectsApi(config),
+        userInterfacesApi: new UserInterfacesApi(config),
+        settingsApi: new SettingsApi(config),
+        outputApi: new OutputApi(config),
+        environment,
+    };
+}
+
+// Helper function to create token provider and enhanced refresh token action
+function createTokenProviderAndRefreshAction(
+    authToken: string,
+    refreshTokenAction?: () => Promise<string | AxiosError>,
+): {
+    tokenProvider: () => string;
+    enhancedRefreshTokenAction?: () => Promise<string | AxiosError>;
+} {
+    // Create a token provider that will always return the current token
+    let currentToken = authToken;
+    const tokenProvider = () => currentToken;
+
+    // Create a refresh token action that also updates the token provider
+    const enhancedRefreshTokenAction = refreshTokenAction
+        ? async () => {
+              const result = await refreshTokenAction();
+              if (result instanceof Error) {
+                  return result;
+              }
+              // Update the current token so the token provider returns the new token
+              currentToken = result;
+              return result;
+          }
+        : undefined;
+
+    return {
+        tokenProvider,
+        enhancedRefreshTokenAction,
+    };
+}
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -38,12 +119,22 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
+        // Create token provider and enhanced refresh token action
+        const { tokenProvider, enhancedRefreshTokenAction } = createTokenProviderAndRefreshAction(
+            authToken,
+            refreshTokenAction,
+        );
+
+        // Initialize environment client APIs with token provider
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             false,
-            refreshTokenAction,
+            environmentClientApis,
+            enhancedRefreshTokenAction,
         );
 
         return this.fullStudioIntegrationConfig(selector, {
@@ -63,6 +154,7 @@ export default class StudioUI extends StudioUILoader {
             onBack: defaultBackFn,
             graFxStudioEnvironmentApiBaseUrl,
             editorLink,
+            environmentClientApis,
         });
     }
 
@@ -141,12 +233,23 @@ export default class StudioUI extends StudioUILoader {
             onFetchUserInterfaceDetails,
             onVariableValueChangedCompleted,
         } = config;
+
+        // Create token provider and enhanced refresh token action
+        const { tokenProvider, enhancedRefreshTokenAction } = createTokenProviderAndRefreshAction(
+            authToken,
+            refreshTokenAction,
+        );
+
+        // Initialize environment client APIs with token provider
+        const environmentClientApis = initializeEnvironmentClientApis(graFxStudioEnvironmentApiBaseUrl, tokenProvider);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             authToken,
             sandboxMode || false,
-            refreshTokenAction,
+            environmentClientApis,
+            enhancedRefreshTokenAction,
             projectDownloadUrl,
             projectUploadUrl,
             userInterfaceID,
@@ -192,6 +295,7 @@ export default class StudioUI extends StudioUILoader {
                 onVariableBlur,
                 onVariableValueChangedCompleted,
                 onProjectLoaded,
+                environmentClientApis,
             },
             {
                 variableTranslations,

@@ -12,6 +12,7 @@ import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { AuthTokenProvider } from './contexts/AuthTokenProvider';
+import { EnvironmentClientApiProvider } from './contexts/EnvironmentClientApiContext';
 import GlobalStyle from './styles/GlobalStyle';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
@@ -82,7 +83,16 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                         <NotificationManagerProvider>
                             <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
                                 <AuthTokenProvider authToken={authToken}>
-                                    <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                                    <EnvironmentClientApiProvider
+                                        connectorsApi={projectConfig.environmentClientApis.connectorsApi}
+                                        projectsApi={projectConfig.environmentClientApis.projectsApi}
+                                        userInterfacesApi={projectConfig.environmentClientApis.userInterfacesApi}
+                                        settingsApi={projectConfig.environmentClientApis.settingsApi}
+                                        outputApi={projectConfig.environmentClientApis.outputApi}
+                                        environment={projectConfig.environmentClientApis.environment}
+                                    >
+                                        <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
+                                    </EnvironmentClientApiProvider>
                                 </AuthTokenProvider>
                             </FeatureFlagProvider>
                         </NotificationManagerProvider>

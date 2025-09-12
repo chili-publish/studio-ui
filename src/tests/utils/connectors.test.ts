@@ -11,8 +11,6 @@ import {
 
 jest.mock('axios');
 
-const GRAFX_ENV_API = 'http://env-1.com/';
-
 describe('utils connectors', () => {
     const mockSDK = mock<EditorSDK>();
     mockSDK.next.connector = {} as any;
@@ -40,7 +38,11 @@ describe('utils connectors', () => {
     });
 
     it('should handle "getRemoteConnector" correctly', async () => {
-        const connector = await getRemoteConnector(GRAFX_ENV_API, 'connector-1', 'example');
+        const mockEnvironmentClientApiMethod = jest.fn().mockResolvedValue({
+            id: 'remote-connector-1',
+        });
+
+        const connector = await getRemoteConnector('connector-1', mockEnvironmentClientApiMethod);
 
         expect(connector).toEqual({
             id: 'remote-connector-1',
@@ -51,7 +53,7 @@ describe('utils connectors', () => {
         });
 
         expect(async () => {
-            await getRemoteConnector(GRAFX_ENV_API, 'connector-1', 'example');
+            await getRemoteConnector('connector-1', mockEnvironmentClientApiMethod);
         }).rejects.toThrow('Connector is not found by connector-1');
     });
 

@@ -11,26 +11,35 @@ const environmentBaseURL = 'environmentBaseURL';
 const projectID = 'projectId';
 const projectName = 'projectName';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'auth-token';
 
 jest.mock('axios');
 
+// Mock environment client API
+jest.mock('@chili-publish/environment-client-api', () => ({
+    ConnectorsApi: jest.fn().mockImplementation(() => ({
+        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: connectorSourceUrl } } }),
+        getAll: jest.fn().mockResolvedValue({ parsedData: [] }),
+    })),
+    ProjectsApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            .fn()
+            .mockResolvedValue({ data: '{"test": "document"}' }),
+        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+    })),
+    UserInterfacesApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
+        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
+    })),
+    SettingsApi: jest.fn().mockImplementation(() => ({})),
+    OutputApi: jest.fn().mockImplementation(() => ({
+        apiV1EnvironmentEnvironmentOutputSettingsGet: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
+    })),
+    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
+
 describe('StudioLoader integration - no projectId', () => {
-    beforeAll(() => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
-
-            return Promise.resolve({ data: {} });
-        });
-    });
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -40,7 +49,7 @@ describe('StudioLoader integration - no projectId', () => {
         act(() => {
             StudioUI.studioUILoaderConfig({
                 selector: 'sui-root',
-                projectDownloadUrl,
+                projectDownloadUrl, // Keep this to test axios path
                 projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
                 graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
                 authToken: token,

@@ -1,12 +1,35 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
+import {
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    SettingsApi,
+    OutputApi,
+    UserInterface as EnvironmentUserInterface,
+    Project as EnvironmentProject,
+    OutputSettings as EnvironmentOutputSettings,
+    GenerateGifOutputRequest,
+    GenerateJpgOutputRequest,
+    GenerateMp4OutputRequest,
+    GeneratePdfOutputRequest,
+    GeneratePngOutputRequest,
+} from '@chili-publish/environment-client-api';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
 import { UITranslations } from './UITranslations';
 import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
+
+// Union type for all possible output generation request types
+export type OutputGenerationRequest =
+    | GenerateGifOutputRequest
+    | GenerateJpgOutputRequest
+    | GenerateMp4OutputRequest
+    | GeneratePdfOutputRequest
+    | GeneratePngOutputRequest;
 
 export enum LoadDocumentError {
     PARSING_ERROR = 'PARSING_ERROR',
@@ -53,6 +76,15 @@ export type ProjectConfig = {
         variableId: string,
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
+    // Environment Client API instances
+    environmentClientApis: {
+        connectorsApi: ConnectorsApi;
+        projectsApi: ProjectsApi;
+        userInterfacesApi: UserInterfacesApi;
+        settingsApi: SettingsApi;
+        outputApi: OutputApi;
+        environment: string;
+    };
 };
 
 export interface DefaultStudioConfig {
@@ -126,13 +158,23 @@ export interface UiOptions {
 
 export type OutputSettings = { [K in DownloadFormats]?: boolean };
 
-export type UserInterfaceOutputSettings = {
-    name: string;
-    id: string;
-    description: string;
+// TODO: Remove this override when environment client API types are properly aligned
+// This type combines OutputSettings and UserInterfaceOutputSettings from environment client API
+export type UserInterfaceOutputSettings = Omit<
+    EnvironmentOutputSettings,
+    'type' | '_default' | 'watermark' | 'watermarkText'
+> & {
+    // Override type to use DownloadFormats instead of string
     type: DownloadFormats;
-    dataSourceEnabled: boolean;
+    // Override layoutIntents to use string[] instead of Array<LayoutIntent> from environment client API
+    // Note: Environment client API uses "Print", "DigitalStatic", "DigitalAnimated"
+    // while we use "print", "digitalStatic", "digitalAnimated"
     layoutIntents: string[];
+    // Make required fields that are optional in environment client API
+    id: string;
+    name: string;
+    description: string;
+    dataSourceEnabled: boolean;
 };
 
 export type UserInterfaceWithOutputSettings = {
@@ -174,15 +216,15 @@ export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
 };
 
-export type APIUserInteface = {
+export type APIUserInterface = Omit<EnvironmentUserInterface, 'id' | 'outputSettings' | '_default' | 'formBuilder'> & {
+    // TODO: Remove this override when environment client API UserInterface updates _default to become default
+    default: boolean;
     id: string;
-    name: string;
     outputSettings: OutputSettingsType;
     // Stringified JSON array of form builder
     formBuilder?: string;
-    default: boolean;
 };
-export type UserInterface = Omit<APIUserInteface, 'formBuilder'> & { formBuilder: FormBuilderArray };
+export type UserInterface = Omit<APIUserInterface, 'formBuilder'> & { formBuilder: FormBuilderArray };
 
 export type PaginatedResponse<T> = {
     data: T[];
@@ -192,16 +234,19 @@ export type PaginatedResponse<T> = {
     };
 };
 
-export interface IOutputSetting {
+// TODO: Remove this override when environment client API OutputSettings updates id, watermarkText, _default, description, type, dataSourceEnabled, watermark to become required
+export type IOutputSetting = Omit<
+    EnvironmentOutputSettings,
+    'id' | 'watermarkText' | '_default' | 'description' | 'type' | 'dataSourceEnabled' | 'watermark'
+> & {
     watermarkText: string;
     default: boolean;
     description: string;
-    id: string;
-    name: string;
-    type: DownloadFormats;
     watermark: boolean;
+    id: string;
+    type: DownloadFormats;
     dataSourceEnabled: boolean;
-}
+};
 
 export const defaultUiOptions = {
     widgets: {
@@ -260,7 +305,12 @@ export const defaultBackFn = () => history.back();
 
 export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
-export type Project = { name: string; id: string; template: { id: string } };
+export type Project = Omit<EnvironmentProject, 'name' | 'id' | 'template'> & {
+    // TODO: Remove this override when environment client API Project updates name, id, template to become required
+    name: string;
+    id: string;
+    template: { id: string };
+};
 
 export interface IDefaultStudioUILoaderConfig {
     selector: string;
@@ -326,13 +376,38 @@ export type PageSnapshot = {
     snapshot: Uint8Array;
 };
 
-export type MobileTrayHeaderDetailsr = {
+export type MobileTrayHeaderDetails = {
     title: string;
     helpText: string;
 };
 
 export type MobileTrayFormBuilderHeader = {
-    datasource: MobileTrayHeaderDetailsr;
-    variables: MobileTrayHeaderDetailsr;
-    layouts: MobileTrayHeaderDetailsr;
+    datasource: MobileTrayHeaderDetails;
+    variables: MobileTrayHeaderDetails;
+    layouts: MobileTrayHeaderDetails;
+};
+
+export type GenerateOutputResponse = {
+    data: {
+        taskId: string;
+    };
+    links: {
+        taskInfo: string;
+    };
+};
+export type GenerateOutputTaskPollingResponse = {
+    data: {
+        taskId: string;
+    };
+    links: {
+        download: string;
+    };
+} | null;
+
+export type ApiError = {
+    type: string;
+    title: string;
+    status: string;
+    detail: string;
+    exceptionDetails?: string;
 };

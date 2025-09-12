@@ -85,13 +85,48 @@ describe("'media' reducer", () => {
             };
         });
 
-        const result = await store.dispatch(getEnvironmentConnectorsFromDocument({ authToken: 'Token' })).unwrap();
+        const mockGetConnectorById = jest.fn().mockImplementation(async (connectorId: string) => {
+            if (connectorId === 'grafx-connector-2') {
+                return { id: 'grafx-connector-2' };
+            }
+            throw new Error('Not found');
+        });
+
+        // Mock fetch for URL connectors
+        global.fetch = jest.fn().mockImplementation(async (url: string) => {
+            if (url.includes('grafx-connector-1')) {
+                return {
+                    ok: true,
+                    json: async () => ({ id: 'grafx-connector-1' }),
+                } as Response;
+            }
+            if (url.includes('grafx-connector-2')) {
+                return {
+                    ok: true,
+                    json: async () => ({ id: 'grafx-connector-2' }),
+                } as Response;
+            }
+            throw new Error('Not found');
+        });
+
+        const result = await store
+            .dispatch(
+                getEnvironmentConnectorsFromDocument({
+                    getConnectorById: mockGetConnectorById,
+                }),
+            )
+            .unwrap();
+
+        // GraFx connector (2-grafx) uses environment client API with grafx-connector-2
+        // URL connectors (1-url, 3-url) use fetch with their URLs
         expect(result).toEqual({
             '1-url': { id: 'grafx-connector-1' },
             '2-grafx': { id: 'grafx-connector-2' },
             '3-url': { id: 'grafx-connector-2' },
         });
 
-        expect(axios.get).toHaveBeenCalledTimes(3);
+        // Environment client API should be called once for the GraFx connector
+        expect(mockGetConnectorById).toHaveBeenCalledTimes(1);
+        expect(mockGetConnectorById).toHaveBeenCalledWith('grafx-connector-2');
     });
 });
