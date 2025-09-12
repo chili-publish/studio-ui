@@ -386,3 +386,28 @@ export type MobileTrayFormBuilderHeader = {
     variables: MobileTrayHeaderDetails;
     layouts: MobileTrayHeaderDetails;
 };
+
+export type GenerateOutputResponse = {
+    data: {
+        taskId: string;
+    };
+    links: {
+        taskInfo: string;
+    };
+};
+export type GenerateOutputTaskPollingResponse = {
+    data: {
+        taskId: string;
+    };
+    links: {
+        download: string;
+    };
+} | null;
+
+export type ApiError = {
+    type: string;
+    title: string;
+    status: string;
+    detail: string;
+    exceptionDetails?: string;
+};

@@ -1,5 +1,11 @@
 import { ConnectorsApi, ProjectsApi, UserInterfacesApi, OutputApi } from '@chili-publish/environment-client-api';
-import { APIUserInterface, IOutputSetting, OutputGenerationRequest } from 'src/types/types';
+import {
+    APIUserInterface,
+    GenerateOutputResponse,
+    GenerateOutputTaskPollingResponse,
+    IOutputSetting,
+    OutputGenerationRequest,
+} from 'src/types/types';
 
 /**
  * Centralized service for environment client API operations
@@ -94,7 +100,7 @@ export class EnvironmentApiService {
         return this.outputApi.apiV1EnvironmentEnvironmentOutputTasksTaskIdGet({
             environment: this.environment,
             taskId,
-        });
+        }) as unknown as Promise<GenerateOutputTaskPollingResponse>; // TODO: Remove casting when env api is updated currently returning Promise<object | null | undefined >
     }
 
     // Generic output generation method
@@ -105,27 +111,27 @@ export class EnvironmentApiService {
                 return this.outputApi.apiV1EnvironmentEnvironmentOutputGifPost({
                     environment: this.environment,
                     generateGifOutputRequest: requestBody,
-                });
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             case 'jpg':
                 return this.outputApi.apiV1EnvironmentEnvironmentOutputJpgPost({
                     environment: this.environment,
                     generateJpgOutputRequest: requestBody,
-                });
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             case 'mp4':
                 return this.outputApi.apiV1EnvironmentEnvironmentOutputMp4Post({
                     environment: this.environment,
                     generateMp4OutputRequest: requestBody,
-                });
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             case 'pdf':
                 return this.outputApi.apiV1EnvironmentEnvironmentOutputPdfPost({
                     environment: this.environment,
                     generatePdfOutputRequest: requestBody,
-                });
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             case 'png':
                 return this.outputApi.apiV1EnvironmentEnvironmentOutputPngPost({
                     environment: this.environment,
                     generatePngOutputRequest: requestBody,
-                });
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             default:
                 throw new Error(`Unsupported output format: ${format}`);
         }
