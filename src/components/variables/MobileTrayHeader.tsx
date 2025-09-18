@@ -1,5 +1,4 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useDirection } from 'src/hooks/useDirection';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
@@ -72,10 +71,6 @@ function MobileTrayHeader({
                         dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
-                    styles={css`
-                        padding-block: 0;
-                        padding-inline: 0 0.5rem;
-                    `}
                 />
                 <TrayPanelTitle margin="0">Select date</TrayPanelTitle>
             </TrayTitleWithBtn>
@@ -92,10 +87,6 @@ function MobileTrayHeader({
                         dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
-                    styles={css`
-                        padding-block: 0;
-                        padding-inline: 0 0.5rem;
-                    `}
                 />
                 <TrayPanelTitle margin="0">{datasource.title}</TrayPanelTitle>
             </TrayTitleWithBtn>

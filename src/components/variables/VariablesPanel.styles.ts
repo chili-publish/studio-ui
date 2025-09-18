@@ -36,6 +36,8 @@ export const TrayTitleWithBtn = styled.div`
     align-items: center;
     button {
         align-self: flex-start;
+        padding-block: 0;
+        padding-inline: 0 0.5rem;
     }
     svg {
         ${({ theme }) => theme.mode === 'light' && `color: ${theme.themeColors.primaryTextColor} !important`};
