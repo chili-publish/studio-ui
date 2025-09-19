@@ -15,6 +15,8 @@ import { useVariableHistory } from './useVariableHistory';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
+const PAGE_SIZE = 50;
+
 function getDataSourceErrorText(status?: number) {
     switch (status) {
         case 401:
@@ -104,7 +106,7 @@ const useDataSource = () => {
 
             try {
                 const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
-                    limit: 15,
+                    limit: PAGE_SIZE,
                     continuationToken: token,
                 });
 
