@@ -179,13 +179,14 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
                 anchorId={APP_WRAPPER_ID}
                 close={closeTray}
                 title={
-                    <MobileTrayHeader
-                        trayHeaderData={trayHeaderData}
-                        isDefaultPanelView={isDefaultPanelView}
-                        isDataSourceDisplayed={isDataSourceDisplayed || false}
-                        isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
-                        mobileListOpen={variablesMobileOptionsListOpen}
-                    />
+                    variablesMobileOptionsListOpen ? null : (
+                        <MobileTrayHeader
+                            trayHeaderData={trayHeaderData}
+                            isDefaultPanelView={isDefaultPanelView}
+                            isDataSourceDisplayed={isDataSourceDisplayed || false}
+                            isAvailableLayoutsDisplayed={isAvailableLayoutsDisplayed}
+                        />
+                    )
                 }
                 onTrayHidden={onTrayHidden}
                 hideCloseButton={variablesMobileOptionsListOpen || layoutsMobileOptionsListOpen}
