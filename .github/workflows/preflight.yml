@@ -1,9 +1,17 @@
-name: Bundle Size Check
+name: Preflight Checks
 on:
     pull_request:
         branches:
             - main
+
 jobs:
+    validate-versions:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: validate package versions
+              run: node validate_versions.cjs
+
     check-bundle-size:
         runs-on: ubuntu-latest
         strategy:
