@@ -1,31 +1,29 @@
-name: Preflight Checks
+name: Preflight
 on:
     pull_request:
         branches:
             - main
-
+env:
+    NODE_VERSION: 20
 jobs:
     validate-versions:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: validate package versions
               run: node validate_versions.cjs
 
     check-bundle-size:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
+            - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v1
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
