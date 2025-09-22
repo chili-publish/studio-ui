@@ -160,10 +160,7 @@ export type OutputSettings = { [K in DownloadFormats]?: boolean };
 
 // TODO: Remove this override when environment client API types are properly aligned
 // This type combines OutputSettings and UserInterfaceOutputSettings from environment client API
-export type UserInterfaceOutputSettings = Omit<
-    EnvironmentOutputSettings,
-    'type' | '_default' | 'watermark' | 'watermarkText'
-> & {
+export type UserInterfaceOutputSettings = Omit<EnvironmentOutputSettings, 'type' | 'watermark' | 'watermarkText'> & {
     // Override type to use DownloadFormats instead of string
     type: DownloadFormats;
     // Override layoutIntents to use string[] instead of Array<LayoutIntent> from environment client API
@@ -216,13 +213,11 @@ export type OutputSettingsType = {
     [index: string]: { layoutIntents: string[] };
 };
 
-export type APIUserInterface = Omit<EnvironmentUserInterface, 'id' | 'outputSettings' | '_default' | 'formBuilder'> & {
-    // TODO: Remove this override when environment client API UserInterface updates _default to become default
+// TODO: Remove this override when environment client API UserInterface is updated
+export type APIUserInterface = Omit<EnvironmentUserInterface, 'id' | 'outputSettings' | 'default'> & {
     default: boolean;
     id: string;
     outputSettings: OutputSettingsType;
-    // Stringified JSON array of form builder
-    formBuilder?: string;
 };
 export type UserInterface = Omit<APIUserInterface, 'formBuilder'> & { formBuilder: FormBuilderArray };
 
@@ -234,10 +229,10 @@ export type PaginatedResponse<T> = {
     };
 };
 
-// TODO: Remove this override when environment client API OutputSettings updates id, watermarkText, _default, description, type, dataSourceEnabled, watermark to become required
+// TODO: Remove this override when environment client API OutputSettings is updated
 export type IOutputSetting = Omit<
     EnvironmentOutputSettings,
-    'id' | 'watermarkText' | '_default' | 'description' | 'type' | 'dataSourceEnabled' | 'watermark'
+    'id' | 'watermarkText' | 'default' | 'description' | 'type' | 'dataSourceEnabled' | 'watermark'
 > & {
     watermarkText: string;
     default: boolean;
