@@ -24,6 +24,8 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+            - name: run package versions check
+              run: yarn validate-versions
             - name: run license check
               run: yarn validate-licenses
             - name: run linting
