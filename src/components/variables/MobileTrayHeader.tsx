@@ -1,5 +1,4 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useDirection } from 'src/hooks/useDirection';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
@@ -12,7 +11,6 @@ import ImagePanelTitle from '../itemBrowser/ImagePanelTitle';
 
 interface MobileTrayHeaderProps {
     isDefaultPanelView: boolean;
-    mobileListOpen: boolean;
     isDataSourceDisplayed: boolean;
     isAvailableLayoutsDisplayed: boolean;
     trayHeaderData: MobileTrayFormBuilderHeader;
@@ -20,7 +18,6 @@ interface MobileTrayHeaderProps {
 
 function MobileTrayHeader({
     isDefaultPanelView,
-    mobileListOpen,
     isDataSourceDisplayed,
     isAvailableLayoutsDisplayed,
     trayHeaderData,
@@ -33,7 +30,6 @@ function MobileTrayHeader({
 
     const backIcon = direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft;
 
-    if (mobileListOpen) return null;
     if (isDefaultPanelView && isDataSourceDisplayed)
         return (
             <SectionWrapper
@@ -52,7 +48,7 @@ function MobileTrayHeader({
                 {layouts.helpText && <SectionHelpText>{layouts.helpText}</SectionHelpText>}
             </SectionWrapper>
         );
-    if (activePanel === PanelType.DEFAULT || mobileListOpen)
+    if (activePanel === PanelType.DEFAULT)
         return (
             <SectionWrapper
                 id="layout-section-header"
@@ -72,10 +68,6 @@ function MobileTrayHeader({
                         dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
-                    styles={css`
-                        padding-block: 0;
-                        padding-inline: 0 0.5rem;
-                    `}
                 />
                 <TrayPanelTitle margin="0">Select date</TrayPanelTitle>
             </TrayTitleWithBtn>
@@ -92,10 +84,6 @@ function MobileTrayHeader({
                         dispatch(showVariablesPanel());
                     }}
                     icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
-                    styles={css`
-                        padding-block: 0;
-                        padding-inline: 0 0.5rem;
-                    `}
                 />
                 <TrayPanelTitle margin="0">{datasource.title}</TrayPanelTitle>
             </TrayTitleWithBtn>

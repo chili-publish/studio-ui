@@ -1,23 +1,28 @@
-name: Bundle Size Check
+name: Preflight
 on:
     pull_request:
         branches:
             - main
+env:
+    NODE_VERSION: 20
 jobs:
+    validate-versions:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: validate package versions
+              run: yarn validate-versions
     check-bundle-size:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+            - name: Use Node ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v4
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
@@ -25,10 +30,8 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-
             - name: Build project
               run: yarn build
-
             - name: Get bundle size for current PR
               id: get_current_bundle_size
               run: |
