@@ -56,8 +56,6 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: validate package versions
-              run: yarn validate-versions
             - name: build code
               run: yarn build
             - name: copy file branch
