@@ -3,21 +3,20 @@ on:
     push:
         branches:
             - main
+env:
+    NODE_VERSION: 20
 jobs:
     build-preflight:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
+            - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
@@ -25,7 +24,7 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-            - name: validate package versions
+            - name: run package versions check
               run: yarn validate-versions
             - name: run license check
               run: yarn validate-licenses
@@ -41,18 +40,15 @@ jobs:
     build-deploy-dev:
         needs: build-preflight
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
+            - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
@@ -90,18 +86,15 @@ jobs:
     bump-version:
         needs: build-preflight
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v3
               with:
                   token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
+            - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - uses: actions/download-artifact@v4

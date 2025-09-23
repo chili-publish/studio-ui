@@ -11,8 +11,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: validate package versions
-              run: node validate_versions.cjs
-
+              run: yarn validate-versions
     check-bundle-size:
         runs-on: ubuntu-latest
         steps:
@@ -31,10 +30,8 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
-
             - name: Build project
               run: yarn build
-
             - name: Get bundle size for current PR
               id: get_current_bundle_size
               run: |
