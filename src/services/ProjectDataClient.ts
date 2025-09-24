@@ -1,15 +1,10 @@
 import { ContentType, contentTypeToExtension } from 'src/utils/contentType';
+import { TokenService } from './TokenService';
 
 /**
  * Service for making HTTP requests to project data endpoints with authentication
  */
 export class ProjectDataClient {
-    private getAuthToken: () => string;
-
-    constructor(getAuthToken: () => string) {
-        this.getAuthToken = getAuthToken;
-    }
-
     /**
      * Makes a GET request to a URL with authentication
      * @param url - The URL to fetch from
@@ -17,13 +12,7 @@ export class ProjectDataClient {
      */
     async fetchFromUrl(url: string): Promise<string | null> {
         try {
-            const headers = this.getAuthHeaders();
-            const response = await fetch(url, { headers });
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
+            const response = await this.makeAuthenticatedRequest(url, 'GET');
             const data = await response.json();
             return JSON.stringify(data.data);
         } catch (error) {
@@ -40,29 +29,11 @@ export class ProjectDataClient {
      * @returns Promise<void> - Success status
      */
     async saveToUrl(url: string, data: string): Promise<void> {
-        const headers = {
-            'Content-Type': 'application/json',
-            ...this.getAuthHeaders(),
-        };
-
-        const response = await fetch(url, {
-            method: 'PUT',
-            headers,
-            body: data,
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        await this.makeAuthenticatedRequest(url, 'PUT', data);
     }
 
     async downloadFromUrl(url: string) {
-        const headers = this.getAuthHeaders();
-        const response = await fetch(url, { headers });
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
+        const response = await this.makeAuthenticatedRequest(url, 'GET');
         const contentType = response.headers.get('content-type') as ContentType;
         return {
             extensionType: contentTypeToExtension(contentType),
@@ -71,10 +42,35 @@ export class ProjectDataClient {
     }
 
     /**
+     * Makes an authenticated request with automatic token refresh on 401
+     */
+    private async makeAuthenticatedRequest(url: string, method: string, body?: string): Promise<Response> {
+        const headers = this.getAuthHeaders();
+        if (body) {
+            headers['Content-Type'] = 'application/json';
+        }
+
+        let response = await fetch(url, { method, headers, body });
+
+        // Handle 401 with token refresh and retry
+        if (response.status === 401) {
+            await TokenService.getInstance().refreshToken();
+            response = await fetch(url, { method, headers: this.getAuthHeaders(), body });
+        }
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        return response;
+    }
+
+    /**
      * Gets authentication headers for all requests
      * @returns Record<string, string>
      */
+    // eslint-disable-next-line class-methods-use-this
     private getAuthHeaders(): Record<string, string> {
-        return { Authorization: `Bearer ${this.getAuthToken()}` };
+        return { Authorization: `Bearer ${TokenService.getInstance().getToken()}` };
     }
 }

@@ -13,7 +13,6 @@ jest.mock('@chili-publish/studio-sdk', () => ({
 
 describe('useEditorAuthExpired', () => {
     const mockOnAuthenticationExpired = jest.fn();
-    const mockUpdateToken = jest.fn();
     const mockOnConnectorAuthenticationRequested = jest.fn();
     const mockCreateProcessFn = jest.fn();
 
@@ -25,12 +24,7 @@ describe('useEditorAuthExpired', () => {
         const newToken = 'new-token-123';
         mockOnAuthenticationExpired.mockResolvedValue(newToken);
 
-        const handleAuthExpired = useEditorAuthExpired(
-            mockOnAuthenticationExpired,
-            mockUpdateToken,
-            undefined,
-            mockCreateProcessFn,
-        );
+        const handleAuthExpired = useEditorAuthExpired(mockOnAuthenticationExpired, undefined, mockCreateProcessFn);
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.grafxToken,
@@ -42,7 +36,6 @@ describe('useEditorAuthExpired', () => {
         const result = await handleAuthExpired(request);
 
         expect(mockOnAuthenticationExpired).toHaveBeenCalled();
-        expect(mockUpdateToken).toHaveBeenCalledWith(newToken);
         expect(GrafxTokenAuthCredentials).toHaveBeenCalledWith(newToken);
         expect(result).toEqual({ token: newToken, constructor: { name: 'GrafxTokenAuthCredentials' } });
     });
@@ -64,7 +57,6 @@ describe('useEditorAuthExpired', () => {
 
         const handleAuthExpired = useEditorAuthExpired(
             mockOnAuthenticationExpired,
-            mockUpdateToken,
             mockOnConnectorAuthenticationRequested,
             mockCreateProcessFn,
         );
@@ -100,7 +92,6 @@ describe('useEditorAuthExpired', () => {
 
         const handleAuthExpired = useEditorAuthExpired(
             mockOnAuthenticationExpired,
-            mockUpdateToken,
             mockOnConnectorAuthenticationRequested,
             mockCreateProcessFn,
         );
@@ -128,12 +119,7 @@ describe('useEditorAuthExpired', () => {
     it('should handle errors gracefully', async () => {
         mockOnAuthenticationExpired.mockRejectedValue(new Error('Test error'));
 
-        const handleAuthExpired = useEditorAuthExpired(
-            mockOnAuthenticationExpired,
-            mockUpdateToken,
-            undefined,
-            mockCreateProcessFn,
-        );
+        const handleAuthExpired = useEditorAuthExpired(mockOnAuthenticationExpired, undefined, mockCreateProcessFn);
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.grafxToken,

@@ -1,5 +1,4 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import axios, { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,12 +10,10 @@ import MainContent from './MainContent';
 import { ProjectConfig } from './types/types';
 import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
-import { AuthTokenProvider } from './contexts/AuthTokenProvider';
 import { EnvironmentClientApiProvider } from './contexts/EnvironmentClientApiContext';
 import GlobalStyle from './styles/GlobalStyle';
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
-    const [authToken, setAuthToken] = useState(projectConfig.onAuthenticationRequested());
     // TODO: Consider to define global object instead
     const [eventSubscriber] = useState(new Subscriber());
 
@@ -38,37 +35,6 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
         return true;
     }, []);
 
-    // This interceptor will resend the request after refreshing the token in case it is no longer valid
-    useEffect(() => {
-        const subscriber = axios.interceptors.response.use(
-            (response) => response,
-            async (error) => {
-                const originalRequest = error.config;
-
-                if (error.response?.status === 401 && !originalRequest.retry && projectConfig) {
-                    originalRequest.retry = true;
-                    return projectConfig
-                        .onAuthenticationExpired()
-                        .then((token) => {
-                            setAuthToken(token);
-                            originalRequest.headers.Authorization = `Bearer ${token}`;
-                            return axios(originalRequest);
-                        })
-                        .catch((err: AxiosError) => {
-                            // eslint-disable-next-line no-console
-                            console.error(`[${App.name}] Axios error`, err);
-                            return err;
-                        });
-                }
-
-                return Promise.reject(error);
-            },
-        );
-        return () => {
-            axios.interceptors.response.eject(subscriber);
-        };
-    }, [projectConfig]);
-
     useEffect(() => {
         // eslint-disable-next-line no-console
         console.table(projectConfig.onLogInfoRequested());
@@ -82,13 +48,11 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                     <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
                         <NotificationManagerProvider>
                             <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
-                                <AuthTokenProvider authToken={authToken}>
-                                    <EnvironmentClientApiProvider
-                                        environmentApiService={projectConfig.environmentApiService}
-                                    >
-                                        <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
-                                    </EnvironmentClientApiProvider>
-                                </AuthTokenProvider>
+                                <EnvironmentClientApiProvider
+                                    environmentApiService={projectConfig.environmentApiService}
+                                >
+                                    <MainContent projectConfig={projectConfig} />
+                                </EnvironmentClientApiProvider>
                             </FeatureFlagProvider>
                         </NotificationManagerProvider>
                     </UiThemeProvider>

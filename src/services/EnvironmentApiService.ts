@@ -32,15 +32,35 @@ export class EnvironmentApiService {
 
     private environment: string;
 
-    private tokenService: TokenService;
-
-    private constructor(apiBasePath: string, environment: string, tokenService: TokenService) {
+    private constructor(apiBasePath: string, environment: string) {
         this.environment = environment;
-        this.tokenService = tokenService;
 
         const config = new Configuration({
             basePath: apiBasePath,
-            accessToken: () => this.tokenService.getToken(),
+            accessToken: () => TokenService.getInstance().getToken(),
+            middleware: [
+                {
+                    post: async (context) => {
+                        // Handle 401 responses with token refresh and retry
+                        if (context.response.status === 401) {
+                            await TokenService.getInstance().refreshToken();
+                            // Retry the request with the new token
+                            const retriedResponse = await context.fetch(context.url, {
+                                method: context.init?.method || 'GET',
+                                headers: {
+                                    ...context.init?.headers,
+                                    Authorization: `Bearer ${TokenService.getInstance().getToken()}`,
+                                },
+                                body: context.init?.body,
+                            });
+
+                            // return the retried response
+                            return retriedResponse;
+                        }
+                        return undefined;
+                    },
+                },
+            ],
         });
 
         // Initialize all API instances
@@ -51,17 +71,11 @@ export class EnvironmentApiService {
     }
 
     /**
-     * Factory method to create EnvironmentApiService instance with token management
+     * Factory method to create EnvironmentApiService instance
      * @param graFxStudioEnvironmentApiBaseUrl - Environment API base URL
-     * @param authToken - Initial authentication token
-     * @param refreshTokenAction - Optional callback to refresh the authentication token
-     * @returns EnvironmentApiService instance with token management
+     * @returns EnvironmentApiService instance
      */
-    static create(
-        graFxStudioEnvironmentApiBaseUrl: string,
-        authToken: string,
-        refreshTokenAction?: () => Promise<string | Error>,
-    ): EnvironmentApiService {
+    static create(graFxStudioEnvironmentApiBaseUrl: string): EnvironmentApiService {
         // Extract environment name from the base URL
         const [, ...rest] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
         const environment = rest.pop() ?? '';
@@ -75,17 +89,15 @@ export class EnvironmentApiService {
             apiBasePath = graFxStudioEnvironmentApiBaseUrl.replace('/api/v1', '');
         }
 
-        // Create token service
-        const tokenService = new TokenService(authToken, refreshTokenAction);
-
-        return new EnvironmentApiService(apiBasePath, environment, tokenService);
+        return new EnvironmentApiService(apiBasePath, environment);
     }
 
     /**
      * Get the token service instance
      */
+    // eslint-disable-next-line class-methods-use-this
     getTokenService(): TokenService {
-        return this.tokenService;
+        return TokenService.getInstance();
     }
 
     // Connectors API methods

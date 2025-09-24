@@ -48,9 +48,6 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onAuthenticationRequested: () => {
         return '';
     },
-    onAuthenticationExpired: async () => {
-        return '';
-    },
     onBack: () => {
         // ignored
     },

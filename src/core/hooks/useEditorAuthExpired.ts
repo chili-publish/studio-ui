@@ -3,8 +3,7 @@ import { CreateProcessFn } from 'src/components/connector-authentication/useConn
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 
 export const useEditorAuthExpired = (
-    onAuthenticationExpired: () => Promise<string>,
-    updateToken: (newValue: string) => void,
+    onAuthenticationExpired: undefined | (() => Promise<string>),
     onConnectorAuthenticationRequested:
         | undefined
         | ((remoteConnectorId: string) => Promise<ConnectorAuthenticationResult>),
@@ -12,9 +11,8 @@ export const useEditorAuthExpired = (
 ) => {
     const handleAuthExpired = async (request: AuthRefreshRequest) => {
         try {
-            if (request.type === AuthRefreshTypeEnum.grafxToken) {
+            if (request.type === AuthRefreshTypeEnum.grafxToken && onAuthenticationExpired) {
                 const newToken = await onAuthenticationExpired();
-                updateToken(newToken);
                 return new GrafxTokenAuthCredentials(newToken);
             }
 

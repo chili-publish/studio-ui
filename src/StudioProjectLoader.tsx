@@ -68,7 +68,7 @@ export class StudioProjectLoader {
         this.onProjectGetDownloadLink = onProjectGetDownloadLink;
         this.environmentApiService = environmentApiService;
 
-        this.projectDataClient = new ProjectDataClient(() => this.onAuthenticationRequested());
+        this.projectDataClient = new ProjectDataClient();
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {

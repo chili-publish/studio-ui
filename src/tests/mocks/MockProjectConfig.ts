@@ -28,9 +28,6 @@ export class ProjectConfigs {
         onAuthenticationRequested: () => {
             return '';
         },
-        onAuthenticationExpired: async () => {
-            return '';
-        },
         onBack: () => {
             // ignored
         },

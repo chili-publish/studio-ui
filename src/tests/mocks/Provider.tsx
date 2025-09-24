@@ -23,11 +23,7 @@ export interface WrapperProps {
 
 // Create mock API instances for testing
 const createMockApiInstances = () => {
-    return EnvironmentApiService.create(
-        'https://test.example.com',
-        'test-environment',
-        jest.fn().mockResolvedValue('test-token'),
-    );
+    return EnvironmentApiService.create('https://test.example.com');
 };
 
 // Used to render test components with new instance of redux store.

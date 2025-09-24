@@ -45,25 +45,6 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
                 selectedLayoutID,
                 outputSettingsId,
             );
-            // const downloadLinkData = await projectConfig.onProjectGetDownloadLink(
-            //     extension,
-            //     selectedLayoutID,
-            //     outputSettingsId,
-            // );
-
-            // if (downloadLinkData.status !== 200) {
-            //     throw new Error('Error getting download link');
-            // }
-
-            // const response = await axios.get(downloadLinkData.data ?? '', {
-            //     responseType: 'blob',
-            //     headers: { Authorization: `Bearer ${authToken}` },
-            // });
-
-            // if (response.status !== 200) return;
-
-            // const contentType: MimeType = response.headers['content-type'];
-            // const extensionType = mimeToExt[contentType];
 
             const objectUrl = window.URL.createObjectURL(outputData);
             const a = Object.assign(document.createElement('a'), {

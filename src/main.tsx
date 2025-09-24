@@ -2,6 +2,7 @@ import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
+import { TokenService } from './services/TokenService';
 import './index.css';
 import {
     defaultBackFn,
@@ -39,12 +40,11 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
-        // Create EnvironmentApiService instance with token management
-        const environmentApiService = EnvironmentApiService.create(
-            graFxStudioEnvironmentApiBaseUrl,
-            authToken,
-            refreshTokenAction,
-        );
+        // Initialize TokenService singleton
+        TokenService.initialize(authToken, refreshTokenAction);
+
+        // Create EnvironmentApiService instance
+        const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
 
         const projectLoader = new StudioProjectLoader(
             projectId,
@@ -150,12 +150,11 @@ export default class StudioUI extends StudioUILoader {
             onVariableValueChangedCompleted,
         } = config;
 
-        // Create EnvironmentApiService instance with token management
-        const environmentApiService = EnvironmentApiService.create(
-            graFxStudioEnvironmentApiBaseUrl,
-            authToken,
-            refreshTokenAction,
-        );
+        // Initialize TokenService singleton
+        TokenService.initialize(authToken, refreshTokenAction);
+
+        // Create EnvironmentApiService instance
+        const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
 
         const projectLoader = new StudioProjectLoader(
             projectId,

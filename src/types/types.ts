@@ -49,7 +49,7 @@ export type ProjectConfig = {
     onProjectLoaded?: () => void;
     onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
     onAuthenticationRequested: () => string;
-    onAuthenticationExpired: () => Promise<string>;
+    onAuthenticationExpired?: () => Promise<string>;
     onBack: () => void;
     onLogInfoRequested: () => unknown;
     onGenerateOutput: (

@@ -6,6 +6,17 @@ import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, waitFor } from '@testing-library/react';
 import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import StudioUI from '../../main';
+import { TokenService } from '../../services/TokenService';
+import { EnvironmentApiService } from '../../services/EnvironmentApiService';
+
+// Mock TokenService singleton
+jest.mock('../../services/TokenService', () => ({
+    TokenService: {
+        initialize: jest.fn(),
+        getInstance: jest.fn(),
+        reset: jest.fn(),
+    },
+}));
 
 // Mock ProjectDataClient
 jest.mock('../../services/ProjectDataClient', () => ({
@@ -15,10 +26,32 @@ jest.mock('../../services/ProjectDataClient', () => ({
     })),
 }));
 
-// Mock EnvironmentApiService
-jest.mock('../../services/EnvironmentApiService', () => ({
-    EnvironmentApiService: {
-        create: jest.fn().mockImplementation((_, __, refreshTokenAction) => ({
+const environmentBaseURL = 'http://abc.com';
+const projectID = 'projectId';
+const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
+const token = 'auth-token';
+const refreshToken = 'refresh-token';
+
+describe('StudioLoader integration - SDK expired auth token', () => {
+    const mockTokenServiceInstance = {
+        getToken: jest.fn().mockReturnValue('mock-token'),
+        refreshToken: jest.fn(),
+        updateEditorToken: jest.fn().mockResolvedValue(undefined),
+    };
+
+    beforeEach(() => {
+        // Set up the mock instance
+        (TokenService.getInstance as jest.Mock).mockReturnValue(mockTokenServiceInstance);
+        // Mock the initialize method to store the refreshTokenAction
+        (TokenService.initialize as jest.Mock).mockImplementation((_, refreshTokenAction) => {
+            if (refreshTokenAction) {
+                mockTokenServiceInstance.refreshToken.mockImplementation(async () => {
+                    return refreshTokenAction();
+                });
+            }
+        });
+        // Set up EnvironmentApiService mock to return our mockTokenServiceInstance
+        const mockEnvironmentApiService = {
             getProjectById: jest.fn().mockResolvedValue(mockProject),
             getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
             saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
@@ -31,28 +64,16 @@ jest.mock('../../services/EnvironmentApiService', () => ({
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
-            getTokenService: jest.fn().mockReturnValue({
-                getToken: jest.fn().mockReturnValue('mock-token'),
-                refreshToken: jest.fn().mockImplementation(async () => {
-                    if (refreshTokenAction) {
-                        return refreshTokenAction();
-                    }
-                    throw new Error(
-                        'The authentication token has expired, and a method to obtain a new one is not provided.',
-                    );
-                }),
-            }),
-        })),
-    },
-}));
+            getTokenService: jest.fn().mockReturnValue(mockTokenServiceInstance),
+        };
+        (EnvironmentApiService.create as jest.Mock).mockReturnValue(mockEnvironmentApiService);
+    });
 
-const environmentBaseURL = 'http://abc.com';
-const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const token = 'auth-token';
-const refreshToken = 'refresh-token';
+    afterEach(() => {
+        // Reset all mocks after each test
+        jest.clearAllMocks();
+    });
 
-describe('StudioLoader integration - SDK expired auth token', () => {
     it('Should correctly refresh the token when refreshToken action is provided', async () => {
         const refreshTokenFn = jest.fn().mockResolvedValue(refreshToken);
         const config = {
@@ -77,6 +98,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
         });
 
         await waitFor(() => {
+            expect(mockTokenServiceInstance.refreshToken).toHaveBeenCalled();
             expect(refreshTokenFn).toHaveBeenCalled();
             expect(JSON.parse(authResult)).toEqual(
                 expect.objectContaining(new GrafxTokenAuthCredentials(refreshToken)),
@@ -96,6 +118,11 @@ describe('StudioLoader integration - SDK expired auth token', () => {
             authToken: token,
             projectName: '',
         };
+
+        // Set up the mock to throw an error when refreshToken is called
+        mockTokenServiceInstance.refreshToken.mockImplementation(async () => {
+            throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
+        });
 
         render(<div id="sui-root" />);
         act(() => {

@@ -59,7 +59,6 @@ describe('MainContent', () => {
         onEngineInitialized: () => null,
         onProjectSave: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
         onAuthenticationRequested: () => 'authToken',
-        onAuthenticationExpired: () => Promise.resolve(''),
         onBack: () => null,
         onLogInfoRequested: () => null,
         onGenerateOutput: () => Promise.resolve({ extensionType: 'pdf', outputData: new Blob() }),
@@ -87,7 +86,7 @@ describe('MainContent', () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={mockProjectConfig} />
+                    <MainContent projectConfig={mockProjectConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );
@@ -107,7 +106,7 @@ describe('MainContent', () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={rtlConfig} />
+                    <MainContent projectConfig={rtlConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );
@@ -161,7 +160,7 @@ describe('MainContent', () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={multiLayoutConfig} />
+                    <MainContent projectConfig={multiLayoutConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );

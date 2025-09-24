@@ -13,7 +13,6 @@ const projectConfig = {
     onProjectLoaded: () => null,
     onProjectSave: () => null,
     onAuthenticationRequested: () => 'authToken',
-    onAuthenticationExpired: () => null,
     onUserInterfaceBack: () => null,
     onLogInfoRequested: () => null,
     onProjectGetDownloadLink: () => null,
