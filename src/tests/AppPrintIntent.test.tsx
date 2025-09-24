@@ -17,6 +17,7 @@ const projectConfig = {
     onUserInterfaceBack: () => null,
     onLogInfoRequested: () => null,
     onProjectGetDownloadLink: () => null,
+    onEngineInitialized: () => null,
     outputSettings: {},
     uiOptions: {},
 };

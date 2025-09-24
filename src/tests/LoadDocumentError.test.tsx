@@ -22,6 +22,7 @@ const projectConfig = {
     onAuthenticationExpired: () => null,
     onLogInfoRequested: () => null,
     onProjectGetDownloadLink: () => null,
+    onEngineInitialized: () => null,
     outputSettings: {},
     uiOptions: {},
 } as unknown as ProjectConfig;

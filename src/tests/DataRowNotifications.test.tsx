@@ -60,6 +60,7 @@ const mockProjectConfig = {
     onProjectInfoRequested: jest.fn().mockResolvedValue({}),
     onProjectSave: jest.fn(),
     onAuthenticationExpired: jest.fn(),
+    onEngineInitialized: jest.fn(),
     outputSettings: {},
 } as unknown as ProjectConfig;
 

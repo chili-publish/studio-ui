@@ -81,6 +81,7 @@ const mockProjectConfig = {
     onProjectSave: jest.fn(),
     onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(false)),
     onAuthenticationExpired: jest.fn(),
+    onEngineInitialized: jest.fn(),
     outputSettings: {},
     onFetchUserInterfaceDetails: jest.fn().mockResolvedValue({
         userInterface: { id: '1', name: 'name' },
