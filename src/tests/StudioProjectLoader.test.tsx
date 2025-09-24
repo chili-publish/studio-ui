@@ -1,18 +1,17 @@
 import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { mockProject } from '@mocks/mockProject';
 import { mockApiUserInterface } from '@mocks/mockUserinterface';
 import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import { StudioProjectLoader } from '../StudioProjectLoader';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
+import { ProjectDataClient } from '../services/ProjectDataClient';
 
-jest.mock('axios');
-
-// Mock EnvironmentApiService
-jest.mock('../services/EnvironmentApiService', () => ({
-    EnvironmentApiService: {
-        create: jest.fn(),
-    },
+// Mock ProjectDataClient
+jest.mock('../services/ProjectDataClient', () => ({
+    ProjectDataClient: jest.fn().mockImplementation(() => ({
+        fetchFromUrl: jest.fn(),
+        saveToUrl: jest.fn(),
+    })),
 }));
 
 jest.mock('../utils/documentExportHelper', () => ({
@@ -57,10 +56,18 @@ describe('StudioProjectLoader', () => {
         generateOutput: jest.fn(),
     } as unknown as EnvironmentApiService;
 
+    // Mock ProjectDataClient
+    const mockProjectDataClient = {
+        fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
+        saveToUrl: jest.fn().mockResolvedValue(true),
+    };
+
     beforeEach(() => {
         jest.clearAllMocks();
         // Mock EnvironmentApiService.create to return our mock
         (EnvironmentApiService.create as jest.Mock).mockReturnValue(mockEnvironmentApiService);
+        // Mock ProjectDataClient constructor to return our mock
+        (ProjectDataClient as jest.Mock).mockReturnValue(mockProjectDataClient);
     });
 
     describe('onProjectInfoRequested', () => {
@@ -120,7 +127,6 @@ describe('StudioProjectLoader', () => {
         });
 
         it('should fetch project template using download URL', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce(mockDocument);
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -132,14 +138,15 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onProjectDocumentRequested();
 
-            expect(result).toEqual(JSON.stringify(mockDocument.data));
-            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
-                headers: { Authorization: 'Bearer mockAuthToken' },
-            });
+            expect(result).toEqual('{"test": "document"}');
+            // Verify that the project data client was called
+            expect(mockProjectDataClient.fetchFromUrl).toHaveBeenCalledWith(mockProjectDownloadUrl);
         });
 
         it('should return "null" in case of error', async () => {
-            (axios.get as jest.Mock).mockRejectedValueOnce({});
+            // Mock project data client to return null (error case)
+            mockProjectDataClient.fetchFromUrl.mockResolvedValueOnce(null);
+
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -152,9 +159,9 @@ describe('StudioProjectLoader', () => {
             const result = await loader.onProjectDocumentRequested();
 
             expect(result).toBeNull();
-            expect(axios.get).toHaveBeenCalledWith(mockProjectDownloadUrl, {
-                headers: { Authorization: 'Bearer mockAuthToken' },
-            });
+            expect(mockProjectDataClient.fetchFromUrl).toHaveBeenCalledWith(mockProjectDownloadUrl);
+            // Should NOT fallback to API when using URL approach
+            expect(mockEnvironmentApiService.getProjectDocument).not.toHaveBeenCalled();
         });
     });
 
@@ -193,20 +200,25 @@ describe('StudioProjectLoader', () => {
 
             const result = await loader.onProjectSave(mockGenerateJson);
 
-            // Verify that the environment API service method was called
-            expect(mockEnvironmentApiService.saveProjectDocument).toHaveBeenCalled();
+            // Verify that the project data client was called
+            expect(mockProjectDataClient.saveToUrl).toHaveBeenCalledWith(
+                mockProjectDownloadUrl,
+                JSON.stringify(mockDocument),
+            );
+            // Should NOT call API when using URL approach
+            expect(mockEnvironmentApiService.saveProjectDocument).not.toHaveBeenCalled();
             expect(result).toEqual(mockProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
         });
 
-        it('Should use fallback url to save document when document URL is not provided', async () => {
+        it('Should use API to save document when upload URL is not provided', async () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 mockEnvironmentApiService,
                 undefined,
-                mockProjectUploadUrl,
+                undefined, // No upload URL
             );
             loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockProject);
 
@@ -214,7 +226,9 @@ describe('StudioProjectLoader', () => {
 
             expect(result).toEqual(mockProject);
             expect(loader.onProjectInfoRequested).toHaveBeenCalled();
-            // Verify that the environment API service method was called
+            // Should NOT call URL handler when no upload URL
+            expect(mockProjectDataClient.saveToUrl).not.toHaveBeenCalled();
+            // Should call API when no upload URL
             expect(mockEnvironmentApiService.saveProjectDocument).toHaveBeenCalled();
         });
     });

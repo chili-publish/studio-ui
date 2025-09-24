@@ -1,39 +1,9 @@
 import { ConfigType, LayoutIntent, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { act, screen, waitFor } from '@testing-library/react';
-import { mockProject } from '@mocks/mockProject';
-import { mockApiUserInterface } from '@mocks/mockUserinterface';
-import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
 import App from '../App';
 import { ProjectConfig } from '../types/types';
 import { getDataTestIdForSUI } from '../utils/dataIds';
 import { renderWithProviders } from './mocks/Provider';
-import { createMockEnvironmentClientApis } from './mocks/environmentClientApi';
-
-// Mock environment client API
-jest.mock('@chili-publish/environment-client-api', () => ({
-    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
-    ProjectsApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            .fn()
-            .mockResolvedValue({ data: '{"test": "document"}' }),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-    })),
-    UserInterfacesApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
-        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
-    })),
-    SettingsApi: jest.fn().mockImplementation(() => ({})),
-    OutputApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
-            .fn()
-            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
-    })),
-    Configuration: jest.fn().mockImplementation(() => ({})),
-}));
-
-// Mock environment client APIs for testing
-const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const projectConfig = {
     projectId: 'projectId',
@@ -49,7 +19,6 @@ const projectConfig = {
     onProjectGetDownloadLink: () => null,
     outputSettings: {},
     uiOptions: {},
-    environmentClientApis: mockEnvironmentClientApis,
 };
 jest.mock('@chili-publish/studio-sdk', () => {
     const originalModule = jest.requireActual('@chili-publish/studio-sdk');

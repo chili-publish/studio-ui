@@ -2,8 +2,6 @@ import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
-jest.mock('../../services/EnvironmentApiService');
-
 describe('"getDownloadLink', () => {
     let mockEnvironmentApiService: jest.Mocked<EnvironmentApiService>;
 

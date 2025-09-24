@@ -1,6 +1,6 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import {
     UserInterface as EnvironmentUserInterface,
     Project as EnvironmentProject,
@@ -59,8 +59,8 @@ export type ProjectConfig = {
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
     editorLink?: string;
-    onFetchOutputSettings?: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
-    onFetchUserInterfaces?: () => Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>>;
+    onFetchOutputSettings: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
+    onFetchUserInterfaces: () => Promise<PaginatedResponse<UserInterface>>;
     onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;

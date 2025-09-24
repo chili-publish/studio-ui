@@ -18,37 +18,43 @@ import { variables } from '@tests/mocks/mockVariables';
 import selectEvent from 'react-select-event';
 import StudioUI from '../../main';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 
-// Mock the entire environment client API module at the top level
-jest.mock('@chili-publish/environment-client-api', () => ({
-    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
-    ProjectsApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            .fn()
-            .mockResolvedValue({ data: '{"test": "document"}' }),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+// Mock ProjectDataClient
+jest.mock('../../services/ProjectDataClient', () => ({
+    ProjectDataClient: jest.fn().mockImplementation(() => ({
+        fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
+        saveToUrl: jest.fn().mockResolvedValue(undefined),
     })),
-    UserInterfacesApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
-        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockApiUserInterface),
-    })),
-    SettingsApi: jest.fn().mockImplementation(() => ({})),
-    OutputApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
-            .fn()
-            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
-    })),
-    Configuration: jest.fn().mockImplementation(() => ({})),
+}));
+
+// Mock EnvironmentApiService
+jest.mock('../../services/EnvironmentApiService', () => ({
+    EnvironmentApiService: {
+        create: jest.fn().mockImplementation(() => ({
+            getProjectById: jest.fn().mockResolvedValue(mockProject),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+            getUserInterfaceById: jest.fn().mockResolvedValue(mockApiUserInterface),
+            getOutputSettings: jest.fn().mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+            getAllConnectors: jest.fn().mockResolvedValue({ data: [] }),
+            getConnectorById: jest.fn().mockResolvedValue({}),
+            getConnectorByIdAs: jest.fn().mockResolvedValue({}),
+            getOutputSettingsById: jest.fn().mockResolvedValue({}),
+            getTaskStatus: jest.fn().mockResolvedValue({}),
+            generateOutput: jest.fn().mockResolvedValue({}),
+            getTokenService: jest.fn().mockReturnValue({
+                getToken: jest.fn().mockReturnValue('mock-token'),
+                refreshToken: jest.fn().mockResolvedValue('new-token'),
+            }),
+            getEnvironment: jest.fn().mockReturnValue('test-environment'),
+        })),
+    },
 }));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
 const token = 'auth-token';
-
-// Mock environment client APIs for testing
-const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const config = {
     selector: 'sui-root',
@@ -59,7 +65,6 @@ const config = {
     projectName: '',
     userInterfaceID: mockUserInterface.id,
     onFetchUserInterfaceDetails: () => Promise.resolve(mockUserInterface),
-    environmentClientApis: mockEnvironmentClientApis,
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let originalAnimateFunction: any;

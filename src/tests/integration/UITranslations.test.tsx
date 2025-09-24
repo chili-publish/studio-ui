@@ -1,51 +1,19 @@
 import { act, render, screen } from '@testing-library/react';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
-import axios from 'axios';
-import { mockUserInterface } from '@mocks/mockUserinterface';
-import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
-import { mockProject } from '@mocks/mockProject';
 import userEvent from '@testing-library/user-event';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
-import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 import StudioUI from '../../main';
 
 jest.mock('@chili-publish/studio-sdk');
-jest.mock('axios');
 
-// Mock environment client API
-jest.mock('@chili-publish/environment-client-api', () => ({
-    ConnectorsApi: jest.fn().mockImplementation(() => ({
-        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: 'http://deploy.com/data-connector' } } }),
-        getAll: jest.fn().mockResolvedValue({ parsedData: [] }),
+// Mock ProjectDataClient
+jest.mock('../../services/ProjectDataClient', () => ({
+    ProjectDataClient: jest.fn().mockImplementation(() => ({
+        fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
+        saveToUrl: jest.fn().mockResolvedValue(undefined),
     })),
-    ProjectsApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            .fn()
-            .mockResolvedValue({ data: '{"test": "document"}' }),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-    })),
-    UserInterfacesApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
-        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
-    })),
-    SettingsApi: jest.fn().mockImplementation(() => ({})),
-    OutputApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentOutputSettingsGet: jest
-            .fn()
-            .mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
-    })),
-    Configuration: jest.fn().mockImplementation(() => ({})),
 }));
-
-// Mock environment client APIs for testing
-const mockEnvironmentClientApis = createMockEnvironmentClientApis();
-
-const environmentBaseURL = 'http://abc.com';
-const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 
 const mockUITranslations = {
     formBuilder: {
@@ -85,7 +53,6 @@ const config = {
     authToken: 'token',
     projectName: '',
     uiTranslations: mockUITranslations,
-    environmentClientApis: mockEnvironmentClientApis,
 };
 
 jest.mock('@chili-publish/studio-sdk', () => {
@@ -140,56 +107,6 @@ jest.mock('@chili-publish/studio-sdk', () => {
 });
 describe('UITranslations Integration', () => {
     beforeEach(() => {
-        const formBuilder = [
-            {
-                type: 'datasource' as const,
-                active: true,
-                header: 'Data source active',
-                helpText: 'Select a data source',
-            },
-            {
-                type: 'layouts' as const,
-                active: true,
-                header: 'Layouts from user interface',
-                helpText: 'Layouts help text',
-                layoutSelector: true,
-                showWidthHeightInputs: true,
-                multipleLayouts: true,
-                allowNewProjectFromLayout: true,
-            },
-            {
-                type: 'variables' as const,
-                active: true,
-                header: 'Variables from user interface',
-                helpText: 'Change the variables',
-            },
-        ];
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: formBuilder });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'data-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            if (url === 'http://deploy.com/media-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'media-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-            return Promise.resolve({ data: {} });
-        });
         render(<div id="sui-root" />);
     });
 

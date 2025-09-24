@@ -12,6 +12,7 @@ import type {
     GenerateOutputTaskPollingResponse,
     IOutputSetting,
     OutputGenerationRequest,
+    PaginatedResponse,
 } from 'src/types/types';
 import { TokenService } from './TokenService';
 
@@ -140,10 +141,9 @@ export class EnvironmentApiService {
 
     // User Interfaces API methods
     async getAllUserInterfaces() {
-        const userInterfaces = this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
+        return this.userInterfacesApi.apiV1EnvironmentEnvironmentUserInterfacesGet({
             environment: this.environment,
-        });
-        return userInterfaces as unknown as { data: APIUserInterface[] }; // TODO: Remove casting when  env api or our code is updated
+        }) as unknown as PaginatedResponse<APIUserInterface>; // TODO: Remove casting when env api or our code is updated
     }
 
     async getUserInterfaceById(userInterfaceId: string) {

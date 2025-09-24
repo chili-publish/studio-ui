@@ -67,6 +67,12 @@ describe('MainContent', () => {
         outputSettings: {},
         uiOptions: {},
         graFxStudioEnvironmentApiBaseUrl: '',
+        onFetchOutputSettings: async () => {
+            return null;
+        },
+        onFetchUserInterfaces: async () => {
+            return { data: [], pageSize: 0 };
+        },
         environmentApiService: {
             getProjectById: jest.fn().mockResolvedValue({
                 id: '00000000-0000-0000-0000-000000000000',

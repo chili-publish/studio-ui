@@ -7,32 +7,6 @@ import axios from 'axios';
 import StudioUI from '../../main';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
-// Mock the EnvironmentApiService class
-jest.mock('../../services/EnvironmentApiService', () => {
-    return {
-        EnvironmentApiService: {
-            create: jest.fn().mockImplementation(() => ({
-                generateOutput: jest.fn(),
-                getOutputSettingsById: jest.fn(),
-                getOutputSettings: jest.fn(),
-                getTaskStatus: jest.fn(),
-                getAllConnectors: jest.fn(),
-                getConnectorById: jest.fn(),
-                getConnectorByIdAs: jest.fn(),
-                getProjectById: jest.fn(),
-                getProjectDocument: jest.fn(),
-                saveProjectDocument: jest.fn(),
-                getAllUserInterfaces: jest.fn(),
-                getUserInterfaceById: jest.fn(),
-                getTokenService: jest.fn().mockReturnValue({
-                    getToken: jest.fn().mockReturnValue('auth-token'),
-                    refreshToken: jest.fn(),
-                }),
-            })),
-        },
-    };
-});
-
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;

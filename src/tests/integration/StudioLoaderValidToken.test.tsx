@@ -1,44 +1,14 @@
 import { onVariableListChangedCallback } from '@tests/mocks/sdk.mock';
-import { mockOutputSetting } from '@mocks/mockOutputSetting';
-import { mockProject } from '@mocks/mockProject';
-import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockVariables } from '@mocks/mockVariables';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { ImageVariable } from '@chili-publish/studio-sdk';
-import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 
 import StudioUI from '../../main';
-
-// Mock environment client API
-jest.mock('@chili-publish/environment-client-api', () => ({
-    ConnectorsApi: jest.fn().mockImplementation(() => ({})),
-    ProjectsApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            .fn()
-            .mockResolvedValue({ data: '{"test": "document"}' }),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-    })),
-    UserInterfacesApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
-        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
-    })),
-    SettingsApi: jest.fn().mockImplementation(() => ({})),
-    OutputApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentOutputSettingsGet: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
-    })),
-    Configuration: jest.fn().mockImplementation(() => ({})),
-}));
-
-// Mock environment client APIs for testing
-const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const environmentBaseURL = 'environmentBaseURL';
 const projectID = 'projectId';
 const projectName = 'projectName';
 const token = 'auth-token';
-
-// Remove axios mock to force environment client API usage
 
 describe('StudioLoader integration - valid auth token', () => {
     it('Should correctly get media details for the image variable when token is valid', async () => {
@@ -51,7 +21,6 @@ describe('StudioLoader integration - valid auth token', () => {
             authToken: token,
             projectName,
             refreshTokenAction: () => Promise.resolve(''),
-            environmentClientApis: mockEnvironmentClientApis,
         };
 
         render(<div id="sui-root" />);

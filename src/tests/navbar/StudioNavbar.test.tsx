@@ -3,7 +3,6 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 
 import { act, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
-import { AxiosResponse } from 'axios';
 import { mockUserInterface, mockUserInterface2 } from '@mocks/mockUserinterface';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
@@ -13,9 +12,7 @@ import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
     FormBuilderType,
-    PaginatedResponse,
     ProjectConfig,
-    UserInterface,
     UserInterfaceWithOutputSettings,
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
@@ -69,10 +66,10 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onFetchUserInterfaceDetails: fetchOuptputSettingsFn,
     onFetchOutputSettings: fetchOuptputSettingsFn,
     onFetchUserInterfaces: async () => {
-        return Promise.resolve({
-            status: 200,
-            data: { data: [mockUserInterface, mockUserInterface2] },
-        } as unknown as AxiosResponse<PaginatedResponse<UserInterface>, any>);
+        return {
+            data: [mockUserInterface, mockUserInterface2],
+            pageSize: 10,
+        };
     },
     environmentApiService: {
         getProjectById: jest.fn().mockResolvedValue({

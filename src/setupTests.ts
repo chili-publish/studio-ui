@@ -80,3 +80,41 @@ if (Promise.withResolvers === undefined) {
 // Mock URL.createObjectURL and URL.revokeObjectURL
 window.URL.createObjectURL = jest.fn();
 window.URL.revokeObjectURL = jest.fn();
+
+// Generic EnvironmentApiService mock
+jest.mock('./services/EnvironmentApiService', () => ({
+    EnvironmentApiService: {
+        create: jest.fn().mockImplementation((_, __, refreshTokenAction) => ({
+            getProjectById: jest.fn().mockResolvedValue({ id: 'projectId', name: 'Test project' }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [{ id: 'ui-1', name: 'Test UI' }] }),
+            getUserInterfaceById: jest.fn().mockResolvedValue({ id: 'ui-1', name: 'Test UI' }),
+            getOutputSettings: jest
+                .fn()
+                .mockResolvedValue({ data: [{ id: 'output-1', type: 'jpg', name: 'JPEG Output' }] }),
+            getAllConnectors: jest.fn().mockResolvedValue({ data: [] }),
+            getConnectorById: jest
+                .fn()
+                .mockResolvedValue({ parsedData: { source: { url: 'http://test-connector.com/data' } } }),
+            getConnectorByIdAs: jest
+                .fn()
+                .mockResolvedValue({ parsedData: { source: { url: 'http://test-connector.com/data' } } }),
+            getOutputSettingsById: jest.fn().mockResolvedValue({}),
+            getTaskStatus: jest.fn().mockResolvedValue({}),
+            generateOutput: jest.fn().mockResolvedValue({}),
+            getTokenService: jest.fn().mockReturnValue({
+                getToken: jest.fn().mockReturnValue('mock-token'),
+                refreshToken: jest.fn().mockImplementation(async () => {
+                    if (refreshTokenAction) {
+                        return refreshTokenAction();
+                    }
+                    throw new Error(
+                        'The authentication token has expired, and a method to obtain a new one is not provided.',
+                    );
+                }),
+            }),
+            getEnvironment: jest.fn().mockReturnValue('test-environment'),
+        })),
+    },
+}));

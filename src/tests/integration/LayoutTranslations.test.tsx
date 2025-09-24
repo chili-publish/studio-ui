@@ -3,42 +3,9 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import userEvent from '@testing-library/user-event';
-import axios from 'axios';
-import { mockUserInterface } from '@mocks/mockUserinterface';
-import { mockOutputSetting } from '@mocks/mockOutputSetting';
-import { mockProject } from '@mocks/mockProject';
-import { createMockEnvironmentClientApis } from '../mocks/environmentClientApi';
 import StudioUI from '../../main';
 
 jest.mock('@chili-publish/studio-sdk');
-jest.mock('axios');
-
-// Mock environment client API
-jest.mock('@chili-publish/environment-client-api', () => ({
-    ConnectorsApi: jest.fn().mockImplementation(() => ({
-        getById: jest.fn().mockResolvedValue({ parsedData: { source: { url: 'http://deploy.com/data-connector' } } }),
-        getAll: jest.fn().mockResolvedValue({ parsedData: [] }),
-    })),
-    ProjectsApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue(mockProject),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            .fn()
-            .mockResolvedValue({ data: '{"test": "document"}' }),
-        apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-    })),
-    UserInterfacesApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentUserInterfacesGet: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
-        apiV1EnvironmentEnvironmentUserInterfacesUserInterfaceIdGet: jest.fn().mockResolvedValue(mockUserInterface),
-    })),
-    SettingsApi: jest.fn().mockImplementation(() => ({})),
-    OutputApi: jest.fn().mockImplementation(() => ({
-        apiV1EnvironmentEnvironmentOutputSettingsGet: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
-    })),
-    Configuration: jest.fn().mockImplementation(() => ({})),
-}));
-
-// Mock environment client APIs for testing
-const mockEnvironmentClientApis = createMockEnvironmentClientApis();
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
@@ -60,7 +27,6 @@ const config = {
     authToken: token,
     projectName: 'Layout translation',
     layoutTranslations,
-    environmentClientApis: mockEnvironmentClientApis,
 };
 
 jest.mock('@chili-publish/studio-sdk', () => {
@@ -93,9 +59,6 @@ jest.mock('@chili-publish/studio-sdk', () => {
 
 describe('Layout Translations Integration', () => {
     beforeEach(() => {
-        (axios.get as jest.Mock).mockImplementation(() => {
-            return Promise.resolve({ data: [] });
-        });
         render(<div id="sui-root" />);
     });
 

@@ -1,5 +1,4 @@
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import axios, { AxiosResponse } from 'axios';
 import {
     APIUserInterface,
     DownloadLinkResult,
@@ -13,6 +12,7 @@ import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
 import { addTrailingSlash, getDownloadLink } from './utils/documentExportHelper';
 import { transformFormBuilderArrayToObject } from './utils/helpers';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
+import { ProjectDataClient } from './services/ProjectDataClient';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -34,6 +34,9 @@ export class StudioProjectLoader {
     // Centralized Environment API Service
     private environmentApiService: EnvironmentApiService;
 
+    // Client for project data requests
+    private projectDataClient: ProjectDataClient;
+
     constructor(
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
@@ -52,6 +55,8 @@ export class StudioProjectLoader {
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
         this.environmentApiService = environmentApiService;
+
+        this.projectDataClient = new ProjectDataClient(() => this.onAuthenticationRequested());
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -84,9 +89,12 @@ export class StudioProjectLoader {
     };
 
     public onProjectDocumentRequested = async (): Promise<string | null> => {
-        if (this.projectDownloadUrl)
-            return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.onAuthenticationRequested());
+        // Use URL-based approach if download URL is provided
+        if (this.projectDownloadUrl) {
+            return this.projectDataClient.fetchFromUrl(this.projectDownloadUrl);
+        }
 
+        // Use API-based approach if no download URL
         if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
         try {
@@ -105,7 +113,7 @@ export class StudioProjectLoader {
     };
 
     public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
-        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl);
+        await this.saveDocument(generateJson);
         return this.onProjectInfoRequested();
     };
 
@@ -141,30 +149,7 @@ export class StudioProjectLoader {
         );
     };
 
-    // We kept this because integrators can send any url to fetch the document
-    // And we need to support that, there is no way to do that with the new environment client API
-    private static fetchDocument = async (templateUrl: string, token: string): Promise<string | null> => {
-        const url = templateUrl;
-        if (url) {
-            const fetchPromise = axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
-            return fetchPromise
-                .then((res) => {
-                    return JSON.stringify(res.data);
-                })
-                .catch(() => {
-                    return null;
-                });
-        }
-        return null;
-    };
-
-    private saveDocument = async (
-        generateJson: () => Promise<string>,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _projectUploadUrl: string | undefined,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _projectDownloadUrl: string | undefined,
-    ): Promise<void> => {
+    private saveDocument = async (generateJson: () => Promise<string>): Promise<void> => {
         try {
             const document = await generateJson().then((res) => {
                 if (res) {
@@ -173,14 +158,20 @@ export class StudioProjectLoader {
                 throw new Error();
             });
 
-            if (document && this.projectId) {
-                try {
+            const requestUrl =
+                this.projectDownloadUrl ||
+                (this.projectUploadUrl ? `${this.projectUploadUrl}/assets/assets/documents/demo.json` : null);
+
+            try {
+                if (requestUrl) {
+                    await this.projectDataClient.saveToUrl(requestUrl, document);
+                } else if (document && this.projectId) {
                     await this.environmentApiService.saveProjectDocument(this.projectId, JSON.parse(document));
-                } catch (err) {
-                    // eslint-disable-next-line no-console
-                    console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                    throw err;
                 }
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error(`[${this.saveDocument.name}] There was an issue saving document`);
+                throw err;
             }
         } catch (error) {
             // eslint-disable-next-line no-console
@@ -193,12 +184,12 @@ export class StudioProjectLoader {
         userInterfaceId = this.userInterfaceID,
     ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
-            const res = await this.onFetchUserInterfaces();
-
-            if (res.status === 200) {
-                return res.data.data.find((value: UserInterface) => value.default);
+            try {
+                const res = await this.onFetchUserInterfaces();
+                return res.data.find((value: UserInterface) => value.default);
+            } catch (error) {
+                throw new Error(`Default user interface not found`);
             }
-            throw new Error(`Default user interface not found`);
         };
 
         const fetchUserInterfaceDetails = async (requestedUserInterfaceId: string) => {
@@ -284,21 +275,13 @@ export class StudioProjectLoader {
         return userInterfaceDetails;
     };
 
-    public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, unknown>> => {
+    public onFetchUserInterfaces = async (): Promise<PaginatedResponse<UserInterface>> => {
         const res = await this.environmentApiService.getAllUserInterfaces();
 
-        // Transform the response to match the expected format
-        const transformedData = {
-            data: res.data?.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)) || [],
-        };
-
         return {
-            data: transformedData,
-            status: 200,
-            statusText: 'OK',
-            headers: {},
-            config: {},
-        } as AxiosResponse<PaginatedResponse<UserInterface>, unknown>;
+            ...res,
+            data: res.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
+        };
     };
 
     private static toUserInterface(apiUserInterface: APIUserInterface): UserInterface {
