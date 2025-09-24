@@ -1279,10 +1279,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@chili-publish/environment-client-api@0.27.0":
-  version "0.27.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.27.0/c072d6c2b83d1f3b691dd40e4145294d1255dabb#c072d6c2b83d1f3b691dd40e4145294d1255dabb"
-  integrity sha512-UE/xmN3AmItYgORm4gUj7W7OJuWtjlJY2FL0JNX+ymV+2MQtd5yT8VbW2vnwTIWpNWlJbTrB8Z8tyrnUsrl+OQ==
+"@chili-publish/environment-client-api@0.28.0":
+  version "0.28.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.28.0/3843e4bbae8428379809c4dddcfdb78bb39ab146#3843e4bbae8428379809c4dddcfdb78bb39ab146"
+  integrity sha512-eJY0F2w0mA21rQUP0axxtIr+OvuhIW/FKaEn1btBlpg5nvzHKyjQsMWUc8/ADyn149G5dhTVGbSbvWGIMYKV3w==
 
 "@chili-publish/grafx-shared-components@0.103.20":
   version "0.103.20"
