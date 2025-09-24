@@ -2,7 +2,6 @@ import { formatCell } from '@chili-publish/grafx-shared-components';
 import { ConnectorEvent, ConnectorEventType, ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
-import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
@@ -35,7 +34,6 @@ const useDataSource = () => {
 
     const { subscriber } = useSubscriberContext();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
-    const { authToken } = useAuthToken();
     const { direction } = useDirection();
     const { connectors } = useEnvironmentClientApi();
 
@@ -65,7 +63,7 @@ const useDataSource = () => {
         } catch (connectorError) {
             return false;
         }
-    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, authToken, connectors]);
+    }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, connectors]);
 
     const currentRow: DataItem | undefined = useMemo(() => {
         return dataRows[currentRowIndex];

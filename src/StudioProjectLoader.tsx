@@ -1,12 +1,5 @@
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import {
-    ConnectorsApi,
-    ProjectsApi,
-    UserInterfacesApi,
-    SettingsApi,
-    OutputApi,
-} from '@chili-publish/environment-client-api';
+import axios, { AxiosResponse } from 'axios';
 import {
     APIUserInterface,
     DownloadLinkResult,
@@ -30,11 +23,7 @@ export class StudioProjectLoader {
 
     private graFxStudioEnvironmentApiBaseUrl: string;
 
-    private authToken: string;
-
     private sandboxMode: boolean;
-
-    private refreshTokenAction?: () => Promise<string | AxiosError>;
 
     private cachedProject: Project | undefined;
 
@@ -43,22 +32,13 @@ export class StudioProjectLoader {
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 
     // Centralized Environment API Service
-    private environmentApiService!: EnvironmentApiService;
+    private environmentApiService: EnvironmentApiService;
 
     constructor(
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
-        authToken: string,
         sandboxMode: boolean,
-        environmentClientApis: {
-            connectorsApi: ConnectorsApi;
-            projectsApi: ProjectsApi;
-            userInterfacesApi: UserInterfacesApi;
-            settingsApi: SettingsApi;
-            outputApi: OutputApi;
-            environment: string;
-        },
-        refreshTokenAction?: () => Promise<string | AxiosError>,
+        environmentApiService: EnvironmentApiService,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
         userInterfaceID?: string,
@@ -69,19 +49,9 @@ export class StudioProjectLoader {
         this.projectId = projectId;
         this.sandboxMode = sandboxMode;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
-        this.authToken = authToken;
-        this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
-
-        // Initialize centralized API service
-        this.environmentApiService = new EnvironmentApiService(
-            environmentClientApis.connectorsApi,
-            environmentClientApis.projectsApi,
-            environmentClientApis.userInterfacesApi,
-            environmentClientApis.outputApi,
-            environmentClientApis.environment,
-        );
+        this.environmentApiService = environmentApiService;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -114,7 +84,8 @@ export class StudioProjectLoader {
     };
 
     public onProjectDocumentRequested = async (): Promise<string | null> => {
-        if (this.projectDownloadUrl) return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.authToken);
+        if (this.projectDownloadUrl)
+            return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.onAuthenticationRequested());
 
         if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
@@ -134,24 +105,16 @@ export class StudioProjectLoader {
     };
 
     public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
-        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
+        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl);
         return this.onProjectInfoRequested();
     };
 
     public onAuthenticationRequested = (): string => {
-        return this.authToken;
+        return this.environmentApiService.getTokenService().getToken();
     };
 
     public onAuthenticationExpired = async (): Promise<string> => {
-        if (!this.refreshTokenAction) {
-            throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
-        }
-        const result = await this.refreshTokenAction();
-        if (result instanceof Error) {
-            throw result;
-        }
-        this.authToken = result;
-        return result;
+        return this.environmentApiService.getTokenService().refreshToken();
     };
 
     public onLogInfoRequested = (): unknown => {
@@ -170,7 +133,6 @@ export class StudioProjectLoader {
     ): Promise<DownloadLinkResult> => {
         return getDownloadLink(
             extension as DownloadFormats,
-            () => this.authToken,
             selectedLayoutID || '0',
             this.projectId,
             outputSettingsId,
@@ -202,8 +164,6 @@ export class StudioProjectLoader {
         _projectUploadUrl: string | undefined,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _projectDownloadUrl: string | undefined,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _token: string,
     ): Promise<void> => {
         try {
             const document = await generateJson().then((res) => {

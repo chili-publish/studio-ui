@@ -1,11 +1,5 @@
 import { defaultOutputSettings, defaultPlatformUiOptions, ProjectConfig } from 'src/types/types';
-import {
-    ConnectorsApi,
-    ProjectsApi,
-    UserInterfacesApi,
-    SettingsApi,
-    OutputApi,
-} from '@chili-publish/environment-client-api';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 
 export class ProjectConfigs {
     static empty: ProjectConfig = {
@@ -46,23 +40,14 @@ export class ProjectConfigs {
         onProjectGetDownloadLink: async () => {
             return { status: 0, error: '', success: false, parsedData: '', data: '' };
         },
-        environmentClientApis: {
-            connectorsApi: {} as ConnectorsApi,
-            projectsApi: {
-                apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
-                    id: '00000000-0000-0000-0000-000000000000',
-                    name: 'mockProjectName',
-                    template: { id: 'dddddd' },
-                }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-                    .fn()
-                    .mockResolvedValue({ data: { mock: 'data' } }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-            } as unknown as ProjectsApi,
-            userInterfacesApi: {} as UserInterfacesApi,
-            settingsApi: {} as SettingsApi,
-            outputApi: {} as OutputApi,
-            environment: 'test-environment',
-        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
     };
 }

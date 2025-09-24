@@ -1,50 +1,21 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import {
-    ConnectorsApi,
-    ProjectsApi,
-    UserInterfacesApi,
-    SettingsApi,
-    OutputApi,
-} from '@chili-publish/environment-client-api';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 
 interface EnvironmentClientApiContextType {
-    connectorsApi: ConnectorsApi;
-    projectsApi: ProjectsApi;
-    userInterfacesApi: UserInterfacesApi;
-    settingsApi: SettingsApi;
-    outputApi: OutputApi;
-    environment: string;
+    environmentApiService: EnvironmentApiService;
 }
 
 const EnvironmentClientApiContext = createContext<EnvironmentClientApiContextType | undefined>(undefined);
 
 interface EnvironmentClientApiProviderProps {
     children: ReactNode;
-    connectorsApi: ConnectorsApi;
-    projectsApi: ProjectsApi;
-    userInterfacesApi: UserInterfacesApi;
-    settingsApi: SettingsApi;
-    outputApi: OutputApi;
-    environment: string;
+    environmentApiService: EnvironmentApiService;
 }
 
-export function EnvironmentClientApiProvider({
-    children,
-    connectorsApi,
-    projectsApi,
-    userInterfacesApi,
-    settingsApi,
-    outputApi,
-    environment,
-}: EnvironmentClientApiProviderProps) {
+export function EnvironmentClientApiProvider({ children, environmentApiService }: EnvironmentClientApiProviderProps) {
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     const value: EnvironmentClientApiContextType = {
-        connectorsApi,
-        projectsApi,
-        userInterfacesApi,
-        settingsApi,
-        outputApi,
-        environment,
+        environmentApiService,
     };
 
     return <EnvironmentClientApiContext.Provider value={value}>{children}</EnvironmentClientApiContext.Provider>;

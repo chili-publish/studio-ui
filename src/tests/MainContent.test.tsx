@@ -1,11 +1,5 @@
 import { LayoutIntent } from '@chili-publish/studio-sdk';
-import {
-    ConnectorsApi,
-    OutputApi,
-    ProjectsApi,
-    SettingsApi,
-    UserInterfacesApi,
-} from '@chili-publish/environment-client-api';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import MainContent from '../MainContent';
 import { ProjectConfig } from '../types/types';
 import { renderWithProviders } from './mocks/Provider';
@@ -73,24 +67,15 @@ describe('MainContent', () => {
         outputSettings: {},
         uiOptions: {},
         graFxStudioEnvironmentApiBaseUrl: '',
-        environmentClientApis: {
-            connectorsApi: {} as ConnectorsApi,
-            projectsApi: {
-                apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
-                    id: '00000000-0000-0000-0000-000000000000',
-                    name: 'mockProjectName',
-                    template: { id: 'dddddd' },
-                }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-                    .fn()
-                    .mockResolvedValue({ data: { mock: 'data' } }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-            } as unknown as ProjectsApi,
-            userInterfacesApi: {} as UserInterfacesApi,
-            settingsApi: {} as SettingsApi,
-            outputApi: {} as OutputApi,
-            environment: 'test-environment',
-        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
     };
 
     it('should render with default ltr direction', async () => {

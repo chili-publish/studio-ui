@@ -84,12 +84,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                             <FeatureFlagProvider featureFlags={projectConfig.featureFlags}>
                                 <AuthTokenProvider authToken={authToken}>
                                     <EnvironmentClientApiProvider
-                                        connectorsApi={projectConfig.environmentClientApis.connectorsApi}
-                                        projectsApi={projectConfig.environmentClientApis.projectsApi}
-                                        userInterfacesApi={projectConfig.environmentClientApis.userInterfacesApi}
-                                        settingsApi={projectConfig.environmentClientApis.settingsApi}
-                                        outputApi={projectConfig.environmentClientApis.outputApi}
-                                        environment={projectConfig.environmentClientApis.environment}
+                                        environmentApiService={projectConfig.environmentApiService}
                                     >
                                         <MainContent updateToken={setAuthToken} projectConfig={projectConfig} />
                                     </EnvironmentClientApiProvider>

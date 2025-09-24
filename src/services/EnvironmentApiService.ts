@@ -1,11 +1,19 @@
-import { ConnectorsApi, ProjectsApi, UserInterfacesApi, OutputApi } from '@chili-publish/environment-client-api';
+import { AxiosError } from 'axios';
 import {
+    Configuration,
+    ConnectorsApi,
+    ProjectsApi,
+    UserInterfacesApi,
+    OutputApi,
+} from '@chili-publish/environment-client-api';
+import type {
     APIUserInterface,
     GenerateOutputResponse,
     GenerateOutputTaskPollingResponse,
     IOutputSetting,
     OutputGenerationRequest,
 } from 'src/types/types';
+import { TokenService } from './TokenService';
 
 /**
  * Centralized service for environment client API operations
@@ -13,15 +21,78 @@ import {
  * and makes it easier to manage API changes and updates
  */
 export class EnvironmentApiService {
-    // eslint-disable-next-line no-useless-constructor
-    constructor(
-        private connectorsApi: ConnectorsApi,
-        private projectsApi: ProjectsApi,
-        private userInterfacesApi: UserInterfacesApi,
-        private outputApi: OutputApi,
-        private environment: string,
-        // eslint-disable-next-line no-empty-function
-    ) {}
+    private connectorsApi: ConnectorsApi;
+
+    private projectsApi: ProjectsApi;
+
+    private userInterfacesApi: UserInterfacesApi;
+
+    private outputApi: OutputApi;
+
+    private environment: string;
+
+    private tokenService: TokenService;
+
+    private constructor(apiBasePath: string, environment: string, tokenService: TokenService) {
+        this.environment = environment;
+        this.tokenService = tokenService;
+
+        const config = new Configuration({
+            basePath: apiBasePath,
+            accessToken: () => this.tokenService.getToken(),
+        });
+
+        // Initialize all API instances
+        this.connectorsApi = new ConnectorsApi(config);
+        this.projectsApi = new ProjectsApi(config);
+        this.userInterfacesApi = new UserInterfacesApi(config);
+        this.outputApi = new OutputApi(config);
+    }
+
+    /**
+     * Factory method to create EnvironmentApiService instance with token management
+     * @param graFxStudioEnvironmentApiBaseUrl - Environment API base URL
+     * @param authToken - Initial authentication token
+     * @param refreshTokenAction - Optional callback to refresh the authentication token
+     * @returns EnvironmentApiService instance with token management
+     */
+    static create(
+        graFxStudioEnvironmentApiBaseUrl: string,
+        authToken: string,
+        refreshTokenAction?: () => Promise<string | AxiosError>,
+    ): EnvironmentApiService {
+        // Extract environment name from the base URL
+        const [, ...rest] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+        const environment = rest.pop() ?? '';
+
+        let apiBasePath: string;
+        if (graFxStudioEnvironmentApiBaseUrl.includes('/environment/')) {
+            const [baseUrlPart] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
+            // Remove /api/v1 from the base URL
+            apiBasePath = baseUrlPart.replace('/api/v1', '');
+        } else {
+            apiBasePath = graFxStudioEnvironmentApiBaseUrl.replace('/api/v1', '');
+        }
+
+        // Create token service
+        const tokenService = new TokenService(authToken, refreshTokenAction);
+
+        return new EnvironmentApiService(apiBasePath, environment, tokenService);
+    }
+
+    /**
+     * Get the token service instance
+     */
+    getTokenService(): TokenService {
+        return this.tokenService;
+    }
+
+    /**
+     * Get the environment name
+     */
+    getEnvironment(): string {
+        return this.environment;
+    }
 
     // Connectors API methods
     async getAllConnectors() {

@@ -1,12 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
-import {
-    ConnectorsApi,
-    OutputApi,
-    ProjectsApi,
-    SettingsApi,
-    UserInterfacesApi,
-} from '@chili-publish/environment-client-api';
+
 import { act, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 import { AxiosResponse } from 'axios';
@@ -14,6 +8,7 @@ import { mockUserInterface, mockUserInterface2 } from '@mocks/mockUserinterface'
 import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
@@ -79,24 +74,15 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
             data: { data: [mockUserInterface, mockUserInterface2] },
         } as unknown as AxiosResponse<PaginatedResponse<UserInterface>, any>);
     },
-    environmentClientApis: {
-        connectorsApi: {} as ConnectorsApi,
-        projectsApi: {
-            apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
-                id: '00000000-0000-0000-0000-000000000000',
-                name: 'mockProjectName',
-                template: { id: 'dddddd' },
-            }),
-            apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-                .fn()
-                .mockResolvedValue({ data: { mock: 'data' } }),
-            apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-        } as unknown as ProjectsApi,
-        userInterfacesApi: {} as UserInterfacesApi,
-        settingsApi: {} as SettingsApi,
-        outputApi: {} as OutputApi,
-        environment: 'test-environment',
-    },
+    environmentApiService: {
+        getProjectById: jest.fn().mockResolvedValue({
+            id: '00000000-0000-0000-0000-000000000000',
+            name: 'mockProjectName',
+            template: { id: 'dddddd' },
+        }),
+        getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+        saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+    } as unknown as EnvironmentApiService,
 });
 
 const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {

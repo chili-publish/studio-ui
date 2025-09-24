@@ -13,14 +13,7 @@ import {
 } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import isPropValid from '@emotion/is-prop-valid';
-import {
-    ConnectorsApi,
-    ProjectsApi,
-    UserInterfacesApi,
-    SettingsApi,
-    OutputApi,
-    Configuration,
-} from '@chili-publish/environment-client-api';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import { RootState, setupStore } from '../../store';
 import { EnvironmentClientApiProvider } from '../../contexts/EnvironmentClientApiContext';
 
@@ -30,19 +23,11 @@ export interface WrapperProps {
 
 // Create mock API instances for testing
 const createMockApiInstances = () => {
-    const config = new Configuration({
-        basePath: 'https://test.example.com',
-        accessToken: 'test-token',
-    });
-
-    return {
-        connectorsApi: new ConnectorsApi(config),
-        projectsApi: new ProjectsApi(config),
-        userInterfacesApi: new UserInterfacesApi(config),
-        settingsApi: new SettingsApi(config),
-        outputApi: new OutputApi(config),
-        environment: 'test-environment',
-    };
+    return EnvironmentApiService.create(
+        'https://test.example.com',
+        'test-environment',
+        jest.fn().mockResolvedValue('test-token'),
+    );
 };
 
 // Used to render test components with new instance of redux store.
@@ -68,14 +53,7 @@ export const renderWithProviders = <
         return (
             <StyleSheetManager shouldForwardProp={isPropValid}>
                 <ReduxProvider store={reduxStore}>
-                    <EnvironmentClientApiProvider
-                        connectorsApi={mockApiInstances.connectorsApi}
-                        projectsApi={mockApiInstances.projectsApi}
-                        userInterfacesApi={mockApiInstances.userInterfacesApi}
-                        settingsApi={mockApiInstances.settingsApi}
-                        outputApi={mockApiInstances.outputApi}
-                        environment={mockApiInstances.environment}
-                    >
+                    <EnvironmentClientApiProvider environmentApiService={mockApiInstances}>
                         <UiThemeProvider theme="platform">{children}</UiThemeProvider>
                     </EnvironmentClientApiProvider>
                 </ReduxProvider>
@@ -117,14 +95,7 @@ export const renderHookWithProviders = <
             return (
                 <StyleSheetManager shouldForwardProp={isPropValid}>
                     <ReduxProvider store={reduxStore}>
-                        <EnvironmentClientApiProvider
-                            connectorsApi={mockApiInstances.connectorsApi}
-                            projectsApi={mockApiInstances.projectsApi}
-                            userInterfacesApi={mockApiInstances.userInterfacesApi}
-                            settingsApi={mockApiInstances.settingsApi}
-                            outputApi={mockApiInstances.outputApi}
-                            environment={mockApiInstances.environment}
-                        >
+                        <EnvironmentClientApiProvider environmentApiService={mockApiInstances}>
                             <UiThemeProvider theme="platform">{children}</UiThemeProvider>
                         </EnvironmentClientApiProvider>
                     </ReduxProvider>

@@ -6,13 +6,6 @@ import EditorSDK, {
     LayoutListItemType,
     LayoutPropertiesType,
 } from '@chili-publish/studio-sdk';
-import {
-    ConnectorsApi,
-    OutputApi,
-    ProjectsApi,
-    SettingsApi,
-    UserInterfacesApi,
-} from '@chili-publish/environment-client-api';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockUserInterface } from '@mocks/mockUserinterface';
@@ -20,6 +13,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import LeftPanel from '../../components/layout-panels/leftPanel/LeftPanel';
 import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import {
@@ -242,23 +236,30 @@ class ProjectConfigs {
         onProjectGetDownloadLink: async () => {
             return { status: 0, error: '', success: false, parsedData: '', data: '' };
         },
-        environmentClientApis: {
-            connectorsApi: {} as ConnectorsApi,
-            projectsApi: {
-                apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
-                    id: '00000000-0000-0000-0000-000000000000',
-                    name: 'mockProjectName',
-                    template: { id: 'dddddd' },
-                }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-                    .fn()
-                    .mockResolvedValue({ data: { mock: 'data' } }),
-                apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-            } as unknown as ProjectsApi,
-            userInterfacesApi: {} as UserInterfacesApi,
-            settingsApi: {} as SettingsApi,
-            outputApi: {} as OutputApi,
-            environment: 'test-environment',
-        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            // connectorsApi: {} as ConnectorsApi,
+            // projectsApi: {
+            //     apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
+            //         id: '00000000-0000-0000-0000-000000000000',
+            //         name: 'mockProjectName',
+            //         template: { id: 'dddddd' },
+            //     }),
+            //     apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
+            //         .fn()
+            //         .mockResolvedValue({ data: { mock: 'data' } }),
+            //     apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
+            // } as unknown as ProjectsApi,
+            // userInterfacesApi: {} as UserInterfacesApi,
+            // settingsApi: {} as SettingsApi,
+            // outputApi: {} as OutputApi,
+            // environment: 'test-environment',
+        } as unknown as EnvironmentApiService,
     };
 }

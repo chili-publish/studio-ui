@@ -2,11 +2,6 @@ import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { AxiosError, AxiosResponse } from 'axios';
 import {
-    ConnectorsApi,
-    ProjectsApi,
-    UserInterfacesApi,
-    SettingsApi,
-    OutputApi,
     UserInterface as EnvironmentUserInterface,
     Project as EnvironmentProject,
     OutputSettings as EnvironmentOutputSettings,
@@ -16,6 +11,7 @@ import {
     GeneratePdfOutputRequest,
     GeneratePngOutputRequest,
 } from '@chili-publish/environment-client-api';
+import type { EnvironmentApiService } from '../services/EnvironmentApiService';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
 import { VariableTranslations } from './VariableTranslations';
 import { UITranslations } from './UITranslations';
@@ -76,48 +72,8 @@ export type ProjectConfig = {
         variableId: string,
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
-    // Environment Client API instances
-    environmentClientApis: {
-        connectorsApi: ConnectorsApi;
-        projectsApi: ProjectsApi;
-        userInterfacesApi: UserInterfacesApi;
-        settingsApi: SettingsApi;
-        outputApi: OutputApi;
-        environment: string;
-    };
+    environmentApiService: EnvironmentApiService;
 };
-
-export interface DefaultStudioConfig {
-    selector: string;
-    projectDownloadUrl: string;
-    projectUploadUrl: string;
-    projectId: string;
-    graFxStudioEnvironmentApiBaseUrl: string;
-    authToken: string;
-    featureFlags?: FeatureFlagsType;
-    uiOptions?: UiOptions;
-
-    outputSettings?: OutputSettings;
-    projectName: string;
-    sandboxMode?: boolean;
-    onSandboxModeToggle?: () => void;
-    refreshTokenAction?: () => Promise<string | AxiosError>;
-    editorLink?: string;
-    userInterfaceID?: string;
-    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
-    customElement?: HTMLElement | string;
-    onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
-    onVariableFocus?: (variableId: string) => void;
-    onVariableBlur?: (variableId: string) => void;
-}
-
-export interface StudioConfig extends Omit<DefaultStudioConfig, 'projectId' | 'projectDownloadUrl'> {
-    projectId?: string;
-    projectDownloadUrl?: string;
-    onProjectInfoRequested: () => Promise<Project>;
-    onProjectDocumentRequested: () => Promise<string | null>;
-    onProjectSave: (generateJson: () => Promise<string>) => Promise<Project>;
-}
 
 export type DownloadLinkResult = {
     status: number;
@@ -297,8 +253,6 @@ export const defaultFormBuilder: FormBuilderType = {
 
 // eslint-disable-next-line no-restricted-globals
 export const defaultBackFn = () => history.back();
-
-export type HttpHeaders = { headers: { 'Content-Type': string; Authorization?: string } };
 
 export type Project = Omit<EnvironmentProject, 'name' | 'id' | 'template'> & {
     // TODO: Remove this override when environment client API Project updates name, id, template to become required

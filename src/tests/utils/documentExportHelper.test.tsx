@@ -35,7 +35,6 @@ describe('"getDownloadLink', () => {
 
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
@@ -61,7 +60,6 @@ describe('"getDownloadLink', () => {
 
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
@@ -89,7 +87,6 @@ describe('"getDownloadLink', () => {
 
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
@@ -119,15 +116,7 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
-            await getDownloadLink(
-                DownloadFormats.PDF,
-                () => 'Token',
-                '1',
-                'projectId',
-                undefined,
-                false,
-                mockEnvironmentApiService,
-            );
+            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', undefined, false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -143,15 +132,7 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: null,
             });
-            await getDownloadLink(
-                DownloadFormats.PDF,
-                () => 'Token',
-                '1',
-                'projectId',
-                'outputId',
-                false,
-                mockEnvironmentApiService,
-            );
+            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -169,15 +150,7 @@ describe('"getDownloadLink', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await getDownloadLink(
-                DownloadFormats.PDF,
-                () => 'Token',
-                '1',
-                'projectId',
-                'outputId',
-                false,
-                mockEnvironmentApiService,
-            );
+            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -197,15 +170,7 @@ describe('"getDownloadLink', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await getDownloadLink(
-                DownloadFormats.PDF,
-                () => 'Token',
-                '1',
-                'projectId',
-                'outputId',
-                false,
-                mockEnvironmentApiService,
-            );
+            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -236,7 +201,6 @@ describe('"getDownloadLink', () => {
         it('should return 200 status if all passed', async () => {
             const res = await getDownloadLink(
                 DownloadFormats.PDF,
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,

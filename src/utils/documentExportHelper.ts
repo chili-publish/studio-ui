@@ -1,6 +1,6 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
-import { ApiError, DownloadLinkResult, GenerateOutputTaskPollingResponse } from '../types/types';
+import { ApiError, DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
 
@@ -15,7 +15,6 @@ import { EnvironmentApiService } from '../services/EnvironmentApiService';
  */
 export const getDownloadLink = async (
     format: DownloadFormats,
-    getToken: () => string,
     layoutId: Id,
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
@@ -105,10 +104,7 @@ export const getDownloadLink = async (
  * @param environmentApiService Environment API service instance
  * @returns task result when completed
  */
-const startPollingOnEndpoint = async (
-    taskId: string,
-    environmentApiService: EnvironmentApiService,
-): Promise<GenerateOutputTaskPollingResponse> => {
+const startPollingOnEndpoint = async (taskId: string, environmentApiService: EnvironmentApiService) => {
     try {
         if (!taskId) {
             // eslint-disable-next-line no-console
