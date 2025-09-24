@@ -62,8 +62,7 @@ describe('MainContent', () => {
         onAuthenticationExpired: () => Promise.resolve(''),
         onBack: () => null,
         onLogInfoRequested: () => null,
-        onProjectGetDownloadLink: () =>
-            Promise.resolve({ status: 0, error: '', success: false, parsedData: '', data: '' }),
+        onGenerateOutput: () => Promise.resolve({ extensionType: 'pdf', outputData: new Blob() }),
         outputSettings: {},
         uiOptions: {},
         graFxStudioEnvironmentApiBaseUrl: '',

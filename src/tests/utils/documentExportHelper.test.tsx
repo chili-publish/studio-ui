@@ -1,8 +1,8 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
+import { addTrailingSlash, exportDocument } from '../../utils/documentExportHelper';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
-describe('"getDownloadLink', () => {
+describe('"exportDocument', () => {
     let mockEnvironmentApiService: jest.Mocked<EnvironmentApiService>;
 
     beforeEach(() => {
@@ -31,7 +31,7 @@ describe('"getDownloadLink', () => {
             // Mock the environment API service to throw an error
             mockEnvironmentApiService.generateOutput.mockRejectedValue(new Error('Test error'));
 
-            const res = await getDownloadLink(
+            const res = await exportDocument(
                 DownloadFormats.PDF,
                 '1',
                 'projectId',
@@ -42,8 +42,6 @@ describe('"getDownloadLink', () => {
             expect(res).toEqual({
                 status: 500,
                 error: 'Unexpected error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
@@ -56,7 +54,7 @@ describe('"getDownloadLink', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            const res = await getDownloadLink(
+            const res = await exportDocument(
                 DownloadFormats.PDF,
                 '1',
                 'projectId',
@@ -67,8 +65,6 @@ describe('"getDownloadLink', () => {
             expect(res).toEqual({
                 status: 503,
                 error: 'Api Error',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
@@ -83,7 +79,7 @@ describe('"getDownloadLink', () => {
             // Mock getTaskStatus to return null (simulating an error)
             mockEnvironmentApiService.getTaskStatus.mockRejectedValue(null);
 
-            const res = await getDownloadLink(
+            const res = await exportDocument(
                 DownloadFormats.PDF,
                 '1',
                 'projectId',
@@ -94,8 +90,6 @@ describe('"getDownloadLink', () => {
             expect(res).toEqual({
                 status: 500,
                 error: 'Error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
@@ -114,7 +108,7 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
-            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', undefined, false, mockEnvironmentApiService);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', undefined, false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -130,7 +124,7 @@ describe('"getDownloadLink', () => {
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: null,
             });
-            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -148,7 +142,7 @@ describe('"getDownloadLink', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -168,7 +162,7 @@ describe('"getDownloadLink', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await getDownloadLink(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -197,7 +191,7 @@ describe('"getDownloadLink', () => {
             });
         });
         it('should return 200 status if all passed', async () => {
-            const res = await getDownloadLink(
+            const res = await exportDocument(
                 DownloadFormats.PDF,
                 '1',
                 'projectId',
@@ -205,13 +199,7 @@ describe('"getDownloadLink', () => {
                 false,
                 mockEnvironmentApiService,
             );
-            expect(res).toEqual({
-                status: 200,
-                error: undefined,
-                success: true,
-                parsedData: 'http://test.com/download',
-                data: 'http://test.com/download',
-            });
+            expect(res).toEqual('test-task-id');
         });
     });
 });

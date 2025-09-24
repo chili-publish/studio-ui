@@ -4,6 +4,9 @@ import { ApiError, DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
 
+type TaskId = string;
+
+type StudioDownloadLinkResult = Omit<DownloadLinkResult, 'success' | 'parsedData'> | TaskId;
 /**
  * This method will call an external api to create a download url using environment client API
  * The video will be generated in the dimensions (and resolution) of the layout.
@@ -13,14 +16,14 @@ import { EnvironmentApiService } from '../services/EnvironmentApiService';
  * @param environmentApiService Environment API service instance
  * @returns the download link
  */
-export const getDownloadLink = async (
+export const exportDocument = async (
     format: DownloadFormats,
     layoutId: Id,
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
     environmentApiService: EnvironmentApiService,
-): Promise<DownloadLinkResult> => {
+): Promise<StudioDownloadLinkResult> => {
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
         let engineVersion: string | null = null;
@@ -62,8 +65,6 @@ export const getDownloadLink = async (
             return {
                 status: Number.parseInt(err.status),
                 error: err.detail,
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             };
         }
@@ -74,25 +75,15 @@ export const getDownloadLink = async (
             return {
                 status: 500,
                 error: 'Error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             };
         }
 
-        return {
-            status: 200,
-            success: true,
-            parsedData: pollingResult.links.download,
-            data: pollingResult.links.download,
-            error: undefined,
-        };
+        return response.data.taskId;
     } catch {
         return {
             status: 500,
             error: 'Unexpected error during polling',
-            success: false,
-            parsedData: undefined,
             data: undefined,
         };
     }
@@ -165,4 +156,4 @@ export const addTrailingSlash = (incomingUrl: string): string => {
     return incomingUrl.endsWith('/') ? incomingUrl : `${incomingUrl}/`;
 };
 
-export default { getDownloadLink, addTrailingSlash };
+export default { exportDocument, addTrailingSlash };

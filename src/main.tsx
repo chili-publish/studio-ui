@@ -64,7 +64,7 @@ export default class StudioUI extends StudioUILoader {
             onAuthenticationRequested: projectLoader.onAuthenticationRequested,
             onAuthenticationExpired: projectLoader.onAuthenticationExpired,
             onLogInfoRequested: projectLoader.onLogInfoRequested,
-            onProjectGetDownloadLink: projectLoader.onProjectGetDownloadLink,
+            onGenerateOutput: projectLoader.onGenerateOutput,
             onFetchOutputSettings: projectLoader.onFetchOutputSettings,
             onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
             onBack: defaultBackFn,
@@ -166,6 +166,7 @@ export default class StudioUI extends StudioUILoader {
             projectUploadUrl,
             userInterfaceID,
             onFetchUserInterfaceDetails,
+            onProjectGetDownloadLink,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -194,7 +195,7 @@ export default class StudioUI extends StudioUILoader {
                 onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
                 onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
                 onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
-                onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+                onGenerateOutput: projectLoader.onGenerateOutput,
                 onFetchOutputSettings: projectLoader.onFetchOutputSettings,
                 onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
                 onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorSDK, { ConnectorMappingDirection, VariableType } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { mock } from 'jest-mock-extended';
 import {
     getConnectorConfigurationOptions,
@@ -8,8 +7,6 @@ import {
     isAuthenticationRequired,
     verifyAuthentication,
 } from '../../utils/connectors';
-
-jest.mock('axios');
 
 describe('utils connectors', () => {
     const mockSDK = mock<EditorSDK>();
@@ -26,12 +23,6 @@ describe('utils connectors', () => {
     mockSDK.connector.getMappings = jest.fn();
 
     window.StudioUISDK = mockSDK;
-
-    (axios.get as jest.Mock).mockResolvedValue({
-        data: {
-            id: 'remote-connector-1',
-        },
-    });
 
     afterEach(() => {
         jest.clearAllMocks();

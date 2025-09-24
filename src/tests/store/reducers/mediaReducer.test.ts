@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorSDK, { ConnectorRegistrationSource } from '@chili-publish/studio-sdk';
 import { configureStore } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { mock } from 'jest-mock-extended';
 import document from 'src/store/reducers/documentReducer';
 import media, { getEnvironmentConnectorsFromDocument } from 'src/store/reducers/mediaReducer';
-
-jest.mock('axios');
 
 function getStore() {
     return configureStore({
@@ -71,18 +68,6 @@ describe("'media' reducer", () => {
                     },
                 },
             ],
-        });
-
-        (axios.get as jest.Mock).mockImplementation(async (url: string) => {
-            const id = url.split('/').at(-1);
-            if (id === '404') {
-                throw new Error('Not found');
-            }
-            return {
-                data: {
-                    id,
-                },
-            };
         });
 
         const mockGetConnectorById = jest.fn().mockImplementation(async (connectorId: string) => {

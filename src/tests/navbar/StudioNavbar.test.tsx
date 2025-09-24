@@ -60,8 +60,8 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onEngineInitialized: () => {
         // ignored
     },
-    onProjectGetDownloadLink: async () => {
-        return { status: 0, error: '', success: false, parsedData: '', data: '' };
+    onGenerateOutput: async () => {
+        return { extensionType: 'pdf', outputData: new Blob() };
     },
     onFetchUserInterfaceDetails: fetchOuptputSettingsFn,
     onFetchOutputSettings: fetchOuptputSettingsFn,

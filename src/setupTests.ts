@@ -114,7 +114,6 @@ jest.mock('./services/EnvironmentApiService', () => ({
                     );
                 }),
             }),
-            getEnvironment: jest.fn().mockReturnValue('test-environment'),
         })),
     },
 }));

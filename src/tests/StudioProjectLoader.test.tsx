@@ -5,6 +5,7 @@ import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting'
 import { StudioProjectLoader } from '../StudioProjectLoader';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
 import { ProjectDataClient } from '../services/ProjectDataClient';
+import { exportDocument } from '../utils/documentExportHelper';
 
 // Mock ProjectDataClient
 jest.mock('../services/ProjectDataClient', () => ({
@@ -23,6 +24,7 @@ jest.mock('../utils/documentExportHelper', () => ({
         data: JSON.stringify({ url: 'mockUrl' }),
     }),
     addTrailingSlash: jest.fn().mockReturnValue('mockGraFxStudioEnvironmentApiBaseUrl/'),
+    exportDocument: jest.fn(),
 }));
 
 describe('StudioProjectLoader', () => {
@@ -46,7 +48,10 @@ describe('StudioProjectLoader', () => {
             getToken: jest.fn().mockReturnValue(mockAuthToken),
             refreshToken: jest.fn().mockResolvedValue('newToken'),
         }),
-        getEnvironment: jest.fn().mockReturnValue('test-environment'),
+        getOutputTaskResult: jest.fn().mockResolvedValue({
+            extensionType: 'pdf',
+            outputData: new Blob(['mock output data'], { type: 'application/pdf' }),
+        }),
         // Additional properties to satisfy EnvironmentApiService type
         getAllConnectors: jest.fn(),
         getConnectorById: jest.fn(),
@@ -60,6 +65,10 @@ describe('StudioProjectLoader', () => {
     const mockProjectDataClient = {
         fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
         saveToUrl: jest.fn().mockResolvedValue(true),
+        downloadFromUrl: jest.fn().mockResolvedValue({
+            extensionType: 'pdf',
+            outputData: new Blob(['mock output data'], { type: 'application/pdf' }),
+        }),
     };
 
     beforeEach(() => {
@@ -255,8 +264,8 @@ describe('StudioProjectLoader', () => {
         });
     });
 
-    describe('onProjectGetDownloadLink', () => {
-        it('should get download link', async () => {
+    describe('onGenerateOutput', () => {
+        it('should generate output using custom onProjectGetDownloadLink callback', async () => {
             const mockExtension = 'pdf';
             const mockSelectedLayoutID = 'mockSelectedLayoutID';
             const mockOutputSettingsId = 'mockOutputSettingsId';
@@ -267,6 +276,57 @@ describe('StudioProjectLoader', () => {
                 parsedData: { url: 'mockUrl' },
                 data: JSON.stringify({ url: 'mockUrl' }),
             };
+            const mockBlob = new Blob(['mock output data'], { type: 'application/pdf' });
+            const mockOutputResult = {
+                extensionType: 'pdf',
+                outputData: mockBlob,
+            };
+
+            // Mock the custom callback
+            const mockOnProjectGetDownloadLink = jest.fn().mockResolvedValue(mockDownloadLinkResult);
+            // Mock the downloadFromUrl method
+            mockProjectDataClient.downloadFromUrl = jest.fn().mockResolvedValue(mockOutputResult);
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
+                mockEnvironmentApiService,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                undefined,
+                undefined,
+                mockOnProjectGetDownloadLink,
+            );
+
+            const result = await loader.onGenerateOutput(mockExtension, mockSelectedLayoutID, mockOutputSettingsId);
+
+            expect(mockOnProjectGetDownloadLink).toHaveBeenCalledWith(
+                mockExtension,
+                mockSelectedLayoutID,
+                mockOutputSettingsId,
+            );
+            expect(mockProjectDataClient.downloadFromUrl).toHaveBeenCalledWith(mockDownloadLinkResult.data);
+            expect(result).toEqual(mockOutputResult);
+        });
+
+        it('should generate output using API when no custom callback is provided', async () => {
+            const mockExtension = 'pdf';
+            const mockSelectedLayoutID = 'mockSelectedLayoutID';
+            const mockOutputSettingsId = 'mockOutputSettingsId';
+            const mockTaskId = 'mockTaskId';
+            const mockBlob = new Blob(['mock output data'], { type: 'application/pdf' });
+            const mockOutputResult = {
+                extensionType: 'pdf',
+                outputData: mockBlob,
+            };
+
+            // Mock the exportDocument function to return a task ID
+            (exportDocument as jest.Mock).mockResolvedValue(mockTaskId);
+
+            // Mock the getOutputTaskResult method
+            mockEnvironmentApiService.getOutputTaskResult = jest.fn().mockResolvedValue(mockOutputResult);
+
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
@@ -276,13 +336,75 @@ describe('StudioProjectLoader', () => {
                 mockProjectUploadUrl,
             );
 
-            const result = await loader.onProjectGetDownloadLink(
+            const result = await loader.onGenerateOutput(mockExtension, mockSelectedLayoutID, mockOutputSettingsId);
+
+            expect(exportDocument).toHaveBeenCalledWith(
                 mockExtension,
                 mockSelectedLayoutID,
+                mockProjectId,
                 mockOutputSettingsId,
+                false,
+                mockEnvironmentApiService,
+            );
+            expect(mockEnvironmentApiService.getOutputTaskResult).toHaveBeenCalledWith(mockTaskId);
+            expect(result).toEqual(mockOutputResult);
+        });
+
+        it('should throw error when custom callback returns error status', async () => {
+            const mockExtension = 'pdf';
+            const mockSelectedLayoutID = 'mockSelectedLayoutID';
+            const mockOutputSettingsId = 'mockOutputSettingsId';
+            const mockDownloadLinkResult = {
+                status: 400,
+                error: 'Bad request',
+                success: false,
+                parsedData: null,
+                data: null,
+            };
+
+            const mockOnProjectGetDownloadLink = jest.fn().mockResolvedValue(mockDownloadLinkResult);
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
+                mockEnvironmentApiService,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+                undefined,
+                undefined,
+                mockOnProjectGetDownloadLink,
             );
 
-            expect(result).toEqual(mockDownloadLinkResult);
+            await expect(
+                loader.onGenerateOutput(mockExtension, mockSelectedLayoutID, mockOutputSettingsId),
+            ).rejects.toThrow('Error getting download link');
+        });
+
+        it('should throw error when exportDocument fails', async () => {
+            const mockExtension = 'pdf';
+            const mockSelectedLayoutID = 'mockSelectedLayoutID';
+            const mockOutputSettingsId = 'mockOutputSettingsId';
+            const mockError = {
+                error: 'Export failed',
+                status: 500,
+            };
+
+            // Mock the exportDocument function to return an error
+            (exportDocument as jest.Mock).mockResolvedValue(mockError);
+
+            const loader = new StudioProjectLoader(
+                mockProjectId,
+                mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
+                mockEnvironmentApiService,
+                mockProjectDownloadUrl,
+                mockProjectUploadUrl,
+            );
+
+            await expect(
+                loader.onGenerateOutput(mockExtension, mockSelectedLayoutID, mockOutputSettingsId),
+            ).rejects.toThrow('Error getting download link:Export failed');
         });
     });
 

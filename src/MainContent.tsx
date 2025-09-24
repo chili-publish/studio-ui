@@ -63,7 +63,6 @@ interface MainContentProps {
 function MainContent({ projectConfig, updateToken }: MainContentProps) {
     const dispatch = useAppDispatch();
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
-    // const [variables, setVariables] = useState<Variable[]>([]);
 
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
@@ -294,9 +293,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
         setSDKRef(sdk);
         window.StudioUISDK.loadEditor();
 
-        if (projectConfig.onEngineInitialized) {
-            projectConfig.onEngineInitialized(currentProject as Project);
-        }
+        projectConfig.onEngineInitialized(currentProject as Project);
 
         projectConfig
             .onProjectDocumentRequested(projectConfig.projectId)

@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import {
     Configuration,
     ConnectorsApi,
@@ -14,6 +13,7 @@ import type {
     OutputGenerationRequest,
     PaginatedResponse,
 } from 'src/types/types';
+import { ContentType, contentTypeToExtension } from 'src/utils/contentType';
 import { TokenService } from './TokenService';
 
 /**
@@ -60,7 +60,7 @@ export class EnvironmentApiService {
     static create(
         graFxStudioEnvironmentApiBaseUrl: string,
         authToken: string,
-        refreshTokenAction?: () => Promise<string | AxiosError>,
+        refreshTokenAction?: () => Promise<string | Error>,
     ): EnvironmentApiService {
         // Extract environment name from the base URL
         const [, ...rest] = graFxStudioEnvironmentApiBaseUrl.split('/environment/');
@@ -86,13 +86,6 @@ export class EnvironmentApiService {
      */
     getTokenService(): TokenService {
         return this.tokenService;
-    }
-
-    /**
-     * Get the environment name
-     */
-    getEnvironment(): string {
-        return this.environment;
     }
 
     // Connectors API methods
@@ -172,6 +165,18 @@ export class EnvironmentApiService {
             environment: this.environment,
             taskId,
         }) as unknown as Promise<GenerateOutputTaskPollingResponse>; // TODO: Remove casting when env api is updated currently returning Promise<object | null | undefined >
+    }
+
+    async getOutputTaskResult(taskId: string) {
+        const response = await this.outputApi.apiV1EnvironmentEnvironmentOutputTasksTaskIdDownloadGetRaw({
+            environment: this.environment,
+            taskId,
+        });
+        const contentType = response.raw.headers.get('content-type') as ContentType;
+        return {
+            extensionType: contentTypeToExtension(contentType),
+            outputData: await response.value(),
+        };
     }
 
     // Generic output generation method

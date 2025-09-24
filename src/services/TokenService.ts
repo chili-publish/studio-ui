@@ -1,5 +1,3 @@
-import { AxiosError } from 'axios';
-
 /**
  * Service responsible for managing authentication tokens
  * Handles token storage, retrieval, and refresh operations
@@ -7,9 +5,9 @@ import { AxiosError } from 'axios';
 export class TokenService {
     private currentToken: string;
 
-    private refreshTokenAction?: () => Promise<string | AxiosError>;
+    private refreshTokenAction?: () => Promise<string | Error>;
 
-    constructor(authToken: string, refreshTokenAction?: () => Promise<string | AxiosError>) {
+    constructor(authToken: string, refreshTokenAction?: () => Promise<string | Error>) {
         this.currentToken = authToken;
         this.refreshTokenAction = refreshTokenAction;
     }

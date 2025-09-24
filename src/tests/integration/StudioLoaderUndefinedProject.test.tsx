@@ -39,7 +39,6 @@ jest.mock('../../services/EnvironmentApiService', () => ({
                 getToken: jest.fn().mockReturnValue('mock-token'),
                 refreshToken: jest.fn().mockResolvedValue('new-token'),
             }),
-            getEnvironment: jest.fn().mockReturnValue('test-environment'),
         })),
     },
 }));

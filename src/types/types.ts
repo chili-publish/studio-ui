@@ -1,6 +1,5 @@
 import { ITheme, UiThemeConfig } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import { AxiosError } from 'axios';
 import {
     UserInterface as EnvironmentUserInterface,
     Project as EnvironmentProject,
@@ -53,11 +52,16 @@ export type ProjectConfig = {
     onAuthenticationExpired: () => Promise<string>;
     onBack: () => void;
     onLogInfoRequested: () => unknown;
-    onProjectGetDownloadLink: (
+    onGenerateOutput: (
         extension: string,
         selectedLayoutID: string | undefined,
         outputSettingsId: string | undefined,
-    ) => Promise<DownloadLinkResult>;
+    ) => Promise<{ extensionType: string; outputData: Blob }>;
+    // onProjectGetDownloadLink: (
+    //     extension: string,
+    //     selectedLayoutID: string | undefined,
+    //     outputSettingsId: string | undefined,
+    // ) => Promise<DownloadLinkResult>;
     editorLink?: string;
     onFetchOutputSettings: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces: () => Promise<PaginatedResponse<UserInterface>>;
@@ -270,7 +274,7 @@ export interface IDefaultStudioUILoaderConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
 
     authToken: string;
-    refreshTokenAction?: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | Error>;
 }
 export interface IStudioUILoaderConfig {
     selector: string;
@@ -278,7 +282,7 @@ export interface IStudioUILoaderConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName: string;
-    refreshTokenAction?: () => Promise<string | AxiosError>;
+    refreshTokenAction?: () => Promise<string | Error>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
     userInterfaceFormBuilderData?: FormBuilderType;

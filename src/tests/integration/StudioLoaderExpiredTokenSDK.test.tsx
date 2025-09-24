@@ -42,7 +42,6 @@ jest.mock('../../services/EnvironmentApiService', () => ({
                     );
                 }),
             }),
-            getEnvironment: jest.fn().mockReturnValue('test-environment'),
         })),
     },
 }));
@@ -58,7 +57,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
         const refreshTokenFn = jest.fn().mockResolvedValue(refreshToken);
         const config = {
             selector: 'sui-root',
-            projectDownloadUrl, // Keep this to use axios path for now
+            projectDownloadUrl, // Keep this to use Project Data Client
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -90,7 +89,7 @@ describe('StudioLoader integration - SDK expired auth token', () => {
 
         const config = {
             selector: 'sui-root',
-            projectDownloadUrl, // Keep this to use axios path for now
+            projectDownloadUrl, // Keep this to use Project Data Client
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             projectId: projectID,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,

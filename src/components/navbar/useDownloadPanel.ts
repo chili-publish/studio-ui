@@ -2,26 +2,13 @@ import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectConfig } from 'src/types/types';
-import axios from 'axios';
-import { useAuthToken } from '../../contexts/AuthTokenProvider';
 import { useNotificationManager } from '../../contexts/NotificantionManager/NotificationManagerContext';
 import { validateVariableList } from '../../store/reducers/variableReducer';
 import { useAppDispatch } from '../../store';
 
-type MimeType = 'image/png' | 'image/jpeg' | 'application/pdf' | 'application/zip' | 'video/mp4' | 'image/gif';
-const mimeToExt: { [key in MimeType]: string } = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'application/pdf': 'pdf',
-    'application/zip': 'zip',
-    'video/mp4': 'mp4',
-    'image/gif': 'gif',
-};
-
 const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, selectedLayoutId: string | null) => {
     const dispatch = useAppDispatch();
 
-    const { authToken } = useAuthToken();
     const [isDownloadPanelVisible, setIsDownloadPanelVisible] = useState(false);
     const previousSelectedLayoutId = useRef<string | null>(selectedLayoutId);
 
@@ -53,27 +40,32 @@ const useDownloadPanel = (projectConfig: ProjectConfig, projectName: string, sel
         try {
             updateDownloadState({ [extension]: true });
             const selectedLayoutID = (await window.StudioUISDK.layout.getSelected()).parsedData?.id;
-            const downloadLinkData = await projectConfig.onProjectGetDownloadLink(
+            const { extensionType, outputData } = await projectConfig.onGenerateOutput(
                 extension,
                 selectedLayoutID,
                 outputSettingsId,
             );
+            // const downloadLinkData = await projectConfig.onProjectGetDownloadLink(
+            //     extension,
+            //     selectedLayoutID,
+            //     outputSettingsId,
+            // );
 
-            if (downloadLinkData.status !== 200) {
-                throw new Error('Error getting download link');
-            }
+            // if (downloadLinkData.status !== 200) {
+            //     throw new Error('Error getting download link');
+            // }
 
-            const response = await axios.get(downloadLinkData.data ?? '', {
-                responseType: 'blob',
-                headers: { Authorization: `Bearer ${authToken}` },
-            });
+            // const response = await axios.get(downloadLinkData.data ?? '', {
+            //     responseType: 'blob',
+            //     headers: { Authorization: `Bearer ${authToken}` },
+            // });
 
-            if (response.status !== 200) return;
+            // if (response.status !== 200) return;
 
-            const contentType: MimeType = response.headers['content-type'];
-            const extensionType = mimeToExt[contentType];
+            // const contentType: MimeType = response.headers['content-type'];
+            // const extensionType = mimeToExt[contentType];
 
-            const objectUrl = window.URL.createObjectURL(response.data);
+            const objectUrl = window.URL.createObjectURL(outputData);
             const a = Object.assign(document.createElement('a'), {
                 href: objectUrl,
                 style: 'display: none',

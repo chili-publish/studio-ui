@@ -9,7 +9,7 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
-import { addTrailingSlash, getDownloadLink } from './utils/documentExportHelper';
+import { addTrailingSlash, exportDocument } from './utils/documentExportHelper';
 import { transformFormBuilderArrayToObject } from './utils/helpers';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
 import { ProjectDataClient } from './services/ProjectDataClient';
@@ -31,6 +31,12 @@ export class StudioProjectLoader {
 
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 
+    private onProjectGetDownloadLink?: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
+
     // Centralized Environment API Service
     private environmentApiService: EnvironmentApiService;
 
@@ -46,6 +52,11 @@ export class StudioProjectLoader {
         projectUploadUrl?: string,
         userInterfaceID?: string,
         onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
+        onProjectGetDownloadLink?: (
+            extension: string,
+            selectedLayoutID: string | undefined,
+            outputSettingsId: string | undefined,
+        ) => Promise<DownloadLinkResult>,
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
@@ -54,6 +65,7 @@ export class StudioProjectLoader {
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
+        this.onProjectGetDownloadLink = onProjectGetDownloadLink;
         this.environmentApiService = environmentApiService;
 
         this.projectDataClient = new ProjectDataClient(() => this.onAuthenticationRequested());
@@ -132,52 +144,6 @@ export class StudioProjectLoader {
             projectId: this.projectId,
             graFxStudioEnvironmentApiBaseUrl: this.graFxStudioEnvironmentApiBaseUrl,
         };
-    };
-
-    public onProjectGetDownloadLink = async (
-        extension: string,
-        selectedLayoutID: string | undefined,
-        outputSettingsId: string | undefined,
-    ): Promise<DownloadLinkResult> => {
-        return getDownloadLink(
-            extension as DownloadFormats,
-            selectedLayoutID || '0',
-            this.projectId,
-            outputSettingsId,
-            this.sandboxMode,
-            this.environmentApiService,
-        );
-    };
-
-    private saveDocument = async (generateJson: () => Promise<string>): Promise<void> => {
-        try {
-            const document = await generateJson().then((res) => {
-                if (res) {
-                    return res;
-                }
-                throw new Error();
-            });
-
-            const requestUrl =
-                this.projectDownloadUrl ||
-                (this.projectUploadUrl ? `${this.projectUploadUrl}/assets/assets/documents/demo.json` : null);
-
-            try {
-                if (requestUrl) {
-                    await this.projectDataClient.saveToUrl(requestUrl, document);
-                } else if (document && this.projectId) {
-                    await this.environmentApiService.saveProjectDocument(this.projectId, JSON.parse(document));
-                }
-            } catch (err) {
-                // eslint-disable-next-line no-console
-                console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                throw err;
-            }
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
-            throw error;
-        }
     };
 
     public onFetchStudioUserInterfaceDetails = async (
@@ -282,6 +248,72 @@ export class StudioProjectLoader {
             ...res,
             data: res.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
         };
+    };
+
+    public onGenerateOutput = async (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ): Promise<{ extensionType: string; outputData: Blob }> => {
+        if (this.onProjectGetDownloadLink) {
+            const result = await this.onProjectGetDownloadLink(extension, selectedLayoutID, outputSettingsId);
+            if (result.status !== 200 || !result.data) {
+                throw new Error('Error getting download link');
+            }
+            return this.projectDataClient.downloadFromUrl(result.data);
+        }
+        const taskId = await this.getTaskId(extension, selectedLayoutID, outputSettingsId);
+        return this.environmentApiService.getOutputTaskResult(taskId);
+    };
+
+    private getTaskId = async (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ): Promise<string> => {
+        const result = await exportDocument(
+            extension as DownloadFormats,
+            selectedLayoutID || '0',
+            this.projectId,
+            outputSettingsId,
+            this.sandboxMode,
+            this.environmentApiService,
+        );
+        if (typeof result !== 'string') {
+            throw new Error(`Error getting download link:${result.error}`);
+        }
+        return result;
+    };
+
+    private saveDocument = async (generateJson: () => Promise<string>): Promise<void> => {
+        try {
+            const document = await generateJson().then((res) => {
+                if (res) {
+                    return res;
+                }
+                throw new Error();
+            });
+
+            const requestUrl =
+                this.projectDownloadUrl ||
+                (this.projectUploadUrl ? `${this.projectUploadUrl}/assets/assets/documents/demo.json` : null);
+
+            try {
+                if (requestUrl) {
+                    await this.projectDataClient.saveToUrl(requestUrl, document);
+                } else if (document && this.projectId) {
+                    await this.environmentApiService.saveProjectDocument(this.projectId, JSON.parse(document));
+                }
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error(`[${this.saveDocument.name}] There was an issue saving document`);
+                throw err;
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
+            throw error;
+        }
     };
 
     private static toUserInterface(apiUserInterface: APIUserInterface): UserInterface {
