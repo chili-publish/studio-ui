@@ -30,7 +30,6 @@ jest.mock('../utils/documentExportHelper', () => ({
 describe('StudioProjectLoader', () => {
     const mockProjectId = 'mockProjectId';
     const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl/';
-    const mockAuthToken = 'mockAuthToken';
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
     const mockProjectUploadUrl = 'mockProjectUploadUrl';
     const mockDocument = { data: { mock: 'data' } };
@@ -44,10 +43,6 @@ describe('StudioProjectLoader', () => {
         getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
         getUserInterfaceById: jest.fn().mockResolvedValue(mockApiUserInterface),
         getOutputSettings: jest.fn().mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
-        getTokenService: jest.fn().mockReturnValue({
-            getToken: jest.fn().mockReturnValue(mockAuthToken),
-            refreshToken: jest.fn().mockResolvedValue('newToken'),
-        }),
         getOutputTaskResult: jest.fn().mockResolvedValue({
             extensionType: 'pdf',
             outputData: new Blob(['mock output data'], { type: 'application/pdf' }),

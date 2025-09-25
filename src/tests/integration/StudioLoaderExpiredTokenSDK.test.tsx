@@ -64,7 +64,6 @@ describe('StudioLoader integration - SDK expired auth token', () => {
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
-            getTokenService: jest.fn().mockReturnValue(mockTokenServiceInstance),
         };
         (EnvironmentApiService.create as jest.Mock).mockReturnValue(mockEnvironmentApiService);
     });

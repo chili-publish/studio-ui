@@ -1,43 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthRefreshRequest, AuthRefreshTypeEnum, GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
+import { AuthRefreshRequest, AuthRefreshTypeEnum } from '@chili-publish/studio-sdk';
 import { useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
+import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 
-jest.mock('@chili-publish/studio-sdk', () => ({
-    ...jest.requireActual('@chili-publish/studio-sdk'),
-    GrafxTokenAuthCredentials: jest.fn().mockImplementation((token) => ({
-        token,
-        constructor: { name: 'GrafxTokenAuthCredentials' },
-    })),
-}));
-
 describe('useEditorAuthExpired', () => {
-    const mockOnAuthenticationExpired = jest.fn();
     const mockOnConnectorAuthenticationRequested = jest.fn();
     const mockCreateProcessFn = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
-    });
-
-    it('should handle Grafx token refresh', async () => {
-        const newToken = 'new-token-123';
-        mockOnAuthenticationExpired.mockResolvedValue(newToken);
-
-        const handleAuthExpired = useEditorAuthExpired(mockOnAuthenticationExpired, undefined, mockCreateProcessFn);
-
-        const request: AuthRefreshRequest = {
-            type: AuthRefreshTypeEnum.grafxToken,
-            connectorId: '',
-            remoteConnectorId: '',
-            headerValue: '',
-        };
-
-        const result = await handleAuthExpired(request);
-
-        expect(mockOnAuthenticationExpired).toHaveBeenCalled();
-        expect(GrafxTokenAuthCredentials).toHaveBeenCalledWith(newToken);
-        expect(result).toEqual({ token: newToken, constructor: { name: 'GrafxTokenAuthCredentials' } });
     });
 
     it('should handle connector authentication with user impersonation', async () => {
@@ -55,11 +27,7 @@ describe('useEditorAuthExpired', () => {
         mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
         mockCreateProcessFn.mockImplementation((fn) => fn());
 
-        const handleAuthExpired = useEditorAuthExpired(
-            mockOnAuthenticationExpired,
-            mockOnConnectorAuthenticationRequested,
-            mockCreateProcessFn,
-        );
+        const handleAuthExpired = useEditorAuthExpired(mockOnConnectorAuthenticationRequested, mockCreateProcessFn);
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.any,
@@ -90,11 +58,7 @@ describe('useEditorAuthExpired', () => {
 
         mockCreateProcessFn.mockImplementation((result) => result);
 
-        const handleAuthExpired = useEditorAuthExpired(
-            mockOnAuthenticationExpired,
-            mockOnConnectorAuthenticationRequested,
-            mockCreateProcessFn,
-        );
+        const handleAuthExpired = useEditorAuthExpired(mockOnConnectorAuthenticationRequested, mockCreateProcessFn);
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.any,
@@ -117,9 +81,13 @@ describe('useEditorAuthExpired', () => {
     });
 
     it('should handle errors gracefully', async () => {
-        mockOnAuthenticationExpired.mockRejectedValue(new Error('Test error'));
+        // Set up the mock instance
+        (TokenService.getInstance as jest.Mock).mockReturnValue({
+            refreshToken: jest.fn().mockRejectedValue(new Error('Test error')),
+        });
+        // Mock the initialize method to store the refreshTokenAction
 
-        const handleAuthExpired = useEditorAuthExpired(mockOnAuthenticationExpired, undefined, mockCreateProcessFn);
+        const handleAuthExpired = useEditorAuthExpired(undefined, mockCreateProcessFn);
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.grafxToken,

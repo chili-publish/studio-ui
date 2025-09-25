@@ -12,18 +12,18 @@ export class TokenService {
 
     private refreshTokenAction?: () => Promise<string | Error>;
 
-    private constructor(authToken: string, refreshTokenAction?: () => Promise<string | Error>) {
-        this.currentToken = authToken;
+    private constructor(getTokenAction: () => string, refreshTokenAction?: () => Promise<string | Error>) {
+        this.currentToken = getTokenAction();
         this.refreshTokenAction = refreshTokenAction;
     }
 
     /**
      * Initialize the singleton instance
-     * @param authToken - Initial authentication token
+     * @param getTokenAction - Initial authentication token
      * @param refreshTokenAction - Optional callback to refresh the authentication token
      */
-    static initialize(authToken: string, refreshTokenAction?: () => Promise<string | Error>): void {
-        TokenService.instance = new TokenService(authToken, refreshTokenAction);
+    static initialize(getTokenAction: () => string, refreshTokenAction?: () => Promise<string | Error>): void {
+        TokenService.instance = new TokenService(getTokenAction, refreshTokenAction);
     }
 
     /**

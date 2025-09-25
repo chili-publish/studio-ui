@@ -45,9 +45,6 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
             template: { id: '1111-111-0000-0000-1111' },
         };
     },
-    onAuthenticationRequested: () => {
-        return '';
-    },
     onBack: () => {
         // ignored
     },

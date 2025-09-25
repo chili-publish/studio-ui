@@ -129,14 +129,6 @@ export class StudioProjectLoader {
         return this.onProjectInfoRequested();
     };
 
-    public onAuthenticationRequested = (): string => {
-        return this.environmentApiService.getTokenService().getToken();
-    };
-
-    public onAuthenticationExpired = async (): Promise<string> => {
-        return this.environmentApiService.getTokenService().refreshToken();
-    };
-
     public onLogInfoRequested = (): unknown => {
         return {
             projectDownloadUrl: this.projectDownloadUrl,

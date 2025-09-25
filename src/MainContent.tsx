@@ -127,7 +127,6 @@ function MainContent({ projectConfig }: MainContentProps) {
     useConnectorAuthenticationResult(authResults);
 
     const handleAuthExpired = useEditorAuthExpired(
-        projectConfig.onAuthenticationExpired,
         projectConfig?.onConnectorAuthenticationRequested,
         createAuthenticationProcess,
     );

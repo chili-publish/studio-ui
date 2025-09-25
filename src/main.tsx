@@ -41,7 +41,7 @@ export default class StudioUI extends StudioUILoader {
             config;
 
         // Initialize TokenService singleton
-        TokenService.initialize(authToken, refreshTokenAction);
+        TokenService.initialize(() => authToken, refreshTokenAction);
 
         // Create EnvironmentApiService instance
         const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
@@ -61,8 +61,6 @@ export default class StudioUI extends StudioUILoader {
             onProjectDocumentRequested: projectLoader.onProjectDocumentRequested,
             onProjectSave: projectLoader.onProjectSave,
             onEngineInitialized: projectLoader.onEngineInitialized,
-            onAuthenticationRequested: projectLoader.onAuthenticationRequested,
-            onAuthenticationExpired: projectLoader.onAuthenticationExpired,
             onLogInfoRequested: projectLoader.onLogInfoRequested,
             onGenerateOutput: projectLoader.onGenerateOutput,
             onFetchOutputSettings: projectLoader.onFetchOutputSettings,
@@ -151,7 +149,10 @@ export default class StudioUI extends StudioUILoader {
         } = config;
 
         // Initialize TokenService singleton
-        TokenService.initialize(authToken, refreshTokenAction);
+        TokenService.initialize(
+            onAuthenticationRequested ?? (() => authToken),
+            refreshTokenAction ?? onAuthenticationExpired,
+        );
 
         // Create EnvironmentApiService instance
         const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
@@ -191,8 +192,6 @@ export default class StudioUI extends StudioUILoader {
                 onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
                 onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
                 onEngineInitialized: onEngineInitialized ?? projectLoader.onEngineInitialized,
-                onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
-                onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
                 onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
                 onGenerateOutput: projectLoader.onGenerateOutput,
                 onFetchOutputSettings: projectLoader.onFetchOutputSettings,

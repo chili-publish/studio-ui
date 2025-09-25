@@ -1,9 +1,9 @@
 import { AuthRefreshRequest, AuthRefreshTypeEnum, GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
 import { CreateProcessFn } from 'src/components/connector-authentication/useConnectorAuthentication';
+import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 
 export const useEditorAuthExpired = (
-    onAuthenticationExpired: undefined | (() => Promise<string>),
     onConnectorAuthenticationRequested:
         | undefined
         | ((remoteConnectorId: string) => Promise<ConnectorAuthenticationResult>),
@@ -11,8 +11,8 @@ export const useEditorAuthExpired = (
 ) => {
     const handleAuthExpired = async (request: AuthRefreshRequest) => {
         try {
-            if (request.type === AuthRefreshTypeEnum.grafxToken && onAuthenticationExpired) {
-                const newToken = await onAuthenticationExpired();
+            if (request.type === AuthRefreshTypeEnum.grafxToken) {
+                const newToken = await TokenService.getInstance().refreshToken();
                 return new GrafxTokenAuthCredentials(newToken);
             }
 

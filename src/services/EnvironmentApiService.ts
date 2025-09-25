@@ -92,14 +92,6 @@ export class EnvironmentApiService {
         return new EnvironmentApiService(apiBasePath, environment);
     }
 
-    /**
-     * Get the token service instance
-     */
-    // eslint-disable-next-line class-methods-use-this
-    getTokenService(): TokenService {
-        return TokenService.getInstance();
-    }
-
     // Connectors API methods
     async getAllConnectors() {
         return this.connectorsApi.apiV1EnvironmentEnvironmentConnectorsGet({

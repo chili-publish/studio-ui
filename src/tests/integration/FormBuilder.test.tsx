@@ -67,10 +67,6 @@ jest.mock('../../services/EnvironmentApiService', () => ({
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
-            getTokenService: jest.fn().mockReturnValue({
-                getToken: jest.fn().mockReturnValue('mock-token'),
-                refreshToken: jest.fn().mockResolvedValue('new-token'),
-            }),
         })),
     },
 }));
@@ -226,10 +222,6 @@ describe('FormBuilder options', () => {
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
-            getTokenService: jest.fn().mockReturnValue({
-                getToken: jest.fn().mockReturnValue('mock-token'),
-                refreshToken: jest.fn().mockResolvedValue('new-token'),
-            }),
         }));
 
         await LoadStudioUI(config);

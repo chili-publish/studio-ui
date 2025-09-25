@@ -58,7 +58,6 @@ describe('MainContent', () => {
         onProjectLoaded: () => null,
         onEngineInitialized: () => null,
         onProjectSave: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
-        onAuthenticationRequested: () => 'authToken',
         onBack: () => null,
         onLogInfoRequested: () => null,
         onGenerateOutput: () => Promise.resolve({ extensionType: 'pdf', outputData: new Blob() }),
