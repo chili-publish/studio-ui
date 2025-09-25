@@ -244,22 +244,6 @@ class ProjectConfigs {
             }),
             getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
             saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
-            // connectorsApi: {} as ConnectorsApi,
-            // projectsApi: {
-            //     apiV1EnvironmentEnvironmentProjectsProjectIdGet: jest.fn().mockResolvedValue({
-            //         id: '00000000-0000-0000-0000-000000000000',
-            //         name: 'mockProjectName',
-            //         template: { id: 'dddddd' },
-            //     }),
-            //     apiV1EnvironmentEnvironmentProjectsProjectIdDocumentGet: jest
-            //         .fn()
-            //         .mockResolvedValue({ data: { mock: 'data' } }),
-            //     apiV1EnvironmentEnvironmentProjectsProjectIdDocumentPut: jest.fn().mockResolvedValue({ success: true }),
-            // } as unknown as ProjectsApi,
-            // userInterfacesApi: {} as UserInterfacesApi,
-            // settingsApi: {} as SettingsApi,
-            // outputApi: {} as OutputApi,
-            // environment: 'test-environment',
         } as unknown as EnvironmentApiService,
     };
 }

@@ -55,11 +55,6 @@ export type ProjectConfig = {
         selectedLayoutID: string | undefined,
         outputSettingsId: string | undefined,
     ) => Promise<{ extensionType: string; outputData: Blob }>;
-    // onProjectGetDownloadLink: (
-    //     extension: string,
-    //     selectedLayoutID: string | undefined,
-    //     outputSettingsId: string | undefined,
-    // ) => Promise<DownloadLinkResult>;
     editorLink?: string;
     onFetchOutputSettings: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces: () => Promise<PaginatedResponse<UserInterface>>;
