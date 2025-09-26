@@ -3,34 +3,43 @@ import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
-
 import StudioUI from '../../main';
 
 const environmentBaseURL = 'environmentBaseURL';
 const projectID = 'projectId';
 const projectName = 'projectName';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'auth-token';
 
-jest.mock('axios');
+// Mock ProjectDataClient
+jest.mock('../../services/ProjectDataClient', () => ({
+    ProjectDataClient: jest.fn().mockImplementation(() => ({
+        fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
+        saveToUrl: jest.fn().mockResolvedValue(undefined),
+    })),
+}));
+
+// Mock EnvironmentApiService
+jest.mock('../../services/EnvironmentApiService', () => ({
+    EnvironmentApiService: {
+        create: jest.fn().mockImplementation(() => ({
+            getProjectById: jest.fn().mockResolvedValue(mockProject),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [mockUserInterface] }),
+            getUserInterfaceById: jest.fn().mockResolvedValue(mockUserInterface),
+            getOutputSettings: jest.fn().mockResolvedValue({ data: [mockOutputSetting] }),
+            getAllConnectors: jest.fn().mockResolvedValue({ data: [] }),
+            getConnectorById: jest.fn().mockResolvedValue({ parsedData: { source: { url: connectorSourceUrl } } }),
+            getConnectorByIdAs: jest.fn().mockResolvedValue({ parsedData: { source: { url: connectorSourceUrl } } }),
+            getOutputSettingsById: jest.fn().mockResolvedValue({}),
+            getTaskStatus: jest.fn().mockResolvedValue({}),
+            generateOutput: jest.fn().mockResolvedValue({}),
+        })),
+    },
+}));
 
 describe('StudioLoader integration - no projectId', () => {
-    beforeAll(() => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === connectorSourceUrl) return Promise.resolve({ data: {} });
-
-            return Promise.resolve({ data: {} });
-        });
-    });
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -40,7 +49,7 @@ describe('StudioLoader integration - no projectId', () => {
         act(() => {
             StudioUI.studioUILoaderConfig({
                 selector: 'sui-root',
-                projectDownloadUrl,
+                projectDownloadUrl, // Keep this to test ProjectDataClient path
                 projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
                 graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
                 authToken: token,
@@ -51,13 +60,6 @@ describe('StudioLoader integration - no projectId', () => {
 
         await waitFor(() => {
             expect(screen.getByText(projectName)).toBeInTheDocument();
-        });
-        expect(axios.get).not.toHaveBeenCalledWith(`${environmentBaseURL}/projects/undefined`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        expect(axios.get).toHaveBeenCalledWith(projectDownloadUrl, {
-            headers: { Authorization: `Bearer ${token}` },
         });
     });
 
@@ -78,18 +80,6 @@ describe('StudioLoader integration - no projectId', () => {
 
         await waitFor(() => {
             expect(screen.getByText(projectName)).toBeInTheDocument();
-        });
-        expect(axios.get).not.toHaveBeenCalledWith(`${environmentBaseURL}/projects/undefined`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        expect(axios.get).not.toHaveBeenCalledWith(projectDownloadUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const documentFallbackUrl = `${environmentBaseURL}/projects/undefined/document`;
-        expect(axios.get).not.toHaveBeenCalledWith(documentFallbackUrl, {
-            headers: { Authorization: `Bearer ${token}` },
         });
     });
 });

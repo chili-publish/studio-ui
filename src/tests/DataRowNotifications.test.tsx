@@ -59,7 +59,7 @@ const mockProjectConfig = {
     onProjectDocumentRequested: jest.fn().mockResolvedValue('{}'),
     onProjectInfoRequested: jest.fn().mockResolvedValue({}),
     onProjectSave: jest.fn(),
-    onAuthenticationExpired: jest.fn(),
+    onEngineInitialized: jest.fn(),
     outputSettings: {},
 } as unknown as ProjectConfig;
 
@@ -102,7 +102,6 @@ const renderComponent = () => {
                             },
                         },
                     }}
-                    updateToken={jest.fn()}
                 />
             </NotificationManagerProvider>
         </SubscriberContextProvider>,

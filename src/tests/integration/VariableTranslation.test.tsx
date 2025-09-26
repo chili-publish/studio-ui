@@ -7,12 +7,9 @@ import {
     ShortTextVariable,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
-import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting';
-import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, within } from '@testing-library/react';
 import { variables, variables as mockVariables } from '@tests/mocks/mockVariables';
-import axios from 'axios';
 import { VariableTranslations } from 'src/types/VariableTranslations';
 import userEvent from '@testing-library/user-event';
 import StudioUI from '../../main';
@@ -20,8 +17,6 @@ import { getDataTestIdForSUI } from '../../utils/dataIds';
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'auth-token';
 
 const mockTranslations: VariableTranslations = {
@@ -62,7 +57,7 @@ const mockTranslations: VariableTranslations = {
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -74,7 +69,6 @@ const config = {
     variables: mockVariables,
 };
 
-jest.mock('axios');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let originalAnimateFunction: any;
 
@@ -133,17 +127,6 @@ describe('Variable Translations', () => {
     const booleanVariable = variables.find((item) => item.id === 'boolean-var-id') as BooleanVariable;
 
     beforeEach(async () => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: mockUserInterface });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            return Promise.resolve({ data: {} });
-        });
         render(<div id="sui-root" />);
         await act(() => {
             StudioUI.studioUILoaderConfig(config);

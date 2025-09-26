@@ -12,11 +12,9 @@ const useUserInterfaceSelector = () => {
     const { selectedUserInterfaceId, onUserInterfaceChange } = useUserInterfaceDetailsContext();
 
     useEffect(() => {
-        if (projectConfig.onFetchUserInterfaces) {
-            projectConfig.onFetchUserInterfaces().then((res) => {
-                setUserInterfaces(res?.data?.data || []);
-            });
-        }
+        projectConfig.onFetchUserInterfaces().then((res) => {
+            setUserInterfaces(res.data);
+        });
     }, [projectConfig]);
 
     const options = useMemo(
