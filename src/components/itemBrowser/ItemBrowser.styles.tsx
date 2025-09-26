@@ -52,6 +52,7 @@ export const NavigationWrapper = styled.div<{ isMobile: boolean }>`
 
     button {
         align-self: flex-start;
+        padding: 0;
     }
 
     svg {

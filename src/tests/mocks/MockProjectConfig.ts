@@ -1,4 +1,5 @@
 import { defaultOutputSettings, defaultPlatformUiOptions, ProjectConfig } from 'src/types/types';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 
 export class ProjectConfigs {
     static empty: ProjectConfig = {
@@ -24,20 +25,29 @@ export class ProjectConfigs {
                 template: { id: '00000000-0000-0000-0000-000000000000' },
             };
         },
-        onAuthenticationRequested: () => {
-            return '';
-        },
-        onAuthenticationExpired: async () => {
-            return '';
-        },
         onBack: () => {
             // ignored
         },
         onLogInfoRequested: () => {
             // ignored
         },
-        onProjectGetDownloadLink: async () => {
-            return { status: 0, error: '', success: false, parsedData: '', data: '' };
+        onGenerateOutput: async () => {
+            return { extensionType: 'pdf', outputData: new Blob() };
         },
+        onFetchOutputSettings: async () => {
+            return null;
+        },
+        onFetchUserInterfaces: async () => {
+            return { data: [], pageSize: 0 };
+        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
     };
 }

@@ -3,22 +3,19 @@ import { ConfigType, NumberVariable as Type } from '@chili-publish/studio-sdk';
 import { act, render, screen, within } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import userEvent from '@testing-library/user-event';
-import axios from 'axios';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import StudioUI from 'src/main';
 import NumberVariable from '../../../../components/variablesComponents/NumberVariable';
 
 jest.mock('@chili-publish/studio-sdk');
-jest.mock('axios');
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const token = 'token';
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -99,9 +96,6 @@ describe('NumberVariable', () => {
     });
 
     it('should focus blur if stepper is used', async () => {
-        (axios.get as jest.Mock).mockImplementation(() => {
-            return Promise.resolve({ data: [] });
-        });
         const { container } = render(<div id="sui-root" />);
         const user = userEvent.setup();
         await act(() => {

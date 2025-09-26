@@ -1,4 +1,5 @@
 import { LayoutIntent } from '@chili-publish/studio-sdk';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import MainContent from '../MainContent';
 import { ProjectConfig } from '../types/types';
 import { renderWithProviders } from './mocks/Provider';
@@ -57,22 +58,34 @@ describe('MainContent', () => {
         onProjectLoaded: () => null,
         onEngineInitialized: () => null,
         onProjectSave: () => Promise.resolve({ name: '', id: '', template: { id: '1' } }),
-        onAuthenticationRequested: () => 'authToken',
-        onAuthenticationExpired: () => Promise.resolve(''),
         onBack: () => null,
         onLogInfoRequested: () => null,
-        onProjectGetDownloadLink: () =>
-            Promise.resolve({ status: 0, error: '', success: false, parsedData: '', data: '' }),
+        onGenerateOutput: () => Promise.resolve({ extensionType: 'pdf', outputData: new Blob() }),
         outputSettings: {},
         uiOptions: {},
         graFxStudioEnvironmentApiBaseUrl: '',
+        onFetchOutputSettings: async () => {
+            return null;
+        },
+        onFetchUserInterfaces: async () => {
+            return { data: [], pageSize: 0 };
+        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
     };
 
     it('should render with default ltr direction', async () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={mockProjectConfig} />
+                    <MainContent projectConfig={mockProjectConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );
@@ -92,7 +105,7 @@ describe('MainContent', () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={rtlConfig} />
+                    <MainContent projectConfig={rtlConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );
@@ -146,7 +159,7 @@ describe('MainContent', () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent updateToken={jest.fn()} projectConfig={multiLayoutConfig} />
+                    <MainContent projectConfig={multiLayoutConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
         );
