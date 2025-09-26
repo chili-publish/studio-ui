@@ -1,31 +1,31 @@
 import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
-import axios from 'axios';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
-import { DownloadLinkResult } from '../types/types';
+import { ApiError, DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
+import { EnvironmentApiService } from '../services/EnvironmentApiService';
 
-type HttpHeaders = { method: string; body: string | null; headers: { 'Content-Type': string; Authorization?: string } };
+type TaskId = string;
 
+type StudioDownloadLinkResult = Omit<DownloadLinkResult, 'success' | 'parsedData'> | TaskId;
 /**
- * This method will call an external api to create a download url
+ * This method will call an external api to create a download url using environment client API
  * The video will be generated in the dimensions (and resolution) of the layout.
  * This means that any upscaling (e.g. playing the video full screen on a 4k monitor) will result in interpolation (= quality loss).
  * @param format The format of a downloadable url
  * @param layoutId id of layout to be downloaded
+ * @param environmentApiService Environment API service instance
  * @returns the download link
  */
-export const getDownloadLink = async (
+export const exportDocument = async (
     format: DownloadFormats,
-    baseUrl: string,
-    getToken: () => string,
     layoutId: Id,
     projectId: Id | undefined,
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
-): Promise<DownloadLinkResult> => {
+    environmentApiService: EnvironmentApiService,
+): Promise<StudioDownloadLinkResult> => {
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
-        const generateExportUrl = `${baseUrl}/output/${format}`;
         let engineVersion: string | null = null;
 
         if (!window.location.hostname.endsWith('chiligrafx.com')) {
@@ -43,7 +43,10 @@ export const getDownloadLink = async (
             if (engineCommitSha) engineVersion += `-${engineCommitSha}`;
         }
 
-        const dataConnectorConfig = await getDataSourceConfig(baseUrl, getToken(), outputSettingsId);
+        const dataConnectorConfig = await getDataSourceConfigWithEnvironmentApi(
+            outputSettingsId,
+            environmentApiService,
+        );
 
         const body = documentResponse.data as string;
         const requestBody = {
@@ -55,97 +58,72 @@ export const getDownloadLink = async (
             ...(isSandboxMode ? { templateId: projectId } : { projectId }),
         };
 
-        const httpResponse = await axios.post(generateExportUrl, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-        });
-
-        const response: GenerateAnimationResponse | ApiError = httpResponse.data as
-            | GenerateAnimationResponse
-            | ApiError;
+        const response = await environmentApiService.generateOutput(format, requestBody);
 
         if ('status' in response) {
-            const err = response as ApiError;
+            const err = response as unknown as ApiError;
             return {
                 status: Number.parseInt(err.status),
                 error: err.detail,
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             };
         }
 
-        const data = response as GenerateAnimationResponse;
-        const pollingResult = await startPollingOnEndpoint(data.links.taskInfo, getToken);
+        const pollingResult = await startPollingOnEndpoint(response.data.taskId, environmentApiService);
 
         if (pollingResult === null) {
             return {
                 status: 500,
                 error: 'Error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             };
         }
 
-        return {
-            status: 200,
-            success: true,
-            parsedData: pollingResult.links.download,
-            data: pollingResult.links.download,
-            error: undefined,
-        };
+        return response.data.taskId;
     } catch {
         return {
             status: 500,
             error: 'Unexpected error during polling',
-            success: false,
-            parsedData: undefined,
             data: undefined,
         };
     }
 };
 
 /**
- * This method will call an external api endpoint, untill the api endpoint returns a status code 200
- * @param endpoint api endpoint to start polling on
- * @returns true when the endpoint call has successfully been resolved
+ * This method will call the environment client API to check task status until the task is completed
+ * @param taskInfoUrl URL containing the task info endpoint
+ * @param environmentApiService Environment API service instance
+ * @returns task result when completed
  */
-const startPollingOnEndpoint = async (
-    endpoint: string,
-    getToken: () => string,
-): Promise<GenerateAnimationTaskPollingResponse | null> => {
+const startPollingOnEndpoint = async (taskId: string, environmentApiService: EnvironmentApiService) => {
     try {
-        const config: HttpHeaders = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-            body: null,
-        };
-        const httpResponse = await axios.get(endpoint, config);
+        if (!taskId) {
+            // eslint-disable-next-line no-console
+            console.error('No task ID provided');
+            return null;
+        }
 
-        if (httpResponse.status === 202) {
+        // Use environment client API to get task status
+        const taskStatus = await environmentApiService.getTaskStatus(taskId);
+
+        if (taskStatus === null) {
+            // Task is still in progress, wait and poll again
             // eslint-disable-next-line no-promise-executor-return
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            return await startPollingOnEndpoint(endpoint, getToken);
+            return await startPollingOnEndpoint(taskId, environmentApiService);
         }
-        if (httpResponse.status === 200) {
-            return httpResponse.data as GenerateAnimationTaskPollingResponse;
-        }
-        return null;
+
+        return taskStatus;
     } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error polling task status:', err);
         return null;
     }
 };
 
-const getDataSourceConfig = async (
-    baseUrl: string,
-    token: string,
+const getDataSourceConfigWithEnvironmentApi = async (
     outputSettingsId: string | undefined,
+    environmentApiService: EnvironmentApiService,
 ): Promise<DataConnectorConfiguration | undefined> => {
     if (!outputSettingsId) {
         return undefined;
@@ -155,16 +133,10 @@ const getDataSourceConfig = async (
         return undefined;
     }
 
-    const { data: setting } = await axios.get<{ dataSourceEnabled: boolean }>(
-        `${baseUrl}/output/settings/${outputSettingsId}`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        },
-    );
-    if (!setting.dataSourceEnabled) {
+    const setting = await environmentApiService.getOutputSettingsById(outputSettingsId);
+
+    if (!(setting as { dataSourceEnabled: boolean }).dataSourceEnabled) {
+        // TODO: Type this properly when environment client API types are updated
         return undefined;
     }
     return {
@@ -173,31 +145,6 @@ const getDataSourceConfig = async (
             context: await getConnectorConfigurationOptions(dataSource.id),
         },
     };
-};
-
-type GenerateAnimationResponse = {
-    data: {
-        taskId: string;
-    };
-    links: {
-        taskInfo: string;
-    };
-};
-type GenerateAnimationTaskPollingResponse = {
-    data: {
-        taskId: string;
-    };
-    links: {
-        download: string;
-    };
-};
-
-type ApiError = {
-    type: string;
-    title: string;
-    status: string;
-    detail: string;
-    exceptionDetails?: string;
 };
 
 /**
@@ -209,4 +156,4 @@ export const addTrailingSlash = (incomingUrl: string): string => {
     return incomingUrl.endsWith('/') ? incomingUrl : `${incomingUrl}/`;
 };
 
-export default { getDownloadLink, addTrailingSlash };
+export default { exportDocument, addTrailingSlash };

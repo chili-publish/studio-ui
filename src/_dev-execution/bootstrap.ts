@@ -2,6 +2,7 @@
 // It's not going to be bundled to the main `bundle.js` file
 
 import StudioUI from '../main';
+import { TemplateManager } from './template-manager';
 import { TokenManager } from './token-manager';
 import { EngineVersionManager } from './version-manager';
 
@@ -38,11 +39,16 @@ import { EngineVersionManager } from './version-manager';
     const envName = import.meta.env.VITE_ENVIRONMENT_NAME;
     const projectId = import.meta.env.VITE_PROJECT_ID;
 
+    // Sandbox mode environment variables
+    const sandboxMode = import.meta.env.VITE_SANDBOX_MODE === 'true';
+    const templateId = import.meta.env.VITE_TEMPLATE_ID;
+
     const baseUrl =
         import.meta.env.VITE_BASE_ENVIRONMENT_API_URL ??
         `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
-    if ((!engineRegex.test(engineVersion) && !engineCommitSha) || !envName || !projectId) {
+    // Validation for regular mode
+    if (!sandboxMode && ((!engineRegex.test(engineVersion) && !engineCommitSha) || !envName || !projectId)) {
         let messageString = `Please make sure to specify the`;
         if (!engineCommitSha) {
             messageString += ` engineCommitSha`;
@@ -59,35 +65,89 @@ import { EngineVersionManager } from './version-manager';
         return;
     }
 
+    // Validation for sandbox mode
+    if (sandboxMode && (!envName || !templateId)) {
+        let messageString = `Please make sure to specify the`;
+        if (!envName) {
+            messageString += ` envName`;
+        }
+        if (!templateId) {
+            messageString += ` templateId`;
+        }
+        // eslint-disable-next-line no-alert
+        alert(messageString);
+
+        return;
+    }
+
     const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
-    StudioUI.studioUILoaderConfig({
+    // Base configuration shared between regular and sandbox modes
+    const baseConfig = {
         selector: 'sui-root',
-        projectId,
-        projectName: 'Dev Run',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.refreshToken(),
-        onConnectorAuthenticationRequested: (connectorId) => {
+        onConnectorAuthenticationRequested: (connectorId: string) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
-        },
-        uiOptions: {
-            widgets: {
-                backButton: { visible: true },
-                navBar: { visible: true },
-                bottomBar: { visible: true },
-                downloadButton: { visible: true },
-            },
         },
         featureFlags: {},
         // eslint-disable-next-line no-console
-        onVariableFocus: (id) => console.log('focused var: ', id),
+        onVariableFocus: (id: string) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console
-        onVariableBlur: (id) => console.log('blurred var: ', id),
-        // eslint-disable-next-line no-console
-        onVariableValueChangedCompleted: async (id, value) => console.log('changed var: ', id, value),
+        onVariableBlur: (id: string) => console.log('blurred var: ', id),
+        // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
+        onVariableValueChangedCompleted: async (id: string, value: any) => console.log('changed var: ', id, value),
         // eslint-disable-next-line no-console
         onProjectLoaded: () => console.log('project loaded'),
-    });
+    };
+
+    if (sandboxMode) {
+        const templateManager = new TemplateManager(authToken, baseUrl, templateId);
+        // Sandbox mode configuration
+        StudioUI.studioUILoaderConfig({
+            ...baseConfig,
+            projectId: templateId,
+            projectName: 'Sandbox mode',
+            sandboxMode: true,
+            userInterfaceID: undefined,
+            uiOptions: {
+                uiTheme: 'dark',
+                widgets: {
+                    downloadButton: { visible: true },
+                    backButton: { visible: true },
+                },
+            },
+            onSandboxModeToggle: () => {
+                // eslint-disable-next-line no-console
+                console.log('Sandbox mode toggle requested');
+            },
+            onProjectDocumentRequested: async () => {
+                return JSON.stringify(await templateManager.getTemplateDocumentAsString());
+            },
+            onProjectInfoRequested: async () => ({
+                id: templateId,
+                name: 'Sandbox mode',
+                template: {
+                    id: templateId,
+                },
+            }),
+        });
+    } else {
+        // Regular mode configuration
+        StudioUI.studioUILoaderConfig({
+            ...baseConfig,
+            projectId,
+            projectName: 'Dev Run',
+            uiOptions: {
+                widgets: {
+                    backButton: { visible: true },
+                    navBar: { visible: true },
+                    bottomBar: { visible: true },
+                    downloadButton: { visible: true },
+                },
+            },
+        });
+    }
 })();

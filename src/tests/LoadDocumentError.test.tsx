@@ -19,9 +19,9 @@ const projectConfig = {
     onProjectLoaded: () => null,
     onProjectSave: () => null,
     onAuthenticationRequested: () => 'authToken',
-    onAuthenticationExpired: () => null,
     onLogInfoRequested: () => null,
     onProjectGetDownloadLink: () => null,
+    onEngineInitialized: () => null,
     outputSettings: {},
     uiOptions: {},
 } as unknown as ProjectConfig;
@@ -75,7 +75,7 @@ describe('LoadDocumentError', () => {
             await renderWithProviders(
                 <AppProvider isDocumentLoaded>
                     <SubscriberContextProvider subscriber={new Subscriber()}>
-                        <MainContent updateToken={jest.fn()} projectConfig={projectConfig} />
+                        <MainContent projectConfig={projectConfig} />
                     </SubscriberContextProvider>
                 </AppProvider>,
             );
