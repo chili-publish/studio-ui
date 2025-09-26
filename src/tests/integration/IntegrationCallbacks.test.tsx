@@ -117,7 +117,7 @@ describe('Integration Callbacks', () => {
 
             // Wait for the project to load and trigger the callback
             await waitFor(() => {
-                expect(mockCallbacks.onProjectLoaded).not.toHaveBeenCalledTimes(1);
+                expect(mockCallbacks.onProjectLoaded).not.toHaveBeenCalled();
             });
 
             // Load variables
