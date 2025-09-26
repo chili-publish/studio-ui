@@ -5,7 +5,6 @@ import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockVariables } from '@mocks/mockVariables';
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import axios from 'axios';
 import StudioUI from '../../main';
 import { Project } from '../../types/types';
 
@@ -33,27 +32,67 @@ const mockCallbacks = {
     onFetchUserInterfaceDetails: jest.fn(),
 };
 
-jest.mock('axios');
-
 describe('Integration Callbacks', () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
-        // Setup default axios mocks
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: mockUserInterface });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            return Promise.resolve({ data: {} });
-        });
+        // Setup default fetch mocks
+        global.fetch = jest.fn().mockImplementation((url, options) => {
+            // Handle PUT requests
+            if (options?.method === 'PUT') {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(mockProject),
+                });
+            }
 
-        (axios.put as jest.Mock).mockResolvedValue({ data: mockProject });
-        (axios.post as jest.Mock).mockResolvedValue({ data: { links: { taskInfo: 'test-task-url' } } });
+            // Handle POST requests
+            if (options?.method === 'POST') {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({ links: { taskInfo: 'test-task-url' } }),
+                });
+            }
+
+            // Handle GET requests
+            if (url === `${environmentBaseURL}/user-interfaces`) {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => Promise.resolve({ data: [mockUserInterface] }),
+                });
+            }
+            if (url === `${environmentBaseURL}/user-interfaces/${mockUserInterface.id}`) {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => Promise.resolve(mockUserInterface),
+                });
+            }
+            if (url === `${environmentBaseURL}/output/settings`) {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    json: () => Promise.resolve({ data: [mockOutputSetting] }),
+                });
+            }
+            if (url === projectDownloadUrl) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({}),
+                });
+            }
+            if (url === projectInfoUrl) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(mockProject),
+                });
+            }
+            return Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({}),
+            });
+        });
     });
 
     describe('onProjectLoaded callback', () => {
