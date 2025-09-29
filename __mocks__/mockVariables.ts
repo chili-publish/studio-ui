@@ -49,7 +49,7 @@ export const mockVariables: [ImageVariable, ...Variable[]] = [
         name: 'Short Variable 1',
         label: 'Short Variable 1',
         type: VariableType.shortText,
-        value: 'I am short text',
+        value: 'I am short text 1',
         occurrences: 22,
         parentId: '2',
         isVisible: true,
