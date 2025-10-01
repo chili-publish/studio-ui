@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { defineConfig } from 'vite';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -9,7 +10,7 @@ export default ({ mode }) => {
         process.exit(1);
     }
     return defineConfig({
-        plugins: [react()],
+        plugins: [react(), cssInjectedByJsPlugin()],
         server: {
             port: 3002,
         },

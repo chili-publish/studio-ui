@@ -3,7 +3,6 @@ import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
 import { TokenService } from './services/TokenService';
-import './index.css';
 import {
     defaultBackFn,
     defaultOutputSettings,

@@ -18,4 +18,12 @@ export const CanvasContainer = styled.div`
 
 export const Container = styled.div`
     background-color: ${({ theme }) => theme.canvas.backgroundColor};
+    height: 100svh;
+    overflow: hidden;
+    position: relative;
+`;
+
+export const ChiliEditor = styled.div`
+    width: 100%;
+    height: 100%;
 `;

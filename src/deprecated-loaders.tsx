@@ -2,7 +2,6 @@ import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './App';
-import './index.css';
 import { setupStore } from './store';
 import { ProjectConfig } from './types/types';
 import { VariableTranslations } from './types/VariableTranslations';

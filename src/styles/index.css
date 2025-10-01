@@ -1,0 +1,10 @@
+/* 
+ * External CSS imports that need to be loaded as standard CSS files
+ * These cannot be bundled with styled-components due to @import limitations
+ */
+
+/* Google Fonts - Required for Roboto font family used throughout the app */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* React DatePicker styles - Required for date picker component functionality */
+@import 'react-datepicker/dist/react-datepicker.css';
