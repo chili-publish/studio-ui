@@ -2,6 +2,7 @@ import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheetManager } from 'styled-components';
 import isPropValid from '@emotion/is-prop-valid';
+import StudioSDK from '@chili-publish/studio-sdk';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
 import { SubscriberContextProvider } from './contexts/Subscriber';
 import MainContent from './MainContent';
@@ -10,8 +11,6 @@ import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { EnvironmentClientApiProvider } from './contexts/EnvironmentClientApiContext';
 import GlobalStyle from './styles/GlobalStyle';
-
-import StudioSDK from '@chili-publish/studio-sdk';
 
 declare global {
     interface Window {
