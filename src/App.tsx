@@ -1,7 +1,5 @@
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import './App.css';
-import 'react-datepicker/dist/react-datepicker.css';
 import { StyleSheetManager } from 'styled-components';
 import isPropValid from '@emotion/is-prop-valid';
 import { NotificationManagerProvider } from './contexts/NotificantionManager/NotificationManagerProvider';
@@ -12,6 +10,15 @@ import { Subscriber } from './utils/subscriber';
 import FeatureFlagProvider from './contexts/FeatureFlagProvider';
 import { EnvironmentClientApiProvider } from './contexts/EnvironmentClientApiContext';
 import GlobalStyle from './styles/GlobalStyle';
+
+import StudioSDK from '@chili-publish/studio-sdk';
+
+declare global {
+    interface Window {
+        StudioUISDK: StudioSDK;
+        SDK: StudioSDK;
+    }
+}
 
 function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     // TODO: Consider to define global object instead
