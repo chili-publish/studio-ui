@@ -54,12 +54,16 @@ function ImageVariable(props: IImageVariable) {
             minWidthPixels: variable.uploadMinWidth,
             minHeightPixels: variable.uploadMinHeight,
         })
-            .then((media) => {
+            .then(async (media) => {
                 if (!media) {
                     return;
                 }
                 dispatch(setImageChangePendingId(variable.id));
-                handleImageChange({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
+                await handleImageChange({
+                    assetId: media.id,
+                    id: variable.id,
+                    context: { searchInUploadFolder: true },
+                });
             })
             .finally(() => {
                 onVariableBlur?.(variable.id);
