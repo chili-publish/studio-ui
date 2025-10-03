@@ -13,6 +13,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock } from 'jest-mock-extended';
 import selectEvent from 'react-select-event';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import LeftPanel from '../../components/layout-panels/leftPanel/LeftPanel';
 import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import {
@@ -220,20 +221,29 @@ class ProjectConfigs {
                 template: { id: '00000000-0000-0000-0000-000000000000' },
             };
         },
-        onAuthenticationRequested: () => {
-            return '';
-        },
-        onAuthenticationExpired: async () => {
-            return '';
-        },
         onBack: () => {
             // ignored
         },
         onLogInfoRequested: () => {
             // ignored
         },
-        onProjectGetDownloadLink: async () => {
-            return { status: 0, error: '', success: false, parsedData: '', data: '' };
+        onGenerateOutput: async () => {
+            return { extensionType: 'pdf', outputData: new Blob() };
         },
+        onFetchOutputSettings: async () => {
+            return null;
+        },
+        onFetchUserInterfaces: async () => {
+            return { data: [], pageSize: 0 };
+        },
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
     };
 }

@@ -1,6 +1,8 @@
 import { Root } from 'react-dom/client';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
+import { EnvironmentApiService } from './services/EnvironmentApiService';
+import { TokenService } from './services/TokenService';
 import './index.css';
 import {
     defaultBackFn,
@@ -38,12 +40,17 @@ export default class StudioUI extends StudioUILoader {
         const { selector, projectId, graFxStudioEnvironmentApiBaseUrl, authToken, refreshTokenAction, editorLink } =
             config;
 
+        // Initialize TokenService singleton
+        TokenService.initialize(() => authToken, refreshTokenAction);
+
+        // Create EnvironmentApiService instance
+        const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
-            authToken,
             false,
-            refreshTokenAction,
+            environmentApiService,
         );
 
         return this.fullStudioIntegrationConfig(selector, {
@@ -54,15 +61,14 @@ export default class StudioUI extends StudioUILoader {
             onProjectDocumentRequested: projectLoader.onProjectDocumentRequested,
             onProjectSave: projectLoader.onProjectSave,
             onEngineInitialized: projectLoader.onEngineInitialized,
-            onAuthenticationRequested: projectLoader.onAuthenticationRequested,
-            onAuthenticationExpired: projectLoader.onAuthenticationExpired,
             onLogInfoRequested: projectLoader.onLogInfoRequested,
-            onProjectGetDownloadLink: projectLoader.onProjectGetDownloadLink,
+            onGenerateOutput: projectLoader.onGenerateOutput,
             onFetchOutputSettings: projectLoader.onFetchOutputSettings,
             onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
             onBack: defaultBackFn,
             graFxStudioEnvironmentApiBaseUrl,
             editorLink,
+            environmentApiService,
         });
     }
 
@@ -141,16 +147,26 @@ export default class StudioUI extends StudioUILoader {
             onFetchUserInterfaceDetails,
             onVariableValueChangedCompleted,
         } = config;
+
+        // Initialize TokenService singleton
+        TokenService.initialize(
+            onAuthenticationRequested ?? (() => authToken),
+            refreshTokenAction ?? onAuthenticationExpired,
+        );
+
+        // Create EnvironmentApiService instance
+        const environmentApiService = EnvironmentApiService.create(graFxStudioEnvironmentApiBaseUrl);
+
         const projectLoader = new StudioProjectLoader(
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
-            authToken,
             sandboxMode || false,
-            refreshTokenAction,
+            environmentApiService,
             projectDownloadUrl,
             projectUploadUrl,
             userInterfaceID,
             onFetchUserInterfaceDetails,
+            onProjectGetDownloadLink,
         );
 
         const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
@@ -176,10 +192,8 @@ export default class StudioUI extends StudioUILoader {
                 onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
                 onProjectSave: onProjectSave ?? projectLoader.onProjectSave,
                 onEngineInitialized: onEngineInitialized ?? projectLoader.onEngineInitialized,
-                onAuthenticationRequested: onAuthenticationRequested ?? projectLoader.onAuthenticationRequested,
-                onAuthenticationExpired: onAuthenticationExpired ?? projectLoader.onAuthenticationExpired,
                 onLogInfoRequested: onLogInfoRequested ?? projectLoader.onLogInfoRequested,
-                onProjectGetDownloadLink: onProjectGetDownloadLink ?? projectLoader.onProjectGetDownloadLink,
+                onGenerateOutput: projectLoader.onGenerateOutput,
                 onFetchOutputSettings: projectLoader.onFetchOutputSettings,
                 onFetchUserInterfaces: projectLoader.onFetchUserInterfaces,
                 onFetchUserInterfaceDetails: projectLoader.onFetchStudioUserInterfaceDetails,
@@ -192,6 +206,7 @@ export default class StudioUI extends StudioUILoader {
                 onVariableBlur,
                 onVariableValueChangedCompleted,
                 onProjectLoaded,
+                environmentApiService,
             },
             {
                 variableTranslations,

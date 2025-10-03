@@ -13,11 +13,18 @@ import {
 } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import isPropValid from '@emotion/is-prop-valid';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import { RootState, setupStore } from '../../store';
+import { EnvironmentClientApiProvider } from '../../contexts/EnvironmentClientApiContext';
 
 export interface WrapperProps {
     children: Element | ReactNode;
 }
+
+// Create mock API instances for testing
+const createMockApiInstances = () => {
+    return EnvironmentApiService.create('https://test.example.com');
+};
 
 // Used to render test components with new instance of redux store.
 export const renderWithProviders = <
@@ -37,10 +44,14 @@ export const renderWithProviders = <
     } = {},
 ): RenderResult<Q, Container, BaseElement> & { reduxStore: ReturnType<typeof setupStore> } => {
     function Wrapper({ children }: PropsWithChildren<WrapperProps>) {
+        const mockApiInstances = createMockApiInstances();
+
         return (
             <StyleSheetManager shouldForwardProp={isPropValid}>
                 <ReduxProvider store={reduxStore}>
-                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    <EnvironmentClientApiProvider environmentApiService={mockApiInstances}>
+                        <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                    </EnvironmentClientApiProvider>
                 </ReduxProvider>
             </StyleSheetManager>
         );
@@ -74,12 +85,18 @@ export const renderHookWithProviders = <
     } = {},
 ): RenderHookResult<Result, Props> =>
     renderHook(hook, {
-        wrapper: ({ children }: { children: ReactNode }) => (
-            <StyleSheetManager shouldForwardProp={isPropValid}>
-                <ReduxProvider store={reduxStore}>
-                    <UiThemeProvider theme="platform">{children}</UiThemeProvider>
-                </ReduxProvider>
-            </StyleSheetManager>
-        ),
+        wrapper: ({ children }: { children: ReactNode }) => {
+            const mockApiInstances = createMockApiInstances();
+
+            return (
+                <StyleSheetManager shouldForwardProp={isPropValid}>
+                    <ReduxProvider store={reduxStore}>
+                        <EnvironmentClientApiProvider environmentApiService={mockApiInstances}>
+                            <UiThemeProvider theme="platform">{children}</UiThemeProvider>
+                        </EnvironmentClientApiProvider>
+                    </ReduxProvider>
+                </StyleSheetManager>
+            );
+        },
         ...renderOptions,
     });

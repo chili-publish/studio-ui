@@ -31,7 +31,6 @@ import { UserInterfaceDetailsContextProvider } from './components/navbar/UserInt
 import Pages from './components/pagesPanel/Pages';
 import MobileVariables from './components/variables/MobileVariables';
 import AppProvider from './contexts/AppProvider';
-import { useAuthToken } from './contexts/AuthTokenProvider';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
@@ -46,6 +45,7 @@ import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
+import { TokenService } from './services/TokenService';
 
 declare global {
     interface Window {
@@ -57,13 +57,11 @@ declare global {
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
     projectConfig: ProjectConfig;
-    updateToken: (newValue: string) => void;
 }
 
-function MainContent({ projectConfig, updateToken }: MainContentProps) {
+function MainContent({ projectConfig }: MainContentProps) {
     const dispatch = useAppDispatch();
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
-    // const [variables, setVariables] = useState<Variable[]>([]);
 
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
@@ -94,7 +92,6 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
     const isMobileSize = useMobileSize();
     const { canvas } = useTheme();
-    const { authToken } = useAuthToken();
     const { loadConnectors } = useMediaConnectors();
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
@@ -130,8 +127,6 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
     useConnectorAuthenticationResult(authResults);
 
     const handleAuthExpired = useEditorAuthExpired(
-        projectConfig.onAuthenticationExpired,
-        updateToken,
         projectConfig?.onConnectorAuthenticationRequested,
         createAuthenticationProcess,
     );
@@ -294,9 +289,7 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
         setSDKRef(sdk);
         window.StudioUISDK.loadEditor();
 
-        if (projectConfig.onEngineInitialized) {
-            projectConfig.onEngineInitialized(currentProject as Project);
-        }
+        projectConfig.onEngineInitialized(currentProject as Project);
 
         projectConfig
             .onProjectDocumentRequested(projectConfig.projectId)
@@ -336,9 +329,9 @@ function MainContent({ projectConfig, updateToken }: MainContentProps) {
 
     useEffect(() => {
         (async () => {
-            await window.StudioUISDK.configuration.setValue(WellKnownConfigurationKeys.GraFxStudioAuthToken, authToken);
+            await TokenService.getInstance().updateEditorToken();
         })();
-    }, [authToken]);
+    }, []);
 
     useEffect(() => {
         (async () => {

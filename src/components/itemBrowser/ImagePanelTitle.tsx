@@ -1,6 +1,5 @@
 import { showVariablesPanel } from 'src/store/reducers/panelReducer';
 import { AvailableIcons, Button, ButtonVariant, Icon, useMobileSize } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
 import { NavigationTitle, NavigationWrapper } from './ItemBrowser.styles';
 import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
@@ -21,9 +20,6 @@ function ImagePanelTitle() {
                     dispatch(showVariablesPanel());
                 }}
                 icon={<Icon icon={direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft} />}
-                styles={css`
-                    padding: 0;
-                `}
             />
             <NavigationTitle className="navigation-path">
                 {getUITranslation(['panels', 'media', 'title'], 'Select image')}

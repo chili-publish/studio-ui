@@ -14,15 +14,12 @@ import { showDatePickerPanel, showVariablesPanel } from 'src/store/reducers/pane
 import { UserInterfaceDetailsContextProvider } from 'src/components/navbar/UserInterfaceDetailsContext';
 import { mockAssets } from '@mocks/mockAssets';
 import { transformFormBuilderArrayToObject } from 'src/utils/helpers';
-import axios from 'axios';
 import MobileVariables from '../components/variables/MobileVariables';
 import AppProvider from '../contexts/AppProvider';
 import { APP_WRAPPER } from './mocks/app';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
 import { renderWithProviders } from './mocks/Provider';
 import { variables } from './mocks/mockVariables';
-
-jest.mock('axios');
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -153,20 +150,6 @@ describe('Mobile Tray Header', () => {
     const reduxStore = setupStore();
 
     beforeEach(() => {
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'connector-id',
-                        type: 'media',
-                        scriptSource: 'defaultMedia',
-                        supportedAuthentication: {
-                            browser: ['none'],
-                        },
-                    },
-                });
-            return Promise.resolve({ data: [] });
-        });
         reduxStore.dispatch(setVariables(variables));
         reduxStore.dispatch(showVariablesPanel());
     });

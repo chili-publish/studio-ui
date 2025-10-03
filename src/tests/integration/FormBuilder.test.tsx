@@ -4,24 +4,79 @@ import { mockOutputSetting, mockOutputSetting2 } from '@mocks/mockOutputSetting'
 import { mockProject } from '@mocks/mockProject';
 import { mockApiUserInterface, mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
 import StudioUI from '../../main';
 import { IStudioUILoaderConfig, UserInterface } from '../../types/types';
 
 import { variables } from '../mocks/mockVariables';
 
-jest.mock('axios');
+// Mock ProjectDataClient
+jest.mock('../../services/ProjectDataClient', () => ({
+    ProjectDataClient: jest.fn().mockImplementation(() => ({
+        fetchFromUrl: jest.fn().mockResolvedValue('{"test": "document"}'),
+        saveToUrl: jest.fn().mockResolvedValue(undefined),
+    })),
+}));
+
 jest.mock('@chili-publish/studio-sdk');
+
+// Mock EnvironmentApiService
+jest.mock('../../services/EnvironmentApiService', () => ({
+    EnvironmentApiService: {
+        create: jest.fn().mockImplementation(() => ({
+            getProjectById: jest.fn().mockResolvedValue(mockProject),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+            getUserInterfaceById: jest.fn().mockImplementation((userInterfaceId) => {
+                // Return custom UI data for specific test cases
+                if (userInterfaceId === mockApiUserInterface.id) {
+                    // Return UI with custom formBuilder for most tests
+                    const formBuilder = [
+                        {
+                            type: 'datasource' as const,
+                            active: true,
+                            header: 'Data source active',
+                            helpText: 'Select a data source',
+                        },
+                        {
+                            type: 'layouts' as const,
+                            active: true,
+                            header: 'Layouts from user interface',
+                            helpText: 'Layouts help text',
+                            layoutSelector: true,
+                            showWidthHeightInputs: true,
+                            multipleLayouts: true,
+                            allowNewProjectFromLayout: true,
+                        },
+                        {
+                            type: 'variables' as const,
+                            active: true,
+                            header: 'Variables from user interface',
+                            helpText: 'Change the variables',
+                        },
+                    ];
+                    const customUI = { ...mockApiUserInterface, formBuilder: JSON.stringify(formBuilder) };
+                    return Promise.resolve(customUI);
+                }
+                return Promise.resolve(mockApiUserInterface);
+            }),
+            getOutputSettings: jest.fn().mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+            getAllConnectors: jest.fn().mockResolvedValue({ data: [] }),
+            getConnectorById: jest.fn().mockResolvedValue({}),
+            getConnectorByIdAs: jest.fn().mockResolvedValue({}),
+            getOutputSettingsById: jest.fn().mockResolvedValue({}),
+            getTaskStatus: jest.fn().mockResolvedValue({}),
+            generateOutput: jest.fn().mockResolvedValue({}),
+        })),
+    },
+}));
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
-const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;
 const token = 'token';
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -61,7 +116,12 @@ jest.mock('@chili-publish/studio-sdk', () => {
             /* eslint-enable */
             return {
                 ...sdk,
-                document: { load: jest.fn().mockImplementation(() => Promise.resolve({ success: false })) },
+                document: {
+                    load: jest.fn().mockImplementation(() => Promise.resolve({ success: false })),
+                    getCurrentState: jest
+                        .fn()
+                        .mockImplementation(() => Promise.resolve({ parsedData: {}, data: '{}' })),
+                },
                 loadEditor: jest.fn(),
                 configuration: {
                     setValue: jest.fn(),
@@ -132,100 +192,44 @@ describe('FormBuilder options', () => {
         jest.resetAllMocks();
     });
     it('should fallback to form builder data of the user interface if onFetchUserInterfaceDetails is not provided', async () => {
-        const formBuilder = [
-            {
-                type: 'datasource' as const,
-                active: true,
-                header: 'Data source active',
-                helpText: 'Select a data source',
-            },
-            {
-                type: 'layouts' as const,
-                active: true,
-                header: 'Layouts from user interface',
-                helpText: 'Layouts help text',
-                layoutSelector: true,
-                showWidthHeightInputs: true,
-                multipleLayouts: true,
-                allowNewProjectFromLayout: true,
-            },
-            {
-                type: 'variables' as const,
-                active: true,
-                header: 'Variables from user interface',
-                helpText: 'Change the variables',
-            },
-        ];
-
-        const ui = { ...mockApiUserInterface, formBuilder: JSON.stringify(formBuilder) };
-
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: ui });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'data-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            if (url === 'http://deploy.com/media-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'media-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-            return Promise.resolve({ data: {} });
-        });
-
         await LoadStudioUI(config);
 
         expect(screen.getByText('Variables from user interface')).toBeInTheDocument();
         expect(screen.getByText('Layouts from user interface')).toBeInTheDocument();
     });
     it('should fallback to default form builder if form builder data of the user interface is undefined and onFetchUserInterfaceDetails is not provided', async () => {
-        const ui = { ...mockApiUserInterface, formBuilder: undefined };
+        // Override the EnvironmentApiService mock for this specific test
+        const { EnvironmentApiService } = jest.requireMock('../../services/EnvironmentApiService');
+        const originalCreate = EnvironmentApiService.create;
 
-        (axios.get as jest.Mock).mockImplementation((url) => {
-            if (url === `${environmentBaseURL}/user-interfaces`)
-                return Promise.resolve({ status: 200, data: { data: [mockApiUserInterface] } });
-            if (url === `${environmentBaseURL}/user-interfaces/${mockApiUserInterface.id}`)
-                return Promise.resolve({ status: 200, data: ui });
-            if (url === `${environmentBaseURL}/output/settings`)
-                return Promise.resolve({ status: 200, data: { data: [mockOutputSetting, mockOutputSetting2] } });
-            if (url === projectDownloadUrl) return Promise.resolve({ data: {} });
-            if (url === projectInfoUrl) return Promise.resolve({ data: mockProject });
-            if (url === 'http://deploy.com/data-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'data-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            if (url === 'http://deploy.com/media-connector')
-                return Promise.resolve({
-                    data: {
-                        id: 'media-connector',
-                        supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] },
-                    },
-                });
-
-            return Promise.resolve({ data: {} });
-        });
+        EnvironmentApiService.create = jest.fn().mockImplementation(() => ({
+            getProjectById: jest.fn().mockResolvedValue(mockProject),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: '{"test": "document"}' }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+            getAllUserInterfaces: jest.fn().mockResolvedValue({ data: [mockApiUserInterface] }),
+            getUserInterfaceById: jest.fn().mockImplementation((userInterfaceId) => {
+                if (userInterfaceId === mockApiUserInterface.id) {
+                    // Return UI with undefined formBuilder for this specific test
+                    const customUI = { ...mockApiUserInterface, formBuilder: undefined };
+                    return Promise.resolve(customUI);
+                }
+                return Promise.resolve(mockApiUserInterface);
+            }),
+            getOutputSettings: jest.fn().mockResolvedValue({ data: [mockOutputSetting, mockOutputSetting2] }),
+            getAllConnectors: jest.fn().mockResolvedValue({ data: [] }),
+            getConnectorById: jest.fn().mockResolvedValue({}),
+            getConnectorByIdAs: jest.fn().mockResolvedValue({}),
+            getOutputSettingsById: jest.fn().mockResolvedValue({}),
+            getTaskStatus: jest.fn().mockResolvedValue({}),
+            generateOutput: jest.fn().mockResolvedValue({}),
+        }));
 
         await LoadStudioUI(config);
-
         expect(screen.getByText('Customize')).toBeInTheDocument();
         expect(screen.getByText('Layouts')).toBeInTheDocument();
+
+        // Restore original mock
+        EnvironmentApiService.create = originalCreate;
     });
 
     it('should render default sections when form builder data is not provided', async () => {

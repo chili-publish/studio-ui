@@ -1,13 +1,10 @@
 import EditorSDK, { ImageVariable } from '@chili-publish/studio-sdk';
 import { ConnectorRegistrationSource } from '@chili-publish/studio-sdk/lib/src/next';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
-import axios from 'axios';
 import { mock } from 'jest-mock-extended';
 import { MediaRemoteConnector } from 'src/utils/ApiTypes';
 import { useVariableConnector } from '../../../../components/variablesComponents/imageVariable/useVariableConnector';
 import { variables as mockVariables } from '../../../mocks/mockVariables';
-
-jest.mock('axios');
 
 describe('"useVariablesConnector" hook', () => {
     beforeEach(() => {
@@ -21,12 +18,6 @@ describe('"useVariablesConnector" hook', () => {
             },
         });
         window.StudioUISDK = mockSDK;
-
-        (axios.get as jest.Mock).mockResolvedValue({
-            data: {
-                id: 'remote-connector-1',
-            },
-        });
     });
 
     afterEach(() => {
