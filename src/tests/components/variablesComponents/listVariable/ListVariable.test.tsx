@@ -6,20 +6,17 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import StudioUI from 'src/main';
-import axios from 'axios';
 import ListVariable from '../../../../components/variablesComponents/listVariable/ListVariable';
 
 jest.mock('@chili-publish/studio-sdk');
-jest.mock('axios');
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const token = 'token';
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
+
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -101,9 +98,6 @@ describe('ListVariable', () => {
     });
 
     it('should focus and blur  if stepper is used', async () => {
-        (axios.get as jest.Mock).mockImplementation(() => {
-            return Promise.resolve({ data: [] });
-        });
         render(<div id="sui-root" />);
         const user = userEvent.setup();
         await act(() => {

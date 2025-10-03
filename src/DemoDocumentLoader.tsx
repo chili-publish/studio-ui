@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { DownloadLinkResult, Project } from './types/types';
 
 export class DemoDocumentLoader {
@@ -42,9 +41,13 @@ export class DemoDocumentLoader {
             };
         };
         this.onProjectDocumentRequested = async (): Promise<string> => {
-            return axios.get(`${editorLink}/assets/assets/documents/demo.json`).then((res) => {
-                return JSON.stringify(res.data);
-            });
+            return fetch(`${editorLink}/assets/assets/documents/demo.json`)
+                .then((res) => {
+                    return res.json();
+                })
+                .then((res) => {
+                    return JSON.stringify(res);
+                });
         };
         this.onAuthenticationExpired = async (): Promise<string> => {
             return '';

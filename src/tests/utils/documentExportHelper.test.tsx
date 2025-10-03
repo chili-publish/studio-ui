@@ -1,83 +1,95 @@
 import { DownloadFormats } from '@chili-publish/studio-sdk';
-import axios from 'axios';
-import { addTrailingSlash, getDownloadLink } from '../../utils/documentExportHelper';
+import { addTrailingSlash, exportDocument } from '../../utils/documentExportHelper';
+import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
-jest.mock('axios');
+describe('"exportDocument', () => {
+    let mockEnvironmentApiService: jest.Mocked<EnvironmentApiService>;
 
-describe('"getDownloadLink', () => {
+    beforeEach(() => {
+        mockEnvironmentApiService = {
+            generateOutput: jest.fn().mockResolvedValue({
+                data: { taskId: 'test-task-id' },
+                links: { taskInfo: 'http://test.com/task-info' },
+            }),
+            getOutputSettingsById: jest.fn().mockResolvedValue({
+                dataSourceEnabled: true,
+            }),
+            getTaskStatus: jest.fn().mockResolvedValue({
+                status: 200,
+                data: { taskId: 'test-task-id' },
+                links: { download: 'http://test.com/download' },
+            }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
+    });
+
     describe('handle errors correctly', () => {
         beforeEach(() => {
             window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
         });
         it('should return "Unexpected error"', async () => {
-            const res = await getDownloadLink(
+            // Mock the environment API service to throw an error
+            mockEnvironmentApiService.generateOutput.mockRejectedValue(new Error('Test error'));
+
+            const res = await exportDocument(
                 DownloadFormats.PDF,
-                '',
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
                 false,
+                mockEnvironmentApiService,
             );
             expect(res).toEqual({
                 status: 500,
                 error: 'Unexpected error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
 
         it('should return ApiError', async () => {
-            (axios.post as jest.Mock).mockResolvedValueOnce({
-                data: {
-                    status: '503',
-                    detail: 'Api Error',
-                },
-            });
-            const res = await getDownloadLink(
+            // Mock the environment API service to return an error response
+            mockEnvironmentApiService.generateOutput.mockResolvedValue({
+                status: '503',
+                detail: 'Api Error',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
+
+            const res = await exportDocument(
                 DownloadFormats.PDF,
-                '',
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
                 false,
+                mockEnvironmentApiService,
             );
             expect(res).toEqual({
                 status: 503,
                 error: 'Api Error',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
 
         it('should return "Error during polling', async () => {
-            (axios.post as jest.Mock).mockResolvedValueOnce({
-                data: {
-                    links: {},
-                },
+            // Mock the environment API service to return a successful response
+            mockEnvironmentApiService.generateOutput.mockResolvedValue({
+                data: { taskId: 'test-task-id' },
+                links: { taskInfo: 'http://test.com/task-info' },
             });
-            (axios.get as jest.Mock).mockResolvedValueOnce({
-                data: {
-                    status: 401,
-                },
-            });
-            const res = await getDownloadLink(
+
+            // Mock getTaskStatus to return null (simulating an error)
+            mockEnvironmentApiService.getTaskStatus.mockRejectedValue(null);
+
+            const res = await exportDocument(
                 DownloadFormats.PDF,
-                '',
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
                 false,
+                mockEnvironmentApiService,
             );
             expect(res).toEqual({
                 status: 500,
                 error: 'Error during polling',
-                success: false,
-                parsedData: undefined,
                 data: undefined,
             });
         });
@@ -94,142 +106,100 @@ describe('"getDownloadLink', () => {
                 },
             });
             window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
-            (axios.post as jest.Mock).mockResolvedValue({
-                data: {
-                    status: '503',
-                    detail: 'Api Error',
-                },
-            });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
-            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', undefined, false);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', undefined, false, mockEnvironmentApiService);
 
-            expect(axios.post).toHaveBeenCalledWith(
-                `/output/pdf`,
-                {
-                    engineVersion: undefined,
-                    dataConnectorConfig: undefined,
-                    outputSettingsId: undefined,
-                    layoutsToExport: ['1'],
-                    documentContent: JSON.parse('{}'),
-                    projectId: 'projectId',
-                },
-                { headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' } },
-            );
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: undefined,
+                dataConnectorConfig: undefined,
+                outputSettingsId: undefined,
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
         });
 
         it('should skip sending data source if it is not defined', async () => {
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: null,
             });
-            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
-            expect(axios.post).toHaveBeenCalledWith(
-                `/output/pdf`,
-                {
-                    engineVersion: undefined,
-                    dataConnectorConfig: undefined,
-                    outputSettingsId: 'outputId',
-                    layoutsToExport: ['1'],
-                    documentContent: JSON.parse('{}'),
-                    projectId: 'projectId',
-                },
-                { headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' } },
-            );
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: undefined,
+                dataConnectorConfig: undefined,
+                outputSettingsId: 'outputId',
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
         });
 
         it('should skip sending data source if output setting does not have "dataSourceEnabled"', async () => {
-            (axios.get as jest.Mock).mockResolvedValue({
-                data: {
-                    dataSourceEnabled: false,
-                },
-            });
-            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
+            mockEnvironmentApiService.getOutputSettingsById.mockResolvedValue({
+                dataSourceEnabled: false,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
 
-            expect(axios.get).toHaveBeenCalledWith(`/output/settings/outputId`, {
-                headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' },
-            });
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
-            expect(axios.post).toHaveBeenCalledWith(
-                `/output/pdf`,
-                {
-                    engineVersion: undefined,
-                    dataConnectorConfig: undefined,
-                    outputSettingsId: 'outputId',
-                    layoutsToExport: ['1'],
-                    documentContent: JSON.parse('{}'),
-                    projectId: 'projectId',
-                },
-                { headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' } },
-            );
+            expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
+
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: undefined,
+                dataConnectorConfig: undefined,
+                outputSettingsId: 'outputId',
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
         });
 
         it('should send data source', async () => {
-            (axios.get as jest.Mock).mockResolvedValue({
-                data: {
-                    dataSourceEnabled: true,
-                },
-            });
-            await getDownloadLink(DownloadFormats.PDF, '', () => 'Token', '1', 'projectId', 'outputId', false);
+            mockEnvironmentApiService.getOutputSettingsById.mockResolvedValue({
+                dataSourceEnabled: true,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
 
-            expect(axios.get).toHaveBeenCalledWith(`/output/settings/outputId`, {
-                headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' },
-            });
+            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
 
-            expect(axios.post).toHaveBeenCalledWith(
-                `/output/pdf`,
-                {
-                    engineVersion: undefined,
-                    dataConnectorConfig: {
-                        dataConnectorId: '123',
-                        dataConnectorParameters: {
-                            context: null,
-                        },
+            expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
+
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: undefined,
+                dataConnectorConfig: {
+                    dataConnectorId: '123',
+                    dataConnectorParameters: {
+                        context: null,
                     },
-                    outputSettingsId: 'outputId',
-                    layoutsToExport: ['1'],
-                    documentContent: JSON.parse('{}'),
-                    projectId: 'projectId',
                 },
-                { headers: { Authorization: 'Bearer Token', 'Content-Type': 'application/json' } },
-            );
+                outputSettingsId: 'outputId',
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
         });
     });
 
     describe('success path', () => {
         beforeEach(() => {
             window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
-            (axios.post as jest.Mock).mockResolvedValueOnce({
-                data: {
-                    links: {},
-                },
+            mockEnvironmentApiService.generateOutput.mockResolvedValue({
+                data: { taskId: 'test-task-id' },
+                links: { taskInfo: 'http://test.com/task-info' },
             });
         });
         it('should return 200 status if all passed', async () => {
-            (axios.get as jest.Mock).mockResolvedValueOnce({
-                status: 200,
-                data: {
-                    links: {
-                        download: 'http://download.com',
-                    },
-                },
-            });
-            const res = await getDownloadLink(
+            const res = await exportDocument(
                 DownloadFormats.PDF,
-                '',
-                () => 'Token',
                 '1',
                 'projectId',
                 undefined,
                 false,
+                mockEnvironmentApiService,
             );
-            expect(res).toEqual({
-                status: 200,
-                error: undefined,
-                success: true,
-                parsedData: 'http://download.com',
-                data: 'http://download.com',
-            });
+            expect(res).toEqual('test-task-id');
         });
     });
 });

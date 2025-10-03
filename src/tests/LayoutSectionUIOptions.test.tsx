@@ -80,7 +80,7 @@ const mockProjectConfig = {
     onProjectInfoRequested: jest.fn().mockResolvedValue({}),
     onProjectSave: jest.fn(),
     onSetMultiLayout: jest.fn((setMultiLayout) => setMultiLayout(false)),
-    onAuthenticationExpired: jest.fn(),
+    onEngineInitialized: jest.fn(),
     outputSettings: {},
     onFetchUserInterfaceDetails: jest.fn().mockResolvedValue({
         userInterface: { id: '1', name: 'name' },
@@ -120,7 +120,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -159,7 +158,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -196,7 +194,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                     onSetMultiLayout: multiLayoutMock,
                                 }}
-                                updateToken={jest.fn()}
                             />
                         </UiThemeProvider>
                     </SubscriberContextProvider>
@@ -219,7 +216,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -258,7 +254,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -302,7 +297,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -346,7 +340,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -383,7 +376,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                     onSetMultiLayout: multiLayoutMock,
                                 }}
-                                updateToken={jest.fn()}
                             />
                         </UiThemeProvider>
                     </SubscriberContextProvider>
@@ -410,7 +402,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,
@@ -455,7 +446,6 @@ describe('Layout Section UI Options', () => {
                                     },
                                 },
                             }}
-                            updateToken={jest.fn()}
                         />
                     </SubscriberContextProvider>
                 </AppProvider>,

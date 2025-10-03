@@ -3,15 +3,12 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { ConfigType } from '@chili-publish/studio-sdk';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import userEvent from '@testing-library/user-event';
-import axios from 'axios';
 import StudioUI from '../../main';
 
 jest.mock('@chili-publish/studio-sdk');
-jest.mock('axios');
 
 const environmentBaseURL = 'http://abc.com';
 const projectID = 'projectId';
-const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const token = 'token';
 
 const layoutTranslations = {
@@ -24,7 +21,6 @@ const layoutTranslations = {
 
 const config = {
     selector: 'sui-root',
-    projectDownloadUrl,
     projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
     projectId: projectID,
     graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
@@ -63,9 +59,6 @@ jest.mock('@chili-publish/studio-sdk', () => {
 
 describe('Layout Translations Integration', () => {
     beforeEach(() => {
-        (axios.get as jest.Mock).mockImplementation(() => {
-            return Promise.resolve({ data: [] });
-        });
         render(<div id="sui-root" />);
     });
 

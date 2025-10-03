@@ -3,4 +3,3 @@
 
 yarn pretty-quick --staged
 yarn lint
-yarn validate-versions

@@ -50,17 +50,24 @@ function ImageVariable(props: IImageVariable) {
         }
         resetMediaError();
         onVariableFocus?.(variable.id);
-        upload([...files], {
+        await upload([...files], {
             minWidthPixels: variable.uploadMinWidth,
             minHeightPixels: variable.uploadMinHeight,
-        }).then((media) => {
-            if (!media) {
-                return;
-            }
-            dispatch(setImageChangePendingId(variable.id));
-            handleImageChange({ assetId: media.id, id: variable.id, context: { searchInUploadFolder: true } });
-            onVariableBlur?.(variable.id);
-        });
+        })
+            .then(async (media) => {
+                if (!media) {
+                    return;
+                }
+                dispatch(setImageChangePendingId(variable.id));
+                await handleImageChange({
+                    assetId: media.id,
+                    id: variable.id,
+                    context: { searchInUploadFolder: true },
+                });
+            })
+            .finally(() => {
+                onVariableBlur?.(variable.id);
+            });
     };
 
     const handleImageBrowse = async () => {

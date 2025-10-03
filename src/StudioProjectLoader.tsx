@@ -1,10 +1,7 @@
 import { DownloadFormats, WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import {
-    APIUserInteface,
+    APIUserInterface,
     DownloadLinkResult,
-    HttpHeaders,
-    IOutputSetting,
     PaginatedResponse,
     Project,
     UserInterface,
@@ -12,8 +9,10 @@ import {
     UserInterfaceWithOutputSettings,
 } from './types/types';
 import { SESSION_USER_INTEFACE_ID_KEY } from './utils/constants';
-import { addTrailingSlash, getDownloadLink } from './utils/documentExportHelper';
+import { addTrailingSlash, exportDocument } from './utils/documentExportHelper';
 import { transformFormBuilderArrayToObject } from './utils/helpers';
+import { EnvironmentApiService } from './services/EnvironmentApiService';
+import { ProjectDataClient } from './services/ProjectDataClient';
 
 export class StudioProjectLoader {
     private projectDownloadUrl?: string;
@@ -24,11 +23,7 @@ export class StudioProjectLoader {
 
     private graFxStudioEnvironmentApiBaseUrl: string;
 
-    private authToken: string;
-
     private sandboxMode: boolean;
-
-    private refreshTokenAction?: () => Promise<string | AxiosError>;
 
     private cachedProject: Project | undefined;
 
@@ -36,26 +31,44 @@ export class StudioProjectLoader {
 
     private onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
 
+    private onProjectGetDownloadLink?: (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ) => Promise<DownloadLinkResult>;
+
+    // Centralized Environment API Service
+    private environmentApiService: EnvironmentApiService;
+
+    // Client for project data requests
+    private projectDataClient: ProjectDataClient;
+
     constructor(
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
-        authToken: string,
         sandboxMode: boolean,
-        refreshTokenAction?: () => Promise<string | AxiosError>,
+        environmentApiService: EnvironmentApiService,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
         userInterfaceID?: string,
         onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>,
+        onProjectGetDownloadLink?: (
+            extension: string,
+            selectedLayoutID: string | undefined,
+            outputSettingsId: string | undefined,
+        ) => Promise<DownloadLinkResult>,
     ) {
         this.projectDownloadUrl = projectDownloadUrl;
         this.projectUploadUrl = projectUploadUrl;
         this.projectId = projectId;
         this.sandboxMode = sandboxMode;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
-        this.authToken = authToken;
-        this.refreshTokenAction = refreshTokenAction;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
+        this.onProjectGetDownloadLink = onProjectGetDownloadLink;
+        this.environmentApiService = environmentApiService;
+
+        this.projectDataClient = new ProjectDataClient();
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {
@@ -65,31 +78,43 @@ export class StudioProjectLoader {
             return this.cachedProject;
         }
 
-        const intermediate = axios
-            .get(`${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}`, {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            })
-            .then((res) => {
-                return res.data;
-            });
+        try {
+            const result = await this.environmentApiService.getProjectById(this.projectId);
 
-        // cache for subsequent calls
-        this.cachedProject = await intermediate;
+            // Transform environment client API Project to our consolidated Project type
+            this.cachedProject = {
+                id: result.id || '',
+                name: result.name || '',
+                template: { id: result.template?.id || '' },
+                collectionId: result.collectionId,
+                userInterfaceId: result.userInterfaceId,
+            };
 
-        if (!this.cachedProject) {
+            if (!this.cachedProject) {
+                throw new Error('Project not found');
+            }
+
+            return this.cachedProject;
+        } catch (error) {
             throw new Error('Project not found');
         }
-
-        return this.cachedProject;
     };
 
     public onProjectDocumentRequested = async (): Promise<string | null> => {
-        if (this.projectDownloadUrl) return StudioProjectLoader.fetchDocument(this.projectDownloadUrl, this.authToken);
+        // Use URL-based approach if download URL is provided
+        if (this.projectDownloadUrl) {
+            return this.projectDataClient.fetchFromUrl(this.projectDownloadUrl);
+        }
 
+        // Use API-based approach if no download URL
         if (!this.projectId) throw new Error('Document could not be loaded (project id was not provided)');
 
-        const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-        return StudioProjectLoader.fetchDocument(fallbackDownloadUrl, this.authToken);
+        try {
+            const result = await this.environmentApiService.getProjectDocument(this.projectId);
+            return JSON.stringify(result);
+        } catch (error) {
+            return null;
+        }
     };
 
     public onEngineInitialized = (): void => {
@@ -100,24 +125,8 @@ export class StudioProjectLoader {
     };
 
     public onProjectSave = async (generateJson: () => Promise<string>): Promise<Project> => {
-        await this.saveDocument(generateJson, this.projectUploadUrl, this.projectDownloadUrl, this.authToken);
+        await this.saveDocument(generateJson);
         return this.onProjectInfoRequested();
-    };
-
-    public onAuthenticationRequested = (): string => {
-        return this.authToken;
-    };
-
-    public onAuthenticationExpired = async (): Promise<string> => {
-        if (!this.refreshTokenAction) {
-            throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
-        }
-        const result = await this.refreshTokenAction();
-        if (result instanceof Error) {
-            throw result;
-        }
-        this.authToken = result;
-        return result;
     };
 
     public onLogInfoRequested = (): unknown => {
@@ -129,128 +138,44 @@ export class StudioProjectLoader {
         };
     };
 
-    public onProjectGetDownloadLink = async (
-        extension: string,
-        selectedLayoutID: string | undefined,
-        outputSettingsId: string | undefined,
-    ): Promise<DownloadLinkResult> => {
-        return getDownloadLink(
-            extension as DownloadFormats,
-            this.graFxStudioEnvironmentApiBaseUrl,
-            () => this.authToken,
-            selectedLayoutID || '0',
-            this.projectId,
-            outputSettingsId,
-            this.sandboxMode,
-        );
-    };
-
-    private static fetchDocument = async (templateUrl: string, token: string): Promise<string | null> => {
-        const url = templateUrl;
-        if (url) {
-            const fetchPromise = axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
-            return fetchPromise
-                .then((res) => {
-                    return JSON.stringify(res.data);
-                })
-                .catch(() => {
-                    return null;
-                });
-        }
-        return null;
-    };
-
-    private saveDocument = async (
-        generateJson: () => Promise<string>,
-        projectUploadUrl: string | undefined,
-        projectDownloadUrl: string | undefined,
-        token: string,
-    ) => {
-        // create a fallback url in case projectDownloadUrl and projectUploadUrl were not provided
-        let url =
-            projectDownloadUrl || (projectUploadUrl ? `${projectUploadUrl}/assets/assets/documents/demo.json` : null);
-
-        if (!url) {
-            if (!this.projectId) throw new Error('Project id was not provided');
-
-            const fallbackDownloadUrl = `${this.graFxStudioEnvironmentApiBaseUrl}/projects/${this.projectId}/document`;
-            url = fallbackDownloadUrl;
-        }
-
-        try {
-            const document = await generateJson().then((res) => {
-                if (res) {
-                    return res;
-                }
-                throw new Error();
-            });
-            const config: HttpHeaders = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-
-            if (document) {
-                axios.put(url, JSON.parse(document), config).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.error(`[${this.saveDocument.name}] There was an issue saving document`);
-                    return err;
-                });
-            }
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
-        }
-    };
-
     public onFetchStudioUserInterfaceDetails = async (
         userInterfaceId = this.userInterfaceID,
     ): Promise<UserInterfaceWithOutputSettings | null> => {
         const fetchDefaultUserInterface = async () => {
-            const res = await this.onFetchUserInterfaces();
-
-            if (res.status === 200) {
-                return res.data.data.find((value: UserInterface) => value.default);
+            try {
+                const res = await this.onFetchUserInterfaces();
+                return res.data.find((value: UserInterface) => value.default);
+            } catch (error) {
+                throw new Error(`Default user interface not found`);
             }
-            throw new Error(`Default user interface not found`);
         };
 
         const fetchUserInterfaceDetails = async (requestedUserInterfaceId: string) => {
-            return axios
-                .get<APIUserInteface>(
-                    `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces/${requestedUserInterfaceId}`,
-                    {
-                        headers: { Authorization: `Bearer ${this.authToken}` },
-                    },
-                )
-                .then((res) => StudioProjectLoader.toUserInterface(res.data))
-                .catch((err) => {
-                    if (err.response && err.response.status === 404) {
-                        return fetchDefaultUserInterface();
-                    }
-                    throw new Error(`${err}`);
-                });
+            try {
+                const result = await this.environmentApiService.getUserInterfaceById(requestedUserInterfaceId);
+                return StudioProjectLoader.toUserInterface(result);
+            } catch (err: unknown) {
+                if ((err as { status?: number }).status === 404) {
+                    return fetchDefaultUserInterface();
+                }
+                throw new Error(`${err}`);
+            }
         };
-        const outputSettings = await axios.get<{ data: IOutputSetting[] }>(
-            `${this.graFxStudioEnvironmentApiBaseUrl}/output/settings`,
-            {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            },
-        );
+        const outputSettings = await this.environmentApiService.getOutputSettings();
 
         const mapOutPutSettingsToLayoutIntent = (userInterface: UserInterface) => {
             const mappedOutputSettings: UserInterfaceOutputSettings[] = [];
             if (!userInterface.outputSettings) return mappedOutputSettings;
 
             Object.keys(userInterface.outputSettings).forEach((outputSettingId) => {
-                const matchedOutputSetting = outputSettings.data.data.find(
-                    (outputSetting: IOutputSetting) => outputSetting.id === outputSettingId,
+                const matchedOutputSetting = outputSettings.data?.find(
+                    (outputSetting) => outputSetting.id === outputSettingId,
                 );
                 if (matchedOutputSetting) {
                     const final = {
                         ...matchedOutputSetting,
-                        layoutIntents: userInterface.outputSettings[outputSettingId].layoutIntents,
+                        id: matchedOutputSetting.id || '',
+                        layoutIntents: userInterface.outputSettings?.[outputSettingId].layoutIntents,
                     };
                     mappedOutputSettings.push(final);
                 }
@@ -275,22 +200,22 @@ export class StudioProjectLoader {
 
             return {
                 userInterface: {
-                    id: userInterfaceData.id,
+                    id: userInterfaceData.id || '',
                     name: userInterfaceData.name,
                 },
                 outputSettings: mapOutPutSettingsToLayoutIntent(userInterfaceData),
                 formBuilder: transformFormBuilderArrayToObject(userInterfaceData.formBuilder),
-                outputSettingsFullList: outputSettings.data.data,
+                outputSettingsFullList: outputSettings.data || [],
             };
         }
         if (this.sandboxMode) {
             const defaultUserInterface = await fetchDefaultUserInterface();
             return defaultUserInterface
                 ? {
-                      userInterface: { id: defaultUserInterface.id, name: defaultUserInterface.name },
+                      userInterface: { id: defaultUserInterface.id || '', name: defaultUserInterface.name },
                       outputSettings: mapOutPutSettingsToLayoutIntent(defaultUserInterface),
                       formBuilder: transformFormBuilderArrayToObject(defaultUserInterface.formBuilder),
-                      outputSettingsFullList: outputSettings.data.data,
+                      outputSettingsFullList: outputSettings.data || [],
                   }
                 : null;
         }
@@ -308,24 +233,82 @@ export class StudioProjectLoader {
         return userInterfaceDetails;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public onFetchUserInterfaces = async (): Promise<AxiosResponse<PaginatedResponse<UserInterface>, any>> => {
-        const res = await axios.get<PaginatedResponse<APIUserInteface>>(
-            `${this.graFxStudioEnvironmentApiBaseUrl}/user-interfaces`,
-            {
-                headers: { Authorization: `Bearer ${this.authToken}` },
-            },
-        );
+    public onFetchUserInterfaces = async (): Promise<PaginatedResponse<UserInterface>> => {
+        const res = await this.environmentApiService.getAllUserInterfaces();
+
         return {
             ...res,
-            data: {
-                ...res.data,
-                data: res.data.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
-            },
+            data: res.data.map((apiUserInterface) => StudioProjectLoader.toUserInterface(apiUserInterface)),
         };
     };
 
-    private static toUserInterface(apiUserInterface: APIUserInteface): UserInterface {
+    public onGenerateOutput = async (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ): Promise<{ extensionType: string; outputData: Blob }> => {
+        if (this.onProjectGetDownloadLink) {
+            const result = await this.onProjectGetDownloadLink(extension, selectedLayoutID, outputSettingsId);
+            if (result.status !== 200 || !result.data) {
+                throw new Error('Error getting download link');
+            }
+            return this.projectDataClient.downloadFromUrl(result.data);
+        }
+        const taskId = await this.getTaskId(extension, selectedLayoutID, outputSettingsId);
+        return this.environmentApiService.getOutputTaskResult(taskId);
+    };
+
+    private getTaskId = async (
+        extension: string,
+        selectedLayoutID: string | undefined,
+        outputSettingsId: string | undefined,
+    ): Promise<string> => {
+        const result = await exportDocument(
+            extension as DownloadFormats,
+            selectedLayoutID || '0',
+            this.projectId,
+            outputSettingsId,
+            this.sandboxMode,
+            this.environmentApiService,
+        );
+        if (typeof result !== 'string') {
+            throw new Error(`Error getting download link:${result.error}`);
+        }
+        return result;
+    };
+
+    private saveDocument = async (generateJson: () => Promise<string>): Promise<void> => {
+        try {
+            const document = await generateJson().then((res) => {
+                if (res) {
+                    return res;
+                }
+                throw new Error();
+            });
+
+            const requestUrl =
+                this.projectDownloadUrl ||
+                (this.projectUploadUrl ? `${this.projectUploadUrl}/assets/assets/documents/demo.json` : null);
+
+            try {
+                if (requestUrl) {
+                    await this.projectDataClient.saveToUrl(requestUrl, document);
+                } else if (document && this.projectId) {
+                    await this.environmentApiService.saveProjectDocument(this.projectId, JSON.parse(document));
+                }
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error(`[${this.saveDocument.name}] There was an issue saving document`);
+                throw err;
+            }
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`[${this.saveDocument.name}] There was an issue fetching the current document state`);
+            throw error;
+        }
+    };
+
+    private static toUserInterface(apiUserInterface: APIUserInterface): UserInterface {
         return {
             ...apiUserInterface,
             formBuilder: apiUserInterface.formBuilder ? JSON.parse(apiUserInterface.formBuilder) : undefined,

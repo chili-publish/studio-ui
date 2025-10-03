@@ -1,19 +1,18 @@
 /* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
+
 import { act, screen, waitFor, within } from '@testing-library/react';
 import selectEvent from 'react-select-event';
-import { AxiosResponse } from 'axios';
 import { mockUserInterface, mockUserInterface2 } from '@mocks/mockUserinterface';
 import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
+import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 import {
     defaultOutputSettings,
     defaultPlatformUiOptions,
     FormBuilderType,
-    PaginatedResponse,
     ProjectConfig,
-    UserInterface,
     UserInterfaceWithOutputSettings,
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
@@ -46,12 +45,6 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
             template: { id: '1111-111-0000-0000-1111' },
         };
     },
-    onAuthenticationRequested: () => {
-        return '';
-    },
-    onAuthenticationExpired: async () => {
-        return '';
-    },
     onBack: () => {
         // ignored
     },
@@ -61,17 +54,26 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onEngineInitialized: () => {
         // ignored
     },
-    onProjectGetDownloadLink: async () => {
-        return { status: 0, error: '', success: false, parsedData: '', data: '' };
+    onGenerateOutput: async () => {
+        return { extensionType: 'pdf', outputData: new Blob() };
     },
     onFetchUserInterfaceDetails: fetchOuptputSettingsFn,
     onFetchOutputSettings: fetchOuptputSettingsFn,
     onFetchUserInterfaces: async () => {
-        return Promise.resolve({
-            status: 200,
-            data: { data: [mockUserInterface, mockUserInterface2] },
-        } as unknown as AxiosResponse<PaginatedResponse<UserInterface>, any>);
+        return {
+            data: [mockUserInterface, mockUserInterface2],
+            pageSize: 10,
+        };
     },
+    environmentApiService: {
+        getProjectById: jest.fn().mockResolvedValue({
+            id: '00000000-0000-0000-0000-000000000000',
+            name: 'mockProjectName',
+            template: { id: 'dddddd' },
+        }),
+        getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+        saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+    } as unknown as EnvironmentApiService,
 });
 
 const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {

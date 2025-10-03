@@ -1,4 +1,4 @@
-const esModules = ['@chili-publish/studio-sdk/lib/src/next'].join('|');
+const esModules = ['@chili-publish/studio-sdk/lib/src/next', '@chili-publish/environment-client-api'].join('|');
 
 module.exports = {
     roots: ['<rootDir>'],
