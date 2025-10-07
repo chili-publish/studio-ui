@@ -3,7 +3,7 @@ on: [pull_request]
 env:
     NODE_VERSION: 20
 permissions:
-    contents: read
+    contents: write
     packages: read
     checks: write
     pull-requests: write
