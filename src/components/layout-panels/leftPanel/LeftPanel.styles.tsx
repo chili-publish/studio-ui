@@ -10,16 +10,18 @@ export const LeftPanelWrapper = styled.div<{ overflowScroll: boolean }>`
     scollbar-gutter: stable;
 `;
 
-export const LeftPanelContainer = styled.div`
+export const LeftPanelContainer = styled.div<{ isHidden: boolean }>`
     padding-block: 0;
     padding-inline: 1.25rem 0;
     box-sizing: border-box;
     width: calc(18.75rem - 1.5625rem - ${SCROLL_SIZE} + 1.25rem);
+    display: ${(props) => (props.isHidden ? 'none' : 'block')};
 `;
 
-export const ImagePanelContainer = styled.div`
+export const ImagePanelContainer = styled.div<{ isHidden: boolean }>`
     padding-block: 0;
     padding-inline: 1.25rem 0;
     height: calc(100% - ${BORDER_SIZE});
     width: calc(18.75rem - ${BORDER_SIZE});
+    display: ${(props) => (props.isHidden ? 'none' : 'block')};
 `;

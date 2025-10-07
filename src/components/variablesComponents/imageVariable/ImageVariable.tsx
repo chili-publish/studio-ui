@@ -26,7 +26,11 @@ function ImageVariable(props: IImageVariable) {
     const { remoteConnector } = useVariableConnector(variable);
 
     const mediaAssetId = useMemo(() => {
-        return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
+        const mediaId = variable.value?.resolved?.mediaId;
+        if (mediaId) {
+            return mediaId.toString();
+        }
+        return variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
     const {
