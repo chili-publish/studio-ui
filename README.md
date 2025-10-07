@@ -33,8 +33,6 @@ If you need help generating a token or would like code samples, please see our [
 <html lang="en">
     <head>
         <!-- ... insert your own stuff here ... -->
-        <!-- link to the studio ui css, to inject the styling -->
-        <link rel="stylesheet" href="https://studio-cdn.chiligrafx.com/studio-ui/latest/main.css" />
     </head>
     <body>
         <!-- div where studio ui will be constructed in -->

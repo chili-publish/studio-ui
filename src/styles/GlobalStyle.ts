@@ -1,6 +1,39 @@
 import { createGlobalStyle } from 'styled-components';
+import './index.css';
 
 const GlobalStyle = createGlobalStyle<{ fontFamily?: string }>`
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    ::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    ::-webkit-scrollbar-track {
+        visibility: hidden;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 0.25rem;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar:window-inactive {
+        visibility: hidden;
+    }
+    ::-webkit-scrollbar-corner {
+        visibility: hidden;
+    }
+
     /* Target the root element of your injected app */
     #studio-ui-root-wrapper {
         /* Isolate from external styles */
