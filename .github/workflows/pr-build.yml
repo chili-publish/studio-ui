@@ -4,7 +4,6 @@ env:
     NODE_VERSION: 20
 permissions:
     contents: read
-    actions: read
     packages: read
     checks: write
     pull-requests: write
