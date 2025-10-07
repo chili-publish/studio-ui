@@ -95,7 +95,7 @@
         "resize-observer-polyfill": "^1.5.1",
         "ts-jest": "^29.2.5",
         "typescript": "^5.1.6",
-        "vite": "^5.4.20"
+        "vite": "^5.4.20",
         "vite-plugin-css-injected-by-js": "^3.5.2"
     },
     "husky": {
