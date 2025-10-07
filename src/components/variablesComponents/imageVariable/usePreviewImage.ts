@@ -26,6 +26,12 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
 
     const { currentVariables: linkedVariables } = useVariablesChange(variableIdsInMapping);
     const connectorCapabilities = useSelector(selectConnectorCapabilities);
+    const currentConnectorCapabilities = useMemo(() => {
+        if (!connectorId) {
+            return undefined;
+        }
+        return connectorCapabilities[connectorId];
+    }, [connectorId, connectorCapabilities]);
 
     const getErrorTranslation = useCallback(
         (error: unknown): string => {
@@ -57,7 +63,7 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
     );
 
     const getMediaDetails = useCallback(async () => {
-        if (!connectorId || !mediaAssetId) {
+        if (!connectorId || !mediaAssetId || !currentConnectorCapabilities) {
             setMediaDetails(null);
             setMediaDetailsPending(false);
             setMediaDetailsError(null);
@@ -71,13 +77,13 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
         try {
             let media: Media | null = null;
 
-            if (connectorCapabilities[connectorId]?.query && connectorCapabilities[connectorId]?.filtering) {
+            if (currentConnectorCapabilities?.query && currentConnectorCapabilities?.filtering) {
                 const { parsedData } = await window.StudioUISDK.mediaConnector.query(connectorId, {
                     filter: [mediaAssetId],
                     pageSize: 1,
                 });
                 media = parsedData?.data[0] ?? null;
-            } else if (connectorCapabilities[connectorId]?.detail) {
+            } else if (currentConnectorCapabilities?.detail) {
                 const { parsedData } = await window.StudioUISDK.mediaConnector.detail(connectorId, mediaAssetId);
                 media = parsedData;
             }
@@ -97,7 +103,7 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
             setMediaDetailsError(error);
             return null;
         }
-    }, [connectorId, mediaAssetId, connectorCapabilities]);
+    }, [connectorId, mediaAssetId, currentConnectorCapabilities]);
 
     // Preview image URL hook - only runs when media details are available
     const previewCall = useCallback(
@@ -206,7 +212,7 @@ export const usePreviewImage = (connectorId: string | undefined, mediaAssetId: s
     // Fetch media details when dependencies change
     useEffect(() => {
         getMediaDetails();
-    }, [linkedVariables, getMediaDetails]);
+    }, [getMediaDetails, linkedVariables]);
 
     // Reset preview error when connector id changes
     useEffect(() => {
