@@ -4,14 +4,15 @@ on:
         types: [prereleased]
 env:
     NODE_VERSION: 20
+permissions:
+    contents: read
+    packages: read
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v3
-              with:
-                  token: ${{ secrets.PACKAGE_SECRET }}
+            - uses: actions/checkout@v4
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v3
               with:
@@ -22,7 +23,7 @@ jobs:
               run: |
                   yarn install
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: build code
               run: yarn build

@@ -3,28 +3,36 @@ on:
     push:
         branches:
             - main
+env:
+    NODE_VERSION: 20
+permissions:
+    packages: read
 jobs:
     update-bundle-size:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [20]
         steps:
+            - name: Get GitHub App Access Token
+              id: github-app-access-token
+              uses: actions/create-github-app-token@v2
+              with:
+                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
+                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
+                  owner: ${{ github.repository_owner }}
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
-                  token: ${{ secrets.PACKAGE_SECRET }}
-            - name: Use Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+                  token: ${{ steps.github-app-access-token.outputs.token }}
+            - name: Use Node ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v2
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: install dependencies
               run: |
                   yarn install
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build project
               run: yarn build

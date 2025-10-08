@@ -5,6 +5,8 @@ on:
             - main
 env:
     NODE_VERSION: 20
+permissions:
+    packages: read
 jobs:
     validate-versions:
         runs-on: ubuntu-latest
@@ -17,8 +19,6 @@ jobs:
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.PACKAGE_SECRET }}
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v4
               with:
@@ -29,7 +29,7 @@ jobs:
               run: |
                   yarn install
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_SECRET }}
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Build project
               run: yarn build
             - name: Get bundle size for current PR
