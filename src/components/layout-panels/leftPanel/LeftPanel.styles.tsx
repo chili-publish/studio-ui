@@ -18,10 +18,9 @@ export const LeftPanelContainer = styled.div<{ isHidden: boolean }>`
     display: ${(props) => (props.isHidden ? 'none' : 'block')};
 `;
 
-export const ImagePanelContainer = styled.div<{ isHidden: boolean }>`
+export const ImagePanelContainer = styled.div`
     padding-block: 0;
     padding-inline: 1.25rem 0;
     height: calc(100% - ${BORDER_SIZE});
     width: calc(18.75rem - ${BORDER_SIZE});
-    display: ${(props) => (props.isHidden ? 'none' : 'block')};
 `;

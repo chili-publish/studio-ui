@@ -52,9 +52,11 @@ function LeftPanel({
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={activePanel !== PanelType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
-                <ImagePanelContainer isHidden={activePanel !== PanelType.IMAGE_PANEL}>
-                    <ImagePanel />
-                </ImagePanelContainer>
+                {activePanel === PanelType.IMAGE_PANEL && (
+                    <ImagePanelContainer>
+                        <ImagePanel />
+                    </ImagePanelContainer>
+                )}
                 <LeftPanelContainer isHidden={activePanel === PanelType.IMAGE_PANEL}>
                     {isDataSourceDisplayed && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
