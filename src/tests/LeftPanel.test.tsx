@@ -208,6 +208,11 @@ describe('Image Panel', () => {
 
         await user.click(imagePicker[0]);
 
+        await waitFor(async () => {
+            const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
+            expect(folder).toBeInTheDocument();
+        });
+
         const folder = await screen.findByTestId(getDataTestId('preview-container-grafx'));
         expect(folder).toBeInTheDocument();
 
@@ -222,7 +227,7 @@ describe('Image Panel', () => {
 
     test('Media asset folder navigation works', async () => {
         const user = userEvent.setup();
-        const { getByText } = renderWithProviders(
+        renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <LeftPanel
                     selectedLayout={mockLayout}
@@ -244,11 +249,18 @@ describe('Image Panel', () => {
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await user.click(imagePicker[0]);
 
-        const image = (await screen.findAllByRole('img', { name: /grafx/i }))[0];
+        await waitFor(async () => {
+            const image = await screen.findAllByRole('img', { name: /grafx/i });
+            expect(image[0]).toBeInTheDocument();
+        });
 
-        await user.click(image);
-        const breadCrumb = getByText('Home');
-        expect(breadCrumb).toBeInTheDocument();
+        const image = await screen.findAllByRole('img', { name: /grafx/i });
+        await user.click(image[0]);
+
+        await waitFor(() => {
+            const breadCrumb = screen.getByText('Home');
+            expect(breadCrumb).toBeInTheDocument();
+        });
     });
 
     test.skip('Image Picker updates image after asset is selected', async () => {
@@ -317,9 +329,12 @@ describe('Image Panel', () => {
         const imagePicker = await screen.findAllByTestId(getDataTestId('image-picker-content'));
         await user.click(imagePicker[0]);
 
-        const image = await screen.findAllByRole('img', { name: /grafx/i });
-        expect(image[0]).toBeInTheDocument();
+        await waitFor(async () => {
+            const image = await screen.findAllByRole('img', { name: /grafx/i });
+            expect(image[0]).toBeInTheDocument();
+        });
 
+        const image = await screen.findAllByRole('img');
         await user.click(image[0]);
 
         await waitFor(() => {
@@ -347,9 +362,12 @@ describe('Image Panel', () => {
 
         await user.click(imagePicker[0]);
 
-        const image = await screen.findAllByRole('img');
-        expect(image[0]).toBeInTheDocument();
+        await waitFor(async () => {
+            const image = await screen.findAllByRole('img');
+            expect(image[0]).toBeInTheDocument();
+        });
 
+        const image = await screen.findAllByRole('img');
         await user.click(image[0]);
 
         const input = getByTestId(getDataTestIdForSUI('media-panel-search-input'));

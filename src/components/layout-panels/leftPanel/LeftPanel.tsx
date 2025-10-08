@@ -52,34 +52,33 @@ function LeftPanel({
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper id="left-panel" overflowScroll={activePanel !== PanelType.IMAGE_PANEL}>
             <ScrollbarWrapper data-intercom-target="Customize panel">
-                {activePanel === PanelType.IMAGE_PANEL ? (
+                {activePanel === PanelType.IMAGE_PANEL && (
                     <ImagePanelContainer>
                         <ImagePanel />
                     </ImagePanelContainer>
-                ) : (
-                    <LeftPanelContainer>
-                        {isDataSourceDisplayed && <DataSource />}
-                        {isAvailableLayoutsDisplayed && (
-                            <>
-                                <SectionWrapper id="layout-section-header">
-                                    <PanelTitle margin="0">{layoutsHeader}</PanelTitle>
-                                    {layoutsHelpText && <SectionHelpText>{layoutsHelpText}</SectionHelpText>}
-                                </SectionWrapper>
-                                {isLayoutSwitcherVisible && (
-                                    <AvailableLayouts
-                                        selectedLayout={selectedLayout}
-                                        availableForUserLayouts={availableLayouts}
-                                    />
-                                )}
-                                {isLayoutResizableVisible && (
-                                    <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
-                                )}
-                            </>
-                        )}
-
-                        {formBuilder.variables.active && <VariablesList />}
-                    </LeftPanelContainer>
                 )}
+                <LeftPanelContainer isHidden={activePanel === PanelType.IMAGE_PANEL}>
+                    {isDataSourceDisplayed && <DataSource />}
+                    {isAvailableLayoutsDisplayed && (
+                        <>
+                            <SectionWrapper id="layout-section-header">
+                                <PanelTitle margin="0">{layoutsHeader}</PanelTitle>
+                                {layoutsHelpText && <SectionHelpText>{layoutsHelpText}</SectionHelpText>}
+                            </SectionWrapper>
+                            {isLayoutSwitcherVisible && (
+                                <AvailableLayouts
+                                    selectedLayout={selectedLayout}
+                                    availableForUserLayouts={availableLayouts}
+                                />
+                            )}
+                            {isLayoutResizableVisible && (
+                                <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
+                            )}
+                        </>
+                    )}
+
+                    {formBuilder.variables.active && <VariablesList />}
+                </LeftPanelContainer>
             </ScrollbarWrapper>
         </LeftPanelWrapper>
     ) : null;
