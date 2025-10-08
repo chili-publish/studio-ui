@@ -28,7 +28,7 @@ function ImageVariable(props: IImageVariable) {
     const mediaAssetId = useMemo(() => {
         const mediaId = variable.value?.resolved?.mediaId;
         if (mediaId) {
-            return mediaId.toString();
+            return mediaId;
         }
         return variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
