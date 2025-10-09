@@ -48,7 +48,6 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
 
     return (
         <div id="studio-ui-root-wrapper">
-            <h2>you cant see me</h2>
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
                 <GlobalStyle fontFamily={projectConfig?.uiOptions.theme?.fontFamily} />
                 <SubscriberContextProvider subscriber={eventSubscriber}>
