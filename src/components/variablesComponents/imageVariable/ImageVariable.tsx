@@ -83,6 +83,9 @@ function ImageVariable(props: IImageVariable) {
             if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                 await verifyAuthentication(variable.value.connectorId);
             }
+            // eslint-disable-next-line no-console
+            console.log('handleImageBrowse', variable.value?.connectorId);
+            resetMediaError();
             onVariableFocus?.(variable.id);
             dispatch(showImagePanel({ variableId: variable.id, connectorId: variable.value?.connectorId ?? '' }));
         } catch (error) {
