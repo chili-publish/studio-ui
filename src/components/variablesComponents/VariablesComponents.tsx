@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 // import { DropDown } from '@chili-publish/grafx-shared-components';
 import {
     DateVariable as DateVariableType,
@@ -60,89 +60,56 @@ function VariablesComponents(props: IVariablesComponents) {
         dispatch(validateVariable({ ...variable, value: { assetId: '', resolved: undefined } } as ImageVariableType));
     }, [handleImageRemove, variable, dispatch]);
 
-    const RenderComponents = useMemo(() => {
-        switch (type) {
-            case VariableType.longText: {
-                return (
-                    <MultiLineTextVariable
-                        variable={variable}
-                        validationError={errMsg}
-                        onValueChange={onVariableValueChange}
-                    />
-                );
-            }
-            case VariableType.shortText: {
-                return (
-                    <TextVariable variable={variable} validationError={errMsg} onValueChange={onVariableValueChange} />
-                );
-            }
+    return (
+        <div style={{ width: '100%' }}>
+            {type === VariableType.longText && (
+                <MultiLineTextVariable
+                    variable={variable}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
+                />
+            )}
+            {type === VariableType.shortText && (
+                <TextVariable variable={variable} validationError={errMsg} onValueChange={onVariableValueChange} />
+            )}
+            {type === VariableType.image && isDocumentLoaded && (
+                <ImageVariable
+                    variable={variable as ImageVariableType}
+                    validationError={errMsg}
+                    handleImageRemove={onImageVariableRemove}
+                    handleImageChange={handleImageChange}
+                />
+            )}
 
-            case VariableType.image: {
-                return isDocumentLoaded ? (
-                    <ImageVariable
-                        variable={variable as ImageVariableType}
-                        validationError={errMsg}
-                        handleImageRemove={onImageVariableRemove}
-                        handleImageChange={handleImageChange}
-                    />
-                ) : null;
-            }
-            case VariableType.boolean: {
-                return <BooleanVariable variable={variable} handleValueChange={handleValueChange} />;
-            }
-            case VariableType.number: {
-                return (
-                    variable.isVisible && (
-                        <NumberVariable
-                            variable={variable as NumberVariableType}
-                            validationError={errMsg}
-                            onValueChange={onVariableValueChange}
-                        />
-                    )
-                );
-            }
-
-            case VariableType.date: {
-                return (
-                    variable.isVisible && (
-                        <DateVariable
-                            variable={variable as DateVariableType}
-                            validationError={errMsg}
-                            onValueChange={onVariableValueChange}
-                            onBlur={onValidate}
-                            onCalendarOpen={onCalendarOpen}
-                            isOpenOnMobile={false}
-                        />
-                    )
-                );
-            }
-            case VariableType.list: {
-                return (
-                    <ListVariable
-                        variable={variable as ListVariableType}
-                        validationError={errMsg}
-                        onChange={(val) => dispatch(validateVariable(val))}
-                    />
-                );
-            }
-            default:
-                return null;
-        }
-    }, [
-        type,
-        variable,
-        isDocumentLoaded,
-        onImageVariableRemove,
-        onVariableValueChange,
-        onValidate,
-        onCalendarOpen,
-        handleValueChange,
-        handleImageChange,
-        errMsg,
-        dispatch,
-    ]);
-
-    return <div style={{ width: '100%' }}>{RenderComponents}</div>;
+            {type === VariableType.boolean && (
+                <BooleanVariable variable={variable} handleValueChange={handleValueChange} />
+            )}
+            {type === VariableType.number && variable.isVisible && (
+                <NumberVariable
+                    variable={variable as NumberVariableType}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
+                />
+            )}
+            {type === VariableType.date && variable.isVisible && (
+                <DateVariable
+                    variable={variable as DateVariableType}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
+                    onBlur={onValidate}
+                    onCalendarOpen={onCalendarOpen}
+                    isOpenOnMobile={false}
+                />
+            )}
+            {type === VariableType.list && (
+                <ListVariable
+                    variable={variable as ListVariableType}
+                    validationError={errMsg}
+                    onChange={(val) => dispatch(validateVariable(val))}
+                />
+            )}
+        </div>
+    );
 }
 
 export default VariablesComponents;

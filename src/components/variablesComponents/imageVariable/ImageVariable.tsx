@@ -26,7 +26,11 @@ function ImageVariable(props: IImageVariable) {
     const { remoteConnector } = useVariableConnector(variable);
 
     const mediaAssetId = useMemo(() => {
-        return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
+        const mediaId = variable.value?.resolved?.mediaId;
+        if (mediaId) {
+            return mediaId;
+        }
+        return variable?.value?.assetId;
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
 
     const {
@@ -79,6 +83,9 @@ function ImageVariable(props: IImageVariable) {
             if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                 await verifyAuthentication(variable.value.connectorId);
             }
+            // eslint-disable-next-line no-console
+            console.log('handleImageBrowse', variable.value?.connectorId);
+            resetMediaError();
             onVariableFocus?.(variable.id);
             dispatch(showImagePanel({ variableId: variable.id, connectorId: variable.value?.connectorId ?? '' }));
         } catch (error) {
