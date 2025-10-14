@@ -37,3 +37,7 @@ export const ErrorMessageContainer = styled.div`
         margin-top: 0 !important;
     }
 `;
+
+export const RangeConstraintErrorMessageWrapper = styled.div`
+    max-width: 15rem;
+`;

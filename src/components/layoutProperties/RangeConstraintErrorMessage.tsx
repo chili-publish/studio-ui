@@ -1,10 +1,9 @@
-import { AvailableIcons, Icon, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
-import { APP_WRAPPER_ID } from 'src/utils/constants';
 import { useUITranslations } from 'src/core/hooks/useUITranslations';
 import { useMemo } from 'react';
 import { LayoutPropertiesType, MeasurementUnit } from '@chili-publish/studio-sdk';
 import { formatNumber } from 'src/utils/formatNumber';
 import { roundValue } from './util';
+import { RangeConstraintErrorMessageWrapper } from './Layout.styles';
 
 interface RangeConstraintErrorMessageProps {
     currentWidth: string;
@@ -64,20 +63,11 @@ function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout
         );
     }, [layout, currentWidth, currentHeight, unit, getUITranslation]);
 
-    return (
-        <Tooltip
-            content={uiTranslation}
-            position={TooltipPosition.TOP}
-            anchorId={APP_WRAPPER_ID}
-            infoStyle={{
-                width: '15rem',
-                whiteSpace: 'pre-line',
-            }}
-            centerArrowOnElement
-        >
-            <Icon icon={AvailableIcons.faCircleExclamation} />
-        </Tooltip>
-    );
+    return uiTranslation ? (
+        <RangeConstraintErrorMessageWrapper data-testid="constraint-proportion-error-message">
+            {uiTranslation}
+        </RangeConstraintErrorMessageWrapper>
+    ) : undefined;
 }
 
 export default RangeConstraintErrorMessage;
