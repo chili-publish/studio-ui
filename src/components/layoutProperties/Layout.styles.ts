@@ -38,6 +38,6 @@ export const ErrorMessageContainer = styled.div`
     }
 `;
 
-export const RangeConstraintErrorMessageWrapper = styled.div`
-    max-width: 15rem;
+export const RangeConstraintErrorMessageWrapper = styled.div<{ maxWidth?: string }>`
+    max-width: ${({ maxWidth }) => maxWidth || '15rem'};
 `;
