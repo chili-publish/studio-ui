@@ -21,6 +21,7 @@ const useDownload = ({
         [DownloadFormats.MP4]: false,
         [DownloadFormats.GIF]: false,
         [DownloadFormats.PDF]: false,
+        [DownloadFormats.HTML]: false,
     };
 
     const [selectedOptionFormat, setSelectedOptionFormat] = useState<DownloadFormats>(DownloadFormats.JPG);
@@ -65,6 +66,13 @@ const useDownload = ({
                 value: DownloadFormats.PDF,
                 item: { type: DownloadFormats.PDF, name: 'PDF' },
             },
+            {
+                label: (
+                    <DropdownOption iconData={AvailableIcons.solidFaGlobe} text="HTML" description="" isExperimental />
+                ),
+                value: DownloadFormats.HTML,
+                item: { type: DownloadFormats.HTML, name: 'HTML' },
+            },
         ];
 
         // if no outputsettings defined, show all
@@ -84,10 +92,15 @@ const useDownload = ({
         if (!userInterfaceOutputSettings) return null;
 
         return userInterfaceOutputSettings.map((val) => {
-            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
+            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf' | 'html';
             return {
                 label: (
-                    <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
+                    <DropdownOption
+                        iconData={outputTypesIcons[key]}
+                        text={val.name}
+                        description={val.description}
+                        isExperimental={val.type === DownloadFormats.HTML}
+                    />
                 ),
                 value: val.id,
                 item: val,
@@ -99,10 +112,15 @@ const useDownload = ({
         if (!outputSettingsFullList) return null;
 
         return outputSettingsFullList.map((val) => {
-            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf';
+            const key = val.type.toLowerCase() as 'jpg' | 'png' | 'mp4' | 'gif' | 'pdf' | 'html';
             return {
                 label: (
-                    <DropdownOption iconData={outputTypesIcons[key]} text={val.name} description={val.description} />
+                    <DropdownOption
+                        iconData={outputTypesIcons[key]}
+                        text={val.name}
+                        description={val.description}
+                        isExperimental={val.type === DownloadFormats.HTML}
+                    />
                 ),
                 value: val.id,
                 item: val,
