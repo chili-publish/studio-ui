@@ -1285,8 +1285,8 @@
   integrity sha512-eJY0F2w0mA21rQUP0axxtIr+OvuhIW/FKaEn1btBlpg5nvzHKyjQsMWUc8/ADyn149G5dhTVGbSbvWGIMYKV3w==
 
 "@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/565/grafx-shared-components.tgz":
-  version "0.103.23"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/565/grafx-shared-components.tgz#c943a5821f54f7b33b141c7b898f22223e023be5"
+  version "0.104.0"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/565/grafx-shared-components.tgz#281313c2babce1d94d26b07cda4fc4c4c9f1c089"
 
 "@chili-publish/studio-sdk@1.31.0":
   version "1.31.0"

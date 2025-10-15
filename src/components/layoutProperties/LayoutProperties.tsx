@@ -5,6 +5,7 @@ import {
     Label,
     ValidationTypes,
     TooltipVariant,
+    TooltipPosition,
 } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
@@ -139,7 +140,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
             tooltipVariant={TooltipVariant.DEFAULT}
-            validationErrorInTooltip
+            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP }}
             validationErrorMessage={
                 <RangeConstraintErrorMessage
                     currentWidth={pageWidth}
