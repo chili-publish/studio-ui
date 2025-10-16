@@ -30,7 +30,7 @@ jobs:
                   scope: '@chili-publish'
             - name: install dependencies
               run: |
-                  yarn install
+                  yarn install --frozen-lockfile
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Bump version locally
