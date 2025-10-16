@@ -1,10 +1,11 @@
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
+import { DownloadFormats } from '@chili-publish/studio-sdk';
 
 export const outputTypesIcons = {
-    jpg: AvailableIcons.faImage,
-    png: AvailableIcons.faImage,
-    mp4: AvailableIcons.faFileVideo,
-    gif: AvailableIcons.faGif,
-    pdf: AvailableIcons.faFilePdf,
-    html: AvailableIcons.solidFaGlobe,
+    [DownloadFormats.JPG]: AvailableIcons.faImage,
+    [DownloadFormats.PNG]: AvailableIcons.faImage,
+    [DownloadFormats.MP4]: AvailableIcons.faFileVideo,
+    [DownloadFormats.GIF]: AvailableIcons.faGif,
+    [DownloadFormats.PDF]: AvailableIcons.faFilePdf,
+    [DownloadFormats.HTML]: AvailableIcons.solidFaGlobe,
 };
