@@ -139,8 +139,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             label={label}
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
-            tooltipVariant={TooltipVariant.DEFAULT}
-            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP }}
+            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP, variant: TooltipVariant.DEFAULT }}
             validationErrorMessage={
                 <RangeConstraintErrorMessage
                     currentWidth={pageWidth}
