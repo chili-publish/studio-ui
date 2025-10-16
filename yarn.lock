@@ -1288,10 +1288,10 @@
   version "0.104.0"
   resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/565/grafx-shared-components.tgz#2fb0be75547351f722e2c16741a18f5a3dff5db1"
 
-"@chili-publish/studio-sdk@1.31.0":
-  version "1.31.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.31.0/726632a9de5e3a8bd54b834c118c17c3ad087227#726632a9de5e3a8bd54b834c118c17c3ad087227"
-  integrity sha512-ZWbbAfE5Bh9DtZW8TBe5C9nDZrQE4maeGWDOIIyucC2GJ0MWcv0SjKs7pj/MWevDccedrAKSar7DszS3ARYt8Q==
+"@chili-publish/studio-sdk@1.32.0":
+  version "1.32.0"
+  resolved "https://registry.npmjs.org/@chili-publish/studio-sdk/-/studio-sdk-1.32.0.tgz#ac73d4f5eb06b6394ed8a03ee10420b02572b379"
+  integrity sha512-UyUalkL7SVnALlckLipRlOB98DNmoJuVghwdMX9lkbbY903oLYuDRmWeMgxXHNQCnoN5qjeNNba2OTAPkL1aIA==
   dependencies:
     penpal "6.1.0"
 
@@ -5725,7 +5725,7 @@ path-type@^4.0.0:
 
 penpal@6.1.0:
   version "6.1.0"
-  resolved "https://registry.yarnpkg.com/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
+  resolved "https://registry.npmjs.org/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
   integrity sha512-UikZxAOAOpRpWUeKHXIr9pOkJSA16EBQKk4KTVVOxJoHIgzVrbEoqP5kLefQIq4dCMNYJy66gWIKjSHUSQuBNg==
 
 picocolors@^1.0.0:
