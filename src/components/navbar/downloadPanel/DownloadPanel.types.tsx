@@ -1,14 +1,11 @@
 import { AvailableIcons } from '@chili-publish/grafx-shared-components';
-
-export type DownloadFormats = 'JPG' | 'PNG' | 'MP4' | 'GIF';
-export type DownloadState = {
-    [key in DownloadFormats]: boolean;
-};
+import { DownloadFormats } from '@chili-publish/studio-sdk';
 
 export const outputTypesIcons = {
-    jpg: AvailableIcons.faImage,
-    png: AvailableIcons.faImage,
-    mp4: AvailableIcons.faFileVideo,
-    gif: AvailableIcons.faGif,
-    pdf: AvailableIcons.faFilePdf,
+    [DownloadFormats.JPG]: AvailableIcons.faImage,
+    [DownloadFormats.PNG]: AvailableIcons.faImage,
+    [DownloadFormats.MP4]: AvailableIcons.faFileVideo,
+    [DownloadFormats.GIF]: AvailableIcons.faGif,
+    [DownloadFormats.PDF]: AvailableIcons.faFilePdf,
+    [DownloadFormats.HTML]: AvailableIcons.solidFaGlobe,
 };
