@@ -61,20 +61,12 @@ describe('RangeConstraintErrorMessage', () => {
             />,
         );
 
-        const tooltip = screen.getByTestId('tooltip');
+        screen.logTestingPlaygroundURL();
+        const tooltip = screen.getByTestId('constraint-proportion-error-message');
         expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toHaveAttribute(
-            'data-content',
-            expect.stringContaining('To respect the allowed proportions (1:2 to 3:4):'),
-        );
-        expect(tooltip).toHaveAttribute(
-            'data-content',
-            expect.stringContaining('If the width is 400 mm, the height must be between 533.33 mm and 800 mm'),
-        );
 
-        expect(tooltip).toHaveAttribute(
-            'data-content',
-            expect.stringContaining('If the height is 200 mm, the width must be between 100 mm and 150 mm'),
-        );
+        expect(tooltip).toHaveTextContent('To respect the allowed proportions (1:2 to 3:4):');
+        expect(tooltip).toHaveTextContent('If the width is 400 mm, the height must be between 533.33 mm and 800 mm');
+        expect(tooltip).toHaveTextContent('If the height is 200 mm, the width must be between 100 mm and 150 mm');
     });
 });

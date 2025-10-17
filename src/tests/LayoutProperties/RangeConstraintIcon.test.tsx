@@ -18,7 +18,8 @@ jest.mock('@chili-publish/grafx-shared-components', () => {
         ...originalModule,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Tooltip: ({ content, children, position, anchorId }: any) => (
-            <div data-testid="tooltip" data-content={content} data-position={position} data-anchor-id={anchorId}>
+            <div data-testid="tooltip" data-position={position} data-anchor-id={anchorId}>
+                <div data-testid="tooltip-content">{content}</div>
                 {children}
             </div>
         ),
@@ -56,9 +57,9 @@ describe('RangeConstraintIcon', () => {
         renderWithProviders(<RangeConstraintIcon layout={layout} />);
 
         const tooltip = screen.getByTestId('tooltip');
+        const tooltipContent = screen.getByTestId('tooltip-content');
         expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toHaveAttribute(
-            'data-content',
+        expect(tooltipContent).toHaveTextContent(
             'Proportions are limited — only aspect ratios between 1:2 and 3:4 are allowed.',
         );
         expect(tooltip).toHaveAttribute('data-position', 'top');
