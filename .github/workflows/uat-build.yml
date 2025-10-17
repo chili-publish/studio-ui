@@ -60,3 +60,14 @@ jobs:
                       --destination studio-ui \
                       --overwrite true \
                       --auth-mode login
+    purge-cdn:
+        needs: build
+        name: Purge Cloudflare CDN
+        runs-on: ubuntu-latest
+        steps:
+            - name: Purge Cloudflare CDN
+              uses: chili-publish/delivery-github-utilities/actions/cloudflare/purge-cdn@cloudflare-purge-cdn_1.0.0
+              with:
+                  environment: UAT
+                  api-token: ${{ secrets.CLOUDFLARE_CDN_PURGE_API_TOKEN_UAT }}
+                  path-prefix: studio-ui

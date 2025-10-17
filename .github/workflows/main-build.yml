@@ -1,4 +1,4 @@
-name: Build and deploy to DEV / STG
+name: Build and deploy to main
 on:
     push:
         branches:
@@ -38,7 +38,7 @@ jobs:
                   name: coverage-artifact
                   path: coverage/coverage-final.json
 
-    build-deploy-dev:
+    build-deploy-main:
         needs: build-preflight
         runs-on: ubuntu-latest
         steps:
@@ -79,6 +79,17 @@ jobs:
               with:
                   inlineScript: |
                       az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+    purge-cdn:
+        needs: build-deploy-main
+        name: Purge Cloudflare CDN
+        runs-on: ubuntu-latest
+        steps:
+            - name: Purge Cloudflare CDN
+              uses: chili-publish/delivery-github-utilities/actions/cloudflare/purge-cdn@cloudflare-purge-cdn_1.0.0
+              with:
+                  environment: DEV
+                  api-token: ${{ secrets.CLOUDFLARE_CDN_PURGE_API_TOKEN_DEV }}
+                  path-prefix: studio-ui
 
     bump-version:
         needs: build-preflight
