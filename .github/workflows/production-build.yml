@@ -33,23 +33,23 @@ jobs:
                   yarn install --frozen-lockfile
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - name: Bump version locally
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version patch --no-git-tag-version
+            # - name: Bump version locally
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #   run: |
+            #       git config --global user.name 'github-actions[bot]'
+            #       git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            #       git fetch origin
+            #       git checkout -B main origin/main
+            #       npm version patch --no-git-tag-version
 
             - name: build code
               run: yarn build
-            - name: Commit version changes
-              run: |
-                  git add package.json yarn.lock
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags
+            # - name: Commit version changes
+            #   run: |
+            #       git add package.json yarn.lock
+            #       git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+            #       git push origin main --follow-tags
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
@@ -84,38 +84,38 @@ jobs:
                       --overwrite true \
                       --auth-mode login
 
-    bump-version:
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get GitHub App Access Token
-              id: github-app-access-token
-              uses: actions/create-github-app-token@v2
-              with:
-                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
-                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
-              with:
-                  token: ${{ steps.github-app-access-token.outputs.token }}
-            - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  registry-url: 'https://npm.pkg.github.com'
-                  scope: '@chili-publish'
-            - name: Bump version locally
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version preminor --no-git-tag-version
-            - name: Commit version changes
-              run: |
-                  git add package.json yarn.lock
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
-                  git push origin main --follow-tags
+    # bump-version:
+    #     needs: build
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Get GitHub App Access Token
+    #           id: github-app-access-token
+    #           uses: actions/create-github-app-token@v2
+    #           with:
+    #               app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
+    #               private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
+    #               owner: ${{ github.repository_owner }}
+    #         - uses: FranzDiebold/github-env-vars-action@v2
+    #         - uses: actions/checkout@v4
+    #           with:
+    #               token: ${{ steps.github-app-access-token.outputs.token }}
+    #         - name: Use Node ${{ env.NODE_VERSION }}
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: ${{ env.NODE_VERSION }}
+    #               registry-url: 'https://npm.pkg.github.com'
+    #               scope: '@chili-publish'
+    #         - name: Bump version locally
+    #           env:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #           run: |
+    #               git config --global user.name 'github-actions[bot]'
+    #               git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+    #               git fetch origin
+    #               git checkout -B main origin/main
+    #               npm version preminor --no-git-tag-version
+    #         - name: Commit version changes
+    #           run: |
+    #               git add package.json yarn.lock
+    #               git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+    #               git push origin main --follow-tags
