@@ -8,7 +8,6 @@ import {
     SelectOptions,
     Tray,
     useMobileSize,
-    useTheme,
 } from '@chili-publish/grafx-shared-components';
 import { DownloadFormats } from '@chili-publish/studio-sdk';
 import { Dispatch, RefObject, useMemo, useState } from 'react';
@@ -25,6 +24,7 @@ import {
     DesktopDropdownContainer,
     DownloadDropdownTitle,
     DownloadPanelContainer,
+    FullWidthButton,
     SpinnerContainer,
 } from './DownloadPanel.styles';
 import { outputTypesIcons } from './DownloadPanel.types';
@@ -60,7 +60,6 @@ function DownloadPanel(props: DownloadPanelProps) {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
     const { direction } = useDirection();
     const isMobileSize = useMobileSize();
-    const { themeColors } = useTheme();
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const {
         options,
@@ -118,33 +117,26 @@ function DownloadPanel(props: DownloadPanelProps) {
                 {!mobileDropdownOpen ? (
                     <ButtonWrapper>
                         {downloadState[selectedOptionFormat] ? (
-                            <SpinnerContainer mobile>
-                                <Button
-                                    loading
-                                    styles={css`
-                                        width: 100%;
-                                        background-color: ${themeColors.disabledElementsColor};
-                                        &:hover {
-                                            background-color: ${themeColors.disabledElementsColor};
-                                        }
-                                        transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
-                                    `}
-                                />
+                            <SpinnerContainer mobile direction={direction}>
+                                <Button loading />
                             </SpinnerContainer>
                         ) : (
-                            <Button
-                                dataId={getDataIdForSUI(`download-btn`)}
-                                dataTestId={getDataTestIdForSUI(`download-btn`)}
-                                onClick={() => {
-                                    handleDownload(selectedOptionFormat, updateDownloadState, selectedOutputSettingsId);
-                                }}
-                                variant={ButtonVariant.primary}
-                                label={DownloadButtonLabel}
-                                icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
-                                styles={css`
-                                    width: 100%;
-                                `}
-                            />
+                            <FullWidthButton>
+                                <Button
+                                    dataId={getDataIdForSUI(`download-btn`)}
+                                    dataTestId={getDataTestIdForSUI(`download-btn`)}
+                                    onClick={() => {
+                                        handleDownload(
+                                            selectedOptionFormat,
+                                            updateDownloadState,
+                                            selectedOutputSettingsId,
+                                        );
+                                    }}
+                                    variant={ButtonVariant.primary}
+                                    label={DownloadButtonLabel}
+                                    icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
+                                />
+                            </FullWidthButton>
                         )}
                     </ButtonWrapper>
                 ) : null}
@@ -180,18 +172,8 @@ function DownloadPanel(props: DownloadPanelProps) {
                         />
                     </DesktopDropdownContainer>
                     {downloadState[selectedOptionFormat] ? (
-                        <SpinnerContainer>
-                            <Button
-                                loading
-                                styles={css`
-                                    width: 100%;
-                                    background-color: ${themeColors.disabledElementsColor};
-                                    &:hover {
-                                        background-color: ${themeColors.disabledElementsColor};
-                                    }
-                                    transform: ${direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)'};
-                                `}
-                            />
+                        <SpinnerContainer direction={direction}>
+                            <Button loading />
                         </SpinnerContainer>
                     ) : (
                         <BtnContainer>
@@ -205,11 +187,6 @@ function DownloadPanel(props: DownloadPanelProps) {
                                 variant={ButtonVariant.primary}
                                 label={DownloadButtonLabel}
                                 icon={<Icon key={selectedOptionFormat} icon={AvailableIcons.faArrowDownToLine} />}
-                                styles={css`
-                                    margin-block: 1.25rem;
-                                    margin-inline: auto;
-                                    width: 100%;
-                                `}
                             />
                         </BtnContainer>
                     )}
