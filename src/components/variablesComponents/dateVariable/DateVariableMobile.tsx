@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react';
 import { Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
 import { DateVariable as DateVariableType } from '@chili-publish/studio-sdk';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DateVariable from './DateVariable';
-import { DatePickerWrapper } from '../VariablesComponents.styles';
+import { DatePickerWrapper, ButtonWrapper } from '../VariablesComponents.styles';
 
 interface DateVariableMobileProps {
     variable: DateVariableType;
@@ -41,16 +40,15 @@ function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProp
                     isOpenOnMobile
                 />
             </DatePickerWrapper>
-            <Button
-                dataId={getDataIdForSUI(`date-confirm-btn`)}
-                dataTestId={getDataTestIdForSUI(`date-confirm-btn`)}
-                onClick={handleDateSelection}
-                variant={ButtonVariant.primary}
-                label="Confirm"
-                styles={css`
-                    width: 100%;
-                `}
-            />
+            <ButtonWrapper>
+                <Button
+                    dataId={getDataIdForSUI(`date-confirm-btn`)}
+                    dataTestId={getDataTestIdForSUI(`date-confirm-btn`)}
+                    onClick={handleDateSelection}
+                    variant={ButtonVariant.primary}
+                    label="Confirm"
+                />
+            </ButtonWrapper>
         </>
     );
 }

@@ -9,6 +9,15 @@ export const EditButtonWrapper = styled.div<{ isTimelineDisplayed?: boolean; isP
         if (isPagesPanelDisplayed) return '8.5rem';
         return '2.5rem';
     }};
+    > button {
+        padding: 0.9375rem;
+        font-size: ${FontSizes.regular};
+        border-radius: 50%;
+
+        svg {
+            width: 1.125rem !important;
+        }
+    }
 `;
 
 export const VariablesContainer = styled.div<{ height?: string }>`
