@@ -47,8 +47,7 @@ type ItemBrowserProps<T extends { id: string }> = {
 const SKELETONS = [...Array.from(Array(10).keys())];
 
 const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
-    if (type === PreviewType.COLLECTION)
-        return 'https://cdnepgrafxstudioprd.azureedge.net/shared/assets/folder-padded.png';
+    if (type === PreviewType.COLLECTION) return 'https://studio-cdn.chiligrafx.com/shared/assets/folder-padded.png';
 
     return path;
 };
