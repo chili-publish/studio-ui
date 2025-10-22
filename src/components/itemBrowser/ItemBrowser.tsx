@@ -16,7 +16,7 @@ import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } f
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
-import { APP_WRAPPER_ID } from 'src/utils/constants';
+import { APP_WRAPPER_ID, FOLDER_PREVIEW_THUMBNAIL } from 'src/utils/constants';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
@@ -47,7 +47,7 @@ type ItemBrowserProps<T extends { id: string }> = {
 const SKELETONS = [...Array.from(Array(10).keys())];
 
 const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefined => {
-    if (type === PreviewType.COLLECTION) return 'https://studio-cdn.chiligrafx.com/shared/assets/folder-padded.png';
+    if (type === PreviewType.COLLECTION) return FOLDER_PREVIEW_THUMBNAIL;
 
     return path;
 };
