@@ -1,5 +1,5 @@
 import { ImagePicker, InputLabel, Label } from '@chili-publish/grafx-shared-components';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { selectImageChangePendingId, setImageChangePendingId } from 'src/store/reducers/variableReducer';
 import { useSelector } from 'react-redux';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
@@ -22,19 +22,25 @@ function ImageVariable(props: IImageVariable) {
     const dispatch = useAppDispatch();
     const placeholder = getImageVariablePlaceholder(variable);
     const imageChangePendingId = useSelector(selectImageChangePendingId);
+    const [selectedMediaAssetId, setSelectedMediaAssetId] = useState<string | undefined>();
 
     const { remoteConnector } = useVariableConnector(variable);
 
-    const mediaAssetId = useMemo(() => {
-        return variable.value?.resolved?.mediaId ?? variable?.value?.assetId;
+    const updateSelectedMediaAssetId = useCallback(() => {
+        setSelectedMediaAssetId(variable.value?.resolved?.mediaId ?? variable?.value?.assetId);
     }, [variable.value?.resolved?.mediaId, variable.value?.assetId]);
+
+    useEffect(() => {
+        updateSelectedMediaAssetId();
+    }, [updateSelectedMediaAssetId]);
 
     const {
         previewImage,
         pending: mediaPending,
         error: mediaError,
         resetError: resetMediaError,
-    } = usePreviewImage(variable.value?.connectorId, mediaAssetId);
+    } = usePreviewImage(variable.value?.connectorId, selectedMediaAssetId);
+
     const {
         upload,
         pending: uploadPending,
@@ -74,11 +80,15 @@ function ImageVariable(props: IImageVariable) {
         if (!remoteConnector) {
             throw new Error('There is no remote connector for defined image variable');
         }
+        setSelectedMediaAssetId(undefined);
         resetUploadError();
         try {
             if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
                 await verifyAuthentication(variable.value.connectorId);
             }
+            resetMediaError();
+            updateSelectedMediaAssetId();
+
             onVariableFocus?.(variable.id);
             dispatch(showImagePanel({ variableId: variable.id, connectorId: variable.value?.connectorId ?? '' }));
         } catch (error) {

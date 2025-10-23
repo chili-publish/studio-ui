@@ -11,7 +11,14 @@ import { variables } from '../../../mocks/mockVariables';
 import * as panelReducer from '../../../../store/reducers/panelReducer';
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
-    useVariableConnector: jest.fn().mockReturnValue({ remoteConnector: null }),
+    useVariableConnector: jest.fn().mockReturnValue({
+        remoteConnector: {
+            id: 'remote-connector-1',
+            type: 'media',
+            scriptSource: 'defaultMedia',
+            supportedAuthentication: { browser: ['none'] },
+        },
+    }),
 }));
 
 jest.mock('../../../../components/variablesComponents/imageVariable/usePreviewImage', () => ({
