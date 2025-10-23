@@ -100,7 +100,7 @@ const useDownload = ({
             return {
                 label: (
                     <DropdownOption
-                        iconData={outputTypesIcons[val.type]}
+                        iconData={outputTypesIcons[val.type.toLowerCase() as DownloadFormats]}
                         text={val.name}
                         description={val.description}
                         isExperimental={val.type === DownloadFormats.HTML}
@@ -119,7 +119,7 @@ const useDownload = ({
             return {
                 label: (
                     <DropdownOption
-                        iconData={outputTypesIcons[val.type]}
+                        iconData={outputTypesIcons[val.type.toLowerCase() as DownloadFormats]}
                         text={val.name}
                         description={val.description}
                         isExperimental={val.type === DownloadFormats.HTML}
