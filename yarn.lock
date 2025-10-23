@@ -1284,10 +1284,10 @@
   resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.31.6/b077f65440b5dbd90f9dea195366e584f8ea7e41#b077f65440b5dbd90f9dea195366e584f8ea7e41"
   integrity sha512-yN9xjo3RF1DX6lQPvDSIUcbPKheQzOvSrf1cVDYBOwzcpG/mnvP9NyN7mI3zlOzgnSKQDbF3/OSDo8FG3ElrBw==
 
-"@chili-publish/grafx-shared-components@0.104.0":
-  version "0.104.0"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.104.0/b4cad136cf3ca11a47ccf3d7a65b284f907db36a#b4cad136cf3ca11a47ccf3d7a65b284f907db36a"
-  integrity sha512-KQmM0gwQ7hHLe9e4sE9uDUlnvGOMFOuFIMFTiLa8C2n+Uv2BI+ujY/69kewYK1YHKxKUwWdSvZIKggQoMoH0LA==
+"@chili-publish/grafx-shared-components@0.104.1":
+  version "0.104.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.104.1/6b638e2a7cf050cddd67271bf8df39898681daec#6b638e2a7cf050cddd67271bf8df39898681daec"
+  integrity sha512-hSB+foLUN1Go4Ui3B7p1oA4roYZXCm8yDiK007Jn8TpLB0+qXvse1G4efKCysJvzMndCo58KmFKVFN0jOtEFgA==
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/690/studio-sdk.tgz":
   version "1.32.0"
@@ -5725,7 +5725,7 @@ path-type@^4.0.0:
 
 penpal@6.1.0:
   version "6.1.0"
-  resolved "https://registry.yarnpkg.com/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
+  resolved "https://registry.npmjs.org/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
   integrity sha512-UikZxAOAOpRpWUeKHXIr9pOkJSA16EBQKk4KTVVOxJoHIgzVrbEoqP5kLefQIq4dCMNYJy66gWIKjSHUSQuBNg==
 
 picocolors@^1.0.0:

@@ -43,3 +43,9 @@ export const DatePickerWrapper = styled.div`
         }
     }
 `;
+
+export const ButtonWrapper = styled.div`
+    > button {
+        width: 100%;
+    }
+`;

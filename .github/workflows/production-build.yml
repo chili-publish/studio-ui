@@ -30,7 +30,7 @@ jobs:
                   scope: '@chili-publish'
             - name: install dependencies
               run: |
-                  yarn install
+                  yarn install --frozen-lockfile
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Bump version locally
@@ -83,7 +83,17 @@ jobs:
                       --destination studio-ui \
                       --overwrite true \
                       --auth-mode login
-
+    purge-cdn:
+        needs: build
+        name: Purge Cloudflare CDN
+        runs-on: ubuntu-latest
+        steps:
+            - name: Purge Cloudflare CDN
+              uses: chili-publish/delivery-github-utilities/actions/cloudflare/purge-cdn@cloudflare-purge-cdn_1.0.0
+              with:
+                  environment: PRD
+                  api-token: ${{ secrets.CLOUDFLARE_CDN_PURGE_API_TOKEN_PRD }}
+                  path-prefix: studio-ui
     bump-version:
         needs: build
         runs-on: ubuntu-latest

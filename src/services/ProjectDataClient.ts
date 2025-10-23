@@ -14,7 +14,7 @@ export class ProjectDataClient {
         try {
             const response = await this.makeAuthenticatedRequest(url, 'GET');
             const data = await response.json();
-            return JSON.stringify(data.data);
+            return JSON.stringify(data);
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(`Failed to fetch from ${url}:`, error);
