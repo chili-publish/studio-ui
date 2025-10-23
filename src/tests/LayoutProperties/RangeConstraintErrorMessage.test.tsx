@@ -61,7 +61,6 @@ describe('RangeConstraintErrorMessage', () => {
             />,
         );
 
-        screen.logTestingPlaygroundURL();
         const tooltip = screen.getByTestId('constraint-proportion-error-message');
         expect(tooltip).toBeInTheDocument();
 
