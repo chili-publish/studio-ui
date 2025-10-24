@@ -80,7 +80,9 @@ export const exportDocument = async (
         }
 
         return response.data.taskId;
-    } catch {
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error exporting document:', err);
         return {
             status: 500,
             error: 'Unexpected error during polling',

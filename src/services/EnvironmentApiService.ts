@@ -212,6 +212,11 @@ export class EnvironmentApiService {
                     environment: this.environment,
                     generatePngOutputRequest: requestBody,
                 }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
+            case 'html':
+                return this.outputApi.apiV1EnvironmentEnvironmentOutputHtmlPost({
+                    environment: this.environment,
+                    generateHtmlOutputRequest: requestBody,
+                }) as unknown as GenerateOutputResponse; // TODO: Remove casting when env api is updated currently returning Promise<object>
             default:
                 throw new Error(`Unsupported output format: ${format}`);
         }

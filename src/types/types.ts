@@ -220,6 +220,7 @@ export const defaultOutputSettings: OutputSettings = {
     png: true,
     jpg: true,
     pdf: true,
+    html: true,
 };
 
 export const defaultFormBuilder: FormBuilderType = {
