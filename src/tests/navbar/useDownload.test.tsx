@@ -10,14 +10,14 @@ describe('useDownload', () => {
             return UiConfigContext.UiConfigContextDefaultValues;
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
-        expect(result.current.options.length).toBe(5);
+        expect(result.current.options.length).toBe(6);
     });
 
     test('only false download options, show the onew that are not false', () => {
         jest.spyOn(UserInterfaceDetailsContext, 'useUserInterfaceDetailsContext').mockImplementation(() => {
             return {
                 ...UserInterfaceDetailsContext.UserInterfaceDetailsContextDefaultValues,
-                outputSettings: { mp4: false, gif: false, jpg: false, pdf: false },
+                outputSettings: { mp4: false, gif: false, jpg: false, pdf: false, html: false },
             };
         });
         const { result } = renderHook(() => useDownload({ hideDownloadPanel: () => null }));
