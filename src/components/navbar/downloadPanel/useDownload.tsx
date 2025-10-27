@@ -97,13 +97,14 @@ const useDownload = ({
         if (!userInterfaceOutputSettings) return null;
 
         return userInterfaceOutputSettings.map((val) => {
+            const type = val.type.toLowerCase() as DownloadFormats;
             return {
                 label: (
                     <DropdownOption
-                        iconData={outputTypesIcons[val.type.toLowerCase() as DownloadFormats]}
+                        iconData={outputTypesIcons[type]}
                         text={val.name}
                         description={val.description}
-                        isExperimental={val.type === DownloadFormats.HTML}
+                        isExperimental={type === DownloadFormats.HTML}
                     />
                 ),
                 value: val.id,
@@ -116,13 +117,14 @@ const useDownload = ({
         if (!outputSettingsFullList) return null;
 
         return outputSettingsFullList.map((val) => {
+            const type = val.type.toLowerCase() as DownloadFormats;
             return {
                 label: (
                     <DropdownOption
-                        iconData={outputTypesIcons[val.type.toLowerCase() as DownloadFormats]}
+                        iconData={outputTypesIcons[type]}
                         text={val.name}
                         description={val.description}
-                        isExperimental={val.type === DownloadFormats.HTML}
+                        isExperimental={type === DownloadFormats.HTML}
                     />
                 ),
                 value: val.id,
