@@ -46,8 +46,6 @@ export const ExperimentalPill = styled.span`
     height: 1.375rem;
     margin: 0 0.5rem;
     padding: 0 0.75rem;
-    color: ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
-    border: 1px solid ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
 `;
 
 export const DropdownOptionLabel = styled.div`
@@ -61,8 +59,8 @@ export const DropdownOptionLabel = styled.div`
         color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     }
     ${ExperimentalPill} {
-        color: ${({ theme }) => theme.themeColors.primaryTextColor};
-        border: 1px solid ${({ theme }) => theme.themeColors.primaryTextColor};
+        color: ${({ theme }) => theme.themeColors.secondaryTextColor};
+        border: 1px solid ${({ theme }) => theme.themeColors.secondaryTextColor};
     }
 `;
 
