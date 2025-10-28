@@ -59,8 +59,8 @@ export const DropdownOptionLabel = styled.div`
         color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     }
     ${ExperimentalPill} {
-        color: ${({ theme }) => theme.themeColors.secondaryTextColor};
-        border: 1px solid ${({ theme }) => theme.themeColors.secondaryTextColor};
+        color: ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
+        border: 1px solid ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
     }
 `;
 
