@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -8,7 +8,30 @@
     </head>
     <body>
         <div id="sui-root"></div>
-        <script type="module" src="./src/main.tsx"></script>
-        <script type="module" src="./src/_dev-execution/bootstrap.ts"></script>
+        <div id="studio-ui-container"></div>
+        <script type="module">
+            const params = new URLSearchParams(window.location.search);
+            const runBasicIntegration = params.get('demo') === 'basic-integration';
+
+            const loadMainWorkspace = async () => {
+                await import('./src/main.tsx');
+                await import('./src/_dev-execution/bootstrap.ts');
+            };
+
+            const loadBasicIntegration = async () => {
+                const { default: studioUI } = await import(
+                    'https://studio-cdn.chiligrafx.com/studio-ui/latest/es-module/bundle.js'
+                );
+                window.StudioUI = studioUI;
+
+                await import('./src/_dev-execution/integration-demos/basic-integration/basic-integration.ts');
+            };
+
+            if (runBasicIntegration) {
+                await loadBasicIntegration();
+            } else {
+                await loadMainWorkspace();
+            }
+        </script>
     </body>
 </html>
