@@ -1,31 +1,22 @@
-import { DateVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { ComponentWrapper } from './VariablesPanel.styles';
-import { PanelType, selectActivePanel, showDatePickerPanel } from '../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../store';
 import { selectVariables, validateUpdatedVariables } from '../../store/reducers/variableReducer';
 import { useVariableHistory } from '../dataSource/useVariableHistory';
+import FlatVariablesList from './FlatVariablesList';
+import GroupVariablesList from './GroupVariablesList';
 
 function VariablesList() {
-    const activePanel = useSelector(selectActivePanel);
     const variables = useSelector(selectVariables);
 
     const dispatch = useAppDispatch();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { updateWithTranslation } = useVariableTranslations();
     const { getUITranslation } = useUITranslations();
-    const handleCalendarOpen = useCallback(
-        (variable: DateVariable) => {
-            if (variable.type === VariableType.date) dispatch(showDatePickerPanel({ variableId: variable.id }));
-        },
-        [dispatch],
-    );
     const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
@@ -38,6 +29,7 @@ function VariablesList() {
 
     const header = getUITranslation(['formBuilder', 'variables', 'header'], formBuilder.variables.header);
     const helpText = getUITranslation(['formBuilder', 'variables', 'helpText'], formBuilder.variables.helpText);
+    const showVaribleGroup = formBuilder.variables?.variableGroups?.show || false;
 
     return (
         <div>
@@ -45,18 +37,11 @@ function VariablesList() {
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
-            {variablesWithTranslation.map((variable: Variable) => {
-                if (!variable.isVisible) return null;
-                return activePanel !== PanelType.DATE_VARIABLE_PICKER ? (
-                    <ComponentWrapper key={`variable-component-${variable.id}`}>
-                        <VariablesComponents
-                            type={variable.type}
-                            variable={variable}
-                            onCalendarOpen={handleCalendarOpen}
-                        />
-                    </ComponentWrapper>
-                ) : null;
-            })}
+            {showVaribleGroup ? (
+                <GroupVariablesList variables={variablesWithTranslation} groupChildren={FlatVariablesList} />
+            ) : (
+                <FlatVariablesList variables={variablesWithTranslation} />
+            )}
         </div>
     );
 }

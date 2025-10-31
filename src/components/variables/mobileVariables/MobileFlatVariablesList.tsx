@@ -1,55 +1,43 @@
 import { InputLabel } from '@chili-publish/grafx-shared-components';
-import { DateVariable as DateVariableType, Variable, VariableType } from '@chili-publish/studio-sdk';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { DateVariable as DateVariableType, ListVariable, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useSelector } from 'react-redux';
-import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
-import DateVariableMobile from '../variablesComponents/dateVariable/DateVariableMobile';
-import MobileListVariable from '../variablesComponents/listVariable/MobileListVariable';
-import { isListVariable } from '../variablesComponents/Variable';
-import VariablesComponents from '../variablesComponents/VariablesComponents';
-import { HelpTextWrapper } from '../variablesComponents/VariablesComponents.styles';
-import { ComponentWrapper } from './VariablesPanel.styles';
+import { useCallback, useEffect, useState } from 'react';
+import DateVariableMobile from '../../variablesComponents/dateVariable/DateVariableMobile';
+import MobileListVariable from '../../variablesComponents/listVariable/MobileListVariable';
+import { isListVariable } from '../../variablesComponents/Variable';
+import VariablesComponents from '../../variablesComponents/VariablesComponents';
+import { HelpTextWrapper } from '../../variablesComponents/VariablesComponents.styles';
+import { ComponentWrapper } from '../VariablesPanel.styles';
 import {
-    selectActivePanel,
-    showVariablesPanel,
     showDatePickerPanel,
     PanelType,
-} from '../../store/reducers/panelReducer';
-import { useAppDispatch } from '../../store';
+    selectActivePanel,
+    showVariablesPanel,
+} from '../../../store/reducers/panelReducer';
 import {
     selectCurrentVariableId,
-    selectVariables,
     selectVariablesValidation,
-    validateUpdatedVariables,
     validateVariable,
-} from '../../store/reducers/variableReducer';
-import { useVariableHistory } from '../dataSource/useVariableHistory';
+} from '../../../store/reducers/variableReducer';
+import { useAppDispatch } from '../../../store';
 
-interface VariablesListProps {
+interface MobileFlatVariablesListProps {
+    variables: Variable[];
     onMobileOptionListToggle?: (_: boolean) => void;
 }
-
-function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
+function MobileFlatVariablesList({ variables, onMobileOptionListToggle }: MobileFlatVariablesListProps) {
     const dispatch = useAppDispatch();
-    const variables = useSelector(selectVariables);
     const variablesValidation = useSelector(selectVariablesValidation);
 
     const activePanel = useSelector(selectActivePanel);
     const currentVariableId = useSelector(selectCurrentVariableId);
 
     const [listVariableOpen, setListVariableOpen] = useState<ListVariable | null>(null);
-    const { updateWithTranslation } = useVariableTranslations();
-    const { hasChanged: variablesChanged } = useVariableHistory();
 
     useEffect(() => {
         if (onMobileOptionListToggle) onMobileOptionListToggle(!!listVariableOpen);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listVariableOpen]);
-
-    useEffect(() => {
-        if (variablesChanged) dispatch(validateUpdatedVariables());
-    }, [variablesChanged, dispatch]);
 
     const handleDateSelected = useCallback(
         (variable: Variable) => {
@@ -59,13 +47,9 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
         [dispatch],
     );
 
-    const variablesWithTranslation = useMemo(() => {
-        return variables.map((variable) => updateWithTranslation(variable));
-    }, [variables, updateWithTranslation]);
-
     return (
-        <div>
-            {variablesWithTranslation.map((variable: Variable) => {
+        <>
+            {variables.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
 
                 const errMsg = variablesValidation?.[variable.id]?.errorMsg;
@@ -88,7 +72,7 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
                                         variable={variable}
                                         validationError={errMsg}
                                         onItemSelected={validateVariable}
-                                        onMenuOpen={() => setListVariableOpen(variable)}
+                                        onMenuOpen={() => setListVariableOpen(variable as any)}
                                         onMenuClose={() => setListVariableOpen(null)}
                                     />
                                 </div>
@@ -126,8 +110,8 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
                     </ComponentWrapper>
                 ) : null;
             })}
-        </div>
+        </>
     );
 }
 
-export default MobileVariablesList;
+export default MobileFlatVariablesList;

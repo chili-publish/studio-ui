@@ -3,20 +3,19 @@ import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize } from '@chi
 import { useCallback, useMemo, useState } from 'react';
 import { css } from 'styled-components';
 import { useSelector } from 'react-redux';
-import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { TOAST_ID } from '../../contexts/NotificantionManager/Notification.types';
-import { useLayoutSection } from '../../core/hooks/useLayoutSection';
-import { MobileTrayFormBuilderHeader, UiOptions } from '../../types/types';
-import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../utils/constants';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
-import DataSourceInput from '../dataSource/DataSourceInput';
-import DataSourceTable from '../dataSource/DataSourceTable';
-import useDataSource from '../dataSource/useDataSource';
-import ImagePanel from '../imagePanel/ImagePanel';
-import AvailableLayouts from '../layout-panels/leftPanel/AvailableLayouts';
-import LayoutProperties from '../layoutProperties/LayoutProperties';
-import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
-import { SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
+import { useUITranslations } from '../../../core/hooks/useUITranslations';
+import { TOAST_ID } from '../../../contexts/NotificantionManager/Notification.types';
+import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
+import { MobileTrayFormBuilderHeader, UiOptions } from '../../../types/types';
+import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constants';
+import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import DataSourceInput from '../../dataSource/DataSourceInput';
+import DataSourceTable from '../../dataSource/DataSourceTable';
+import useDataSource from '../../dataSource/useDataSource';
+import AvailableLayouts from '../../layout-panels/leftPanel/AvailableLayouts';
+import LayoutProperties from '../../layoutProperties/LayoutProperties';
+import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
+import { SectionHelpText, SectionWrapper } from '../../shared/Panel.styles';
 import {
     DataSourceTableWrapper,
     dataSourceTrayStyles,
@@ -26,15 +25,16 @@ import {
 } from './MobileTray.styles';
 import MobileTrayHeader from './MobileTrayHeader';
 import MobileVariablesList from './MobileVariablesList';
-import useDataSourceInputHandler from './useDataSourceInputHandler';
-import { TrayPanelTitle, VariablesContainer } from './VariablesPanel.styles';
+import { TrayPanelTitle, VariablesContainer } from '../VariablesPanel.styles';
 import {
     selectActivePanel,
     showVariablesPanel,
     showDataSourcePanel,
     PanelType,
-} from '../../store/reducers/panelReducer';
-import { useAppDispatch } from '../../store';
+} from '../../../store/reducers/panelReducer';
+import { useAppDispatch } from '../../../store';
+import useDataSourceInputHandler from '../useDataSourceInputHandler';
+import ImagePanel from '../../imagePanel/ImagePanel';
 
 // TODO: replace 'select-input-menu' with proper id, after the shared components are updated, and the breadcrumb id is aggregated
 // through <BreadcrumbNavigationDropdown> to the Select
