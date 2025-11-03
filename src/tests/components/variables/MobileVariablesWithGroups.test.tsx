@@ -1,18 +1,18 @@
-import { renderWithProviders } from '@tests/mocks/Provider';
-import { setVariables } from 'src/store/reducers/variableReducer';
 import { Variable, VariableType, VariableVisibilityType } from '@chili-publish/studio-sdk';
+import { variablesWithGroups } from '@tests/mocks/mockVariables';
+import { useUserInterfaceDetailsContext } from 'src/components/navbar/UserInterfaceDetailsContext';
+import { renderWithProviders } from '@tests/mocks/Provider';
+import MobileVariablesList from 'src/components/variables/mobileVariables/MobileVariablesList';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { variablesWithGroups } from '@tests/mocks/mockVariables';
+import { setVariables } from '../../../store/reducers/variableReducer';
 import { setupStore } from '../../../store';
-import VariablesList from '../../../components/variables/VariablesList';
-import { useUserInterfaceDetailsContext } from '../../../components/navbar/UserInterfaceDetailsContext';
 
 jest.mock('../../../components/navbar/UserInterfaceDetailsContext', () => ({
     useUserInterfaceDetailsContext: jest.fn(),
 }));
 
-describe('Variables With Groups', () => {
+describe('Mobile variables With Groups', () => {
     let reduxStore: ReturnType<typeof setupStore>;
 
     beforeEach(() => {
@@ -27,7 +27,7 @@ describe('Variables With Groups', () => {
                 },
             },
         });
-        renderWithProviders(<VariablesList />, { reduxStore });
+        renderWithProviders(<MobileVariablesList />, { reduxStore });
 
         const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
         expect(groupedVariables).toHaveLength(8);
@@ -110,7 +110,7 @@ describe('Variables With Groups', () => {
 
         reduxStore.dispatch(setVariables(mockVariables as Variable[]));
 
-        renderWithProviders(<VariablesList />, { reduxStore });
+        renderWithProviders(<MobileVariablesList />, { reduxStore });
 
         const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
         expect(groupedVariables).toHaveLength(1);
@@ -161,7 +161,7 @@ describe('Variables With Groups', () => {
 
         reduxStore.dispatch(setVariables(mockVariables as Variable[]));
 
-        renderWithProviders(<VariablesList />, { reduxStore });
+        renderWithProviders(<MobileVariablesList />, { reduxStore });
 
         expect(screen.queryByText('New group')).not.toBeInTheDocument();
         expect(screen.queryByText('Variable')).not.toBeInTheDocument();
@@ -175,7 +175,7 @@ describe('Variables With Groups', () => {
                 },
             },
         });
-        renderWithProviders(<VariablesList />, { reduxStore });
+        renderWithProviders(<MobileVariablesList />, { reduxStore });
 
         const groupedVariables = screen.queryAllByTestId(/variable-wrapper/);
         expect(groupedVariables).toHaveLength(0);
