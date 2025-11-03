@@ -13,7 +13,7 @@ import { useAppDispatch } from '../../../store';
 function DateVariableMobile() {
     const dispatch = useAppDispatch();
     const currentVariable = useSelector(selectCurrentVariable);
-    const [selectedDate, setSelectedDate] = useState<Date | null>();
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const { projectConfig } = useUiConfigContext();
 
     const handleDateSelection = useCallback(async () => {

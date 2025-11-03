@@ -9,7 +9,7 @@ import { renderWithProviders } from '../../mocks/Provider';
 import { setupStore } from '../../../store';
 import { setVariables } from '../../../store/reducers/variableReducer';
 
-jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
+jest.mock('../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
         selectedConnector: {
             supportedAuthentication: {

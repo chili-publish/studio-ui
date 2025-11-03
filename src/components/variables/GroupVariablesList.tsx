@@ -36,6 +36,7 @@ function GroupVariablesList({
                 const previousVariableIsGroup = groupedVariables[index - 1]?.type === VariableType.group;
                 const currentVariableIsGroup = groupedVariable.type === VariableType.group;
                 const nextVariableIsGroup = groupedVariables[index + 1]?.type === VariableType.group;
+                if (groupedVariable.type === VariableType.group && !groupedVariable.children?.length) return null;
                 return (
                     <GroupedVariablesWrapper
                         key={`grouped-variable-${groupedVariable.id}`}

@@ -222,7 +222,7 @@ export const variablesWithGroups = [
         visibility: {
             type: VariableVisibilityType.visible,
         },
-        value: 8,
+        value: '8',
         occurrences: 0,
         privateData: {},
         removeParagraphIfEmpty: false,

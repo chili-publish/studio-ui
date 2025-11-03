@@ -112,10 +112,10 @@ describe('Variables With Groups', () => {
 
         renderWithProviders(<VariablesList />, { reduxStore });
 
-        const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
-        expect(groupedVariables).toHaveLength(1);
+        const groupedVariables = screen.queryAllByTestId(/variable-wrapper/);
+        expect(groupedVariables).toHaveLength(0);
 
-        expect(within(groupedVariables[0]).queryByText('New group')).not.toBeInTheDocument();
+        expect(screen.queryByText('New group')).not.toBeInTheDocument();
     });
 
     it('a hidden group should not be rendered', async () => {

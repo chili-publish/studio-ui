@@ -98,7 +98,7 @@ describe('Mobile variables With Groups', () => {
                 isRequired: false,
                 isVisible: false,
                 visibility: {
-                    type: VariableVisibilityType.visible,
+                    type: VariableVisibilityType.invisible,
                 },
                 value: '',
                 occurrences: 0,
@@ -112,10 +112,10 @@ describe('Mobile variables With Groups', () => {
 
         renderWithProviders(<MobileVariablesList />, { reduxStore });
 
-        const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
-        expect(groupedVariables).toHaveLength(1);
+        const groupedVariables = screen.queryAllByTestId(/variable-wrapper/);
+        expect(groupedVariables).toHaveLength(0);
 
-        expect(within(groupedVariables[0]).queryByText('New group')).not.toBeInTheDocument();
+        expect(screen.queryByText('New group')).not.toBeInTheDocument();
     });
 
     it('a hidden group should not be rendered', async () => {
@@ -136,7 +136,7 @@ describe('Mobile variables With Groups', () => {
                 isRequired: false,
                 isVisible: false,
                 visibility: {
-                    type: VariableVisibilityType.visible,
+                    type: VariableVisibilityType.invisible,
                 },
                 privateData: {},
             },
