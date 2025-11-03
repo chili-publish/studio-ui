@@ -1,0 +1,412 @@
+import { renderWithProviders } from '@tests/mocks/Provider';
+import { setVariables } from 'src/store/reducers/variableReducer';
+import { Variable, VariableType, VariableVisibilityType } from '@chili-publish/studio-sdk';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { setupStore } from '../../../store';
+import VariablesList from '../../../components/variables/VariablesList';
+import { useUserInterfaceDetailsContext } from '../../../components/navbar/UserInterfaceDetailsContext';
+
+// Mock the UserInterfaceDetailsContext - must be at top level for hoisting
+jest.mock('../../../components/navbar/UserInterfaceDetailsContext', () => ({
+    useUserInterfaceDetailsContext: jest.fn(),
+}));
+
+const variables = [
+    {
+        id: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+        type: VariableType.group,
+        parentId: '',
+        name: 'New group',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        privateData: {},
+    },
+    {
+        id: 'c97376c4-156a-47d4-a7af-18d4f3ab2d26',
+        type: VariableType.shortText,
+        parentId: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+        name: 'Variable',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: '',
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+        isDontBreak: false,
+    },
+    {
+        id: 'f628235b-f7de-407d-b38b-9821aac5a85c',
+        type: VariableType.shortText,
+        parentId: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+        name: 'Variable 1',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: false,
+        visibility: {
+            type: VariableVisibilityType.invisible,
+        },
+        value: '',
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+        isDontBreak: false,
+    },
+    {
+        id: '4d3155ab-b12c-4ab3-95d9-8df4b3647578',
+        type: VariableType.shortText,
+        parentId: '',
+        name: 'Name',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 'John Doe',
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+        isDontBreak: false,
+    },
+    {
+        id: '2f3243f3-8cdf-404e-bb66-ce40919dd18f',
+        type: VariableType.shortText,
+        parentId: '',
+        name: 'Type',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 'Company',
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+        isDontBreak: false,
+    },
+    {
+        id: 'eec01ce4-860a-47c1-b73f-fa0c27263974',
+        type: VariableType.list,
+        parentId: '',
+        name: 'Template',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        items: [
+            {
+                value: '1',
+            },
+            {
+                value: '2',
+            },
+            {
+                value: '3',
+            },
+        ],
+        selected: {
+            value: '3',
+        },
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+    },
+    {
+        id: '8d9be0ee-3fe9-4b2f-82a4-2c60d122e186',
+        type: VariableType.number,
+        parentId: '',
+        name: 'Height',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 500,
+        occurrences: 0,
+        numberOfDecimals: 0,
+        decimalSeparator: '.',
+        thousandsSeparator: '',
+        showStepper: true,
+        stepSize: 1,
+        privateData: {},
+    },
+    {
+        id: '12174a0d-fe63-4b8e-a31b-ad3a12a54170',
+        type: VariableType.group,
+        parentId: '',
+        name: 'New group 1',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        privateData: {},
+    },
+    {
+        id: '6c73d7f5-de45-4d0b-a280-94bbde71a56a',
+        type: VariableType.image,
+        parentId: '12174a0d-fe63-4b8e-a31b-ad3a12a54170',
+        name: 'Image',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: {
+            connectorId: 'a24d80ea-cf38-4618-9287-38f485179ebb',
+            assetId: 'f4ad58d3-bbf1-465b-b6e7-259a11d2ec09',
+            resolved: {
+                mediaId: 'f4ad58d3-bbf1-465b-b6e7-259a11d2ec09',
+            },
+            context: {},
+        },
+        occurrences: 1,
+        privateData: {},
+        allowQuery: true,
+        allowUpload: false,
+    },
+    {
+        id: '3a025b2e-b4cc-4366-a1d2-64c4d4b94f31',
+        type: VariableType.number,
+        parentId: '12174a0d-fe63-4b8e-a31b-ad3a12a54170',
+        name: 'Width',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 0,
+        occurrences: 0,
+        numberOfDecimals: 0,
+        decimalSeparator: '.',
+        thousandsSeparator: '',
+        showStepper: true,
+        stepSize: 1,
+        privateData: {},
+    },
+    {
+        id: '362748c1-8ccc-47bb-b8d6-74f0e7236a17',
+        type: VariableType.number,
+        parentId: '',
+        name: 'Ratioxx',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 6,
+        occurrences: 0,
+        numberOfDecimals: 2,
+        decimalSeparator: '.',
+        thousandsSeparator: '',
+        showStepper: true,
+        stepSize: 1,
+        privateData: {},
+    },
+    {
+        id: 'a465e4be-28e1-4e8a-b847-dabb1294196a',
+        type: VariableType.shortText,
+        parentId: '',
+        name: 'Ratio',
+        isReadonly: false,
+        isRequired: false,
+        isVisible: true,
+        visibility: {
+            type: VariableVisibilityType.visible,
+        },
+        value: 8,
+        occurrences: 0,
+        privateData: {},
+        removeParagraphIfEmpty: false,
+        isDontBreak: false,
+    },
+];
+describe('Variables With Groups', () => {
+    let reduxStore: ReturnType<typeof setupStore>;
+
+    beforeEach(() => {
+        reduxStore = setupStore();
+        reduxStore.dispatch(setVariables(variables as Variable[]));
+    });
+    it('should render grouped variables when flag is enabled on user interface level', async () => {
+        (useUserInterfaceDetailsContext as jest.Mock).mockReturnValue({
+            formBuilder: {
+                variables: {
+                    variableGroups: { show: true },
+                },
+            },
+        });
+        renderWithProviders(<VariablesList />, { reduxStore });
+
+        const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
+        expect(groupedVariables).toHaveLength(8);
+
+        const group = groupedVariables[0];
+        expect(group).toHaveTextContent('New group');
+
+        await userEvent.click(within(group).getByRole('button'));
+
+        await waitFor(() => {
+            expect(screen.getByText('Variable')).toBeInTheDocument();
+            // hidden variables are not rendered
+            expect(screen.queryByText('Variable 1')).not.toBeInTheDocument();
+        });
+
+        expect(groupedVariables[1]).toHaveTextContent('Name');
+        expect(within(groupedVariables[1]).getByRole('textbox')).toHaveValue('John Doe');
+
+        expect(groupedVariables[2]).toHaveTextContent('Type');
+        expect(within(groupedVariables[2]).getByRole('textbox')).toHaveValue('Company');
+
+        expect(groupedVariables[3]).toHaveTextContent('Template');
+        expect(within(groupedVariables[3]).getByText('3')).toBeInTheDocument();
+
+        expect(groupedVariables[4]).toHaveTextContent('Height');
+        expect(within(groupedVariables[4]).getByRole('textbox')).toHaveValue('500');
+        expect(within(groupedVariables[4]).getByRole('textbox')).toHaveAttribute('step', '1');
+
+        expect(groupedVariables[5]).toHaveTextContent('New group 1');
+
+        expect(groupedVariables[6]).toHaveTextContent('Ratioxx');
+        expect(within(groupedVariables[6]).getByRole('textbox')).toHaveValue('6.00');
+        expect(within(groupedVariables[6]).getByRole('textbox')).toHaveAttribute('step', '1');
+
+        expect(groupedVariables[7]).toHaveTextContent('Ratio');
+        expect(within(groupedVariables[7]).getByRole('textbox')).toHaveValue('8');
+        expect(within(groupedVariables[7]).getByRole('textbox')).not.toHaveAttribute('step');
+    });
+
+    it('a group with hidden variables should not be rendered', async () => {
+        (useUserInterfaceDetailsContext as jest.Mock).mockReturnValue({
+            formBuilder: {
+                variables: {
+                    variableGroups: { show: true },
+                },
+            },
+        });
+        const mockVariables = [
+            {
+                id: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+                type: VariableType.group,
+                parentId: '',
+                name: 'New group',
+                isReadonly: false,
+                isRequired: false,
+                isVisible: true,
+                visibility: {
+                    type: VariableVisibilityType.visible,
+                },
+                privateData: {},
+            },
+            {
+                id: 'c97376c4-156a-47d4-a7af-18d4f3ab2d26',
+                type: VariableType.shortText,
+                parentId: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+                name: 'Variable',
+                isReadonly: false,
+                isRequired: false,
+                isVisible: false,
+                visibility: {
+                    type: VariableVisibilityType.visible,
+                },
+                value: '',
+                occurrences: 0,
+                privateData: {},
+                removeParagraphIfEmpty: false,
+                isDontBreak: false,
+            },
+        ];
+
+        reduxStore.dispatch(setVariables(mockVariables as Variable[]));
+
+        renderWithProviders(<VariablesList />, { reduxStore });
+
+        const groupedVariables = screen.getAllByTestId(/variable-wrapper/);
+        expect(groupedVariables).toHaveLength(1);
+
+        expect(within(groupedVariables[0]).queryByText('New group')).not.toBeInTheDocument();
+    });
+
+    it('a hidden group should not be rendered', async () => {
+        (useUserInterfaceDetailsContext as jest.Mock).mockReturnValue({
+            formBuilder: {
+                variables: {
+                    variableGroups: { show: true },
+                },
+            },
+        });
+        const mockVariables = [
+            {
+                id: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+                type: VariableType.group,
+                parentId: '',
+                name: 'New group',
+                isReadonly: false,
+                isRequired: false,
+                isVisible: false,
+                visibility: {
+                    type: VariableVisibilityType.visible,
+                },
+                privateData: {},
+            },
+            {
+                id: 'c97376c4-156a-47d4-a7af-18d4f3ab2d26',
+                type: VariableType.shortText,
+                parentId: '4bd6606d-3b72-424f-92aa-2a8c7ccecd4b',
+                name: 'Variable',
+                isReadonly: false,
+                isRequired: false,
+                isVisible: true,
+                visibility: {
+                    type: VariableVisibilityType.visible,
+                },
+                value: '',
+                occurrences: 0,
+                privateData: {},
+                removeParagraphIfEmpty: false,
+                isDontBreak: false,
+            },
+        ];
+
+        reduxStore.dispatch(setVariables(mockVariables as Variable[]));
+
+        renderWithProviders(<VariablesList />, { reduxStore });
+
+        expect(screen.queryByText('New group')).not.toBeInTheDocument();
+        expect(screen.queryByText('Variable')).not.toBeInTheDocument();
+    });
+
+    it('groups are not rendered when showing flag is disabled on user interface level', () => {
+        (useUserInterfaceDetailsContext as jest.Mock).mockReturnValue({
+            formBuilder: {
+                variables: {
+                    variableGroups: { show: false },
+                },
+            },
+        });
+        renderWithProviders(<VariablesList />, { reduxStore });
+
+        const groupedVariables = screen.queryAllByTestId(/variable-wrapper/);
+        expect(groupedVariables).toHaveLength(0);
+
+        expect(screen.queryByText('New group')).not.toBeInTheDocument();
+        expect(screen.queryByText('New group 1')).not.toBeInTheDocument();
+    });
+});

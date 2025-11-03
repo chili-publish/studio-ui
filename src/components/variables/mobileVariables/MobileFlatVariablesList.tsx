@@ -1,6 +1,7 @@
 import { InputLabel } from '@chili-publish/grafx-shared-components';
 import { Variable, VariableType } from '@chili-publish/studio-sdk';
 import { useSelector } from 'react-redux';
+import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import MobileListVariable from '../../variablesComponents/listVariable/MobileListVariable';
 import { isListVariable } from '../../variablesComponents/Variable';
 import VariablesComponents from '../../variablesComponents/VariablesComponents';
@@ -29,6 +30,8 @@ function MobileFlatVariablesList({ variables }: MobileFlatVariablesListProps) {
                         <ComponentWrapper
                             key={`variable-component-${variable.id}`}
                             data-intercom-target={`dropdown-variable-${variable.name}`}
+                            data-id={getDataIdForSUI(`variable-${variable.id}`)}
+                            data-testid={getDataTestIdForSUI(`variable-${variable.id}`)}
                         >
                             <HelpTextWrapper>
                                 <div>
@@ -45,7 +48,11 @@ function MobileFlatVariablesList({ variables }: MobileFlatVariablesListProps) {
                         </ComponentWrapper>
                     );
                 return (
-                    <ComponentWrapper key={`variable-component-${variable.id}`}>
+                    <ComponentWrapper
+                        key={`variable-component-${variable.id}`}
+                        data-id={getDataIdForSUI(`variable-${variable.id}`)}
+                        data-testid={getDataTestIdForSUI(`variable-${variable.id}`)}
+                    >
                         <VariablesComponents
                             type={variable.type}
                             variable={variable}

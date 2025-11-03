@@ -28,7 +28,7 @@ function DateVariableMobile() {
 
             setSelectedDate(null);
         }
-    }, [selectedDate, currentVariable, projectConfig]);
+    }, [selectedDate, currentVariable, projectConfig, dispatch]);
 
     if (!currentVariable || currentVariable?.type !== VariableType.date) return null;
     return (

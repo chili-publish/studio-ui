@@ -1,13 +1,13 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
-import VariablesList from '../components/variables/VariablesList';
-import AppProvider from '../contexts/AppProvider';
-import { getDataTestIdForSUI } from '../utils/dataIds';
-import { APP_WRAPPER } from './mocks/app';
-import { variables } from './mocks/mockVariables';
-import { renderWithProviders } from './mocks/Provider';
-import { setupStore } from '../store';
-import { setVariables } from '../store/reducers/variableReducer';
+import VariablesList from '../../../components/variables/VariablesList';
+import AppProvider from '../../../contexts/AppProvider';
+import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import { APP_WRAPPER } from '../../mocks/app';
+import { variables } from '../../mocks/mockVariables';
+import { renderWithProviders } from '../../mocks/Provider';
+import { setupStore } from '../../../store';
+import { setVariables } from '../../../store/reducers/variableReducer';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({

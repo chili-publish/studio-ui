@@ -1,5 +1,6 @@
 import { Variable, VariableType } from '@chili-publish/studio-sdk';
 import styled from 'styled-components';
+import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import useGroupVariables from './useGroupVariables';
 import GroupVariable from './GroupVariable';
 
@@ -36,7 +37,11 @@ function GroupVariablesList({
                 const currentVariableIsGroup = groupedVariable.type === VariableType.group;
                 const nextVariableIsGroup = groupedVariables[index + 1]?.type === VariableType.group;
                 return (
-                    <GroupedVariablesWrapper key={`grouped-variable-${groupedVariable.id}`}>
+                    <GroupedVariablesWrapper
+                        key={`grouped-variable-${groupedVariable.id}`}
+                        data-id={getDataIdForSUI(`variable-wrapper-${groupedVariable.id}`)}
+                        data-testid={getDataTestIdForSUI(`variable-wrapper-${groupedVariable.id}`)}
+                    >
                         {groupedVariable.type === VariableType.group && !!groupedVariable.children?.length && (
                             <CollapseWrapper
                                 hasTopBorder={currentVariableIsGroup && !previousVariableIsGroup}
