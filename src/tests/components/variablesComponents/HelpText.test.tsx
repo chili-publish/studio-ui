@@ -18,7 +18,12 @@ import { setupStore } from '../../../store';
 import { setCurrentSelectedVariableId, setVariables } from '../../../store/reducers/variableReducer';
 
 describe('Variable help text', () => {
-    const reduxStore = setupStore();
+    let reduxStore: ReturnType<typeof setupStore>;
+
+    beforeEach(() => {
+        reduxStore = setupStore();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });

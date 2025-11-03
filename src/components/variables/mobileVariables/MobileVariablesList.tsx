@@ -25,9 +25,9 @@ function MobileVariablesList() {
         return variables.map((variable) => updateWithTranslation(variable));
     }, [variables, updateWithTranslation]);
 
-    const showVaribleGroup = formBuilder.variables?.variableGroups?.show || false;
+    const showVariableGroup = formBuilder.variables?.variableGroups?.show || false;
 
-    return showVaribleGroup ? (
+    return showVariableGroup ? (
         <GroupVariablesList variables={variablesWithTranslation} childrenListComponent={MobileFlatVariablesList} />
     ) : (
         <MobileFlatVariablesList variables={variablesWithTranslation} />

@@ -29,7 +29,7 @@ function VariablesList() {
 
     const header = getUITranslation(['formBuilder', 'variables', 'header'], formBuilder.variables.header);
     const helpText = getUITranslation(['formBuilder', 'variables', 'helpText'], formBuilder.variables.helpText);
-    const showVaribleGroup = formBuilder.variables?.variableGroups?.show || false;
+    const showVariableGroup = formBuilder.variables?.variableGroups?.show || false;
 
     return (
         <div>
@@ -37,7 +37,7 @@ function VariablesList() {
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
-            {showVaribleGroup ? (
+            {showVariableGroup ? (
                 <GroupVariablesList variables={variablesWithTranslation} childrenListComponent={FlatVariablesList} />
             ) : (
                 <FlatVariablesList variables={variablesWithTranslation} />

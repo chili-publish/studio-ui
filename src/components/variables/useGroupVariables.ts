@@ -20,7 +20,7 @@ const aggregateVariables = (variables: Variable[]): (Variable & { children?: Var
     variables
         .filter((item) => item.isVisible && !!item.parentId)
         .forEach((item) => {
-            groups.get(item.parentId).children.push(item);
+            if (groups.has(item.parentId)) groups.get(item.parentId).children.push(item);
         });
 
     return result || [];
