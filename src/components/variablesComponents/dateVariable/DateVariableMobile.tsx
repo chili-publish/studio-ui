@@ -1,37 +1,42 @@
 import { useCallback, useState } from 'react';
 import { Button, ButtonVariant } from '@chili-publish/grafx-shared-components';
-import { DateVariable as DateVariableType } from '@chili-publish/studio-sdk';
+import { DateVariable as DateVariableType, VariableType } from '@chili-publish/studio-sdk';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
+import { selectCurrentVariable, validateVariable } from 'src/store/reducers/variableReducer';
+import { showVariablesPanel } from 'src/store/reducers/panelReducer';
+import { useSelector } from 'react-redux';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import DateVariable from './DateVariable';
 import { DatePickerWrapper, ButtonWrapper } from '../VariablesComponents.styles';
+import { useAppDispatch } from '../../../store';
 
-interface DateVariableMobileProps {
-    variable: DateVariableType;
-    onDateSelected: (_: DateVariableType) => void;
-}
-function DateVariableMobile({ variable, onDateSelected }: DateVariableMobileProps) {
+function DateVariableMobile() {
+    const dispatch = useAppDispatch();
+    const currentVariable = useSelector(selectCurrentVariable);
     const [selectedDate, setSelectedDate] = useState<Date | null>();
     const { projectConfig } = useUiConfigContext();
 
     const handleDateSelection = useCallback(async () => {
-        if (selectedDate) {
+        if (selectedDate && currentVariable) {
             const formattedDate = selectedDate?.toISOString().split('T')[0];
-            const result = await window.StudioUISDK.variable.setValue(variable.id, formattedDate);
+            const result = await window.StudioUISDK.variable.setValue(currentVariable.id, formattedDate);
             if (result.success) {
-                projectConfig.onVariableValueChangedCompleted?.(variable.id, formattedDate);
+                projectConfig.onVariableValueChangedCompleted?.(currentVariable.id, formattedDate);
             }
-            onDateSelected({ ...variable, value: formattedDate });
+            dispatch(validateVariable(currentVariable));
+            dispatch(showVariablesPanel());
+
             setSelectedDate(null);
         }
-    }, [selectedDate, onDateSelected, variable, projectConfig]);
+    }, [selectedDate, currentVariable, projectConfig]);
 
+    if (!currentVariable || currentVariable?.type !== VariableType.date) return null;
     return (
         <>
             <DatePickerWrapper>
                 <DateVariable
-                    key={variable.id}
-                    variable={variable as DateVariableType}
+                    key={currentVariable.id}
+                    variable={currentVariable as DateVariableType}
                     inline
                     selected={selectedDate}
                     setDate={(val) => {

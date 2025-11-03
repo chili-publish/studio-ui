@@ -38,7 +38,7 @@ function VariablesList() {
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
             {showVaribleGroup ? (
-                <GroupVariablesList variables={variablesWithTranslation} groupChildren={FlatVariablesList} />
+                <GroupVariablesList variables={variablesWithTranslation} childrenListComponent={FlatVariablesList} />
             ) : (
                 <FlatVariablesList variables={variablesWithTranslation} />
             )}

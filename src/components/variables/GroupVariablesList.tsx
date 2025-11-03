@@ -2,17 +2,15 @@ import { Variable, VariableType } from '@chili-publish/studio-sdk';
 import styled from 'styled-components';
 import useGroupVariables from './useGroupVariables';
 import GroupVariable from './GroupVariable';
-import FlatVariablesList from './FlatVariablesList';
 
-const GroupedVariablesWrapper = styled.div<{ hasBottomMargin?: boolean }>`
-    margin-bottom: ${(props) => (props.hasBottomMargin ? '0.5rem' : '0')};
-`;
-const CollapseWrapper = styled.div<{ hasTopBorder?: boolean }>`
+const GroupedVariablesWrapper = styled.div``;
+const CollapseWrapper = styled.div<{ hasTopBorder?: boolean; hasBottomMargin?: boolean }>`
     border-bottom: 2px solid ${(props) => props.theme.panel.borderColor};
     border-top: ${(props) => (props.hasTopBorder ? `2px solid ${props.theme.panel.borderColor}` : 'none')};
 
     margin-left: -1.125rem;
     margin-right: -1.125rem;
+    margin-bottom: ${(props) => (props.hasBottomMargin ? '0.5rem' : '0')};
     [data-id*='collapse-group'] {
         [data-id*='-header'],
         [data-id*='-body'] {
@@ -23,12 +21,12 @@ const CollapseWrapper = styled.div<{ hasTopBorder?: boolean }>`
 
 function GroupVariablesList({
     variables,
-    groupChildren,
+    childrenListComponent,
 }: {
     variables: Variable[];
-    groupChildren: React.ComponentType<{ variables: Variable[] }>;
+    childrenListComponent: React.ComponentType<{ variables: Variable[] }>;
 }) {
-    const VariablesListComponent = groupChildren;
+    const VariablesListComponent = childrenListComponent;
     const { groupedVariables } = useGroupVariables(variables);
 
     return (
@@ -38,12 +36,12 @@ function GroupVariablesList({
                 const currentVariableIsGroup = groupedVariable.type === VariableType.group;
                 const nextVariableIsGroup = groupedVariables[index + 1]?.type === VariableType.group;
                 return (
-                    <GroupedVariablesWrapper
-                        key={`grouped-variable-${groupedVariable.id}`}
-                        hasBottomMargin={!nextVariableIsGroup || !currentVariableIsGroup}
-                    >
+                    <GroupedVariablesWrapper key={`grouped-variable-${groupedVariable.id}`}>
                         {groupedVariable.type === VariableType.group && !!groupedVariable.children?.length && (
-                            <CollapseWrapper hasTopBorder={currentVariableIsGroup && !previousVariableIsGroup}>
+                            <CollapseWrapper
+                                hasTopBorder={currentVariableIsGroup && !previousVariableIsGroup}
+                                hasBottomMargin={!nextVariableIsGroup}
+                            >
                                 <GroupVariable groupVariable={groupedVariable}>
                                     <VariablesListComponent variables={groupedVariable.children || []} />
                                 </GroupVariable>

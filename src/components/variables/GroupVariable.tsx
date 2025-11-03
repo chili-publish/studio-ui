@@ -6,7 +6,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import { VariablesWrapper } from './VariablesPanel.styles';
 
 const CollapseContent = styled.div`
-    padding-bottom: 1.25rem;
+    padding-bottom: 1rem;
 `;
 
 interface GroupVariableProps {

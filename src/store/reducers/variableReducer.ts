@@ -127,6 +127,9 @@ export const selectHasValidationErrors = (state: RootState): boolean => state.va
 
 export const selectVariablesValidation = (state: RootState): VariableValidation => state.variable.validation;
 export const selectCurrentVariableId = (state: RootState): string => state.variable.currentSelectedVariableId;
+export const selectCurrentVariable = (state: RootState): Variable | undefined => {
+    return state.variable.variables.find((variable) => variable.id === state.variable.currentSelectedVariableId);
+};
 export const selectCurrentVariableConnectorId = (state: RootState): string =>
     state.variable.currentSelectedVariableConnectorId;
 

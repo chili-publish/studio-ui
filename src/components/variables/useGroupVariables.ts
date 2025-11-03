@@ -3,25 +3,25 @@ import { useEffect, useState } from 'react';
 
 const aggregateVariables = (variables: Variable[]): (Variable & { children?: Variable[] })[] => {
     const groups = new Map();
-    const result = [];
+    const result: Variable[] = [];
 
-    for (const item of variables) {
-        if (!item.isVisible) continue;
-        const isGroup = item.type === VariableType.group;
-        if (isGroup) {
-            const group = { ...item, children: [] };
-            groups.set(item.id, group);
-            result.push(group);
-        } else if (!isGroup && !item.parentId) {
-            result.push(item);
-        }
-    }
-    for (const item of variables) {
-        if (!item.isVisible) continue;
-        if (!!item.parentId && groups.has(item.parentId)) {
+    variables
+        .filter((item) => item.isVisible)
+        .forEach((item) => {
+            const isGroup = item.type === VariableType.group;
+            if (isGroup) {
+                const group = { ...item, children: [] };
+                groups.set(item.id, group);
+                result.push(group);
+            } else if (!isGroup && !item.parentId) {
+                result.push(item);
+            }
+        });
+    variables
+        .filter((item) => item.isVisible && !!item.parentId)
+        .forEach((item) => {
             groups.get(item.parentId).children.push(item);
-        }
-    }
+        });
 
     return result || [];
 };

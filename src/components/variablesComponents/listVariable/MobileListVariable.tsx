@@ -2,35 +2,20 @@ import { SelectOptions } from '@chili-publish/grafx-shared-components';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
-import StudioMobileDropdown from '../../shared/StudioMobileDropdown/StudioMobileDropdown';
 import { getDataIdForSUI } from '../../../utils/dataIds';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import StudioMobileDropdownControl from '../../shared/StudioMobileDropdown/StudioMobileDropdownControl';
 
 interface MobileListVariableProps {
     variable: ListVariable;
-    validationError?: string;
     required?: boolean;
-    isOpen?: boolean;
-    onItemSelected: (_: ListVariable) => void;
+    validationError?: string;
     onMenuOpen?: () => void;
-    onMenuClose?: () => void;
 }
 
-function MobileListVariable({
-    variable,
-    required,
-    validationError,
-    isOpen,
-    onMenuOpen,
-    onMenuClose,
-    onItemSelected,
-}: MobileListVariableProps) {
-    const { onVariableBlur, onVariableFocus, projectConfig } = useUiConfigContext();
+function MobileListVariable({ variable, required, validationError, onMenuOpen }: MobileListVariableProps) {
+    const { onVariableFocus } = useUiConfigContext();
 
-    const options = variable.items.map((item) => ({
-        label: item.displayValue || item.value,
-        value: item.value,
-    }));
     const selectedValue = variable.selected
         ? {
               label: variable.selected.displayValue || variable.selected.value,
@@ -39,32 +24,17 @@ function MobileListVariable({
         : ('' as unknown as SelectOptions);
     const placeholder = getVariablePlaceholder(variable);
 
-    const updateVariableValue = async (value: string) => {
-        onItemSelected({ ...variable, selected: { value } });
-        const result = await window.StudioUISDK.variable.setValue(variable.id, value);
-        if (result.success) {
-            projectConfig.onVariableValueChangedCompleted?.(variable.id, value);
-        }
-    };
-
     return (
-        <StudioMobileDropdown
+        <StudioMobileDropdownControl
             dataId={getDataIdForSUI(`variable-list-${variable.id}`)}
-            isOpen={isOpen}
             label={variable.label ?? variable.name}
             selectedValue={selectedValue}
-            options={options}
             placeholder={placeholder}
             required={required}
             validationError={validationError}
-            onChange={updateVariableValue}
-            onMenuOpen={() => {
+            onOpen={() => {
                 if (onMenuOpen) onMenuOpen();
                 onVariableFocus?.(variable.id);
-            }}
-            onMenuClose={() => {
-                if (onMenuClose) onMenuClose();
-                onVariableBlur?.(variable.id);
             }}
         />
     );

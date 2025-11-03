@@ -1,14 +1,7 @@
-import { AvailableIcons, Icon, InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
+import { SelectOptions } from '@chili-publish/grafx-shared-components';
 import { useCallback, useState } from 'react';
-import {
-    DropdownContainer,
-    MobileDropdownMenuOption,
-    MobileDropdownOptionContainer,
-    MobileDropdownOptionContent,
-    MobileDropdownValue,
-    MobilePlaceholderWrapper,
-} from './StudioMobileDropdown.styles';
-import { ErrorMessage } from '../ErrorMessage.styles';
+import StudioMobileDropdownOptions from './StudioMobileDropdownOptions';
+import StudioMobileDropdownControl from './StudioMobileDropdownControl';
 
 interface StudioMobileDropdownProps {
     selectedValue?: SelectOptions | null;
@@ -19,7 +12,7 @@ interface StudioMobileDropdownProps {
     placeholder?: string;
     validationError?: string;
     required?: boolean;
-    onChange: (_: string) => void;
+    onChange?: (_: string) => void;
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
 }
@@ -49,39 +42,22 @@ function StudioMobileDropdown({
     }, [onMenuClose]);
 
     return isDropdownOpen ? (
-        <>
-            {options.map((option) => (
-                <MobileDropdownMenuOption
-                    key={option.value}
-                    selected={selectedValue?.value === option.value}
-                    onClick={() => {
-                        onChange(option.value as string);
-                        closeMobileDropdown();
-                    }}
-                >
-                    <MobileDropdownOptionContent>
-                        {option.label as string}
-                        {selectedValue?.value === option.value && <Icon icon={AvailableIcons.faCheck} />}
-                    </MobileDropdownOptionContent>
-                </MobileDropdownMenuOption>
-            ))}
-        </>
+        <StudioMobileDropdownOptions
+            options={options}
+            selectedValue={selectedValue}
+            onChange={onChange}
+            onClose={closeMobileDropdown}
+        />
     ) : (
-        <DropdownContainer data-id={dataId} data-testid={dataId} onClick={() => openMobileDropdown()}>
-            {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
-            <MobileDropdownOptionContainer hasError={!!validationError}>
-                <MobileDropdownValue>
-                    {selectedValue?.label ? (
-                        // eslint-disable-next-line react/jsx-no-useless-fragment
-                        <>{selectedValue.label}</>
-                    ) : (
-                        <MobilePlaceholderWrapper>{placeholder ?? 'Select...'}</MobilePlaceholderWrapper>
-                    )}
-                </MobileDropdownValue>
-                <Icon icon={AvailableIcons.faChevronDown} />
-            </MobileDropdownOptionContainer>
-            {validationError ? <ErrorMessage>{validationError}</ErrorMessage> : null}
-        </DropdownContainer>
+        <StudioMobileDropdownControl
+            dataId={dataId}
+            label={label}
+            selectedValue={selectedValue}
+            placeholder={placeholder}
+            validationError={validationError}
+            required={required}
+            onOpen={openMobileDropdown}
+        />
     );
 }
 

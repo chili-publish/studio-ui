@@ -8,11 +8,7 @@ import MobileFlatVariablesList from './MobileFlatVariablesList';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 import GroupVariablesList from '../GroupVariablesList';
 
-interface VariablesListProps {
-    onMobileOptionListToggle?: (_: boolean) => void;
-}
-
-function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
+function MobileVariablesList() {
     const dispatch = useAppDispatch();
 
     const { formBuilder } = useUserInterfaceDetailsContext();
@@ -32,12 +28,9 @@ function MobileVariablesList({ onMobileOptionListToggle }: VariablesListProps) {
     const showVaribleGroup = formBuilder.variables?.variableGroups?.show || false;
 
     return showVaribleGroup ? (
-        <GroupVariablesList variables={variablesWithTranslation} groupChildren={MobileFlatVariablesList} />
+        <GroupVariablesList variables={variablesWithTranslation} childrenListComponent={MobileFlatVariablesList} />
     ) : (
-        <MobileFlatVariablesList
-            variables={variablesWithTranslation}
-            onMobileOptionListToggle={onMobileOptionListToggle}
-        />
+        <MobileFlatVariablesList variables={variablesWithTranslation} />
     );
 }
 
