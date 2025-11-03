@@ -7,6 +7,7 @@ import {
 } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
 import NumberVariable from '../../../components/variablesComponents/NumberVariable';
 import TextVariable from '../../../components/variablesComponents/TextVariable';
@@ -15,7 +16,6 @@ import DateVariableMobile from '../../../components/variablesComponents/dateVari
 import { APP_WRAPPER } from '../../mocks/app';
 import { setupStore } from '../../../store';
 import { setCurrentSelectedVariableId, setVariables } from '../../../store/reducers/variableReducer';
-import { renderWithProviders } from '@tests/mocks/Provider';
 
 describe('Variable help text', () => {
     const reduxStore = setupStore();
