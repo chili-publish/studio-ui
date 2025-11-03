@@ -1,24 +1,8 @@
 import { Variable, VariableType } from '@chili-publish/studio-sdk';
-import styled from 'styled-components';
 import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import useGroupVariables from './useGroupVariables';
 import GroupVariable from './GroupVariable';
-
-const GroupedVariablesWrapper = styled.div``;
-const CollapseWrapper = styled.div<{ hasTopBorder?: boolean; hasBottomMargin?: boolean }>`
-    border-bottom: 2px solid ${(props) => props.theme.panel.borderColor};
-    border-top: ${(props) => (props.hasTopBorder ? `2px solid ${props.theme.panel.borderColor}` : 'none')};
-
-    margin-left: -1.125rem;
-    margin-right: -1.125rem;
-    margin-bottom: ${(props) => (props.hasBottomMargin ? '0.5rem' : '0')};
-    [data-id*='collapse-group'] {
-        [data-id*='-header'],
-        [data-id*='-body'] {
-            padding: 0 1.25rem;
-        }
-    }
-`;
+import { CollapseWrapper, GroupedVariablesWrapper } from './GroupVariables.style';
 
 function GroupVariablesList({
     variables,
@@ -49,7 +33,7 @@ function GroupVariablesList({
                                 hasBottomMargin={!nextVariableIsGroup}
                             >
                                 <GroupVariable groupVariable={groupedVariable}>
-                                    <VariablesListComponent variables={groupedVariable.children || []} />
+                                    <VariablesListComponent variables={groupedVariable.children} />
                                 </GroupVariable>
                             </CollapseWrapper>
                         )}

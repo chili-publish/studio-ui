@@ -1,16 +1,12 @@
 import { Collapse, InputLabel } from '@chili-publish/grafx-shared-components';
-import styled from 'styled-components';
-import { Variable } from '@chili-publish/studio-sdk';
 import { useState } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import { VariablesWrapper } from './VariablesPanel.styles';
-
-const CollapseContent = styled.div`
-    padding-bottom: 1rem;
-`;
+import { CollapseContent } from './GroupVariables.style';
+import { GroupVariable as GroupVariableType } from './Variable.types';
 
 interface GroupVariableProps {
-    groupVariable: Variable & { children?: Variable[] };
+    groupVariable: GroupVariableType;
     children: React.ReactNode;
 }
 function GroupVariable({ groupVariable, children }: GroupVariableProps) {
