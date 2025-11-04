@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { test, expect } from '@playwright/test';
 
-test('basic integration', async ({ page }) => {
+test('basic integration according to the documentation', async ({ page }) => {
     await page.goto(
         'http://localhost:3002/?demo=basic-integration&engine=main&engineCommitSha=3963c4a3bb691757589caffaef9136222649551b',
     );
@@ -31,4 +31,11 @@ test('basic integration', async ({ page }) => {
           - button
           - button
     `);
+    await expect(page.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
+      - text: Data row
+      - textbox "data-source-input":
+        - /placeholder: Select data row
+        - text: /New Listing \\| 0b10af0f-\\d+-4e5e-a835-8642b23f3a28 \\| Charming house featuring 4 bedrooms, 3 bathrooms and a backyard \\| Beautiful property close to all amenities \\| 149c5d16-b1fa-4a44-a49d-f6bcd652515d \\| Janice Barrow \\| Real Estate Broker \\| \\d+-\\d+-\\d+ \\| chill\\.com\\/properties/
+      - button
+      `);
 });

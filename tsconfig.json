@@ -25,6 +25,6 @@
             "src/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "automation-tests/integrationLayer"],
     "exclude": ["node_modules", "build"] // *** The files to not type check ***
 }

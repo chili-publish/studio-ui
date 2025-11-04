@@ -1,5 +1,6 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
+import { UiOptions } from 'src/types/types';
 import StudioUI from 'src/main';
 import { IntegrationTokenManager } from '../../integration-token-manager';
 import { EngineVersionManager } from '../../version-manager';
@@ -74,8 +75,43 @@ import { EngineVersionManager } from '../../version-manager';
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.getAccessToken(),
         featureFlags: {},
-        projectName: 'Dev Run',
+        projectName: 'Test project name',
     };
+
+    const uiOptions: UiOptions = {
+        theme: {
+            fontFamily: 'inherit',
+            colors: {
+                brandBackgroundColor: '#F40009', // Used for primary buttons, checkboxes, toggles, radio buttons, animation timeline, etc.
+                primaryButtonTextColor: '#ffffff', // Used for primary button text, checkboxes, toggles, radio buttons.
+                primaryButtonHoverColor: '#CB0007', // Used for primary button hover background.
+                panelBackgroundColor: '#252525', // Used for panel and modal backgrounds.
+                dropdownMenuBackgroundColor: '#2F2F2F', // Used for dropdown menu backgrounds.
+                inputBackgroundColor: '#323232', // Used for input fields background.
+                inputBorderColor: '#F5F5F5', // Used for the border color of input fields.
+                inputFocusBorderColor: '#ffffff', // Used for the border color of input fields when focused.
+                canvasBackgroundColor: '#161616', // Used for canvas background.
+                highlightedElementsColor: '#3E3E3E', // Used for highlighted elements.
+                disabledElementsColor: '#6E6E6E', // Used for disabled text and buttons.
+                placeholderTextColor: '#909090', // Used for text placeholders.
+                primaryTextColor: '#ffffff', // Used for primary text.
+                secondaryTextColor: '#B9B9B9', // Used for secondary text.
+            },
+        },
+        widgets: {
+            downloadButton: {
+                visible: true,
+            },
+            backButton: {
+                visible: true,
+            },
+        },
+    };
+
+    // injects the comic sans font on the body
+    const style = document.createElement('style');
+    style.textContent = 'body { font-family: Comic Sans MS, cursive, sans-serif; }';
+    document.head.appendChild(style);
 
     StudioUI.studioUILoaderConfig({
         // Div id to inject studio-ui in
@@ -95,5 +131,6 @@ import { EngineVersionManager } from '../../version-manager';
         /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
         projectName: baseConfig.projectName,
         userInterfaceID: undefined,
+        uiOptions,
     });
 })();

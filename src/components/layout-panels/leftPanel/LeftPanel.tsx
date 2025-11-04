@@ -50,7 +50,11 @@ function LeftPanel({
     const layoutsHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
     return !shouldHideLeftPanel ? (
-        <LeftPanelWrapper id="left-panel" overflowScroll={activePanel !== PanelType.IMAGE_PANEL}>
+        <LeftPanelWrapper
+            data-testid="test-sui-left-panel"
+            id="left-panel"
+            overflowScroll={activePanel !== PanelType.IMAGE_PANEL}
+        >
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 {activePanel === PanelType.IMAGE_PANEL && (
                     <ImagePanelContainer>

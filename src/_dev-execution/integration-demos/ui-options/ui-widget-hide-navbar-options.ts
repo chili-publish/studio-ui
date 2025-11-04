@@ -1,5 +1,6 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
+import { UiOptions } from 'src/types/types';
 import StudioUI from 'src/main';
 import { IntegrationTokenManager } from '../../integration-token-manager';
 import { EngineVersionManager } from '../../version-manager';
@@ -74,8 +75,21 @@ import { EngineVersionManager } from '../../version-manager';
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.getAccessToken(),
         featureFlags: {},
-        projectName: 'Dev Run',
+        projectName: 'Test project name',
     };
+
+    const uiOptions: UiOptions = {
+        widgets: {
+            navBar: {
+                visible: false,
+            },
+        },
+    };
+
+    // injects the comic sans font on the body
+    const style = document.createElement('style');
+    style.textContent = 'body { font-family: Comic Sans MS, cursive, sans-serif; }';
+    document.head.appendChild(style);
 
     StudioUI.studioUILoaderConfig({
         // Div id to inject studio-ui in
@@ -95,5 +109,6 @@ import { EngineVersionManager } from '../../version-manager';
         /* projectName: string, name of the project. Shown in the UI (does not have to be match the real name) */
         projectName: baseConfig.projectName,
         userInterfaceID: undefined,
+        uiOptions,
     });
 })();
