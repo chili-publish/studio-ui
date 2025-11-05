@@ -29,7 +29,7 @@
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
         "@chili-publish/environment-client-api": "0.31.9",
-        "@chili-publish/grafx-shared-components": "0.104.4",
+        "@chili-publish/grafx-shared-components": "0.105.1",
         "@chili-publish/studio-sdk": "1.32.1-alfa.2",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",
@@ -50,9 +50,6 @@
         "redux-logger": "^3.0.6",
         "styled-components": "6.1.18",
         "use-async-memo": "^1.2.5"
-    },
-    "engines": {
-        "node": ">=20.0.0 <21.0.0"
     },
     "devDependencies": {
         "@auth0/auth0-spa-js": "^2.1.3",
