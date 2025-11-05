@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { APP_WRAPPER_ID } from '../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
+import { RangeConstraintErrorMessageWrapper } from './Layout.styles';
 
 interface RangeConstraintIconProps {
     layout: LayoutPropertiesType;
@@ -37,12 +38,16 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
     }
     return (
         <Tooltip
-            content={uiTranslation}
+            content={
+                <RangeConstraintErrorMessageWrapper
+                    maxWidth="10rem"
+                    data-testid="range-constraint-proportion-error-message-link"
+                >
+                    {uiTranslation}
+                </RangeConstraintErrorMessageWrapper>
+            }
             position={TooltipPosition.TOP}
             anchorId={APP_WRAPPER_ID}
-            infoStyle={{
-                width: '10rem',
-            }}
         >
             <Icon
                 icon={AvailableIcons.faLink}

@@ -59,8 +59,8 @@ export const DropdownOptionLabel = styled.div`
         color: ${({ theme }) => theme.themeColors.secondaryTextColor};
     }
     ${ExperimentalPill} {
-        color: ${({ theme }) => theme.themeColors.primaryTextColor};
-        border: 1px solid ${({ theme }) => theme.themeColors.primaryTextColor};
+        color: ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
+        border: 1px solid ${({ theme }) => theme.themeColors.secondaryTextColor} !important;
     }
 `;
 
@@ -95,12 +95,15 @@ export const Content = styled.div<{ borderTop?: boolean }>`
     border-top: ${({ borderTop, theme }) => (borderTop ? `1px solid ${theme.panel.borderColor}` : 'none')};
 `;
 
-export const BtnContainer = styled.div<{ mobile?: boolean }>`
+export const BtnContainer = styled.div<{ mobile?: boolean; direction?: 'ltr' | 'rtl' }>`
     padding-inline: ${(props) => (props.mobile ? '0' : '1.25rem')};
+    > button {
+        margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto;')};
+        width: 100%;
+        transform: ${({ direction }) => (direction === 'rtl' ? 'scaleX(-1)' : 'scaleX(1)')};
+    }
 `;
 export const SpinnerContainer = styled(BtnContainer)`
-    margin: ${(props) => (props.mobile ? 'auto' : '1.25rem auto 1.25rem;')};
-    padding: ${(props) => (props.mobile ? '0' : '0 1.25rem;')};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -115,5 +118,10 @@ export const ErrorToastWrapper = styled.div`
         left: 50%;
         top: 0;
         z-index: 2;
+    }
+`;
+export const FullWidthButton = styled.div`
+    > button {
+        width: 100%;
     }
 `;

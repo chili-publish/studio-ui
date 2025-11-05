@@ -1,4 +1,12 @@
-import { Button, ButtonVariant, Input, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
+import {
+    Button,
+    ButtonVariant,
+    Input,
+    Label,
+    ValidationTypes,
+    TooltipVariant,
+    TooltipPosition,
+} from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
@@ -131,15 +139,14 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             label={label}
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
-            customErrorComponent={
-                formHasError ? (
-                    <RangeConstraintErrorMessage
-                        currentWidth={pageWidth}
-                        currentHeight={pageHeight}
-                        unit={layout?.unit.value}
-                        layout={layout}
-                    />
-                ) : undefined
+            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP, variant: TooltipVariant.DEFAULT }}
+            validationErrorMessage={
+                <RangeConstraintErrorMessage
+                    currentWidth={pageWidth}
+                    currentHeight={pageHeight}
+                    unit={layout?.unit.value}
+                    layout={layout}
+                />
             }
         />
     );

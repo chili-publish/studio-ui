@@ -1,5 +1,4 @@
-import { AvailableIcons, Button, ButtonVariant, FontSizes, Icon } from '@chili-publish/grafx-shared-components';
-import { css } from 'styled-components';
+import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { useState } from 'react';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { useLeftPanelAndTrayVisibility } from '../../core/hooks/useLeftPanelAndTrayVisibility';
@@ -47,15 +46,6 @@ function MobileVariables(props: MobileVariablesProps) {
                         variant={ButtonVariant.primary}
                         icon={<Icon key="icon-edit-variable" icon={AvailableIcons.faPen} height="1.125rem" />}
                         onClick={() => setIsTrayVisible(true)}
-                        styles={css`
-                            padding: 0.9375rem;
-                            font-size: ${FontSizes.regular};
-                            border-radius: 50%;
-
-                            svg {
-                                width: 1.125rem !important;
-                            }
-                        `}
                     />
                 </EditButtonWrapper>
             )}
