@@ -102,8 +102,6 @@ import { EngineVersionManager } from '../../version-manager';
         selector: baseConfig.selector,
         // downloadUrl used to fetch the document
         projectDownloadUrl: `${baseUrl}/projects/${projectId}/document`,
-        // uploadUrl used to save the changes you did to the document (autosave)
-        projectUploadUrl: `${baseUrl}/projects/${projectId}`,
         // project Id to enable autosave
         projectId,
         /* environment base URL ex: https://cp-abc-123.chili-publish.online/grafx/api/v1/cp-abc-123 */
