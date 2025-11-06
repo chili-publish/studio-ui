@@ -9,7 +9,6 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import { useUiConfigContext } from '../../contexts/UiConfigContext';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
 import { ButtonsWrapper, ErrorMessageContainer, IconWrapper, LayoutInputsContainer } from './Layout.styles';
@@ -29,7 +28,6 @@ interface LayoutPropertiesProps {
 }
 
 function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
-    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
     const { saveChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText, setPageWidth, setPageHeight } =
         useLayoutProperties(layout, pageSize);
 
@@ -53,13 +51,7 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
     const widthLabel = getUITranslation(['formBuilder', 'layouts', 'width'], 'Width');
     const heightLabel = getUITranslation(['formBuilder', 'layouts', 'height'], 'Height');
 
-    const handleFocus = (inputId: string) => {
-        onVariableFocus?.(inputId);
-    };
-
     const handleBlur = async (inputId: PageInputId, value: string) => {
-        onVariableBlur?.(inputId);
-
         if (submitOnBlur) {
             saveChange(PagePropertyMap[inputId], value);
         } else {
@@ -133,7 +125,6 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             onChange={(ev) => {
                 if (!submitOnBlur) setValue(ev.target.value);
             }}
-            onFocus={() => handleFocus(id)}
             onBlur={handleInputBlur(id)}
             name={id}
             label={label}
