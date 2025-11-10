@@ -71,16 +71,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            - name: copy coverage reports
-              run: |
-                  coveragePath=upload/coverage_reports/$CI_REF_NAME
-                  mkdir -p ${coveragePath%"/merge"}
-                  cp -R coverage/* ${coveragePath%"/merge"}
-            - name: Copy to Azure Blob Storage
-              uses: azure/CLI@v1
-              with:
-                  inlineScript: |
-                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
     build:
         runs-on: ubuntu-latest
         name: build (20)
