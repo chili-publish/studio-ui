@@ -1,10 +1,12 @@
-import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
+import { ModalLayout, ModalSize, Select } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
+import { useMemo } from 'react';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { APP_WRAPPER_ID } from '../../utils/constants';
-import { MODAL_ID, ModalStyle } from './DataSourceModal.styles';
+import { MODAL_ID, ModalStyle, PageSizeToolbar } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
+import { PAGE_SIZE } from './useDataSource';
 
 interface TableModalProps {
     isOpen: boolean;
@@ -17,6 +19,8 @@ interface TableModalProps {
 
     selectedRow: number;
     onSelectedRowChanged: (_: number) => void;
+    pageSize: number;
+    onPageSizeChanged: (pageSize: number) => void;
 }
 
 function DataSourceModal({
@@ -29,6 +33,8 @@ function DataSourceModal({
     onClose,
     selectedRow,
     onSelectedRowChanged,
+    pageSize,
+    onPageSizeChanged,
 }: TableModalProps) {
     const { getUITranslation } = useUITranslations();
     const { formBuilder } = useUserInterfaceDetailsContext();
@@ -36,6 +42,21 @@ function DataSourceModal({
     const title = getUITranslation(
         ['formBuilder', 'datasource', 'header'],
         formBuilder.datasource?.header ?? 'Data source',
+    );
+
+    const pageSizeOptions = useMemo(
+        () => [
+            { value: PAGE_SIZE, label: PAGE_SIZE.toString() },
+            { value: 100, label: '100' },
+            { value: 500, label: '500' },
+            { value: 1000, label: '1000' },
+        ],
+        [],
+    );
+
+    const selectedPageSizeOption = useMemo(
+        () => pageSizeOptions.find((option) => option.value === pageSize) ?? pageSizeOptions[0],
+        [pageSize, pageSizeOptions],
     );
 
     return (
@@ -52,6 +73,18 @@ function DataSourceModal({
             >
                 <ModalLayout.Title>{title}</ModalLayout.Title>
                 <ModalLayout.Body>
+                    <PageSizeToolbar>
+                        <Select
+                            options={pageSizeOptions}
+                            value={selectedPageSizeOption}
+                            onChange={(option) => {
+                                if (option && !Array.isArray(option) && option.value) {
+                                    onPageSizeChanged(option.value as number);
+                                }
+                            }}
+                            label="Page size"
+                        />
+                    </PageSizeToolbar>
                     <DataSourceTable
                         data={data}
                         error={error}
