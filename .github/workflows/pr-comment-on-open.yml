@@ -16,4 +16,3 @@ jobs:
                   script: |
                       const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
                       github.issues.createComment({ issue_number, owner, repo, body: 'PR can be checked at https://stgrafxstudiodevpublic.blob.core.windows.net/studio-ui/pr_builds/' + issue_number + '/index.html' });
-                      github.issues.createComment({ issue_number, owner, repo, body: 'Coverage report can be checked at https://stgrafxstudiodevpublic.blob.core.windows.net/studio-ui/coverage_reports/' + issue_number + '/coverage.html' });
