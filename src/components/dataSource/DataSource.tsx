@@ -27,6 +27,8 @@ function DataSource() {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
+        pageSize,
+        updatePageSize,
     } = useDataSource();
 
     const onDataSourceModalClose = useCallback(() => {
@@ -86,6 +88,8 @@ function DataSource() {
                     hasMoreData={hasMoreRows}
                     onNextPageRequested={loadDataRows}
                     onClose={onDataSourceModalClose}
+                    pageSize={pageSize}
+                    onPageSizeChanged={updatePageSize}
                 />
             ) : null}
         </>
