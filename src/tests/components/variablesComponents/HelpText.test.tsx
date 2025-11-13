@@ -7,14 +7,23 @@ import {
 } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
+import { renderWithProviders } from '@tests/mocks/Provider';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
 import NumberVariable from '../../../components/variablesComponents/NumberVariable';
 import TextVariable from '../../../components/variablesComponents/TextVariable';
 import DateVariable from '../../../components/variablesComponents/dateVariable/DateVariable';
 import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';
 import { APP_WRAPPER } from '../../mocks/app';
+import { setupStore } from '../../../store';
+import { setCurrentSelectedVariableId, setVariables } from '../../../store/reducers/variableReducer';
 
 describe('Variable help text', () => {
+    let reduxStore: ReturnType<typeof setupStore>;
+
+    beforeEach(() => {
+        reduxStore = setupStore();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -49,10 +58,13 @@ describe('Variable help text', () => {
         const helpText = 'helpText info';
         const variable = variables.find((item) => item.id === 'date-variable') as DateVariableType;
         const dateVariable = { ...variable, helpText };
-        render(
+        reduxStore.dispatch(setVariables(variables));
+        reduxStore.dispatch(setCurrentSelectedVariableId(dateVariable.id));
+        renderWithProviders(
             <UiThemeProvider theme="platform">
-                <DateVariableMobile variable={dateVariable} onDateSelected={jest.fn} />
+                <DateVariableMobile />
             </UiThemeProvider>,
+            { reduxStore },
         );
 
         expect(screen.queryByText(helpText)).not.toBeInTheDocument();

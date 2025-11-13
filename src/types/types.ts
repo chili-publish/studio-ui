@@ -151,7 +151,11 @@ export interface LayoutForm extends BaseFormBuilderType<'layouts'> {
 }
 
 export type DataSourceForm = BaseFormBuilderType<'datasource'>;
-export type VariablesForm = BaseFormBuilderType<'variables'>;
+export type VariablesForm = BaseFormBuilderType<'variables'> & {
+    variableGroups?: {
+        show: boolean;
+    };
+};
 
 export type FormBuilderArray = Array<DataSourceForm | VariablesForm | LayoutForm>;
 

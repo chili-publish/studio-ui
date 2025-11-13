@@ -28,7 +28,7 @@ import Navbar from './components/navbar/Navbar';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
 import { UserInterfaceDetailsContextProvider } from './components/navbar/UserInterfaceDetailsContext';
 import Pages from './components/pagesPanel/Pages';
-import MobileVariables from './components/variables/MobileVariables';
+import MobileVariables from './components/variables/mobileVariables/MobileVariables';
 import AppProvider from './contexts/AppProvider';
 import ShortcutProvider from './contexts/ShortcutManager/ShortcutProvider';
 import { useSubscriberContext } from './contexts/Subscriber';

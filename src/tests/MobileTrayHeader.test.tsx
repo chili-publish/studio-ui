@@ -14,7 +14,7 @@ import { showDatePickerPanel, showVariablesPanel } from 'src/store/reducers/pane
 import { UserInterfaceDetailsContextProvider } from 'src/components/navbar/UserInterfaceDetailsContext';
 import { mockAssets } from '@mocks/mockAssets';
 import { transformFormBuilderArrayToObject } from 'src/utils/helpers';
-import MobileVariables from '../components/variables/MobileVariables';
+import MobileVariables from '../components/variables/mobileVariables/MobileVariables';
 import AppProvider from '../contexts/AppProvider';
 import { APP_WRAPPER } from './mocks/app';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
