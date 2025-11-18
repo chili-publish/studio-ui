@@ -15,7 +15,7 @@ import { useVariableHistory } from './useVariableHistory';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
-const PAGE_SIZE = 50;
+export const PAGE_SIZE = 50;
 
 function getDataSourceErrorText(status?: number) {
     switch (status) {
@@ -41,6 +41,7 @@ const useDataSource = () => {
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
     const [prevDataRowIndex, setPrevDataRowIndex] = useState(currentRowIndex);
+    const [pageSize, setPageSize] = useState<number>(PAGE_SIZE);
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<{ status?: number; message: string } | undefined>();
@@ -108,10 +109,16 @@ const useDataSource = () => {
             setIsLoading(true);
 
             try {
+                const startTime = performance.now();
                 const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, {
-                    limit: PAGE_SIZE,
+                    limit: pageSize,
                     continuationToken: token,
                 });
+                const endTime = performance.now();
+                const executionTime = (endTime - startTime) / 1000;
+
+                // eslint-disable-next-line no-console
+                console.log(`[TimeExecution] getPage for ${token} took ${executionTime.toFixed(2)}s`);
 
                 const rowItems = page?.data ?? [];
                 setError(undefined);
@@ -133,7 +140,7 @@ const useDataSource = () => {
                 setIsLoading(false);
             }
         },
-        [resetData],
+        [resetData, pageSize],
     );
 
     const loadDataRows = useCallback(async () => {
@@ -158,6 +165,15 @@ const useDataSource = () => {
         if (processingDataRow.current !== null) return;
         if (index >= 0) setCurrentRowIndex(index);
     }, []);
+
+    const updatePageSize = useCallback(
+        (newPageSize: number) => {
+            setPageSize(newPageSize);
+            resetData();
+            setCurrentRowIndex(0);
+        },
+        [resetData],
+    );
 
     useEffect(() => {
         if (dataSource) {
@@ -232,6 +248,8 @@ const useDataSource = () => {
         hasDataConnector: !!dataSource,
         requiresUserAuthorizationCheck,
         error: error?.message,
+        pageSize,
+        updatePageSize,
     };
 };
 
