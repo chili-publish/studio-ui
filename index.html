@@ -11,52 +11,19 @@
         <div id="studio-ui-container"></div>
         <script type="module">
             const params = new URLSearchParams(window.location.search);
-            const runBasicIntegration = params.get('demo') === 'basic-integration';
-            const runUiThemeOptions = params.get('demo') === 'ui-theme-options';
-            const runUiWidgetTrueOptions = params.get('demo') === 'ui-widget-true-options';
-            const runUiWidgetFalseOptions = params.get('demo') === 'ui-widget-false-options';
-            const runUiWidgetHideNavbarOptions = params.get('demo') === 'ui-widget-hide-navbar-options';
+            const runIntegrationTest = params.get('demo') === 'integration';
 
             const loadMainWorkspace = async () => {
                 await import('./src/main.tsx');
                 await import('./src/_dev-execution/bootstrap.ts');
             };
 
-            const loadBasicIntegration = async () => {
+            const loadIntegrationTest = async () => {
                 await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/basic-integration/basic-integration.ts');
+                await import('./src/_dev-execution/integration-demos/integration.ts');
             };
-
-            const loadUiThemeOptions = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/ui-options/ui-theme-options.ts');
-            };
-
-            const loadUiWidgetTrueOptions = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/ui-options/ui-widget-true-options.ts');
-            };
-
-            const loadUiWidgetFalseOptions = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/ui-options/ui-widget-false-options.ts');
-            };
-
-            const loadUiWidgetHideNavbarOptions = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/ui-options/ui-widget-hide-navbar-options.ts');
-            };
-
-            if (runBasicIntegration) {
-                await loadBasicIntegration();
-            } else if (runUiThemeOptions) {
-                await loadUiThemeOptions();
-            } else if (runUiWidgetTrueOptions) {
-                await loadUiWidgetTrueOptions();
-            } else if (runUiWidgetFalseOptions) {
-                await loadUiWidgetFalseOptions();
-            } else if (runUiWidgetHideNavbarOptions) {
-                await loadUiWidgetHideNavbarOptions();
+            if (runIntegrationTest) {
+                await loadIntegrationTest();
             } else {
                 await loadMainWorkspace();
             }

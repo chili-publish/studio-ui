@@ -57,6 +57,7 @@ function AvailableLayouts({
         />
     ) : (
         <Select
+            id="sui-dropdown-available-layout"
             dataId={getDataIdForSUI(`dropdown-available-layout`)}
             dataTestId={getDataTestIdForSUI(`dropdown-available-layout`)}
             value={selectedLayoutOption as SelectOptions}

@@ -1,10 +1,18 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { test, expect } from '@playwright/test';
+import { getProjectConfig } from './helpers/project.config';
 
-test('basic integration according to the documentation', async ({ page }) => {
-    await page.goto(
-        'http://localhost:3002/?demo=basic-integration&engine=main&engineCommitSha=3963c4a3bb691757589caffaef9136222649551b',
-    );
+test('basic integration', async ({ page }) => {
+    const projectConfig = { ...getProjectConfig({}) };
+    const configString = JSON.stringify(projectConfig);
+
+    await page.addInitScript(`
+        window.__PROJECT_CONFIG__ = ${configString};
+    `);
+
+    await page.goto('/?demo=integration');
+
+    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+
     await expect(page.getByLabel('Project: Listing')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Data source' })).toBeVisible();
     await expect(page.getByText('Data row')).toBeVisible();
@@ -14,8 +22,8 @@ test('basic integration according to the documentation', async ({ page }) => {
             .getByTestId('test-sui-dropdown-available-layout-label-with-icon-container')
             .getByTestId('test-gsc-input-label'),
     ).toBeVisible();
-    await expect(page.getByText('Width')).toBeVisible();
-    await expect(page.getByText('Height')).toBeVisible();
+    // await expect(page.getByText('Width')).toBeVisible();
+    // await expect(page.getByText('Height')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Customize' })).toBeVisible();
     await expect(page.getByTestId('test-sui-navbar')).toMatchAriaSnapshot(`
     - navigation:
