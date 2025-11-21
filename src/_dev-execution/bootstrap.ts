@@ -111,7 +111,7 @@ import { EngineVersionManager } from './version-manager';
             projectId: templateId,
             projectName: 'Sandbox mode',
             sandboxMode: true,
-            // userInterfaceID: undefined,
+            userInterfaceID: undefined,
             uiOptions: {
                 uiTheme: 'dark',
                 widgets: {
@@ -133,19 +133,6 @@ import { EngineVersionManager } from './version-manager';
                     id: templateId,
                 },
             }),
-            userInterfaceID: '259c8ddf-eff6-4975-9830-6c68c4783d75',
-            onFetchUserInterfaceDetails: async (userInterfaceId: string) => {
-                console.log('userInterfaceId', userInterfaceId);
-                const response = await fetch(`${baseUrl}/user-interfaces/${userInterfaceId}`, {
-                    headers: { Authorization: `Bearer ${authToken}` },
-                });
-                const res = await response.json();
-                const formBuilder = res.formBuilder ? JSON.parse(res.formBuilder) : undefined;
-                return {
-                    ...res,
-                    formBuilder,
-                };
-            },
         });
     } else {
         // Regular mode configuration
@@ -160,19 +147,6 @@ import { EngineVersionManager } from './version-manager';
                     bottomBar: { visible: true },
                     downloadButton: { visible: true },
                 },
-            },
-            userInterfaceID: '259c8ddf-eff6-4975-9830-6c68c4783d75',
-            onFetchUserInterfaceDetails: async (userInterfaceId: string) => {
-                console.log('userInterfaceId', userInterfaceId);
-                const response = await fetch(`${baseUrl}/user-interfaces/${userInterfaceId}`, {
-                    headers: { Authorization: `Bearer ${authToken}` },
-                });
-                const res = await response.json();
-                const formBuilder = res.formBuilder ? JSON.parse(res.formBuilder) : undefined;
-                return {
-                    ...res,
-                    formBuilder,
-                };
             },
         });
     }
