@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 
 test('custom user interface ID and onFetchUserInterfaceDetails callback', async ({ page }) => {
     const projectConfig = {

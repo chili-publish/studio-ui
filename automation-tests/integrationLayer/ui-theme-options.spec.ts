@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { test, expect } from '@playwright/test';
 import { UiOptions } from 'src/types/types';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 
 const uiOptions: UiOptions = {
     theme: {

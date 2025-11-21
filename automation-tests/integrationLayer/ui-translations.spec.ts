@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 test('ui translations', async ({ page }) => {
     const uiTranslations = {
         toolBar: {

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { UiOptions } from 'src/types/types';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 
 test('ui widget options (true)', async ({ page }) => {
     const uiOptions: UiOptions = {

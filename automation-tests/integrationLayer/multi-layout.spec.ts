@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 test('configure multi layout mode', async ({ page }) => {
     const projectConfig = { ...getProjectConfig({ customElement: '<div>Custom main element</div>' }) };
     const configString = JSON.stringify(projectConfig);

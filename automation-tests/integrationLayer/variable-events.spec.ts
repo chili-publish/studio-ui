@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getProjectConfig } from './helpers/project.config';
+import { getProjectConfig } from '../helpers/project.config';
 test('focus and blur a text variable', async ({ page }) => {
     const projectConfig = { ...getProjectConfig({}) };
 
@@ -128,8 +128,6 @@ test('focus and blur an image variable on remove', async ({ page }) => {
     expect(variableBlurred).toBe('b0baa83c-6ce3-441f-a39f-0b767b5bc329');
 });
 
-// this test is failing because user is not authorized to access the proxy endpoint
-// kept it here because it would be valuable to have a test for this scenario
 test('focus and blur on image upload', async ({ page }) => {
     const projectConfig = { ...getProjectConfig({}) };
 
