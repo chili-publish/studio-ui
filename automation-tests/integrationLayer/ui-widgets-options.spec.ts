@@ -32,6 +32,8 @@ test('ui widget options (true)', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
     await expect(page.locator('#studio-ui-container')).toBeVisible();
     await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toBeVisible();
@@ -74,6 +76,8 @@ test('ui widget options (false)', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     // check if download button is not visible
@@ -105,6 +109,8 @@ test('ui widget options (hide navbar)', async ({ page }) => {
     `);
 
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 

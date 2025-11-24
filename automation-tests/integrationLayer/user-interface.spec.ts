@@ -30,6 +30,8 @@ test('custom user interface ID and onFetchUserInterfaceDetails callback', async 
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     const downloadButton = page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button');
@@ -62,6 +64,8 @@ test('custom user interface ID', async ({ page }) => {
     await page.addInitScript(`window.__PROJECT_CONFIG__ = ${configString};`);
 
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 

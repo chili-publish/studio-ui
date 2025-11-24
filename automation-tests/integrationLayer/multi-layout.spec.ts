@@ -13,6 +13,8 @@ test('configure multi layout mode', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     // Wait for the callback to be set
     await page.waitForFunction(() => (window as any).__SET_MULTI_LAYOUT_VIEW__ !== undefined);
 

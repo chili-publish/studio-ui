@@ -22,6 +22,8 @@ test('ui translations', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     const menuToggle = page.getByTestId('test-sui-studio-navbar-item-menu');
@@ -57,7 +59,10 @@ test('layouts ui translations', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+
     const layoutsHeading = page.getByTestId('test-sui-layouts-heading');
     await expect(layoutsHeading).toBeVisible();
 
@@ -102,6 +107,8 @@ test('variables ui translations', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     const variablesHeading = page.getByTestId('test-sui-variables-heading');
@@ -133,10 +140,14 @@ test('datasource ui translations', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     const datasourceHeading = page.getByTestId('test-sui-datasource-heading');
     await expect(datasourceHeading).toBeVisible();
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     await expect(page.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
         - heading "Datasource custom header"

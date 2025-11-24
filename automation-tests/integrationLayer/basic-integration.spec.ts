@@ -11,9 +11,11 @@ test('basic integration', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+    await page.waitForLoadState('networkidle');
 
+    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
     await expect(page.getByLabel('Project: Listing')).toBeVisible();
+
     await expect(page.getByRole('heading', { name: 'Data source' })).toBeVisible();
     await expect(page.getByText('Data row')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Layouts' })).toBeVisible();

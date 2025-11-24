@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env.local' });
 export default defineConfig({
@@ -6,4 +6,19 @@ export default defineConfig({
     use: {
         baseURL: 'http://localhost:3002',
     },
+    projects: [
+        {
+            name: 'chromium',
+            use: { browserName: 'chromium' },
+        },
+        // Mobile tests
+        {
+            name: 'mobile',
+            use: {
+                ...devices['iPhone 15 Pro Max'],
+                browserName: 'chromium',
+            },
+            testDir: './automation-tests/integrationLayer/mobile',
+        },
+    ],
 });

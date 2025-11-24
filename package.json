@@ -24,7 +24,8 @@
         "cover": "jest --coverage",
         "make-badges": "node createCoverageBadge.cjs",
         "validate-licenses": "node validate_licenses.cjs",
-        "validate-versions": "node validate_versions.cjs"
+        "validate-versions": "node validate_versions.cjs",
+        "mobile-test": "playwright test --project=mobile"
     },
     "dependencies": {
         "@babel/preset-env": "^7.25.3",

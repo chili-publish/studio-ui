@@ -19,6 +19,8 @@ test('focus and blur a text variable', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     let variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
@@ -53,6 +55,8 @@ test('focus an image variable on browse', async ({ page }) => {
     `);
 
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
@@ -97,6 +101,8 @@ test('focus and blur an image variable on remove', async ({ page }) => {
         };
     `);
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
@@ -145,6 +151,8 @@ test('focus and blur on image upload', async ({ page }) => {
         };
     `);
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 

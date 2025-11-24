@@ -45,6 +45,8 @@ test('ui theme options', async ({ page }) => {
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
+    await page.waitForLoadState('networkidle');
+
     // Inject the comic sans font style after navigation
     await page.addStyleTag({
         content: 'body { font-family: Comic Sans MS, cursive, sans-serif; }',
@@ -128,6 +130,8 @@ test('dark ui theme', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
+    await page.waitForLoadState('networkidle');
+
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     const availableLayoutsInput = page.locator('#sui-dropdown-available-layout-label-with-icon-container');
@@ -183,6 +187,8 @@ test('light ui theme', async ({ page }) => {
     `);
 
     await page.goto('/?demo=integration');
+
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
