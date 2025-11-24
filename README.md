@@ -103,19 +103,29 @@ for a more advanced example, and extra information about building an integration
 
 ### Configure .npmrc to access private npm repositories
 
+#### Setup access to `@chili-publish` registry
+
 This step is only applicable if you have access to the CHILI publish organisation.
 
-- Setup access to `@chili-publish` registry
+- Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only necessary scopes (`read:packages`) and expiration time recommendation is `90 days`.
 
-    - Generate `GH_ACCESS_TOKEN`: https://github.com/settings/tokens. Ensure that you selected only necessary scopes (`read:packages`) and expiration time recommendation is `90 days`.
-
-    - Login to the repository
+- Login to the repository
 
     ```bash
     npm login --scope=@chili-publish --registry=https://npm.pkg.github.com
     ```
 
     > you need to login with your github credentials, when asked for a password, use the previously generated `GH_ACCESS_TOKEN`
+
+#### Setup access to `@fortawesome` registry
+
+- Set the `FONTAWESOME_NPM_TOKEN` environment variable:
+
+    ```bash
+    export FONTAWESOME_NPM_TOKEN=<your-fontawesome-token>
+    ```
+
+    > On Windows, use `set FONTAWESOME_NPM_TOKEN=<your-fontawesome-token>` in Command Prompt or `$env:FONTAWESOME_NPM_TOKEN="<your-fontawesome-token>"` in PowerShell
 
 Example of the .npmrc (npmrc file for windows, ~/.npmrc for mac / linux) file:
 
