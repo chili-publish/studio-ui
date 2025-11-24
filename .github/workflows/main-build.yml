@@ -5,6 +5,7 @@ on:
             - main
 env:
     NODE_VERSION: 22.x
+    FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
 permissions:
     contents: read
     packages: read
@@ -31,7 +32,6 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
             - name: run package versions check
               run: yarn validate-versions
             - name: run license check
@@ -68,7 +68,6 @@ jobs:
                   yarn install
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
             - name: build code
               run: yarn build
             - name: copy file branch
