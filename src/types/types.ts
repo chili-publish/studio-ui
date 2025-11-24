@@ -320,6 +320,7 @@ export interface IStudioUILoaderConfig {
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
     uiTranslations?: UITranslations;
+    onLoadError?: (error: Error) => void;
 }
 
 export type PageSnapshot = {

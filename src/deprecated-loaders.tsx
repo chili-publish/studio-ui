@@ -17,7 +17,12 @@ export type AppConfig = {
 export default class StudioUILoader {
     protected root: Root | undefined;
 
-    constructor(selector: string, projectConfig: ProjectConfig, appConfig: AppConfig = {}) {
+    constructor(
+        selector: string,
+        projectConfig: ProjectConfig,
+        appConfig: AppConfig = {},
+        onLoadError?: (error: Error) => void,
+    ) {
         const container = document.getElementById(selector || 'sui-root');
 
         if (this.root) {
@@ -33,7 +38,7 @@ export default class StudioUILoader {
         this.root.render(
             <React.StrictMode>
                 <Provider store={store}>
-                    <App projectConfig={projectConfig} />
+                    <App projectConfig={projectConfig} onLoadError={onLoadError} />
                 </Provider>
             </React.StrictMode>,
         );
