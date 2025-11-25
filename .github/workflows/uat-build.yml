@@ -4,6 +4,7 @@ on:
         types: [prereleased]
 env:
     NODE_VERSION: 22.x
+    FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
 permissions:
     contents: read
     packages: read
@@ -19,6 +20,12 @@ jobs:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.cache/yarn
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
             - name: install dependencies
               run: |
                   yarn install
@@ -48,7 +55,13 @@ jobs:
             - name: Azure Login action
               uses: azure/login@v2
               with:
-                  creds: '{"clientId":"${{ vars.SP_FRONTEND_CLIENT_ID }}", "clientSecret": "${{ secrets.SP_FRONTEND_CLIENT_SECRET }}","tenantId":"${{ vars.AZURE_TENANT_ID }}", "subscriptionId": "${{ vars.SUBSCRIPTION_ID_UAT }}"}'
+                  creds: |
+                      {
+                          "clientId": "${{ vars.AZ_AD_CLIENT_ID_CP_RJS_INT_CICD_SP }}",
+                          "clientSecret": "${{ secrets.AZ_AD_CLIENT_SECRET_CP_RJS_INT_CICD_SP }}",
+                          "tenantId": "${{ vars.AZ_TENANT_ID }}",
+                          "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID_SAAS_UAT }}"
+                      }
             - name: Upload build
               uses: azure/cli@v2
               with:
