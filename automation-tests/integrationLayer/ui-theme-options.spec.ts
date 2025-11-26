@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { UiOptions } from 'src/types/types';
 import { getProjectConfig } from '../helpers/project.config';
 
@@ -31,6 +31,72 @@ const uiOptions: UiOptions = {
             visible: true,
         },
     },
+};
+
+const assertLightThemeStyling: (page: Page) => Promise<void> = async (page) => {
+    const availableLayoutsInput = page.locator('#sui-dropdown-available-layout-label-with-icon-container');
+    await expect(availableLayoutsInput).toBeVisible();
+
+    const availableLayoutsSelect = page.locator('.grafx-select__control').nth(0);
+    await availableLayoutsSelect.click();
+    await page.locator('.grafx-select__option', { hasText: '2K' }).click();
+
+    await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.getByTestId('test-sui-navbar')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.getByTestId('test-sui-timeline-wrapper')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
+        'background-color',
+        'rgb(1, 0, 88)',
+    );
+    await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(44, 44, 44)');
+
+    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+
+    await expect(page.locator('input[value="New Listing"] >> xpath=..')).toHaveCSS(
+        'background-color',
+        'rgb(245, 245, 245)',
+    );
+    await expect(page.locator('input[value="New Listing"]')).toHaveCSS('color', 'rgb(44, 44, 44)');
+
+    const leftPanelScrollbarThumb = page.getByTestId('test-gsc-scrollbar-wrapper');
+    const thumbColor = await leftPanelScrollbarThumb.evaluate((element) => {
+        return window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor;
+    });
+    expect(thumbColor).toBe('rgb(142, 142, 142)');
+};
+
+const assertDarkThemeStyling: (page: Page) => Promise<void> = async (page) => {
+    const availableLayoutsInput = page.locator('#sui-dropdown-available-layout-label-with-icon-container');
+    await expect(availableLayoutsInput).toBeVisible();
+
+    const availableLayoutsSelect = page.locator('.grafx-select__control').nth(0);
+    await availableLayoutsSelect.click();
+    await page.locator('.grafx-select__option', { hasText: '2K' }).click();
+
+    await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
+    await expect(page.getByTestId('test-sui-navbar')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
+    await expect(page.getByTestId('test-sui-timeline-wrapper')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
+
+    await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(255, 255, 255)');
+
+    await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
+        'background-color',
+        'rgb(79, 205, 182)',
+    );
+
+    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(50, 50, 50)');
+
+    await expect(page.locator('input[value="New Listing"] >> xpath=..')).toHaveCSS(
+        'background-color',
+        'rgb(50, 50, 50)',
+    );
+    await expect(page.locator('input[value="New Listing"]')).toHaveCSS('color', 'rgb(255, 255, 255)');
+
+    const leftPanelScrollbarThumb = page.getByTestId('test-gsc-scrollbar-wrapper');
+    const thumbColor = await leftPanelScrollbarThumb.evaluate((element) => {
+        return window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor;
+    });
+    expect(thumbColor).toBe('rgb(62, 62, 62)');
 };
 
 test('ui theme options', async ({ page }) => {
@@ -134,37 +200,7 @@ test('dark ui theme', async ({ page }) => {
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
-    const availableLayoutsInput = page.locator('#sui-dropdown-available-layout-label-with-icon-container');
-    await expect(availableLayoutsInput).toBeVisible();
-
-    const availableLayoutsSelect = page.locator('.grafx-select__control').nth(0);
-    await availableLayoutsSelect.click();
-    await page.locator('.grafx-select__option', { hasText: '2K' }).click();
-
-    await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
-    await expect(page.getByTestId('test-sui-navbar')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
-    await expect(page.getByTestId('test-sui-timeline-wrapper')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
-
-    await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(255, 255, 255)');
-
-    await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
-        'background-color',
-        'rgb(79, 205, 182)',
-    );
-
-    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(50, 50, 50)');
-
-    await expect(page.locator('input[value="New Listing"] >> xpath=..')).toHaveCSS(
-        'background-color',
-        'rgb(50, 50, 50)',
-    );
-    await expect(page.locator('input[value="New Listing"]')).toHaveCSS('color', 'rgb(255, 255, 255)');
-
-    const leftPanelScrollbarThumb = page.getByTestId('test-gsc-scrollbar-wrapper');
-    const thumbColor = await leftPanelScrollbarThumb.evaluate((element) => {
-        return window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor;
-    });
-    expect(thumbColor).toBe('rgb(62, 62, 62)');
+    await assertDarkThemeStyling(page);
 });
 
 test('light ui theme', async ({ page }) => {
@@ -192,33 +228,62 @@ test('light ui theme', async ({ page }) => {
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
-    const availableLayoutsInput = page.locator('#sui-dropdown-available-layout-label-with-icon-container');
-    await expect(availableLayoutsInput).toBeVisible();
+    await assertLightThemeStyling(page);
+});
 
-    const availableLayoutsSelect = page.locator('.grafx-select__control').nth(0);
-    await availableLayoutsSelect.click();
-    await page.locator('.grafx-select__option', { hasText: '2K' }).click();
+test.use({ colorScheme: 'dark' });
+test('system ui theme - dark', async ({ page }) => {
+    const projectConfig = {
+        ...getProjectConfig({
+            uiOptions: {
+                uiTheme: 'system',
+                widgets: {
+                    downloadButton: {
+                        visible: true,
+                    },
+                },
+            },
+        }),
+    };
+    const configString = JSON.stringify(projectConfig);
 
-    await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(page.getByTestId('test-sui-navbar')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(page.getByTestId('test-sui-timeline-wrapper')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
-        'background-color',
-        'rgb(1, 0, 88)',
-    );
-    await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(44, 44, 44)');
+    await page.addInitScript(`
+        window.__PROJECT_CONFIG__ = ${configString};
+    `);
 
-    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+    await page.goto('/?demo=integration');
 
-    await expect(page.locator('input[value="New Listing"] >> xpath=..')).toHaveCSS(
-        'background-color',
-        'rgb(245, 245, 245)',
-    );
-    await expect(page.locator('input[value="New Listing"]')).toHaveCSS('color', 'rgb(44, 44, 44)');
+    await page.waitForLoadState('networkidle');
 
-    const leftPanelScrollbarThumb = page.getByTestId('test-gsc-scrollbar-wrapper');
-    const thumbColor = await leftPanelScrollbarThumb.evaluate((element) => {
-        return window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor;
-    });
-    expect(thumbColor).toBe('rgb(142, 142, 142)');
+    await assertDarkThemeStyling(page);
+});
+
+test.use({ colorScheme: 'light' });
+test('system ui theme - light', async ({ page }) => {
+    const projectConfig = {
+        ...getProjectConfig({
+            uiOptions: {
+                uiTheme: 'system',
+                widgets: {
+                    downloadButton: {
+                        visible: true,
+                    },
+                },
+            },
+        }),
+    };
+    const configString = JSON.stringify(projectConfig);
+
+    await page.addInitScript(`
+        window.__PROJECT_CONFIG__ = ${configString};
+    `);
+
+    await page.emulateMedia({ colorScheme: 'light' });
+
+    await page.goto('/?demo=integration');
+    await page.emulateMedia({ colorScheme: 'light' });
+
+    await page.waitForLoadState('networkidle');
+
+    await assertLightThemeStyling(page);
 });

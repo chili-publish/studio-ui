@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test';
 import { getProjectConfig } from '../../helpers/project.config';
 
 test.describe('mobile UI tests', () => {
+    test.beforeEach(({ browserName }, testInfo) => {
+        const isMobile = testInfo.project.name.includes('mobile');
+        if (!isMobile) test.skip(); // skip desktop
+    });
     test('displays headings in the correct order', async ({ page }) => {
         const projectConfig = { ...getProjectConfig({}) };
         const configString = JSON.stringify(projectConfig);
