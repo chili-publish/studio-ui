@@ -289,13 +289,13 @@ export interface IStudioUILoaderConfig {
     projectUploadUrl?: string;
     sandboxMode?: boolean;
     featureFlags?: Record<string, boolean>;
-    variableTranslations?: VariableTranslations;
+    variableTranslations?: VariableTranslations; //
     layoutTranslations?: LayoutTranslations;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
-    onEngineInitialized?: (project: Project) => void;
+    onEngineInitialized?: (project: Project) => void; // tests
     onProjectLoaded?: () => void;
     onAuthenticationRequested?: () => string;
     onAuthenticationExpired?: () => Promise<string>;
@@ -309,12 +309,12 @@ export interface IStudioUILoaderConfig {
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
-    onVariableBlur?: (variableId: string) => void;
+    onVariableBlur?: (variableId: string) => void; // extend for all variable types
     onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
     onVariableValueChangedCompleted?: (
         variableId: string,
         value: string | boolean | number | null | undefined,
-    ) => Promise<void>;
+    ) => Promise<void>; // tests
     uiTranslations?: UITranslations;
 }
 

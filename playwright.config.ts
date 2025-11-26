@@ -15,7 +15,7 @@ export default defineConfig({
         {
             name: 'mobile',
             use: {
-                ...devices['iPhone 15 Pro Max'],
+                ...devices['iPhone 12 Mini'],
                 browserName: 'chromium',
             },
             testDir: './automation-tests/integrationLayer/mobile',

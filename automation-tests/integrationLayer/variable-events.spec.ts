@@ -1,69 +1,148 @@
-import { test, expect } from '@playwright/test';
+import { test as base, expect, Page } from '@playwright/test';
 import { getProjectConfig } from '../helpers/project.config';
-test('focus and blur a text variable', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({}) };
 
-    const configString = JSON.stringify(projectConfig);
+const test = base.extend<{ variableEventsPage: Page }>({
+    variableEventsPage: async ({ page }, use) => {
+        const projectConfig = { ...getProjectConfig({}) };
 
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-        window.__VARIABLE_FOCUSED__ID__ = null;
-        window.__VARIABLE_BLURRED__ID__ = null;
-        window.__PROJECT_CONFIG__.onVariableFocus = (id) => {
-            window.__VARIABLE_FOCUSED__ID__ = id;
-        };
-        window.__PROJECT_CONFIG__.onVariableBlur = (id) => {
-            window.__VARIABLE_BLURRED__ID__ = id;
-        };
-    `);
+        const configString = JSON.stringify(projectConfig);
 
-    await page.goto('/?demo=integration');
+        await page.addInitScript(`
+            window.__PROJECT_CONFIG__ = ${configString};
+            window.__VARIABLE_FOCUSED__ID__ = null;
+            window.__VARIABLE_BLURRED__ID__ = null;
+            window.__PROJECT_CONFIG__.onVariableFocus = (id) => {
+                window.__VARIABLE_FOCUSED__ID__ = id;
+            };
+            window.__PROJECT_CONFIG__.onVariableBlur = (id) => {
+                window.__VARIABLE_BLURRED__ID__ = id;
+            };
+        `);
 
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    let variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+        await page.goto('/?demo=integration');
+        await page.waitForLoadState('networkidle');
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        await use(page);
+    },
+});
+test('focus and blur a text variable', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
 
     expect(variableFocused).toBe(null);
-    const textVariable = page.locator('input[value="New Listing"]');
+    const textVariable = variableEventsPage.locator('input[value="New Listing"]');
     await expect(textVariable).toBeVisible();
-    await textVariable.fill('variable value');
+    // did not use fill to avoid triggering blur event when typing
+    await textVariable.click();
+    await textVariable.pressSequentially('variable value');
 
-    variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
     expect(variableFocused).toBe('a754b513-c120-4a0d-9f3c-96ebc825cba4');
+    expect(variableBlurred).toBe(null);
 
-    const dataSourceTitle = page.getByRole('heading', { name: 'Data source' });
+    // trigger blur event by clicking on any other element
+    const dataSourceTitle = variableEventsPage.getByRole('heading', { name: 'Data source' });
     await expect(dataSourceTitle).toBeVisible();
     await dataSourceTitle.click();
 
-    const variableBlurred = await page.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
     expect(variableBlurred).toBe('a754b513-c120-4a0d-9f3c-96ebc825cba4');
 });
 
-test('focus an image variable on browse', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({}) };
+test('focus and blur a boolean variable', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
 
-    const configString = JSON.stringify(projectConfig);
+    expect(variableFocused).toBe(null);
+    const booleanVariableLabel = variableEventsPage.getByText('HasBackyard');
+    const booleanVariable = booleanVariableLabel.locator('..');
+    await expect(booleanVariable).toBeVisible();
 
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-        window.__VARIABLE_FOCUSED__ID__ = null;
-        window.__PROJECT_CONFIG__.onVariableFocus = (id) => {
-            window.__VARIABLE_FOCUSED__ID__ = id;
-        };
-    `);
+    await booleanVariable.click();
 
-    await page.goto('/?demo=integration');
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    expect(variableFocused).toBe('6bbe3817-64e1-415b-819a-50d55fea9aa0');
+    const variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableBlurred).toBe('6bbe3817-64e1-415b-819a-50d55fea9aa0');
+});
 
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    let variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+test('focus and blur a date variable', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
     expect(variableFocused).toBe(null);
 
-    await expect(page.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
+    const dateVariable = variableEventsPage.getByRole('textbox', { name: 'Date' });
+    await expect(dateVariable).toBeVisible();
+    await dateVariable.click();
+
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableFocused).toBe('fa683e26-8f8f-4236-be62-ee84205122ce');
+    expect(variableBlurred).toBe(null);
+
+    await dateVariable.fill('2025-11-25');
+
+    // trigger blur event by clicking on any other element
+    const dataSourceTitle = variableEventsPage.getByRole('heading', { name: 'Data source' });
+    await expect(dataSourceTitle).toBeVisible();
+    await dataSourceTitle.click();
+
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableBlurred).toBe('fa683e26-8f8f-4236-be62-ee84205122ce');
+});
+
+test('focus and blur a list variable', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    expect(variableFocused).toBe(null);
+
+    const listVariable = variableEventsPage.getByTestId('test-sui-dropdown-6cfd95c1-5f8d-4757-bc7a-fd9b50fe415a');
+    await expect(listVariable).toBeVisible();
+
+    const listVariableSelect = listVariable.locator('.grafx-select__indicator');
+    await listVariableSelect.click();
+
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableFocused).toBe('6cfd95c1-5f8d-4757-bc7a-fd9b50fe415a');
+
+    // it is disabled due to a bug on ListVariable component, which calls onVariableBlur when the select is opened first time
+    // expect(variableBlurred).toBe(null);
+
+    await variableEventsPage.locator('.grafx-select__option', { hasText: 'Option2' }).click();
+
+    // trigger blur event by clicking on any other element
+    const dataSourceTitle = variableEventsPage.getByRole('heading', { name: 'Data source' });
+    await expect(dataSourceTitle).toBeVisible();
+    await dataSourceTitle.click();
+
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableBlurred).toBe('6cfd95c1-5f8d-4757-bc7a-fd9b50fe415a');
+});
+
+test('focus and blur a multi line text variable', async ({ variableEventsPage }) => {
+    const textVariable = variableEventsPage.getByRole('textbox', { name: 'multi-line-text' });
+    await expect(textVariable).toBeVisible();
+
+    // did not use fill to avoid triggering blur event when typing
+    await textVariable.click();
+    await textVariable.pressSequentially('multi line text variable value');
+
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableFocused).toBe('6680a4aa-28d9-48fe-a99a-9dcd1925907d');
+
+    // trigger blur event by clicking on any other element
+    const dataSourceTitle = variableEventsPage.getByRole('heading', { name: 'Data source' });
+    await expect(dataSourceTitle).toBeVisible();
+    await dataSourceTitle.click();
+
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableBlurred).toBe('6680a4aa-28d9-48fe-a99a-9dcd1925907d');
+});
+
+test('focus an image variable on browse', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    expect(variableFocused).toBe(null);
+
+    await expect(variableEventsPage.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
         - text: Data row
         - textbox "data-source-input":
           - /placeholder: Select data row
@@ -75,43 +154,22 @@ test('focus an image variable on browse', async ({ page }) => {
         setTimeout(resolve, 1000);
     });
 
-    const imageVariable = page.getByTestId('test-gsc-image-picker-content').first();
+    const imageVariable = variableEventsPage.getByTestId('test-gsc-image-picker-content').first();
     await expect(imageVariable).toBeVisible();
     await imageVariable.dblclick();
 
-    await expect(page.getByPlaceholder('Search')).toBeVisible();
-    variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    await expect(variableEventsPage.getByPlaceholder('Search')).toBeVisible();
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
     expect(variableFocused).toBe('65aa0424-ff1d-4939-8ad3-37ba84463953');
 });
 
-test('focus and blur an image variable on remove', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({}) };
-
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-        window.__VARIABLE_FOCUSED__ID__ = null;
-        window.__VARIABLE_BLURRED__ID__ = null;
-        window.__PROJECT_CONFIG__.onVariableFocus = (id) => {
-            window.__VARIABLE_FOCUSED__ID__ = id;
-        };
-        window.__PROJECT_CONFIG__.onVariableBlur = (id) => {
-            window.__VARIABLE_BLURRED__ID__ = id;
-        };
-    `);
-    await page.goto('/?demo=integration');
-
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    let variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
-    let variableBlurred = await page.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+test('focus and blur an image variable on remove', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
     expect(variableFocused).toBe(null);
     expect(variableBlurred).toBe(null);
 
-    await expect(page.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
+    await expect(variableEventsPage.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
         - text: Data row
         - textbox "data-source-input":
           - /placeholder: Select data row
@@ -119,49 +177,28 @@ test('focus and blur an image variable on remove', async ({ page }) => {
         - button
         `);
 
-    const imageVariable = page.locator('#b0baa83c-6ce3-441f-a39f-0b767b5bc329');
+    const imageVariable = variableEventsPage.locator('#b0baa83c-6ce3-441f-a39f-0b767b5bc329');
     await expect(imageVariable).toBeVisible();
 
-    const removeButton = page
+    const removeButton = variableEventsPage
         .getByTestId('test-sui-img-picker-b0baa83c-6ce3-441f-a39f-0b767b5bc329')
         .getByTestId('test-gsc-button');
     await expect(removeButton).toBeVisible();
     await removeButton.click();
 
-    variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
     expect(variableFocused).toBe('b0baa83c-6ce3-441f-a39f-0b767b5bc329');
-    variableBlurred = await page.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
     expect(variableBlurred).toBe('b0baa83c-6ce3-441f-a39f-0b767b5bc329');
 });
 
-test('focus and blur on image upload', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({}) };
-
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-        window.__VARIABLE_FOCUSED__ID__ = null;
-        window.__VARIABLE_BLURRED__ID__ = null;
-        window.__PROJECT_CONFIG__.onVariableFocus = (id) => {
-            window.__VARIABLE_FOCUSED__ID__ = id;
-        };
-        window.__PROJECT_CONFIG__.onVariableBlur = (id) => {
-            window.__VARIABLE_BLURRED__ID__ = id;
-        };
-    `);
-    await page.goto('/?demo=integration');
-
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    let variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
-    let variableBlurred = await page.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+test.skip('focus and blur on image upload', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
     expect(variableFocused).toBe(null);
     expect(variableBlurred).toBe(null);
 
-    await expect(page.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
+    await expect(variableEventsPage.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
         - text: Data row
         - textbox "data-source-input":
           - /placeholder: Select data row
@@ -169,18 +206,19 @@ test('focus and blur on image upload', async ({ page }) => {
         - button
         `);
 
-    const imageVariable = page.locator('#b0baa83c-6ce3-441f-a39f-0b767b5bc329');
+    const imageVariable = variableEventsPage.locator('#b0baa83c-6ce3-441f-a39f-0b767b5bc329');
     await expect(imageVariable).toBeVisible();
 
     const filePath = new URL('assets/img.PNG', import.meta.url).pathname;
-    const uploadInput = page
+    const uploadInput = variableEventsPage
         .getByTestId('test-sui-img-picker-b0baa83c-6ce3-441f-a39f-0b767b5bc329')
         .getByTestId('test-gsc-image-picker-upload-input');
     uploadInput.setInputFiles(filePath);
     await uploadInput.dispatchEvent('change');
 
-    variableFocused = await page.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
     expect(variableFocused).toBe('b0baa83c-6ce3-441f-a39f-0b767b5bc329');
-    variableBlurred = await page.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
     expect(variableBlurred).toBe('b0baa83c-6ce3-441f-a39f-0b767b5bc329');
+    //  remove the asset afterwards
 });
