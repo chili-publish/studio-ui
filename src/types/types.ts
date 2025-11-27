@@ -295,7 +295,7 @@ export interface IStudioUILoaderConfig {
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested?: (projectId?: string) => Promise<string | null>;
     onProjectSave?: (generateJson: () => Promise<string>) => Promise<Project>;
-    onEngineInitialized?: (project: Project) => void; // tests
+    onEngineInitialized?: (project: Project) => void;
     onProjectLoaded?: () => void;
     onAuthenticationRequested?: () => string;
     onAuthenticationExpired?: () => Promise<string>;
@@ -309,7 +309,7 @@ export interface IStudioUILoaderConfig {
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
-    onVariableBlur?: (variableId: string) => void; // extend for all variable types
+    onVariableBlur?: (variableId: string) => void;
     onFetchUserInterfaceDetails?: (userInterfaceId: string) => Promise<UserInterface>;
     onVariableValueChangedCompleted?: (
         variableId: string,

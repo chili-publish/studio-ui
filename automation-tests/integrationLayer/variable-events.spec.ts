@@ -49,6 +49,45 @@ test('focus and blur a text variable', async ({ variableEventsPage }) => {
     expect(variableBlurred).toBe('a754b513-c120-4a0d-9f3c-96ebc825cba4');
 });
 
+test('focus and blur a number variable', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    expect(variableFocused).toBe(null);
+
+    const numberVariable = variableEventsPage.getByTestId('test-sui-input-number-cfdb290c-2f69-4e53-b432-dc41401c0c07');
+    await expect(numberVariable).toBeVisible();
+    await numberVariable.click();
+
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableFocused).toBe('cfdb290c-2f69-4e53-b432-dc41401c0c07');
+    expect(variableBlurred).toBe(null);
+
+    // trigger blur event by clicking on any other element
+    const dataSourceTitle = variableEventsPage.getByRole('heading', { name: 'Data source' });
+    await expect(dataSourceTitle).toBeVisible();
+    await dataSourceTitle.click();
+
+    variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableBlurred).toBe('cfdb290c-2f69-4e53-b432-dc41401c0c07');
+});
+
+test('focus and blur a number variable with stepper', async ({ variableEventsPage }) => {
+    let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    expect(variableFocused).toBe(null);
+
+    const numberVariable = variableEventsPage.getByTestId('test-sui-input-number-cfdb290c-2f69-4e53-b432-dc41401c0c07');
+    await expect(numberVariable).toBeVisible();
+    const numberVariableWrapper = numberVariable.locator('..');
+
+    const stepper = numberVariableWrapper.getByRole('button').first();
+    await stepper.click();
+
+    variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+    let variableBlurred = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_BLURRED__ID__);
+    expect(variableFocused).toBe('cfdb290c-2f69-4e53-b432-dc41401c0c07');
+    expect(variableBlurred).toBe('cfdb290c-2f69-4e53-b432-dc41401c0c07');
+});
+
 test('focus and blur a boolean variable', async ({ variableEventsPage }) => {
     let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
 
