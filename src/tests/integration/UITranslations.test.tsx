@@ -49,7 +49,7 @@ const config = {
     selector: 'sui-root',
     projectUploadUrl: 'http://abc.com/projects/projectId',
     projectId: 'projectId',
-    graFxStudioEnvironmentApiBaseUrl: 'http://abc.com',
+    graFxStudioEnvironmentApiBaseUrl: 'https://test-api.test.com/grafx/api/v1/environment/test-api',
     authToken: 'token',
     projectName: '',
     uiTranslations: mockUITranslations,
