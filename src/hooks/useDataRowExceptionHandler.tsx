@@ -3,7 +3,7 @@ import SDK, { DataRowAsyncError, Variable, VariableType } from '@chili-publish/s
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 import { useCallback, useEffect } from 'react';
-import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
+import { useNotificationManager } from '../contexts/NotificantionManager/NotificationManagerContext';
 
 const DATA_SOURCE_TOAST_ID = 'data-source-toast';
 const varTypesWithNoValue = [VariableType.number, VariableType.boolean];
@@ -93,8 +93,4 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
             unsubscriber?.();
         };
     }, [sdkRef, handleRowExceptions, removeNotifications]);
-
-    return {
-        handleRowExceptions,
-    };
 };
