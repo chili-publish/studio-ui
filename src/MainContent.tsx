@@ -56,10 +56,9 @@ import { useNotificationManager } from './contexts/NotificantionManager/Notifica
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
     projectConfig: ProjectConfig;
-    onLoadError?: (error: Error) => void;
 }
 
-function MainContent({ projectConfig, onLoadError }: MainContentProps) {
+function MainContent({ projectConfig }: MainContentProps) {
     const dispatch = useAppDispatch();
     const { addNotification } = useNotificationManager();
 
@@ -284,7 +283,7 @@ function MainContent({ projectConfig, onLoadError }: MainContentProps) {
                     type: ToastVariant.NEGATIVE,
                     duration: 5000,
                 });
-                onLoadError?.(error);
+                projectConfig.onLoadError?.(error);
             },
         });
 

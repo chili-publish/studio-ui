@@ -24,13 +24,8 @@ export default class StudioUI extends StudioUILoader {
      * @param projectConfig - The configuration of the project
      * @returns
      */
-    private static fullStudioIntegrationConfig(
-        selector: string,
-        projectConfig: ProjectConfig,
-        appConfig?: AppConfig,
-        onLoadError?: (error: Error) => void,
-    ) {
-        return new StudioUI(selector, projectConfig, appConfig, onLoadError);
+    private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig, appConfig?: AppConfig) {
+        return new StudioUI(selector, projectConfig, appConfig);
     }
 
     /**
@@ -139,18 +134,20 @@ export default class StudioUI extends StudioUILoader {
                 if (typeof uiOptions.widgets !== 'object') {
                     errorsObject.widgets = 'Widgets must be an object';
                 } else {
-                    Object.values(uiOptions.widgets).forEach((v) => {
-                        if (typeof v !== 'object') {
-                            errorsObject.widgets = "Provided widgets must contain property 'visible' of type boolean";
-                        }
-                    });
+                    const hasInvalidWidget = Object.values(uiOptions.widgets).some(
+                        (v) => typeof v !== 'object' || typeof v.visible !== 'boolean',
+                    );
+
+                    if (hasInvalidWidget) {
+                        errorsObject.widgets = "Provided widgets must contain property 'visible' of type boolean";
+                    }
                 }
             }
             if (uiOptions?.formBuilder !== undefined) {
                 if (typeof uiOptions.formBuilder !== 'object') {
                     errorsObject.formBuilder = 'Form builder must be an object';
                 } else {
-                    const formBuilder = uiOptions.formBuilder;
+                    const { formBuilder } = uiOptions;
                     const requiredFormKeys: FormKeys[] = ['datasource', 'layouts', 'variables'];
                     const formBuilderErrors: Record<string, Record<string, string>> = {
                         datasource: {},
@@ -265,9 +262,9 @@ export default class StudioUI extends StudioUILoader {
      * @param layoutTranslations - Translations for the layout.
      * @returns
      */
-    static studioUILoaderConfig(config: IStudioUILoaderConfig) {
+    static studioUILoaderConfig(config: IStudioUILoaderConfig): StudioUI | null {
         if (!this.validateCoreConfig(config)) {
-            return;
+            return null;
         }
         const {
             selector,
@@ -367,13 +364,13 @@ export default class StudioUI extends StudioUILoader {
                 onVariableValueChangedCompleted,
                 onProjectLoaded,
                 environmentApiService,
+                onLoadError,
             },
             {
                 variableTranslations,
                 uiTranslations,
                 layoutTranslations,
             },
-            onLoadError,
         );
     }
 }

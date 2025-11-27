@@ -70,6 +70,7 @@ export type ProjectConfig = {
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
     environmentApiService: EnvironmentApiService;
+    onLoadError?: (error: Error) => void;
 };
 
 export type DownloadLinkResult = {

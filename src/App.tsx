@@ -19,7 +19,7 @@ declare global {
     }
 }
 
-function App({ projectConfig, onLoadError }: { projectConfig: ProjectConfig; onLoadError?: (error: Error) => void }) {
+function App({ projectConfig }: { projectConfig: ProjectConfig }) {
     // TODO: Consider to define global object instead
     const [eventSubscriber] = useState(new Subscriber());
 
@@ -57,7 +57,7 @@ function App({ projectConfig, onLoadError }: { projectConfig: ProjectConfig; onL
                                 <EnvironmentClientApiProvider
                                     environmentApiService={projectConfig.environmentApiService}
                                 >
-                                    <MainContent projectConfig={projectConfig} onLoadError={onLoadError} />
+                                    <MainContent projectConfig={projectConfig} />
                                 </EnvironmentClientApiProvider>
                             </FeatureFlagProvider>
                         </NotificationManagerProvider>
