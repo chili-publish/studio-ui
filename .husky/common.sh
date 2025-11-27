@@ -6,3 +6,6 @@ command_exists () {
 if command_exists winpty && test -t 1; then
   exec < /dev/tty
 fi
+
+# Export FONTAWESOME_NPM_TOKEN (reads from ~/.huskyrc via husky.sh, with fallback)
+export FONTAWESOME_NPM_TOKEN=${FONTAWESOME_NPM_TOKEN:-placeholder-token}
