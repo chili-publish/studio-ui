@@ -5,7 +5,7 @@ import { ImageVariable } from '@chili-publish/studio-sdk';
 
 import StudioUI from '../../main';
 
-const environmentBaseURL = 'environmentBaseURL';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const projectName = 'projectName';
 const token = 'auth-token';
