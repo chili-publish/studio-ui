@@ -17,7 +17,7 @@ export default ({ mode }) => {
         base: './',
         optimizeDeps: {
             // To debug linked version of '@chili-publish/grafx-shared-components', exclude it from this array
-            include: ['@chili-publish/grafx-shared-components'],
+            include: [],
         },
         resolve: {
             // force Vite to always resolve listed dependencies to the same copy (from project root).
