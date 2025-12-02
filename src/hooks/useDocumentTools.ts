@@ -28,9 +28,10 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
             );
         });
         if (framesWithEnabledConstraints) {
-            sdkRef.tool.setSelect();
+            await sdkRef.tool.setSelect();
         } else {
-            sdkRef.tool.setHand();
+            await sdkRef.frame.deselectAll();
+            await sdkRef.tool.setHand();
         }
     }, [sdkRef, selectedPageId, visibleFrames]);
 

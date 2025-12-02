@@ -1,4 +1,4 @@
-import EditorSDK, { FrameLayoutType, FrameConstraints, FrameTypeEnum, FrameType } from '@chili-publish/studio-sdk';
+import SDK, { FrameLayoutType, FrameConstraints, FrameTypeEnum, FrameType } from '@chili-publish/studio-sdk';
 import { act, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
@@ -34,21 +34,24 @@ const createMockConstraints = (overrides?: Partial<FrameConstraints>): FrameCons
     }) as unknown as FrameConstraints;
 
 describe('useDocumentTools', () => {
-    let sdk: EditorSDK;
+    let sdk: SDK;
     let getAllByPageIdSpy: jest.Mock;
     let getConstraintsSpy: jest.Mock;
     let setSelectSpy: jest.Mock;
     let setHandSpy: jest.Mock;
+    let deselectAllSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
 
     beforeEach(() => {
         // Create a mocked SDK instance
-        sdk = mock<EditorSDK>();
+        sdk = mock<SDK>();
 
         // Set up frame methods
         getAllByPageIdSpy = jest.fn();
+        deselectAllSpy = jest.fn();
         sdk.frame = {
             getAllByPageId: getAllByPageIdSpy,
+            deselectAll: deselectAllSpy,
             constraints: {
                 get: jest.fn(),
             },
@@ -128,6 +131,7 @@ describe('useDocumentTools', () => {
         await waitFor(() => {
             expect(getAllByPageIdSpy).toHaveBeenCalledWith('page1');
             expect(getConstraintsSpy).toHaveBeenCalledTimes(2);
+            expect(deselectAllSpy).toHaveBeenCalled();
             expect(setHandSpy).toHaveBeenCalled();
             expect(setSelectSpy).not.toHaveBeenCalled();
         });
@@ -402,7 +406,7 @@ describe('useDocumentTools', () => {
         });
 
         const { rerender } = renderHookWithProviders(
-            (props: { pageId: string }) => useDocumentTools(sdk, props.pageId),
+            (props: { pageId: string | null }) => useDocumentTools(sdk, props.pageId),
             {
                 initialProps: { pageId: 'page1' },
             },
