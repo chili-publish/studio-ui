@@ -31,6 +31,14 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
             await sdkRef.tool.setSelect();
         } else {
             await sdkRef.frame.deselectAll();
+
+            // frame.deselectAll currently removes focus from selected layout too so we use use
+            // a workaround below to restore it
+            const { parsedData: selectedLayout } = await sdkRef.layout.getSelected();
+            if (selectedLayout) {
+                await sdkRef.layout.select(selectedLayout.id);
+            }
+
             await sdkRef.tool.setHand();
         }
     }, [sdkRef, selectedPageId, visibleFrames]);

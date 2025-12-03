@@ -40,6 +40,8 @@ describe('useDocumentTools', () => {
     let setSelectSpy: jest.Mock;
     let setHandSpy: jest.Mock;
     let deselectAllSpy: jest.Mock;
+    let getSelectedLayoutSpy: jest.Mock;
+    let selectLayoutSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
 
     beforeEach(() => {
@@ -57,6 +59,18 @@ describe('useDocumentTools', () => {
             },
         } as unknown as typeof sdk.frame;
         getConstraintsSpy = sdk.frame.constraints.get as jest.Mock;
+
+        // Set up layout methods
+        getSelectedLayoutSpy = jest.fn().mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: null,
+        });
+        selectLayoutSpy = jest.fn();
+        sdk.layout = {
+            getSelected: getSelectedLayoutSpy,
+            select: selectLayoutSpy,
+        } as unknown as typeof sdk.layout;
 
         // Set up tool methods
         setSelectSpy = jest.fn();
@@ -123,6 +137,12 @@ describe('useDocumentTools', () => {
         // Clear initial calls from hook mount
         jest.clearAllMocks();
 
+        getSelectedLayoutSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: { id: 'layout1' },
+        });
+
         // Simulate frames layout change with visible frames
         await act(async () => {
             await triggerCallback([createMockFrameLayout('frame1', true), createMockFrameLayout('frame2', true)]);
@@ -132,6 +152,8 @@ describe('useDocumentTools', () => {
             expect(getAllByPageIdSpy).toHaveBeenCalledWith('page1');
             expect(getConstraintsSpy).toHaveBeenCalledTimes(2);
             expect(deselectAllSpy).toHaveBeenCalled();
+            expect(getSelectedLayoutSpy).toHaveBeenCalled();
+            expect(selectLayoutSpy).toHaveBeenCalledWith('layout1');
             expect(setHandSpy).toHaveBeenCalled();
             expect(setSelectSpy).not.toHaveBeenCalled();
         });
