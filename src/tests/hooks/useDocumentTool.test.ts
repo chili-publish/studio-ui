@@ -40,8 +40,7 @@ describe('useDocumentTools', () => {
     let setSelectSpy: jest.Mock;
     let setHandSpy: jest.Mock;
     let deselectAllSpy: jest.Mock;
-    let getSelectedLayoutSpy: jest.Mock;
-    let selectLayoutSpy: jest.Mock;
+    let getSelectedFramesSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
 
     beforeEach(() => {
@@ -51,26 +50,20 @@ describe('useDocumentTools', () => {
         // Set up frame methods
         getAllByPageIdSpy = jest.fn();
         deselectAllSpy = jest.fn();
+        getSelectedFramesSpy = jest.fn().mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [],
+        });
         sdk.frame = {
             getAllByPageId: getAllByPageIdSpy,
             deselectAll: deselectAllSpy,
+            getSelected: getSelectedFramesSpy,
             constraints: {
                 get: jest.fn(),
             },
         } as unknown as typeof sdk.frame;
         getConstraintsSpy = sdk.frame.constraints.get as jest.Mock;
-
-        // Set up layout methods
-        getSelectedLayoutSpy = jest.fn().mockResolvedValue({
-            success: true,
-            status: 200,
-            parsedData: null,
-        });
-        selectLayoutSpy = jest.fn();
-        sdk.layout = {
-            getSelected: getSelectedLayoutSpy,
-            select: selectLayoutSpy,
-        } as unknown as typeof sdk.layout;
 
         // Set up tool methods
         setSelectSpy = jest.fn();
@@ -137,10 +130,10 @@ describe('useDocumentTools', () => {
         // Clear initial calls from hook mount
         jest.clearAllMocks();
 
-        getSelectedLayoutSpy.mockResolvedValue({
+        getSelectedFramesSpy.mockResolvedValue({
             success: true,
             status: 200,
-            parsedData: { id: 'layout1' },
+            parsedData: [frame1],
         });
 
         // Simulate frames layout change with visible frames
@@ -151,9 +144,54 @@ describe('useDocumentTools', () => {
         await waitFor(() => {
             expect(getAllByPageIdSpy).toHaveBeenCalledWith('page1');
             expect(getConstraintsSpy).toHaveBeenCalledTimes(2);
+            expect(getSelectedFramesSpy).toHaveBeenCalled();
             expect(deselectAllSpy).toHaveBeenCalled();
-            expect(getSelectedLayoutSpy).toHaveBeenCalled();
-            expect(selectLayoutSpy).toHaveBeenCalledWith('layout1');
+            expect(setHandSpy).toHaveBeenCalled();
+            expect(setSelectSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    it('should set hand tool without deselecting when no frames are selected', async () => {
+        const frame1 = createMockFrame('frame1', 'Frame 1');
+
+        getAllByPageIdSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [frame1],
+        });
+
+        getConstraintsSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: createMockConstraints({
+                selectable: createMockPropertyState(false),
+                horizontal: createMockPropertyState({ allowed: false }),
+                vertical: createMockPropertyState({ allowed: false }),
+                rotation: createMockPropertyState({ allowed: false }),
+                resize: createMockPropertyState({ allowed: false }),
+            }),
+        });
+
+        renderHookWithProviders(() => useDocumentTools(sdk, 'page1'));
+
+        // Clear initial calls from hook mount
+        jest.clearAllMocks();
+
+        getSelectedFramesSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [],
+        });
+
+        await act(async () => {
+            await triggerCallback([createMockFrameLayout('frame1', true)]);
+        });
+
+        await waitFor(() => {
+            expect(getAllByPageIdSpy).toHaveBeenCalledWith('page1');
+            expect(getConstraintsSpy).toHaveBeenCalledTimes(1);
+            expect(getSelectedFramesSpy).toHaveBeenCalled();
+            expect(deselectAllSpy).not.toHaveBeenCalled();
             expect(setHandSpy).toHaveBeenCalled();
             expect(setSelectSpy).not.toHaveBeenCalled();
         });
