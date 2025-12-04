@@ -93,7 +93,7 @@ jobs:
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     preflight:
-        needs: [validate-tag-release]
+        needs: [validate-tag-release, detect-release-type]
         if: needs.validate-tag-release.outputs.release_exists == 'true'
         runs-on: ubuntu-latest
         permissions:
@@ -289,6 +289,8 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
 
             - name: Check cache
               id: cache
@@ -302,6 +304,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Check if hotfix release
               id: check_hotfix
