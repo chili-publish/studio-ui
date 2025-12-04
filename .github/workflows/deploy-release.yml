@@ -216,6 +216,8 @@ jobs:
         if: needs.validate-tag-release.outputs.release_exists == 'true'
         name: Cloudflare CDN purge
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
