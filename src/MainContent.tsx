@@ -252,6 +252,11 @@ function MainContent({ projectConfig }: MainContentProps) {
             onLayoutsChanged: (layoutList) => {
                 setLayouts(layoutList);
             },
+            onFramesLayoutChanged: () => {
+                if (shouldSaveDocument()) {
+                    saveDocumentDebounced();
+                }
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
