@@ -42,9 +42,9 @@ jobs:
                   NODE_OPTIONS: --max-old-space-size=6144
             - name: Rename coverage to shard coverage
               run: |
-                  mv coverage/cover.xml coverage/cover-${{matrix.shard}}.xml
+                  mv coverage/junit.xml coverage/junit-${{matrix.shard}}.xml
                   mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
-                  mv coverage/coverage-final.json coverage/coverage-${{matrix.shard}}.json
+                  mv coverage/coverage-final.json coverage/coverage-final-${{matrix.shard}}.json
             - name: Use UploadArtifact
               uses: actions/upload-artifact@v4
               with:
