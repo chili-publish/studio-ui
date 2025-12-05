@@ -98,6 +98,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: read
+            packages: read
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -136,6 +137,7 @@ jobs:
         timeout-minutes: 30
         permissions:
             contents: read
+            packages: read
         strategy:
             matrix:
                 shard: [1, 2, 3, 4, 5]
@@ -179,6 +181,7 @@ jobs:
         environment: ${{ needs.detect-release-type.outputs.environment }}
         permissions:
             contents: read
+            packages: read
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -307,6 +310,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write
+            packages: read
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         steps:

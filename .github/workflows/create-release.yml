@@ -75,6 +75,7 @@ jobs:
         permissions:
             contents: write
             pull-requests: read
+            packages: read
         outputs:
             notification_text: ${{ steps.create_release_and_notify.outputs.notification_text }}
         steps:
@@ -197,6 +198,7 @@ jobs:
         permissions:
             contents: write
             pull-requests: read
+            packages: read
         outputs:
             notification_text: ${{ steps.create_release_and_notify.outputs.notification_text }}
         steps:
@@ -327,6 +329,7 @@ jobs:
         permissions:
             contents: write
             pull-requests: read
+            packages: read
         outputs:
             notification_text: ${{ steps.create_release_and_notify.outputs.notification_text }}
         steps:
