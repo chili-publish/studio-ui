@@ -127,6 +127,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -247,6 +249,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -374,7 +378,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Fetch GH releases
               id: fetch_releases
               uses: ./.github/actions/fetch-gh-releases
