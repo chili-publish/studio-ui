@@ -44,24 +44,24 @@ jobs:
               id: prepare
               run: |
                   # Read values from workflow_dispatch inputs (required)
-                  if [ -z "${{ github.event.inputs.environment }}" ]; then
-                    echo "❌ Error: 'environment' input is required"
-                    exit 1
-                  fi
+                  # if [ -z "${{ github.event.inputs.environment }}" ]; then
+                  #   echo "❌ Error: 'environment' input is required"
+                  #   exit 1
+                  # fi
                   # ENVIRONMENT="${{ github.event.inputs.environment }}"
                   ENVIRONMENT="uat"
 
-                  if [ -z "${{ github.event.inputs.release_type }}" ]; then
-                    echo "❌ Error: 'release_type' input is required"
-                    exit 1
-                  fi
+                  # if [ -z "${{ github.event.inputs.release_type }}" ]; then
+                  #   echo "❌ Error: 'release_type' input is required"
+                  #   exit 1
+                  # fi
                   # RELEASE_TYPE="${{ github.event.inputs.release_type }}"
                   RELEASE_TYPE="regular"
 
-                  if [ -z "${{ github.event.inputs.sdk_version }}" ]; then
-                    echo "❌ Error: 'sdk_version' input is required"
-                    exit 1
-                  fi
+                  # if [ -z "${{ github.event.inputs.sdk_version }}" ]; then
+                  #   echo "❌ Error: 'sdk_version' input is required"
+                  #   exit 1
+                  # fi
                   # SDK_VERSION="${{ github.event.inputs.sdk_version }}"
                   SDK_VERSION="1.35.0"
 
