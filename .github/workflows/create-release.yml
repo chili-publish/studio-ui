@@ -63,7 +63,7 @@ jobs:
                   #   exit 1
                   # fi
                   # SDK_VERSION="${{ github.event.inputs.sdk_version }}"
-                  SDK_VERSION="1.35.0"
+                  SDK_VERSION="1.35.0-rc.0"
 
                   # Define target branch. It states for the branch that will be used for release commit history merges.
                   TARGET_BRANCH="fix/WRS-2788-test-create-release"
