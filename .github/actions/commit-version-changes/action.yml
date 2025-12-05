@@ -1,23 +1,23 @@
 name: 'Commit Version Changes'
-description: 'Commit and push version changes with tag'
+description: 'Commit version changes and push branch'
 inputs:
     tag_name:
         required: true
-        description: 'Tag name for the version'
+        description: 'Tag name for the version (used in commit message)'
     version_branch:
         required: false
-        description: 'Branch name to commit version changes to (if provided, commits directly to this branch; otherwise creates a temporary version branch)'
+        description: 'Branch name to commit to. If not provided, creates a temporary branch.'
 outputs:
     version_commit_sha:
         description: 'SHA of the version commit'
         value: ${{ steps.commit_version.outputs.version_commit_sha }}
-    created_version_branch:
-        description: 'Created version branch name (only set if version_branch input is not provided)'
+    version_branch:
+        description: 'Branch name that was pushed'
         value: ${{ steps.commit_version.outputs.version_branch }}
 runs:
     using: composite
     steps:
-        - name: Commit and push version changes
+        - name: Commit and push version branch
           id: commit_version
           shell: bash
           run: |
@@ -42,10 +42,12 @@ runs:
               VERSION_COMMIT=$(git rev-parse HEAD)
               echo "version_commit_sha=$VERSION_COMMIT" >> $GITHUB_OUTPUT
 
-              # Create tag pointing to the version commit
-              git tag "$TAG_NAME" "$VERSION_COMMIT"
+              echo "version_branch=$BRANCH_TO_PUSH" >> $GITHUB_OUTPUT
 
-              # Push branch and tag together to trigger tag push workflow (deploy-release.yml)
-              git push origin "$BRANCH_TO_PUSH" "$TAG_NAME"
+              # Push the branch (tag will be created and pushed later after validation)
+              echo "Pushing branch: $BRANCH_TO_PUSH"
+              git push origin "$BRANCH_TO_PUSH"
+
+              echo "✅ Version branch pushed to $BRANCH_TO_PUSH"
           env:
               GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
