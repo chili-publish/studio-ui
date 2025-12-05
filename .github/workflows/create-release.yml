@@ -25,6 +25,7 @@ on:
 env:
     NODE_VERSION: 22.x
     RELEASES_LIMIT: 10
+    FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
 
 jobs:
     configure-parameters:
@@ -121,6 +122,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -241,6 +244,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -368,7 +373,8 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Fetch GH releases
               id: fetch_releases
               uses: ./.github/actions/fetch-gh-releases
