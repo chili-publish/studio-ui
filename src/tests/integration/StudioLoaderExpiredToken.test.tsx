@@ -8,7 +8,7 @@ jest.unmock('../../services/TokenService');
 jest.unmock('../../services/EnvironmentApiService');
 jest.unmock('../../services/ProjectDataClient');
 
-const environmentBaseURL = 'http://abc.com/grafx/api/v1/environment/test';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const originalToken = 'auth-token';

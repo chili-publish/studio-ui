@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import StudioUI from '../../main';
 import { Project } from '../../types/types';
 
-const environmentBaseURL = 'http://test.com';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'test-project-id';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const projectInfoUrl = `${environmentBaseURL}/projects/${projectID}`;

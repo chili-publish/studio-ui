@@ -5,7 +5,7 @@ import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import StudioUI from '../../main';
 
-const environmentBaseURL = 'environmentBaseURL';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const projectName = 'projectName';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
@@ -46,8 +46,9 @@ describe('StudioLoader integration - no projectId', () => {
 
     it('Should not try to load project details when there is no projectId provided in the config', async () => {
         render(<div id="sui-root" />);
+        let instance;
         act(() => {
-            StudioUI.studioUILoaderConfig({
+            instance = StudioUI.studioUILoaderConfig({
                 selector: 'sui-root',
                 projectDownloadUrl, // Keep this to test ProjectDataClient path
                 projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
@@ -58,18 +59,17 @@ describe('StudioLoader integration - no projectId', () => {
             });
         });
 
-        await waitFor(() => {
-            expect(screen.getByText(projectName)).toBeInTheDocument();
-        });
+        expect(instance).toBeNull();
     });
 
-    it('Should not try to load project document when there is no projectId provided or projectDownloadUrl in the config', async () => {
+    it('Should not try to load project document when there is no projectDownloadUrl provided in the config', async () => {
         const config = {
             selector: 'sui-root',
             projectUploadUrl: `${environmentBaseURL}/projects/${projectID}`,
             graFxStudioEnvironmentApiBaseUrl: environmentBaseURL,
             authToken: token,
             projectName,
+            projectId: projectID,
             refreshTokenAction: () => Promise.resolve(''),
         };
 
