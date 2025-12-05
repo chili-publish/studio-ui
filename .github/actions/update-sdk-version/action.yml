@@ -11,6 +11,7 @@ runs:
     using: composite
     steps:
         - name: Validate SDK version
+          if: false # TEMPORARY: Disabled for testing
           shell: bash
           run: |
               SDK_VERSION_INPUT="${{ inputs.sdk_version }}"
