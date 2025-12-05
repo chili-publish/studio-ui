@@ -30,7 +30,7 @@
         "@babel/preset-env": "^7.25.3",
         "@chili-publish/environment-client-api": "0.31.9",
         "@chili-publish/grafx-shared-components": "0.106.3",
-        "@chili-publish/studio-sdk": "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/718/studio-sdk.tgz",
+        "@chili-publish/studio-sdk": "1.35.0-alpha.2",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/pro-light-svg-icons": "^6.7.1",
         "@fortawesome/pro-regular-svg-icons": "^6.7.1",
