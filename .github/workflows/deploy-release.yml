@@ -71,17 +71,29 @@ jobs:
                     echo "is_uat=true" >> $GITHUB_OUTPUT
                     echo "is_prd=false" >> $GITHUB_OUTPUT
                     echo "environment=uat" >> $GITHUB_OUTPUT
-                    echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_SAAS_UAT }}" >> $GITHUB_OUTPUT
-                    echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_UAT }}" >> $GITHUB_OUTPUT
-                    echo "purge_destination=UAT" >> $GITHUB_OUTPUT
+                    # echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_SAAS_UAT }}" >> $GITHUB_OUTPUT
+                    # echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_UAT }}" >> $GITHUB_OUTPUT
+                    # echo "purge_destination=UAT" >> $GITHUB_OUTPUT
+
+                    # TEMPORARY: Using dev storage for testing
+                    echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_SAAS_DEV }}" >> $GITHUB_OUTPUT
+                    echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_DEV }}" >> $GITHUB_OUTPUT
+                    echo "purge_destination=DEV" >> $GITHUB_OUTPUT
+
                     echo "Detected UAT release: $TAG_NAME"
                   elif [[ "$TAG_NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     echo "is_uat=false" >> $GITHUB_OUTPUT
                     echo "is_prd=true" >> $GITHUB_OUTPUT
                     echo "environment=prd" >> $GITHUB_OUTPUT
-                    echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_GRAFX_PRD }}" >> $GITHUB_OUTPUT
-                    echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_PROD }}" >> $GITHUB_OUTPUT
-                    echo "purge_destination=PRD" >> $GITHUB_OUTPUT
+                    # echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_GRAFX_PRD }}" >> $GITHUB_OUTPUT
+                    # echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_PROD }}" >> $GITHUB_OUTPUT
+                    # echo "purge_destination=PRD" >> $GITHUB_OUTPUT
+
+                    # TEMPORARY: Using dev storage for testing
+                    echo "subscription_id=${{ vars.AZ_SUBSCRIPTION_ID_SAAS_DEV }}" >> $GITHUB_OUTPUT
+                    echo "storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME_DEV }}" >> $GITHUB_OUTPUT
+                    echo "purge_destination=DEV" >> $GITHUB_OUTPUT
+
                     echo "Detected PRD release: $TAG_NAME"
                   else
                     echo "❌ Error: Tag format not recognized. Expected format: X.Y.Z (PRD) or X.Y.Z-rc.N (UAT)"
@@ -308,6 +320,7 @@ jobs:
         permissions:
             contents: write
         env:
+            TARGET_BRANCH: fix/WRS-2788-test-create-release
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         steps:
             - name: Get GitHub App Access Token
@@ -321,7 +334,7 @@ jobs:
             - name: Checkout main branch
               uses: actions/checkout@v4
               with:
-                  ref: main
+                  ref: ${{ env.TARGET_BRANCH }}
                   token: ${{ steps.github-app-access-token.outputs.token }}
                   fetch-depth: 0
 
@@ -404,5 +417,5 @@ jobs:
               run: |
                   git add package.json yarn.lock || true
                   git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }} for next dev cycle [skip ci]"
-                  git push origin main
+                  git push origin ${{ env.TARGET_BRANCH }}
                   echo "Pushed version bump to main branch"
