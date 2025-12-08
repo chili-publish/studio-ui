@@ -390,8 +390,12 @@ jobs:
             - name: Configure registry for SDK update (production)
               run: |
                   echo "Configuring yarn to use public npm registry for SDK update..."
-                  # Set registry for @chili-publish/studio-sdk scope to public npm
-                  npm config set "@chili-publish:registry" "https://registry.npmjs.org/"
+                  # Temporarily modify .npmrc to use public npm for @chili-publish scope
+                  # Save original value
+                  ORIGINAL_REGISTRY=$(grep "^@chili-publish:registry=" .npmrc | cut -d'=' -f2 || echo "")
+                  # Replace with public npm registry
+                  sed -i.bak 's|^@chili-publish:registry=.*|@chili-publish:registry=https://registry.npmjs.org/|' .npmrc
+                  echo "Temporarily changed @chili-publish:registry to https://registry.npmjs.org/"
 
             - name: Update SDK version
               uses: ./.github/actions/update-sdk-version
@@ -400,6 +404,12 @@ jobs:
                   environment: 'prd'
               env:
                   NODE_AUTH_TOKEN: ''
+
+            - name: Restore registry configuration (production)
+              run: |
+                  echo "Restoring original .npmrc configuration..."
+                  # Restore from backup
+                  mv .npmrc.bak .npmrc || echo "No backup found, keeping current configuration"
 
             - name: Commit and push version changes
               id: apply_version
