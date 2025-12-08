@@ -387,6 +387,12 @@ jobs:
               with:
                   version_strategy: 'patch'
 
+            - name: Configure registry for SDK update (production)
+              run: |
+                  echo "Configuring yarn to use public npm registry for SDK update..."
+                  # Set registry for @chili-publish/studio-sdk scope to public npm
+                  npm config set "@chili-publish:registry" "https://registry.npmjs.org/"
+
             - name: Update SDK version
               uses: ./.github/actions/update-sdk-version
               with:
