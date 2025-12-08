@@ -3,7 +3,7 @@ name: Create GitHub Release
 on:
     push:
         branches:
-            - fix/WRS-2788-test-create-release
+            - hotfix/1.35.0-rc.1
     workflow_dispatch:
         inputs:
             environment:
@@ -56,14 +56,14 @@ jobs:
                   #   exit 1
                   # fi
                   # RELEASE_TYPE="${{ github.event.inputs.release_type }}"
-                  RELEASE_TYPE="regular"
+                  RELEASE_TYPE="hotfix"
 
                   # if [ -z "${{ github.event.inputs.sdk_version }}" ]; then
                   #   echo "❌ Error: 'sdk_version' input is required"
                   #   exit 1
                   # fi
                   # SDK_VERSION="${{ github.event.inputs.sdk_version }}"
-                  SDK_VERSION="1.35.0-alpha.2"
+                  SDK_VERSION="latest"
 
                   # Define target branch. It states for the branch that will be used for release commit history merges.
                   TARGET_BRANCH="fix/WRS-2788-test-create-release"
