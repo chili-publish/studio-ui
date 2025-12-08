@@ -225,7 +225,7 @@ jobs:
 
                   payload=$(cat <<EOF
                   {
-                      "text": "$EMOJI **$RELEASE_TYPE Deployment Completed**\n\n**Version:** $VERSION\n**Tag:** $TAG_NAME\n\nDeployment to $RELEASE_TYPE environment completed successfully."
+                      "text": "[Test Message]$EMOJI **$RELEASE_TYPE Deployment Completed**\n\n**Version:** $VERSION\n**Tag:** $TAG_NAME\n\nDeployment to $RELEASE_TYPE environment completed successfully."
                   }
                   EOF
                   )

@@ -66,5 +66,5 @@ runs:
                 TYPE="Production Release Created"
               fi
 
-              TEXT="${EMOJI} **$TYPE**\n\n**Release:** $RELEASE_URL\n\n**Version:** $VERSION\n\nRelease has been created and deployment will be triggered automatically."
+              TEXT="${EMOJI} **[Test Message]$TYPE**\n\n**Release:** $RELEASE_URL\n\n**Version:** $VERSION\n\nRelease has been created and deployment will be triggered automatically."
               echo "text=$TEXT" >> $GITHUB_OUTPUT
