@@ -586,6 +586,13 @@ jobs:
         outputs:
             notification_text: ${{ steps.create_release.outputs.notification_text }}
         steps:
+            - name: Get GitHub App Access Token
+              id: github-app-access-token
+              uses: actions/create-github-app-token@v2
+              with:
+                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
+                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
+                  owner: ${{ github.repository_owner }}
             - name: Extract version outputs
               id: version
               run: |
@@ -620,14 +627,7 @@ jobs:
               with:
                   ref: ${{ steps.version.outputs.version_branch }}
                   fetch-depth: 0
-
-            - name: Get GitHub App Access Token
-              id: github-app-access-token
-              uses: actions/create-github-app-token@v2
-              with:
-                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
-                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
+                  token: ${{ steps.github-app-access-token.outputs.token }}
 
             - name: Create and push tag
               run: |
