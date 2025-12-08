@@ -26,7 +26,7 @@ jest.mock('../../services/ProjectDataClient', () => ({
     })),
 }));
 
-const environmentBaseURL = 'http://abc.com';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const projectDownloadUrl = `${environmentBaseURL}/projects/${projectID}/document`;
 const token = 'auth-token';
