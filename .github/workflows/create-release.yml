@@ -584,9 +584,10 @@ jobs:
                   echo "⚠️  Preflight failed - reverting version change commit"
                   echo "⚠️  Branch: $BRANCH, Commit: $COMMIT_SHA"
 
-                  # Checkout the branch
+                  # Checkout the branch and pull latest changes
                   git fetch origin "$BRANCH"
                   git checkout "$BRANCH"
+                  git pull origin "$BRANCH" || echo "Pull failed or already up to date"
 
                   # Revert the version change commit
                   git revert "$COMMIT_SHA" --no-edit || echo "Revert failed or commit already reverted"
