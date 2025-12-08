@@ -621,12 +621,24 @@ jobs:
                   ref: ${{ steps.version.outputs.version_branch }}
                   fetch-depth: 0
 
+            - name: Get GitHub App Access Token
+              id: github-app-access-token
+              uses: actions/create-github-app-token@v2
+              with:
+                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
+                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
+                  owner: ${{ github.repository_owner }}
+
             - name: Create and push tag
               run: |
                   TAG="${{ steps.version.outputs.tag_name }}"
                   COMMIT_SHA="${{ steps.version.outputs.version_commit_sha }}"
 
                   echo "Creating tag: $TAG at commit $COMMIT_SHA"
+
+                  # Configure git to use the token
+                  git config user.name 'github-actions[bot]'
+                  git config user.email 'github-actions[bot]@users.noreply.github.com'
 
                   # Create the tag
                   git tag "$TAG" "$COMMIT_SHA"
@@ -635,8 +647,6 @@ jobs:
                   git push origin "$TAG"
 
                   echo "✅ Successfully created and pushed tag"
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Create GitHub release
               id: create_release
@@ -649,14 +659,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Get GitHub App Access Token
-              id: github-app-access-token
-              uses: actions/create-github-app-token@v2
-              with:
-                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
-                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
-
             - name: Merge and delete version branch
               uses: ./.github/actions/merge-and-delete-branch
               with:
@@ -667,6 +669,7 @@ jobs:
 
     notify-teams:
         needs: [finalize-release]
+        if: always() && needs.finalize-release.result == 'success'
         runs-on: ubuntu-latest
         permissions:
             contents: read
