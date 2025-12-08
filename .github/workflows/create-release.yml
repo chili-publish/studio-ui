@@ -595,7 +595,7 @@ jobs:
 
     finalize-release:
         needs: [configure-parameters, preflight, run-tests, uat-regular, uat-hotfix, production]
-        if: always() && (needs.uat-regular.result == 'success' || needs.uat-hotfix.result == 'success' || needs.production.result == 'success')
+        if: always() && (needs.uat-regular.result == 'success' || needs.uat-hotfix.result == 'success' || needs.production.result == 'success') && needs.preflight.result == 'success' && needs.run-tests.result == 'success'
         runs-on: ubuntu-latest
         permissions:
             contents: write
