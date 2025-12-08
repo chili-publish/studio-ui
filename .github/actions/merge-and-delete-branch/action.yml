@@ -10,6 +10,12 @@ inputs:
 runs:
     using: composite
     steps:
+        - name: Configure git
+          shell: bash
+          run: |
+              git config --global user.name 'github-actions[bot]'
+              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
         - name: Merge source branch to target branch
           shell: bash
           run: |
