@@ -1,4 +1,4 @@
-name: Build and deploy to main
+name: Build and deploy to DEV
 on:
     push:
         branches:
@@ -10,13 +10,83 @@ permissions:
     contents: read
     packages: read
 jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        strategy:
+            matrix:
+                shard: [1, 2, 3, 4, 5]
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v4
+            - name: Use Node ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.cache/yarn
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+            - name: install dependencies
+              run: |
+                  yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: run tests
+              run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --coverage --runInBand
+              env:
+                  NODE_OPTIONS: --max-old-space-size=6144
+            - name: Rename coverage to shard coverage
+              run: |
+                  mv coverage/junit.xml coverage/junit-${{matrix.shard}}.xml
+                  mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
+                  mv coverage/coverage-final.json coverage/coverage-final-${{matrix.shard}}.json
+            - name: Use UploadArtifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-artifacts-${{ matrix.shard }}
+                  path: |
+                      coverage/**/*.xml
+                      coverage/**/*.json
+                      coverage/**/*.info
+    prepare-coverage:
+        runs-on: ubuntu-latest
+        needs: [run-tests]
+        env:
+            COVERAGE_REPORT_NAME: coverage-report
+        outputs:
+            report_name: ${{ steps.set-output.outputs.report_name }}
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v4
+            - uses: actions/upload-artifact/merge@v4
+              with:
+                  name: coverage-artifacts
+            - uses: actions/download-artifact@v4
+              with:
+                  name: coverage-artifacts
+                  path: coverage
+            - name: Process Coverage
+              run: npx nyc report --reporter lcov --reporter json --reporter text --reporter html -t coverage
+            - name: Set report name output
+              id: set-output
+              run: echo "report_name=${{ env.COVERAGE_REPORT_NAME }}" >> $GITHUB_OUTPUT
+            - name: Upload coverage report
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ env.COVERAGE_REPORT_NAME }}
+                  path: coverage
     build-preflight:
         runs-on: ubuntu-latest
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v4
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -38,21 +108,15 @@ jobs:
               run: yarn validate-licenses
             - name: run linting
               run: yarn ci-lint
-            - name: run tests
-              run: yarn cover
-            - uses: actions/upload-artifact@v4
-              with:
-                  name: coverage-artifact
-                  path: coverage/coverage-final.json
 
     build-deploy-main:
-        needs: build-preflight
+        needs: [build-preflight, run-tests]
         runs-on: ubuntu-latest
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v4
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -74,7 +138,7 @@ jobs:
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
                   export PACKAGE_VERSION_TRIMMED=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const path = version[0] + '.' + version[1]; console.log(path)")
-                  export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.');console.log(version[2])")
+                  export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const patch = version.slice(2).join('.'); console.log(patch)")
 
                   buildPath=upload/$PACKAGE_VERSION_TRIMMED/$PACKAGE_VERSION_PATCH
                   latestPath=upload/latest
@@ -87,11 +151,27 @@ jobs:
                   cp -R dist/* ${buildPath%"/merge"}
                   cp -R dist/* ${latestPath%"/merge"}
                   cp -R dist/* ${versionedLatestPath%"/merge"}
+            - name: Azure Login
+              uses: azure/login@v2
+              with:
+                  creds: >-
+                      {
+                          "clientId": "${{ vars.AZ_AD_CLIENT_ID_CP_RJS_INT_CICD_SP }}",
+                          "clientSecret": "${{ secrets.AZ_AD_CLIENT_SECRET_CP_RJS_INT_CICD_SP }}",
+                          "tenantId": "${{ vars.AZ_TENANT_ID }}",
+                          "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID_SAAS_DEV }}"
+                      }
+
             - name: Copy to Azure Blob Storage
-              uses: azure/CLI@v1
+              uses: azure/cli@v2
               with:
                   inlineScript: |
-                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+                      az storage blob upload-batch \
+                        --account-name "${{ vars.STORAGE_ACCOUNT_NAME_DEV }}" \
+                        --destination studio-ui \
+                        --source upload/ \
+                        --overwrite true \
+                        --auth-mode login
     purge-cdn:
         needs: build-deploy-main
         name: Cloudflare CDN purge
@@ -116,7 +196,7 @@ jobs:
                   -d '{"ref":"main","inputs":{"destination":"DEV","purge-prefixes":"studio-ui"}}'
 
     bump-version:
-        needs: build-preflight
+        needs: [build-deploy-main, prepare-coverage]
         runs-on: ubuntu-latest
         steps:
             - name: Get GitHub App Access Token
@@ -129,21 +209,20 @@ jobs:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v4
               with:
+                  ref: main
                   token: ${{ steps.github-app-access-token.outputs.token }}
+                  fetch-depth: 0
+            - uses: actions/download-artifact@v4
+              with:
+                  name: ${{ needs.prepare-coverage.outputs.report_name }}
+                  path: coverage
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/download-artifact@v4
-              with:
-                  name: coverage-artifact
-                  path: coverage
-            - name: Display structure of downloaded files
-              run: ls -R
-              working-directory: coverage
-            - name: run readmeUpdater
+            - name: Update coverage badges
               run: yarn make-badges
             - name: Bump version
               env:
@@ -151,11 +230,11 @@ jobs:
               run: |
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git fetch origin
-                  git checkout -B main origin/main
-                  npm version prerelease --no-git-tag-version
+                  npm version prerelease --preid=alpha --git-tag-version=false
             - name: Push new version
               run: |
-                  git add .
-                  git commit -m "CI: Bump version to $(jq -r .version < package.json) [skip ci]" --allow-empty
+                  VERSION=$(jq -r .version < package.json)
+                  git add package.json README.md
+                  git commit -m "CI: Bump version to $VERSION [skip ci]"
+                  git tag "$VERSION"
                   git push origin main --follow-tags
