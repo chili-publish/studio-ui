@@ -9,7 +9,7 @@ import NumberVariable from '../../../../components/variablesComponents/NumberVar
 
 jest.mock('@chili-publish/studio-sdk');
 
-const environmentBaseURL = 'http://abc.com';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const token = 'token';
 

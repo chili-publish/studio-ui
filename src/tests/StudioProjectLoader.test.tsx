@@ -23,13 +23,13 @@ jest.mock('../utils/documentExportHelper', () => ({
         parsedData: { url: 'mockUrl' },
         data: JSON.stringify({ url: 'mockUrl' }),
     }),
-    addTrailingSlash: jest.fn().mockReturnValue('mockGraFxStudioEnvironmentApiBaseUrl/'),
+    addTrailingSlash: jest.fn().mockReturnValue('https://test-api.test.com/grafx/api/v1/environment/test-api/'),
     exportDocument: jest.fn(),
 }));
 
 describe('StudioProjectLoader', () => {
     const mockProjectId = 'mockProjectId';
-    const mockGraFxStudioEnvironmentApiBaseUrl = 'mockGraFxStudioEnvironmentApiBaseUrl/';
+    const mockGraFxStudioEnvironmentApiBaseUrl = 'https://test-api.test.com/grafx/api/v1/environment/test-api/';
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
     const mockProjectUploadUrl = 'mockProjectUploadUrl';
     const mockDocument = { data: { mock: 'data' } };

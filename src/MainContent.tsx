@@ -1,4 +1,10 @@
-import { UiThemeProvider, useDebounce, useMobileSize, useTheme } from '@chili-publish/grafx-shared-components';
+import {
+    ToastVariant,
+    UiThemeProvider,
+    useDebounce,
+    useMobileSize,
+    useTheme,
+} from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
     ConnectorEvent,
     DocumentType,
@@ -10,6 +16,7 @@ import StudioSDK, {
     PageSize,
     Variable,
     WellKnownConfigurationKeys,
+    FrameEditingMode,
 } from '@chili-publish/studio-sdk';
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -39,12 +46,14 @@ import { SuiCanvas } from './MainContent.styles';
 import { useAppDispatch } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
-import { useDataRowExceptionHandler } from './useDataRowExceptionHandler';
+import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
 import { TokenService } from './services/TokenService';
+import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
+import { useDocumentTools } from './hooks/useDocumentTools';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -53,6 +62,8 @@ interface MainContentProps {
 
 function MainContent({ projectConfig }: MainContentProps) {
     const dispatch = useAppDispatch();
+    const { addNotification } = useNotificationManager();
+
     const [fetchedDocument, setFetchedDocument] = useState<string | null>(null);
 
     const [canUndo, setCanUndo] = useState(false);
@@ -88,6 +99,7 @@ function MainContent({ projectConfig }: MainContentProps) {
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
+    useDocumentTools(sdkRef, activePageId);
 
     const { direction, updateDirection } = useDirection();
 
@@ -249,6 +261,11 @@ function MainContent({ projectConfig }: MainContentProps) {
             onLayoutsChanged: (layoutList) => {
                 setLayouts(layoutList);
             },
+            onFramesLayoutChanged: () => {
+                if (shouldSaveDocument()) {
+                    saveDocumentDebounced();
+                }
+            },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
             studioOptions: {
@@ -264,9 +281,19 @@ function MainContent({ projectConfig }: MainContentProps) {
                     zoom: { enabled: false },
                     viewMode: { enabled: false },
                 },
+                frameEditingMode: FrameEditingMode.followConstraints,
             },
             editorLink: projectConfig.editorLink,
             enableQueryCallCache: true,
+            onConnectionError: (error) => {
+                addNotification({
+                    id: 'init-error',
+                    message: 'Something went wrong with loading the components, please try again later.',
+                    type: ToastVariant.NEGATIVE,
+                    duration: 5000,
+                });
+                projectConfig.onLoadError?.(error);
+            },
         });
 
         // call onProjectLoaded when the document is loaded
