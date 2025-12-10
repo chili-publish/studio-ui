@@ -49,11 +49,16 @@ runs:
 
               # Validate version format based on environment
               if [ "$ENVIRONMENT" = "uat" ]; then
-                if [[ ! "$SDK_VERSION_TO_VALIDATE" == *"-rc"* ]]; then
-                  echo "❌ Error: For UAT environment, SDK version must include -rc suffix (e.g., 1.35.0-rc.0), but got: $SDK_VERSION_TO_VALIDATE"
+                # UAT allows both -rc versions and normal semver (latest PRD)
+                if [[ "$SDK_VERSION_TO_VALIDATE" == *"-"* ]] && [[ ! "$SDK_VERSION_TO_VALIDATE" == *"-rc"* ]]; then
+                  echo "❌ Error: For UAT environment, SDK version must be normal semver (e.g., 1.35.0) or include -rc suffix (e.g., 1.35.0-rc.0), but got: $SDK_VERSION_TO_VALIDATE"
                   exit 1
                 fi
-                echo "✅ Validation passed: SDK version has -rc suffix for UAT"
+                if [[ "$SDK_VERSION_TO_VALIDATE" == *"-rc"* ]]; then
+                  echo "✅ Validation passed: SDK version has -rc suffix for UAT"
+                else
+                  echo "✅ Validation passed: SDK version is normal semver (latest PRD) for UAT"
+                fi
               elif [ "$ENVIRONMENT" = "prd" ]; then
                 if [[ "$SDK_VERSION_TO_VALIDATE" == *"-"* ]]; then
                   echo "❌ Error: For PRD environment, SDK version must be normal semver without postfix (e.g., 1.35.0), but got: $SDK_VERSION_TO_VALIDATE"
