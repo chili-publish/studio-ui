@@ -26,10 +26,6 @@ const createMockFrameLayout = (id: string, isVisible: boolean): NonNullable<Fram
 const createMockConstraints = (overrides?: Partial<FrameConstraints>): FrameConstraints =>
     ({
         selectionAllowed: createMockPropertyState(false),
-        horizontalMovementAllowed: createMockPropertyState(false),
-        verticalMovementAllowed: createMockPropertyState(false),
-        rotationAllowed: createMockPropertyState(false),
-        resizeAllowed: createMockPropertyState(false),
         ...overrides,
     }) as unknown as FrameConstraints;
 
@@ -107,10 +103,6 @@ describe('useDocumentTools', () => {
                 status: 200,
                 parsedData: createMockConstraints({
                     selectionAllowed: createMockPropertyState(false),
-                    horizontalMovementAllowed: createMockPropertyState(false),
-                    verticalMovementAllowed: createMockPropertyState(false),
-                    rotationAllowed: createMockPropertyState(false),
-                    resizeAllowed: createMockPropertyState(false),
                 }),
             })
             .mockResolvedValueOnce({
@@ -118,10 +110,6 @@ describe('useDocumentTools', () => {
                 status: 200,
                 parsedData: createMockConstraints({
                     selectionAllowed: createMockPropertyState(false),
-                    horizontalMovementAllowed: createMockPropertyState(false),
-                    verticalMovementAllowed: createMockPropertyState(false),
-                    rotationAllowed: createMockPropertyState(false),
-                    resizeAllowed: createMockPropertyState(false),
                 }),
             });
 
@@ -165,10 +153,6 @@ describe('useDocumentTools', () => {
             status: 200,
             parsedData: createMockConstraints({
                 selectionAllowed: createMockPropertyState(false),
-                horizontalMovementAllowed: createMockPropertyState(false),
-                verticalMovementAllowed: createMockPropertyState(false),
-                rotationAllowed: createMockPropertyState(false),
-                resizeAllowed: createMockPropertyState(false),
             }),
         });
 
