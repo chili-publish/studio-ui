@@ -19,13 +19,7 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
         );
 
         const framesWithEnabledConstraints = constraintsArray.some(({ parsedData: constraints }) => {
-            return (
-                constraints?.selectable.value ||
-                constraints?.horizontal.value.allowed ||
-                constraints?.vertical.value.allowed ||
-                constraints?.rotation.value.allowed ||
-                constraints?.resize.value.allowed
-            );
+            return constraints?.selectionAllowed.value;
         });
         if (framesWithEnabledConstraints) {
             await sdkRef.tool.setSelect();
