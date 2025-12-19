@@ -106,7 +106,6 @@ jest.mock('./services/FeatureFlagService', () => ({
         initialize: jest.fn().mockResolvedValue(undefined),
         isEnabled: jest.fn().mockReturnValue(false),
         getFeatureFlags: jest.fn().mockReturnValue({}),
-        reset: jest.fn(),
     },
 }));
 
