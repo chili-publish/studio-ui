@@ -3,6 +3,7 @@ import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
 import { TokenService } from './services/TokenService';
+import { featureFlagService } from './services/FeatureFlagService';
 import {
     defaultBackFn,
     defaultOutputSettings,
@@ -279,7 +280,7 @@ export default class StudioUI extends StudioUILoader {
             uiOptions,
             outputSettings,
             userInterfaceID,
-            featureFlags,
+            featureFlagConfigURL,
             sandboxMode,
             variableTranslations,
             uiTranslations,
@@ -304,6 +305,11 @@ export default class StudioUI extends StudioUILoader {
             onVariableValueChangedCompleted,
             onLoadError,
         } = config;
+
+        // Configure the feature flag service with the provided URL
+        if (featureFlagConfigURL) {
+            featureFlagService.configure(featureFlagConfigURL);
+        }
 
         // Initialize TokenService singleton
         TokenService.initialize(
@@ -342,7 +348,7 @@ export default class StudioUI extends StudioUILoader {
                     ...uiOptionsConfig,
                     uiTheme: uiOptionsConfig.uiTheme || 'light',
                 },
-                featureFlags,
+                featureFlagConfigURL,
                 sandboxMode: sandboxMode || false,
                 onSandboxModeToggle,
                 onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,

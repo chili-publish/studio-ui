@@ -93,6 +93,23 @@ jest.mock('./services/TokenService', () => ({
     },
 }));
 
+// Mock fetchFeatureFlags from grafx-shared-components
+jest.mock('@chili-publish/grafx-shared-components', () => ({
+    ...jest.requireActual('@chili-publish/grafx-shared-components'),
+    fetchFeatureFlags: jest.fn().mockResolvedValue({}),
+}));
+
+// Mock FeatureFlagService
+jest.mock('./services/FeatureFlagService', () => ({
+    featureFlagService: {
+        configure: jest.fn(),
+        initialize: jest.fn().mockResolvedValue(undefined),
+        isEnabled: jest.fn().mockReturnValue(false),
+        getFeatureFlags: jest.fn().mockReturnValue({}),
+        reset: jest.fn(),
+    },
+}));
+
 // Global EnvironmentApiService mock
 jest.mock('./services/EnvironmentApiService', () => ({
     EnvironmentApiService: {
