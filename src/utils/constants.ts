@@ -1,4 +1,5 @@
 export const APP_WRAPPER_ID = 'studio-ui-application';
+export const DEFAULT_FEATURE_FLAGS_URL = 'https://chiligrafx.com/feature-flags.json';
 export const PREVIEW_FALLBACK = 'https://studio-cdn.chiligrafx.com/shared/assets/preview-fallback-padded.svg';
 export const FOLDER_PREVIEW_THUMBNAIL = 'https://studio-cdn.chiligrafx.com/shared/assets/folder-padded.png';
 export const SESSION_USER_INTEFACE_ID_KEY = 'userInterfaceId';

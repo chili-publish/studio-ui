@@ -1,9 +1,10 @@
 import { Root } from 'react-dom/client';
+import { featureFlagService } from '@chili-publish/grafx-shared-components';
 import { StudioProjectLoader } from './StudioProjectLoader';
 import StudioUILoader, { AppConfig } from './deprecated-loaders';
 import { EnvironmentApiService } from './services/EnvironmentApiService';
 import { TokenService } from './services/TokenService';
-import { featureFlagService } from './services/FeatureFlagService';
+import { DEFAULT_FEATURE_FLAGS_URL } from './utils/constants';
 import {
     defaultBackFn,
     defaultOutputSettings,
@@ -15,6 +16,7 @@ import {
     ProjectConfig,
     VariablesForm,
 } from './types/types';
+import { getSUIVersion } from './utils/getSUIVersion';
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -307,9 +309,11 @@ export default class StudioUI extends StudioUILoader {
         } = config;
 
         // Configure the feature flag service with the provided URL
-        if (featureFlagConfigURL) {
-            featureFlagService.configure(featureFlagConfigURL);
-        }
+        featureFlagService.configure({
+            featureFlagConfigURL,
+            fallbackURL: DEFAULT_FEATURE_FLAGS_URL,
+            studioVersion: getSUIVersion(),
+        });
 
         // Initialize TokenService singleton
         TokenService.initialize(

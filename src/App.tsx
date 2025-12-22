@@ -53,7 +53,7 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
                 <SubscriberContextProvider subscriber={eventSubscriber}>
                     <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
                         <NotificationManagerProvider>
-                            <FeatureFlagProvider featureFlagConfigURL={projectConfig.featureFlagConfigURL}>
+                            <FeatureFlagProvider>
                                 <EnvironmentClientApiProvider
                                     environmentApiService={projectConfig.environmentApiService}
                                 >

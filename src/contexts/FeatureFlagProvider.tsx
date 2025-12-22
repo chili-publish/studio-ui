@@ -1,6 +1,6 @@
+import { featureFlagService } from '@chili-publish/grafx-shared-components';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { FeatureFlagsType } from '../types/types';
-import { featureFlagService } from '../services/FeatureFlagService';
 
 interface IFeatureFlagContext {
     featureFlags: FeatureFlagsType;
@@ -21,33 +21,20 @@ export const useFeatureFlagContext = () => {
 };
 
 interface FeatureFlagProviderProps {
-    /** URL to fetch feature flags from. If not provided, no feature flags are enabled. */
-    featureFlagConfigURL?: string;
     children: React.ReactNode;
 }
 
-function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProviderProps) {
+function FeatureFlagProvider({ children }: FeatureFlagProviderProps) {
     const [featureFlags, setFeatureFlags] = useState<FeatureFlagsType>({});
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const initializeFlags = async () => {
-            // Only fetch if featureFlagConfigURL is provided
-            if (!featureFlagConfigURL) {
-                setFeatureFlags({});
-                setIsLoading(false);
-                return;
-            }
-
-            // Initialize and fetch flags (service is already configured in main.tsx)
-            await featureFlagService.initialize((flags) => {
-                setFeatureFlags(flags);
-            });
+        // Initialize and fetch flags (service is already configured in main.tsx)
+        featureFlagService.initialize((flags) => {
+            setFeatureFlags(flags);
             setIsLoading(false);
-        };
-
-        initializeFlags();
-    }, [featureFlagConfigURL]);
+        });
+    }, []);
 
     const isEnabled = useCallback(
         (flagName: string): boolean => {

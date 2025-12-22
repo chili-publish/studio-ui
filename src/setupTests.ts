@@ -93,21 +93,24 @@ jest.mock('./services/TokenService', () => ({
     },
 }));
 
-// Mock fetchFeatureFlags from grafx-shared-components
-jest.mock('@chili-publish/grafx-shared-components', () => ({
-    ...jest.requireActual('@chili-publish/grafx-shared-components'),
-    fetchFeatureFlags: jest.fn().mockResolvedValue({}),
+// Mock getSUIVersion utility
+jest.mock('./utils/getSUIVersion', () => ({
+    getSUIVersion: jest.fn().mockReturnValue('1.35'),
 }));
 
-// Mock FeatureFlagService
-jest.mock('./services/FeatureFlagService', () => ({
-    featureFlagService: {
-        configure: jest.fn(),
-        initialize: jest.fn().mockResolvedValue(undefined),
-        isEnabled: jest.fn().mockReturnValue(false),
-        getFeatureFlags: jest.fn().mockReturnValue({}),
-    },
-}));
+// Mock featureFlagService from grafx-shared-components
+// We need to spy on the actual module to preserve other exports
+beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require, @typescript-eslint/no-explicit-any
+    const gsc = require('@chili-publish/grafx-shared-components') as any;
+    if (gsc.featureFlagService) {
+        gsc.featureFlagService.configure = jest.fn();
+        gsc.featureFlagService.initialize = jest.fn().mockImplementation((callback: unknown) => {
+            if (typeof callback === 'function') callback({});
+            return Promise.resolve();
+        });
+    }
+});
 
 // Global EnvironmentApiService mock
 jest.mock('./services/EnvironmentApiService', () => ({
