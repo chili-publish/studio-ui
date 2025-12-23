@@ -398,7 +398,7 @@ jobs:
                   sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
                   environment: 'prd'
               env:
-                  NODE_AUTH_TOKEN: ''
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Restore registry configuration (production)
               run: |
