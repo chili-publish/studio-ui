@@ -93,9 +93,8 @@ runs:
           shell: bash
           run: |
               echo "Updating yarn.lock with new SDK version..."
-              # Yarn Classic (1.22) doesn't support updating lockfile without installation
-              # yarn install will update yarn.lock to match the updated package.json
-              yarn install
+              # In order to update SDK reference in the yarn.lock file, we need to add the new SDK version to the dependencies
+              yarn add @chili-publish/studio-sdk@$SDK_VERSION
           env:
               NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
 
