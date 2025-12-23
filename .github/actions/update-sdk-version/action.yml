@@ -92,6 +92,7 @@ runs:
           if: inputs.sdk_version != '' && inputs.sdk_version != 'latest'
           shell: bash
           run: |
+              SDK_VERSION="${{ inputs.sdk_version }}"
               echo "Updating yarn.lock with new SDK version..."
               # In order to update SDK reference in the yarn.lock file, we need to add the new SDK version to the dependencies
               yarn add @chili-publish/studio-sdk@$SDK_VERSION
