@@ -394,7 +394,7 @@ jobs:
                   # Fail if version doesn't match expectations (unless 'latest' was specified)
                   if [ "$SDK_VERSION" != "latest" ] && [ "$CURRENT_SDK_VERSION" != "$SDK_VERSION" ]; then
                     echo "❌ Error: Current SDK version ($CURRENT_SDK_VERSION) doesn't match expected version ($SDK_VERSION)"
-                    echo "❌ For production releases, SDK version should already be correct from the UAT tag"
+                    echo "❌ For production releases, SDK version should already be correct from the release branch"
                     exit 1
                   else
                     echo "✅ SDK version is correct"
