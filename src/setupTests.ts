@@ -98,18 +98,17 @@ jest.mock('./utils/getSUIVersion', () => ({
     getSUIVersion: jest.fn().mockReturnValue('1.35'),
 }));
 
-// Mock featureFlagService from grafx-shared-components
-// We need to spy on the actual module to preserve other exports
-beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require, @typescript-eslint/no-explicit-any
-    const gsc = require('@chili-publish/grafx-shared-components') as any;
-    if (gsc.featureFlagService) {
-        gsc.featureFlagService.configure = jest.fn();
-        gsc.featureFlagService.initialize = jest.fn().mockImplementation((callback: unknown) => {
-            if (typeof callback === 'function') callback({});
-            return Promise.resolve();
-        });
-    }
+// Mock StudioFeatureFlagsProvider from grafx-shared-components
+jest.mock('@chili-publish/grafx-shared-components', () => {
+    const actual = jest.requireActual('@chili-publish/grafx-shared-components');
+    return {
+        ...actual,
+        StudioFeatureFlagsProvider: ({ children }: { children: React.ReactNode }) => children,
+        useStudioFeatureFlags: () => ({
+            featureFlags: {},
+            isEnabled: () => false,
+        }),
+    };
 });
 
 // Global EnvironmentApiService mock

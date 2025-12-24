@@ -1,58 +1,23 @@
-import { featureFlagService } from '@chili-publish/grafx-shared-components';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { FeatureFlagsType } from '../types/types';
-
-interface IFeatureFlagContext {
-    featureFlags: FeatureFlagsType;
-    isEnabled: (flagName: string) => boolean;
-    isLoading: boolean;
-}
-
-export const FeatureFlagContextDefaultValues: IFeatureFlagContext = {
-    featureFlags: {},
-    isEnabled: () => false,
-    isLoading: true,
-};
-
-export const FeatureFlagContext = createContext<IFeatureFlagContext>(FeatureFlagContextDefaultValues);
-
-export const useFeatureFlagContext = () => {
-    return useContext(FeatureFlagContext);
-};
+import { StudioFeatureFlagsProvider, useStudioFeatureFlags } from '@chili-publish/grafx-shared-components';
+import { DEFAULT_FEATURE_FLAGS_URL } from '../utils/constants';
+import { getSUIVersion } from '../utils/getSUIVersion';
 
 interface FeatureFlagProviderProps {
+    featureFlagConfigURL?: string;
     children: React.ReactNode;
 }
 
-function FeatureFlagProvider({ children }: FeatureFlagProviderProps) {
-    const [featureFlags, setFeatureFlags] = useState<FeatureFlagsType>({});
-    const [isLoading, setIsLoading] = useState(true);
+function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProviderProps) {
+    const url = featureFlagConfigURL || DEFAULT_FEATURE_FLAGS_URL;
+    const studioVersion = getSUIVersion();
 
-    useEffect(() => {
-        // Initialize and fetch flags (service is already configured in main.tsx)
-        featureFlagService.initialize((flags) => {
-            setFeatureFlags(flags);
-            setIsLoading(false);
-        });
-    }, []);
-
-    const isEnabled = useCallback(
-        (flagName: string): boolean => {
-            return !!featureFlags[flagName];
-        },
-        [featureFlags],
+    return (
+        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={studioVersion}>
+            {children}
+        </StudioFeatureFlagsProvider>
     );
-
-    const value = useMemo(
-        () => ({
-            featureFlags,
-            isEnabled,
-            isLoading,
-        }),
-        [featureFlags, isEnabled, isLoading],
-    );
-
-    return <FeatureFlagContext.Provider value={value}>{children}</FeatureFlagContext.Provider>;
 }
+
+export const useFeatureFlagContext = useStudioFeatureFlags;
 
 export default FeatureFlagProvider;
