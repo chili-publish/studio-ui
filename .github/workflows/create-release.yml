@@ -382,29 +382,23 @@ jobs:
               with:
                   version_strategy: 'patch'
 
-            - name: Configure registry for SDK update (production)
+            - name: Validate SDK version (production)
               run: |
-                  echo "Configuring yarn to use public npm registry for SDK update..."
-                  # Temporarily modify .npmrc to use public npm for @chili-publish scope
-                  # Save original value
-                  ORIGINAL_REGISTRY=$(grep "^@chili-publish:registry=" .npmrc | cut -d'=' -f2 || echo "")
-                  # Replace with public npm registry
-                  sed -i.bak 's|^@chili-publish:registry=.*|@chili-publish:registry=https://registry.npmjs.org/|' .npmrc
-                  echo "Temporarily changed @chili-publish:registry to https://registry.npmjs.org/"
+                  SDK_VERSION="${{ needs.configure-parameters.outputs.sdk_version }}"
+                  CURRENT_SDK_VERSION=$(node -p "require('./package.json').dependencies['@chili-publish/studio-sdk']")
 
-            - name: Update SDK version
-              uses: ./.github/actions/update-sdk-version
-              with:
-                  sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
-                  environment: 'prd'
-              env:
-                  NODE_AUTH_TOKEN: ''
+                  echo "Expected SDK version: $SDK_VERSION"
+                  echo "Current SDK version: $CURRENT_SDK_VERSION"
 
-            - name: Restore registry configuration (production)
-              run: |
-                  echo "Restoring original .npmrc configuration..."
-                  # Restore from backup
-                  mv .npmrc.bak .npmrc || echo "No backup found, keeping current configuration"
+                  # For production, SDK should already be correct from release branch
+                  # Fail if version doesn't match expectations (unless 'latest' was specified)
+                  if [ "$SDK_VERSION" != "latest" ] && [ "$CURRENT_SDK_VERSION" != "$SDK_VERSION" ]; then
+                    echo "❌ Error: Current SDK version ($CURRENT_SDK_VERSION) doesn't match expected version ($SDK_VERSION)"
+                    echo "❌ For production releases, SDK version should already be correct from the release branch"
+                    exit 1
+                  else
+                    echo "✅ SDK version is correct"
+                  fi
 
             - name: Commit and push version changes
               id: apply_version
