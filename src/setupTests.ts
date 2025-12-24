@@ -93,6 +93,24 @@ jest.mock('./services/TokenService', () => ({
     },
 }));
 
+// Mock getSUIVersion utility
+jest.mock('./utils/getSUIVersion', () => ({
+    getSUIVersion: jest.fn().mockReturnValue('1.35'),
+}));
+
+// Mock StudioFeatureFlagsProvider from grafx-shared-components
+jest.mock('@chili-publish/grafx-shared-components', () => {
+    const actual = jest.requireActual('@chili-publish/grafx-shared-components');
+    return {
+        ...actual,
+        StudioFeatureFlagsProvider: ({ children }: { children: React.ReactNode }) => children,
+        useStudioFeatureFlags: () => ({
+            featureFlags: {},
+            isEnabled: () => false,
+        }),
+    };
+});
+
 // Global EnvironmentApiService mock
 jest.mock('./services/EnvironmentApiService', () => ({
     EnvironmentApiService: {

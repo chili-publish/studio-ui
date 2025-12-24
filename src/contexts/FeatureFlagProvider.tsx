@@ -1,35 +1,23 @@
-import { createContext, useContext, useMemo } from 'react';
-import { FeatureFlagsType } from 'src/types/types';
+import { StudioFeatureFlagsProvider, useStudioFeatureFlags } from '@chili-publish/grafx-shared-components';
+import { DEFAULT_FEATURE_FLAGS_URL } from '../utils/constants';
+import { getSUIVersion } from '../utils/getSUIVersion';
 
-interface IFeatureFlagContext {
-    featureFlags?: FeatureFlagsType;
-}
-
-export const FeatureFlagContextDefaultValues: IFeatureFlagContext = {
-    featureFlags: {},
-};
-
-export const FeatureFlagContext = createContext<IFeatureFlagContext>(FeatureFlagContextDefaultValues);
-
-export const useFeatureFlagContext = () => {
-    return useContext(FeatureFlagContext);
-};
-
-function FeatureFlagProvider({
-    featureFlags,
-    children,
-}: {
-    featureFlags?: FeatureFlagsType;
+interface FeatureFlagProviderProps {
+    featureFlagConfigURL?: string;
     children: React.ReactNode;
-}) {
-    const data = useMemo(
-        () => ({
-            featureFlags,
-        }),
-        [featureFlags],
-    );
-
-    return <FeatureFlagContext.Provider value={data}>{children}</FeatureFlagContext.Provider>;
 }
+
+function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProviderProps) {
+    const url = featureFlagConfigURL || DEFAULT_FEATURE_FLAGS_URL;
+    const studioVersion = getSUIVersion();
+
+    return (
+        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={studioVersion}>
+            {children}
+        </StudioFeatureFlagsProvider>
+    );
+}
+
+export const useFeatureFlagContext = useStudioFeatureFlags;
 
 export default FeatureFlagProvider;
