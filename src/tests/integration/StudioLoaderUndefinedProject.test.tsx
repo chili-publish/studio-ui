@@ -44,7 +44,7 @@ describe('StudioLoader integration - no projectId', () => {
         jest.clearAllMocks();
     });
 
-    it('Should not try to load project details when there is no projectId provided in the config', async () => {
+    it('Should create instance when there is no projectId provided in the config (projectId is optional)', async () => {
         render(<div id="sui-root" />);
         let instance;
         act(() => {
@@ -59,7 +59,8 @@ describe('StudioLoader integration - no projectId', () => {
             });
         });
 
-        expect(instance).toBeNull();
+        expect(instance).not.toBeNull();
+        expect(instance).toBeInstanceOf(StudioUI);
     });
 
     it('Should not try to load project document when there is no projectDownloadUrl provided in the config', async () => {
