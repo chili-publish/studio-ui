@@ -2,8 +2,8 @@ import SDK, { FrameLayoutType, FrameConstraints, FrameTypeEnum, FrameType } from
 import { act, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
-import { useDocumentTools } from '../../hooks/useDocumentTools';
 import { defaultStudioOptions } from 'src/utils/studioOptions.util';
+import { useDocumentTools } from '../../hooks/useDocumentTools';
 
 const createMockPropertyState = <T>(value: T) => ({
     value,
