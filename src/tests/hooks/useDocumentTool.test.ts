@@ -3,6 +3,7 @@ import { act, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useDocumentTools } from '../../hooks/useDocumentTools';
+import { defaultStudioOptions } from 'src/utils/studioOptions.util';
 
 const createMockPropertyState = <T>(value: T) => ({
     value,
@@ -37,6 +38,7 @@ describe('useDocumentTools', () => {
     let setHandSpy: jest.Mock;
     let deselectAllSpy: jest.Mock;
     let getSelectedFramesSpy: jest.Mock;
+    let updateStudioOptionsSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
 
     beforeEach(() => {
@@ -68,6 +70,11 @@ describe('useDocumentTools', () => {
             setHand: jest.fn(),
         } as unknown as typeof sdk.tool;
         setHandSpy = sdk.tool.setHand as jest.Mock;
+
+        sdk.configuration = {
+            updateStudioOptions: jest.fn(),
+        } as unknown as typeof sdk.configuration;
+        updateStudioOptionsSpy = sdk.configuration.updateStudioOptions as jest.Mock;
 
         // Set up event system
         triggerCallback = jest.fn() as (framesLayout: FrameLayoutType[]) => void;
@@ -136,6 +143,7 @@ describe('useDocumentTools', () => {
             expect(deselectAllSpy).toHaveBeenCalled();
             expect(setHandSpy).toHaveBeenCalled();
             expect(setSelectSpy).not.toHaveBeenCalled();
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith(defaultStudioOptions);
         });
     });
 
@@ -178,6 +186,7 @@ describe('useDocumentTools', () => {
             expect(deselectAllSpy).not.toHaveBeenCalled();
             expect(setHandSpy).toHaveBeenCalled();
             expect(setSelectSpy).not.toHaveBeenCalled();
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith(defaultStudioOptions);
         });
     });
 
@@ -221,6 +230,7 @@ describe('useDocumentTools', () => {
             expect(getConstraintsSpy).toHaveBeenCalledWith('frame1');
             expect(getConstraintsSpy).toHaveBeenCalledWith('frame2');
             expect(getConstraintsSpy).not.toHaveBeenCalledWith('frame3');
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith(defaultStudioOptions);
         });
     });
 
@@ -262,6 +272,12 @@ describe('useDocumentTools', () => {
 
         await waitFor(() => {
             expect(getAllByPageIdSpy).toHaveBeenCalledTimes(2);
+        });
+        await waitFor(() => {
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith({
+                ...defaultStudioOptions,
+                shortcutOptions: { ...defaultStudioOptions.shortcutOptions, hand: { enabled: false } },
+            });
         });
     });
 
