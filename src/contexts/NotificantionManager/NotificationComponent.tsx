@@ -17,7 +17,7 @@ function NotificationComponent(props: INotificationComponent) {
                 key={currentNotification?.id}
                 visible={!!currentNotification}
                 time={currentNotification?.duration ?? DEFAULT_NOTIFICATION_DURATION}
-                type={currentNotification?.type ?? ToastVariant.NEUTRAL}
+                type={currentNotification?.type ?? ToastVariant.INFORMATIVE}
                 content={currentNotification?.message || ''}
                 action={currentNotification?.action}
                 onClose={() => (currentNotification ? removeNotification(currentNotification) : null)}
