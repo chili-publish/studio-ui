@@ -45,7 +45,7 @@ test('ui widget options (true)', async ({ page }) => {
     expect(callbackCalled).toBe(true);
 
     // check if timeline is visible
-    await page.getByTestId('test-gsc-drop-down-indicator-icon').click();
+    await page.getByTestId('test-gsc-drop-down-indicator-icon').first().click();
     await page.getByRole('option', { name: 'Facebook Square Ad' }).click();
     await expect(page.getByTestId('test-gsc-timeline')).toBeVisible();
 
@@ -84,7 +84,7 @@ test('ui widget options (false)', async ({ page }) => {
     await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).not.toBeVisible();
 
     // check if timeline is not visible
-    await page.getByTestId('test-gsc-drop-down-indicator-icon').click();
+    await page.getByTestId('test-gsc-drop-down-indicator-icon').first().click();
     await page.getByRole('option', { name: 'Facebook Square Ad' }).click();
     await expect(page.getByTestId('test-gsc-timeline')).not.toBeVisible();
 

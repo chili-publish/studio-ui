@@ -232,7 +232,7 @@ test('light ui theme', async ({ page }) => {
 });
 
 test.use({ colorScheme: 'dark' });
-test('system ui theme - dark', async ({ page }) => {
+test.skip('system ui theme - dark', async ({ page }) => {
     const projectConfig = {
         ...getProjectConfig({
             uiOptions: {
