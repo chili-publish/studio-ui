@@ -1,5 +1,6 @@
 import SDK, { FrameLayoutType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useState } from 'react';
+import { defaultStudioOptions } from 'src/utils/studioOptions.util';
 
 export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string | null) => {
     const [visibleFrames, setVisibleFrames] = useState<NonNullable<FrameLayoutType>[]>([]);
@@ -23,6 +24,10 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
         });
         if (framesWithEnabledConstraints) {
             await sdkRef.tool.setSelect();
+            await sdkRef.configuration.updateStudioOptions({
+                ...defaultStudioOptions,
+                shortcutOptions: { ...defaultStudioOptions.shortcutOptions, hand: { enabled: false } },
+            });
         } else {
             const { parsedData: selectedFrames } = await sdkRef.frame.getSelected();
             if (selectedFrames?.length) {
@@ -30,6 +35,7 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
             }
 
             await sdkRef.tool.setHand();
+            await sdkRef.configuration.updateStudioOptions(defaultStudioOptions);
         }
     }, [sdkRef, selectedPageId, visibleFrames]);
 
