@@ -229,7 +229,7 @@ window.StudioUI.studioUILoaderConfig({
 });
 ```
 
-> **Note**: If `featureFlagConfigURL` is not provided, all feature flags default to disabled. This ensures safe behavior when feature flag configuration is not available.
+> **Note**: If `featureFlagConfigURL` is not provided, it defaults to the production feature flags URL (`https://chiligrafx.com/feature-flags.json`).
 
 #### outputSettings
 
