@@ -280,7 +280,7 @@ export interface IStudioUILoaderConfig {
     projectId?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
-    projectName: string;
+    projectName?: string;
     refreshTokenAction?: () => Promise<string | Error>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
