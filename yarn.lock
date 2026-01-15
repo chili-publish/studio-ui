@@ -5716,7 +5716,7 @@ path-type@^4.0.0:
 
 penpal@6.1.0:
   version "6.1.0"
-  resolved "https://registry.npmjs.org/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
+  resolved "https://registry.yarnpkg.com/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
   integrity sha512-UikZxAOAOpRpWUeKHXIr9pOkJSA16EBQKk4KTVVOxJoHIgzVrbEoqP5kLefQIq4dCMNYJy66gWIKjSHUSQuBNg==
 
 picocolors@^1.0.0:
