@@ -212,11 +212,11 @@ Feature flags allow you to control the availability of certain features in Studi
 
 - **Type**: `string`
 - **Optional**: Yes
-- **Default**: None (no feature flags enabled)
+- **Fallback**: `https://chiligrafx.com/feature-flags.json` (production URL)
 
 The URL to fetch the feature flags configuration from. This URL should return a JSON configuration that maps feature flag names to their version requirements.
 
-If not provided, no feature flags will be enabled, and the application will behave with all experimental/optional features disabled.
+If not provided, the application falls back to the production feature flags URL.
 
 Example usage:
 
@@ -224,12 +224,10 @@ Example usage:
 window.StudioUI.studioUILoaderConfig({
     // ... other config options ...
 
-    // URL to fetch feature flags configuration
-    featureFlagConfigURL: 'https://chiligrafx.com/feature-flags.json',
+    // Optional: Override the default feature flags URL
+    featureFlagConfigURL: 'https://your-custom-url.com/feature-flags.json',
 });
 ```
-
-> **Note**: If `featureFlagConfigURL` is not provided, it defaults to the production feature flags URL (`https://chiligrafx.com/feature-flags.json`).
 
 #### outputSettings
 
