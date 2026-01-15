@@ -2,6 +2,8 @@ import { StudioFeatureFlagsProvider, useStudioFeatureFlags } from '@chili-publis
 import { DEFAULT_FEATURE_FLAGS_URL } from '../utils/constants';
 import { getSUIVersion } from '../utils/getSUIVersion';
 
+const STUDIO_VERSION = getSUIVersion();
+
 interface FeatureFlagProviderProps {
     featureFlagConfigURL?: string;
     children: React.ReactNode;
@@ -9,10 +11,9 @@ interface FeatureFlagProviderProps {
 
 function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProviderProps) {
     const url = featureFlagConfigURL || DEFAULT_FEATURE_FLAGS_URL;
-    const studioVersion = getSUIVersion();
 
     return (
-        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={studioVersion}>
+        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={STUDIO_VERSION}>
             {children}
         </StudioFeatureFlagsProvider>
     );
