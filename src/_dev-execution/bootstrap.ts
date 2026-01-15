@@ -92,7 +92,8 @@ import { EngineVersionManager } from './version-manager';
         onConnectorAuthenticationRequested: (connectorId: string) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
-        featureFlags: {},
+        // Feature flags are now fetched from URL-based config
+        featureFlagConfigURL: 'https://chiligrafx-main.com/feature-flags.json',
         // eslint-disable-next-line no-console
         onVariableFocus: (id: string) => console.log('focused var: ', id),
         // eslint-disable-next-line no-console
