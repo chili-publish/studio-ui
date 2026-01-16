@@ -21,7 +21,7 @@ import StudioSDK, {
 import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import packageInfo from '../package.json';
-import { CanvasContainer, ChiliEditor, Container, MainContentContainer } from './App.styles';
+import { CanvasContainer, Container, MainContentContainer } from './App.styles';
 import AnimationTimeline from './components/animationTimeline/AnimationTimeline';
 import {
     ConnectorAuthenticationModal,
@@ -42,18 +42,17 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
-import { SuiCanvas } from './MainContent.styles';
 import { useAppDispatch } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
-import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
 import { TokenService } from './services/TokenService';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 import { useDocumentTools } from './hooks/useDocumentTools';
+import Canvas from './Canvas';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -466,19 +465,13 @@ function MainContent({ projectConfig }: MainContentProps) {
                                             isVisible={multiLayoutMode}
                                         />
                                     )}
-                                    <SuiCanvas
-                                        // intent prop to calculate pages container
-                                        hasMultiplePages={layoutIntent === LayoutIntent.print && pages?.length > 1}
-                                        hasAnimationTimeline={layoutIntent === LayoutIntent.digitalAnimated}
-                                        isBottomBarHidden={
-                                            projectConfig.uiOptions.widgets?.bottomBar?.visible === false
-                                        }
-                                        data-id={getDataIdForSUI('canvas')}
-                                        data-testid={getDataTestIdForSUI('canvas')}
-                                        isVisible={!multiLayoutMode}
-                                    >
-                                        <ChiliEditor id={EDITOR_ID} />
-                                    </SuiCanvas>
+                                    <Canvas
+                                        layoutIntent={layoutIntent}
+                                        pages={pages}
+                                        projectConfig={projectConfig}
+                                        multiLayoutMode={multiLayoutMode}
+                                        editorId={EDITOR_ID}
+                                    />
                                     {layoutIntent === LayoutIntent.digitalAnimated &&
                                     typeof animationLength === 'number' ? (
                                         <AnimationTimeline
