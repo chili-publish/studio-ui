@@ -10,7 +10,7 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 const HARD_BREAK = '\n\u200B';
 const SOFT_BREAK = '\n\u200C';
 
-function MultiLineTextVariable(props: ITextVariable) {
+const MultiLineTextVariable = (props: ITextVariable) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
@@ -132,6 +132,6 @@ function MultiLineTextVariable(props: ITextVariable) {
             ) : null}
         </HelpTextWrapper>
     );
-}
+};
 const MultiLineTextVariableComponent = React.memo(MultiLineTextVariable);
 export default MultiLineTextVariableComponent;

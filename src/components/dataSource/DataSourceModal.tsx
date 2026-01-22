@@ -19,7 +19,7 @@ interface TableModalProps {
     onSelectedRowChanged: (_: number) => void;
 }
 
-function DataSourceModal({
+const DataSourceModal = ({
     isOpen,
     data,
     error,
@@ -29,7 +29,7 @@ function DataSourceModal({
     onClose,
     selectedRow,
     onSelectedRowChanged,
-}: TableModalProps) {
+}: TableModalProps) => {
     const { getUITranslation } = useUITranslations();
     const { formBuilder } = useUserInterfaceDetailsContext();
 
@@ -65,5 +65,5 @@ function DataSourceModal({
             </ModalLayout.Container>
         </>
     );
-}
+};
 export default DataSourceModal;

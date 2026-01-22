@@ -5,7 +5,7 @@ import { INotificationComponent, TOAST_ID } from './Notification.types';
 
 const DEFAULT_NOTIFICATION_DURATION = 5000;
 
-function NotificationComponent(props: INotificationComponent) {
+const NotificationComponent = (props: INotificationComponent) => {
     const { currentNotification, removeNotification } = props;
     const { direction } = useDirection();
     return (
@@ -25,6 +25,6 @@ function NotificationComponent(props: INotificationComponent) {
             />
         </NotificationWrapper>
     );
-}
+};
 
 export default NotificationComponent;

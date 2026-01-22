@@ -1,4 +1,4 @@
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
@@ -10,7 +10,14 @@ export default ({ mode }) => {
         process.exit(1);
     }
     return defineConfig({
-        plugins: [react(), cssInjectedByJsPlugin()],
+        plugins: [
+            react({
+                babel: {
+                    plugins: ['babel-plugin-react-compiler'],
+                },
+            }),
+            cssInjectedByJsPlugin(),
+        ],
         server: {
             port: 3002,
         },

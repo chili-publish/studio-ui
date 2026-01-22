@@ -52,7 +52,7 @@ const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefin
     return path;
 };
 
-function ItemBrowser<
+const ItemBrowser = <
     T extends {
         id: string;
         type: MediaType;
@@ -60,7 +60,9 @@ function ItemBrowser<
         relativePath: string;
         extension?: string;
     },
->(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
+>(
+    props: React.PropsWithChildren<ItemBrowserProps<T>>,
+) => {
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const activePanel = useSelector(selectActivePanel);
 
@@ -99,7 +101,6 @@ function ItemBrowser<
     useEffect(() => {
         setBreadcrumbStack([]);
         setNavigationStack([]);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePanel]);
 
     // nextPagetoken is first set with 'requested: false' whenever we know the next
@@ -175,7 +176,6 @@ function ItemBrowser<
             setSelectedItems([]);
             setNavigationStack([]);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
@@ -187,7 +187,6 @@ function ItemBrowser<
         return relativePath;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onItemClick = async (item: T) => {
         const itemType = convertToPreviewType(item.type as unknown as AssetType);
         if (itemType === PreviewType.COLLECTION) {
@@ -235,10 +234,8 @@ function ItemBrowser<
             fallback: UNABLE_TO_LOAD_PANEL,
         };
         return itemType === PreviewType.COLLECTION ? (
-            // eslint-disable-next-line react/jsx-props-no-spreading
             <ChiliPreview {...defaultProps} />
         ) : (
-            // eslint-disable-next-line react/jsx-props-no-spreading
             <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
         );
     });
@@ -384,7 +381,7 @@ function ItemBrowser<
             </Panel>
         </>
     );
-}
+};
 
 function toNavigationStack(path: string): string[] {
     return path.replaceAll('\\', '/').replace(/^\/+/, '').split('/');

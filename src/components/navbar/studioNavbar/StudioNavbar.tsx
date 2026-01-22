@@ -8,7 +8,7 @@ import { INavbar } from '../Navbar.types';
 import useDownloadPanel from '../useDownloadPanel';
 import useStudioNavbar from './useStudioNavbar';
 
-function StudioNavbar(props: INavbar) {
+const StudioNavbar = (props: INavbar) => {
     const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
     const iframe = useGetIframeAsync({ containerId: 'studio-ui-chili-editor' })?.contentWindow;
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
@@ -88,6 +88,6 @@ function StudioNavbar(props: INavbar) {
             />
         </StyledNavbar>
     );
-}
+};
 
 export default StudioNavbar;

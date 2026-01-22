@@ -9,7 +9,7 @@ import { RangeConstraintErrorMessageWrapper } from './Layout.styles';
 interface RangeConstraintIconProps {
     layout: LayoutPropertiesType;
 }
-function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
+const RangeConstraintIcon = ({ layout }: RangeConstraintIconProps) => {
     const { getUITranslation } = useUITranslations();
 
     const uiTranslation = useMemo(() => {
@@ -56,6 +56,6 @@ function RangeConstraintIcon({ layout }: RangeConstraintIconProps) {
             />
         </Tooltip>
     );
-}
+};
 
 export default RangeConstraintIcon;

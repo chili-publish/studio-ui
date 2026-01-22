@@ -51,7 +51,7 @@ interface VariablesPanelProps {
     pageSize?: PageSize;
     layoutSectionUIOptions: UiOptions['layoutSection'] & { visible: boolean };
 }
-function MobileVariablesPanel(props: VariablesPanelProps) {
+const MobileVariablesPanel = (props: VariablesPanelProps) => {
     const {
         isTrayVisible,
         setIsTrayVisible,
@@ -284,6 +284,6 @@ function MobileVariablesPanel(props: VariablesPanelProps) {
             </Tray>
         </>
     );
-}
+};
 
 export default MobileVariablesPanel;
