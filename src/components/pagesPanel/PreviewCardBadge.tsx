@@ -6,11 +6,11 @@ interface PreviewCardBadgeProps {
     children: ReactNode;
 }
 
-export function PreviewCardBadge({ badgeNumber, children }: PreviewCardBadgeProps) {
+export const PreviewCardBadge = ({ badgeNumber, children }: PreviewCardBadgeProps) => {
     return (
         <Wrapper key={`card-wrapped-${badgeNumber}`}>
             {children}
             {badgeNumber && <NumberBadge>{badgeNumber}</NumberBadge>}
         </Wrapper>
     );
-}
+};

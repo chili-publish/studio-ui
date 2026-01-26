@@ -60,7 +60,7 @@ const useDataSource = () => {
                 (connectorId) => connectors.getByIdAs<DataRemoteConnector>(connectorId), // Pass the environment client API method
             );
             return isAuthenticationRequired(connector);
-        } catch (connectorError) {
+        } catch {
             return false;
         }
     }, [dataSource, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, connectors]);

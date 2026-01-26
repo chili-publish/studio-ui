@@ -56,7 +56,7 @@ const getCustomSelectedOption = (option?: SelectOptions) => {
     return option ? ({ label: getCustomSelectedLabel(option), value: option.value } as SelectOptions) : undefined;
 };
 
-function DownloadPanel(props: DownloadPanelProps) {
+const DownloadPanel = (props: DownloadPanelProps) => {
     const { hideDownloadPanel, isDownloadPanelVisible, handleDownload, isSandBoxMode, exportButtonRef } = props;
     const { direction } = useDirection();
     const isMobileSize = useMobileSize();
@@ -194,6 +194,6 @@ function DownloadPanel(props: DownloadPanelProps) {
             </Menu>
         </>
     );
-}
+};
 
 export default DownloadPanel;

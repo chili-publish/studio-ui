@@ -22,13 +22,13 @@ interface LeftPanelProps {
     pageSize?: PageSize;
 }
 
-function LeftPanel({
+const LeftPanel = ({
     selectedLayout,
     layouts,
     layoutPropertiesState,
     pageSize,
     layoutSectionUIOptions,
-}: LeftPanelProps) {
+}: LeftPanelProps) => {
     const activePanel = useSelector(selectActivePanel);
     const {
         shouldHide: shouldHideLeftPanel,
@@ -82,6 +82,6 @@ function LeftPanel({
             </ScrollbarWrapper>
         </LeftPanelWrapper>
     ) : null;
-}
+};
 
 export default LeftPanel;

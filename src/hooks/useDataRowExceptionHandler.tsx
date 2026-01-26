@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, react/no-array-index-key */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SDK, { DataRowAsyncError, Variable, VariableType } from '@chili-publish/studio-sdk';
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';

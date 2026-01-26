@@ -47,6 +47,7 @@ export const getEnvironmentConnectorsFromDocument = createAsyncThunk(
                 (groups, connector) => {
                     const url = getConnectorUrl(connector, configuration.graFxStudioEnvironmentApiBaseUrl);
                     if (!groups[url]) {
+                        // eslint-disable-next-line no-param-reassign
                         groups[url] = [];
                     }
                     groups[url].push(connector.id);

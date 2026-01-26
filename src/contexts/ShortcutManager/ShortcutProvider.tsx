@@ -69,6 +69,7 @@ function ShortcutProvider({ projectConfig, undoStackState, zoom, children }: Sho
                 },
             },
         ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [
             selectedMode,
             updateSelectedMode,

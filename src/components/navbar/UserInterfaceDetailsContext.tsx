@@ -29,7 +29,7 @@ export const useUserInterfaceDetailsContext = () => {
     return useContext(UserInterfaceDetailsContext);
 };
 
-export function UserInterfaceDetailsContextProvider({
+export const UserInterfaceDetailsContextProvider = ({
     projectConfig,
     layoutIntent,
     children,
@@ -37,7 +37,7 @@ export function UserInterfaceDetailsContextProvider({
     projectConfig: ProjectConfig;
     layoutIntent: string | null;
     children: ReactNode;
-}) {
+}) => {
     const { dataSource } = useAppContext();
     const [selectedUserInterfaceId, setSelectedUserInterfaceId] = useState<string | null>(
         projectConfig.userInterfaceID || null,
@@ -113,4 +113,4 @@ export function UserInterfaceDetailsContextProvider({
     );
 
     return <UserInterfaceDetailsContext.Provider value={data}>{children}</UserInterfaceDetailsContext.Provider>;
-}
+};

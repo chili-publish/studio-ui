@@ -13,7 +13,7 @@ interface MobileListVariableProps {
     onMenuOpen?: () => void;
 }
 
-function MobileListVariable({ variable, required, validationError, onMenuOpen }: MobileListVariableProps) {
+const MobileListVariable = ({ variable, required, validationError, onMenuOpen }: MobileListVariableProps) => {
     const { onVariableFocus } = useUiConfigContext();
 
     const selectedValue = variable.selected
@@ -38,6 +38,6 @@ function MobileListVariable({ variable, required, validationError, onMenuOpen }:
             }}
         />
     );
-}
+};
 
 export default MobileListVariable;

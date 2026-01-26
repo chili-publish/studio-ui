@@ -6,12 +6,12 @@ import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { LoadDocumentError } from '../../types/types';
 import { MessageWrapper, TitleWrapper } from './LoadDocumentErrorDialog.styles';
 
-interface LoadDocumentErrorDialog {
+interface LoadDocumentErrorDialogProps {
     loadDocumentError: { isOpen: boolean; error: LoadDocumentError } | undefined;
     goBack: () => void;
 }
 
-function LoadDocumentErrorDialog({ loadDocumentError, goBack }: LoadDocumentErrorDialog) {
+const LoadDocumentErrorDialog = ({ loadDocumentError, goBack }: LoadDocumentErrorDialogProps) => {
     const { getUITranslation } = useUITranslations();
 
     const onClose = () => {
@@ -86,6 +86,6 @@ function LoadDocumentErrorDialog({ loadDocumentError, goBack }: LoadDocumentErro
             </ModalLayout.Footer>
         </ModalLayout.Container>
     );
-}
+};
 
 export default LoadDocumentErrorDialog;

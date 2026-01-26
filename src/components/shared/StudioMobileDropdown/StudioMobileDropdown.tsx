@@ -16,7 +16,7 @@ interface StudioMobileDropdownProps {
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
 }
-function StudioMobileDropdown({
+const StudioMobileDropdown = ({
     dataId,
     isOpen,
     label,
@@ -28,7 +28,7 @@ function StudioMobileDropdown({
     onChange,
     onMenuOpen,
     onMenuClose,
-}: StudioMobileDropdownProps) {
+}: StudioMobileDropdownProps) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
 
     const openMobileDropdown = useCallback(() => {
@@ -59,6 +59,6 @@ function StudioMobileDropdown({
             onOpen={openMobileDropdown}
         />
     );
-}
+};
 
 export default StudioMobileDropdown;

@@ -14,7 +14,7 @@ import { useAppDispatch } from '../../../store';
 interface MobileFlatVariablesListProps {
     variables: Variable[];
 }
-function MobileFlatVariablesList({ variables }: MobileFlatVariablesListProps) {
+const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) => {
     const dispatch = useAppDispatch();
     const variablesValidation = useSelector(selectVariablesValidation);
 
@@ -66,6 +66,6 @@ function MobileFlatVariablesList({ variables }: MobileFlatVariablesListProps) {
             })}
         </>
     );
-}
+};
 
 export default MobileFlatVariablesList;

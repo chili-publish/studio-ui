@@ -2,7 +2,6 @@ import { ConfigType, LayoutIntent, Variable } from '@chili-publish/studio-sdk';
 import { mockMedia } from '@mocks/mockMedia';
 import { mockVariables } from '@mocks/mockVariables';
 
-// eslint-disable-next-line import/no-mutable-exports
 export let onVariableListChangedCallback: ((variableList: Variable[]) => void) | undefined;
 export const connectorSourceUrl = 'connectorSourceUrl';
 
@@ -12,11 +11,11 @@ jest.mock('@chili-publish/studio-sdk', () => {
     return {
         __esModule: true,
         ...originalModule,
-        /* eslint-disable */
+
         default: function (config: ConfigType) {
             onVariableListChangedCallback = config.onVariableListChanged;
             const sdk = new originalModule.default(config);
-            /* eslint-enable */
+
             return {
                 ...sdk,
                 loadEditor: () => '',

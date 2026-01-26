@@ -14,7 +14,7 @@ interface DropdownOptionProps {
     isExperimental?: boolean;
 }
 
-function DropdownOption(props: DropdownOptionProps) {
+const DropdownOption = (props: DropdownOptionProps) => {
     const { iconData, text, description, isExperimental } = props;
     return (
         <DropdownOptionLabel>
@@ -26,6 +26,6 @@ function DropdownOption(props: DropdownOptionProps) {
             {isExperimental && <ExperimentalPill>Experimental</ExperimentalPill>}
         </DropdownOptionLabel>
     );
-}
+};
 
 export default DropdownOption;

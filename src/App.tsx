@@ -19,7 +19,7 @@ declare global {
     }
 }
 
-function App({ projectConfig }: { projectConfig: ProjectConfig }) {
+const App = ({ projectConfig }: { projectConfig: ProjectConfig }) => {
     // TODO: Consider to define global object instead
     const [eventSubscriber] = useState(new Subscriber());
 
@@ -66,6 +66,6 @@ function App({ projectConfig }: { projectConfig: ProjectConfig }) {
             </StyleSheetManager>
         </div>
     );
-}
+};
 
 export default App;

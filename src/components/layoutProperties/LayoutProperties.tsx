@@ -27,7 +27,7 @@ interface LayoutPropertiesProps {
     pageSize?: PageSize;
 }
 
-function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
+const LayoutProperties = ({ layout, pageSize }: LayoutPropertiesProps) => {
     const { saveChange, pageWidth, pageHeight, widthInputHelpText, heightInputHelpText, setPageWidth, setPageHeight } =
         useLayoutProperties(layout, pageSize);
 
@@ -198,5 +198,5 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             )}
         </>
     );
-}
+};
 export default LayoutProperties;

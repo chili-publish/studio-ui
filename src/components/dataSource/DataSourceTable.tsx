@@ -21,7 +21,7 @@ interface DataSourceTableProps {
     onSelectedRowChanged: (_: number) => void;
 }
 
-function DataSourceTable({
+const DataSourceTable = ({
     data,
     error,
     hasMoreData,
@@ -29,7 +29,7 @@ function DataSourceTable({
     selectedRow,
     onNextPageRequested,
     onSelectedRowChanged,
-}: DataSourceTableProps) {
+}: DataSourceTableProps) => {
     const { infiniteScrollingRef } = useInfiniteScrolling(
         (hasMoreData && !dataIsLoading) || false,
         onNextPageRequested,
@@ -64,6 +64,6 @@ function DataSourceTable({
             <InfiniteScrollingContainer id="infinite-scrolling" ref={infiniteScrollingRef} />
         </>
     );
-}
+};
 
 export default DataSourceTable;

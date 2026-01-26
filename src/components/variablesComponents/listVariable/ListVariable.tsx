@@ -7,7 +7,7 @@ import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IListVariable } from '../VariablesComponents.types';
 
-function ListVariable(props: IListVariable) {
+const ListVariable = (props: IListVariable) => {
     const { variable, validationError, onChange } = props;
     const { onVariableBlur, onVariableFocus, projectConfig } = useUiConfigContext();
 
@@ -78,6 +78,6 @@ function ListVariable(props: IListVariable) {
             </HelpTextWrapper>
         </ComponentWrapper>
     );
-}
+};
 
 export default ListVariable;

@@ -110,7 +110,7 @@ const startPollingOnEndpoint = async (taskId: string, environmentApiService: Env
 
         if (taskStatus === null) {
             // Task is still in progress, wait and poll again
-            // eslint-disable-next-line no-promise-executor-return
+
             await new Promise((resolve) => setTimeout(resolve, 2000));
             return await startPollingOnEndpoint(taskId, environmentApiService);
         }

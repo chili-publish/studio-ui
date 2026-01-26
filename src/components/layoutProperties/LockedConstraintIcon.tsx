@@ -7,7 +7,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 interface LockedConstraintIconProps {
     layout: LayoutPropertiesType;
 }
-function LockedConstraintIcon({ layout }: LockedConstraintIconProps) {
+const LockedConstraintIcon = ({ layout }: LockedConstraintIconProps) => {
     const { getUITranslation } = useUITranslations();
 
     if (!layout) {
@@ -27,6 +27,6 @@ function LockedConstraintIcon({ layout }: LockedConstraintIconProps) {
             />
         </Tooltip>
     );
-}
+};
 
 export default LockedConstraintIcon;

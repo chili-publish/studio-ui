@@ -5,7 +5,7 @@ import { HelpTextWrapper } from './VariablesComponents.styles';
 import { INumberVariable } from './VariablesComponents.types';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
-function NumberVariable(props: INumberVariable) {
+const NumberVariable = (props: INumberVariable) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
@@ -58,5 +58,5 @@ function NumberVariable(props: INumberVariable) {
             ) : null}
         </HelpTextWrapper>
     );
-}
+};
 export default NumberVariable;

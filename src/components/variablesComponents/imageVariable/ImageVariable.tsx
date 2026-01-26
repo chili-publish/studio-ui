@@ -14,7 +14,7 @@ import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
 import { showImagePanel } from '../../../store/reducers/panelReducer';
 
-function ImageVariable(props: IImageVariable) {
+const ImageVariable = (props: IImageVariable) => {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
 
     const { onVariableFocus, onVariableBlur } = useUiConfigContext();
@@ -143,6 +143,6 @@ function ImageVariable(props: IImageVariable) {
             ) : null}
         </HelpTextWrapper>
     );
-}
+};
 
 export default ImageVariable;

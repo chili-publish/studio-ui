@@ -21,7 +21,7 @@ describe("'media' reducer", () => {
     let store: ReturnType<typeof getStore>;
     beforeEach(() => {
         const mockSDK = mock<EditorSDK>();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         mockSDK.next.connector = {} as any;
         mockSDK.next.connector.getAllByType = jest.fn();
         window.StudioUISDK = mockSDK;

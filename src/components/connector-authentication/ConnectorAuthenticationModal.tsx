@@ -8,7 +8,7 @@ interface ConnectorAuthenticationModalProp {
     onConfirm: () => void;
 }
 
-export function ConnectorAuthenticationModal({ name, onConfirm, onCancel }: ConnectorAuthenticationModalProp) {
+export const ConnectorAuthenticationModal = ({ name, onConfirm, onCancel }: ConnectorAuthenticationModalProp) => {
     const { getUITranslation } = useUITranslations();
 
     return (
@@ -33,6 +33,6 @@ export function ConnectorAuthenticationModal({ name, onConfirm, onCancel }: Conn
             }}
         />
     );
-}
+};
 
 export default ConnectorAuthenticationModal;

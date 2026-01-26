@@ -9,7 +9,7 @@ interface GroupVariableProps {
     groupVariable: GroupVariableType;
     children: React.ReactNode;
 }
-function GroupVariable({ groupVariable, children }: GroupVariableProps) {
+const GroupVariable = ({ groupVariable, children }: GroupVariableProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -33,6 +33,6 @@ function GroupVariable({ groupVariable, children }: GroupVariableProps) {
             )}
         </Collapse>
     );
-}
+};
 
 export default GroupVariable;

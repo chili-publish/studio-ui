@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import { BooleanVariable as Type } from '@chili-publish/studio-sdk';
 import { render, screen } from '@testing-library/react';

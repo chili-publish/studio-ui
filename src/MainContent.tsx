@@ -59,7 +59,7 @@ interface MainContentProps {
     projectConfig: ProjectConfig;
 }
 
-function MainContent({ projectConfig }: MainContentProps) {
+const MainContent = ({ projectConfig }: MainContentProps) => {
     const dispatch = useAppDispatch();
     const { addNotification } = useNotificationManager();
 
@@ -424,11 +424,10 @@ function MainContent({ projectConfig }: MainContentProps) {
                             {projectConfig.uiOptions.widgets?.navBar?.visible ===
                             false ? null : projectConfig.sandboxMode ? (
                                 <UiThemeProvider theme="studio" mode="dark">
-                                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                    {}
                                     <StudioNavbar {...navbarProps} />
                                 </UiThemeProvider>
                             ) : (
-                                // eslint-disable-next-line react/jsx-props-no-spreading
                                 <Navbar {...navbarProps} />
                             )}
 
@@ -513,6 +512,6 @@ function MainContent({ projectConfig }: MainContentProps) {
             </ShortcutProvider>
         </AppProvider>
     );
-}
+};
 
 export default React.memo(MainContent);

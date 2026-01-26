@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ZoomButtonProps, ZoomTypeEnum } from './Zoom.types';
 import { NavbarGroup, NavbarText } from '../navbar/Navbar.styles';
 
-function ZoomButton(props: ZoomButtonProps) {
+const ZoomButton = (props: ZoomButtonProps) => {
     const { type, handleOnClick } = props;
     const isDecrement = type === ZoomTypeEnum.DECREMENT;
     const ariaLabel = `Zoom ${isDecrement ? 'out' : 'in'}`;
@@ -17,14 +17,14 @@ function ZoomButton(props: ZoomButtonProps) {
             }
         />
     );
-}
+};
 
 interface IZoom {
     zoomIn: () => Promise<void>;
     zoomOut: () => Promise<void>;
     zoom: number;
 }
-function Zoom(props: IZoom) {
+const Zoom = (props: IZoom) => {
     const { zoom, zoomIn, zoomOut } = props;
 
     const [currentZoom, setCurrentZoom] = useState(zoom);
@@ -48,6 +48,6 @@ function Zoom(props: IZoom) {
             <ZoomButton handleOnClick={zoomIn} />
         </NavbarGroup>
     );
-}
+};
 
 export default Zoom;

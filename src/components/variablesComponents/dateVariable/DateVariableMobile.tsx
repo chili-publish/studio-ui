@@ -10,7 +10,7 @@ import DateVariable from './DateVariable';
 import { DatePickerWrapper, ButtonWrapper } from '../VariablesComponents.styles';
 import { useAppDispatch } from '../../../store';
 
-function DateVariableMobile() {
+const DateVariableMobile = () => {
     const dispatch = useAppDispatch();
     const currentVariable = useSelector(selectCurrentVariable);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -56,6 +56,6 @@ function DateVariableMobile() {
             </ButtonWrapper>
         </>
     );
-}
+};
 
 export default DateVariableMobile;

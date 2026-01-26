@@ -26,7 +26,7 @@ export const useAppContext = () => {
     return useContext(AppContext);
 };
 
-function AppProvider({
+const AppProvider = ({
     isDocumentLoaded,
     isAnimationPlaying,
     dataSource,
@@ -36,7 +36,7 @@ function AppProvider({
     isAnimationPlaying?: boolean;
     dataSource?: ConnectorInstance;
     children: ReactNode;
-}) {
+}) => {
     const [selectedMode, setSelectedMode] = useState<Mode>('run');
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
 
@@ -71,6 +71,6 @@ function AppProvider({
     );
 
     return <AppContext.Provider value={data}>{children}</AppContext.Provider>;
-}
+};
 
 export default AppProvider;

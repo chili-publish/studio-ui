@@ -16,7 +16,7 @@ import {
 import { useVariableComponents } from '../variablesComponents/useVariablesComponents';
 import { SEARCH_IN_UPLOAD_FOLDER_FIELD_NAME } from '../../utils/constants';
 
-function ImagePanel() {
+const ImagePanel = () => {
     const dispatch = useAppDispatch();
 
     const currentVariableId = useSelector(selectCurrentVariableId);
@@ -77,6 +77,6 @@ function ImagePanel() {
             convertToPreviewType={convertToPreviewType}
         />
     );
-}
+};
 
 export default ImagePanel;

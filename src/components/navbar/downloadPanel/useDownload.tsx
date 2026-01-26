@@ -174,7 +174,7 @@ const useDownload = ({
                 setSelectedOutputSettingsId(undefined);
             }
         },
-        [getFormatFromId, userInterfaceDownloadOptions, outputSettingsFullListOptions, isSandBoxMode],
+        [getFormatFromId, outputSettingsFullList, userInterfaceOutputSettings, isSandBoxMode],
     );
 
     useEffect(() => {

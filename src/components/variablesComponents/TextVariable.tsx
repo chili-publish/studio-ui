@@ -7,7 +7,7 @@ import { ITextVariable } from './VariablesComponents.types';
 import { getVariablePlaceholder } from './variablePlaceholder.util';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
-function TextVariable(props: ITextVariable) {
+const TextVariable = (props: ITextVariable) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
@@ -54,6 +54,6 @@ function TextVariable(props: ITextVariable) {
             ) : null}
         </HelpTextWrapper>
     );
-}
+};
 const TextVarComponent = React.memo(TextVariable);
 export default TextVarComponent;

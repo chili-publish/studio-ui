@@ -6,7 +6,7 @@ import DownloadPanel from './downloadPanel/DownloadPanel';
 import useDownloadPanel from './useDownloadPanel';
 import useNavbar from './useNavbar';
 
-function Navbar(props: INavbar) {
+const Navbar = (props: INavbar) => {
     const { projectName, goBack, projectConfig, zoom, undoStackState, selectedLayoutId } = props;
 
     const { isDownloadPanelVisible, showDownloadPanel, hideDownloadPanel, handleDownload } = useDownloadPanel(
@@ -54,6 +54,6 @@ function Navbar(props: INavbar) {
             />
         </StyledNavbar>
     );
-}
+};
 
 export default Navbar;

@@ -8,7 +8,7 @@ import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IDateVariable } from '../VariablesComponents.types';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 
-function DateVariable(props: IDateVariable) {
+const DateVariable = (props: IDateVariable) => {
     const {
         onValueChange,
         variable,
@@ -88,6 +88,6 @@ function DateVariable(props: IDateVariable) {
             ) : null}
         </HelpTextWrapper>
     );
-}
+};
 
 export default DateVariable;

@@ -113,6 +113,7 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
     );
     return mappingValues.reduce(
         (config, mapping) => {
+            // eslint-disable-next-line no-param-reassign
             config[mapping.name] = mapping.value;
             return config;
         },

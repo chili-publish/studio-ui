@@ -15,7 +15,7 @@ interface StudioDropdownProps {
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
 }
-function StudioDropdown({
+const StudioDropdown = ({
     dataId,
     label,
     selectedValue,
@@ -28,7 +28,7 @@ function StudioDropdown({
     onMenuOpen,
     onMenuClose,
     id,
-}: StudioDropdownProps) {
+}: StudioDropdownProps) => {
     return (
         <Select
             id={id}
@@ -47,6 +47,6 @@ function StudioDropdown({
             onMenuClose={onMenuClose}
         />
     );
-}
+};
 
 export default StudioDropdown;

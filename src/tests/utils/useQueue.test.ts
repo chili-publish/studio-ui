@@ -41,6 +41,7 @@ describe('useProcessingQueue', () => {
     it('should handle processing errors gracefully', async () => {
         const error = new Error('Processing failed');
         const errorProcessItem = jest.fn().mockRejectedValue(error);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         const { result } = renderHook(() =>

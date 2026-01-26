@@ -43,7 +43,7 @@ export const renderWithProviders = <
         reduxStore?: ReturnType<typeof setupStore>;
     } = {},
 ): RenderResult<Q, Container, BaseElement> & { reduxStore: ReturnType<typeof setupStore> } => {
-    function Wrapper({ children }: PropsWithChildren<WrapperProps>) {
+    const Wrapper = ({ children }: PropsWithChildren<WrapperProps>) => {
         const mockApiInstances = createMockApiInstances();
 
         return (
@@ -55,7 +55,7 @@ export const renderWithProviders = <
                 </ReduxProvider>
             </StyleSheetManager>
         );
-    }
+    };
 
     const rendered = render(ui, { wrapper: Wrapper, ...renderOptions });
 
