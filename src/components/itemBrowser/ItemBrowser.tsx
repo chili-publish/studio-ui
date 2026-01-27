@@ -9,11 +9,13 @@ import {
     PreviewType,
     ScrollbarWrapper,
     SelectOptions,
+    Tooltip,
+    TooltipPosition,
     useInfiniteScrolling,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
 import { APP_WRAPPER_ID, FOLDER_PREVIEW_THUMBNAIL } from 'src/utils/constants';
@@ -234,13 +236,21 @@ function ItemBrowser<
             renamingDisabled: true,
             fallback: UNABLE_TO_LOAD_PANEL,
         };
-        return itemType === PreviewType.COLLECTION ? (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <ChiliPreview {...defaultProps} />
-        ) : (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
-        );
+
+        const previewProps = itemType === PreviewType.COLLECTION ? undefined : { byteArray: previewByteArray };
+
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        const previewComponent = <ChiliPreview {...defaultProps} {...previewProps} />;
+
+        if (itemType === PreviewType.IMAGE) {
+            return (
+                <Tooltip key={defaultProps.key} position={TooltipPosition.TOP} content={defaultProps.name}>
+                    {previewComponent}
+                </Tooltip>
+            );
+        }
+
+        return <Fragment key={defaultProps.key}>{previewComponent}</Fragment>;
     });
 
     const breacrumbStackString = useMemo(() => {
