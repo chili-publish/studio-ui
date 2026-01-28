@@ -5,10 +5,11 @@ import { IntegrationTokenManager } from '../integration-token-manager';
 
 (async () => {
     const tokenManager = new IntegrationTokenManager();
+    const projectConfig = window.__PROJECT_CONFIG__ || {};
 
     StudioUI.studioUILoaderConfig({
-        selector: 'studio-ui-container',
-        ...(window.__PROJECT_CONFIG__ || {}),
+        ...projectConfig,
+        selector: projectConfig.selector || 'studio-ui-container',
         authToken: await tokenManager.getAccessToken(),
         refreshTokenAction: () => tokenManager.getAccessToken(),
     });
