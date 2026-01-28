@@ -2,6 +2,7 @@ name: Build and deploy PR
 on: [pull_request]
 env:
     NODE_VERSION: 22.x
+    FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
 permissions:
     contents: write
     packages: read
@@ -23,6 +24,12 @@ jobs:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.cache/yarn
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
             - name: install dependencies
               run: |
                   yarn install
@@ -54,7 +61,6 @@ jobs:
             - uses: actions/upload-artifact/merge@v4
               with:
                   name: coverage-artifacts
-                  path: coverage
             - uses: actions/download-artifact@v4
               with:
                   name: coverage-artifacts
@@ -71,16 +77,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            - name: copy coverage reports
-              run: |
-                  coveragePath=upload/coverage_reports/$CI_REF_NAME
-                  mkdir -p ${coveragePath%"/merge"}
-                  cp -R coverage/* ${coveragePath%"/merge"}
-            - name: Copy to Azure Blob Storage
-              uses: azure/CLI@v1
-              with:
-                  inlineScript: |
-                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
     build:
         runs-on: ubuntu-latest
         name: build (20)
@@ -93,6 +89,12 @@ jobs:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.cache/yarn
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
             - name: install dependencies
               run: |
                   yarn install
@@ -143,8 +145,24 @@ jobs:
                   buildPath=upload/pr_builds/$CI_REF_NAME
                   mkdir -p ${buildPath%"/merge"}
                   cp -R dist/* ${buildPath%"/merge"}
+            - name: Azure Login
+              uses: azure/login@v2
+              with:
+                  creds: >-
+                      {
+                          "clientId": "${{ vars.AZ_AD_CLIENT_ID_CP_RJS_INT_CICD_SP }}",
+                          "clientSecret": "${{ secrets.AZ_AD_CLIENT_SECRET_CP_RJS_INT_CICD_SP }}",
+                          "tenantId": "${{ vars.AZ_TENANT_ID }}",
+                          "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID_SAAS_DEV }}"
+                      }
+
             - name: Copy to Azure Blob Storage
-              uses: azure/CLI@v1
+              uses: azure/cli@v2
               with:
                   inlineScript: |
-                      az storage blob upload-batch -d studio-ui -s upload/ --connection-string "${{ secrets.AZURE_CDN_STUDIO_DEV_CONNECTION_STRING }}" --overwrite true
+                      az storage blob upload-batch \
+                        --account-name "${{ vars.STORAGE_ACCOUNT_NAME_DEV }}" \
+                        --destination studio-ui \
+                        --source upload/ \
+                        --overwrite true \
+                        --auth-mode login

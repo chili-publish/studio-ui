@@ -191,6 +191,31 @@ const uiOptions = {
 };
 ```
 
+### Feature Flags
+
+Feature flags allow you to control the availability of certain features in Studio UI based on the Studio version. This is the recommended approach for managing feature availability.
+
+#### featureFlagConfigURL
+
+- **Type**: `string`
+- **Optional**: Yes
+- **Fallback**: `https://chiligrafx.com/feature-flags.json` (production URL)
+
+The URL to fetch the feature flags configuration from. This URL should return a JSON configuration that maps feature flag names to their version requirements.
+
+If not provided, the application falls back to the production feature flags URL.
+
+Example usage:
+
+```js
+window.StudioUI.studioUILoaderConfig({
+    // ... other config options ...
+
+    // Optional: Override the default feature flags URL
+    featureFlagConfigURL: 'https://your-custom-url.com/feature-flags.json',
+});
+```
+
 #### outputSettings
 
 - **Deprecated**: Yes

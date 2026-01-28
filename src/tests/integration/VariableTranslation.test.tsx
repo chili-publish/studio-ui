@@ -15,7 +15,7 @@ import userEvent from '@testing-library/user-event';
 import StudioUI from '../../main';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 
-const environmentBaseURL = 'http://abc.com';
+const environmentBaseURL = 'https://test-api.test.com/grafx/api/v1/environment/test-api';
 const projectID = 'projectId';
 const token = 'auth-token';
 

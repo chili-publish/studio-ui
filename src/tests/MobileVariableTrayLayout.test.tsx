@@ -8,7 +8,7 @@ import { UiConfigContextProvider } from 'src/contexts/UiConfigContext';
 import { ProjectConfig, UserInterfaceWithOutputSettings } from 'src/types/types';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { mockOutputSetting } from '@mocks/mockOutputSetting';
-import MobileVariables from '../components/variables/MobileVariables';
+import MobileVariables from '../components/variables/mobileVariables/MobileVariables';
 import * as AppProvider from '../contexts/AppProvider';
 import { IAppContext } from '../contexts/AppProvider';
 import FeatureFlagProvider from '../contexts/FeatureFlagProvider';

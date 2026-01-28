@@ -41,7 +41,7 @@ export type ProjectConfig = {
     userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     sandboxMode?: boolean;
-    featureFlags?: FeatureFlagsType;
+    featureFlagConfigURL?: string;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
     onProjectDocumentRequested: (projectId?: string) => Promise<string | null>;
@@ -70,6 +70,7 @@ export type ProjectConfig = {
         value: string | boolean | number | null | undefined,
     ) => Promise<void>;
     environmentApiService: EnvironmentApiService;
+    onLoadError?: (error: Error) => void;
 };
 
 export type DownloadLinkResult = {
@@ -151,7 +152,11 @@ export interface LayoutForm extends BaseFormBuilderType<'layouts'> {
 }
 
 export type DataSourceForm = BaseFormBuilderType<'datasource'>;
-export type VariablesForm = BaseFormBuilderType<'variables'>;
+export type VariablesForm = BaseFormBuilderType<'variables'> & {
+    variableGroups?: {
+        show: boolean;
+    };
+};
 
 export type FormBuilderArray = Array<DataSourceForm | VariablesForm | LayoutForm>;
 
@@ -275,7 +280,7 @@ export interface IStudioUILoaderConfig {
     projectId?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
-    projectName: string;
+    projectName?: string;
     refreshTokenAction?: () => Promise<string | Error>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;
@@ -288,8 +293,9 @@ export interface IStudioUILoaderConfig {
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
     sandboxMode?: boolean;
-    featureFlags?: Record<string, boolean>;
-    variableTranslations?: VariableTranslations; //
+    /** URL to fetch feature flags from. If not provided, no feature flags are enabled. */
+    featureFlagConfigURL?: string;
+    variableTranslations?: VariableTranslations;
     layoutTranslations?: LayoutTranslations;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested?: (projectId?: string) => Promise<Project>;
@@ -316,6 +322,7 @@ export interface IStudioUILoaderConfig {
         value: string | boolean | number | null | undefined,
     ) => Promise<void>; // tests
     uiTranslations?: UITranslations;
+    onLoadError?: (error: Error) => void;
 }
 
 export type PageSnapshot = {

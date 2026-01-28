@@ -11,6 +11,7 @@ import {
     IStudioUILoaderConfig,
     ProjectConfig,
 } from './types/types';
+import { validateCoreConfig } from './utils/validateConfig';
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
@@ -108,7 +109,10 @@ export default class StudioUI extends StudioUILoader {
      * @param layoutTranslations - Translations for the layout.
      * @returns
      */
-    static studioUILoaderConfig(config: IStudioUILoaderConfig) {
+    static studioUILoaderConfig(config: IStudioUILoaderConfig): StudioUI | null {
+        if (!validateCoreConfig(config)) {
+            return null;
+        }
         const {
             selector,
             projectDownloadUrl,
@@ -122,7 +126,7 @@ export default class StudioUI extends StudioUILoader {
             uiOptions,
             outputSettings,
             userInterfaceID,
-            featureFlags,
+            featureFlagConfigURL,
             sandboxMode,
             variableTranslations,
             uiTranslations,
@@ -145,6 +149,7 @@ export default class StudioUI extends StudioUILoader {
             userInterfaceFormBuilderData,
             onFetchUserInterfaceDetails,
             onVariableValueChangedCompleted,
+            onLoadError,
         } = config;
 
         // Initialize TokenService singleton
@@ -184,7 +189,7 @@ export default class StudioUI extends StudioUILoader {
                     ...uiOptionsConfig,
                     uiTheme: uiOptionsConfig.uiTheme || 'light',
                 },
-                featureFlags,
+                featureFlagConfigURL,
                 sandboxMode: sandboxMode || false,
                 onSandboxModeToggle,
                 onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
@@ -206,6 +211,7 @@ export default class StudioUI extends StudioUILoader {
                 onVariableValueChangedCompleted,
                 onProjectLoaded,
                 environmentApiService,
+                onLoadError,
             },
             {
                 variableTranslations,

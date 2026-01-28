@@ -1,11 +1,11 @@
 import { AvailableIcons, Button, ButtonVariant, Icon } from '@chili-publish/grafx-shared-components';
 import { useState } from 'react';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
-import { useLeftPanelAndTrayVisibility } from '../../core/hooks/useLeftPanelAndTrayVisibility';
-import { EditButtonWrapper } from './VariablesPanel.styles';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
-import { UiOptions } from '../../types/types';
+import { EditButtonWrapper } from '../VariablesPanel.styles';
+import { getDataTestIdForSUI } from '../../../utils/dataIds';
+import { UiOptions } from '../../../types/types';
 import MobileVariablesPanel from './MobileVariablesTray';
+import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
 
 interface MobileVariablesProps {
     selectedLayout: Layout | null;

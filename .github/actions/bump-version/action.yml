@@ -1,0 +1,51 @@
+name: 'Bump Version'
+description: 'Increment package.json version based on strategy'
+inputs:
+    version_strategy:
+        required: true
+        description: "Version bump strategy: 'prerelease', 'prerelease-conditional', or 'patch'"
+outputs:
+    tag_name:
+        description: 'The new version tag name'
+        value: ${{ steps.bump_version.outputs.tag_name }}
+runs:
+    using: composite
+    steps:
+        - name: Bump version
+          id: bump_version
+          shell: bash
+          run: |
+              git config --global user.name 'github-actions[bot]'
+              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+              VERSION_STRATEGY="${{ inputs.version_strategy }}"
+
+              if [ "$VERSION_STRATEGY" = "prerelease" ]; then
+                # UAT regular: add -rc.0 prefix (minor version already bumped in post-production step)
+                # e.g., 1.3.0-alpha.0 -> 1.3.0-rc.0
+                NEW_VERSION=$(npm version prerelease --preid=rc --git-tag-version=false)
+              elif [ "$VERSION_STRATEGY" = "prerelease-conditional" ]; then
+                # UAT hotfix: Check if we're hotfixing an existing UAT release
+                CURRENT_VERSION=$(node -p "require('./package.json').version")
+                if [[ "$CURRENT_VERSION" == *"-rc."* ]]; then
+                  # Hotfix existing UAT release: increment prerelease number only
+                  # e.g., 1.2.3-rc.0 -> 1.2.3-rc.1
+                  NEW_VERSION=$(npm version prerelease --preid=rc --git-tag-version=false)
+                else
+                  # New UAT hotfix from main or production: increment patch and add -rc.0
+                  # e.g., 1.2.3 -> 1.2.4-rc.0
+                  NEW_VERSION=$(npm version prepatch --preid=rc --git-tag-version=false)
+                fi
+              elif [ "$VERSION_STRATEGY" = "patch" ]; then
+                # PRD releases (both regular and hotfix): strip prerelease suffix
+                # e.g., 1.3.0-rc.2 -> 1.3.0 (regular)
+                # e.g., 1.2.3-rc.1 -> 1.2.3 (hotfix, patch already incremented in UAT)
+                NEW_VERSION=$(npm version patch --git-tag-version=false)
+              else
+                echo "❌ Error: Unknown version strategy: $VERSION_STRATEGY"
+                exit 1
+              fi
+
+              # Remove 'v' prefix if present
+              TAG_NAME=$(echo $NEW_VERSION | sed 's/^v//')
+              echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT

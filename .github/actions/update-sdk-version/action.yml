@@ -1,0 +1,106 @@
+name: 'Update SDK Version'
+description: 'Update SDK version in package.json and yarn.lock'
+inputs:
+    sdk_version:
+        required: true
+        description: 'SDK version to update. Can be an actual version (e.g., 1.35.0) or "latest" to keep current version unchanged.'
+    environment:
+        required: true
+        description: 'Environment (uat or prd) for validation'
+runs:
+    using: composite
+    steps:
+        - name: Validate SDK version
+          shell: bash
+          run: |
+              SDK_VERSION_INPUT="${{ inputs.sdk_version }}"
+              ENVIRONMENT="${{ inputs.environment }}"
+
+              # Get current studio version from package.json
+              STUDIO_VERSION=$(node -p "require('./package.json').version")
+              STUDIO_MAJOR_MINOR=$(echo "$STUDIO_VERSION" | sed 's/-.*//' | cut -d. -f1,2)
+
+              echo "Studio version: $STUDIO_VERSION (Major.Minor: $STUDIO_MAJOR_MINOR)"
+              echo "SDK version input: $SDK_VERSION_INPUT"
+              echo "Environment: $ENVIRONMENT"
+
+              # Determine which SDK version to validate
+              if [ "$SDK_VERSION_INPUT" = "latest" ]; then
+                # Get current SDK version from package.json
+                SDK_VERSION_TO_VALIDATE=$(node -p "require('./package.json').dependencies['@chili-publish/studio-sdk']")
+                if [ -z "$SDK_VERSION_TO_VALIDATE" ]; then
+                  echo "❌ Error: @chili-publish/studio-sdk not found in dependencies"
+                  exit 1
+                fi
+                echo "Validating current SDK version: $SDK_VERSION_TO_VALIDATE"
+              else
+                SDK_VERSION_TO_VALIDATE="$SDK_VERSION_INPUT"
+                echo "Validating provided SDK version: $SDK_VERSION_TO_VALIDATE"
+              fi
+
+              # Extract Major.Minor from SDK version
+              SDK_MAJOR_MINOR=$(echo "$SDK_VERSION_TO_VALIDATE" | sed 's/-.*//' | cut -d. -f1,2)
+
+              # Validate Major.Minor matches studio version
+              if [ "$SDK_MAJOR_MINOR" != "$STUDIO_MAJOR_MINOR" ]; then
+                echo "❌ Error: SDK version Major.Minor ($SDK_MAJOR_MINOR) doesn't match Studio version Major.Minor ($STUDIO_MAJOR_MINOR)"
+                exit 1
+              fi
+
+              # Validate version format based on environment
+              if [ "$ENVIRONMENT" = "uat" ]; then
+                # UAT allows both -rc versions and normal semver (latest PRD)
+                if [[ "$SDK_VERSION_TO_VALIDATE" == *"-"* ]] && [[ ! "$SDK_VERSION_TO_VALIDATE" == *"-rc"* ]]; then
+                  echo "❌ Error: For UAT environment, SDK version must be normal semver (e.g., 1.35.0) or include -rc suffix (e.g., 1.35.0-rc.0), but got: $SDK_VERSION_TO_VALIDATE"
+                  exit 1
+                fi
+                if [[ "$SDK_VERSION_TO_VALIDATE" == *"-rc"* ]]; then
+                  echo "✅ Validation passed: SDK version has -rc suffix for UAT"
+                else
+                  echo "✅ Validation passed: SDK version is normal semver (latest PRD) for UAT"
+                fi
+              elif [ "$ENVIRONMENT" = "prd" ]; then
+                if [[ "$SDK_VERSION_TO_VALIDATE" == *"-"* ]]; then
+                  echo "❌ Error: For PRD environment, SDK version must be normal semver without postfix (e.g., 1.35.0), but got: $SDK_VERSION_TO_VALIDATE"
+                  exit 1
+                fi
+                echo "✅ Validation passed: SDK version is normal semver for PRD"
+              fi
+
+        - name: Update SDK version
+          if: inputs.sdk_version != '' && inputs.sdk_version != 'latest'
+          shell: bash
+          run: |
+              SDK_VERSION="${{ inputs.sdk_version }}"
+              echo "Updating SDK version to: $SDK_VERSION"
+
+              # Update the SDK version in package.json
+              node -e "
+                const fs = require('fs');
+                const path = './package.json';
+                const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+                if (data.dependencies && data.dependencies['@chili-publish/studio-sdk']) {
+                  data.dependencies['@chili-publish/studio-sdk'] = '$SDK_VERSION';
+                  fs.writeFileSync(path, JSON.stringify(data, null, 4));
+                  console.log('Updated @chili-publish/studio-sdk to version: $SDK_VERSION');
+                } else {
+                  console.log('⚠️  Warning: @chili-publish/studio-sdk not found in dependencies');
+                }
+              "
+
+        - name: Update yarn.lock after SDK version change
+          if: inputs.sdk_version != '' && inputs.sdk_version != 'latest'
+          shell: bash
+          run: |
+              echo "Updating yarn.lock with new SDK version..."
+              # Yarn Classic (1.22) doesn't support updating lockfile without installation
+              # yarn install will update yarn.lock to match the updated package.json
+              yarn install
+          env:
+              NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
+
+        - name: Skip SDK version update
+          if: inputs.sdk_version == 'latest'
+          shell: bash
+          run: |
+              echo "SDK version is 'latest' - keeping current SDK version unchanged"

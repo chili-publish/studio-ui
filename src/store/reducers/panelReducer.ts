@@ -7,6 +7,7 @@ export const enum PanelType {
     IMAGE_PANEL = 'image_panel',
     DATE_VARIABLE_PICKER = 'date_variable_picker',
     DATA_SOURCE_TABLE = 'data_source_table',
+    LIST_VARIABLE_PANEL = 'list_variable_panel',
 }
 
 type PanelState = {
@@ -25,6 +26,13 @@ export const showImagePanel = createAsyncThunk(
     ({ variableId, connectorId }: { variableId: string; connectorId: string }, { dispatch }) => {
         dispatch(setCurrentSelectedVariableId(variableId));
         dispatch(setCurrentSelectedVariableConnectorId(connectorId));
+    },
+);
+
+export const showListVariablePanel = createAsyncThunk(
+    'panel/showListVariablePanel',
+    ({ variableId }: { variableId: string }, { dispatch }) => {
+        dispatch(setCurrentSelectedVariableId(variableId));
     },
 );
 
@@ -49,6 +57,9 @@ export const panelSlice = createSlice({
         });
         builder.addCase(showImagePanel.fulfilled, (state) => {
             state.activePanel = PanelType.IMAGE_PANEL;
+        });
+        builder.addCase(showListVariablePanel.fulfilled, (state) => {
+            state.activePanel = PanelType.LIST_VARIABLE_PANEL;
         });
     },
 });

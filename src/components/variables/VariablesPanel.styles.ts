@@ -36,7 +36,13 @@ export const TrayPanelTitle = styled.h2<{ margin?: string }>`
 `;
 
 export const ComponentWrapper = styled.div`
-    margin-bottom: 1rem;
+    margin-bottom: 1rem !important;
+`;
+
+export const VariablesWrapper = styled.div`
+    ${ComponentWrapper}:last-child {
+        margin-bottom: 0 !important;
+    }
 `;
 
 export const TrayTitleWithBtn = styled.div`
