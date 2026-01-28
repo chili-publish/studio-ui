@@ -23,6 +23,9 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
         });
         if (framesWithEnabledConstraints) {
             await sdkRef.tool.setSelect();
+            await sdkRef.configuration.updateStudioOptions({
+                shortcutOptions: { hand: { enabled: false } },
+            });
         } else {
             const { parsedData: selectedFrames } = await sdkRef.frame.getSelected();
             if (selectedFrames?.length) {
