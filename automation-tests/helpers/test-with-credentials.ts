@@ -15,8 +15,8 @@ export const test = base.extend({
         console.log('!!!clientId', clientId, 'clientSecret', clientSecret);
         if (clientId && clientSecret) {
             await page.addInitScript(`
-                window.__INTEGRATION_CLIENT_ID = ${JSON.stringify(clientId)};
-                window.__INTEGRATION_CLIENT_SECRET = ${JSON.stringify(clientSecret)};
+                window.__INTEGRATION_CLIENT_ID = ${clientId};
+                window.__INTEGRATION_CLIENT_SECRET = ${clientSecret};
             `);
         }
 
