@@ -207,7 +207,7 @@ jobs:
               run: yarn playwright-test
               env:
                   GITHUB_PR_NUMBER: ${{ steps.extract-pr-number.outputs.pr_number }}
-                  INTEGRATION_CLIENT_ID: ${{ vars.INTEGRATION_CLIENT_ID }}
+                  INTEGRATION_CLIENT_ID: ${{ secrets.INTEGRATION_CLIENT_ID }}
                   INTEGRATION_CLIENT_SECRET: ${{ secrets.INTEGRATION_CLIENT_SECRET }}
             - uses: actions/upload-artifact@v4
               if: ${{ !cancelled() }}
