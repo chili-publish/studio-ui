@@ -11,7 +11,12 @@ function getBaseURL(): string {
         // Try to get PR number from various sources
         let githubPrNumber: string | undefined = process.env.GITHUB_PR_NUMBER;
 
+        console.log('githubPrNumber', githubPrNumber);
         if (githubPrNumber) {
+            console.log(
+                'baseUrl',
+                `https://chiligrafx-main.com/environments/${{ envId }}/studio/projects/${{ projectId }}?studio-ui=pr_builds/${{ githubPrNumber }}`,
+            );
             return `https://chiligrafx-main.com/environments/${{ envId }}/studio/projects/${{ projectId }}?studio-ui=pr_builds/${{ githubPrNumber }}`;
         }
 
