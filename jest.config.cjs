@@ -26,4 +26,5 @@ module.exports = {
         ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', outputName: 'junit.xml' }],
     ],
     transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
+    testPathIgnorePatterns: ['<rootDir>/automation-tests/*'],
 };

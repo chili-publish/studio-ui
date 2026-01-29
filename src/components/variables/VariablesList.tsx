@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useVariableTranslations } from '../../core/hooks/useVariableTranslations';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
@@ -33,7 +34,7 @@ function VariablesList() {
 
     return (
         <div>
-            <SectionWrapper id="variables-section-header">
+            <SectionWrapper id="variables-section-header" data-testid={`${getDataTestIdForSUI('variables-heading')}`}>
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>

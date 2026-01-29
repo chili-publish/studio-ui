@@ -17,14 +17,16 @@
         "test": "jest",
         "lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
         "ci-lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,json}\"",
-        "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+        "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./automation-tests/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
         "postinstall": "node ./node_modules/husky/lib/bin install",
         "format-staged": "pretty-quick --staged",
         "pretty-quick": "pretty-quick",
         "cover": "jest --coverage",
         "make-badges": "node createCoverageBadge.cjs",
         "validate-licenses": "node validate_licenses.cjs",
-        "validate-versions": "node validate_versions.cjs"
+        "validate-versions": "node validate_versions.cjs",
+        "playwright-test": "playwright test",
+        "playwright-mobile-test": "playwright test --project=mobile"
     },
     "dependencies": {
         "@babel/preset-env": "^7.25.3",
@@ -40,6 +42,7 @@
         "date-fns": "^4.1.0",
         "dnd-core": "^15.1.1",
         "react": "^19.2.0",
+        "dotenv": "^17.2.3",
         "react-datepicker": "^7.1.0",
         "react-dnd": "^15.1.1",
         "react-dnd-html5-backend": "^15.1.2",
@@ -54,6 +57,7 @@
     "devDependencies": {
         "@auth0/auth0-spa-js": "^2.1.3",
         "@emotion/is-prop-valid": "^1.3.1",
+        "@playwright/test": "^1.56.1",
         "@testing-library/dom": "10.4.0",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.0",
