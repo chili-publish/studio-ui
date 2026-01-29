@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../helpers/test-with-credentials';
 import { UiOptions } from 'src/types/types';
 import { getProjectConfig } from '../helpers/project.config';
 

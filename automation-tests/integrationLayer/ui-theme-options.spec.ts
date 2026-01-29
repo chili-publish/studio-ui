@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { test, expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { test, expect } from '../helpers/test-with-credentials';
+
 import { UiOptions } from 'src/types/types';
 import { getProjectConfig } from '../helpers/project.config';
 
@@ -109,9 +111,9 @@ test('ui theme options', async ({ page }) => {
 
     await page.goto('/?demo=integration');
 
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
     await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
     // Inject the comic sans font style after navigation
     await page.addStyleTag({

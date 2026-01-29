@@ -1,12 +1,12 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, no-underscore-dangle */
 export class IntegrationTokenManager {
     private readonly client_id: string;
 
     private readonly client_secret: string;
 
     constructor() {
-        this.client_id = import.meta.env.VITE_INTEGRATION_CLIENT_ID ?? '';
-        this.client_secret = import.meta.env.VITE_INTEGRATION_CLIENT_SECRET ?? '';
+        this.client_id = window.__INTEGRATION_CLIENT_ID ?? import.meta.env.VITE_INTEGRATION_CLIENT_ID ?? '';
+        this.client_secret = window.__INTEGRATION_CLIENT_SECRET ?? import.meta.env.VITE_INTEGRATION_CLIENT_SECRET ?? '';
     }
 
     async getAccessToken(): Promise<string> {

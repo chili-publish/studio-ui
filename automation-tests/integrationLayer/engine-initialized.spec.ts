@@ -1,5 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../helpers/test-with-credentials';
 import { getProjectConfig } from '../helpers/project.config';
+
 test('engine initialized callback', async ({ page }) => {
     const projectConfig = { ...getProjectConfig({}) };
     const configString = JSON.stringify(projectConfig);

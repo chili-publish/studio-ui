@@ -1,4 +1,6 @@
-import { test as base, expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { test as base, expect } from '../helpers/test-with-credentials';
+
 import { getProjectConfig } from '../helpers/project.config';
 
 const test = base.extend<{ variableEventsPage: Page }>({

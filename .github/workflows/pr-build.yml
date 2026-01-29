@@ -166,3 +166,52 @@ jobs:
                         --source upload/ \
                         --overwrite true \
                         --auth-mode login
+    playwright-tests:
+        runs-on: ubuntu-latest
+        needs: [build]
+        timeout-minutes: 60
+        steps:
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v4
+            - name: Use Node ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@chili-publish'
+            - uses: actions/cache@v4
+              with:
+                  path: ~/.cache/yarn
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+            - name: Install dependencies
+              run: yarn install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - uses: actions/cache@v4
+              id: playwright-cache
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/package.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-playwright-
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps
+            - name: Extract PR number from GITHUB_REF
+              id: extract-pr-number
+              run: |
+                  PR_NUMBER=$(echo "${{ github.ref }}" | sed 's|refs/pull/||' | sed 's|/merge||')
+                  echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            - name: Run Playwright tests
+              run: yarn playwright-test
+              env:
+                  GITHUB_PR_NUMBER: ${{ steps.extract-pr-number.outputs.pr_number }}
+                  INTEGRATION_CLIENT_ID: ${{ vars.INTEGRATION_CLIENT_ID }}
+                  INTEGRATION_CLIENT_SECRET: ${{ secrets.INTEGRATION_CLIENT_SECRET }}
+            - uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 30

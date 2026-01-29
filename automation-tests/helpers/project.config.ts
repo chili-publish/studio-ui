@@ -1,11 +1,13 @@
 import { IStudioUILoaderConfig } from 'src/types/types';
 import dotenv from 'dotenv';
+import { projectInfo } from './projectInfo';
 
 dotenv.config({ path: './.env.local' });
 
 export const getProjectConfig = (extendedConfig: Partial<IStudioUILoaderConfig>) => {
-    const baseUrl = process.env.VITE_INTEGRATION_BASE_ENVIRONMENT_API_URL;
-    const projectId = process.env.VITE_INTEGRATION_PROJECT_ID;
+    const envName = projectInfo.envName;
+    const projectId = projectInfo.projectId;
+    const baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`;
     // Base configuration shared between regular and sandbox modes
     const baseConfig = {
         selector: 'studio-ui-container',

@@ -4,6 +4,8 @@ import { IStudioUILoaderConfig } from 'src/types/types';
 declare global {
     interface Window {
         __PROJECT_CONFIG__: IStudioUILoaderConfig;
+        __INTEGRATION_CLIENT_ID?: string;
+        __INTEGRATION_CLIENT_SECRET?: string;
     }
 }
 
