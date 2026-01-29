@@ -29,7 +29,7 @@ export default defineConfig({
     testDir: './automation-tests/integrationLayer',
     use: {
         baseURL: getBaseURL(),
-        trace: 'on-first-retry',
+        trace: 'on',
     },
     workers: process.env.CI ? 1 : undefined,
     reporter: [['html']],
