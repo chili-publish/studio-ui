@@ -12,7 +12,7 @@
         "build": "tsc && npm run build:iife && npm run build:module",
         "build:iife": "OUTPUT_FORMAT=iife vite build",
         "build:module": "OUTPUT_FORMAT=module vite build",
-        "preview": "vite preview",
+        "preview": "OUTPUT_FORMAT=iife vite preview",
         "testw": "jest --watch --silent",
         "test": "jest",
         "lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
