@@ -12,6 +12,7 @@
         <script type="module">
             const params = new URLSearchParams(window.location.search);
             const runIntegrationTest = params.get('demo') === 'integration';
+            console.log('runIntegrationTest', runIntegrationTest, params);
 
             const loadMainWorkspace = async () => {
                 await import('./src/main.tsx');

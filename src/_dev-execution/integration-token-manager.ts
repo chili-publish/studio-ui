@@ -7,12 +7,11 @@ export class IntegrationTokenManager {
     constructor() {
         this.client_id = window.__INTEGRATION_CLIENT_ID ?? import.meta.env.VITE_INTEGRATION_CLIENT_ID ?? '';
         this.client_secret = window.__INTEGRATION_CLIENT_SECRET ?? import.meta.env.VITE_INTEGRATION_CLIENT_SECRET ?? '';
-
-        // eslint-disable-next-line no-console
-        console.log('!!!client_id', this.client_id, '!!!client_secret', this.client_secret);
     }
 
     async getAccessToken(): Promise<string> {
+        // eslint-disable-next-line no-console
+        console.log('getAccessToken', this.client_id, '!!!client_secret', this.client_secret);
         try {
             const response = await fetch('https://integration-login.chiligrafx-main.com/oauth/token', {
                 method: 'POST',
