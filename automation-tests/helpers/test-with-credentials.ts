@@ -3,8 +3,7 @@ import { test as base } from '@playwright/test';
 /**
  * Custom Playwright test fixture that automatically injects integration credentials
  * into all pages. This allows credentials from GitHub secrets (CI) or .env.local (local)
- * to be available in the browser context without needing to call injectIntegrationCredentials
- * in each test.
+ * to be available in the browser context.
  *
  * Usage: Import this instead of '@playwright/test' in test files:
  *   import { test, expect } from '../helpers/test-with-credentials';
