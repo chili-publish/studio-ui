@@ -15,9 +15,9 @@ function getBaseURL(): string {
         if (githubPrNumber) {
             console.log(
                 'baseUrl',
-                `https://chiligrafx-main.com/environments/${{ envId }}/studio/projects/${{ projectId }}?studio-ui=pr_builds/${{ githubPrNumber }}`,
+                `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?studio-ui=pr_builds/${githubPrNumber}`,
             );
-            return `https://chiligrafx-main.com/environments/${{ envId }}/studio/projects/${{ projectId }}?studio-ui=pr_builds/${{ githubPrNumber }}`;
+            return `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?studio-ui=pr_builds/${githubPrNumber}`;
         }
 
         // If we're in CI but can't determine PR number, throw an error
