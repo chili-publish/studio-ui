@@ -12,10 +12,6 @@ function getBaseURL(): string {
         let githubPrNumber: string | undefined = process.env.GITHUB_PR_NUMBER;
 
         if (githubPrNumber) {
-            console.log(
-                'baseUrl',
-                `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?studio-ui=pr_builds/${githubPrNumber}`,
-            );
             return `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?demo=integration&studio-ui=pr_builds/${githubPrNumber}`;
         }
 
@@ -34,6 +30,8 @@ export default defineConfig({
     use: {
         baseURL: getBaseURL(),
     },
+    workers: process.env.CI ? 1 : undefined,
+    reporter: [['html']],
     projects: [
         {
             name: 'chromium',
