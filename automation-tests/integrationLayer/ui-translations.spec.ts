@@ -21,7 +21,7 @@ test('ui translations', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -58,7 +58,7 @@ test('layouts ui translations', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -106,7 +106,7 @@ test('variables ui translations', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -139,7 +139,7 @@ test('datasource ui translations', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 

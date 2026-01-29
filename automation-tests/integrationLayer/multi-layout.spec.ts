@@ -12,7 +12,7 @@ test('configure multi layout mode', async ({ page }) => {
         };
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 

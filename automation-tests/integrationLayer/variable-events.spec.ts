@@ -21,7 +21,7 @@ const test = base.extend<{ variableEventsPage: Page }>({
             };
         `);
 
-        await page.goto('/?demo=integration');
+        await page.goto('');
         await page.waitForLoadState('networkidle');
         await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
         await use(page);

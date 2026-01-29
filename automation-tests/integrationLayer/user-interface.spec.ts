@@ -28,7 +28,7 @@ test('custom user interface ID and onFetchUserInterfaceDetails callback', async 
         };
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -63,7 +63,7 @@ test('custom user interface ID', async ({ page }) => {
 
     await page.addInitScript(`window.__PROJECT_CONFIG__ = ${configString};`);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 

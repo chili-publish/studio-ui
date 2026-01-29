@@ -11,13 +11,12 @@ function getBaseURL(): string {
         // Try to get PR number from various sources
         let githubPrNumber: string | undefined = process.env.GITHUB_PR_NUMBER;
 
-        console.log('githubPrNumber', githubPrNumber);
         if (githubPrNumber) {
             console.log(
                 'baseUrl',
                 `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?studio-ui=pr_builds/${githubPrNumber}`,
             );
-            return `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?studio-ui=pr_builds/${githubPrNumber}`;
+            return `https://chiligrafx-main.com/environments/${envId}/studio/projects/${projectId}?demo=integration&studio-ui=pr_builds/${githubPrNumber}`;
         }
 
         // If we're in CI but can't determine PR number, throw an error
@@ -27,7 +26,7 @@ function getBaseURL(): string {
     }
 
     // Local development
-    return 'http://localhost:3002';
+    return 'http://localhost:3002?demo=integration&studio-ui=pr_builds/123';
 }
 
 export default defineConfig({

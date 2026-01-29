@@ -14,7 +14,7 @@ test.describe('mobile UI tests', () => {
             window.__PROJECT_CONFIG__ = ${configString};
         `);
 
-        await page.goto('/?demo=integration');
+        await page.goto('');
 
         // Wait for the page to fully load
         await page.waitForLoadState('networkidle');

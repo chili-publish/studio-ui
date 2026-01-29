@@ -30,7 +30,7 @@ test('ui widget options (true)', async ({ page }) => {
         };
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -74,7 +74,7 @@ test('ui widget options (false)', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -108,7 +108,7 @@ test('ui widget options (hide navbar)', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 

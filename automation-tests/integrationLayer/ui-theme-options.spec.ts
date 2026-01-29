@@ -109,7 +109,7 @@ test('ui theme options', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -196,7 +196,7 @@ test('dark ui theme', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -224,7 +224,7 @@ test('light ui theme', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -253,7 +253,7 @@ test.skip('system ui theme - dark', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
@@ -282,7 +282,7 @@ test('system ui theme - light', async ({ page }) => {
 
     await page.emulateMedia({ colorScheme: 'light' });
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
     await page.emulateMedia({ colorScheme: 'light' });
 
     await page.waitForLoadState('networkidle');

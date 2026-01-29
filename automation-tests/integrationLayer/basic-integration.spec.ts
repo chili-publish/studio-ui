@@ -9,7 +9,7 @@ test('basic integration', async ({ page }) => {
         window.__PROJECT_CONFIG__ = ${configString};
     `);
 
-    await page.goto('/?demo=integration');
+    await page.goto('');
 
     await page.waitForLoadState('networkidle');
 
