@@ -18,12 +18,6 @@ export const test = base.extend({
                 window.__INTEGRATION_CLIENT_ID = '${clientId}';
                 window.__INTEGRATION_CLIENT_SECRET = '${clientSecret}';
             `);
-            console.log(
-                '!!!window.__INTEGRATION_CLIENT_ID',
-                window.__INTEGRATION_CLIENT_ID,
-                'window.__INTEGRATION_CLIENT_SECRET',
-                window.__INTEGRATION_CLIENT_SECRET,
-            );
         }
 
         await use(page);
