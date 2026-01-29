@@ -1,8 +1,5 @@
 import { IStudioUILoaderConfig } from 'src/types/types';
-import dotenv from 'dotenv';
 import { projectInfo } from './projectInfo';
-
-dotenv.config({ path: './.env.local' });
 
 export const getProjectConfig = (extendedConfig: Partial<IStudioUILoaderConfig>) => {
     const envName = projectInfo.envName;

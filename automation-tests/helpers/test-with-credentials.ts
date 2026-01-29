@@ -15,9 +15,15 @@ export const test = base.extend({
         console.log('!!!clientId', clientId, 'clientSecret', clientSecret);
         if (clientId && clientSecret) {
             await page.addInitScript(`
-                window.__INTEGRATION_CLIENT_ID = ${clientId};
-                window.__INTEGRATION_CLIENT_SECRET = ${clientSecret};
+                window.__INTEGRATION_CLIENT_ID = '${clientId}';
+                window.__INTEGRATION_CLIENT_SECRET = '${clientSecret}';
             `);
+            console.log(
+                '!!!window.__INTEGRATION_CLIENT_ID',
+                window.__INTEGRATION_CLIENT_ID,
+                'window.__INTEGRATION_CLIENT_SECRET',
+                window.__INTEGRATION_CLIENT_SECRET,
+            );
         }
 
         await use(page);
