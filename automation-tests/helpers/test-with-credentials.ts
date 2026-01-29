@@ -13,7 +13,7 @@ export const test = base.extend({
     page: async ({ page }, use) => {
         const clientId = process.env.INTEGRATION_CLIENT_ID;
         const clientSecret = process.env.INTEGRATION_CLIENT_SECRET;
-
+        console.log('!!!clientId', clientId, 'clientSecret', clientSecret);
         if (clientId && clientSecret) {
             await page.addInitScript(`
                 window.__INTEGRATION_CLIENT_ID = ${JSON.stringify(clientId)};
