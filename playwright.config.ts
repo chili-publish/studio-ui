@@ -14,7 +14,7 @@ function getTestConfig() {
         return {
             baseURL: testUrl,
             webServer: {
-                command: 'yarn build && yarn preview --port ' + testPort,
+                command: 'yarn playwright:build && yarn preview --port ' + testPort,
                 port: testPort,
                 reuseExistingServer: false,
                 timeout: 300000, // 5 minutes for build + server start

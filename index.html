@@ -24,9 +24,9 @@
                 await import('./src/_dev-execution/integration-demos/integration.ts');
             };
             if (runIntegrationTest) {
-                await loadIntegrationTest();
+                loadIntegrationTest();
             } else {
-                await loadMainWorkspace();
+                loadMainWorkspace();
             }
         </script>
     </body>
