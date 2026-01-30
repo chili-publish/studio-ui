@@ -29,3 +29,5 @@ export const SectionWrapper = styled.div<{ id?: string; margin?: string }>`
     margin: 1rem 0;
     ${(props) => props.margin && `margin: ${props.margin};`};
 `;
+
+export const HeadingWrapper = styled.div``;

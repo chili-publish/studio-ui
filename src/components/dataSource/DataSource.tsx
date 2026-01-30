@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
@@ -60,7 +61,7 @@ function DataSource() {
 
     return (
         <>
-            <SectionWrapper id="datasource-section-header">
+            <SectionWrapper id="datasource-section-header" data-testid={`${getDataTestIdForSUI('datasource-heading')}`}>
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
