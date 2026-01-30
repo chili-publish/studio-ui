@@ -154,3 +154,8 @@ export const EmptySearchResultContainer = styled.div`
     font-size: 0.875rem;
     text-align: center;
 `;
+
+export const TooltipContent = styled.div`
+    overflow-wrap: break-word;
+    word-break: break-word;
+`;
