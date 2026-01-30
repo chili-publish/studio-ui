@@ -10,8 +10,6 @@ export class IntegrationTokenManager {
     }
 
     async getAccessToken(): Promise<string> {
-        // eslint-disable-next-line no-console
-        console.log('getAccessToken', this.client_id, '!!!client_secret', this.client_secret);
         try {
             const response = await fetch('https://integration-login.chiligrafx-main.com/oauth/token', {
                 method: 'POST',

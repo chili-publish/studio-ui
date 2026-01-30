@@ -37,5 +37,5 @@ test('configure multi layout mode', async ({ page }) => {
     });
 
     await expect(page.getByTestId('test-sui-canvas')).toBeVisible();
-    expect(page.getByText('Custom main element')).not.toBeVisible();
+    await expect(page.getByText('Custom main element')).not.toBeVisible();
 });
