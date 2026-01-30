@@ -32,6 +32,7 @@ import {
     ScrollbarContainer,
     SearchInputWrapper,
     StyledPanelTitle,
+    TooltipContent,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
 import { PanelType, selectActivePanel } from '../../store/reducers/panelReducer';
@@ -244,7 +245,11 @@ function ItemBrowser<
 
         if (itemType === PreviewType.IMAGE) {
             return (
-                <Tooltip key={defaultProps.key} position={TooltipPosition.TOP} content={defaultProps.name}>
+                <Tooltip
+                    key={defaultProps.key}
+                    position={TooltipPosition.TOP}
+                    content={<TooltipContent>{defaultProps.name}</TooltipContent>}
+                >
                     {previewComponent}
                 </Tooltip>
             );
