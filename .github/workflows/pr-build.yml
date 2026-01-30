@@ -193,10 +193,11 @@ jobs:
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
-                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/package.json') }}
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
                   restore-keys: |
                       ${{ runner.os }}-playwright-
             - name: Install Playwright Browsers
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: npx playwright install --with-deps
             - name: Extract PR number from GITHUB_REF
               id: extract-pr-number
