@@ -43,7 +43,6 @@
         "date-fns": "^4.1.0",
         "dnd-core": "^15.1.1",
         "react": "^19.2.0",
-        "dotenv": "^17.2.3",
         "react-datepicker": "^7.1.0",
         "react-dnd": "^15.1.1",
         "react-dnd-html5-backend": "^15.1.2",
