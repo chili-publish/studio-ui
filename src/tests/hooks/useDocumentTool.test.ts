@@ -37,6 +37,7 @@ describe('useDocumentTools', () => {
     let setHandSpy: jest.Mock;
     let deselectAllSpy: jest.Mock;
     let getSelectedFramesSpy: jest.Mock;
+    let updateStudioOptionsSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
 
     beforeEach(() => {
@@ -68,6 +69,12 @@ describe('useDocumentTools', () => {
             setHand: jest.fn(),
         } as unknown as typeof sdk.tool;
         setHandSpy = sdk.tool.setHand as jest.Mock;
+
+        // Set up configuration methods
+        updateStudioOptionsSpy = jest.fn();
+        sdk.configuration = {
+            updateStudioOptions: updateStudioOptionsSpy,
+        } as unknown as typeof sdk.configuration;
 
         // Set up event system
         triggerCallback = jest.fn() as (framesLayout: FrameLayoutType[]) => void;
@@ -312,6 +319,41 @@ describe('useDocumentTools', () => {
 
         await waitFor(() => {
             expect(getAllByPageIdSpy).toHaveBeenCalledWith('page2');
+        });
+    });
+
+    it('should disable hand shortcut when frames have enabled constraints', async () => {
+        const frame1 = createMockFrame('frame1', 'Frame 1');
+
+        getAllByPageIdSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [frame1],
+        });
+
+        getConstraintsSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: createMockConstraints({
+                selectionAllowed: createMockPropertyState(true),
+            }),
+        });
+
+        renderHookWithProviders(() => useDocumentTools(sdk, 'page1'));
+
+        // Clear initial calls from hook mount
+        jest.clearAllMocks();
+
+        // Simulate frames layout change with visible frames
+        await act(async () => {
+            await triggerCallback([createMockFrameLayout('frame1', true)]);
+        });
+
+        await waitFor(() => {
+            expect(setSelectSpy).toHaveBeenCalled();
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith({
+                shortcutOptions: { hand: { enabled: false } },
+            });
         });
     });
 });
