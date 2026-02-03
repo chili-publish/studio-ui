@@ -1,24 +1,12 @@
 import { test, expect } from '../../helpers/test-with-credentials';
-import { getProjectConfig } from '../../helpers/project.config';
 
 test.describe('mobile UI tests', () => {
-    test.beforeEach(({ browserName }, testInfo) => {
+    test.beforeEach(({}, testInfo) => {
         const isMobile = testInfo.project.name.includes('mobile');
         if (!isMobile) test.skip(); // skip desktop
     });
+
     test('displays headings in the correct order', async ({ page }) => {
-        const projectConfig = { ...getProjectConfig({}) };
-        const configString = JSON.stringify(projectConfig);
-
-        await page.addInitScript(`
-            window.__PROJECT_CONFIG__ = ${configString};
-        `);
-
-        await page.goto('');
-
-        // Wait for the page to fully load
-        await page.waitForLoadState('networkidle');
-
         await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
         const trayButton = page.getByTestId('test-sui-mobile-variables');

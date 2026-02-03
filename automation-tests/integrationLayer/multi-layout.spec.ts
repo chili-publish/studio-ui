@@ -1,21 +1,15 @@
 import { test, expect } from '../helpers/test-with-credentials';
 import { getProjectConfig } from '../helpers/project.config';
 
-test('configure multi layout mode', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({ customElement: '<div>Custom main element</div>' }) };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
+const initScript = `
         window.__PROJECT_CONFIG__.onSetMultiLayout = (fn) => {
             window.__SET_MULTI_LAYOUT_VIEW__ = fn;
         };
-    `);
+    `;
+const projectConfig = { ...getProjectConfig({ customElement: '<div>Custom main element</div>' }) };
 
-    await page.goto('');
-
-    await page.waitForLoadState('networkidle');
-
+test.use({ initScript, projectConfig });
+test('configure multi layout mode', async ({ page }) => {
     // Wait for the callback to be set
     await page.waitForFunction(() => (window as any).__SET_MULTI_LAYOUT_VIEW__ !== undefined);
 
@@ -27,7 +21,7 @@ test('configure multi layout mode', async ({ page }) => {
     });
 
     await expect(page.getByTestId('test-sui-canvas')).not.toBeVisible();
-    expect(page.getByText('Custom main element')).toBeVisible();
+    await expect(page.getByText('Custom main element')).toBeVisible();
 
     // Disable multi-layout mode
     await page.evaluate(() => {

@@ -1,9 +1,47 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Page } from '@playwright/test';
 import { test, expect } from '../helpers/test-with-credentials';
-
 import { UiOptions } from 'src/types/types';
 import { getProjectConfig } from '../helpers/project.config';
+
+const projectConfigDark = {
+    ...getProjectConfig({
+        uiOptions: {
+            uiTheme: 'dark',
+            widgets: {
+                downloadButton: {
+                    visible: true,
+                },
+            },
+        },
+    }),
+};
+
+const projectConfigLight = {
+    ...getProjectConfig({
+        uiOptions: {
+            uiTheme: 'light',
+            widgets: {
+                downloadButton: {
+                    visible: true,
+                },
+            },
+        },
+    }),
+};
+
+const projectConfigSystem = {
+    ...getProjectConfig({
+        uiOptions: {
+            uiTheme: 'system',
+            widgets: {
+                downloadButton: {
+                    visible: true,
+                },
+            },
+        },
+    }),
+};
 
 const uiOptions: UiOptions = {
     theme: {
@@ -101,191 +139,102 @@ const assertDarkThemeStyling: (page: Page) => Promise<void> = async (page) => {
     expect(thumbColor).toBe('rgb(62, 62, 62)');
 };
 
-test('ui theme options', async ({ page }) => {
+test.describe('ui theme options', () => {
     const projectConfig = { ...getProjectConfig({ uiOptions }) };
-    const configString = JSON.stringify(projectConfig);
+    test.use({ projectConfig });
+    test('custom theme options', async ({ page }) => {
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
+        // Inject the comic sans font style after navigation
+        await page.addStyleTag({
+            content: 'body { font-family: Comic Sans MS, cursive, sans-serif; }',
+        });
 
-    await page.goto('');
+        await expect(page.getByLabel('Project: Listing')).toBeVisible();
 
-    await page.waitForLoadState('networkidle');
+        // check if the comic sans font is injected on the body
+        await expect(page.locator('body')).toHaveCSS('font-family', '"Comic Sans MS", cursive, sans-serif');
+        // check if comic sans font is used in the UI
+        await expect(page.getByLabel('Project: Listing')).toHaveCSS(
+            'font-family',
+            '"Comic Sans MS", cursive, sans-serif',
+        );
+        // background color of the button should be #F40009 = rgb(244, 0, 9)
+        await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
+            'background-color',
+            'rgb(244, 0, 9)',
+        );
+        // primaryButtonTextColor should be #ffffff
+        await expect(page.getByLabel('Download').getByTestId('test-gsc-button')).toHaveCSS(
+            'color',
+            'rgb(255, 255, 255)',
+        );
+        // primaryButtonHoverColor should be #CB0007 = rgb(203, 0, 7) on hover
+        const downloadButton = page.getByLabel('Download').getByTestId('test-gsc-button');
+        await downloadButton.hover();
+        await expect(downloadButton).toHaveCSS('background-color', 'rgb(203, 0, 7)');
 
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        // panelBackgroundColor should be #252525 = rgb(37, 37, 37)
+        await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
+        // dropdownMenuBackgroundColor is difficult to test because it's inside a dropdown menu, so we skip it for now
+        // inputBackgroundColor should be #323232 = rgb(50, 50, 50)
+        await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(50, 50, 50)');
+        // inputBorderColor should be #F5F5F5 = rgb(245, 245, 245)
+        await expect(page.locator('.grafx-select__control').first()).toHaveCSS('border-color', 'rgb(245, 245, 245)');
+        // inputFocusBorderColor should be #ffffff = rgb(255, 255, 255)
+        await expect(page.locator('.grafx-select__control').first()).toBeVisible();
+        await page.locator('.grafx-select__control').first().click();
+        await expect(page.locator('.grafx-select__control').first()).toHaveCSS('border-color', 'rgb(255, 255, 255)');
+        // canvasBackgroundColor should be #161616 = rgb(22, 22, 22)
+        // tested in unit tests
+        // highlightedElementsColor should be #3E3E3E = rgb(62, 62, 62)
+        await expect(page.getByRole('option').first()).toHaveCSS('background-color', 'rgb(62, 62, 62)');
+        // disabledElementsColor should be #6E6E6E = rgb(110, 110, 110)
+        // tested in unit tests
+        // placeholderTextColor should be #909090 = rgb(144, 144, 144)
+        page.getByLabel('Project: Listing').click();
+        await expect(page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4')).toBeVisible();
+        await page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4').dblclick();
+        await page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4').fill('');
+        // Check placeholder pseudo-element CSS color
+        const inputElement = page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4');
+        const placeholderColor = await inputElement.evaluate((element) => {
+            return window.getComputedStyle(element, '::placeholder').color;
+        });
+        expect(placeholderColor).toBe('rgb(144, 144, 144)');
+        // primaryTextColor should be #ffffff = rgb(255, 255, 255)
+        await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(255, 255, 255)');
 
-    // Inject the comic sans font style after navigation
-    await page.addStyleTag({
-        content: 'body { font-family: Comic Sans MS, cursive, sans-serif; }',
+        // secondaryTextColor should be #B9B9B9 = rgb(185, 185, 185)
+        await expect(page.getByLabel('Project: Listing')).toHaveCSS('color', 'rgb(185, 185, 185)');
+    });
+});
+
+test.describe('dark ui theme', () => {
+    test.use({ projectConfig: projectConfigDark });
+    test('dark ui theme test', async ({ page }) => {
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        await assertDarkThemeStyling(page);
+    });
+});
+
+test.describe('light ui theme', () => {
+    test.use({ projectConfig: projectConfigLight });
+    test('light ui theme test', async ({ page }) => {
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        await assertLightThemeStyling(page);
+    });
+});
+
+test.describe('system ui theme', () => {
+    test.use({ projectConfig: projectConfigSystem });
+    test.skip('system ui theme - dark', async ({ page }) => {
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        await assertDarkThemeStyling(page);
     });
 
-    await expect(page.getByLabel('Project: Listing')).toBeVisible();
-
-    // check if the comic sans font is injected on the body
-    await expect(page.locator('body')).toHaveCSS('font-family', '"Comic Sans MS", cursive, sans-serif');
-    // check if comic sans font is used in the UI
-    await expect(page.getByLabel('Project: Listing')).toHaveCSS('font-family', '"Comic Sans MS", cursive, sans-serif');
-    // background color of the button should be #F40009 = rgb(244, 0, 9)
-    await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toHaveCSS(
-        'background-color',
-        'rgb(244, 0, 9)',
-    );
-    // primaryButtonTextColor should be #ffffff
-    await expect(page.getByLabel('Download').getByTestId('test-gsc-button')).toHaveCSS('color', 'rgb(255, 255, 255)');
-    // primaryButtonHoverColor should be #CB0007 = rgb(203, 0, 7) on hover
-    const downloadButton = page.getByLabel('Download').getByTestId('test-gsc-button');
-    await downloadButton.hover();
-    await expect(downloadButton).toHaveCSS('background-color', 'rgb(203, 0, 7)');
-
-    // panelBackgroundColor should be #252525 = rgb(37, 37, 37)
-    await expect(page.getByTestId('test-sui-left-panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
-    // dropdownMenuBackgroundColor is difficult to test because it's inside a dropdown menu, so we skip it for now
-    // inputBackgroundColor should be #323232 = rgb(50, 50, 50)
-    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('background-color', 'rgb(50, 50, 50)');
-    // inputBorderColor should be #F5F5F5 = rgb(245, 245, 245)
-    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('border-color', 'rgb(245, 245, 245)');
-    // inputFocusBorderColor should be #ffffff = rgb(255, 255, 255)
-    await expect(page.locator('.grafx-select__control').first()).toBeVisible();
-    await page.locator('.grafx-select__control').first().click();
-    await expect(page.locator('.grafx-select__control').first()).toHaveCSS('border-color', 'rgb(255, 255, 255)');
-    // canvasBackgroundColor should be #161616 = rgb(22, 22, 22)
-    // tested in unit tests
-    // highlightedElementsColor should be #3E3E3E = rgb(62, 62, 62)
-    await expect(page.getByRole('option').first()).toHaveCSS('background-color', 'rgb(62, 62, 62)');
-    // disabledElementsColor should be #6E6E6E = rgb(110, 110, 110)
-    // tested in unit tests
-    // placeholderTextColor should be #909090 = rgb(144, 144, 144)
-    page.getByLabel('Project: Listing').click();
-    // wait for 1 second
-    await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
+    test('system ui theme - light', async ({ page }) => {
+        await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
+        await assertLightThemeStyling(page);
     });
-
-    await page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4').dblclick();
-    await page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4').fill('');
-    // Check placeholder pseudo-element CSS color
-    const inputElement = page.getByTestId('test-sui-input-a754b513-c120-4a0d-9f3c-96ebc825cba4');
-    const placeholderColor = await inputElement.evaluate((element) => {
-        return window.getComputedStyle(element, '::placeholder').color;
-    });
-    expect(placeholderColor).toBe('rgb(144, 144, 144)');
-    // primaryTextColor should be #ffffff = rgb(255, 255, 255)
-    await expect(page.getByRole('heading', { name: 'Data source' })).toHaveCSS('color', 'rgb(255, 255, 255)');
-
-    // secondaryTextColor should be #B9B9B9 = rgb(185, 185, 185)
-    await expect(page.getByLabel('Project: Listing')).toHaveCSS('color', 'rgb(185, 185, 185)');
-});
-
-test('dark ui theme', async ({ page }) => {
-    const projectConfig = {
-        ...getProjectConfig({
-            uiOptions: {
-                uiTheme: 'dark',
-                widgets: {
-                    downloadButton: {
-                        visible: true,
-                    },
-                },
-            },
-        }),
-    };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
-
-    await page.goto('');
-
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    await assertDarkThemeStyling(page);
-});
-
-test('light ui theme', async ({ page }) => {
-    const projectConfig = {
-        ...getProjectConfig({
-            uiOptions: {
-                uiTheme: 'light',
-                widgets: {
-                    downloadButton: {
-                        visible: true,
-                    },
-                },
-            },
-        }),
-    };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
-
-    await page.goto('');
-
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-
-    await assertLightThemeStyling(page);
-});
-
-test.use({ colorScheme: 'dark' });
-test.skip('system ui theme - dark', async ({ page }) => {
-    const projectConfig = {
-        ...getProjectConfig({
-            uiOptions: {
-                uiTheme: 'system',
-                widgets: {
-                    downloadButton: {
-                        visible: true,
-                    },
-                },
-            },
-        }),
-    };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
-
-    await page.goto('');
-
-    await page.waitForLoadState('networkidle');
-
-    await assertDarkThemeStyling(page);
-});
-
-test.use({ colorScheme: 'light' });
-test('system ui theme - light', async ({ page }) => {
-    const projectConfig = {
-        ...getProjectConfig({
-            uiOptions: {
-                uiTheme: 'system',
-                widgets: {
-                    downloadButton: {
-                        visible: true,
-                    },
-                },
-            },
-        }),
-    };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
-
-    await page.emulateMedia({ colorScheme: 'light' });
-
-    await page.goto('');
-    await page.emulateMedia({ colorScheme: 'light' });
-
-    await page.waitForLoadState('networkidle');
-
-    await assertLightThemeStyling(page);
 });
