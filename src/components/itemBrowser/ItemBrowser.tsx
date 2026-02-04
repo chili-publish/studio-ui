@@ -9,11 +9,13 @@ import {
     PreviewType,
     ScrollbarWrapper,
     SelectOptions,
+    Tooltip,
+    TooltipPosition,
     useInfiniteScrolling,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
 import { APP_WRAPPER_ID, FOLDER_PREVIEW_THUMBNAIL } from 'src/utils/constants';
@@ -30,6 +32,7 @@ import {
     ScrollbarContainer,
     SearchInputWrapper,
     StyledPanelTitle,
+    TooltipContent,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
 import { PanelType, selectActivePanel } from '../../store/reducers/panelReducer';
@@ -233,11 +236,24 @@ const ItemBrowser = <
             renamingDisabled: true,
             fallback: UNABLE_TO_LOAD_PANEL,
         };
-        return itemType === PreviewType.COLLECTION ? (
-            <ChiliPreview {...defaultProps} />
-        ) : (
-            <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
-        );
+
+        const previewProps = itemType === PreviewType.COLLECTION ? undefined : { byteArray: previewByteArray };
+
+        const previewComponent = <ChiliPreview {...defaultProps} {...previewProps} />;
+
+        if (itemType === PreviewType.IMAGE) {
+            return (
+                <Tooltip
+                    key={defaultProps.key}
+                    position={TooltipPosition.TOP}
+                    content={<TooltipContent>{defaultProps.name}</TooltipContent>}
+                >
+                    {previewComponent}
+                </Tooltip>
+            );
+        }
+
+        return <Fragment key={defaultProps.key}>{previewComponent}</Fragment>;
     });
 
     const breacrumbStackString = useMemo(() => {
