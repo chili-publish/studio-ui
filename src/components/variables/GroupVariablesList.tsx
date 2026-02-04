@@ -4,13 +4,13 @@ import useGroupVariables from './useGroupVariables';
 import GroupVariable from './GroupVariable';
 import { CollapseWrapper, GroupedVariablesWrapper } from './GroupVariables.style';
 
-function GroupVariablesList({
+const GroupVariablesList = ({
     variables,
     childrenListComponent,
 }: {
     variables: Variable[];
     childrenListComponent: React.ComponentType<{ variables: Variable[] }>;
-}) {
+}) => {
     const VariablesListComponent = childrenListComponent;
     const { groupedVariables } = useGroupVariables(variables);
 
@@ -45,6 +45,6 @@ function GroupVariablesList({
             })}
         </>
     );
-}
+};
 
 export default GroupVariablesList;

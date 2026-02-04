@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import EditorSDK, { ConnectorRegistrationSource, LayoutPropertiesType } from '@chili-publish/studio-sdk';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, screen, waitFor } from '@testing-library/react';

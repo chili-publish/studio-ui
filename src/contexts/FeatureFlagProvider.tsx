@@ -9,7 +9,7 @@ interface FeatureFlagProviderProps {
     children: React.ReactNode;
 }
 
-function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProviderProps) {
+const FeatureFlagProvider = ({ featureFlagConfigURL, children }: FeatureFlagProviderProps) => {
     const url = featureFlagConfigURL || DEFAULT_FEATURE_FLAGS_URL;
 
     return (
@@ -17,7 +17,7 @@ function FeatureFlagProvider({ featureFlagConfigURL, children }: FeatureFlagProv
             {children}
         </StudioFeatureFlagsProvider>
     );
-}
+};
 
 export const useFeatureFlagContext = useStudioFeatureFlags;
 

@@ -25,7 +25,7 @@ interface PagesProps {
     };
 }
 
-function Pages({ pages, activePageId, layoutDetails }: PagesProps) {
+const Pages = ({ pages, activePageId, layoutDetails }: PagesProps) => {
     const { uiOptions } = useUiConfigContext();
     const { shouldHide: leftPanelIsHidden } = useLeftPanelAndTrayVisibility(layoutDetails);
 
@@ -86,5 +86,5 @@ function Pages({ pages, activePageId, layoutDetails }: PagesProps) {
             </ScrollbarWrapper>
         </Container>
     );
-}
+};
 export default Pages;

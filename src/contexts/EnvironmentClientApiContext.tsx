@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
 
 interface EnvironmentClientApiContextType {
@@ -12,14 +12,16 @@ interface EnvironmentClientApiProviderProps {
     environmentApiService: EnvironmentApiService;
 }
 
-export function EnvironmentClientApiProvider({ children, environmentApiService }: EnvironmentClientApiProviderProps) {
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
+export const EnvironmentClientApiProvider = ({
+    children,
+    environmentApiService,
+}: EnvironmentClientApiProviderProps) => {
     const value: EnvironmentClientApiContextType = {
         environmentApiService,
     };
 
     return <EnvironmentClientApiContext.Provider value={value}>{children}</EnvironmentClientApiContext.Provider>;
-}
+};
 
 export function useEnvironmentClientApiContext(): EnvironmentClientApiContextType {
     const context = useContext(EnvironmentClientApiContext);

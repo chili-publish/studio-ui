@@ -5,7 +5,7 @@ import { useDirection } from '../../hooks/useDirection';
 import { useAppDispatch } from '../../store';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 
-function ImagePanelTitle() {
+const ImagePanelTitle = () => {
     const { direction } = useDirection();
     const isMobileSize = useMobileSize();
     const dispatch = useAppDispatch();
@@ -26,6 +26,6 @@ function ImagePanelTitle() {
             </NavigationTitle>
         </NavigationWrapper>
     );
-}
+};
 
 export default ImagePanelTitle;

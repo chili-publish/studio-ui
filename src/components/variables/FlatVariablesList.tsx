@@ -6,7 +6,7 @@ import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import VariablesComponents from '../variablesComponents/VariablesComponents';
 import { ComponentWrapper } from './VariablesPanel.styles';
 
-function FlatVariablesList({ variables }: { variables: Variable[] }) {
+const FlatVariablesList = ({ variables }: { variables: Variable[] }) => {
     const dispatch = useAppDispatch();
     const handleCalendarOpen = useCallback(
         (variable: DateVariable) => {
@@ -34,6 +34,6 @@ function FlatVariablesList({ variables }: { variables: Variable[] }) {
             })}
         </>
     );
-}
+};
 
 export default FlatVariablesList;

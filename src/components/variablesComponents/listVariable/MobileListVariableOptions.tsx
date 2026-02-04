@@ -7,7 +7,7 @@ import StudioMobileDropdownOptions from '../../shared/StudioMobileDropdown/Studi
 import { showVariablesPanel } from '../../../store/reducers/panelReducer';
 import { useAppDispatch } from '../../../store';
 
-function MobileListVariableOptions() {
+const MobileListVariableOptions = () => {
     const variable = useSelector(selectCurrentVariable) as ListVariable;
     const dispatch = useAppDispatch();
     const { onVariableBlur, projectConfig } = useUiConfigContext();
@@ -47,6 +47,6 @@ function MobileListVariableOptions() {
             onClose={handleClose}
         />
     );
-}
+};
 
 export default MobileListVariableOptions;
