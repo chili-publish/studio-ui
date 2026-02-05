@@ -12,6 +12,7 @@ import {
     defaultPlatformUiOptions,
     FormBuilderType,
     ProjectConfig,
+    UiOptions,
     UserInterfaceWithOutputSettings,
 } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
@@ -21,7 +22,7 @@ import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
 type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutputSettings | null>;
 
-const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig => ({
+const getPrjConfig = (projectConfig: Partial<ProjectConfig>): ProjectConfig => ({
     projectId: '1111-111-0000-0000-1111',
     projectName: '',
     uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'dark' },
@@ -56,14 +57,15 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     onGenerateOutput: async () => {
         return { extensionType: 'pdf', outputData: new Blob() };
     },
-    onFetchUserInterfaceDetails: fetchOuptputSettingsFn,
-    onFetchOutputSettings: fetchOuptputSettingsFn,
+    onFetchUserInterfaceDetails: projectConfig.onFetchOutputSettings,
+    onFetchOutputSettings: projectConfig.onFetchOutputSettings ?? (() => Promise.resolve(null)),
     onFetchUserInterfaces: async () => {
         return {
             data: [mockUserInterface, mockUserInterface2],
             pageSize: 10,
         };
     },
+    ...(projectConfig.uiOptions && { uiOptions: projectConfig.uiOptions }),
     environmentApiService: {
         getProjectById: jest.fn().mockResolvedValue({
             id: '00000000-0000-0000-0000-000000000000',
@@ -75,8 +77,8 @@ const getPrjConfig = (fetchOuptputSettingsFn: OutpuSettingsFn): ProjectConfig =>
     } as unknown as EnvironmentApiService,
 });
 
-const renderTemplate = (fetchOuptputSettingsFn: OutpuSettingsFn) => {
-    const projectConfig = getPrjConfig(fetchOuptputSettingsFn);
+const renderTemplate = (fetchOuptputSettingsFn?: OutpuSettingsFn, uiOptions?: UiOptions) => {
+    const projectConfig = getPrjConfig({ onFetchOutputSettings: fetchOuptputSettingsFn, uiOptions });
 
     const navbarProps = {
         projectName: 'test project',
@@ -113,6 +115,8 @@ describe('StudioNavbar', () => {
         );
         renderTemplate(fetchOutputSettings);
 
+        expect(screen.getByTestId(getDataTestIdForSUI(`studio-navbar-item-user-interface`))).toBeInTheDocument();
+
         const selectIndicator = within(screen.getByTestId(getDataTestIdForSUI(`dropdown-user-interface`))).getByRole(
             'combobox',
         );
@@ -134,5 +138,11 @@ describe('StudioNavbar', () => {
         });
 
         expect(fetchOutputSettings).toHaveBeenCalledWith(mockUserInterface2.id);
+    });
+
+    it('should not show the user interface dropdown when the download button is not visible', () => {
+        renderTemplate(undefined, { widgets: { downloadButton: { visible: false } } });
+
+        expect(screen.queryByTestId(getDataTestIdForSUI(`studio-navbar-item-user-interface`))).not.toBeInTheDocument();
     });
 });

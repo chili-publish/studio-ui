@@ -9,6 +9,7 @@ import useNavbarModeToggle from '../navbarItems/useNavbarModeToggle';
 import useNavbarUndoRedoItems from '../navbarItems/useNavbarUndoRedo';
 import useNavbarZoom from '../navbarItems/useNavbarZoom';
 import useUserInterfaceSelector from '../navbarItems/useUserInterfaceSelector';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 
 interface INavbar {
     projectName: string;
@@ -26,6 +27,8 @@ const useStudioNavbar = ({
     onBackClick,
     onDownloadPanelOpen,
 }: INavbar) => {
+    const { isDownloadBtnVisible } = useUiConfigContext();
+
     const handleOnBack = useCallback(() => {
         if (onBackClick) {
             sessionStorage.removeItem(SESSION_USER_INTEFACE_ID_KEY);
@@ -58,7 +61,7 @@ const useStudioNavbar = ({
         const items = [
             menuNavbarItem,
             modeToggleNavbarItem,
-            userInterfaceDropdownNavbarItem,
+            ...(isDownloadBtnVisible ? [userInterfaceDropdownNavbarItem] : []),
             projectNameItem,
             undoRedoNavbarItem,
             downloadNavbarItem,
@@ -73,6 +76,7 @@ const useStudioNavbar = ({
         projectNameItem,
         modeToggleNavbarItem,
         userInterfaceDropdownNavbarItem,
+        isDownloadBtnVisible,
     ]);
 
     return {
