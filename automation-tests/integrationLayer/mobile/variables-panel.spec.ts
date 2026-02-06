@@ -1,5 +1,4 @@
-import { test, expect } from '../../helpers/test-with-credentials';
-import { getProjectConfig } from '../../helpers/project.config';
+import { test, expect, getProjectConfig } from '@helpers';
 
 test.describe('mobile UI tests', () => {
     test.beforeEach(({ browserName }, testInfo) => {

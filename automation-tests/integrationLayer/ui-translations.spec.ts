@@ -1,6 +1,5 @@
-import { test, expect } from '../helpers/test-with-credentials';
+import { test, expect, getProjectConfig } from '@helpers';
 
-import { getProjectConfig } from '../helpers/project.config';
 test('ui translations', async ({ page }) => {
     const uiTranslations = {
         toolBar: {

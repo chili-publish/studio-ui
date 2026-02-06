@@ -1,6 +1,5 @@
-import { test, expect } from '../helpers/test-with-credentials';
+import { test, expect, getProjectConfig } from '@helpers';
 import { UiOptions } from 'src/types/types';
-import { getProjectConfig } from '../helpers/project.config';
 
 test('ui widget options (true)', async ({ page }) => {
     const uiOptions: UiOptions = {

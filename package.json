@@ -13,7 +13,7 @@
         "build:iife": "OUTPUT_FORMAT=iife vite build",
         "build:module": "OUTPUT_FORMAT=module vite build",
         "preview": "OUTPUT_FORMAT=module vite preview",
-        "playwright:build": "BUILD_FOR_PLAYWRIGHT_TESTS=true OUTPUT_FORMAT=module vite build",
+        "playwright:build": "vite build --config vite.playwright.config.ts",
         "testw": "jest --watch --silent",
         "test": "jest",
         "lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",

@@ -1,5 +1,4 @@
-import { test, expect } from '../helpers/test-with-credentials';
-import { getProjectConfig } from '../helpers/project.config';
+import { test, expect, getProjectConfig } from '@helpers';
 
 test('configure multi layout mode', async ({ page }) => {
     const projectConfig = { ...getProjectConfig({ customElement: '<div>Custom main element</div>' }) };

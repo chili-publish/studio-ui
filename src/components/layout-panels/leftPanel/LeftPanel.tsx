@@ -52,7 +52,7 @@ function LeftPanel({
 
     return !shouldHideLeftPanel ? (
         <LeftPanelWrapper
-            data-testid="test-sui-left-panel"
+            data-testid={getDataTestIdForSUI('left-panel')}
             id="left-panel"
             overflowScroll={activePanel !== PanelType.IMAGE_PANEL}
         >

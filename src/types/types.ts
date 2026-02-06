@@ -320,7 +320,7 @@ export interface IStudioUILoaderConfig {
     onVariableValueChangedCompleted?: (
         variableId: string,
         value: string | boolean | number | null | undefined,
-    ) => Promise<void>; // tests
+    ) => Promise<void>;
     uiTranslations?: UITranslations;
     onLoadError?: (error: Error) => void;
 }

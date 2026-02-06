@@ -1,7 +1,5 @@
 import { Page } from '@playwright/test';
-import { test as base, expect } from '../helpers/test-with-credentials';
-
-import { getProjectConfig } from '../helpers/project.config';
+import { test as base, expect, getProjectConfig } from '@helpers';
 
 const test = base.extend<{ variableEventsPage: Page }>({
     variableEventsPage: async ({ page }, use) => {
