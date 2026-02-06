@@ -26,7 +26,7 @@ interface DataSourceInputProps {
     onPrevClick: () => void;
     onNextClick: () => void;
 }
-function DataSourceInput({
+const DataSourceInput = ({
     currentRow,
     currentRowIndex,
     dataIsLoading,
@@ -36,7 +36,7 @@ function DataSourceInput({
     onInputClick,
     onPrevClick,
     onNextClick,
-}: DataSourceInputProps) {
+}: DataSourceInputProps) => {
     const { direction } = useDirection();
     const { getUITranslation } = useUITranslations();
     const inputLabel = getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'Data row');
@@ -105,6 +105,6 @@ function DataSourceInput({
             )}
         </>
     );
-}
+};
 
 export default DataSourceInput;

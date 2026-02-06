@@ -18,7 +18,7 @@ interface MobileVariablesProps {
     isPagesPanelDisplayed?: boolean;
 }
 
-function MobileVariables(props: MobileVariablesProps) {
+const MobileVariables = (props: MobileVariablesProps) => {
     const {
         isTimelineDisplayed,
         isPagesPanelDisplayed,
@@ -51,7 +51,6 @@ function MobileVariables(props: MobileVariablesProps) {
             )}
             {isTrayVisible ? (
                 <MobileVariablesPanel
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...trayProps}
                     isTrayVisible={isTrayVisible}
                     setIsTrayVisible={setIsTrayVisible}
@@ -62,6 +61,6 @@ function MobileVariables(props: MobileVariablesProps) {
             ) : null}
         </>
     );
-}
+};
 
 export default MobileVariables;

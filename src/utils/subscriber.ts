@@ -15,7 +15,7 @@ export class Subscriber {
         if (!this.subscriptions[event]) {
             this.subscriptions[event] = [];
         }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
         this.subscriptions[event]!.push(handler);
     }
 
@@ -23,7 +23,7 @@ export class Subscriber {
         if (!this.subscriptions[event]) {
             this.subscriptions[event] = [];
         }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
         this.subscriptions[event]!.splice(this.subscriptions[event]!.indexOf(handler), 1);
     }
 

@@ -29,7 +29,6 @@ export class TokenManager {
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
     async validateToken(token: string) {
         const { exp: expirationTime } = TokenManager.getJwtPayload(token);
         // expirationTime in seconds, Date.now() in ms
@@ -69,7 +68,6 @@ export class TokenManager {
                     .atob(base64)
                     .split('')
                     .map((c) => {
-                        // eslint-disable-next-line prefer-template
                         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                     })
                     .join(''),

@@ -254,7 +254,6 @@ export const defaultFormBuilder: FormBuilderType = {
     },
 };
 
-// eslint-disable-next-line no-restricted-globals
 export const defaultBackFn = () => history.back();
 
 export type Project = Omit<EnvironmentProject, 'name' | 'id' | 'template'> & {

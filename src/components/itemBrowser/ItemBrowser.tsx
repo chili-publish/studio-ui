@@ -9,11 +9,13 @@ import {
     PreviewType,
     ScrollbarWrapper,
     SelectOptions,
+    Tooltip,
+    TooltipPosition,
     useInfiniteScrolling,
     useMobileSize,
 } from '@chili-publish/grafx-shared-components';
 import { EditorResponse, Media, MediaType, MetaData, QueryOptions, QueryPage } from '@chili-publish/studio-sdk';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConnectorCapabilities } from 'src/store/reducers/mediaReducer';
 import { APP_WRAPPER_ID, FOLDER_PREVIEW_THUMBNAIL } from 'src/utils/constants';
@@ -30,6 +32,7 @@ import {
     ScrollbarContainer,
     SearchInputWrapper,
     StyledPanelTitle,
+    TooltipContent,
 } from './ItemBrowser.styles';
 import { ItemCache, PreviewResponse } from './ItemCache';
 import { PanelType, selectActivePanel } from '../../store/reducers/panelReducer';
@@ -52,7 +55,7 @@ const getPreviewThumbnail = (type: PreviewType, path?: string): string | undefin
     return path;
 };
 
-function ItemBrowser<
+const ItemBrowser = <
     T extends {
         id: string;
         type: MediaType;
@@ -60,7 +63,9 @@ function ItemBrowser<
         relativePath: string;
         extension?: string;
     },
->(props: React.PropsWithChildren<ItemBrowserProps<T>>) {
+>(
+    props: React.PropsWithChildren<ItemBrowserProps<T>>,
+) => {
     const { isPanelOpen, connectorId, queryCall, previewCall, onSelect, convertToPreviewType } = props;
     const activePanel = useSelector(selectActivePanel);
 
@@ -99,7 +104,6 @@ function ItemBrowser<
     useEffect(() => {
         setBreadcrumbStack([]);
         setNavigationStack([]);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePanel]);
 
     // nextPagetoken is first set with 'requested: false' whenever we know the next
@@ -175,7 +179,6 @@ function ItemBrowser<
             setSelectedItems([]);
             setNavigationStack([]);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getKey = useCallback((str: string, idx: number) => encodeURI(`${str},${idx}`), []);
@@ -187,7 +190,6 @@ function ItemBrowser<
         return relativePath;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onItemClick = async (item: T) => {
         const itemType = convertToPreviewType(item.type as unknown as AssetType);
         if (itemType === PreviewType.COLLECTION) {
@@ -234,13 +236,24 @@ function ItemBrowser<
             renamingDisabled: true,
             fallback: UNABLE_TO_LOAD_PANEL,
         };
-        return itemType === PreviewType.COLLECTION ? (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <ChiliPreview {...defaultProps} />
-        ) : (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <ChiliPreview {...defaultProps} byteArray={previewByteArray} />
-        );
+
+        const previewProps = itemType === PreviewType.COLLECTION ? undefined : { byteArray: previewByteArray };
+
+        const previewComponent = <ChiliPreview {...defaultProps} {...previewProps} />;
+
+        if (itemType === PreviewType.IMAGE) {
+            return (
+                <Tooltip
+                    key={defaultProps.key}
+                    position={TooltipPosition.TOP}
+                    content={<TooltipContent>{defaultProps.name}</TooltipContent>}
+                >
+                    {previewComponent}
+                </Tooltip>
+            );
+        }
+
+        return <Fragment key={defaultProps.key}>{previewComponent}</Fragment>;
     });
 
     const breacrumbStackString = useMemo(() => {
@@ -384,7 +397,7 @@ function ItemBrowser<
             </Panel>
         </>
     );
-}
+};
 
 function toNavigationStack(path: string): string[] {
     return path.replaceAll('\\', '/').replace(/^\/+/, '').split('/');

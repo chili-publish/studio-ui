@@ -11,7 +11,12 @@ interface RangeConstraintErrorMessageProps {
     unit: MeasurementUnit | undefined;
     layout: LayoutPropertiesType;
 }
-function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout }: RangeConstraintErrorMessageProps) {
+const RangeConstraintErrorMessage = ({
+    currentWidth,
+    currentHeight,
+    unit,
+    layout,
+}: RangeConstraintErrorMessageProps) => {
     const { getUITranslation } = useUITranslations();
 
     const uiTranslation = useMemo(() => {
@@ -68,6 +73,6 @@ function RangeConstraintErrorMessage({ currentWidth, currentHeight, unit, layout
             {uiTranslation}
         </RangeConstraintErrorMessageWrapper>
     ) : undefined;
-}
+};
 
 export default RangeConstraintErrorMessage;

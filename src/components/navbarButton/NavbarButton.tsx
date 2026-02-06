@@ -2,7 +2,7 @@ import { Button, ButtonVariant, Icon, getDataTestId } from '@chili-publish/grafx
 import { NavbarButtonProps } from './NavbarButton.types';
 import { getDataIdForSUI } from '../../utils/dataIds';
 
-function NavbarButton(props: NavbarButtonProps) {
+const NavbarButton = (props: NavbarButtonProps) => {
     const {
         dataId,
         dataTestId,
@@ -28,6 +28,6 @@ function NavbarButton(props: NavbarButtonProps) {
             label={label}
         />
     );
-}
+};
 
 export default NavbarButton;

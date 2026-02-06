@@ -29,7 +29,7 @@ const useDataSourceInputHandler = ({
         } else {
             onDataSourcePanelOpen();
         }
-    }, [onDataRowsLoad, onDataSourcePanelOpen]);
+    }, [requiresUserAuthorizationCheck, onDataRowsLoad, onDataSourcePanelOpen]);
 
     return {
         onSelectedRowChanged,

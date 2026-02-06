@@ -19,11 +19,11 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
     );
     const sectionTitle = useMemo(
         () => layoutSectionUIOptions?.title ?? formBuilder.layouts?.header,
-        [layoutSectionUIOptions?.title, formBuilder.layouts],
+        [layoutSectionUIOptions, formBuilder.layouts],
     );
     const layoutSwitcherVisibility = useMemo(
         () => layoutSectionUIOptions?.layoutSwitcherVisible ?? formBuilder.layouts?.layoutSelector,
-        [layoutSectionUIOptions?.layoutSwitcherVisible, formBuilder.layouts],
+        [layoutSectionUIOptions, formBuilder.layouts],
     );
 
     const layoutResizableVisibility = useMemo(() => formBuilder.layouts?.showWidthHeightInputs, [formBuilder.layouts]);

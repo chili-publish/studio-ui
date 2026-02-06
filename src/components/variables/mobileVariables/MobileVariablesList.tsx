@@ -8,7 +8,7 @@ import MobileFlatVariablesList from './MobileFlatVariablesList';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
 import GroupVariablesList from '../GroupVariablesList';
 
-function MobileVariablesList() {
+const MobileVariablesList = () => {
     const dispatch = useAppDispatch();
 
     const { formBuilder } = useUserInterfaceDetailsContext();
@@ -32,6 +32,6 @@ function MobileVariablesList() {
     ) : (
         <MobileFlatVariablesList variables={variablesWithTranslation} />
     );
-}
+};
 
 export default MobileVariablesList;

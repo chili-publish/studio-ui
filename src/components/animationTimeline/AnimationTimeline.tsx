@@ -9,7 +9,7 @@ interface IAnimationTimeline {
     animationLength: number;
     isAnimationPlaying: boolean;
 }
-function AnimationTimeline(props: IAnimationTimeline) {
+const AnimationTimeline = (props: IAnimationTimeline) => {
     const { scrubberTimeMs, animationLength, isAnimationPlaying } = props;
     const { uiOptions } = useUiConfigContext();
 
@@ -40,6 +40,6 @@ function AnimationTimeline(props: IAnimationTimeline) {
             )}
         </AnimationTimelineWrapper>
     );
-}
+};
 
 export default AnimationTimeline;

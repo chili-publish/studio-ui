@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, no-underscore-dangle */
+/* eslint-disable no-underscore-dangle */
 export class IntegrationTokenManager {
     private readonly client_id: string;
 
@@ -28,7 +28,7 @@ export class IntegrationTokenManager {
                 throw new Error('Failed to get access token');
             }
             return data.access_token;
-        } catch (e) {
+        } catch {
             throw new Error('Failed to get access token');
         }
     }
