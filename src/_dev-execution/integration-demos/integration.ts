@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 
+import { IStudioUILoaderConfig } from 'src/types/types';
 import StudioUI from '../../main';
-import { IntegrationTokenManager } from '../integration-token-manager';
+import { IntegrationTokenManager } from './integration-token-manager';
 
 (async () => {
     const tokenManager = new IntegrationTokenManager();
@@ -9,8 +10,8 @@ import { IntegrationTokenManager } from '../integration-token-manager';
 
     StudioUI.studioUILoaderConfig({
         ...projectConfig,
-        selector: projectConfig.selector || 'studio-ui-container',
+        selector: (projectConfig as IStudioUILoaderConfig)?.selector || 'studio-ui-container',
         authToken: await tokenManager.getAccessToken(),
         refreshTokenAction: () => tokenManager.getAccessToken(),
-    });
+    } as IStudioUILoaderConfig);
 })();
