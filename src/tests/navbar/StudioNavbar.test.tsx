@@ -7,78 +7,69 @@ import { LayoutIntent } from '@chili-publish/studio-sdk';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import { EnvironmentApiService } from 'src/services/EnvironmentApiService';
-import {
-    defaultOutputSettings,
-    defaultPlatformUiOptions,
-    FormBuilderType,
-    ProjectConfig,
-    UiOptions,
-    UserInterfaceWithOutputSettings,
-} from '../../types/types';
+import { defaultOutputSettings, defaultPlatformUiOptions, FormBuilderType, ProjectConfig } from '../../types/types';
 import { getDataTestIdForSUI } from '../../utils/dataIds';
 import StudioNavbar from '../../components/navbar/studioNavbar/StudioNavbar';
 import { UserInterfaceDetailsContextProvider } from '../../components/navbar/UserInterfaceDetailsContext';
 import { UiConfigContextProvider } from '../../contexts/UiConfigContext';
 
-type OutpuSettingsFn = (_?: string | undefined) => Promise<UserInterfaceWithOutputSettings | null>;
+const getPrjConfig = (projectConfig: Partial<ProjectConfig>): ProjectConfig =>
+    ({
+        projectId: '1111-111-0000-0000-1111',
+        projectName: '',
+        uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'dark' },
+        outputSettings: defaultOutputSettings,
+        graFxStudioEnvironmentApiBaseUrl: '',
+        sandboxMode: true,
+        onProjectInfoRequested: async () => {
+            return { name: '', id: '', template: { id: '1111-111-0000-0000-1111' } };
+        },
+        onProjectDocumentRequested: async () => {
+            return '';
+        },
+        onProjectLoaded: () => {
+            // ignored
+        },
+        onProjectSave: async () => {
+            return {
+                name: '',
+                id: '1111-111-0000-0000-1111',
+                template: { id: '1111-111-0000-0000-1111' },
+            };
+        },
+        onBack: () => {
+            // ignored
+        },
+        onLogInfoRequested: () => {
+            // ignored
+        },
+        onEngineInitialized: () => {
+            // ignored
+        },
+        onGenerateOutput: async () => {
+            return { extensionType: 'pdf', outputData: new Blob() };
+        },
+        onFetchUserInterfaces: async () => {
+            return {
+                data: [mockUserInterface, mockUserInterface2],
+                pageSize: 10,
+            };
+        },
 
-const getPrjConfig = (projectConfig: Partial<ProjectConfig>): ProjectConfig => ({
-    projectId: '1111-111-0000-0000-1111',
-    projectName: '',
-    uiOptions: { ...defaultPlatformUiOptions, uiTheme: 'dark' },
-    outputSettings: defaultOutputSettings,
-    graFxStudioEnvironmentApiBaseUrl: '',
-    sandboxMode: true,
-    onProjectInfoRequested: async () => {
-        return { name: '', id: '', template: { id: '1111-111-0000-0000-1111' } };
-    },
-    onProjectDocumentRequested: async () => {
-        return '';
-    },
-    onProjectLoaded: () => {
-        // ignored
-    },
-    onProjectSave: async () => {
-        return {
-            name: '',
-            id: '1111-111-0000-0000-1111',
-            template: { id: '1111-111-0000-0000-1111' },
-        };
-    },
-    onBack: () => {
-        // ignored
-    },
-    onLogInfoRequested: () => {
-        // ignored
-    },
-    onEngineInitialized: () => {
-        // ignored
-    },
-    onGenerateOutput: async () => {
-        return { extensionType: 'pdf', outputData: new Blob() };
-    },
-    onFetchUserInterfaceDetails: projectConfig.onFetchOutputSettings,
-    onFetchOutputSettings: projectConfig.onFetchOutputSettings ?? (() => Promise.resolve(null)),
-    onFetchUserInterfaces: async () => {
-        return {
-            data: [mockUserInterface, mockUserInterface2],
-            pageSize: 10,
-        };
-    },
-    ...(projectConfig.uiOptions && { uiOptions: projectConfig.uiOptions }),
-    environmentApiService: {
-        getProjectById: jest.fn().mockResolvedValue({
-            id: '00000000-0000-0000-0000-000000000000',
-            name: 'mockProjectName',
-            template: { id: 'dddddd' },
-        }),
-        getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
-        saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
-    } as unknown as EnvironmentApiService,
-});
+        environmentApiService: {
+            getProjectById: jest.fn().mockResolvedValue({
+                id: '00000000-0000-0000-0000-000000000000',
+                name: 'mockProjectName',
+                template: { id: 'dddddd' },
+            }),
+            getProjectDocument: jest.fn().mockResolvedValue({ data: { mock: 'data' } }),
+            saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
+        } as unknown as EnvironmentApiService,
+        ...projectConfig,
+    }) as ProjectConfig;
 
-const renderTemplate = (fetchOuptputSettingsFn?: OutpuSettingsFn, uiOptions?: UiOptions) => {
-    const projectConfig = getPrjConfig({ onFetchOutputSettings: fetchOuptputSettingsFn, uiOptions });
+const renderTemplate = (prjConfig: Partial<ProjectConfig>) => {
+    const projectConfig = getPrjConfig(prjConfig);
 
     const navbarProps = {
         projectName: 'test project',
@@ -102,18 +93,22 @@ const renderTemplate = (fetchOuptputSettingsFn?: OutpuSettingsFn, uiOptions?: Ui
         </UiConfigContextProvider>,
     );
 };
+
+const fetchOutputSettings = jest.fn(() =>
+    Promise.resolve({
+        userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
+        outputSettings: [],
+        formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
+        outputSettingsFullList: [],
+    }),
+);
 describe('StudioNavbar', () => {
     const user = userEvent.setup();
     it('should be able to select an user interface', async () => {
-        const fetchOutputSettings = jest.fn(() =>
-            Promise.resolve({
-                userInterface: { id: mockUserInterface.id, name: mockUserInterface.name },
-                outputSettings: [],
-                formBuilder: mockUserInterface.formBuilder as unknown as FormBuilderType,
-                outputSettingsFullList: [],
-            }),
-        );
-        renderTemplate(fetchOutputSettings);
+        renderTemplate({
+            onFetchOutputSettings: fetchOutputSettings,
+            onFetchUserInterfaceDetails: fetchOutputSettings,
+        });
 
         expect(screen.getByTestId(getDataTestIdForSUI(`studio-navbar-item-user-interface`))).toBeInTheDocument();
 
@@ -140,9 +135,20 @@ describe('StudioNavbar', () => {
         expect(fetchOutputSettings).toHaveBeenCalledWith(mockUserInterface2.id);
     });
 
-    it('should not show the user interface dropdown when the download button is not visible', () => {
-        renderTemplate(undefined, { widgets: { downloadButton: { visible: false } } });
+    it('should not show download button and user interface selector when in component mode', async () => {
+        renderTemplate({
+            onFetchUserInterfaceDetails: fetchOutputSettings,
+            onFetchOutputSettings: fetchOutputSettings,
+            componentMode: true,
+        });
 
-        expect(screen.queryByTestId(getDataTestIdForSUI(`studio-navbar-item-user-interface`))).not.toBeInTheDocument();
+        await waitFor(() => {
+            const downloadButton = screen.queryByRole('button', { name: /download/i });
+            expect(downloadButton).not.toBeInTheDocument();
+
+            expect(
+                screen.queryByTestId(getDataTestIdForSUI(`studio-navbar-item-user-interface`)),
+            ).not.toBeInTheDocument();
+        });
     });
 });
