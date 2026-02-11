@@ -41,6 +41,7 @@ export type ProjectConfig = {
     userInterfaceID?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
     sandboxMode?: boolean;
+    componentMode?: boolean;
     featureFlagConfigURL?: string;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
@@ -292,6 +293,7 @@ export interface IStudioUILoaderConfig {
     projectDownloadUrl?: string;
     projectUploadUrl?: string;
     sandboxMode?: boolean;
+    componentMode?: boolean;
     /** URL to fetch feature flags from. If not provided, no feature flags are enabled. */
     featureFlagConfigURL?: string;
     variableTranslations?: VariableTranslations;

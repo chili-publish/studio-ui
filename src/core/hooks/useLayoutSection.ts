@@ -2,6 +2,7 @@ import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { useMemo } from 'react';
 import { useUserInterfaceDetailsContext } from '../../components/navbar/UserInterfaceDetailsContext';
 import { UiOptions } from '../../types/types';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 
 interface UseLayoutSectionProps {
     layouts: LayoutListItemType[];
@@ -10,6 +11,7 @@ interface UseLayoutSectionProps {
 }
 
 export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptions }: UseLayoutSectionProps) {
+    const { projectConfig } = useUiConfigContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const availableLayouts = useMemo(() => layouts?.filter((item) => item.availableForUser), [layouts]);
 
@@ -35,10 +37,13 @@ export function useLayoutSection({ layouts, selectedLayout, layoutSectionUIOptio
         [availableLayouts?.length, layoutSwitcherVisibility],
     );
 
-    const isLayoutResizableVisible = useMemo(
-        () => selectedLayout?.id && selectedLayout?.resizableByUser?.enabled && layoutResizableVisibility,
-        [selectedLayout, layoutResizableVisibility],
-    );
+    const isLayoutResizableVisible = useMemo(() => {
+        const isComponentMode = projectConfig.componentMode ?? false;
+        return (
+            selectedLayout?.id &&
+            ((selectedLayout?.resizableByUser?.enabled && layoutResizableVisibility) || isComponentMode)
+        );
+    }, [selectedLayout, layoutResizableVisibility, projectConfig.componentMode]);
 
     const isAvailableLayoutsDisplayed = useMemo(() => {
         if (!layoutsSectionVisibility) {

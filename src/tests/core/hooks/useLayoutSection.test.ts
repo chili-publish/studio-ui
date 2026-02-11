@@ -1,11 +1,16 @@
 import { Layout, LayoutListItemType } from '@chili-publish/studio-sdk';
 import { renderHook } from '@testing-library/react';
 import { useUserInterfaceDetailsContext } from '../../../components/navbar/UserInterfaceDetailsContext';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
 
 // Mock the UserInterfaceDetailsContext
 jest.mock('../../../components/navbar/UserInterfaceDetailsContext', () => ({
     useUserInterfaceDetailsContext: jest.fn(),
+}));
+
+jest.mock('../../../contexts/UiConfigContext', () => ({
+    useUiConfigContext: jest.fn(),
 }));
 
 describe('useLayoutSection', () => {
@@ -58,6 +63,11 @@ describe('useLayoutSection', () => {
     beforeEach(() => {
         (useUserInterfaceDetailsContext as jest.Mock).mockReturnValue({
             formBuilder: defaultFormBuilder,
+        });
+        (useUiConfigContext as jest.Mock).mockReturnValue({
+            projectConfig: {
+                componentMode: undefined,
+            },
         });
     });
 
@@ -151,6 +161,30 @@ describe('useLayoutSection', () => {
         );
 
         expect(result.current.isLayoutResizableVisible).toBe(false);
+    });
+
+    it('should show resizable controls when in component mode', () => {
+        (useUiConfigContext as jest.Mock).mockReturnValue({
+            projectConfig: {
+                componentMode: true,
+            },
+        });
+        const nonResizableLayout = {
+            ...mockSelectedLayout,
+            resizableByUser: {
+                enabled: false,
+            },
+        } as Layout;
+
+        const { result } = renderHook(() =>
+            useLayoutSection({
+                layouts: mockLayouts,
+                selectedLayout: nonResizableLayout,
+                layoutSectionUIOptions: mockLayoutSectionUIOptions,
+            }),
+        );
+
+        expect(result.current.isLayoutResizableVisible).toBe(true);
     });
 
     it('should not show resizable controls when showWidthHeightInputs is false', () => {
