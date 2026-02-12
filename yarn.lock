@@ -1314,10 +1314,10 @@
   resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/0.115.0/72528c8b8dbfdbdf52780d0211f4a0f6c464b2ba#72528c8b8dbfdbdf52780d0211f4a0f6c464b2ba"
   integrity sha512-7fXm4iclcGtFvwWo+zx2qC3fn9KtnCT7yFJrJnZ74wjEz8TKAAuxsRzDpVbm5UzKHKcMQHHLdgBRFT7xgnhzAA==
 
-"@chili-publish/studio-sdk@1.38.0-alpha.3":
-  version "1.38.0-alpha.3"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.38.0-alpha.3/2fd6b8b033e3f5afc2aea74782d4a6bd4bec9c16#2fd6b8b033e3f5afc2aea74782d4a6bd4bec9c16"
-  integrity sha512-q2zI2wj75VUkZhKFS1+dFQA6ZJmLMmESCpLdloF0WAztOudea1WFUGZcdfwBCqQxP1Hk9/QPSwzv6hi/erFziQ==
+"@chili-publish/studio-sdk@1.38.0-rc.0":
+  version "1.38.0-rc.0"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.38.0-rc.0/ce07a5e7f8c54bb57930340c44ca5f7f324214bd#ce07a5e7f8c54bb57930340c44ca5f7f324214bd"
+  integrity sha512-IQlWtu61khUdBmxpoZZhUutjXn4z72qs6UWxhl38huKqc0dRGGPznUz7uSaObD7WITxzqAIhDYEf0kOcwTBlKA==
   dependencies:
     penpal "6.1.0"
 
