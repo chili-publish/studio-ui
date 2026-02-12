@@ -55,6 +55,37 @@ import { EngineVersionManager } from './version-manager';
         import.meta.env.VITE_BASE_ENVIRONMENT_API_URL ??
         `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
+    engineCommitSha = integrationTest && !engineCommitSha ? 'latest' : engineCommitSha;
+    const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
+
+    // Base configuration shared between regular and sandbox modes
+    const baseConfig = {
+        selector: 'sui-root',
+        graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
+        authToken,
+        editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
+        refreshTokenAction: () =>
+            integrationTest ? tokenManager.getAccessToken() : (tokenManager as TokenManager).refreshToken(),
+        onConnectorAuthenticationRequested: (connectorId: string) => {
+            return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
+        },
+        // Feature flags are now fetched from URL-based config
+        featureFlagConfigURL: 'https://chiligrafx-main.com/feature-flags.json',
+        // eslint-disable-next-line no-console
+        onVariableFocus: (id: string) => console.log('focused var: ', id),
+        // eslint-disable-next-line no-console
+        onVariableBlur: (id: string) => console.log('blurred var: ', id),
+        // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
+        onVariableValueChangedCompleted: async (id: string, value: any) => console.log('changed var: ', id, value),
+        // eslint-disable-next-line no-console
+        onProjectLoaded: () => console.log('project loaded'),
+    };
+
+    if (integrationTest) {
+        runIntegrationTests(baseConfig);
+        return;
+    }
+
     // Validation for regular mode
     if (!sandboxMode && ((!engineRegex.test(engineVersion) && !engineCommitSha) || !envName || !projectId)) {
         let messageString = `Please make sure to specify the`;
@@ -85,37 +116,6 @@ import { EngineVersionManager } from './version-manager';
 
         alert(messageString);
 
-        return;
-    }
-
-    engineCommitSha = integrationTest && !engineCommitSha ? 'latest' : engineCommitSha;
-    const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
-
-    // Base configuration shared between regular and sandbox modes
-    const baseConfig = {
-        selector: 'sui-root',
-        graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
-        authToken,
-        editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-        refreshTokenAction: () =>
-            integrationTest ? tokenManager.getAccessToken() : (tokenManager as TokenManager).refreshToken(),
-        onConnectorAuthenticationRequested: (connectorId: string) => {
-            return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
-        },
-        // Feature flags are now fetched from URL-based config
-        featureFlagConfigURL: 'https://chiligrafx-main.com/feature-flags.json',
-        // eslint-disable-next-line no-console
-        onVariableFocus: (id: string) => console.log('focused var: ', id),
-        // eslint-disable-next-line no-console
-        onVariableBlur: (id: string) => console.log('blurred var: ', id),
-        // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
-        onVariableValueChangedCompleted: async (id: string, value: any) => console.log('changed var: ', id, value),
-        // eslint-disable-next-line no-console
-        onProjectLoaded: () => console.log('project loaded'),
-    };
-
-    if (integrationTest) {
-        runIntegrationTests(baseConfig);
         return;
     }
 
