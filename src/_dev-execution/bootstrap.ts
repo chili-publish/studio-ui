@@ -14,8 +14,6 @@ import { EngineVersionManager } from './version-manager';
 
     const tokenManager = integrationTest ? new IntegrationTokenManager() : new TokenManager();
 
-    // eslint-disable-next-line no-console
-    console.log('tokenManager');
     // state after redirection
     if (urlParams.has('code') && !integrationTest) {
         const res = await (tokenManager as TokenManager).redirectCallback();
@@ -33,9 +31,6 @@ import { EngineVersionManager } from './version-manager';
     }
 
     const engineVersionManager = new EngineVersionManager(authToken);
-
-    // eslint-disable-next-line no-console
-    console.log('engineVersionManager');
 
     const engineVersion = urlParams.get('engine') ?? 'main';
     let engineCommitSha =

@@ -10,7 +10,6 @@
         <div id="sui-root"></div>
         <div id="studio-ui-container"></div>
         <script type="module">
-            console.log('loading main workspace');
             const loadMainWorkspace = async () => {
                 await import('./src/main.tsx');
                 await import('./src/_dev-execution/bootstrap.ts');
