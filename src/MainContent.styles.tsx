@@ -26,5 +26,5 @@ export const SuiCanvas = styled.div<{
         return '100%';
     }};
     width: 100%;
-    display: ${(props) => (props.isVisible ? 'block' : 'none')};
+    visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
 `;
