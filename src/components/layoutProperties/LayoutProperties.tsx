@@ -21,6 +21,7 @@ import { useLayoutConstraintProportions } from './useLayoutConstraintProportions
 import { clampValue, withMeasurementUnit } from './util';
 import { ErrorMessage } from '../shared/ErrorMessage.styles';
 import RangeConstraintErrorMessage from './RangeConstraintErrorMessage';
+import { APP_WRAPPER_ID } from 'src/utils/constants';
 
 interface LayoutPropertiesProps {
     layout: LayoutPropertiesType;
@@ -130,7 +131,12 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             label={label}
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
-            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP, variant: TooltipVariant.DEFAULT }}
+            validationErrorInTooltip={{
+                enabled: true,
+                position: TooltipPosition.TOP,
+                variant: TooltipVariant.DEFAULT,
+                anchorId: APP_WRAPPER_ID,
+            }}
             validationErrorMessage={
                 <RangeConstraintErrorMessage
                     currentWidth={pageWidth}
