@@ -9,6 +9,7 @@ import {
 } from '@chili-publish/grafx-shared-components';
 import { LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { APP_WRAPPER_ID } from 'src/utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { formatNumber } from '../../utils/formatNumber';
 import { ButtonsWrapper, ErrorMessageContainer, IconWrapper, LayoutInputsContainer } from './Layout.styles';
@@ -130,7 +131,12 @@ function LayoutProperties({ layout, pageSize }: LayoutPropertiesProps) {
             label={label}
             helpText={helpText}
             validation={formHasError ? ValidationTypes.ERROR : undefined}
-            validationErrorInTooltip={{ enabled: true, position: TooltipPosition.TOP, variant: TooltipVariant.DEFAULT }}
+            validationErrorInTooltip={{
+                enabled: true,
+                position: TooltipPosition.TOP,
+                variant: TooltipVariant.DEFAULT,
+                anchorId: APP_WRAPPER_ID,
+            }}
             validationErrorMessage={
                 <RangeConstraintErrorMessage
                     currentWidth={pageWidth}
