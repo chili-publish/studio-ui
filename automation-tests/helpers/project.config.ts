@@ -1,4 +1,4 @@
-import { IStudioUILoaderConfig } from 'src/types/types';
+import { IStudioUILoaderConfig } from '../../src/types/types';
 import { projectInfo } from './projectInfo';
 
 export const getProjectConfig = (extendedConfig: Partial<IStudioUILoaderConfig>) => {

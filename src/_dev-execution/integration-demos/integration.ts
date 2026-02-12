@@ -4,14 +4,15 @@ import { IStudioUILoaderConfig } from 'src/types/types';
 import StudioUI from '../../main';
 import { IntegrationTokenManager } from './integration-token-manager';
 
-(async () => {
+export const runIntegrationTests = async (baseConfig: IStudioUILoaderConfig) => {
     const tokenManager = new IntegrationTokenManager();
     const projectConfig = window.__PROJECT_CONFIG__ || {};
 
     StudioUI.studioUILoaderConfig({
+        ...baseConfig,
         ...projectConfig,
         selector: (projectConfig as IStudioUILoaderConfig)?.selector || 'studio-ui-container',
         authToken: await tokenManager.getAccessToken(),
         refreshTokenAction: () => tokenManager.getAccessToken(),
     } as IStudioUILoaderConfig);
-})();
+};

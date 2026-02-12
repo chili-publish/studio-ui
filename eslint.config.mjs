@@ -5,6 +5,7 @@ import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import importPlugin from 'eslint-plugin-import';
+import boundariesPlugin from 'eslint-plugin-boundaries';
 import globals from 'globals';
 
 export default defineConfig([
@@ -35,11 +36,28 @@ export default defineConfig([
             'react-hooks': reactHooks,
             prettier: prettierPlugin,
             import: importPlugin,
+            boundaries: boundariesPlugin,
         },
         settings: {
             react: {
                 version: 'detect',
             },
+            'import/resolver': {
+                node: {
+                    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+                    moduleDirectory: ['node_modules', 'src/', 'automation-tests/'],
+                },
+            },
+            'boundaries/elements': [
+                {
+                    type: 'automation-tests',
+                    pattern: 'automation-tests/**',
+                },
+                {
+                    type: 'app',
+                    pattern: 'src/**',
+                },
+            ],
         },
         ignores: ['**/*.json'],
 
@@ -136,6 +154,23 @@ export default defineConfig([
             ],
 
             'func-names': 'off',
+
+            'boundaries/element-types': [
+                'error',
+                {
+                    default: 'allow',
+                    rules: [
+                        {
+                            from: 'automation-tests',
+                            disallow: ['app'],
+                        },
+                        {
+                            from: 'app',
+                            disallow: ['automation-tests'],
+                        },
+                    ],
+                },
+            ],
         },
     },
 ]);

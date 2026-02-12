@@ -2,18 +2,21 @@
 // It's not going to be bundled to the main `bundle.js` file
 
 import StudioUI from '../main';
+import { runIntegrationTests } from './integration-demos/integration';
+import { IntegrationTokenManager } from './integration-demos/integration-token-manager';
 import { TemplateManager } from './template-manager';
 import { TokenManager } from './token-manager';
 import { EngineVersionManager } from './version-manager';
 
 (async () => {
-    const tokenManager = new TokenManager();
-
     let urlParams = new URLSearchParams(window.location.search);
+    const integrationTest = urlParams.get('demo') === 'integration';
+
+    const tokenManager = integrationTest ? new IntegrationTokenManager() : new TokenManager();
 
     // state after redirection
-    if (urlParams.has('code')) {
-        const res = await tokenManager.redirectCallback();
+    if (urlParams.has('code') && !integrationTest) {
+        const res = await (tokenManager as TokenManager).redirectCallback();
         if (res.appState) {
             window.history.replaceState(null, '', res.appState.returnTo);
             urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +33,7 @@ import { EngineVersionManager } from './version-manager';
     const engineVersionManager = new EngineVersionManager(authToken);
 
     const engineVersion = urlParams.get('engine') ?? 'main';
-    const engineCommitSha =
+    let engineCommitSha =
         urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha(engineVersion));
 
     // The following will take released versions in consideration
@@ -80,6 +83,7 @@ import { EngineVersionManager } from './version-manager';
         return;
     }
 
+    engineCommitSha = integrationTest && !engineCommitSha ? 'latest' : engineCommitSha;
     const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
     // Base configuration shared between regular and sandbox modes
@@ -88,7 +92,8 @@ import { EngineVersionManager } from './version-manager';
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-        refreshTokenAction: () => tokenManager.refreshToken(),
+        refreshTokenAction: () =>
+            integrationTest ? tokenManager.getAccessToken() : (tokenManager as TokenManager).refreshToken(),
         onConnectorAuthenticationRequested: (connectorId: string) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
@@ -103,6 +108,11 @@ import { EngineVersionManager } from './version-manager';
         // eslint-disable-next-line no-console
         onProjectLoaded: () => console.log('project loaded'),
     };
+
+    if (integrationTest) {
+        runIntegrationTests(baseConfig);
+        return;
+    }
 
     if (sandboxMode) {
         const templateManager = new TemplateManager(authToken, baseUrl, templateId);
