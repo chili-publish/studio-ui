@@ -1,6 +1,6 @@
 import { defineConfig, mergeConfig } from 'vite';
-import { baseConfig } from './vite.config';
 import path from 'path';
+import { baseConfig } from './vite.base.config';
 
 export default () => {
     const viteBaseConfig = baseConfig('module');
