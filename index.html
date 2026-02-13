@@ -8,13 +8,7 @@
     </head>
     <body>
         <div id="sui-root"></div>
-        <div id="studio-ui-container"></div>
-        <script type="module">
-            const loadMainWorkspace = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/bootstrap.ts');
-            };
-            loadMainWorkspace();
-        </script>
+        <script type="module" src="./src/main.tsx"></script>
+        <script type="module" src="./src/_dev-execution/bootstrap.ts"></script>
     </body>
 </html>

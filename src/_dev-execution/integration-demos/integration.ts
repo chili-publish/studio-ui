@@ -5,8 +5,6 @@ import StudioUI from '../../main';
 import { IntegrationTokenManager } from './integration-token-manager';
 
 export const runIntegrationTests = async (baseConfig: IStudioUILoaderConfig) => {
-    // eslint-disable-next-line no-console
-    console.log('running integration tests');
     const tokenManager = new IntegrationTokenManager();
     const projectConfig = window.__PROJECT_CONFIG__ || {};
 
