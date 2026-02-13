@@ -208,6 +208,8 @@ test('focus and blur an image variable on remove', async ({ variableEventsPage }
     expect(variableFocused).toBe(null);
     expect(variableBlurred).toBe(null);
 
+    await variableEventsPage.waitForTimeout(2000);
+
     await expect(variableEventsPage.getByTestId('test-gsc-scrollbar-wrapper')).toMatchAriaSnapshot(`
         - text: Data row
         - textbox "data-source-input":

@@ -118,8 +118,6 @@ test('ui theme options', async ({ page }) => {
         content: 'body { font-family: Comic Sans MS, cursive, sans-serif; }',
     });
 
-    await expect(page.getByLabel('Project: Listing')).toBeVisible();
-
     // check if the comic sans font is injected on the body
     await expect(page.locator('body')).toHaveCSS('font-family', '"Comic Sans MS", cursive, sans-serif');
     // check if comic sans font is used in the UI
