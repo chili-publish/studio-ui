@@ -34,7 +34,6 @@ test('ui widget options (true)', async ({ page }) => {
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
-    await expect(page.locator('#studio-ui-container')).toBeVisible();
     await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toBeVisible();
 
     await page.getByTestId('test-gsc-back-btn').click();

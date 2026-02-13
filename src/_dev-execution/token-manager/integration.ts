@@ -32,4 +32,12 @@ export class IntegrationTokenManager {
             throw new Error('Failed to get access token');
         }
     }
+
+    async refreshToken() {
+        return this.getAccessToken();
+    }
+
+    async redirectCallback() {
+        return { appState: { returnTo: window.location.href } };
+    }
 }

@@ -2,10 +2,9 @@
 // It's not going to be bundled to the main `bundle.js` file
 
 import StudioUI from '../main';
-import { runIntegrationTests } from './integration-demos/integration';
-import { IntegrationTokenManager } from './integration-demos/integration-token-manager';
 import { TemplateManager } from './template-manager';
-import { TokenManager } from './token-manager';
+import { IntegrationTokenManager } from './token-manager/integration';
+import { TokenManager } from './token-manager/user-password';
 import { EngineVersionManager } from './version-manager';
 
 (async () => {
@@ -15,25 +14,19 @@ import { EngineVersionManager } from './version-manager';
     const tokenManager = integrationTest ? new IntegrationTokenManager() : new TokenManager();
 
     // state after redirection
-    if (urlParams.has('code') && !integrationTest) {
-        const res = await (tokenManager as TokenManager).redirectCallback();
+    if (urlParams.has('code')) {
+        const res = await tokenManager.redirectCallback();
         if (res.appState) {
             window.history.replaceState(null, '', res.appState.returnTo);
             urlParams = new URLSearchParams(window.location.search);
         }
     }
 
-    let authToken = '';
-    if (import.meta.env.VITE_TOKEN) {
-        authToken = import.meta.env.VITE_TOKEN;
-    } else {
-        authToken = await tokenManager.getAccessToken();
-    }
+    const authToken = await tokenManager.getAccessToken();
 
     const engineVersionManager = new EngineVersionManager(authToken);
-
     const engineVersion = urlParams.get('engine') ?? 'main';
-    let engineCommitSha =
+    const engineCommitSha =
         urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha(engineVersion));
 
     // The following will take released versions in consideration
@@ -50,17 +43,25 @@ import { EngineVersionManager } from './version-manager';
         import.meta.env.VITE_BASE_ENVIRONMENT_API_URL ??
         `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
-    engineCommitSha = integrationTest && !engineCommitSha ? 'latest' : engineCommitSha;
     const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
     // Base configuration shared between regular and sandbox modes
     const baseConfig = {
+        projectId,
+        projectName: 'Dev Run',
+        uiOptions: {
+            widgets: {
+                backButton: { visible: true },
+                navBar: { visible: true },
+                bottomBar: { visible: true },
+                downloadButton: { visible: true },
+            },
+        },
         selector: 'sui-root',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-        refreshTokenAction: () =>
-            integrationTest ? tokenManager.getAccessToken() : (tokenManager as TokenManager).refreshToken(),
+        refreshTokenAction: tokenManager.refreshToken,
         onConnectorAuthenticationRequested: (connectorId: string) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
@@ -74,41 +75,16 @@ import { EngineVersionManager } from './version-manager';
         onVariableValueChangedCompleted: async (id: string, value: any) => console.log('changed var: ', id, value),
         // eslint-disable-next-line no-console
         onProjectLoaded: () => console.log('project loaded'),
+        // eslint-disable-next-line no-underscore-dangle
+        ...(window.__PROJECT_CONFIG__ || {}),
     };
 
-    if (integrationTest) {
-        runIntegrationTests(baseConfig);
-        return;
-    }
-
     // Validation for regular mode
-    if (!sandboxMode && ((!engineRegex.test(engineVersion) && !engineCommitSha) || !envName || !projectId)) {
+    if (!engineRegex.test(engineVersion) && !engineCommitSha) {
         let messageString = `Please make sure to specify the`;
         if (!engineCommitSha) {
             messageString += ` engineCommitSha`;
         }
-        if (!envName) {
-            messageString += ` envName`;
-        }
-        if (!projectId) {
-            messageString += ` projectId`;
-        }
-
-        alert(messageString);
-
-        return;
-    }
-
-    // Validation for sandbox mode
-    if (sandboxMode && (!envName || !templateId)) {
-        let messageString = `Please make sure to specify the`;
-        if (!envName) {
-            messageString += ` envName`;
-        }
-        if (!templateId) {
-            messageString += ` templateId`;
-        }
-
         alert(messageString);
 
         return;
@@ -146,19 +122,7 @@ import { EngineVersionManager } from './version-manager';
             }),
         });
     } else {
-        // Regular mode configuration
-        StudioUI.studioUILoaderConfig({
-            ...baseConfig,
-            projectId,
-            projectName: 'Dev Run',
-            uiOptions: {
-                widgets: {
-                    backButton: { visible: true },
-                    navBar: { visible: true },
-                    bottomBar: { visible: true },
-                    downloadButton: { visible: true },
-                },
-            },
-        });
+        // Regular mode configuration + integration tests
+        StudioUI.studioUILoaderConfig(baseConfig);
     }
 })();
