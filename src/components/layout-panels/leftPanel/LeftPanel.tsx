@@ -1,6 +1,7 @@
 import { ScrollbarWrapper } from '@chili-publish/grafx-shared-components';
 import { Layout, LayoutListItemType, LayoutPropertiesType, PageSize } from '@chili-publish/studio-sdk';
 import { useSelector } from 'react-redux';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
 import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { UiOptions } from '../../../types/types';
@@ -8,7 +9,7 @@ import DataSource from '../../dataSource/DataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import LayoutProperties from '../../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
-import { PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.styles';
+import { HeadingWrapper, PanelTitle, SectionHelpText, SectionWrapper } from '../../shared/Panel.styles';
 import VariablesList from '../../variables/VariablesList';
 import AvailableLayouts from './AvailableLayouts';
 import { ImagePanelContainer, LeftPanelContainer, LeftPanelWrapper } from './LeftPanel.styles';
@@ -50,7 +51,11 @@ const LeftPanel = ({
     const layoutsHelpText = getUITranslation(['formBuilder', 'layouts', 'helpText'], helpText);
 
     return !shouldHideLeftPanel ? (
-        <LeftPanelWrapper id="left-panel" overflowScroll={activePanel !== PanelType.IMAGE_PANEL}>
+        <LeftPanelWrapper
+            data-testid={getDataTestIdForSUI('left-panel')}
+            id="left-panel"
+            overflowScroll={activePanel !== PanelType.IMAGE_PANEL}
+        >
             <ScrollbarWrapper data-intercom-target="Customize panel">
                 {activePanel === PanelType.IMAGE_PANEL && (
                     <ImagePanelContainer>
@@ -61,16 +66,19 @@ const LeftPanel = ({
                     {isDataSourceDisplayed && <DataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
-                            <SectionWrapper id="layout-section-header">
-                                <PanelTitle margin="0">{layoutsHeader}</PanelTitle>
-                                {layoutsHelpText && <SectionHelpText>{layoutsHelpText}</SectionHelpText>}
-                            </SectionWrapper>
-                            {isLayoutSwitcherVisible && (
-                                <AvailableLayouts
-                                    selectedLayout={selectedLayout}
-                                    availableForUserLayouts={availableLayouts}
-                                />
-                            )}
+                            <HeadingWrapper data-testid={`${getDataTestIdForSUI('layouts-heading')}`}>
+                                <SectionWrapper id="layout-section-header">
+                                    <PanelTitle margin="0">{layoutsHeader}</PanelTitle>
+                                    {layoutsHelpText && <SectionHelpText>{layoutsHelpText}</SectionHelpText>}
+                                </SectionWrapper>
+                                {isLayoutSwitcherVisible && (
+                                    <AvailableLayouts
+                                        selectedLayout={selectedLayout}
+                                        availableForUserLayouts={availableLayouts}
+                                    />
+                                )}
+                            </HeadingWrapper>
+
                             {isLayoutResizableVisible && (
                                 <LayoutProperties layout={layoutPropertiesState} pageSize={pageSize} />
                             )}
