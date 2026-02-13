@@ -20,6 +20,8 @@ test.describe('mobile UI tests', () => {
 
         await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
+        await page.waitForTimeout(1000);
+
         const trayButton = page.getByTestId('test-sui-mobile-variables');
         await expect(trayButton).toBeVisible();
         await trayButton.click();
