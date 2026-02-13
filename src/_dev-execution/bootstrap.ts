@@ -61,7 +61,7 @@ import { EngineVersionManager } from './version-manager';
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
-        refreshTokenAction: tokenManager.refreshToken,
+        refreshTokenAction: () => tokenManager.refreshToken(),
         onConnectorAuthenticationRequested: (connectorId: string) => {
             return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
         },
