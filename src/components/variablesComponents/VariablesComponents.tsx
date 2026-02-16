@@ -23,7 +23,7 @@ import { useVariableComponents } from './useVariablesComponents';
 import { useAppDispatch } from '../../store';
 import { selectVariablesValidation, validateVariable } from '../../store/reducers/variableReducer';
 
-function VariablesComponents(props: IVariablesComponents) {
+const VariablesComponents = (props: IVariablesComponents) => {
     const { type, variable, onCalendarOpen } = props;
     const { handleValueChange, handleImageRemove, handleImageChange } = useVariableComponents(variable.id);
     const { isDocumentLoaded } = useAppContext();
@@ -110,6 +110,6 @@ function VariablesComponents(props: IVariablesComponents) {
             )}
         </div>
     );
-}
+};
 
 export default VariablesComponents;

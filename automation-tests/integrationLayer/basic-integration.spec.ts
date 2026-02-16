@@ -1,4 +1,4 @@
-import { test, expect } from '../helpers/test-with-credentials';
+import { test, expect } from '@helpers';
 
 test('basic integration', async ({ page }) => {
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();

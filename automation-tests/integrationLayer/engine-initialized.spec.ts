@@ -1,4 +1,4 @@
-import { test, expect } from '../helpers/test-with-credentials';
+import { test, expect } from '@helpers';
 
 const initScript = `
         window.__ENGINE_INITIALIZED__ = false;

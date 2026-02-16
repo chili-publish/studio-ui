@@ -7,7 +7,12 @@ interface StudioMobileDropdownOptionsProps {
     onChange?: (value: string) => void;
     onClose: () => void;
 }
-function StudioMobileDropdownOptions({ options, selectedValue, onChange, onClose }: StudioMobileDropdownOptionsProps) {
+const StudioMobileDropdownOptions = ({
+    options,
+    selectedValue,
+    onChange,
+    onClose,
+}: StudioMobileDropdownOptionsProps) => {
     return (
         <>
             {options.map((option) => (
@@ -27,6 +32,6 @@ function StudioMobileDropdownOptions({ options, selectedValue, onChange, onClose
             ))}
         </>
     );
-}
+};
 
 export default StudioMobileDropdownOptions;

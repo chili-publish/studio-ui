@@ -18,13 +18,13 @@ export const useUiConfigContext = () => {
     return useContext(UiConfigContext);
 };
 
-export function UiConfigContextProvider({
+export const UiConfigContextProvider = ({
     children,
     projectConfig,
 }: {
     children: ReactNode;
     projectConfig: ProjectConfig;
-}) {
+}) => {
     const data = useMemo(
         () => ({
             projectConfig,
@@ -39,4 +39,4 @@ export function UiConfigContextProvider({
     );
 
     return <UiConfigContext.Provider value={data}>{children}</UiConfigContext.Provider>;
-}
+};

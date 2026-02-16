@@ -8,7 +8,7 @@ import DataSourceModal from './DataSourceModal';
 import useDataSource from './useDataSource';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
-function DataSource() {
+const DataSource = () => {
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { getUITranslation } = useUITranslations();
@@ -91,6 +91,6 @@ function DataSource() {
             ) : null}
         </>
     );
-}
+};
 
 export default DataSource;

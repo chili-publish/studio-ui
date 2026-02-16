@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading, @typescript-eslint/no-explicit-any */
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 
 import { act, screen, waitFor, within } from '@testing-library/react';

@@ -8,26 +8,7 @@
     </head>
     <body>
         <div id="sui-root"></div>
-        <div id="studio-ui-container"></div>
-        <script type="module">
-            const params = new URLSearchParams(window.location.search);
-            const runIntegrationTest = params.get('demo') === 'integration';
-            console.log('runIntegrationTest', runIntegrationTest, params);
-
-            const loadMainWorkspace = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/bootstrap.ts');
-            };
-
-            const loadIntegrationTest = async () => {
-                await import('./src/main.tsx');
-                await import('./src/_dev-execution/integration-demos/integration.ts');
-            };
-            if (runIntegrationTest) {
-                loadIntegrationTest();
-            } else {
-                loadMainWorkspace();
-            }
-        </script>
+        <script type="module" src="./src/main.tsx"></script>
+        <script type="module" src="./src/_dev-execution/bootstrap.ts"></script>
     </body>
 </html>

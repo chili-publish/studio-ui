@@ -22,9 +22,11 @@
         "paths": {
             "@mocks/*": ["__mocks__/*"],
             "@tests/*": ["./src/tests/*"],
+            "@helpers": ["./automation-tests/helpers/index.ts"],
+            "@helpers/*": ["./automation-tests/helpers/*"],
             "src/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*", "automation-tests/integrationLayer", "automation-tests/helpers/project.config.ts"],
+    "include": ["src/**/*", "automation-tests/**/*"],
     "exclude": ["node_modules", "build"] // *** The files to not type check ***
 }

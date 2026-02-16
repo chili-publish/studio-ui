@@ -11,7 +11,7 @@ import { useVariableHistory } from '../dataSource/useVariableHistory';
 import FlatVariablesList from './FlatVariablesList';
 import GroupVariablesList from './GroupVariablesList';
 
-function VariablesList() {
+const VariablesList = () => {
     const variables = useSelector(selectVariables);
 
     const dispatch = useAppDispatch();
@@ -45,6 +45,6 @@ function VariablesList() {
             )}
         </div>
     );
-}
+};
 
 export default VariablesList;

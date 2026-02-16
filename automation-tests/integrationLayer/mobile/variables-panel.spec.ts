@@ -1,4 +1,4 @@
-import { test, expect } from '../../helpers/test-with-credentials';
+import { test, expect } from '@helpers';
 
 test.describe('mobile UI tests', () => {
     test.beforeEach(({}, testInfo) => {
@@ -9,9 +9,14 @@ test.describe('mobile UI tests', () => {
     test('displays headings in the correct order', async ({ page }) => {
         await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
 
+        await page.waitForTimeout(2000);
+
         const trayButton = page.getByTestId('test-sui-mobile-variables');
         await expect(trayButton).toBeVisible();
         await trayButton.click();
+
+        const trayPanel = page.getByTestId('test-sui-tray-panel');
+        await expect(trayPanel).toBeVisible();
 
         await expect(page.getByRole('heading', { name: 'Data source' })).toBeVisible();
         await expect(page.getByTestId('test-sui-tray-panel')).toMatchAriaSnapshot(`
@@ -25,9 +30,6 @@ test.describe('mobile UI tests', () => {
             - button
             - heading "Layouts"
             `);
-
-        const trayPanel = page.getByTestId('test-sui-tray-panel');
-        await expect(trayPanel).toBeVisible();
 
         const headings = trayPanel.getByRole('heading');
         await expect(headings).toHaveCount(3);

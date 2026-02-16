@@ -69,7 +69,7 @@ export class ProjectDataClient {
      * Gets authentication headers for all requests
      * @returns Record<string, string>
      */
-    // eslint-disable-next-line class-methods-use-this
+
     private getAuthHeaders(): Record<string, string> {
         return { Authorization: `Bearer ${TokenService.getInstance().getToken()}` };
     }

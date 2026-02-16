@@ -16,7 +16,7 @@ interface StudioMobileDropdownControlProps {
     required?: boolean;
     onOpen: () => void;
 }
-function StudioMobileDropdownControl({
+const StudioMobileDropdownControl = ({
     dataId,
     label,
     selectedValue,
@@ -24,7 +24,7 @@ function StudioMobileDropdownControl({
     validationError,
     required,
     onOpen,
-}: StudioMobileDropdownControlProps) {
+}: StudioMobileDropdownControlProps) => {
     return (
         <DropdownContainer data-id={dataId} data-testid={dataId} onClick={onOpen}>
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
@@ -42,6 +42,6 @@ function StudioMobileDropdownControl({
             {validationError ? <ErrorMessage>{validationError}</ErrorMessage> : null}
         </DropdownContainer>
     );
-}
+};
 
 export default StudioMobileDropdownControl;

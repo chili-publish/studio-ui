@@ -7,11 +7,7 @@ interface Executor {
     handler: () => Promise<ConnectorAuthenticationResult>;
 }
 
-type AuthenticationResolvers = Omit<
-    // eslint-disable-next-line no-undef
-    PromiseWithResolvers<RefreshedAuthCredendentials | null>,
-    'promise'
->;
+type AuthenticationResolvers = Omit<PromiseWithResolvers<RefreshedAuthCredendentials | null>, 'promise'>;
 
 interface ManualProcess {
     __resolvers: AuthenticationResolvers;

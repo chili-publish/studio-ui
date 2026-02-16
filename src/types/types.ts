@@ -254,7 +254,6 @@ export const defaultFormBuilder: FormBuilderType = {
     },
 };
 
-// eslint-disable-next-line no-restricted-globals
 export const defaultBackFn = () => history.back();
 
 export type Project = Omit<EnvironmentProject, 'name' | 'id' | 'template'> & {
@@ -320,7 +319,7 @@ export interface IStudioUILoaderConfig {
     onVariableValueChangedCompleted?: (
         variableId: string,
         value: string | boolean | number | null | undefined,
-    ) => Promise<void>; // tests
+    ) => Promise<void>;
     uiTranslations?: UITranslations;
     onLoadError?: (error: Error) => void;
 }

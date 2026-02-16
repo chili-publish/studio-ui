@@ -1,4 +1,4 @@
-import { IStudioUILoaderConfig } from 'src/types/types';
+import { IStudioUILoaderConfig } from '../../src/types/types';
 import { projectInfo } from './projectInfo';
 
 export const getProjectConfig = (extendedConfig: Partial<IStudioUILoaderConfig>) => {
@@ -7,7 +7,7 @@ export const getProjectConfig = (extendedConfig: Partial<IStudioUILoaderConfig>)
     const baseUrl = `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`;
     // Base configuration shared between regular and sandbox modes
     const baseConfig = {
-        selector: 'studio-ui-container',
+        selector: 'sui-root',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/main-latest/web`,
         featureFlags: {},
