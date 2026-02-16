@@ -50,6 +50,7 @@ export default class StudioUI extends StudioUILoader {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             false,
+            false,
             environmentApiService,
         );
 
@@ -167,6 +168,7 @@ export default class StudioUI extends StudioUILoader {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             sandboxMode || false,
+            componentMode || false,
             environmentApiService,
             projectDownloadUrl,
             projectUploadUrl,
