@@ -1,7 +1,7 @@
 import { test, expect } from '@helpers';
 
 test.describe('mobile UI tests', () => {
-    test.beforeEach(({}, testInfo) => {
+    test.beforeEach(({ browserName }, testInfo) => {
         const isMobile = testInfo.project.name.includes('mobile');
         if (!isMobile) test.skip(); // skip desktop
     });
