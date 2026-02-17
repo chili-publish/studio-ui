@@ -38,6 +38,7 @@ const testConfig = getTestConfig();
 
 export default defineConfig({
     testDir: './automation-tests/integrationLayer',
+    expect: { timeout: 10_000 },
     use: {
         baseURL: testConfig.baseURL,
         trace: 'on',

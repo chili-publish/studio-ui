@@ -1,17 +1,6 @@
-import { test, expect, getProjectConfig } from '@helpers';
+import { test, expect } from '@helpers';
 
 test('basic integration', async ({ page }) => {
-    const projectConfig = { ...getProjectConfig({}) };
-    const configString = JSON.stringify(projectConfig);
-
-    await page.addInitScript(`
-        window.__PROJECT_CONFIG__ = ${configString};
-    `);
-
-    await page.goto('');
-
-    await page.waitForLoadState('networkidle');
-
     await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
     await expect(page.getByLabel('Project: Listing')).toBeVisible();
 
