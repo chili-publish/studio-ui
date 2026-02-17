@@ -7,7 +7,7 @@ import { NavbarLabel } from '../Navbar.styles';
 import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
 
 const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: boolean) => {
-    const { isDownloadBtnVisible } = useUiConfigContext();
+    const { isDownloadBtnVisible, projectConfig } = useUiConfigContext();
     const { userInterfaceOutputSettings, outputSettingsFullList } = useUserInterfaceDetailsContext();
     const isMobile = useMobileSize();
     const { getUITranslation } = useUITranslations();
@@ -18,7 +18,7 @@ const useNavbarDownloadBtn = (onDownloadPanelOpen: () => void, isSandBoxMode?: b
     );
     const label = translatedLabel || (isSandBoxMode ? 'Export' : 'Download');
     const isVisible = isSandBoxMode
-        ? isDownloadBtnVisible
+        ? isDownloadBtnVisible && !projectConfig.componentMode
         : isDownloadBtnVisible && userInterfaceOutputSettings?.length !== 0;
 
     const navbarItem = useMemo(

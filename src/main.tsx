@@ -50,6 +50,7 @@ export default class StudioUI extends StudioUILoader {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             false,
+            false,
             environmentApiService,
         );
 
@@ -89,6 +90,7 @@ export default class StudioUI extends StudioUILoader {
      * @param outputSettings - The flags to manage the available types of outputs.
      * @param userInterfaceID - The id of the user interface used to fetch output settings, when passed outputSettings is ignored.
      * @param sandboxMode - Flag to open the project in sandbox mode.
+     * @param componentMode - Flag to notify the project is in component mode.
      * @param onSandboxModeToggle - Callback when user switches sandbox mode.
      * @param onProjectInfoRequested - Callback to get the project info.
      * @param onProjectDocumentRequested - Callback to get the project template.
@@ -128,6 +130,7 @@ export default class StudioUI extends StudioUILoader {
             userInterfaceID,
             featureFlagConfigURL,
             sandboxMode,
+            componentMode,
             variableTranslations,
             uiTranslations,
             layoutTranslations,
@@ -165,6 +168,7 @@ export default class StudioUI extends StudioUILoader {
             projectId,
             graFxStudioEnvironmentApiBaseUrl,
             sandboxMode || false,
+            componentMode || false,
             environmentApiService,
             projectDownloadUrl,
             projectUploadUrl,
@@ -191,6 +195,7 @@ export default class StudioUI extends StudioUILoader {
                 },
                 featureFlagConfigURL,
                 sandboxMode: sandboxMode || false,
+                componentMode: componentMode || false,
                 onSandboxModeToggle,
                 onProjectInfoRequested: onProjectInfoRequested ?? projectLoader.onProjectInfoRequested,
                 onProjectDocumentRequested: onProjectDocumentRequested ?? projectLoader.onProjectDocumentRequested,
