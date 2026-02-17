@@ -58,7 +58,7 @@ const useStudioNavbar = ({
         const items = [
             menuNavbarItem,
             modeToggleNavbarItem,
-            userInterfaceDropdownNavbarItem,
+            ...(!projectConfig.componentMode ? [userInterfaceDropdownNavbarItem] : []),
             projectNameItem,
             undoRedoNavbarItem,
             downloadNavbarItem,
@@ -73,6 +73,7 @@ const useStudioNavbar = ({
         projectNameItem,
         modeToggleNavbarItem,
         userInterfaceDropdownNavbarItem,
+        projectConfig.componentMode,
     ]);
 
     return {
