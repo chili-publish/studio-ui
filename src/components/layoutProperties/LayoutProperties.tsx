@@ -144,7 +144,7 @@ const LayoutProperties = ({ layout, pageSize }: LayoutPropertiesProps) => {
 
     return (
         <>
-            <LayoutInputsContainer>
+            <LayoutInputsContainer data-testid={`${getDataTestIdForSUI('layout-properties-inputs')}`}>
                 {renderInput('page-width-input', pageWidth, setPageWidth, widthLabel, widthInputHelpText)}
                 {hasLockedConstraint && (
                     <IconWrapper hasHelpText={!!widthInputHelpText || !!heightInputHelpText}>

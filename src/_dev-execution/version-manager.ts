@@ -33,7 +33,7 @@ export class EngineVersionManager {
 
     private async fetchLatestCommitSha(branchPath: string): Promise<string | null> {
         if (!this.requestUrl) {
-            return null;
+            return 'latest';
         }
         const selected = branchPath === 'main' ? 'latest' : branchPath;
         const data: Array<EngineVerion> = await fetch(this.requestUrl, {
