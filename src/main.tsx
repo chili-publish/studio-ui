@@ -16,6 +16,8 @@ import { validateCoreConfig } from './utils/validateConfig';
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
 
+    private static instance: StudioUI | undefined;
+
     /**
      * Creates a new instance of StudioUI with all integration points available.
      * @param selector - The selector for the root element of the UI.
@@ -23,7 +25,9 @@ export default class StudioUI extends StudioUILoader {
      * @returns
      */
     private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig, appConfig?: AppConfig) {
-        return new StudioUI(selector, projectConfig, appConfig);
+        const instance = new StudioUI(selector, projectConfig, appConfig);
+        this.instance = instance;
+        return instance;
     }
 
     /**
@@ -177,8 +181,15 @@ export default class StudioUI extends StudioUILoader {
             onProjectGetDownloadLink,
         );
 
-        const onBack = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
         const uiOptionsConfig = uiOptions ?? defaultPlatformUiOptions;
+
+        const onBack = (): void => {
+            const onBackFn = uiOptions?.widgets?.backButton?.event ?? defaultBackFn;
+            if (!onBackFn) return;
+
+            this.instance?.destroy();
+            onBackFn();
+        };
 
         return this.fullStudioIntegrationConfig(
             selector,
