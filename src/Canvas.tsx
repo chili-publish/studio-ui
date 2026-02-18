@@ -12,7 +12,7 @@ interface CanvasProps {
     multiLayoutMode: boolean;
     editorId: string;
 }
-function Canvas({ layoutIntent, pages, projectConfig, multiLayoutMode, editorId }: CanvasProps) {
+const Canvas = ({ layoutIntent, pages, projectConfig, multiLayoutMode, editorId }: CanvasProps) => {
     const [iframeWindow, setIframeWindow] = useState<Window | null>(null);
 
     useEffect(() => {
@@ -62,6 +62,6 @@ function Canvas({ layoutIntent, pages, projectConfig, multiLayoutMode, editorId 
             <ChiliEditor id={editorId} />
         </SuiCanvas>
     );
-}
+};
 
 export default Canvas;

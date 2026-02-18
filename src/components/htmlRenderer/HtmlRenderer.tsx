@@ -5,7 +5,7 @@ interface IContent {
     content: string | HTMLElement | DocumentFragment;
     isVisible?: boolean;
 }
-function HtmlRenderer(props: IContent) {
+const HtmlRenderer = (props: IContent) => {
     const { content, isVisible } = props;
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +27,6 @@ function HtmlRenderer(props: IContent) {
     }, [content]);
 
     return <Container ref={containerRef} isVisible={isVisible} />;
-}
+};
 
 export default HtmlRenderer;

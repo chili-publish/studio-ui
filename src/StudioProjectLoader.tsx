@@ -25,6 +25,8 @@ export class StudioProjectLoader {
 
     private sandboxMode: boolean;
 
+    private componentMode: boolean;
+
     private cachedProject: Project | undefined;
 
     private userInterfaceID?: string;
@@ -47,6 +49,7 @@ export class StudioProjectLoader {
         projectId: string | undefined,
         graFxStudioEnvironmentApiBaseUrl: string,
         sandboxMode: boolean,
+        componentMode: boolean,
         environmentApiService: EnvironmentApiService,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
@@ -62,6 +65,7 @@ export class StudioProjectLoader {
         this.projectUploadUrl = projectUploadUrl;
         this.projectId = projectId;
         this.sandboxMode = sandboxMode;
+        this.componentMode = componentMode;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
@@ -208,7 +212,7 @@ export class StudioProjectLoader {
                 outputSettingsFullList: outputSettings.data || [],
             };
         }
-        if (this.sandboxMode) {
+        if (this.sandboxMode && !this.componentMode) {
             const defaultUserInterface = await fetchDefaultUserInterface();
             return defaultUserInterface
                 ? {

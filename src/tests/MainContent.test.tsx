@@ -126,6 +126,7 @@ describe('MainContent', () => {
             configuration: { setValue: jest.fn() },
             config: {
                 events: {
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
                     onDocumentLoaded: { registerCallback: jest.fn().mockReturnValue(() => {}) },
                     onVariableListChanged: { trigger: jest.fn() },
                     onLayoutsChanged: { trigger: jest.fn() },

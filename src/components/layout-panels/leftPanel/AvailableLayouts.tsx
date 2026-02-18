@@ -14,12 +14,12 @@ interface AvailableLayoutsProp {
     onMobileOptionListToggle?: (_: boolean) => void;
 }
 
-function AvailableLayouts({
+const AvailableLayouts = ({
     selectedLayout,
     availableForUserLayouts,
     mobileDevice,
     onMobileOptionListToggle,
-}: AvailableLayoutsProp) {
+}: AvailableLayoutsProp) => {
     const { getUITranslation } = useUITranslations();
     const { getTranslatedLayoutDisplayName } = useLayoutTranslations();
 
@@ -67,6 +67,6 @@ function AvailableLayouts({
             placeholder={placeholder}
         />
     );
-}
+};
 
 export default AvailableLayouts;

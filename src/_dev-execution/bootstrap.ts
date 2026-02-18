@@ -59,7 +59,7 @@ import { EngineVersionManager } from './version-manager';
         if (!projectId) {
             messageString += ` projectId`;
         }
-        // eslint-disable-next-line no-alert
+
         alert(messageString);
 
         return;
@@ -74,7 +74,7 @@ import { EngineVersionManager } from './version-manager';
         if (!templateId) {
             messageString += ` templateId`;
         }
-        // eslint-disable-next-line no-alert
+
         alert(messageString);
 
         return;

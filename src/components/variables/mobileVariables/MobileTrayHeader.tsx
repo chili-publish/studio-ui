@@ -16,12 +16,12 @@ interface MobileTrayHeaderProps {
     trayHeaderData: MobileTrayFormBuilderHeader;
 }
 
-function MobileTrayHeader({
+const MobileTrayHeader = ({
     isDefaultPanelView,
     isDataSourceDisplayed,
     isAvailableLayoutsDisplayed,
     trayHeaderData,
-}: MobileTrayHeaderProps) {
+}: MobileTrayHeaderProps) => {
     const dispatch = useAppDispatch();
     const activePanel = useSelector(selectActivePanel);
     const { datasource, variables, layouts } = trayHeaderData;
@@ -88,6 +88,7 @@ function MobileTrayHeader({
                 <TrayPanelTitle margin="0">{datasource.title}</TrayPanelTitle>
             </TrayTitleWithBtn>
         );
-}
+    return null;
+};
 
 export default MobileTrayHeader;

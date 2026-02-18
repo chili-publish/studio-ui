@@ -1,10 +1,17 @@
 import EditorSDK from '@chili-publish/studio-sdk';
 import '@testing-library/jest-dom';
 import { mock } from 'jest-mock-extended';
+import { TransformStream } from 'stream/web';
+
+if (typeof globalThis.TransformStream === 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).TransformStream = TransformStream;
+}
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('@chili-publish/studio-sdk/lib/src/next');
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const ResizeObserver = require('resize-observer-polyfill');
 
 global.ResizeObserver = ResizeObserver;

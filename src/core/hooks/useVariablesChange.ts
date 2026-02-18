@@ -22,6 +22,7 @@ export function useVariablesChange(variableIds: Array<string>) {
                 .filter((v) => variableIds.includes(v.id))
                 .reduce(
                     (all, vm) => {
+                        // eslint-disable-next-line no-param-reassign
                         all[vm.id] = vm;
                         return all;
                     },
