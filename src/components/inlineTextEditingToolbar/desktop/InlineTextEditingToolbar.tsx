@@ -2,7 +2,7 @@ import { Separator, ToolbarWrapper } from './InlineTextEditingToolbar.styles';
 import ParagraphStyleConstraint from './paragraphStyleConstraint/ParagraphStyleConstraint';
 import CharacterStyleConstraint from './characterStyleConstraint/CharacterStyleConstraint';
 import ColorConstraint from './colorConstraint/ColorConstraint';
-import useFrameConstraints from './useFrameConstraints';
+import useFrameConstraints from '../useFrameConstraints';
 import { useAppSelector } from 'src/store';
 import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 import FontSizeConstraint from './fontSizeConstraint/FontSizeConstraint';

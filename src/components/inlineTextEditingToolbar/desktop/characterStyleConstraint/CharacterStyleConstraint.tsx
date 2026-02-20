@@ -2,10 +2,9 @@ import { CharacterStyle, Id, SelectedTextStyles, TextStyleUpdateType } from '@ch
 import { useEffect, useState } from 'react';
 import { useAppSelector } from 'src/store';
 import { selectedTextProperties } from 'src/store/reducers/frameReducer';
-import StudioDropdown from '../../shared/StudioDropdown';
-import { getDataIdForSUI } from 'src/utils/dataIds';
 import { ConstraintWrapper } from '../InlineTextEditingToolbar.styles';
 import { AvailableIcons, Icon } from '@chili-publish/grafx-shared-components';
+import StudioDropdown from '../../../shared/StudioDropdown';
 
 const CharacterStyleConstraint = ({ characterStyleIds }: { characterStyleIds: Id[] }) => {
     const textStyle = useAppSelector(selectedTextProperties);
@@ -36,7 +35,7 @@ const CharacterStyleConstraint = ({ characterStyleIds }: { characterStyleIds: Id
             <Icon icon={AvailableIcons.faFont} />
             <StudioDropdown
                 id="character-style-constraint"
-                dataId={getDataIdForSUI('character-style-constraint')}
+                dataId={'character-style-constraint'}
                 selectedValue={options.find((option) => option.value === textStyle?.characterStyleId)}
                 options={options}
                 onChange={handleChange}
