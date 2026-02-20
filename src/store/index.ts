@@ -9,6 +9,7 @@ import direction from './reducers/directionReducer';
 import appConfig from './reducers/appConfigReducer';
 import panel from './reducers/panelReducer';
 import variable from './reducers/variableReducer';
+import frames from './reducers/frameReducer';
 
 const extraMiddlewares: Middleware[] = [errorHandlerMiddleware];
 
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
     appConfig,
     panel,
     variable,
+    frames,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -53,6 +53,8 @@ import { TokenService } from './services/TokenService';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 import { useDocumentTools } from './hooks/useDocumentTools';
 import Canvas from './Canvas';
+import { setSelectedFrameContent, setSelectedTextProperties } from './store/reducers/frameReducer';
+import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/InlineTextEditingToolbar';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -221,6 +223,12 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
+            },
+            onSelectedFrameContentChanged: (frameContent) => {
+                dispatch(setSelectedFrameContent(frameContent));
+            },
+            onSelectedTextStyleChanged: (textStyle) => {
+                dispatch(setSelectedTextProperties(textStyle));
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -445,6 +453,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                     />
                                 )}
                                 <CanvasContainer>
+                                    <InlineTextEditingToolbar />
                                     {isMobileSize && (
                                         <MobileVariables
                                             selectedLayout={currentSelectedLayout}
