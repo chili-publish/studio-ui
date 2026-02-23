@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ParagraphStyle, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
+import { FrameConstraints, ParagraphStyle, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -48,7 +48,21 @@ describe('ParagraphStyleConstraint', () => {
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle1 })
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle2 });
 
-        renderWithProviders(<ParagraphStyleConstraint paragraphStyleIds={['style-1', 'style-2']} />);
+        renderWithProviders(
+            <ParagraphStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            paragraphStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+        );
 
         const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-paragraph-style-constraint'));
         expect(dropdown).toBeInTheDocument();
@@ -77,14 +91,29 @@ describe('ParagraphStyleConstraint', () => {
             paragraphStyleId: 'style-2',
         } as SelectedTextStyle;
 
-        renderWithProviders(<ParagraphStyleConstraint paragraphStyleIds={['style-1', 'style-2', 'style-3']} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <ParagraphStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            paragraphStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2', 'style-3'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-paragraph-style-constraint'));
         expect(dropdown).toBeInTheDocument();
@@ -104,14 +133,29 @@ describe('ParagraphStyleConstraint', () => {
             paragraphStyleId: 'style-1',
         } as SelectedTextStyle;
 
-        renderWithProviders(<ParagraphStyleConstraint paragraphStyleIds={['style-1', 'style-2']} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <ParagraphStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            paragraphStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         await waitFor(() => {
             expect(screen.getByText('Heading 1')).toBeInTheDocument();

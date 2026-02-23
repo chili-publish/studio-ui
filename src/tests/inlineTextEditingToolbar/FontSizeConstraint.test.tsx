@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
+import { FrameConstraints, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -31,7 +31,7 @@ describe('FontSizeConstraint', () => {
             fontSize: 16,
         } as SelectedTextStyle;
 
-        renderWithProviders(<FontSizeConstraint />, {
+        renderWithProviders(<FontSizeConstraint frameConstraints={null} />, {
             preloadedState: {
                 frames: {
                     selectedFrameContent: null,
@@ -49,7 +49,7 @@ describe('FontSizeConstraint', () => {
             fontSize: 16,
         } as SelectedTextStyle;
 
-        renderWithProviders(<FontSizeConstraint />, {
+        renderWithProviders(<FontSizeConstraint frameConstraints={null} />, {
             preloadedState: {
                 frames: {
                     selectedFrameContent: null,
@@ -77,7 +77,7 @@ describe('FontSizeConstraint', () => {
             fontSize: 16,
         } as SelectedTextStyle;
 
-        renderWithProviders(<FontSizeConstraint />, {
+        renderWithProviders(<FontSizeConstraint frameConstraints={null} />, {
             preloadedState: {
                 frames: {
                     selectedFrameContent: null,
@@ -106,14 +106,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        const { container } = renderWithProviders(<FontSizeConstraint max={16} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        const { container } = renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 5, max: 16 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const inputWrapper = container.querySelector(`[data-id="sui-font-size-constraint-input-wrapper"]`);
         expect(inputWrapper).toBeInTheDocument();
@@ -136,14 +151,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        const { container } = renderWithProviders(<FontSizeConstraint min={14} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        const { container } = renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 14, max: 20 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const inputWrapper = container.querySelector(`[data-id="sui-font-size-constraint-input-wrapper"]`);
         expect(inputWrapper).toBeInTheDocument();
@@ -164,14 +194,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        const { container } = renderWithProviders(<FontSizeConstraint min={14} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        const { container } = renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 14, max: 20 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const input = screen.getByTestId(getDataTestIdForSUI('font-size-constraint')) as HTMLInputElement;
         const inputWrapper = container.querySelector(`[data-id="sui-font-size-constraint-input-wrapper"]`);
@@ -196,14 +241,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        const { container } = renderWithProviders(<FontSizeConstraint max={16} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        const { container } = renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 5, max: 16 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const input = screen.getByTestId(getDataTestIdForSUI('font-size-constraint')) as HTMLInputElement;
         const inputWrapper = container.querySelector(`[data-id="sui-font-size-constraint-input-wrapper"]`);
@@ -228,14 +288,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        renderWithProviders(<FontSizeConstraint min={14} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 14, max: 20 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const input = screen.getByTestId(getDataTestIdForSUI('font-size-constraint')) as HTMLInputElement;
         const user = userEvent.setup();
@@ -257,14 +332,29 @@ describe('FontSizeConstraint', () => {
             fontSize: 15,
         } as SelectedTextStyle;
 
-        renderWithProviders(<FontSizeConstraint max={16} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <FontSizeConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            fontSizes: {
+                                value: { allowed: true, min: 5, max: 16 },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const input = screen.getByTestId(getDataTestIdForSUI('font-size-constraint')) as HTMLInputElement;
         const user = userEvent.setup();

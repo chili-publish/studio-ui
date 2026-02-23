@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CharacterStyle, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
+import { CharacterStyle, FrameConstraints, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +43,21 @@ describe('CharacterStyleConstraint', () => {
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle1 })
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
 
-        renderWithProviders(<CharacterStyleConstraint characterStyleIds={['style-1', 'style-2']} />);
+        renderWithProviders(
+            <CharacterStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            characterStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+        );
 
         const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-character-style-constraint'));
         expect(dropdown).toBeInTheDocument();
@@ -71,14 +85,29 @@ describe('CharacterStyleConstraint', () => {
             characterStyleId: 'style-2',
         } as SelectedTextStyle;
 
-        renderWithProviders(<CharacterStyleConstraint characterStyleIds={['style-1', 'style-2']} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <CharacterStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            characterStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-character-style-constraint'));
         expect(dropdown).toBeInTheDocument();
@@ -98,14 +127,29 @@ describe('CharacterStyleConstraint', () => {
             characterStyleId: 'style-1',
         } as SelectedTextStyle;
 
-        renderWithProviders(<CharacterStyleConstraint characterStyleIds={['style-1', 'style-2']} />, {
-            preloadedState: {
-                frames: {
-                    selectedFrameContent: null,
-                    selectedTextProperties: selectedTextStyle,
+        renderWithProviders(
+            <CharacterStyleConstraint
+                frameConstraints={
+                    {
+                        text: {
+                            characterStyles: {
+                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                isOverride: false,
+                                isReadOnly: false,
+                            },
+                        },
+                    } as unknown as FrameConstraints
+                }
+            />,
+            {
+                preloadedState: {
+                    frames: {
+                        selectedFrameContent: null,
+                        selectedTextProperties: selectedTextStyle,
+                    },
                 },
             },
-        });
+        );
 
         await waitFor(() => {
             expect(screen.getByText('Character Style 1')).toBeInTheDocument();
