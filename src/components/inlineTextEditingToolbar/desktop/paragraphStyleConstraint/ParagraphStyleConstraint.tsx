@@ -1,36 +1,14 @@
-import { Id, ParagraphStyle, SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
-import { useEffect, useState } from 'react';
+import { FrameConstraints } from '@chili-publish/studio-sdk';
 import StudioDropdown from '../../../shared/StudioDropdown';
 import { useAppSelector } from 'src/store';
 import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 import { AvailableIcons, Icon } from '@chili-publish/grafx-shared-components';
 import { ConstraintWrapper } from '../InlineTextEditingToolbar.styles';
+import useAllowedParagraphStyles from '../../_shared/useAllowedParagraphStyles';
 
-const ParagraphStyleConstraint = ({ paragraphStyleIds }: { paragraphStyleIds: Id[] }) => {
+const ParagraphStyleConstraint = ({ frameConstraints }: { frameConstraints: FrameConstraints | null }) => {
     const textStyle = useAppSelector(selectedTextProperties);
-    const [selectedParagraphStyle, setSelectedParagraphStyle] = useState<ParagraphStyle[]>([]);
-
-    useEffect(() => {
-        if (paragraphStyleIds.length > 0) {
-            const fetchParagraphStyles = async () => {
-                const paragraphStylesData = await Promise.all(
-                    paragraphStyleIds.map((id) => window.StudioUISDK.paragraphStyle.getById(id)),
-                );
-                setSelectedParagraphStyle(
-                    paragraphStylesData.map((data) => data.parsedData).filter((data) => data !== null),
-                );
-            };
-            fetchParagraphStyles();
-        }
-    }, [paragraphStyleIds]);
-
-    const options = selectedParagraphStyle.map((style) => ({
-        label: style.name,
-        value: style.id,
-    }));
-
-    const handleChange = async (val: string) =>
-        window.StudioUISDK.textSelection.set({ [SelectedTextStyles.PARAGRAPH]: { value: val } } as TextStyleUpdateType);
+    const { options, handleChange } = useAllowedParagraphStyles(frameConstraints);
 
     return (
         <ConstraintWrapper>

@@ -1,34 +1,14 @@
-import { CharacterStyle, Id, SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
-import { useEffect, useState } from 'react';
-import { useAppSelector } from 'src/store';
-import { selectedTextProperties } from 'src/store/reducers/frameReducer';
+import { FrameConstraints } from '@chili-publish/studio-sdk';
 import { ConstraintWrapper } from '../InlineTextEditingToolbar.styles';
 import { AvailableIcons, Icon } from '@chili-publish/grafx-shared-components';
 import StudioDropdown from '../../../shared/StudioDropdown';
+import useAllowedCharacterStyles from '../../_shared/useAllowedCharacterStyles';
+import { useAppSelector } from 'src/store';
+import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 
-const CharacterStyleConstraint = ({ characterStyleIds }: { characterStyleIds: Id[] }) => {
+const CharacterStyleConstraint = ({ frameConstraints }: { frameConstraints: FrameConstraints | null }) => {
     const textStyle = useAppSelector(selectedTextProperties);
-    const [characterStyles, setCharacterStyles] = useState<CharacterStyle[]>([]);
-
-    useEffect(() => {
-        if (characterStyleIds.length > 0) {
-            const fetchCharacterStyles = async () => {
-                const characterStylesData = await Promise.all(
-                    characterStyleIds.map((id) => window.StudioUISDK.characterStyle.getById(id)),
-                );
-                setCharacterStyles(characterStylesData.map((data) => data.parsedData).filter((data) => data !== null));
-            };
-            fetchCharacterStyles();
-        }
-    }, [characterStyleIds]);
-
-    const options = characterStyles.map((style) => ({
-        label: style.name,
-        value: style.id,
-    }));
-
-    const handleChange = async (val: string) =>
-        window.StudioUISDK.textSelection.set({ [SelectedTextStyles.CHARACTER]: { value: val } } as TextStyleUpdateType);
+    const { options, handleChange } = useAllowedCharacterStyles(frameConstraints);
 
     return (
         <ConstraintWrapper>

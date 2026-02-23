@@ -5,33 +5,27 @@ import {
     ModalSize,
     useOnClickOutside,
 } from '@chili-publish/grafx-shared-components';
-import { DocumentColor, SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
+import { FrameConstraints } from '@chili-publish/studio-sdk';
 import { useRef } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
-import { toColorPickerColor } from './color.util';
 import { APP_WRAPPER_ID } from 'src/utils/constants';
-import { SelectColorLabel } from './Color.styles';
+import useAllowedColorStyles from '../../_shared/useAllowedColorStyles';
+import { SelectColorLabel, StyledColorGrid } from '../../_shared/InlineTextEditing.styles';
 
 const STYLE_COLOR_PICKER_DIALOG_ID = 'style-color-picker-dialog';
 
 interface ColorPickerModalProps {
-    colors: DocumentColor[];
+    frameConstraints: FrameConstraints | null;
     position: { left: number; top: number } | null;
     onClose: () => void;
 }
-const ColorPickerModal = ({ colors, position, onClose }: ColorPickerModalProps) => {
+const ColorPickerModal = ({ frameConstraints, position, onClose }: ColorPickerModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
-    const colorGridColors = colors.map((color) => ({
-        colorValue: toColorPickerColor(color),
-        name: color.name,
-        id: color.id,
-    }));
+    const { colorGridColors, handleColorSelection } = useAllowedColorStyles(frameConstraints);
 
-    const handleColorSelection = async (color: ColorGridType) => {
-        await window.StudioUISDK.textSelection.set({
-            [SelectedTextStyles.COLOR]: { value: color.colorValue },
-        } as TextStyleUpdateType);
+    const selectColor = async (color: ColorGridType) => {
+        await handleColorSelection(color);
         onClose();
     };
 
@@ -55,14 +49,16 @@ const ColorPickerModal = ({ colors, position, onClose }: ColorPickerModalProps) 
             }}
             onClose={onClose}
         >
-            <ModalLayout.Title>Brand Kit Color</ModalLayout.Title>
+            <ModalLayout.Title>Color</ModalLayout.Title>
             <ModalLayout.Body>
-                <ColorGrid
-                    colors={colorGridColors}
-                    onClick={handleColorSelection}
-                    emptyStateMessage="Any colors added to the Brand Kit will be available here."
-                />
-                {colors.length ? <SelectColorLabel>Select a color</SelectColorLabel> : null}
+                <StyledColorGrid>
+                    <ColorGrid
+                        colors={colorGridColors}
+                        onClick={selectColor}
+                        emptyStateMessage="Any colors added to the Brand Kit will be available here."
+                    />
+                    {colorGridColors.length ? <SelectColorLabel>Select a color</SelectColorLabel> : null}
+                </StyledColorGrid>
             </ModalLayout.Body>
         </ModalLayout.Container>
     );

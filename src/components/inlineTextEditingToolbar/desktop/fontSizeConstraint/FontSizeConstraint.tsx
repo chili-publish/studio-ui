@@ -4,13 +4,9 @@ import { getDataIdForSUI, getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useAppSelector } from 'src/store';
 import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 import { ChangeEvent } from 'react';
-import { SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
+import { FrameConstraints, SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
 
-interface FontSizeConstraintProps {
-    min?: number | null;
-    max?: number | null;
-}
-const FontSizeConstraint = ({ min, max }: FontSizeConstraintProps) => {
+const FontSizeConstraint = ({ frameConstraints }: { frameConstraints: FrameConstraints | null }) => {
     const textStyle = useAppSelector(selectedTextProperties);
 
     const handleChange = async (val: number) =>
@@ -22,8 +18,8 @@ const FontSizeConstraint = ({ min, max }: FontSizeConstraintProps) => {
             <Input
                 type="number"
                 name="font-size-constraint"
-                min={min ?? undefined}
-                max={max ?? undefined}
+                min={frameConstraints?.text?.fontSizes.value.min ?? undefined}
+                max={frameConstraints?.text?.fontSizes.value.max ?? undefined}
                 value={`${textStyle?.fontSize}`}
                 step={1}
                 dataId={getDataIdForSUI(`font-size-constraint`)}

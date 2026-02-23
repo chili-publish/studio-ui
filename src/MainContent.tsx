@@ -3,6 +3,7 @@ import {
     UiThemeProvider,
     useDebounce,
     useMobileSize,
+    useTabletSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
@@ -100,10 +101,13 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     const enableAutoSaveRef = useRef(false);
 
     const isMobileSize = useMobileSize();
+    const isTabletSize = useTabletSize();
+
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
     const textProperties = useAppSelector(selectedTextProperties);
-    const mobileInlineTextEditingMode = isMobileSize && !!textProperties;
+    const mobileOrTabletSize = isMobileSize || isTabletSize;
+    const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
@@ -460,7 +464,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                     />
                                 )}
                                 <CanvasContainer>
-                                    {!isMobileSize && <InlineTextEditingToolbar />}
+                                    {!mobileOrTabletSize && <InlineTextEditingToolbar />}
                                     {isMobileSize && (
                                         <MobileVariables
                                             selectedLayout={currentSelectedLayout}

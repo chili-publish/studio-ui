@@ -2,52 +2,44 @@ import { Separator, ToolbarWrapper } from './InlineTextEditingToolbar.styles';
 import ParagraphStyleConstraint from './paragraphStyleConstraint/ParagraphStyleConstraint';
 import CharacterStyleConstraint from './characterStyleConstraint/CharacterStyleConstraint';
 import ColorConstraint from './colorConstraint/ColorConstraint';
-import useFrameConstraints from '../useFrameConstraints';
-import { useAppSelector } from 'src/store';
-import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 import FontSizeConstraint from './fontSizeConstraint/FontSizeConstraint';
+import useTextEditingEnabled from '../_shared/useTextEditingEnabled';
 
 const InlineTextEditingToolbar = () => {
-    const { frameConstraints } = useFrameConstraints();
-    const textProperties = useAppSelector(selectedTextProperties);
+    const {
+        hasParagraphStyleConstraint,
+        hasCharacterStyleConstraint,
+        hasFontSizeConstraint,
+        hasColorConstraint,
+        hasTextEditingAllowed,
+        textInEditMode,
+        frameConstraints,
+    } = useTextEditingEnabled();
 
-    const hasParagraphStyleConstraint = frameConstraints?.text?.paragraphStyles?.value.allowed;
-    const hasCharacterStyleConstraint = frameConstraints?.text?.characterStyles?.value.allowed;
-    const hasFontSizeConstraint = frameConstraints?.text?.fontSizes?.value.allowed;
-    const hasColorConstraint = frameConstraints?.text?.colors?.value.allowed;
-    const hasTextEditingAllowed = frameConstraints?.text?.textEditingAllowed.value;
-
-    if (!hasTextEditingAllowed || !textProperties) {
+    if (!hasTextEditingAllowed || !textInEditMode) {
         return null;
     }
     return (
         <ToolbarWrapper>
             {hasParagraphStyleConstraint && (
                 <>
-                    <ParagraphStyleConstraint
-                        paragraphStyleIds={frameConstraints?.text?.paragraphStyles.value.ids ?? []}
-                    />
+                    <ParagraphStyleConstraint frameConstraints={frameConstraints} />
                     <Separator />
                 </>
             )}
             {hasCharacterStyleConstraint && (
                 <>
-                    <CharacterStyleConstraint
-                        characterStyleIds={frameConstraints?.text?.characterStyles.value.ids ?? []}
-                    />
+                    <CharacterStyleConstraint frameConstraints={frameConstraints} />
                     <Separator />
                 </>
             )}
             {hasFontSizeConstraint && (
                 <>
-                    <FontSizeConstraint
-                        min={frameConstraints?.text?.fontSizes.value.min}
-                        max={frameConstraints?.text?.fontSizes.value.max}
-                    />
+                    <FontSizeConstraint frameConstraints={frameConstraints} />
                     <Separator />
                 </>
             )}
-            {hasColorConstraint && <ColorConstraint colorIds={frameConstraints?.text?.colors.value.ids ?? []} />}
+            {hasColorConstraint && <ColorConstraint frameConstraints={frameConstraints} />}
         </ToolbarWrapper>
     );
 };
