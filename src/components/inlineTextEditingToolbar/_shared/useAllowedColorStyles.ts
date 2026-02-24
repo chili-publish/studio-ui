@@ -10,8 +10,16 @@ const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
         const colorIds = frameConstraints?.text?.colors.value.ids ?? [];
         if (colorIds.length > 0) {
             const fetchColors = async () => {
-                const colorsData = await Promise.all(colorIds.map((id) => window.StudioUISDK.colorStyle.getById(id)));
-                setColors(colorsData.map((data) => data.parsedData).filter((data) => data !== null));
+                try {
+                    const colorsData = await Promise.all(
+                        colorIds.map((id) => window.StudioUISDK.colorStyle.getById(id)),
+                    );
+                    setColors(colorsData.map((data) => data.parsedData).filter((data) => data !== null));
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error('Error fetching colors:', error);
+                    setColors([]);
+                }
             };
             fetchColors();
         } else {
