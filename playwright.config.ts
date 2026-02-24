@@ -44,7 +44,7 @@ export default defineConfig({
         trace: 'on',
     },
     webServer: testConfig.webServer,
-    workers: process.env.CI ? 1 : undefined,
+    workers: process.env.CI ? 4 : undefined,
     reporter: [['html']],
     projects: [
         {
