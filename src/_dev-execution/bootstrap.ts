@@ -3,13 +3,15 @@
 
 import StudioUI from '../main';
 import { TemplateManager } from './template-manager';
-import { TokenManager } from './token-manager';
+import { IntegrationTokenManager } from './token-manager/integration';
+import { TokenManager } from './token-manager/user-password';
 import { EngineVersionManager } from './version-manager';
 
 (async () => {
-    const tokenManager = new TokenManager();
-
     let urlParams = new URLSearchParams(window.location.search);
+    const integrationTest = urlParams.get('demo') === 'integration';
+
+    const tokenManager = integrationTest ? new IntegrationTokenManager() : new TokenManager();
 
     // state after redirection
     if (urlParams.has('code')) {
@@ -20,15 +22,9 @@ import { EngineVersionManager } from './version-manager';
         }
     }
 
-    let authToken = '';
-    if (import.meta.env.VITE_TOKEN) {
-        authToken = import.meta.env.VITE_TOKEN;
-    } else {
-        authToken = await tokenManager.getAccessToken();
-    }
+    const authToken = await tokenManager.getAccessToken();
 
     const engineVersionManager = new EngineVersionManager(authToken);
-
     const engineVersion = urlParams.get('engine') ?? 'main';
     const engineCommitSha =
         urlParams.get('engineCommitSha') ?? (await engineVersionManager.getLatestCommitSha(engineVersion));
@@ -47,43 +43,20 @@ import { EngineVersionManager } from './version-manager';
         import.meta.env.VITE_BASE_ENVIRONMENT_API_URL ??
         `https://${envName}.cpstaging.online/grafx/api/v1/environment/${envName}`; // Or different baseUrl
 
-    // Validation for regular mode
-    if (!sandboxMode && ((!engineRegex.test(engineVersion) && !engineCommitSha) || !envName || !projectId)) {
-        let messageString = `Please make sure to specify the`;
-        if (!engineCommitSha) {
-            messageString += ` engineCommitSha`;
-        }
-        if (!envName) {
-            messageString += ` envName`;
-        }
-        if (!projectId) {
-            messageString += ` projectId`;
-        }
-
-        alert(messageString);
-
-        return;
-    }
-
-    // Validation for sandbox mode
-    if (sandboxMode && (!envName || !templateId)) {
-        let messageString = `Please make sure to specify the`;
-        if (!envName) {
-            messageString += ` envName`;
-        }
-        if (!templateId) {
-            messageString += ` templateId`;
-        }
-
-        alert(messageString);
-
-        return;
-    }
-
     const engineSource = engineRegex.test(engineVersion) ? engineVersion : `${engineVersion}-${engineCommitSha}`;
 
     // Base configuration shared between regular and sandbox modes
     const baseConfig = {
+        projectId,
+        projectName: 'Dev Run',
+        uiOptions: {
+            widgets: {
+                backButton: { visible: true },
+                navBar: { visible: true },
+                bottomBar: { visible: true },
+                downloadButton: { visible: true },
+            },
+        },
         selector: 'sui-root',
         graFxStudioEnvironmentApiBaseUrl: `${baseUrl}`,
         authToken,
@@ -102,7 +75,20 @@ import { EngineVersionManager } from './version-manager';
         onVariableValueChangedCompleted: async (id: string, value: any) => console.log('changed var: ', id, value),
         // eslint-disable-next-line no-console
         onProjectLoaded: () => console.log('project loaded'),
+        // eslint-disable-next-line no-underscore-dangle
+        ...(window.__PROJECT_CONFIG__ || {}),
     };
+
+    // Validation for regular mode
+    if (!engineRegex.test(engineVersion) && !engineCommitSha) {
+        let messageString = `Please make sure to specify the`;
+        if (!engineCommitSha) {
+            messageString += ` engineCommitSha`;
+        }
+        alert(messageString);
+
+        return;
+    }
 
     if (sandboxMode) {
         const templateManager = new TemplateManager(authToken, baseUrl, templateId);
@@ -136,19 +122,7 @@ import { EngineVersionManager } from './version-manager';
             }),
         });
     } else {
-        // Regular mode configuration
-        StudioUI.studioUILoaderConfig({
-            ...baseConfig,
-            projectId,
-            projectName: 'Dev Run',
-            uiOptions: {
-                widgets: {
-                    backButton: { visible: true },
-                    navBar: { visible: true },
-                    bottomBar: { visible: true },
-                    downloadButton: { visible: true },
-                },
-            },
-        });
+        // Regular mode configuration + integration tests
+        StudioUI.studioUILoaderConfig(baseConfig);
     }
 })();

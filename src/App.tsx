@@ -25,7 +25,7 @@ const App = ({ projectConfig }: { projectConfig: ProjectConfig }) => {
 
     const uiThemeMode = useMemo(() => {
         if (projectConfig.uiOptions.uiTheme === 'system') {
-            const isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)');
+            const isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
             return isDarkTheme ? 'dark' : 'light';
         }
         return projectConfig.uiOptions.uiTheme;
