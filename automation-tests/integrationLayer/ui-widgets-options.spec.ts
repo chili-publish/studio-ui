@@ -37,12 +37,6 @@ test.describe('UI widget options (all visible)', () => {
         await expect(page.locator('#studio-ui-chili-editor').first()).toBeVisible();
         await expect(page.getByTestId('test-sui-navbar-item-download').getByTestId('test-gsc-button')).toBeVisible();
 
-        await page.getByTestId('test-gsc-back-btn').click();
-
-        // Verify the callback was called
-        const callbackCalled = await page.evaluate(() => (window as any).__BACK_BUTTON_CALLED__);
-        expect(callbackCalled).toBe(true);
-
         // check if timeline is visible
         await page.getByTestId('test-gsc-drop-down-indicator-icon').first().click();
         await page.getByRole('option', { name: 'Facebook Square Ad' }).click();
@@ -50,6 +44,17 @@ test.describe('UI widget options (all visible)', () => {
 
         // check if navbar is visible
         await expect(page.getByTestId('test-sui-navbar')).toBeVisible();
+
+        await page.getByTestId('test-gsc-back-btn').click();
+
+        // Verify the callback was called
+        const callbackCalled = await page.evaluate(() => (window as any).__BACK_BUTTON_CALLED__);
+        expect(callbackCalled).toBe(true);
+
+        // Expect screen to be empty
+        await expect(page.getByTestId('test-sui-navbar')).not.toBeVisible();
+        await expect(page.getByTestId('test-gsc-timeline')).not.toBeVisible();
+        await expect(page.locator('#studio-ui-chili-editor').first()).not.toBeVisible();
     });
 });
 
