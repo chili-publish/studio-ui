@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FrameConstraints, ParagraphStyle, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { renderWithProviders } from 'src/tests/mocks/Provider';
 import MobileParagraphStyleConstraint from 'src/components/inlineTextEditingToolbar/mobile/paragraphStyleConstraint/MobileParagraphStyleConstraint';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -111,7 +112,13 @@ describe('MobileParagraphStyleConstraint', () => {
 
         // The selected value should be style-2 (Body Text)
         await waitFor(() => {
+            const selectedOption = screen.getByText('Body Text');
             expect(screen.getByText('Body Text')).toBeInTheDocument();
+            expect(
+                within(selectedOption.parentElement as HTMLElement).getByTestId(
+                    getDataTestIdForSUI('selected-option-icon'),
+                ),
+            ).toBeInTheDocument();
         });
     });
 

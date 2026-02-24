@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CharacterStyle, FrameConstraints, SelectedTextStyle, SelectedTextStyles } from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { renderWithProviders } from 'src/tests/mocks/Provider';
 import MobileCharacterStyleConstraint from 'src/components/inlineTextEditingToolbar/mobile/characterStyleConstraint/MobileCharacterStyleConstraint';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -111,7 +112,13 @@ describe('MobileCharacterStyleConstraint', () => {
 
         // The selected value should be style-2 (Character Style 2)
         await waitFor(() => {
-            expect(screen.getByText('Character Style 2')).toBeInTheDocument();
+            const selectedOption = screen.getByText('Character Style 2');
+            expect(selectedOption).toBeInTheDocument();
+            expect(
+                within(selectedOption.parentElement as HTMLElement).getByTestId(
+                    getDataTestIdForSUI('selected-option-icon'),
+                ),
+            ).toBeInTheDocument();
         });
     });
 

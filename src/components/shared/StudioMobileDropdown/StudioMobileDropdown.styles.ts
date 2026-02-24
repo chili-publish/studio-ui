@@ -64,6 +64,7 @@ export const MobileDropdownMenuOption = styled.div<{ selected?: boolean }>`
     word-break: break-word;
     padding: 0.5rem 0.75rem;
     font-size: ${FontSizes.regular};
+    cursor: pointer;
 
     color: ${({ selected, theme }) => `${selected ? theme.select.color : theme.select.menuOption.color} !important`};
 
