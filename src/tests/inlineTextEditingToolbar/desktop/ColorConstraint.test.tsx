@@ -62,21 +62,6 @@ const createMockFrameConstraints = (overrides?: any): FrameConstraints => {
 };
 
 describe('ColorConstraint', () => {
-    beforeEach(() => {
-        Object.defineProperty(window, 'rgbToCMYK', {
-            configurable: true,
-            enumerable: true,
-            value: jest.fn().mockReturnValue([0, 0, 0, 0]),
-            writable: true,
-        });
-        Object.defineProperty(window, 'cmykToRGB', {
-            configurable: true,
-            enumerable: true,
-            value: jest.fn().mockReturnValue([0, 0, 0]),
-            writable: true,
-        });
-    });
-
     let mockSDK: ReturnType<typeof mock<EditorSDK>>;
     const mockConvertColor = convertColor as jest.MockedFunction<typeof convertColor>;
 
@@ -114,6 +99,19 @@ describe('ColorConstraint', () => {
     };
 
     beforeEach(() => {
+        Object.defineProperty(window, 'rgbToCMYK', {
+            configurable: true,
+            enumerable: true,
+            value: jest.fn().mockReturnValue([0, 0, 0, 0]),
+            writable: true,
+        });
+        Object.defineProperty(window, 'cmykToRGB', {
+            configurable: true,
+            enumerable: true,
+            value: jest.fn().mockReturnValue([0, 0, 0]),
+            writable: true,
+        });
+
         mockSDK = mock<EditorSDK>();
         mockSDK.colorStyle = {
             getById: jest.fn(),

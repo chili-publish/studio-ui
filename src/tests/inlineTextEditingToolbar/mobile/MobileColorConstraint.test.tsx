@@ -91,9 +91,7 @@ describe('MobileColorConstraint', () => {
             value: jest.fn().mockReturnValue([0, 0, 0]),
             writable: true,
         });
-    });
 
-    beforeEach(() => {
         mockSDK = mock<EditorSDK>();
         mockSDK.colorStyle = {
             getById: jest.fn(),

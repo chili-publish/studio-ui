@@ -72,7 +72,7 @@ describe('MobileFontSizeConstraint', () => {
         });
     });
 
-    it('minus button should be disabled user manually enters the min value', async () => {
+    it('minus button should be disabled when user manually enters the min value', async () => {
         const selectedTextStyle: SelectedTextStyle = {
             fontSize: 15,
         } as SelectedTextStyle;
