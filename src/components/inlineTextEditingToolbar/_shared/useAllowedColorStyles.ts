@@ -7,6 +7,7 @@ const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
     const [colors, setColors] = useState<DocumentColor[]>([]);
 
     useEffect(() => {
+        let cancelled = false;
         const colorIds = frameConstraints?.text?.colors.value.ids ?? [];
         if (colorIds.length > 0) {
             const fetchColors = async () => {
@@ -14,17 +15,21 @@ const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
                     const colorsData = await Promise.all(
                         colorIds.map((id) => window.StudioUISDK.colorStyle.getById(id)),
                     );
-                    setColors(colorsData.map((data) => data.parsedData).filter((data) => data !== null));
+                    if (!cancelled)
+                        setColors(colorsData.map((data) => data.parsedData).filter((data) => data !== null));
                 } catch (error) {
                     // eslint-disable-next-line no-console
                     console.error('Error fetching colors:', error);
-                    setColors([]);
+                    if (!cancelled) setColors([]);
                 }
             };
             fetchColors();
         } else {
             setColors([]);
         }
+        return () => {
+            cancelled = true;
+        };
     }, [frameConstraints]);
 
     const colorGridColors = colors.map((color) => ({
