@@ -58,9 +58,10 @@ const MobileInlineTextEditingToolbar = () => {
         );
     }
     return (
-        <MobileToolbarWrapper>
+        <MobileToolbarWrapper data-testid={getDataTestIdForSUI('mobile-inline-text-editing-toolbar')}>
             {hasParagraphStyleConstraint && (
                 <Button
+                    dataTestId={getDataTestIdForSUI('paragraph-style-constraint-button')}
                     variant={ButtonVariant.tertiary}
                     icon={<Icon icon={AvailableIcons.faParagraph} />}
                     onClick={() => openView(TextEditingMobileViewTrayView.PARAGRAPH_STYLE)}
@@ -68,6 +69,7 @@ const MobileInlineTextEditingToolbar = () => {
             )}
             {hasCharacterStyleConstraint && (
                 <Button
+                    dataTestId={getDataTestIdForSUI('character-style-constraint-button')}
                     variant={ButtonVariant.tertiary}
                     icon={<Icon icon={AvailableIcons.faFont} />}
                     onClick={() => openView(TextEditingMobileViewTrayView.CHARACTER_STYLE)}
@@ -75,6 +77,7 @@ const MobileInlineTextEditingToolbar = () => {
             )}
             {hasFontSizeConstraint && (
                 <Button
+                    dataTestId={getDataTestIdForSUI('font-size-constraint-button')}
                     variant={ButtonVariant.tertiary}
                     icon={<Icon icon={AvailableIcons.faTextSize} />}
                     onClick={() => openView(TextEditingMobileViewTrayView.FONT_SIZE)}
@@ -82,6 +85,7 @@ const MobileInlineTextEditingToolbar = () => {
             )}
             {hasColorConstraint && (
                 <Button
+                    dataTestId={getDataTestIdForSUI('color-constraint-button')}
                     variant={ButtonVariant.tertiary}
                     icon={<Icon icon={AvailableIcons.faPalette} />}
                     onClick={() => openView(TextEditingMobileViewTrayView.COLOR)}

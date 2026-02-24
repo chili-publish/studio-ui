@@ -21,7 +21,7 @@ export const MobileToolbarWrapper = styled.div`
 `;
 
 export const ListViewTrayStyle = createGlobalStyle`
-    &[data-id='gsc-tray-body'] {
+    [data-id='gsc-tray-body'] {
         padding: 0 !important;
         padding-top: 0.5rem;
     }

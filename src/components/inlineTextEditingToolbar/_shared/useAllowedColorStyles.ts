@@ -14,6 +14,8 @@ const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
                 setColors(colorsData.map((data) => data.parsedData).filter((data) => data !== null));
             };
             fetchColors();
+        } else {
+            setColors([]);
         }
     }, [frameConstraints]);
 

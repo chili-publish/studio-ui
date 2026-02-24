@@ -4,9 +4,9 @@ import { mock } from 'jest-mock-extended';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EditorSDK from '@chili-publish/studio-sdk';
-import { renderWithProviders } from '../mocks/Provider';
-import { getDataTestIdForSUI } from '../../utils/dataIds';
-import FontSizeConstraint from '../../components/inlineTextEditingToolbar/desktop/fontSizeConstraint/FontSizeConstraint';
+import { renderWithProviders } from 'src/tests/mocks/Provider';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
+import FontSizeConstraint from 'src/components/inlineTextEditingToolbar/desktop/fontSizeConstraint/FontSizeConstraint';
 
 jest.mock('@chili-publish/studio-sdk');
 

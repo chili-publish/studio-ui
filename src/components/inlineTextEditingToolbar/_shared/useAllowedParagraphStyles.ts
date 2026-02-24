@@ -16,6 +16,8 @@ const useAllowedParagraphStyles = (frameConstraints: FrameConstraints | null) =>
                 );
             };
             fetchParagraphStyles();
+        } else {
+            setSelectedParagraphStyle([]);
         }
     }, [frameConstraints]);
 

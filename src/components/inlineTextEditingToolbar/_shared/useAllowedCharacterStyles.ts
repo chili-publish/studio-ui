@@ -14,6 +14,8 @@ const useAllowedCharacterStyles = (frameConstraints: FrameConstraints | null) =>
                 setCharacterStyles(characterStylesData.map((data) => data.parsedData).filter((data) => data !== null));
             };
             fetchCharacterStyles();
+        } else {
+            setCharacterStyles([]);
         }
     }, [frameConstraints]);
 
