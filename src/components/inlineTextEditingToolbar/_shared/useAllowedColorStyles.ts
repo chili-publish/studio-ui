@@ -1,6 +1,6 @@
 import { DocumentColor, FrameConstraints, SelectedTextStyles, TextStyleUpdateType } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
-import { toColorPickerColor } from '../desktop/colorConstraint/color.util';
+import { toColor, toColorPickerColor } from '../desktop/colorConstraint/color.util';
 import { ColorGridType } from '@chili-publish/grafx-shared-components';
 
 const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
@@ -27,7 +27,7 @@ const useAllowedColorStyles = (frameConstraints: FrameConstraints | null) => {
 
     const handleColorSelection = async (color: ColorGridType) => {
         await window.StudioUISDK.textSelection.set({
-            [SelectedTextStyles.COLOR]: { value: color.colorValue },
+            [SelectedTextStyles.COLOR]: { value: toColor(color.colorValue) },
         } as TextStyleUpdateType);
     };
 

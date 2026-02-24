@@ -5,12 +5,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { renderWithProviders } from 'src/tests/mocks/Provider';
-import { getDataTestIdForSUI } from 'src/utils/dataIds';
-import CharacterStyleConstraint from 'src/components/inlineTextEditingToolbar/desktop/characterStyleConstraint/CharacterStyleConstraint';
+import MobileCharacterStyleConstraint from 'src/components/inlineTextEditingToolbar/mobile/characterStyleConstraint/MobileCharacterStyleConstraint';
 
 jest.mock('@chili-publish/studio-sdk');
 
-describe('CharacterStyleConstraint', () => {
+describe('MobileCharacterStyleConstraint', () => {
     let mockSDK: ReturnType<typeof mock<EditorSDK>>;
     const mockCharacterStyle1: CharacterStyle = {
         id: 'style-1',
@@ -20,6 +19,11 @@ describe('CharacterStyleConstraint', () => {
     const mockCharacterStyle2: CharacterStyle = {
         id: 'style-2',
         name: 'Character Style 2',
+    } as CharacterStyle;
+
+    const mockCharacterStyle3: CharacterStyle = {
+        id: 'style-3',
+        name: 'Character Style 3',
     } as CharacterStyle;
 
     beforeEach(() => {
@@ -44,7 +48,7 @@ describe('CharacterStyleConstraint', () => {
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
 
         renderWithProviders(
-            <CharacterStyleConstraint
+            <MobileCharacterStyleConstraint
                 frameConstraints={
                     {
                         text: {
@@ -58,11 +62,6 @@ describe('CharacterStyleConstraint', () => {
                 }
             />,
         );
-
-        const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-character-style-constraint'));
-        expect(dropdown).toBeInTheDocument();
-
-        await userEvent.click(dropdown);
 
         await waitFor(() => {
             expect(mockSDK.characterStyle.getById).toHaveBeenCalledTimes(2);
@@ -79,19 +78,20 @@ describe('CharacterStyleConstraint', () => {
     it('should display the selected character style based on textStyle', async () => {
         (mockSDK.characterStyle.getById as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle1 })
-            .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
+            .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 })
+            .mockResolvedValueOnce({ parsedData: mockCharacterStyle3 });
 
         const selectedTextStyle: SelectedTextStyle = {
             characterStyleId: 'style-2',
         } as SelectedTextStyle;
 
         renderWithProviders(
-            <CharacterStyleConstraint
+            <MobileCharacterStyleConstraint
                 frameConstraints={
                     {
                         text: {
                             characterStyles: {
-                                value: { allowed: true, ids: ['style-1', 'style-2'] },
+                                value: { allowed: true, ids: ['style-1', 'style-2', 'style-3'] },
                                 isOverride: false,
                                 isReadOnly: false,
                             },
@@ -108,9 +108,6 @@ describe('CharacterStyleConstraint', () => {
                 },
             },
         );
-
-        const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-character-style-constraint'));
-        expect(dropdown).toBeInTheDocument();
 
         // The selected value should be style-2 (Character Style 2)
         await waitFor(() => {
@@ -128,7 +125,7 @@ describe('CharacterStyleConstraint', () => {
         } as SelectedTextStyle;
 
         renderWithProviders(
-            <CharacterStyleConstraint
+            <MobileCharacterStyleConstraint
                 frameConstraints={
                     {
                         text: {
@@ -153,20 +150,13 @@ describe('CharacterStyleConstraint', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Character Style 1')).toBeInTheDocument();
-            expect(screen.queryByText('Character Style 2')).not.toBeInTheDocument();
+            expect(screen.getByText('Character Style 2')).toBeInTheDocument();
         });
 
         const user = userEvent.setup();
-        const dropdown = screen.getByTestId(getDataTestIdForSUI('dropdown-character-style-constraint'));
+        const characterStyle2Option = screen.getByText('Character Style 2');
 
-        await user.click(dropdown);
-
-        await waitFor(() => {
-            const characterStyle2Option = screen.getByText('Character Style 2');
-            expect(characterStyle2Option).toBeInTheDocument();
-        });
-
-        await user.click(screen.getByText('Character Style 2'));
+        await user.click(characterStyle2Option);
 
         await waitFor(() => {
             expect(mockSDK.textSelection.set).toHaveBeenCalledWith({

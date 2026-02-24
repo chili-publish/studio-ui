@@ -17,6 +17,7 @@ import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 import { getColorValue } from './color.util';
 import useColorModalPosition from './useColorModalPosition';
 import { APP_WRAPPER_ID } from 'src/utils/constants';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 
 const ColorConstraint = ({ frameConstraints }: { frameConstraints: FrameConstraints | null }) => {
     const textStyle = useAppSelector(selectedTextProperties);
@@ -41,7 +42,12 @@ const ColorConstraint = ({ frameConstraints }: { frameConstraints: FrameConstrai
                 position={TooltipPosition.BOTTOM}
                 content={formatColorValue(textStyle?.color?.color as unknown as Color)}
             >
-                <ColorContainer ref={colorContainerRef} color={colorValue} onClick={openColorPicker} />
+                <ColorContainer
+                    ref={colorContainerRef}
+                    color={colorValue}
+                    onClick={openColorPicker}
+                    data-testid={getDataTestIdForSUI('color-constraint-container')}
+                />
             </Tooltip>
 
             {isColorPickerOpen && (

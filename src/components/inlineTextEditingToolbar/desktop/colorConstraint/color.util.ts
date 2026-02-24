@@ -1,5 +1,5 @@
-import { Color, ColorUsage, ColorUsageTypeEnum, convertColor } from '@chili-publish/grafx-shared-components';
-import { DocumentColor } from '@chili-publish/studio-sdk';
+import { Color, ColorUsage, convertColor } from '@chili-publish/grafx-shared-components';
+import { ColorUsageUpdate, DocumentColor, ColorUsageType } from '@chili-publish/studio-sdk';
 
 export const getColorValue = async (color: ColorUsage): Promise<string> => {
     if (!color.color) return '';
@@ -10,8 +10,14 @@ export const getColorValue = async (color: ColorUsage): Promise<string> => {
 export const toColorPickerColor = (color: DocumentColor): ColorUsage => {
     const colorUsage = {
         id: color.id,
-        type: ColorUsageTypeEnum.local,
         color: color.color as unknown as Color,
-    };
+    } as unknown as ColorUsage;
     return colorUsage;
+};
+
+export const toColor = (color: ColorUsage): ColorUsageUpdate => {
+    return {
+        ...color,
+        type: ColorUsageType.brandKit,
+    } as unknown as ColorUsageUpdate;
 };
