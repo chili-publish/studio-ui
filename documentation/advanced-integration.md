@@ -17,14 +17,6 @@ Configurable widgets are able to be hidden, or in some cases you can add events 
 
 Add your own theming to the Studio UI, to give the UI a little touch of your own, to seamlessly blend in with your own application
 
-### outputSettings
-
-- **Deprecated**: Yes
-
-> Alpha
-
-This setting allows you to fine grain which output types are possible within the integration. At the time of writing we are working on simplifying this drastically, but this isn't implemented yet.
-
 ## Perquisites
 
 Before we start, make sure the following bulletpoints are checked off:
@@ -87,11 +79,6 @@ const projectName = 'End User view';
 /* Function that refreshes your access token, not providing a proper function can lead to data loss when your token is expired. Preferably you retrieve a token here silently. */
 const refreshTokenAction = () => Promise.resolve(token);
 
-/* this example will allow only animated output within your user interface */
-const outputSettings = {
-    mp4: true,
-    gif: true,
-};
 /* The ID of the user interface, used to fetch output settings, if passed it will override the default output settings set above */
 const userInterfaceID = '859dd405-bfed-467f-b833-510afef5fda4';
 
