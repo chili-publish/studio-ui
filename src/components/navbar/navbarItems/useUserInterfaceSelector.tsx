@@ -1,5 +1,5 @@
 import { AvailableIcons, Select, Tooltip, TooltipPosition } from '@chili-publish/grafx-shared-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { APP_WRAPPER_ID, SESSION_USER_INTEFACE_ID_KEY } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 import { useUserInterfaceDetailsContext } from '../UserInterfaceDetailsContext';
@@ -9,11 +9,16 @@ import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 const useUserInterfaceSelector = () => {
     const { projectConfig } = useUiConfigContext();
     const [userInterfaces, setUserInterfaces] = useState<UserInterface[]>([]);
+    const [validUserInterfaceForTemplate, setValidUserInterfaceForTemplate] = useState<string | null>(null);
     const { selectedUserInterfaceId, onUserInterfaceChange } = useUserInterfaceDetailsContext();
 
     useEffect(() => {
         projectConfig.onFetchUserInterfaces().then((res) => {
             setUserInterfaces(res.data);
+            const interfaceFromSession = sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY);
+            if (interfaceFromSession) {
+                setValidUserInterfaceForTemplate(res.data.find((item) => item.id === interfaceFromSession)?.id || null);
+            }
         });
     }, [projectConfig]);
 
@@ -21,11 +26,21 @@ const useUserInterfaceSelector = () => {
         () => userInterfaces.map((item) => ({ label: item.name, value: item.id })),
         [userInterfaces],
     );
-    const validUserInterfaceForTemplate = userInterfaces.find(
-        (item) => item.id === sessionStorage.getItem(SESSION_USER_INTEFACE_ID_KEY),
-    )?.id;
-    const selectedUserInterface =
-        validUserInterfaceForTemplate || selectedUserInterfaceId || userInterfaces.find((item) => item.default)?.id;
+
+    const selectedUserInterface = useMemo(
+        () =>
+            validUserInterfaceForTemplate || selectedUserInterfaceId || userInterfaces.find((item) => item.default)?.id,
+        [validUserInterfaceForTemplate, selectedUserInterfaceId, userInterfaces],
+    );
+
+    const handleUserInterfaceChange = useCallback(
+        (value: string) => {
+            onUserInterfaceChange(value);
+            sessionStorage.setItem(SESSION_USER_INTEFACE_ID_KEY, value);
+            setValidUserInterfaceForTemplate(value);
+        },
+        [onUserInterfaceChange],
+    );
 
     const navbarItem = useMemo(
         () => ({
@@ -38,8 +53,7 @@ const useUserInterfaceSelector = () => {
                         options={options}
                         value={options.find((op) => op.value === selectedUserInterface)}
                         onChange={(option) => {
-                            onUserInterfaceChange(option?.value as unknown as string);
-                            sessionStorage.setItem(SESSION_USER_INTEFACE_ID_KEY, option?.value as string);
+                            handleUserInterfaceChange(option?.value as string);
                         }}
                         noDropDownIcon
                         controlShouldRenderValue={false}
@@ -52,7 +66,7 @@ const useUserInterfaceSelector = () => {
                 </Tooltip>
             ),
         }),
-        [options, selectedUserInterface, onUserInterfaceChange],
+        [options, selectedUserInterface, handleUserInterfaceChange],
     );
 
     return {
