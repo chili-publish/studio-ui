@@ -1,5 +1,6 @@
 import { AvailableIcons, Icon, SelectOptions } from '@chili-publish/grafx-shared-components';
 import { MobileDropdownMenuOption, MobileDropdownOptionContent } from './StudioMobileDropdown.styles';
+import { getDataTestIdForSUI } from 'src/utils/dataIds';
 
 interface StudioMobileDropdownOptionsProps {
     options: SelectOptions[];
@@ -26,7 +27,12 @@ const StudioMobileDropdownOptions = ({
                 >
                     <MobileDropdownOptionContent>
                         {option.label as string}
-                        {selectedValue?.value === option.value && <Icon icon={AvailableIcons.faCheck} />}
+                        {selectedValue?.value === option.value && (
+                            <Icon
+                                dataTestId={getDataTestIdForSUI('selected-option-icon')}
+                                icon={AvailableIcons.faCheck}
+                            />
+                        )}
                     </MobileDropdownOptionContent>
                 </MobileDropdownMenuOption>
             ))}

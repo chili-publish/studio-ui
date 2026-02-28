@@ -3,6 +3,7 @@ import {
     UiThemeProvider,
     useDebounce,
     useMobileSize,
+    useTabletSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
@@ -42,7 +43,7 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
-import { useAppDispatch } from './store';
+import { useAppDispatch, useAppSelector } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
@@ -53,6 +54,13 @@ import { TokenService } from './services/TokenService';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 import { useDocumentTools } from './hooks/useDocumentTools';
 import Canvas from './Canvas';
+import {
+    selectedTextProperties,
+    setSelectedFrameContent,
+    setSelectedTextProperties,
+} from './store/reducers/frameReducer';
+import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
+import MobileInlineTextEditingToolbar from './components/inlineTextEditingToolbar/mobile/MobileInlineTextEditingToolbar';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -93,8 +101,13 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     const enableAutoSaveRef = useRef(false);
 
     const isMobileSize = useMobileSize();
+    const isTabletSize = useTabletSize();
+
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
+    const textProperties = useAppSelector(selectedTextProperties);
+    const mobileOrTabletSize = isMobileSize || isTabletSize;
+    const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
@@ -221,6 +234,12 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
+            },
+            onSelectedFrameContentChanged: (frameContent) => {
+                dispatch(setSelectedFrameContent(frameContent));
+            },
+            onSelectedTextStyleChanged: (textStyle) => {
+                dispatch(setSelectedTextProperties(textStyle));
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -445,6 +464,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                     />
                                 )}
                                 <CanvasContainer>
+                                    {!mobileOrTabletSize && <InlineTextEditingToolbar />}
                                     {isMobileSize && (
                                         <MobileVariables
                                             selectedLayout={currentSelectedLayout}
@@ -471,7 +491,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                         multiLayoutMode={multiLayoutMode}
                                         editorId={EDITOR_ID}
                                     />
-                                    {layoutIntent === LayoutIntent.digitalAnimated &&
+
+                                    {!mobileInlineTextEditingMode &&
+                                    layoutIntent === LayoutIntent.digitalAnimated &&
                                     typeof animationLength === 'number' ? (
                                         <AnimationTimeline
                                             scrubberTimeMs={scrubberTimeMs}
@@ -479,7 +501,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                             isAnimationPlaying={animationStatus}
                                         />
                                     ) : null}
-                                    {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                    {!mobileInlineTextEditingMode &&
+                                    layoutIntent === LayoutIntent.print &&
+                                    pages?.length > 1 ? (
                                         <Pages
                                             pages={pages}
                                             activePageId={activePageId}
@@ -490,6 +514,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                             }}
                                         />
                                     ) : null}
+                                    {mobileInlineTextEditingMode && <MobileInlineTextEditingToolbar />}
                                 </CanvasContainer>
                             </MainContentContainer>
                         </UserInterfaceDetailsContextProvider>
