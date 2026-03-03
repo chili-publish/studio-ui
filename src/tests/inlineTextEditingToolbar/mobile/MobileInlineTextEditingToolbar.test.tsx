@@ -116,6 +116,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -137,6 +138,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: null,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -148,9 +150,19 @@ describe('MobileInlineTextEditingToolbar', () => {
 
         it('should render toolbar when text editing is allowed and text is in edit mode', async () => {
             const frameConstraints = createMockFrameConstraints();
+            const frameConstraintsData = {
+                ...frameConstraints,
+                text: {
+                    ...frameConstraints.text,
+                    paragraphStyles: {
+                        ...(frameConstraints.text?.paragraphStyles || {}),
+                        value: { allowed: true, ids: ['style-1'] },
+                    },
+                },
+            };
 
             (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
-                parsedData: frameConstraints,
+                parsedData: frameConstraintsData,
             });
 
             renderWithProviders(<MobileInlineTextEditingToolbar />, {
@@ -158,6 +170,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -191,6 +204,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -226,6 +240,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -261,6 +276,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -294,6 +310,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -342,6 +359,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -384,6 +402,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -424,6 +443,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -464,6 +484,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -502,6 +523,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });
@@ -540,6 +562,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                     frames: {
                         selectedFrameContent: { id: 'frame-1' } as any,
                         selectedTextProperties: mockSelectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             });

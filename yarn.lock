@@ -1322,11 +1322,11 @@
 
 "@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/598/grafx-shared-components.tgz":
   version "0.116.3"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/598/grafx-shared-components.tgz#d46d1d7ff808bf01acab1362ebddf81bf2288dc4"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/598/grafx-shared-components.tgz#282bab03e62f28b9c5b363a84d03ea0b1ae81213"
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/734/studio-sdk.tgz":
   version "1.39.0-alpha.1"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/734/studio-sdk.tgz#4ab36766e15ce5abf8065b9ebca84b7e1fae658b"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/734/studio-sdk.tgz#8319d07a97f7efd3227c02b14f527e55ae17db1a"
   dependencies:
     penpal "6.1.0"
 

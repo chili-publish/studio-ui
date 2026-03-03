@@ -104,6 +104,7 @@ describe('CharacterStyleConstraint', () => {
                     frames: {
                         selectedFrameContent: null,
                         selectedTextProperties: selectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             },
@@ -146,6 +147,7 @@ describe('CharacterStyleConstraint', () => {
                     frames: {
                         selectedFrameContent: null,
                         selectedTextProperties: selectedTextStyle,
+                        selectedFrameLayouts: [{ id: 'layout-1' } as any],
                     },
                 },
             },

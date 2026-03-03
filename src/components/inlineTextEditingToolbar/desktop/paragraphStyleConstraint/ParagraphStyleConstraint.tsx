@@ -16,7 +16,7 @@ const ParagraphStyleConstraint = ({ frameConstraints }: { frameConstraints: Fram
             <StudioDropdown
                 id="paragraph-style-constraint"
                 dataId={'paragraph-style-constraint'}
-                selectedValue={options.find((option) => option.value === textStyle?.paragraphStyleId)}
+                selectedValue={options.find((option) => option.value === textStyle?.paragraphStyleId) ?? null}
                 options={options}
                 onChange={handleChange}
             />

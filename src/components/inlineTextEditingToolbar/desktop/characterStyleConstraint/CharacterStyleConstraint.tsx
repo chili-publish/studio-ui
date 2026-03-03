@@ -16,7 +16,7 @@ const CharacterStyleConstraint = ({ frameConstraints }: { frameConstraints: Fram
             <StudioDropdown
                 id="character-style-constraint"
                 dataId={'character-style-constraint'}
-                selectedValue={options.find((option) => option.value === textStyle?.characterStyleId)}
+                selectedValue={options.find((option) => option.value === textStyle?.characterStyleId) ?? null}
                 options={options}
                 onChange={handleChange}
             />

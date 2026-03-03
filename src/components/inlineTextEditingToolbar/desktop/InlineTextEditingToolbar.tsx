@@ -24,19 +24,19 @@ const InlineTextEditingToolbar = () => {
             {hasParagraphStyleConstraint && (
                 <>
                     <ParagraphStyleConstraint frameConstraints={frameConstraints} />
-                    <Separator />
+                    {hasCharacterStyleConstraint || hasFontSizeConstraint || hasColorConstraint ? <Separator /> : null}
                 </>
             )}
             {hasCharacterStyleConstraint && (
                 <>
                     <CharacterStyleConstraint frameConstraints={frameConstraints} />
-                    <Separator />
+                    {hasFontSizeConstraint || hasColorConstraint ? <Separator /> : null}
                 </>
             )}
             {hasFontSizeConstraint && (
                 <>
                     <FontSizeConstraint frameConstraints={frameConstraints} />
-                    <Separator />
+                    {hasColorConstraint ? <Separator /> : null}
                 </>
             )}
             {hasColorConstraint && <ColorConstraint frameConstraints={frameConstraints} />}

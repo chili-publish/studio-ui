@@ -5,7 +5,6 @@ export const ToolbarWrapper = styled.div`
     top: 0.875rem;
     left: 50%;
     transform: translate(-50%, 0%);
-    max-width: 43rem;
     height: 3.5rem;
     background-color: ${({ theme }) => theme.panel.backgroundColor};
     border-radius: 0.5rem;
@@ -21,6 +20,9 @@ export const ConstraintWrapper = styled.div`
     gap: 0.625rem;
     [data-id$='-style-constraint'] {
         width: 9.063rem;
+    }
+    input {
+        width: 3rem;
     }
 `;
 

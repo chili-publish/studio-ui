@@ -18,7 +18,7 @@ const FontSizeConstraint = ({ frameConstraints }: { frameConstraints: FrameConst
             <Input
                 type="number"
                 name="font-size-constraint"
-                min={frameConstraints?.text?.fontSizes.value.min ?? undefined}
+                min={frameConstraints?.text?.fontSizes.value.min ?? 0}
                 max={frameConstraints?.text?.fontSizes.value.max ?? undefined}
                 value={`${textStyle?.fontSize}`}
                 step={1}
@@ -32,6 +32,7 @@ const FontSizeConstraint = ({ frameConstraints }: { frameConstraints: FrameConst
                     const currentValue = parseFloat(value.replace(',', '.'));
                     handleChange(currentValue);
                 }}
+                width="4rem"
             />
         </ConstraintWrapper>
     );

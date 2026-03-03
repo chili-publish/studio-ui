@@ -57,6 +57,7 @@ import Canvas from './Canvas';
 import {
     selectedTextProperties,
     setSelectedFrameContent,
+    setSelectedFrameLayouts,
     setSelectedTextProperties,
 } from './store/reducers/frameReducer';
 import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
@@ -234,6 +235,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 if (shouldSaveDocument()) {
                     saveDocumentDebounced();
                 }
+            },
+            onSelectedFramesLayoutChanged: (frameLayout) => {
+                dispatch(setSelectedFrameLayouts(frameLayout ?? null));
             },
             onSelectedFrameContentChanged: (frameContent) => {
                 dispatch(setSelectedFrameContent(frameContent));
