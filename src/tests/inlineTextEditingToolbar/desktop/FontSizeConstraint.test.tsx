@@ -328,11 +328,9 @@ describe('FontSizeConstraint', () => {
         await user.tab();
 
         await waitFor(() => {
-            expect(mockSDK.textSelection.set).toHaveBeenCalledWith({
-                [SelectedTextStyles.FONT_SIZE]: { value: 15 },
-            });
+            expect(mockSDK.textSelection.set).not.toHaveBeenCalledWith();
+            expect(input.value).toBe('15');
         });
-        expect(input.value).toBe('15');
     });
 
     it('falls back to previous value when user enters a value higher than the max value', async () => {
@@ -373,10 +371,10 @@ describe('FontSizeConstraint', () => {
         await user.tab();
 
         await waitFor(() => {
-            expect(mockSDK.textSelection.set).toHaveBeenCalledWith({
-                [SelectedTextStyles.FONT_SIZE]: { value: 15 },
-            });
+            expect(mockSDK.textSelection.set).not.toHaveBeenCalled();
         });
-        expect(input.value).toBe('15');
+        await waitFor(() => {
+            expect(input.value).toBe('15');
+        });
     });
 });

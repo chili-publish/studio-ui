@@ -173,6 +173,18 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     }, [projectConfig, projectConfig.onSetMultiLayout]);
 
     useEffect(() => {
+        const unsubscriber = sdkRef?.config.events.onUndoStackStateChanged.registerCallback(async (stack) => {
+            const shouldSaveDocument = enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+            if ((stack.canUndo || stack.canRedo) && shouldSaveDocument) {
+                saveDocumentDebounced();
+            }
+        });
+        return () => {
+            unsubscriber?.();
+        };
+    }, [sdkRef]);
+
+    useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
             .then((project) => {
@@ -189,9 +201,6 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         if (!eventSubscriber) {
             return;
         }
-        const shouldSaveDocument = () => {
-            return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
-        };
         const sdk = new StudioSDK({
             editorId: EDITOR_ID,
             enableNextSubscribers: {
@@ -202,9 +211,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 dispatch(setVariables(variableList));
 
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
 
                 if (enableAutoSaveRef.current === false) {
                     enableAutoSaveRef.current = true;
@@ -232,9 +241,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                         zoomToPage();
                     });
                 }
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
             },
             onSelectedFramesLayoutChanged: (frameLayout) => {
                 dispatch(setSelectedFrameLayouts(frameLayout ?? null));
@@ -273,9 +282,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                     zoomToPage(size.id);
                 }
                 setPageSize(size);
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -284,9 +293,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 setLayouts(layoutList);
             },
             onFramesLayoutChanged: () => {
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
