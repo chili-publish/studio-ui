@@ -30,7 +30,9 @@ const FontSizeConstraint = ({ frameConstraints }: { frameConstraints: FrameConst
                 }}
                 onValueChange={(value: string) => {
                     const currentValue = parseFloat(value.replace(',', '.'));
-                    handleChange(currentValue);
+                    if (currentValue !== textStyle?.fontSize) {
+                        handleChange(currentValue);
+                    }
                 }}
                 width="4rem"
             />

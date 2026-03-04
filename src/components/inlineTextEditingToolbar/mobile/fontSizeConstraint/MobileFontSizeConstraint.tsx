@@ -27,7 +27,9 @@ const MobileFontSizeConstraint = ({ frameConstraints }: { frameConstraints: Fram
             }}
             onValueChange={(value: string) => {
                 const currentValue = parseFloat(value.replace(',', '.'));
-                handleChange(currentValue);
+                if (currentValue !== textStyle?.fontSize) {
+                    handleChange(currentValue);
+                }
             }}
         />
     );
