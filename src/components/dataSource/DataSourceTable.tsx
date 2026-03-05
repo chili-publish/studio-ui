@@ -27,7 +27,7 @@ const DataSourceTable = ({
             {!error && data.length > 0 && (
                 <InfiniteScrollingTable
                     rows={data}
-                    defaultSelectedRow={selectedRow}
+                    selectedRow={selectedRow}
                     onSelectedRowChanged={onSelectedRowChanged}
                     onNextPageRequested={onNextPageRequested}
                     nextPageLoading={dataIsLoading || false}
