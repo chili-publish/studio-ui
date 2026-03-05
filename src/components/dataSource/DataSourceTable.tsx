@@ -1,14 +1,6 @@
-import { AvailableIcons, Icon, LoadingIcon, Table, useInfiniteScrolling } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InfiniteScrollingTable } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
-import {
-    Center,
-    EmptyStateText,
-    ErrorTextBox,
-    ErrorTextMsg,
-    FullSizeCenter,
-    InfiniteScrollingContainer,
-    TableWrapper,
-} from './DataSourceTable.styles';
+import { EmptyStateText, ErrorTextBox, ErrorTextMsg, FullSizeCenter } from './DataSourceTable.styles';
 
 interface DataSourceTableProps {
     data: DataItem[];
@@ -30,24 +22,19 @@ const DataSourceTable = ({
     onNextPageRequested,
     onSelectedRowChanged,
 }: DataSourceTableProps) => {
-    const { infiniteScrollingRef } = useInfiniteScrolling(
-        (hasMoreData && !dataIsLoading) || false,
-        onNextPageRequested,
-    );
-
     return (
         <>
             {!error && data.length > 0 && (
-                <TableWrapper>
-                    <Table defaultSelectedRow={selectedRow} rows={data} onSelectedRowChanged={onSelectedRowChanged} />
-                </TableWrapper>
+                <InfiniteScrollingTable
+                    rows={data}
+                    defaultSelectedRow={selectedRow}
+                    onSelectedRowChanged={onSelectedRowChanged}
+                    onNextPageRequested={onNextPageRequested}
+                    nextPageLoading={dataIsLoading || false}
+                    hasNextPage={hasMoreData || false}
+                />
             )}
 
-            {dataIsLoading && (
-                <Center>
-                    <LoadingIcon />
-                </Center>
-            )}
             {!dataIsLoading && data.length === 0 && !error && (
                 <FullSizeCenter>
                     <EmptyStateText>No data available.</EmptyStateText>
@@ -61,7 +48,6 @@ const DataSourceTable = ({
                     </ErrorTextBox>
                 </FullSizeCenter>
             )}
-            <InfiniteScrollingContainer id="infinite-scrolling" ref={infiniteScrollingRef} />
         </>
     );
 };
