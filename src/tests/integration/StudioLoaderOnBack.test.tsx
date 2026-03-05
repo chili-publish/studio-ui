@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-restricted-syntax */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { act, waitFor } from '@testing-library/react';
 import { createRoot, Root } from 'react-dom/client';
 import StudioUI from 'src/main';
