@@ -3,6 +3,7 @@ import {
     UiThemeProvider,
     useDebounce,
     useMobileSize,
+    useTabletSize,
     useTheme,
 } from '@chili-publish/grafx-shared-components';
 import StudioSDK, {
@@ -42,7 +43,7 @@ import { useSubscriberContext } from './contexts/Subscriber';
 import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
-import { useAppDispatch } from './store';
+import { useAppDispatch, useAppSelector } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
@@ -53,6 +54,14 @@ import { TokenService } from './services/TokenService';
 import { useNotificationManager } from './contexts/NotificantionManager/NotificationManagerContext';
 import { useDocumentTools } from './hooks/useDocumentTools';
 import Canvas from './Canvas';
+import {
+    selectedTextProperties,
+    setSelectedFrameContent,
+    setSelectedFrameLayouts,
+    setSelectedTextProperties,
+} from './store/reducers/frameReducer';
+import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
+import MobileInlineTextEditingToolbar from './components/inlineTextEditingToolbar/mobile/MobileInlineTextEditingToolbar';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -93,8 +102,13 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     const enableAutoSaveRef = useRef(false);
 
     const isMobileSize = useMobileSize();
+    const isTabletSize = useTabletSize();
+
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
+    const textProperties = useAppSelector(selectedTextProperties);
+    const mobileOrTabletSize = isMobileSize || isTabletSize;
+    const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
 
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
@@ -159,6 +173,18 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     }, [projectConfig, projectConfig.onSetMultiLayout]);
 
     useEffect(() => {
+        const unsubscriber = sdkRef?.config.events.onUndoStackStateChanged.registerCallback(async (stack) => {
+            const shouldSaveDocument = enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+            if ((stack.canUndo || stack.canRedo) && shouldSaveDocument) {
+                saveDocumentDebounced();
+            }
+        });
+        return () => {
+            unsubscriber?.();
+        };
+    }, [sdkRef]);
+
+    useEffect(() => {
         projectConfig
             .onProjectInfoRequested(projectConfig.projectId)
             .then((project) => {
@@ -175,9 +201,6 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         if (!eventSubscriber) {
             return;
         }
-        const shouldSaveDocument = () => {
-            return enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
-        };
         const sdk = new StudioSDK({
             editorId: EDITOR_ID,
             enableNextSubscribers: {
@@ -188,9 +211,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 eventSubscriber.emit('onVariableListChanged', variableList);
                 dispatch(setVariables(variableList));
 
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
 
                 if (enableAutoSaveRef.current === false) {
                     enableAutoSaveRef.current = true;
@@ -218,9 +241,18 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                         zoomToPage();
                     });
                 }
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
+            },
+            onSelectedFramesLayoutChanged: (frameLayout) => {
+                dispatch(setSelectedFrameLayouts(frameLayout ?? null));
+            },
+            onSelectedFrameContentChanged: (frameContent) => {
+                dispatch(setSelectedFrameContent(frameContent));
+            },
+            onSelectedTextStyleChanged: (textStyle) => {
+                dispatch(setSelectedTextProperties(textStyle));
             },
             onScrubberPositionChanged: (animationPlayback) => {
                 setAnimationStatus(animationPlayback?.animationIsPlaying || false);
@@ -250,9 +282,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                     zoomToPage(size.id);
                 }
                 setPageSize(size);
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
             },
             onCustomUndoDataChanged: (customData: Record<string, string>) => {
                 eventSubscriber.emit('onCustomUndoDataChanged', customData);
@@ -261,9 +293,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 setLayouts(layoutList);
             },
             onFramesLayoutChanged: () => {
-                if (shouldSaveDocument()) {
-                    saveDocumentDebounced();
-                }
+                // if (shouldSaveDocument()) {
+                //     saveDocumentDebounced();
+                // }
             },
             studioStyling: { uiBackgroundColorHex: canvas.backgroundColor },
             documentType: DocumentType.project,
@@ -445,6 +477,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                     />
                                 )}
                                 <CanvasContainer>
+                                    {!mobileOrTabletSize && <InlineTextEditingToolbar />}
                                     {isMobileSize && (
                                         <MobileVariables
                                             selectedLayout={currentSelectedLayout}
@@ -471,7 +504,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                         multiLayoutMode={multiLayoutMode}
                                         editorId={EDITOR_ID}
                                     />
-                                    {layoutIntent === LayoutIntent.digitalAnimated &&
+
+                                    {!mobileInlineTextEditingMode &&
+                                    layoutIntent === LayoutIntent.digitalAnimated &&
                                     typeof animationLength === 'number' ? (
                                         <AnimationTimeline
                                             scrubberTimeMs={scrubberTimeMs}
@@ -479,7 +514,9 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                             isAnimationPlaying={animationStatus}
                                         />
                                     ) : null}
-                                    {layoutIntent === LayoutIntent.print && pages?.length > 1 ? (
+                                    {!mobileInlineTextEditingMode &&
+                                    layoutIntent === LayoutIntent.print &&
+                                    pages?.length > 1 ? (
                                         <Pages
                                             pages={pages}
                                             activePageId={activePageId}
@@ -490,6 +527,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                                             }}
                                         />
                                     ) : null}
+                                    {mobileInlineTextEditingMode && <MobileInlineTextEditingToolbar />}
                                 </CanvasContainer>
                             </MainContentContainer>
                         </UserInterfaceDetailsContextProvider>

@@ -69,10 +69,11 @@ test.describe('variable events', () => {
           - text: /New Listing \\| 0b10af0f-\\d+-4e5e-a835-8642b23f3a28 \\| Charming house featuring 4 bedrooms, 3 bathrooms and a backyard \\| Beautiful property close to all amenities \\| 149c5d16-b1fa-4a44-a49d-f6bcd652515d \\| Janice Barrow \\| Real Estate Broker \\| \\d+-\\d+-\\d+ \\| chill\\.com\\/properties/
         - button
         `);
+    });
 
-        await new Promise((resolve) => {
-            setTimeout(resolve, 1000);
-        });
+    test('focus an image variable on browse ', async ({ variableEventsPage }) => {
+        let variableFocused = await variableEventsPage.evaluate(() => (window as any).__VARIABLE_FOCUSED__ID__);
+        expect(variableFocused).toBe(null);
 
         const imageVariable = variableEventsPage.getByTestId('test-gsc-image-picker-content').first();
         await expect(imageVariable).toBeVisible();

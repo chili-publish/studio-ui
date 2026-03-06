@@ -14,6 +14,7 @@ export const MainContentContainer = styled.div<{ sandboxMode?: boolean; fullHeig
 
 export const CanvasContainer = styled.div`
     width: 100%;
+    position: relative;
 `;
 
 export const Container = styled.div`
