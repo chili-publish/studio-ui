@@ -1,5 +1,5 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
-import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { LongTextVariable } from '@chili-publish/studio-sdk';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
@@ -10,17 +10,17 @@ import { useUiConfigContext } from '../../contexts/UiConfigContext';
 const HARD_BREAK = '\n\u200B';
 const SOFT_BREAK = '\n\u200C';
 
-const MultiLineTextVariable = (props: ITextVariable) => {
+const MultiLineTextVariable = (props: ITextVariable<LongTextVariable>) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const [variableValue, setVariableValue] = useState((variable as LongTextVariable).value);
+    const [variableValue, setVariableValue] = useState(variable.value);
     const placeholder = getVariablePlaceholder(variable);
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
-        setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
+        setVariableValue(variable.value);
     }, [variable]);
 
     const handleVariableChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -108,10 +108,11 @@ const MultiLineTextVariable = (props: ITextVariable) => {
                 label={
                     <Label translationKey={variable?.label ?? variable.name} value={variable?.label ?? variable.name} />
                 }
+                maxLength={variable.maxCharacters}
                 placeholder={placeholder}
                 onFocus={() => onVariableFocus?.(variable.id)}
                 onBlur={() => {
-                    const oldValue = (variable as LongTextVariable).value;
+                    const oldValue = variable.value;
                     if (textareaRef.current) {
                         onValueChange(textareaRef.current.value.replace(/\n\u200B/g, '\n\n'), {
                             changed: oldValue !== textareaRef.current.value.replace(/\n\u200B/g, '\n\n'),

@@ -1,5 +1,5 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
-import { LongTextVariable, ShortTextVariable } from '@chili-publish/studio-sdk';
+import { ShortTextVariable } from '@chili-publish/studio-sdk';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
@@ -7,17 +7,16 @@ import { ITextVariable } from './VariablesComponents.types';
 import { getVariablePlaceholder } from './variablePlaceholder.util';
 import { useUiConfigContext } from '../../contexts/UiConfigContext';
 
-const TextVariable = (props: ITextVariable) => {
+const TextVariable = (props: ITextVariable<ShortTextVariable>) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const [variableValue, setVariableValue] = useState(
-        (variable as ShortTextVariable).value || (variable as LongTextVariable).value,
-    );
+    const [variableValue, setVariableValue] = useState(variable.value);
     const placeholder = getVariablePlaceholder(variable);
+    const maxCharacters = variable.maxCharacters;
 
     useEffect(() => {
-        setVariableValue((variable as ShortTextVariable).value || (variable as LongTextVariable).value);
+        setVariableValue(variable.value);
     }, [variable]);
 
     const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +36,7 @@ const TextVariable = (props: ITextVariable) => {
                 onChange={handleVariableChange}
                 onFocus={() => onVariableFocus?.(variable.id)}
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                    const oldValue = (variable as ShortTextVariable).value || (variable as LongTextVariable).value;
+                    const oldValue = variable.value;
                     const newValue = event.target.value;
                     onValueChange(newValue, { changed: oldValue !== newValue });
                     onVariableBlur?.(variable.id);
@@ -46,6 +45,7 @@ const TextVariable = (props: ITextVariable) => {
                 label={
                     <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
+                maxLength={maxCharacters}
                 validation={validationError ? ValidationTypes.ERROR : undefined}
                 validationErrorMessage={validationError}
             />
