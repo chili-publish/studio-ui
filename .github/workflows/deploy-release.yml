@@ -139,16 +139,20 @@ jobs:
                   export PACKAGE_VERSION_PATCH=$(node --eval="const version = '$CURRENT_PACKAGE_VERSION'.split('.'); const patch = version.slice(2).join('.'); console.log(patch)")
 
                   buildPath=upload/$PACKAGE_VERSION_TRIMMED/$PACKAGE_VERSION_PATCH
-                  latestPath=upload/latest
                   versionedLatestPath=upload/$PACKAGE_VERSION_TRIMMED/latest
 
                   mkdir -p ${buildPath%"/merge"}
-                  mkdir -p ${latestPath%"/merge"}
                   mkdir -p ${versionedLatestPath%"/merge"}
 
                   cp -R dist/* ${buildPath%"/merge"}
-                  cp -R dist/* ${latestPath%"/merge"}
                   cp -R dist/* ${versionedLatestPath%"/merge"}
+
+                  # Only update main "latest" for PRD (not for UAT)
+                  if [ "${{ needs.detect-release-type.outputs.is_uat }}" != "true" ]; then
+                    latestPath=upload/latest
+                    mkdir -p ${latestPath%"/merge"}
+                    cp -R dist/* ${latestPath%"/merge"}
+                  fi
 
             - name: Azure Login
               uses: azure/login@v2
