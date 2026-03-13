@@ -247,6 +247,7 @@ const ItemBrowser = <
                     key={defaultProps.key}
                     position={TooltipPosition.TOP}
                     content={<TooltipContent>{defaultProps.name}</TooltipContent>}
+                    anchorId={APP_WRAPPER_ID}
                 >
                     {previewComponent}
                 </Tooltip>
