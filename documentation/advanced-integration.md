@@ -633,7 +633,7 @@ window.StudioUI.studioUILoaderConfig({
         );
 
         if (response?.success) {
-            return { type: 'authentified' };
+            return { type: 'authenticated' };
         }
         return {
             type: 'error',

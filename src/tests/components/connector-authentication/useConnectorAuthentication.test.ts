@@ -41,7 +41,7 @@ describe('useConnectorAuthentication hook', () => {
 
     it('should perform process correclty for different connectors', async () => {
         const executor1 = jest.fn().mockResolvedValueOnce({ type: 'error' });
-        const executor2 = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor2 = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
 
         const { result } = renderHook(() => useConnectorAuthentication());
 
@@ -96,7 +96,7 @@ describe('useConnectorAuthentication hook', () => {
                     {
                         connectorName: 'connectorName2',
                         remoteConnectorId: 'connectorId2',
-                        result: { type: 'authentified' },
+                        result: { type: 'authenticated' },
                     },
                 ]),
             );
@@ -104,7 +104,7 @@ describe('useConnectorAuthentication hook', () => {
     });
 
     it('should perform process correclty for none-authentified type', async () => {
-        const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
         const { result } = renderHook(() => useConnectorAuthentication());
 
         let processResult: RefreshedAuthCredendentials | null | undefined;
@@ -133,7 +133,7 @@ describe('useConnectorAuthentication hook', () => {
                     {
                         connectorName: 'connectorName',
                         remoteConnectorId: 'connectorId',
-                        result: { type: 'authentified' },
+                        result: { type: 'authenticated' },
                     },
                 ]),
             );
@@ -272,7 +272,7 @@ describe('useConnectorAuthentication hook', () => {
 
     it('should handle direct ConnectorAuthenticationResult input', async () => {
         const { result } = renderHook(() => useConnectorAuthentication());
-        const authResult = { type: 'authentified' as const };
+        const authResult = { type: 'authenticated' as const };
 
         let processResult: RefreshedAuthCredendentials | null | undefined;
         await act(async () => {
@@ -317,7 +317,7 @@ describe('useConnectorAuthentication hook', () => {
 
     it('should reset process correctly', async () => {
         const { result } = renderHook(() => useConnectorAuthentication());
-        const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
 
         act(() => {
             result.current.createProcess(executor, 'connectorName', 'connectorId');

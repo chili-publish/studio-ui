@@ -57,7 +57,7 @@ export const useConnectorAuthentication = () => {
                                     },
                                 ]);
 
-                                if (res.type === 'authentified') {
+                                if (res.type === 'authentified' || res.type === 'authenticated') {
                                     return new RefreshedAuthCredendentials();
                                 }
                                 // eslint-disable-next-line no-console
@@ -115,7 +115,7 @@ export const useConnectorAuthentication = () => {
                 remoteConnectorId,
             },
         ]);
-        if (executorOrResult.type === 'authentified') {
+        if (executorOrResult.type === 'authentified' || executorOrResult.type === 'authenticated') {
             return new RefreshedAuthCredendentials();
         }
         return null;
