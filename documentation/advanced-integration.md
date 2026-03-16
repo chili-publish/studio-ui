@@ -604,6 +604,45 @@ Following callbacks are also available (in other loaders):
 - `onLogInfoRequested`: A callback used to generate some loading information in the console.
 - `onProjectGetDownloadLink`: A callback to get the output download link for the project.
 
+### Connector authentication (supportedAuth `none`)
+
+When a connector uses **none** as its supported browser auth, Studio UI calls your `onConnectorAuthenticationRequested` callback with `supportedAuth: 'none'`. Obtain credentials (e.g. API key), pass them to the SDK so the connector can send them on subsequent requests, then return a successful result. This approach is also known as **token injection**.
+
+Use **ConnectorController.setHttpHeader** on `StudioUISDK.connector` to inject the header; see the method’s description in the SDK for parameters and behavior.
+
+**Example: `onConnectorAuthenticationRequested` for `none` (token injection)**
+
+```js
+import { ConnectorType } from '@chili-publish/studio-sdk';
+
+window.StudioUI.studioUILoaderConfig({
+    // ... other config ...
+    onConnectorAuthenticationRequested: async (request) => {
+        if (request.supportedAuth !== 'none') {
+            return { type: 'error', error: new Error('Unsupported auth type') };
+        }
+        const token = await fetchConnectorToken();
+        const headerName = 'Authorization';
+        const headerValue = `Bearer ${token}`;
+
+        const response = await window.StudioUISDK.connector.setHttpHeader(
+            request.id,
+            headerName,
+            headerValue,
+            ConnectorType.media,
+        );
+
+        if (response?.success) {
+            return { type: 'authentified' };
+        }
+        return {
+            type: 'error',
+            error: new Error(response?.error ?? 'Failed to set connector header'),
+        };
+    },
+});
+```
+
 ### Enable/Disable Connector Query Call Caching
 
 By default, connector query calls are cached. This behavior can be overridden using:

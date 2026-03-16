@@ -88,9 +88,8 @@ export const useConnectorAuthentication = () => {
     );
 
     const createProcess: CreateProcessFn = async (executorOrResult, name: string, remoteConnectorId: string) => {
-        const authenticationAwaiter = Promise.withResolvers<RefreshedAuthCredendentials | null>();
-
         if (typeof executorOrResult === 'function') {
+            const authenticationAwaiter = Promise.withResolvers<RefreshedAuthCredendentials | null>();
             setPendingAuthentications((prev) => [
                 ...prev,
                 {
@@ -116,6 +115,9 @@ export const useConnectorAuthentication = () => {
                 remoteConnectorId,
             },
         ]);
+        if (executorOrResult.type === 'authentified') {
+            return new RefreshedAuthCredendentials();
+        }
         return null;
     };
 

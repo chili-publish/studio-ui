@@ -7,7 +7,18 @@ import {
     ConnectorUrlRegistration,
 } from '@chili-publish/studio-sdk/lib/src/next';
 import { isBooleanVariable, isListVariable, isTextVariable } from '../components/variablesComponents/Variable';
-import { RemoteConnector } from './ApiTypes';
+import { RemoteConnector, SupportedAuthBrowser } from './ApiTypes';
+
+/** Result of normalizing headerValue: known auth type or 'unknown' for unrecognized values. */
+type NormalizedSupportedAuth = SupportedAuthBrowser | 'unknown';
+
+/** Normalizes a string (e.g. from headerValue, possibly different case) to a known auth type or 'unknown'. Missing/empty is treated as 'none'. */
+export function normalizeSupportedAuth(value: string | null | undefined): NormalizedSupportedAuth {
+    const lower = (value ?? '').trim().toLowerCase();
+    if (lower === 'oauth2authorizationcode') return 'oAuth2AuthorizationCode';
+    if (lower === 'none' || lower === '') return 'none';
+    return 'unknown';
+}
 
 type ConnectorRegistration = ConnectorGrafxRegistration | ConnectorUrlRegistration | ConnectorLocalRegistration;
 
