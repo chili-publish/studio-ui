@@ -23,6 +23,7 @@ export const Center = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 32rem;
 
     ${TableWrapper} + & {
         margin-top: -2rem;
