@@ -6,6 +6,8 @@ import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { UiOptions } from '../../../types/types';
 import MobileVariablesPanel from './MobileVariablesTray';
 import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
+import { useAppSelector } from 'src/store';
+import { selectedTextProperties } from 'src/store/reducers/frameReducer';
 
 interface MobileVariablesProps {
     selectedLayout: Layout | null;
@@ -27,6 +29,9 @@ const MobileVariables = (props: MobileVariablesProps) => {
         layoutSectionUIOptions,
         ...trayProps
     } = props;
+    const textProperties = useAppSelector(selectedTextProperties);
+    const textInEditMode = !!textProperties;
+
     const [isTrayVisible, setIsTrayVisible] = useState<boolean>(false);
     const { shouldHide: shouldHideEditButton } = useLeftPanelAndTrayVisibility({
         layouts,
@@ -36,7 +41,7 @@ const MobileVariables = (props: MobileVariablesProps) => {
 
     return (
         <>
-            {!shouldHideEditButton && (
+            {!shouldHideEditButton && !textInEditMode && (
                 <EditButtonWrapper
                     isTimelineDisplayed={isTimelineDisplayed}
                     isPagesPanelDisplayed={isPagesPanelDisplayed}

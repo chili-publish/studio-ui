@@ -5,7 +5,7 @@ interface StudioDropdownProps {
     dataId: string;
     id?: string;
     label?: string;
-    selectedValue?: SelectOptions;
+    selectedValue?: SelectOptions | null;
     options: SelectOptions[];
     width?: string;
     placeholder?: string;
