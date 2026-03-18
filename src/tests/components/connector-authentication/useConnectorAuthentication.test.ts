@@ -332,6 +332,8 @@ describe('useConnectorAuthentication hook', () => {
         });
 
         expect(processResult).toEqual(null);
+        expect(window.console.warn).toHaveBeenCalledWith('There is a "error" issue with authenticating the connector');
+        expect(window.console.error).toHaveBeenCalledWith(errorResult.error);
         await waitFor(() => {
             expect(result.current.authResults).toEqual([
                 {

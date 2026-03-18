@@ -30,12 +30,35 @@ export type ConnectorPendingAuthentication = {
     executor: Executor | null;
 };
 
+const toRefreshedCredentials = (res: ConnectorAuthenticationResult): RefreshedAuthCredendentials | null => {
+    if (res.type === 'authentified' || res.type === 'authenticated') {
+        return res.token
+            ? new RefreshedAuthCredendentials({ [res.token.headerName]: res.token.headerValue })
+            : new RefreshedAuthCredendentials();
+    }
+    // eslint-disable-next-line no-console
+    console.warn(`There is a "${res.type}" issue with authenticating the connector`);
+    if (res.type === 'error') {
+        // eslint-disable-next-line no-console
+        console.error(res.error);
+    }
+    return null;
+};
+
 export const useConnectorAuthentication = () => {
     const [pendingAuthentications, setPendingAuthentications] = useState<ConnectorPendingAuthentication[]>([]);
     const [authResults, setAuthResults] = useState<ConnectorAuthResult[]>([]);
     const resetProcess = useCallback((remoteConnectorId: string) => {
         setPendingAuthentications((prev) => prev.filter((item) => item.remoteConnectorId !== remoteConnectorId));
     }, []);
+
+    const recordAuthResult = useCallback(
+        (result: ConnectorAuthenticationResult, connectorName: string, remoteConnectorId: string) => {
+            setAuthResults((prev) => [...prev, { result, connectorName, remoteConnectorId }]);
+            return toRefreshedCredentials(result);
+        },
+        [],
+    );
 
     const getProcess: (id: string) => ManualProcess | null = useCallback(
         (id: string) => {
@@ -47,32 +70,15 @@ export const useConnectorAuthentication = () => {
                     __resolvers: authenticationProcess.authenticationResolvers,
                     async start() {
                         try {
-                            const executorResult = await authenticationProcess.executor?.handler().then((res) => {
-                                setAuthResults((prev) => [
-                                    ...prev,
-                                    {
-                                        result: res,
-                                        connectorName: authenticationProcess.connectorName,
-                                        remoteConnectorId: authenticationProcess.remoteConnectorId,
-                                    },
-                                ]);
-
-                                if (res.type === 'authentified' || res.type === 'authenticated') {
-                                    return res.token
-                                        ? new RefreshedAuthCredendentials({
-                                              [res.token.headerName]: res.token.headerValue,
-                                          })
-                                        : new RefreshedAuthCredendentials();
-                                }
-                                // eslint-disable-next-line no-console
-                                console.warn(`There is a "${res.type}" issue with authenticating the connector`);
-                                if (res.type === 'error') {
-                                    // eslint-disable-next-line no-console
-                                    console.error(res.error);
-                                }
-
-                                return null;
-                            });
+                            const executorResult = await authenticationProcess.executor
+                                ?.handler()
+                                .then((res) =>
+                                    recordAuthResult(
+                                        res,
+                                        authenticationProcess.connectorName,
+                                        authenticationProcess.remoteConnectorId,
+                                    ),
+                                );
                             this.__resolvers.resolve(executorResult || null);
                         } catch (error) {
                             this.__resolvers.reject(error);
@@ -88,7 +94,7 @@ export const useConnectorAuthentication = () => {
             }
             return null;
         },
-        [pendingAuthentications, resetProcess],
+        [pendingAuthentications, recordAuthResult, resetProcess],
     );
 
     const createProcess: CreateProcessFn = async (executorOrResult, name: string, remoteConnectorId: string) => {
@@ -111,22 +117,7 @@ export const useConnectorAuthentication = () => {
             const promiseResult = await authenticationAwaiter.promise;
             return promiseResult;
         }
-        setAuthResults((prev) => [
-            ...prev,
-            {
-                result: executorOrResult,
-                connectorName: name,
-                remoteConnectorId,
-            },
-        ]);
-        if (executorOrResult.type === 'authentified' || executorOrResult.type === 'authenticated') {
-            return executorOrResult.token
-                ? new RefreshedAuthCredendentials({
-                      [executorOrResult.token.headerName]: executorOrResult.token.headerValue,
-                  })
-                : new RefreshedAuthCredendentials();
-        }
-        return null;
+        return recordAuthResult(executorOrResult, name, remoteConnectorId);
     };
 
     return {

@@ -89,6 +89,68 @@ describe('useEditorAuthExpired', () => {
         expect(authResult).toEqual(mockAuthResult);
     });
 
+    it('should return error when oAuth2 auth handler is not configured', async () => {
+        const mockConnector = { name: 'OAuth Connector' };
+        const errorResult = {
+            type: 'error',
+            error: new Error('Authorization handler is not configured for connector "OAuth Connector"'),
+        };
+
+        window.StudioUISDK = {
+            connector: {
+                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
+            },
+        } as any;
+
+        mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
+
+        const { result } = renderHookWithProviders(() => useEditorAuthExpired(undefined, mockCreateProcessFn));
+        const handleAuthExpired = result.current;
+
+        const request: AuthRefreshRequest = {
+            type: AuthRefreshTypeEnum.any,
+            connectorId: 'connector-123',
+            remoteConnectorId: 'remote-123',
+            headerValue: 'oAuth2AuthorizationCode',
+        };
+
+        const authResult = await handleAuthExpired(request);
+
+        expect(mockCreateProcessFn).toHaveBeenCalledWith(errorResult, 'OAuth Connector', 'remote-123');
+        expect(authResult).toEqual(errorResult);
+    });
+
+    it('should return error when none auth handler is not configured', async () => {
+        const mockConnector = { name: 'No-Auth Connector' };
+        const errorResult = {
+            type: 'error',
+            error: new Error('Authorization handler is not configured for connector "No-Auth Connector"'),
+        };
+
+        window.StudioUISDK = {
+            connector: {
+                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
+            },
+        } as any;
+
+        mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
+
+        const { result } = renderHookWithProviders(() => useEditorAuthExpired(undefined, mockCreateProcessFn));
+        const handleAuthExpired = result.current;
+
+        const request: AuthRefreshRequest = {
+            type: AuthRefreshTypeEnum.any,
+            connectorId: 'connector-123',
+            remoteConnectorId: 'remote-123',
+            headerValue: undefined as any,
+        };
+
+        const authResult = await handleAuthExpired(request);
+
+        expect(mockCreateProcessFn).toHaveBeenCalledWith(errorResult, 'No-Auth Connector', 'remote-123');
+        expect(authResult).toEqual(errorResult);
+    });
+
     it('should handle connector authentication with error handling (unsupported auth)', async () => {
         const mockConnector = { name: 'Test Connector' };
         const errorResult = {

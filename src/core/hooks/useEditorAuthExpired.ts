@@ -45,13 +45,23 @@ export const useEditorAuthExpired = (
                     supportedAuth,
                 };
 
+                if ((handling === 'viaModal' || handling === 'directCall') && !onConnectorAuthenticationRequested) {
+                    return await createProcessFn(
+                        {
+                            type: 'error',
+                            error: new Error(`Authorization handler is not configured for connector "${name}"`),
+                        },
+                        name,
+                        request.remoteConnectorId,
+                    );
+                }
+
                 if (handling === 'viaModal' && onConnectorAuthenticationRequested) {
-                    const result = await createProcessFn(
+                    return await createProcessFn(
                         async () => onConnectorAuthenticationRequested(authRequest),
                         name,
                         request.remoteConnectorId,
                     );
-                    return result;
                 }
 
                 if (handling === 'directCall' && onConnectorAuthenticationRequested) {
@@ -70,7 +80,7 @@ export const useEditorAuthExpired = (
                 }
 
                 if (handling === 'alwaysError') {
-                    const result = await createProcessFn(
+                    return await createProcessFn(
                         {
                             type: 'error',
                             error: new Error(`Authorization failed for connector "${name}"`),
@@ -78,7 +88,6 @@ export const useEditorAuthExpired = (
                         name,
                         request.remoteConnectorId,
                     );
-                    return result;
                 }
             }
         } catch (error) {
