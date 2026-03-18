@@ -65,7 +65,7 @@ export const useConnectorAuthentication = () => {
                                         : new RefreshedAuthCredendentials();
                                 }
                                 // eslint-disable-next-line no-console
-                                console.warn(`There is a "${res.type}" issue with authentifying of the connector`);
+                                console.warn(`There is a "${res.type}" issue with authenticating the connector`);
                                 if (res.type === 'error') {
                                     // eslint-disable-next-line no-console
                                     console.error(res.error);
