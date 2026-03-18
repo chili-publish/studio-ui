@@ -608,7 +608,9 @@ Following callbacks are also available (in other loaders):
 
 Studio UI calls `onConnectorAuthenticationRequested` whenever a connector receives a **401** response—for example, when a token has not been provided yet or has expired.
 
-For connectors with `supportedAuth: 'none'`, there is no built-in browser auth flow. You fetch credentials yourself and return them via the **token** field of the result. Studio UI then injects the supplied header into subsequent connector requests.
+For connectors with a **browser** `supportedAuth` of `'none'`, you are responsible for fetching credentials and returning them via the **token** field of the result. Studio UI then injects the supplied header into subsequent connector requests.
+
+> **IMPORTANT:** This only covers the browser-side authentication used for asset loading in the editor. For output generation to work, the connector must still have an appropriate **server** `supportedAuth` configured separately.
 
 **Example**
 
@@ -641,7 +643,7 @@ await window.StudioUISDK.connector.setHttpHeader(remoteConnectorId, headerName, 
 
 This is useful when you want to pre-configure a connector's credentials as soon as the editor is ready, without waiting for a 401.
 
-> **Note:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeader` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
+> **IMPORTANT:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeader` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
 
 ### Enable/Disable Connector Query Call Caching
 
