@@ -58,7 +58,11 @@ export const useConnectorAuthentication = () => {
                                 ]);
 
                                 if (res.type === 'authentified' || res.type === 'authenticated') {
-                                    return new RefreshedAuthCredendentials();
+                                    return res.token
+                                        ? new RefreshedAuthCredendentials({
+                                              [res.token.headerName]: res.token.headerValue,
+                                          })
+                                        : new RefreshedAuthCredendentials();
                                 }
                                 // eslint-disable-next-line no-console
                                 console.warn(`There is a "${res.type}" issue with authentifying of the connector`);
@@ -116,7 +120,11 @@ export const useConnectorAuthentication = () => {
             },
         ]);
         if (executorOrResult.type === 'authentified' || executorOrResult.type === 'authenticated') {
-            return new RefreshedAuthCredendentials();
+            return executorOrResult.token
+                ? new RefreshedAuthCredendentials({
+                      [executorOrResult.token.headerName]: executorOrResult.token.headerValue,
+                  })
+                : new RefreshedAuthCredendentials();
         }
         return null;
     };

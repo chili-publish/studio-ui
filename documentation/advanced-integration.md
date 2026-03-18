@@ -606,42 +606,42 @@ Following callbacks are also available (in other loaders):
 
 ### Connector authentication (supportedAuth `none`)
 
-When a connector uses **none** as its supported browser auth, Studio UI calls your `onConnectorAuthenticationRequested` callback with `supportedAuth: 'none'`. Obtain credentials (e.g. API key), pass them to the SDK so the connector can send them on subsequent requests, then return a successful result. This approach is also known as **token injection**.
+Studio UI calls `onConnectorAuthenticationRequested` whenever a connector receives a **401** response—for example, when a token has not been provided yet or has expired.
 
-Use **ConnectorController.setHttpHeader** on `StudioUISDK.connector` to inject the header; see the method’s description in the SDK for parameters and behavior.
+For connectors with `supportedAuth: 'none'`, there is no built-in browser auth flow. You fetch credentials yourself and return them via the **token** field of the result. Studio UI then injects the supplied header into subsequent connector requests.
 
-**Example: `onConnectorAuthenticationRequested` for `none` (token injection)**
+**Example**
 
 ```js
-import { ConnectorType } from '@chili-publish/studio-sdk';
-
 window.StudioUI.studioUILoaderConfig({
     // ... other config ...
     onConnectorAuthenticationRequested: async (request) => {
         if (request.supportedAuth !== 'none') {
-            return { type: 'error', error: new Error('Unsupported auth type') };
+            throw new Error(`Unsupported auth type: ${request.supportedAuth}`);
         }
         const token = await fetchConnectorToken();
-        const headerName = 'Authorization';
-        const headerValue = `Bearer ${token}`;
-
-        const response = await window.StudioUISDK.connector.setHttpHeader(
-            request.id,
-            headerName,
-            headerValue,
-            ConnectorType.media,
-        );
-
-        if (response?.success) {
-            return { type: 'authenticated' };
-        }
         return {
-            type: 'error',
-            error: new Error(response?.error ?? 'Failed to set connector header'),
+            type: 'authenticated',
+            token: {
+                headerName: 'Authorization',
+                headerValue: `Bearer ${token}`,
+            },
         };
     },
 });
 ```
+
+### Proactive token injection via setHttpHeader
+
+If you already have a token available before any connector request is made, you can inject it upfront using:
+
+```js
+await window.StudioUISDK.connector.setHttpHeader(remoteConnectorId, headerName, headerValue);
+```
+
+This is useful when you want to pre-configure a connector's credentials as soon as the editor is ready, without waiting for a 401.
+
+> **Note:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeader` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
 
 ### Enable/Disable Connector Query Call Caching
 

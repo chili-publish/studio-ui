@@ -270,7 +270,7 @@ describe('useConnectorAuthentication hook', () => {
         expect(result.current.pendingAuthentications.length).toBe(0);
     });
 
-    it('should handle direct ConnectorAuthenticationResult input', async () => {
+    it('should handle direct ConnectorAuthenticationResult input without token', async () => {
         const { result } = renderHook(() => useConnectorAuthentication());
         const authResult = { type: 'authenticated' as const };
 
@@ -280,6 +280,35 @@ describe('useConnectorAuthentication hook', () => {
         });
 
         expect(processResult).toEqual(new RefreshedAuthCredendentials());
+        await waitFor(() => {
+            expect(result.current.authResults).toEqual([
+                {
+                    connectorName: 'connectorName',
+                    remoteConnectorId: 'connectorId',
+                    result: authResult,
+                },
+            ]);
+        });
+
+        expect(result.current.pendingAuthentications.length).toBe(0);
+    });
+
+    it('should handle direct ConnectorAuthenticationResult input with token', async () => {
+        const { result } = renderHook(() => useConnectorAuthentication());
+        const authResult = {
+            type: 'authenticated' as const,
+            token: {
+                headerName: 'Authorization',
+                headerValue: 'Bearer Token',
+            },
+        };
+
+        let processResult: RefreshedAuthCredendentials | null | undefined;
+        await act(async () => {
+            processResult = await result.current.createProcess(authResult, 'connectorName', 'connectorId');
+        });
+
+        expect(processResult).toEqual(new RefreshedAuthCredendentials({ Authorization: 'Bearer Token' }));
         await waitFor(() => {
             expect(result.current.authResults).toEqual([
                 {

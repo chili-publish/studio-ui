@@ -1326,8 +1326,8 @@
   integrity sha512-bhDpDiBxpyu9ZLHOuxE7IinsxeiHb4k2zheE/SHSS/n9uJRaQ73IKCWQ/LGwO34dd6XIO+XCbB8bEgFG4i5nTg==
 
 "@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/747/studio-sdk.tgz":
-  version "1.40.0-alpha.1"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/747/studio-sdk.tgz#ad874b76f721d816b3f0894230c881f5be11f5cb"
+  version "1.40.0-alpha.2"
+  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/747/studio-sdk.tgz#6a3894b4325870f5feccd12f4c18f09cef7bfaa1"
   dependencies:
     penpal "6.1.0"
 
@@ -6017,7 +6017,7 @@ path-type@^4.0.0:
 
 penpal@6.1.0:
   version "6.1.0"
-  resolved "https://registry.npmjs.org/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
+  resolved "https://registry.yarnpkg.com/penpal/-/penpal-6.1.0.tgz#d4a9d373c464093680a4bf989d0a2588f2cee5d1"
   integrity sha512-UikZxAOAOpRpWUeKHXIr9pOkJSA16EBQKk4KTVVOxJoHIgzVrbEoqP5kLefQIq4dCMNYJy66gWIKjSHUSQuBNg==
 
 picocolors@^1.0.0:

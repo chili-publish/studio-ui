@@ -53,7 +53,9 @@ describe('useEditorAuthExpired', () => {
 
     it('should handle connector authentication with requestWithoutModal (none)', async () => {
         const mockConnector = { name: 'No-Auth Connector' };
-        const mockAuthResult: ConnectorAuthenticationResult = { type: 'authenticated' };
+        const mockAuthResult: ConnectorAuthenticationResult = {
+            type: 'authenticated',
+        };
 
         window.StudioUISDK = {
             connector: {
