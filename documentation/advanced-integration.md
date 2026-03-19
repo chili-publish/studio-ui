@@ -633,17 +633,19 @@ window.StudioUI.studioUILoaderConfig({
 });
 ```
 
-### Proactive token injection via setHttpHeader
+### Proactive token injection via _setHttpHeaders_
 
 If you already have a token available before any connector request is made, you can inject it upfront using:
 
 ```js
-await window.StudioUISDK.connector.setHttpHeader(remoteConnectorId, headerName, headerValue);
+await window.StudioUISDK.connector.setHttpHeaders(remoteConnectorId, {
+    Authorization: 'Bearer Token',
+});
 ```
 
 This is useful when you want to pre-configure a connector's credentials as soon as the editor is ready, without waiting for a 401.
 
-> **IMPORTANT:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeader` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
+> **IMPORTANT:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeaders` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
 
 ### Enable/Disable Connector Query Call Caching
 
