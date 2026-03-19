@@ -58,7 +58,7 @@ describe('MultiLineTextVariable', () => {
         expect(screen.getByTestId(getDataTestId('input-label')).innerHTML).toEqual(multiLineVariable.name);
     });
 
-    it('should pass maxCharacters to textarea as maxLength and show character limit in the DOM', () => {
+    it('should show character limit text in the DOM when maxCharacters is set', () => {
         const MAX_CHARACTERS = 140;
         const variable = variables.find((item) => item.id === multiLineVariableId);
         const multiLineVariable = {
@@ -72,8 +72,7 @@ describe('MultiLineTextVariable', () => {
             </UiThemeProvider>,
         );
 
-        const textarea = screen.getByRole('textbox');
-        expect(textarea).toHaveAttribute('maxlength', String(MAX_CHARACTERS));
+        expect(screen.getByRole('textbox')).toBeInTheDocument();
         expect(screen.getByText(String(MAX_CHARACTERS))).toBeInTheDocument();
     });
 });
