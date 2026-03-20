@@ -5,6 +5,7 @@ const Center = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 32rem;
 `;
 
 export const FullSizeCenter = styled(Center)`
