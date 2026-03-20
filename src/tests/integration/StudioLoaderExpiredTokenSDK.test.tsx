@@ -4,7 +4,7 @@ import { mockOutputSetting } from '@mocks/mockOutputSetting';
 import { mockProject } from '@mocks/mockProject';
 import { mockUserInterface } from '@mocks/mockUserinterface';
 import { act, render, waitFor } from '@testing-library/react';
-import { GrafxTokenAuthCredentials } from '@chili-publish/studio-sdk';
+import { AuthCredentialsTypeEnum } from '@chili-publish/studio-sdk';
 import StudioUI from '../../main';
 import { TokenService } from '../../services/TokenService';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
@@ -99,9 +99,10 @@ describe('StudioLoader integration - SDK expired auth token', () => {
         await waitFor(() => {
             expect(mockTokenServiceInstance.refreshToken).toHaveBeenCalled();
             expect(refreshTokenFn).toHaveBeenCalled();
-            expect(JSON.parse(authResult)).toEqual(
-                expect.objectContaining(new GrafxTokenAuthCredentials(refreshToken)),
-            );
+
+            const resObject = JSON.parse(authResult);
+            expect(resObject.type).toEqual(AuthCredentialsTypeEnum.grafxToken);
+            expect(resObject.token).toEqual(refreshToken);
         });
     });
 
