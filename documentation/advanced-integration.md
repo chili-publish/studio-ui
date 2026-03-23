@@ -633,6 +633,16 @@ window.StudioUI.studioUILoaderConfig({
 });
 ```
 
+#### `request` parameter (`ConnectorAuthenticationRequest`)
+
+Your callback receives a single object with this shape:
+
+| Field           | Type     | Description                                                                         |
+| --------------- | -------- | ----------------------------------------------------------------------------------- |
+| `id`            | `string` | Remote connector id — refers to the id of the connector in the **Environment API**. |
+| `name`          | `string` | Connector name.                                                                     |
+| `supportedAuth` | `string` | For this flow, Studio UI passes `'none'`.                                           |
+
 ### Proactive token injection via _setHttpHeaders_
 
 If you already have a token available before any connector request is made, you can inject it upfront using:
