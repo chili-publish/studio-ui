@@ -1,6 +1,7 @@
 // This is an entry point when running standalone version of studio workspace in dev mode
 // It's not going to be bundled to the main `bundle.js` file
 
+import { ConnectorAuthenticationRequest } from 'src/types/types';
 import StudioUI from '../main';
 import { TemplateManager } from './template-manager';
 import { IntegrationTokenManager } from './token-manager/integration';
@@ -62,8 +63,8 @@ import { EngineVersionManager } from './version-manager';
         authToken,
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.refreshToken(),
-        onConnectorAuthenticationRequested: (connectorId: string) => {
-            return Promise.reject(new Error(`Authorization failed for ${connectorId}`));
+        onConnectorAuthenticationRequested: (request: ConnectorAuthenticationRequest) => {
+            return Promise.reject(new Error(`Authorization failed for ${request.name} (${request.id})`));
         },
         // Feature flags are now fetched from URL-based config
         featureFlagConfigURL: 'https://chiligrafx-main.com/feature-flags.json',
