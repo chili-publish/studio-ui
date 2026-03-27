@@ -604,6 +604,59 @@ Following callbacks are also available (in other loaders):
 - `onLogInfoRequested`: A callback used to generate some loading information in the console.
 - `onProjectGetDownloadLink`: A callback to get the output download link for the project.
 
+### Connector authentication (supportedAuth `none`)
+
+Studio UI calls `onConnectorAuthenticationRequested` whenever a connector receives a **401** response—for example, when a token has not been provided yet or has expired.
+
+For connectors with a **browser** `supportedAuth` of `'none'`, you are responsible for fetching credentials and returning them via the **token** field of the result. Studio UI then injects the supplied header into subsequent connector requests.
+
+> **IMPORTANT:** This only covers the browser-side authentication used for asset loading in the editor. For output generation to work, the connector must still have an appropriate **server** `supportedAuth` configured separately.
+
+**Example**
+
+```js
+window.StudioUI.studioUILoaderConfig({
+    // ... other config ...
+    onConnectorAuthenticationRequested: async (request) => {
+        if (request.supportedAuth !== 'none') {
+            throw new Error(`Unsupported auth type: ${request.supportedAuth}`);
+        }
+        const token = await fetchConnectorToken();
+        return {
+            type: 'authenticated',
+            token: {
+                headerName: 'Authorization',
+                headerValue: `Bearer ${token}`,
+            },
+        };
+    },
+});
+```
+
+#### `request` parameter (`ConnectorAuthenticationRequest`)
+
+Your callback receives a single object with this shape:
+
+| Field           | Type     | Description                                                                         |
+| --------------- | -------- | ----------------------------------------------------------------------------------- |
+| `id`            | `string` | Remote connector id — refers to the id of the connector in the **Environment API**. |
+| `name`          | `string` | Connector name.                                                                     |
+| `supportedAuth` | `string` | For this flow, Studio UI passes `'none'`.                                           |
+
+### Proactive token injection via _setHttpHeaders_
+
+If you already have a token available before any connector request is made, you can inject it upfront using:
+
+```js
+await window.StudioUISDK.connector.setHttpHeaders(remoteConnectorId, {
+    Authorization: 'Bearer Token',
+});
+```
+
+This is useful when you want to pre-configure a connector's credentials as soon as the editor is ready, without waiting for a 401.
+
+> **IMPORTANT:** If the document already contains assets that require a token (e.g. images placed on a frame), those assets will be requested during document load before `setHttpHeaders` has a chance to run. Those requests will result in a **401**, which triggers `onConnectorAuthenticationRequested`. The token will then be injected through that flow instead. Keep this in mind when designing your initialization sequence.
+
 ### Enable/Disable Connector Query Call Caching
 
 By default, connector query calls are cached. This behavior can be overridden using:

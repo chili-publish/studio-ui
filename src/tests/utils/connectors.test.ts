@@ -5,6 +5,7 @@ import {
     getConnectorConfigurationOptions,
     getRemoteConnector,
     isAuthenticationRequired,
+    normalizeSupportedAuth,
     verifyAuthentication,
 } from '../../utils/connectors';
 
@@ -26,6 +27,33 @@ describe('utils connectors', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+    });
+
+    describe('normalizeSupportedAuth', () => {
+        it('returns "oAuth2AuthorizationCode" for oAuth2AuthorizationCode (any case)', () => {
+            expect(normalizeSupportedAuth('oAuth2AuthorizationCode')).toBe('oAuth2AuthorizationCode');
+            expect(normalizeSupportedAuth('oauth2authorizationcode')).toBe('oAuth2AuthorizationCode');
+            expect(normalizeSupportedAuth('OAUTH2AUTHORIZATIONCODE')).toBe('oAuth2AuthorizationCode');
+        });
+
+        it('returns "none" for none, empty string, and missing value', () => {
+            expect(normalizeSupportedAuth('none')).toBe('none');
+            expect(normalizeSupportedAuth('NONE')).toBe('none');
+            expect(normalizeSupportedAuth('')).toBe('none');
+            expect(normalizeSupportedAuth(undefined)).toBe('none');
+            expect(normalizeSupportedAuth(null)).toBe('none');
+        });
+
+        it('trims and lowercases before matching', () => {
+            expect(normalizeSupportedAuth('  none  ')).toBe('none');
+            expect(normalizeSupportedAuth('  oAuth2AuthorizationCode  ')).toBe('oAuth2AuthorizationCode');
+        });
+
+        it('returns "unknown" for unrecognized values', () => {
+            expect(normalizeSupportedAuth('some-other-auth')).toBe('unknown');
+            expect(normalizeSupportedAuth('basic')).toBe('unknown');
+            expect(normalizeSupportedAuth('custom')).toBe('unknown');
+        });
     });
 
     it('should handle "getRemoteConnector" correctly', async () => {

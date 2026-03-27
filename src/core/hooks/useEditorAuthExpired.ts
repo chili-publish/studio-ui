@@ -2,11 +2,28 @@ import { AuthRefreshRequest, AuthRefreshTypeEnum, GrafxTokenAuthCredentials } fr
 import { CreateProcessFn } from 'src/components/connector-authentication/useConnectorAuthentication';
 import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
+import { ConnectorAuthenticationRequest } from 'src/types/types';
+import { normalizeSupportedAuth } from 'src/utils/connectors';
+
+/** How to handle connector auth for a given supportedAuth value */
+export type ConnectorAuthHandling = 'viaModal' | 'directCall' | 'alwaysError';
+
+/**
+ * Static config: which handling to use per supportedAuth.
+ * - viaModal: show modal first, then call onConnectorAuthenticationRequested on confirm
+ * - directCall: call onConnectorAuthenticationRequested and feed result to createProcessFn (no modal)
+ * - alwaysError: show immediate error (createProcessFn with error)
+ */
+const SUPPORTED_AUTH_HANDLING: Record<string, ConnectorAuthHandling> = {
+    oAuth2AuthorizationCode: 'viaModal',
+    none: 'directCall',
+    unknown: 'alwaysError',
+};
 
 export const useEditorAuthExpired = (
     onConnectorAuthenticationRequested:
         | undefined
-        | ((remoteConnectorId: string) => Promise<ConnectorAuthenticationResult>),
+        | ((request: ConnectorAuthenticationRequest) => Promise<ConnectorAuthenticationResult>),
     createProcessFn: CreateProcessFn,
 ) => {
     const handleAuthExpired = async (request: AuthRefreshRequest) => {
@@ -16,34 +33,62 @@ export const useEditorAuthExpired = (
                 return new GrafxTokenAuthCredentials(newToken);
             }
 
-            // When we made a request through /proxy endpoint and there is a connector authorization failure,
-            // request.headerValue won't be empty
-            if (request.type === AuthRefreshTypeEnum.any && !!request.headerValue) {
-                const { parsedData: connector } = await window.StudioUISDK.connector.getById(request.connectorId);
-                const isUserImpersonationRequired =
-                    request.headerValue.toLowerCase().includes('oAuth2AuthorizationCode'.toLowerCase()) &&
-                    !!onConnectorAuthenticationRequested;
+            if (request.type === AuthRefreshTypeEnum.any) {
+                const { parsedData: engineConnector } = await window.StudioUISDK.connector.getById(request.connectorId);
+                const name = engineConnector?.name ?? '';
+                const supportedAuth = normalizeSupportedAuth(request.headerValue);
+                const handling = SUPPORTED_AUTH_HANDLING[supportedAuth];
 
-                if (isUserImpersonationRequired) {
-                    const result = await createProcessFn(
-                        async () => {
-                            const res = await onConnectorAuthenticationRequested!(request.remoteConnectorId);
-                            return res;
+                const authRequest: ConnectorAuthenticationRequest = {
+                    id: request.remoteConnectorId,
+                    name,
+                    supportedAuth,
+                };
+
+                if ((handling === 'viaModal' || handling === 'directCall') && !onConnectorAuthenticationRequested) {
+                    return await createProcessFn(
+                        {
+                            type: 'error',
+                            error: new Error(`Authorization handler is not configured for connector "${name}"`),
                         },
-                        connector?.name ?? '',
+                        name,
                         request.remoteConnectorId,
                     );
-                    return result;
                 }
-                const result = await createProcessFn(
-                    {
-                        type: 'error',
-                        error: new Error(`Authorization failed for connector "${connector?.name}"`),
-                    },
-                    connector?.name ?? '',
-                    request.remoteConnectorId,
-                );
-                return result;
+
+                if (handling === 'viaModal' && onConnectorAuthenticationRequested) {
+                    return await createProcessFn(
+                        async () => onConnectorAuthenticationRequested(authRequest),
+                        name,
+                        request.remoteConnectorId,
+                    );
+                }
+
+                if (handling === 'directCall' && onConnectorAuthenticationRequested) {
+                    let authResult: ConnectorAuthenticationResult;
+                    try {
+                        authResult = await onConnectorAuthenticationRequested(authRequest);
+                    } catch (error) {
+                        authResult = {
+                            type: 'error',
+                            error: new Error(`Authorization failed for connector "${name}"`, {
+                                cause: error,
+                            }),
+                        };
+                    }
+                    return await createProcessFn(authResult, name, request.remoteConnectorId);
+                }
+
+                if (handling === 'alwaysError') {
+                    return await createProcessFn(
+                        {
+                            type: 'error',
+                            error: new Error(`Authorization failed for connector "${name}"`),
+                        },
+                        name,
+                        request.remoteConnectorId,
+                    );
+                }
             }
         } catch (error) {
             // eslint-disable-next-line no-console

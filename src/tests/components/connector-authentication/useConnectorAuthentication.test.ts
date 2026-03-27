@@ -1,6 +1,5 @@
 import { RefreshedAuthCredendentials } from '@chili-publish/studio-sdk';
-import { renderHook, waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { useConnectorAuthentication } from '../../../components/connector-authentication';
 
 describe('useConnectorAuthentication hook', () => {
@@ -42,7 +41,7 @@ describe('useConnectorAuthentication hook', () => {
 
     it('should perform process correclty for different connectors', async () => {
         const executor1 = jest.fn().mockResolvedValueOnce({ type: 'error' });
-        const executor2 = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor2 = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
 
         const { result } = renderHook(() => useConnectorAuthentication());
 
@@ -97,7 +96,7 @@ describe('useConnectorAuthentication hook', () => {
                     {
                         connectorName: 'connectorName2',
                         remoteConnectorId: 'connectorId2',
-                        result: { type: 'authentified' },
+                        result: { type: 'authenticated' },
                     },
                 ]),
             );
@@ -105,7 +104,7 @@ describe('useConnectorAuthentication hook', () => {
     });
 
     it('should perform process correclty for none-authentified type', async () => {
-        const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
         const { result } = renderHook(() => useConnectorAuthentication());
 
         let processResult: RefreshedAuthCredendentials | null | undefined;
@@ -134,7 +133,7 @@ describe('useConnectorAuthentication hook', () => {
                     {
                         connectorName: 'connectorName',
                         remoteConnectorId: 'connectorId',
-                        result: { type: 'authentified' },
+                        result: { type: 'authenticated' },
                     },
                 ]),
             );
@@ -271,14 +270,16 @@ describe('useConnectorAuthentication hook', () => {
         expect(result.current.pendingAuthentications.length).toBe(0);
     });
 
-    it('should handle direct ConnectorAuthenticationResult input', async () => {
+    it('should handle direct ConnectorAuthenticationResult input without token', async () => {
         const { result } = renderHook(() => useConnectorAuthentication());
-        const authResult = { type: 'authentified' as const };
+        const authResult = { type: 'authenticated' as const };
 
+        let processResult: RefreshedAuthCredendentials | null | undefined;
         await act(async () => {
-            await result.current.createProcess(authResult, 'connectorName', 'connectorId');
+            processResult = await result.current.createProcess(authResult, 'connectorName', 'connectorId');
         });
 
+        expect(processResult).toEqual(new RefreshedAuthCredendentials());
         await waitFor(() => {
             expect(result.current.authResults).toEqual([
                 {
@@ -292,9 +293,62 @@ describe('useConnectorAuthentication hook', () => {
         expect(result.current.pendingAuthentications.length).toBe(0);
     });
 
+    it('should handle direct ConnectorAuthenticationResult input with token', async () => {
+        const { result } = renderHook(() => useConnectorAuthentication());
+        const authResult = {
+            type: 'authenticated' as const,
+            token: {
+                headerName: 'Authorization',
+                headerValue: 'Bearer Token',
+            },
+        };
+
+        let processResult: RefreshedAuthCredendentials | null | undefined;
+        await act(async () => {
+            processResult = await result.current.createProcess(authResult, 'connectorName', 'connectorId');
+        });
+
+        expect(processResult).toEqual(new RefreshedAuthCredendentials({ Authorization: 'Bearer Token' }));
+        await waitFor(() => {
+            expect(result.current.authResults).toEqual([
+                {
+                    connectorName: 'connectorName',
+                    remoteConnectorId: 'connectorId',
+                    result: authResult,
+                },
+            ]);
+        });
+
+        expect(result.current.pendingAuthentications.length).toBe(0);
+    });
+
+    it('should handle direct error ConnectorAuthenticationResult input', async () => {
+        const { result } = renderHook(() => useConnectorAuthentication());
+        const errorResult = { type: 'error' as const, error: new Error('Direct error') };
+
+        let processResult: RefreshedAuthCredendentials | null | undefined;
+        await act(async () => {
+            processResult = await result.current.createProcess(errorResult, 'errorConnector', 'errorConnectorId');
+        });
+
+        expect(processResult).toEqual(null);
+        expect(window.console.warn).toHaveBeenCalledWith('There is a "error" issue with authenticating the connector');
+        expect(window.console.error).toHaveBeenCalledWith(errorResult.error);
+        await waitFor(() => {
+            expect(result.current.authResults).toEqual([
+                {
+                    connectorName: 'errorConnector',
+                    remoteConnectorId: 'errorConnectorId',
+                    result: errorResult,
+                },
+            ]);
+        });
+        expect(result.current.pendingAuthentications.length).toBe(0);
+    });
+
     it('should reset process correctly', async () => {
         const { result } = renderHook(() => useConnectorAuthentication());
-        const executor = jest.fn().mockResolvedValueOnce({ type: 'authentified' });
+        const executor = jest.fn().mockResolvedValueOnce({ type: 'authenticated' });
 
         act(() => {
             result.current.createProcess(executor, 'connectorName', 'connectorId');

@@ -16,6 +16,9 @@ export enum AssetTypeToString {
     FOLDER = 'Folder',
 }
 
+/** Supported browser auth methods for connectors (API and headerValue normalization). */
+export type SupportedAuthBrowser = 'oAuth2AuthorizationCode' | 'none';
+
 // It partially describe the API Connector Entity
 // https://main.cpstaging.online/grafx/swagger/index.html?urls.primaryName=experimental#/Connectors/get_api_experimental_environment__environment__connectors__connectorId_
 export type RemoteConnector = {
@@ -28,7 +31,7 @@ export type RemoteConnector = {
     default: boolean;
     enabled: boolean;
     supportedAuthentication: {
-        browser: Array<'oAuth2AuthorizationCode' | 'none'>;
+        browser: Array<SupportedAuthBrowser>;
     };
     ownerType: 'builtIn';
 };

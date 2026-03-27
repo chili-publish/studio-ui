@@ -12,6 +12,13 @@ import {
 } from '@chili-publish/environment-client-api';
 import type { EnvironmentApiService } from '../services/EnvironmentApiService';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
+
+/** Parameters passed to onConnectorAuthenticationRequested when connector auth is needed */
+export type ConnectorAuthenticationRequest = {
+    id: string;
+    name: string;
+    supportedAuth: string;
+};
 import { VariableTranslations } from './VariableTranslations';
 import { UITranslations } from './UITranslations';
 import { LayoutTranslations } from './LayoutTranslations';
@@ -59,7 +66,9 @@ export type ProjectConfig = {
     editorLink?: string;
     onFetchOutputSettings: (_?: string) => Promise<UserInterfaceWithOutputSettings | null>;
     onFetchUserInterfaces: () => Promise<PaginatedResponse<UserInterface>>;
-    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    onConnectorAuthenticationRequested?: (
+        request: ConnectorAuthenticationRequest,
+    ) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
@@ -312,7 +321,9 @@ export interface IStudioUILoaderConfig {
         selectedLayoutID: string | undefined,
         outputSettingsId: string | undefined,
     ) => Promise<DownloadLinkResult>;
-    onConnectorAuthenticationRequested?: (connectorId: string) => Promise<ConnectorAuthenticationResult>;
+    onConnectorAuthenticationRequested?: (
+        request: ConnectorAuthenticationRequest,
+    ) => Promise<ConnectorAuthenticationResult>;
     customElement?: HTMLElement | string;
     onSetMultiLayout?: (setMultiLayout: React.Dispatch<React.SetStateAction<boolean>>) => void;
     onVariableFocus?: (variableId: string) => void;
