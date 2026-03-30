@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppProvider';
 import BooleanVariable from './BooleanVariable';
 import MultiLineTextVariable from './MultiLineTextVariable';
-import NumberVariable from './NumberVariable';
+import NumberVariable from './numberVariable/NumberVariable';
 import TextVariable from './TextVariable';
 import { isTextVariable, TextVariable as TextVariableType } from './Variable';
 import { IVariablesComponents } from './VariablesComponents.types';

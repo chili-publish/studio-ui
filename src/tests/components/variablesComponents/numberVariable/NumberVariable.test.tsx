@@ -5,7 +5,7 @@ import { variables } from '@tests/mocks/mockVariables';
 import userEvent from '@testing-library/user-event';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import StudioUI from 'src/main';
-import NumberVariable from '../../../../components/variablesComponents/NumberVariable';
+import NumberVariable from '../../../../components/variablesComponents/numberVariable/NumberVariable';
 
 jest.mock('@chili-publish/studio-sdk');
 

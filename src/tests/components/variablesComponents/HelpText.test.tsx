@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
-import NumberVariable from '../../../components/variablesComponents/NumberVariable';
+import NumberVariable from '../../../components/variablesComponents/numberVariable/NumberVariable';
 import TextVariable from '../../../components/variablesComponents/TextVariable';
 import DateVariable from '../../../components/variablesComponents/dateVariable/DateVariable';
 import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';

@@ -1,65 +1,36 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { HelpTextWrapper } from './VariablesComponents.styles';
-import { INumberVariable } from './VariablesComponents.types';
-import { useUiConfigContext } from '../../contexts/UiConfigContext';
-import { useValueDraft } from './useValueDraft';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { INumberVariable } from '../VariablesComponents.types';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useNumberVariableDraft } from './useNumberVariableDraft';
 
 const NumberVariable = (props: INumberVariable) => {
     const { variable, validationError, onValidateValue, onCommitValue } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const [draft, setDraft, revertToCommitted] = useValueDraft(variable.id, `${variable.value}`);
-
-    const commitIfChanged = async (raw: string) => {
-        const num = Number(raw.replace(',', '.'));
-        if (Number.isNaN(num)) return;
-        if (num === variable.value) return;
-        onValidateValue(num);
-        try {
-            const result = await onCommitValue(num);
-            if (result && !result.success) {
-                revertToCommitted();
-                onValidateValue(variable.value);
-            }
-        } catch {
-            revertToCommitted();
-            onValidateValue(variable.value);
-        }
-    };
+    const { draft, commitIfChanged, updateDraftWithoutCommit } = useNumberVariableDraft(
+        variable,
+        onValidateValue,
+        onCommitValue,
+    );
 
     const handleBlur = (event: ChangeEvent<HTMLInputElement>) => {
-        const raw = event.target.value;
-        setDraft(raw);
-        const num = parseFloat(raw.replace(',', '.'));
-        const prevValue = variable.value;
-        const changed = prevValue !== num;
-        if (Number.isNaN(num)) {
-            onValidateValue(num);
-        } else if (changed) {
-            commitIfChanged(raw);
-        } else {
-            onValidateValue(num);
-        }
+        commitIfChanged(event.target.value);
         onVariableBlur?.(variable.id);
     };
 
     const handleChange = (value: string) => {
-        setDraft(value);
-        const num = parseFloat(value.replace(',', '.'));
+        const num = Number(value.replace(',', '.'));
         const prevValue = variable.value;
         const hasChanged = prevValue !== num;
         if (hasChanged) {
             onVariableFocus?.(variable.id);
-            if (Number.isNaN(num)) {
-                onValidateValue(num);
-            } else {
-                commitIfChanged(value);
-            }
+            commitIfChanged(value);
             onVariableBlur?.(variable.id);
         } else {
-            onValidateValue(num);
+            updateDraftWithoutCommit(value, num);
         }
     };
 

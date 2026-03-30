@@ -2,12 +2,12 @@ import { DatePicker, InputLabel, useMobileSize } from '@chili-publish/grafx-shar
 import { useMemo } from 'react';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
-import useDateVariable from '../useDateVariable';
+import useDateVariable from './useDateVariable';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
-import { useValueDraft } from '../useValueDraft';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IDateVariable } from '../VariablesComponents.types';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useDateVariableDraft } from './useDateVariableDraft';
 
 /** ISO 8601 calendar date string (YYYY-MM-DD) for SDK / variable storage. */
 function toISODateString(date: Date): string {
@@ -36,7 +36,7 @@ const DateVariable = (props: IDateVariable) => {
     const { minDate, maxDate } = useDateVariable(variable);
     const isMobileSize = useMobileSize();
 
-    const [draft, setDraft, revertToCommitted] = useValueDraft(variable.id, variable.value ?? '');
+    const { draft, commitIfChanged } = useDateVariableDraft(variable, onValidateValue, onCommitValue);
 
     const getSelectedDate = useMemo(() => {
         if (isMobileSize && selected) return selected;
@@ -47,21 +47,6 @@ const DateVariable = (props: IDateVariable) => {
 
     const placeholder = getVariablePlaceholder(variable);
 
-    const commitISO = async (isoDate: string) => {
-        if (!onCommitValue) return;
-        onValidateValue?.(isoDate);
-        try {
-            const result = await onCommitValue(isoDate);
-            if (result && !result.success) {
-                revertToCommitted();
-                onValidateValue?.(variable.value ?? '');
-            }
-        } catch {
-            revertToCommitted();
-            onValidateValue?.(variable.value ?? '');
-        }
-    };
-
     const handleChange = (date: Date | null | undefined) => {
         if (date) {
             const isoDate = toISODateString(date);
@@ -69,16 +54,9 @@ const DateVariable = (props: IDateVariable) => {
                 setDate?.(isoDate);
                 return;
             }
-            const prevISO = variable.value ?? '';
-            if (prevISO === isoDate) return;
-            setDraft(isoDate);
-            void commitISO(isoDate);
+            commitIfChanged(isoDate);
         } else if (onCommitValue) {
-            const emptyISO = '';
-            const prevISO = variable.value ?? '';
-            if (prevISO === emptyISO) return;
-            setDraft(emptyISO);
-            void commitISO(emptyISO);
+            commitIfChanged('');
         }
     };
 
