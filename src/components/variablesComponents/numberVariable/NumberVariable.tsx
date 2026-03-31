@@ -1,13 +1,38 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ChangeEvent } from 'react';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { HelpTextWrapper } from './VariablesComponents.styles';
-import { INumberVariable } from './VariablesComponents.types';
-import { useUiConfigContext } from '../../contexts/UiConfigContext';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
+import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { INumberVariable } from '../VariablesComponents.types';
+import { useUiConfigContext } from '../../../contexts/UiConfigContext';
+import { useNumberVariableDraft } from './useNumberVariableDraft';
 
 const NumberVariable = (props: INumberVariable) => {
-    const { variable, validationError, onValueChange } = props;
+    const { variable, validationError, onValidateValue, onCommitValue } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
+
+    const { draft, commitIfChanged, updateDraftWithoutCommit } = useNumberVariableDraft(
+        variable,
+        onValidateValue,
+        onCommitValue,
+    );
+
+    const handleBlur = (event: ChangeEvent<HTMLInputElement>) => {
+        commitIfChanged(event.target.value);
+        onVariableBlur?.(variable.id);
+    };
+
+    const handleChange = (value: string) => {
+        const num = Number(value.replace(',', '.'));
+        const prevValue = variable.value;
+        const hasChanged = prevValue !== num;
+        if (hasChanged) {
+            onVariableFocus?.(variable.id);
+            commitIfChanged(value);
+            onVariableBlur?.(variable.id);
+        } else {
+            updateDraftWithoutCommit(value, num);
+        }
+    };
 
     return (
         <HelpTextWrapper>
@@ -20,7 +45,7 @@ const NumberVariable = (props: INumberVariable) => {
                 label={
                     <Label translationKey={variable.label ?? variable.name} value={variable.label ?? variable.name} />
                 }
-                value={`${variable.value}`}
+                value={draft}
                 step={variable.showStepper ? variable.stepSize : undefined}
                 dataId={getDataIdForSUI(`input-number-${variable.id}`)}
                 dataTestId={getDataTestIdForSUI(`input-number-${variable.id}`)}
@@ -28,26 +53,8 @@ const NumberVariable = (props: INumberVariable) => {
                 onFocus={() => {
                     onVariableFocus?.(variable.id);
                 }}
-                onBlur={(event: ChangeEvent<HTMLInputElement>) => {
-                    const currentValue = parseFloat(event.target.value.replace(',', '.'));
-                    const prevValue = variable.value;
-                    onValueChange(currentValue, { changed: prevValue !== currentValue });
-                    onVariableBlur?.(variable.id);
-                }}
-                onValueChange={(value: string) => {
-                    const currentValue = parseFloat(value.replace(',', '.'));
-                    const prevValue = variable.value;
-                    const hasChanged = prevValue !== currentValue;
-
-                    // if value changed via stepper, ensure focus/blur handlers are called
-                    if (hasChanged) {
-                        onVariableFocus?.(variable.id);
-                        onValueChange(currentValue, { changed: true });
-                        onVariableBlur?.(variable.id);
-                    } else {
-                        onValueChange(currentValue, { changed: false });
-                    }
-                }}
+                onBlur={handleBlur}
+                onValueChange={handleChange}
                 disabled={variable.isReadonly}
                 required={variable.isRequired}
                 validation={validationError ? ValidationTypes.ERROR : undefined}
