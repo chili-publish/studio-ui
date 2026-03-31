@@ -64,7 +64,16 @@ import { EngineVersionManager } from './version-manager';
         editorLink: `https://stgrafxstudiodevpublic.blob.core.windows.net/editor/${engineSource}/web`,
         refreshTokenAction: () => tokenManager.refreshToken(),
         onConnectorAuthenticationRequested: (request: ConnectorAuthenticationRequest) => {
-            return Promise.reject(new Error(`Authorization failed for ${request.name} (${request.id})`));
+            if (request.supportedAuth !== 'none') {
+                return Promise.reject(new Error(`Authorization failed for ${request.name} (${request.id})`));
+            }
+            return Promise.resolve({
+                type: 'authenticated' as const,
+                token: {
+                    headerName: 'Authorization',
+                    headerValue: `Bearer ${import.meta.env.VITE_ACQUIA_TOKEN}`,
+                },
+            });
         },
         // Feature flags are now fetched from URL-based config
         featureFlagConfigURL: 'https://chiligrafx-main.com/feature-flags.json',
