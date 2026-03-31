@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import BooleanVariable from '../../../components/variablesComponents/BooleanVariable';
-import NumberVariable from '../../../components/variablesComponents/NumberVariable';
+import NumberVariable from '../../../components/variablesComponents/numberVariable/NumberVariable';
 import TextVariable from '../../../components/variablesComponents/TextVariable';
 import DateVariable from '../../../components/variablesComponents/dateVariable/DateVariable';
 import DateVariableMobile from '../../../components/variablesComponents/dateVariable/DateVariableMobile';
@@ -33,7 +33,11 @@ describe('Variable help text', () => {
         const numberVariable = { ...variable, helpText };
         render(
             <UiThemeProvider theme="platform">
-                <NumberVariable variable={numberVariable} onValueChange={jest.fn()} />
+                <NumberVariable
+                    variable={numberVariable}
+                    onValidateValue={jest.fn()}
+                    onCommitValue={jest.fn().mockResolvedValue({ success: true, data: null })}
+                />
             </UiThemeProvider>,
         );
 
@@ -46,7 +50,11 @@ describe('Variable help text', () => {
         const dateVariable = { ...variable, helpText };
         render(
             <UiThemeProvider theme="platform">
-                <DateVariable variable={dateVariable} onValueChange={jest.fn()} />
+                <DateVariable
+                    variable={dateVariable}
+                    onValidateValue={jest.fn()}
+                    onCommitValue={jest.fn().mockResolvedValue({ success: true, data: null })}
+                />
             </UiThemeProvider>,
             { container: document.body.appendChild(APP_WRAPPER) },
         );
