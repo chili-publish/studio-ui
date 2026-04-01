@@ -2,7 +2,7 @@ import {
     AuthRefreshRequest,
     AuthRefreshTypeEnum,
     GrafxTokenAuthCredentials,
-    SupportedAuth,
+    ConnectorSupportedAuth,
 } from '@chili-publish/studio-sdk';
 import { CreateProcessFn } from 'src/components/connector-authentication/useConnectorAuthentication';
 import { TokenService } from 'src/services/TokenService';
@@ -19,9 +19,9 @@ export type ConnectorAuthHandling = 'viaModal' | 'directCall' | 'alwaysError';
  * - directCall: call onConnectorAuthenticationRequested and feed result to createProcessFn (no modal)
  * - alwaysError: show immediate error (createProcessFn with error)
  */
-const SUPPORTED_AUTH_HANDLING: Partial<Record<SupportedAuth, ConnectorAuthHandling>> = {
-    [SupportedAuth.OAuth2AuthorizationCode]: 'viaModal',
-    [SupportedAuth.None]: 'directCall',
+const SUPPORTED_AUTH_HANDLING: Partial<Record<ConnectorSupportedAuth, ConnectorAuthHandling>> = {
+    [ConnectorSupportedAuth.OAuth2AuthorizationCode]: 'viaModal',
+    [ConnectorSupportedAuth.None]: 'directCall',
 };
 
 export const useEditorAuthExpired = (

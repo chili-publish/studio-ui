@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthRefreshRequest, AuthRefreshTypeEnum, ConnectorType, SupportedAuth } from '@chili-publish/studio-sdk';
+import {
+    AuthRefreshRequest,
+    AuthRefreshTypeEnum,
+    ConnectorType,
+    ConnectorSupportedAuth,
+} from '@chili-publish/studio-sdk';
 import { useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
 import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
@@ -9,8 +14,8 @@ const baseConnectorDefinition = {
     id: 'connector-123',
     type: ConnectorType.media,
     supportedAuthentication: {
-        browser: [SupportedAuth.OAuth2AuthorizationCode],
-        server: [SupportedAuth.OAuth2AuthorizationCode],
+        browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+        server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
     },
 };
 
@@ -81,8 +86,8 @@ describe('useEditorAuthExpired', () => {
                 ...baseConnectorDefinition,
                 name: 'No-Auth Connector',
                 supportedAuthentication: {
-                    browser: [SupportedAuth.None],
-                    server: [SupportedAuth.None],
+                    browser: [ConnectorSupportedAuth.None],
+                    server: [ConnectorSupportedAuth.None],
                 },
             },
         };
@@ -146,8 +151,8 @@ describe('useEditorAuthExpired', () => {
                 ...baseConnectorDefinition,
                 name: 'No-Auth Connector',
                 supportedAuthentication: {
-                    browser: [SupportedAuth.None],
-                    server: [SupportedAuth.None],
+                    browser: [ConnectorSupportedAuth.None],
+                    server: [ConnectorSupportedAuth.None],
                 },
             },
         };
@@ -180,8 +185,8 @@ describe('useEditorAuthExpired', () => {
                 ...baseConnectorDefinition,
                 name: 'Test Connector',
                 supportedAuthentication: {
-                    browser: [SupportedAuth.StaticKey],
-                    server: [SupportedAuth.StaticKey],
+                    browser: [ConnectorSupportedAuth.StaticKey],
+                    server: [ConnectorSupportedAuth.StaticKey],
                 },
             },
         };
