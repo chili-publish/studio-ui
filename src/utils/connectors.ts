@@ -12,6 +12,15 @@ import { RemoteConnector, SupportedAuthBrowser } from './ApiTypes';
 /** Result of normalizing headerValue: known auth type or 'unknown' for unrecognized values. */
 type NormalizedSupportedAuth = SupportedAuthBrowser | 'unknown';
 
+/**
+ * Parses the connector hub id from `externalSourceId` when it follows `{connectorHubId}_{version}`..
+ */
+export function parseConnectorHubIdFromExternalSourceId(externalSourceId?: string | null): string | undefined {
+    if (externalSourceId == null || externalSourceId === '') return undefined;
+    const [connectorHubId] = externalSourceId.split('_');
+    return connectorHubId;
+}
+
 /** Normalizes a string (e.g. from headerValue, possibly different case) to a known auth type or 'unknown'. Missing/empty is treated as 'none'. */
 export function normalizeSupportedAuth(value: string | null | undefined): NormalizedSupportedAuth {
     const lower = (value ?? '').trim().toLowerCase();

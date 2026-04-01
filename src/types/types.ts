@@ -12,16 +12,18 @@ import {
 } from '@chili-publish/environment-client-api';
 import type { EnvironmentApiService } from '../services/EnvironmentApiService';
 import { ConnectorAuthenticationResult } from './ConnectorAuthenticationResult';
+import { LayoutTranslations } from './LayoutTranslations';
+import { UITranslations } from './UITranslations';
+import { VariableTranslations } from './VariableTranslations';
 
 /** Parameters passed to onConnectorAuthenticationRequested when connector auth is needed */
 export type ConnectorAuthenticationRequest = {
     id: string;
     name: string;
     supportedAuth: string;
+    // In case connector is hub-based, the connector hub id is populated here
+    connectorHubId?: string;
 };
-import { VariableTranslations } from './VariableTranslations';
-import { UITranslations } from './UITranslations';
-import { LayoutTranslations } from './LayoutTranslations';
 
 export type FeatureFlagsType = Record<string, boolean>;
 

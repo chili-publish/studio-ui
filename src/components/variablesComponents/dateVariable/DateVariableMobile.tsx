@@ -17,16 +17,21 @@ const DateVariableMobile = () => {
     const { projectConfig } = useUiConfigContext();
 
     const handleDateSelection = useCallback(async () => {
-        if (selectedDate && currentVariable) {
-            const formattedDate = selectedDate?.toISOString().split('T')[0];
-            const result = await window.StudioUISDK.variable.setValue(currentVariable.id, formattedDate);
-            if (result.success) {
-                projectConfig.onVariableValueChangedCompleted?.(currentVariable.id, formattedDate);
+        if (!selectedDate || !currentVariable) return;
+        const isoDate = selectedDate.toISOString().split('T')[0];
+        try {
+            const result = await window.StudioUISDK.variable.setValue(currentVariable.id, isoDate);
+            if (!result.success) {
+                throw new Error('setValue failed');
             }
+            projectConfig.onVariableValueChangedCompleted?.(currentVariable.id, isoDate);
             dispatch(validateVariable(currentVariable));
             dispatch(showVariablesPanel());
-
             setSelectedDate(null);
+        } catch {
+            const dateVar = currentVariable as DateVariableType;
+            setSelectedDate(dateVar.value ? new Date(dateVar.value) : null);
+            dispatch(validateVariable(currentVariable));
         }
     }, [selectedDate, currentVariable, projectConfig, dispatch]);
 

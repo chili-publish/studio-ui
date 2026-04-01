@@ -1,9 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthRefreshRequest, AuthRefreshTypeEnum } from '@chili-publish/studio-sdk';
+import {
+    AuthRefreshRequest,
+    AuthRefreshTypeEnum,
+    ConnectorType,
+    ConnectorSupportedAuth,
+} from '@chili-publish/studio-sdk';
 import { useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
 import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
+
+const baseConnectorDefinition = {
+    id: 'connector-123',
+    type: ConnectorType.media,
+    supportedAuthentication: {
+        browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+        server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+    },
+};
 
 describe('useEditorAuthExpired', () => {
     const mockOnConnectorAuthenticationRequested = jest.fn();
@@ -14,16 +28,9 @@ describe('useEditorAuthExpired', () => {
     });
 
     it('should handle connector authentication with modal (oAuth2)', async () => {
-        const mockConnector = { name: 'Test Connector' };
         const mockAuthResult: ConnectorAuthenticationResult = {
             type: 'authenticated',
         };
-
-        window.StudioUISDK = {
-            connector: {
-                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
-            },
-        } as any;
 
         mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
         mockCreateProcessFn.mockImplementation((fn) => (typeof fn === 'function' ? fn() : fn));
@@ -38,6 +45,11 @@ describe('useEditorAuthExpired', () => {
             connectorId: 'connector-123',
             remoteConnectorId: 'remote-123',
             headerValue: 'oAuth2AuthorizationCode',
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: 'Test Connector',
+                externalSourceId: 'hub-abc_1.0.0',
+            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -47,21 +59,15 @@ describe('useEditorAuthExpired', () => {
             id: 'remote-123',
             name: 'Test Connector',
             supportedAuth: 'oAuth2AuthorizationCode',
+            connectorHubId: 'hub-abc',
         });
         expect(authResult).toEqual(mockAuthResult);
     });
 
     it('should handle connector authentication with requestWithoutModal (none)', async () => {
-        const mockConnector = { name: 'No-Auth Connector' };
         const mockAuthResult: ConnectorAuthenticationResult = {
             type: 'authenticated',
         };
-
-        window.StudioUISDK = {
-            connector: {
-                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
-            },
-        } as any;
 
         mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
         mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
@@ -75,7 +81,15 @@ describe('useEditorAuthExpired', () => {
             type: AuthRefreshTypeEnum.any,
             connectorId: 'connector-123',
             remoteConnectorId: 'remote-123',
-            headerValue: undefined as any,
+            headerValue: null,
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: 'No-Auth Connector',
+                supportedAuthentication: {
+                    browser: [ConnectorSupportedAuth.None],
+                    server: [ConnectorSupportedAuth.None],
+                },
+            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -90,17 +104,10 @@ describe('useEditorAuthExpired', () => {
     });
 
     it('should return error when oAuth2 auth handler is not configured', async () => {
-        const mockConnector = { name: 'OAuth Connector' };
         const errorResult = {
             type: 'error',
             error: new Error('Authorization handler is not configured for connector "OAuth Connector"'),
         };
-
-        window.StudioUISDK = {
-            connector: {
-                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
-            },
-        } as any;
 
         mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
 
@@ -112,6 +119,10 @@ describe('useEditorAuthExpired', () => {
             connectorId: 'connector-123',
             remoteConnectorId: 'remote-123',
             headerValue: 'oAuth2AuthorizationCode',
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: 'OAuth Connector',
+            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -121,17 +132,10 @@ describe('useEditorAuthExpired', () => {
     });
 
     it('should return error when none auth handler is not configured', async () => {
-        const mockConnector = { name: 'No-Auth Connector' };
         const errorResult = {
             type: 'error',
             error: new Error('Authorization handler is not configured for connector "No-Auth Connector"'),
         };
-
-        window.StudioUISDK = {
-            connector: {
-                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
-            },
-        } as any;
 
         mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
 
@@ -142,7 +146,15 @@ describe('useEditorAuthExpired', () => {
             type: AuthRefreshTypeEnum.any,
             connectorId: 'connector-123',
             remoteConnectorId: 'remote-123',
-            headerValue: undefined as any,
+            headerValue: null,
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: 'No-Auth Connector',
+                supportedAuthentication: {
+                    browser: [ConnectorSupportedAuth.None],
+                    server: [ConnectorSupportedAuth.None],
+                },
+            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -152,17 +164,10 @@ describe('useEditorAuthExpired', () => {
     });
 
     it('should handle connector authentication with error handling (unsupported auth)', async () => {
-        const mockConnector = { name: 'Test Connector' };
         const errorResult = {
             type: 'error',
             error: new Error('Authorization failed for connector "Test Connector"'),
         };
-
-        window.StudioUISDK = {
-            connector: {
-                getById: jest.fn().mockResolvedValue({ parsedData: mockConnector }),
-            },
-        } as any;
 
         mockCreateProcessFn.mockImplementation((result) => Promise.resolve(result as any));
 
@@ -176,6 +181,14 @@ describe('useEditorAuthExpired', () => {
             connectorId: 'connector-123',
             remoteConnectorId: 'remote-123',
             headerValue: 'some-other-auth',
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: 'Test Connector',
+                supportedAuthentication: {
+                    browser: [ConnectorSupportedAuth.StaticKey],
+                    server: [ConnectorSupportedAuth.StaticKey],
+                },
+            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -205,6 +218,10 @@ describe('useEditorAuthExpired', () => {
             connectorId: '',
             remoteConnectorId: '',
             headerValue: '',
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: '',
+            },
         };
 
         const authResult = await handleAuthExpired(request);
