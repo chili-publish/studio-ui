@@ -7,40 +7,45 @@ import {
     Label,
     LoadingIcon,
 } from '@chili-publish/grafx-shared-components';
-import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { useDirection } from '../../hooks/useDirection';
-import { Text } from '../../styles/Main.styles';
-import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
+import { useDirection } from '../../../hooks/useDirection';
+import { Text } from '../../../styles/Main.styles';
 import { DATA_SOURCE_ID, DataSourceInputStyle, RowInfoContainer } from './DataSource.styles';
+import { getDataIdForSUI, getDataTestIdForSUI } from '../../../utils/dataIds';
 
 interface DataSourceInputProps {
     currentRow: string;
-    currentRowIndex: number;
+    currentRowIndex?: number;
     dataIsLoading: boolean;
     isEmptyState: boolean;
 
     isNextDisabled: boolean;
     isPrevDisabled: boolean;
+    isDataRowIndexHidden: boolean;
 
     onInputClick: (_: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => void;
     onPrevClick: () => void;
     onNextClick: () => void;
+
+    labels: {
+        input: string;
+        row?: string;
+    };
 }
 const DataSourceInput = ({
     currentRow,
     currentRowIndex,
     dataIsLoading,
     isEmptyState,
+    isDataRowIndexHidden,
     isPrevDisabled,
     isNextDisabled,
     onInputClick,
     onPrevClick,
     onNextClick,
+    labels,
 }: DataSourceInputProps) => {
     const { direction } = useDirection();
-    const { getUITranslation } = useUITranslations();
-    const inputLabel = getUITranslation(['formBuilder', 'datasource', 'inputLabel'], 'Data row');
-    const rowLabel = getUITranslation(['formBuilder', 'datasource', 'row'], 'Row');
+
     return (
         <>
             <DataSourceInputStyle disabled={dataIsLoading} />
@@ -54,7 +59,7 @@ const DataSourceInput = ({
                 name="data-source-input"
                 value={currentRow}
                 placeholder="Select data row"
-                label={<Label translationKey="dataRow" value={inputLabel} />}
+                label={<Label translationKey="dataRow" value={labels.input} />}
                 onClick={onInputClick}
                 rightIcon={{
                     label: '',
@@ -87,7 +92,9 @@ const DataSourceInput = ({
                             />
                         }
                     />
-                    <Text>{currentRow ? `${rowLabel} ${currentRowIndex + 1}` : ''}</Text>
+                    {!isDataRowIndexHidden && currentRowIndex !== undefined && (
+                        <Text>{currentRow ? `${labels.row} ${currentRowIndex + 1}` : ''}</Text>
+                    )}
                     <Button
                         variant={ButtonVariant.tertiary}
                         onClick={onNextClick}

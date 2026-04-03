@@ -5,7 +5,7 @@ import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useLeftPanelAndTrayVisibility } from '../../../core/hooks/useLeftPanelAndTrayVisibility';
 import { useUITranslations } from '../../../core/hooks/useUITranslations';
 import { UiOptions } from '../../../types/types';
-import DataSource from '../../dataSource/DataSource';
+import OutputDataSource from '../../dataSource/OutputDataSource';
 import ImagePanel from '../../imagePanel/ImagePanel';
 import LayoutProperties from '../../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
@@ -63,7 +63,7 @@ const LeftPanel = ({
                     </ImagePanelContainer>
                 )}
                 <LeftPanelContainer isHidden={activePanel === PanelType.IMAGE_PANEL}>
-                    {isDataSourceDisplayed && <DataSource />}
+                    {isDataSourceDisplayed && <OutputDataSource />}
                     {isAvailableLayoutsDisplayed && (
                         <>
                             <HeadingWrapper data-testid={`${getDataTestIdForSUI('layouts-heading')}`}>

@@ -5,7 +5,7 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/mocks/app';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import DataSource from '../../../components/dataSource/DataSource';
+import OutputDataSource from '../../../components/dataSource/OutputDataSource';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
@@ -75,7 +75,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -101,7 +101,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -127,7 +127,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -153,7 +153,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -183,7 +183,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -243,7 +243,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,

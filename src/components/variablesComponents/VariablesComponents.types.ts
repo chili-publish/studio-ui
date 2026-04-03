@@ -5,6 +5,7 @@ import {
     NumberVariable,
     Variable,
     VariableType,
+    DataSourceVariable as DataSourceVariableType,
 } from '@chili-publish/studio-sdk';
 import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 
@@ -58,4 +59,10 @@ export interface IListVariable {
     variable: ListVariable;
     validationError?: string;
     onChange: (_: ListVariable) => void;
+}
+
+export interface IDataSourceVariable {
+    variable: DataSourceVariableType;
+    validationError?: string;
+    onValueChange?: (value: string, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
 }

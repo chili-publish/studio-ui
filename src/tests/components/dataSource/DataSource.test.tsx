@@ -3,7 +3,7 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import DataSource from '../../../components/dataSource/DataSource';
+import OutputDataSource from '../../../components/dataSource/OutputDataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
@@ -51,7 +51,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -65,7 +65,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -81,7 +81,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -101,7 +101,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -129,7 +129,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -211,7 +211,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );

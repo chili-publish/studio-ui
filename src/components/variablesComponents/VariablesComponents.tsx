@@ -4,6 +4,7 @@ import {
     DateVariable as DateVariableType,
     ImageVariable as ImageVariableType,
     NumberVariable as NumberVariableType,
+    DataSourceVariable as DataSourceVariableType,
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
@@ -22,6 +23,7 @@ import ListVariable from './listVariable/ListVariable';
 import { useVariableComponents } from './useVariablesComponents';
 import { useAppDispatch } from '../../store';
 import { selectVariablesValidation, validateVariable } from '../../store/reducers/variableReducer';
+import DataSourceVariable from './dataSourceVariable/DataSourceVariable';
 
 const VariablesComponents = (props: IVariablesComponents) => {
     const { type, variable, onCalendarOpen } = props;
@@ -106,6 +108,13 @@ const VariablesComponents = (props: IVariablesComponents) => {
                     variable={variable as ListVariableType}
                     validationError={errMsg}
                     onChange={(val) => dispatch(validateVariable(val))}
+                />
+            )}
+            {type === VariableType.dataSource && (
+                <DataSourceVariable
+                    variable={variable as DataSourceVariableType}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
                 />
             )}
         </div>
