@@ -25,6 +25,8 @@ export class StudioProjectLoader {
 
     private sandboxMode: boolean;
 
+    private isDev: boolean;
+
     private componentMode: boolean;
 
     private cachedProject: Project | undefined;
@@ -50,6 +52,7 @@ export class StudioProjectLoader {
         graFxStudioEnvironmentApiBaseUrl: string,
         sandboxMode: boolean,
         componentMode: boolean,
+        isDev: boolean,
         environmentApiService: EnvironmentApiService,
         projectDownloadUrl?: string,
         projectUploadUrl?: string,
@@ -66,6 +69,7 @@ export class StudioProjectLoader {
         this.projectId = projectId;
         this.sandboxMode = sandboxMode;
         this.componentMode = componentMode;
+        this.isDev = isDev;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
@@ -274,6 +278,7 @@ export class StudioProjectLoader {
             outputSettingsId,
             this.sandboxMode,
             this.environmentApiService,
+            this.isDev,
         );
         if (typeof result !== 'string') {
             throw new Error(`Error getting download link:${result.error}`);
