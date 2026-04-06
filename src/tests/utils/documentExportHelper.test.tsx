@@ -38,6 +38,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
+                false,
             );
             expect(res).toEqual({
                 status: 500,
@@ -61,6 +62,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
+                false,
             );
             expect(res).toEqual({
                 status: 503,
@@ -86,6 +88,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
+                false,
             );
             expect(res).toEqual({
                 status: 500,
@@ -108,7 +111,15 @@ describe('"exportDocument', () => {
             window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
-            await exportDocument(DownloadFormats.PDF, '1', 'projectId', undefined, false, mockEnvironmentApiService);
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                undefined,
+                false,
+                mockEnvironmentApiService,
+                false,
+            );
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -124,7 +135,15 @@ describe('"exportDocument', () => {
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: null,
             });
-            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
+                false,
+            );
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
                 engineVersion: undefined,
@@ -142,7 +161,15 @@ describe('"exportDocument', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
+                false,
+            );
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -162,7 +189,15 @@ describe('"exportDocument', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
-            await exportDocument(DownloadFormats.PDF, '1', 'projectId', 'outputId', false, mockEnvironmentApiService);
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
+                false,
+            );
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
@@ -198,6 +233,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
+                false,
             );
             expect(res).toEqual('test-task-id');
         });
