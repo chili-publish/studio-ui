@@ -38,7 +38,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
             expect(res).toEqual({
                 status: 500,
@@ -62,7 +62,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
             expect(res).toEqual({
                 status: 503,
@@ -88,7 +88,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
             expect(res).toEqual({
                 status: 500,
@@ -98,9 +98,11 @@ describe('"exportDocument', () => {
         });
     });
 
-    describe('handle data source configuration correctly', () => {
+    describe('handle data source configuration correctly on dev environment', () => {
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
+            window.StudioUISDK.document.getCurrentState = jest
+                .fn()
+                .mockResolvedValue({ data: '{}', parsedData: { engineVersion: '1.0.0' } });
             window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
                 parsedData: {
                     source: {
@@ -118,11 +120,11 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
-                engineVersion: undefined,
+                engineVersion: '1.0.0',
                 dataConnectorConfig: undefined,
                 outputSettingsId: undefined,
                 layoutsToExport: ['1'],
@@ -142,11 +144,11 @@ describe('"exportDocument', () => {
                 'outputId',
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
-                engineVersion: undefined,
+                engineVersion: '1.0.0',
                 dataConnectorConfig: undefined,
                 outputSettingsId: 'outputId',
                 layoutsToExport: ['1'],
@@ -168,13 +170,13 @@ describe('"exportDocument', () => {
                 'outputId',
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
-                engineVersion: undefined,
+                engineVersion: '1.0.0',
                 dataConnectorConfig: undefined,
                 outputSettingsId: 'outputId',
                 layoutsToExport: ['1'],
@@ -196,13 +198,80 @@ describe('"exportDocument', () => {
                 'outputId',
                 false,
                 mockEnvironmentApiService,
+                true,
+            );
+
+            expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
+
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: '1.0.0',
+                dataConnectorConfig: {
+                    dataConnectorId: '123',
+                    dataConnectorParameters: {
+                        context: null,
+                    },
+                },
+                outputSettingsId: 'outputId',
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
+        });
+    });
+    describe('handle data source configuration correctly on production environment', () => {
+        beforeEach(() => {
+            window.StudioUISDK.document.getCurrentState = jest
+                .fn()
+                .mockResolvedValue({ data: '{}', parsedData: { engineVersion: '1.0.0' } });
+            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+                parsedData: {
+                    source: {
+                        id: '123',
+                    },
+                },
+            });
+            window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
+        });
+        it('should skip sending data source if output settings id is not specified', async () => {
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                undefined,
+                false,
+                mockEnvironmentApiService,
+                false,
+            );
+
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: null,
+                dataConnectorConfig: undefined,
+                outputSettingsId: undefined,
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse('{}'),
+                projectId: 'projectId',
+            });
+        });
+        it('should send data source', async () => {
+            mockEnvironmentApiService.getOutputSettingsById.mockResolvedValue({
+                dataSourceEnabled: true,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
+
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
                 false,
             );
 
             expect(mockEnvironmentApiService.getOutputSettingsById).toHaveBeenCalledWith('outputId');
 
             expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
-                engineVersion: undefined,
+                engineVersion: null,
                 dataConnectorConfig: {
                     dataConnectorId: '123',
                     dataConnectorParameters: {
@@ -233,7 +302,7 @@ describe('"exportDocument', () => {
                 undefined,
                 false,
                 mockEnvironmentApiService,
-                false,
+                true,
             );
             expect(res).toEqual('test-task-id');
         });

@@ -29,7 +29,7 @@ export const exportDocument = async (
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
         let engineVersion: string | null = null;
 
-        if (!isDev) {
+        if (isDev) {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             engineVersion = urlParams.get('engine');
