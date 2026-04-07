@@ -30,6 +30,24 @@ const MobileTrayHeader = ({
 
     const backIcon = direction === 'rtl' ? AvailableIcons.faArrowRight : AvailableIcons.faArrowLeft;
 
+    if (
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE ||
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE
+    )
+        return (
+            <TrayTitleWithBtn data-testid={`${getDataTestIdForSUI('datasource-variable-tray-title')}`}>
+                <Button
+                    type="button"
+                    variant={ButtonVariant.tertiary}
+                    onClick={() => {
+                        dispatch(showVariablesPanel());
+                    }}
+                    icon={<Icon key="go-back-to-variable-list" icon={backIcon} />}
+                />
+                <TrayPanelTitle margin="0">Select data row</TrayPanelTitle>
+            </TrayTitleWithBtn>
+        );
+
     if (isDefaultPanelView && isDataSourceDisplayed)
         return (
             <SectionWrapper

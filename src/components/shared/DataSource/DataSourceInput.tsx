@@ -29,6 +29,7 @@ interface DataSourceInputProps {
     labels: {
         input: string;
         row?: string;
+        placeholder?: string;
     };
 }
 const DataSourceInput = ({
@@ -58,7 +59,7 @@ const DataSourceInput = ({
                 dataIntercomId="data-source-input"
                 name="data-source-input"
                 value={currentRow}
-                placeholder="Select data row"
+                placeholder={labels.placeholder ?? 'Select data row'}
                 label={<Label translationKey="dataRow" value={labels.input} />}
                 onClick={onInputClick}
                 rightIcon={{

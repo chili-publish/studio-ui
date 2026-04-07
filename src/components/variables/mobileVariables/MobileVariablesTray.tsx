@@ -77,7 +77,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
         hasMoreRows,
         isPrevDisabled,
         isNextDisabled,
-        loadDataRows,
+        loadNextPage,
         getPreviousRow,
         getNextRow,
         hasDataConnector,
@@ -87,7 +87,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         requiresUserAuthorizationCheck,
-        onDataRowsLoad: loadDataRows,
+        onDataRowsLoad: loadNextPage,
         onRowConfirmed: updateSelectedRow,
         onDataSourcePanelOpen: () => dispatch(showDataSourcePanel()),
         onDataSourcePanelClose: () => dispatch(showVariablesPanel()),
@@ -109,6 +109,17 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
     const isImageBrowsePanelOpen = activePanel === PanelType.IMAGE_PANEL;
     const isDataSourcePanelOpen = activePanel === PanelType.DATA_SOURCE_TABLE;
     const isListVariablePanelOpen = activePanel === PanelType.LIST_VARIABLE_PANEL;
+    // part of the refactoring of the MobileVariablesTray
+    const isDataSourceVariablePanelOpen =
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE ||
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
+
+    const fullScreenPanelOpen =
+        isDataSourcePanelOpen ||
+        isDataSourceVariablePanelOpen ||
+        isDateVariablePanelOpen ||
+        isImageBrowsePanelOpen ||
+        isListVariablePanelOpen;
 
     const isDefaultPanelView = !(isDateVariablePanelOpen || isImageBrowsePanelOpen || isDataSourcePanelOpen);
 
@@ -118,8 +129,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
-    const isCustomizeSubtitleDisplayed =
-        (isDataSourceDisplayed || isAvailableLayoutsDisplayed) && !isListVariablePanelOpen && !isDateVariablePanelOpen;
+    const isCustomizeSubtitleDisplayed = (isDataSourceDisplayed || isAvailableLayoutsDisplayed) && !fullScreenPanelOpen;
 
     const isAvailableLayoutsSectionDisplayed =
         isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && !isListVariablePanelOpen;
@@ -204,7 +214,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
                 <VariablesContainer>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
-                            {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
+                            {isDataSourceDisplayed && !fullScreenPanelOpen ? (
                                 <DataSourceInput
                                     currentRow={currentInputRow}
                                     currentRowIndex={currentRowIndex}
@@ -245,7 +255,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
                             {!layoutsMobileOptionsListOpen &&
                                 formBuilder.variables.active &&
-                                activePanel === PanelType.DEFAULT && (
+                                (activePanel === PanelType.DEFAULT || isDataSourceVariablePanelOpen) && (
                                     <>
                                         {isCustomizeSubtitleDisplayed && (
                                             <SectionWrapper
@@ -273,10 +283,10 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
                     <DataSourceTableWrapper>
                         <DataSourceTable
                             data={dataRows}
-                            hasMoreData={hasMoreRows}
-                            dataIsLoading={isLoading}
-                            selectedRow={currentRowIndex}
-                            onNextPageRequested={loadDataRows}
+                            hasNextPage={hasMoreRows}
+                            nextPageLoading={isLoading}
+                            selectedRowIndex={currentRowIndex}
+                            onNextPageRequested={loadNextPage}
                             onSelectedRowChanged={onSelectedRowChanged}
                         />
                     </DataSourceTableWrapper>

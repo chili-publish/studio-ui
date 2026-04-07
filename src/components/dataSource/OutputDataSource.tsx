@@ -30,8 +30,6 @@ const OutputDataSource = () => {
         error,
     } = useDataSource();
 
-    console.log('currentInputRow', currentRowIndex);
-
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);
     }, [setIsDataSourceModalOpen]);

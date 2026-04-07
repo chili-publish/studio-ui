@@ -11,12 +11,21 @@ interface TableModalProps {
     data: DataItem[];
     error?: string;
     hasMoreData?: boolean;
-    dataIsLoading?: boolean;
-    onNextPageRequested: () => void;
-    onClose: () => void;
 
-    selectedRow: number;
+    previousPageLoading?: boolean;
+    hasPreviousPage?: boolean;
+    onPreviousPageRequested?: () => void;
+
+    nextPageLoading?: boolean;
+    hasNextPage?: boolean;
+    onNextPageRequested: () => void;
+
+    selectedRowIndex?: number;
+    selectedRow?: DataItem;
+    selectedRowKey?: string;
+
     onSelectedRowChanged: (_: number) => void;
+    onClose: () => void;
 }
 
 const DataSourceModal = ({
@@ -24,11 +33,16 @@ const DataSourceModal = ({
     isOpen,
     data,
     error,
-    hasMoreData,
-    dataIsLoading,
+    hasPreviousPage,
+    hasNextPage,
+    previousPageLoading,
+    nextPageLoading,
+    onPreviousPageRequested,
     onNextPageRequested,
     onClose,
     selectedRow,
+    selectedRowIndex,
+    selectedRowKey,
     onSelectedRowChanged,
 }: TableModalProps) => {
     return (
@@ -48,10 +62,15 @@ const DataSourceModal = ({
                     <DataSourceTable
                         data={data}
                         error={error}
-                        hasNextPage={hasMoreData}
-                        nextPageLoading={dataIsLoading}
-                        selectedRowIndex={selectedRow}
+                        hasNextPage={hasNextPage}
+                        nextPageLoading={nextPageLoading}
+                        hasPreviousPage={hasPreviousPage}
+                        previousPageLoading={previousPageLoading}
+                        onPreviousPageRequested={onPreviousPageRequested}
                         onNextPageRequested={onNextPageRequested}
+                        selectedRowIndex={selectedRowIndex}
+                        selectedRow={selectedRow}
+                        selectedRowKey={selectedRowKey}
                         onSelectedRowChanged={onSelectedRowChanged}
                     />
                 </ModalLayout.Body>

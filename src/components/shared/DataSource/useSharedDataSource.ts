@@ -32,6 +32,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
     const { connectors } = useEnvironmentClientApi();
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
+    const [currentDataRow, setCurrentDataRow] = useState<DataItem | undefined>(undefined);
     const [dataRows, setDataRows] = useState<DataItem[]>([]);
 
     const [previousPageToken, setPreviousPageToken] = useState<string | null>(null);
@@ -46,9 +47,6 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
     const processingDataRow = useRef<number>(null);
 
     // const { hasChanged: variablesChanged } = useVariableHistory();
-    const currentDataRow = useMemo(() => {
-        return dataRows[currentRowIndex];
-    }, [dataRows, currentRowIndex]);
 
     const currentInputRow = useMemo(() => {
         if (!currentDataRow) return '';
@@ -79,13 +77,92 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
         setPreviousPageToken(null);
     }, []);
 
+    const onProcessingDataRowChange = useCallback((rowIndex: number) => {
+        processingDataRow.current = rowIndex;
+    }, []);
+
+    const loadBySelectedItem = useCallback(
+        async (connectorIdData: string, variableEntryId: string) => {
+            try {
+                const { parsedData: item } = await window.StudioUISDK.dataConnector.getPageItemById(
+                    connectorIdData,
+                    variableEntryId,
+                    {
+                        limit: PAGE_SIZE,
+                    },
+                );
+                const dataItem = item?.data;
+                const nextPageToken = item?.continuationToken;
+                const previosPageToken = item?.previousPageToken;
+                const isNextPageRequested = !!nextPageToken;
+                const isPreviousPage = !!previosPageToken;
+
+                if (isNextPageRequested) setIsNextPageLoading(true);
+                if (!isNextPageRequested && isPreviousPage) setIsPreviousPageLoading(true);
+
+                const pageConfig = {
+                    limit: PAGE_SIZE,
+                    continuationToken: nextPageToken,
+                    previousPageToken: !nextPageToken ? previosPageToken : undefined,
+                };
+
+                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(
+                    connectorIdData,
+                    pageConfig,
+                );
+                setError(undefined);
+                setPreviousPageToken(page?.previousPageToken ?? null);
+                setContinuationToken(page?.continuationToken ?? null);
+
+                if (isNextPageRequested) {
+                    setDataRows(dataItem ? [dataItem, ...(page?.data ?? [])] : (page?.data ?? []));
+                } else {
+                    setDataRows(dataItem ? [...(page?.data ?? []), dataItem] : (page?.data ?? []));
+                }
+                setIsNextPageLoading(false);
+                setIsPreviousPageLoading(false);
+
+                shouldUpdateDataRow.current = true;
+                setCurrentRowIndex(0);
+                setCurrentDataRow(dataItem ?? undefined);
+                return {
+                    data: dataItem ? [dataItem, ...(page?.data ?? [])] : (page?.data ?? []),
+                    hasNextPage: !!page?.continuationToken,
+                    hasPreviousPage: !!page?.previousPageToken,
+                };
+            } catch (err) {
+                resetData();
+                if (err instanceof ConnectorHttpError) {
+                    setError({
+                        status: err.statusCode,
+                        message: getDataSourceErrorText(err.statusCode),
+                    });
+                } else {
+                    setError({
+                        message: getDataSourceErrorText(),
+                    });
+                }
+                return {
+                    data: [],
+                    hasNextPage: false,
+                    hasPreviousPage: false,
+                };
+            } finally {
+                setIsNextPageLoading(false);
+                setIsPreviousPageLoading(false);
+            }
+        },
+        [resetData],
+    );
+
     const loadDataRowsByToken = useCallback(
         async (
-            connectorId: string,
+            connectorDataId: string,
             tokenConfig: { previousPageToken?: string | null } | { continuationToken?: string | null },
             options?: {
                 selectLastIncomingRowFromPreviousPage?: boolean;
                 selectFirstIncomingRowFromNextPage?: boolean;
+                preselectFirstRow?: boolean;
             },
         ) => {
             const nextPageRequested = 'continuationToken' in tokenConfig;
@@ -95,18 +172,24 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
             if (previousPageRequested) setIsPreviousPageLoading(true);
 
             const pageConfig = {
-                limit: PAGE_SIZE,
+                limit: 15,
                 continuationToken: nextPageRequested ? tokenConfig.continuationToken : undefined,
                 previousPageToken: previousPageRequested ? tokenConfig.previousPageToken : undefined,
             };
             try {
-                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(connectorId, pageConfig);
+                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(
+                    connectorDataId,
+                    pageConfig,
+                );
 
                 const rowItems = page?.data ?? [];
                 setError(undefined);
                 if (nextPageRequested) setContinuationToken(page?.continuationToken ?? null);
                 if (previousPageRequested) setPreviousPageToken(page?.previousPageToken ?? null);
-
+                if (options?.preselectFirstRow) {
+                    setCurrentRowIndex(0);
+                    setCurrentDataRow(rowItems[0] ?? undefined);
+                }
                 setDataRows((prevData) => {
                     let rowsToMerge = rowItems;
                     if (deduplicateRows) {
@@ -155,7 +238,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
                 setIsPreviousPageLoading(false);
             }
         },
-        [resetData],
+        [resetData, deduplicateRows],
     );
 
     const loadNextPage = useCallback(
@@ -187,6 +270,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
 
         shouldUpdateDataRow.current = true;
         setCurrentRowIndex(prevIndex);
+        setCurrentDataRow(dataRows[prevIndex]);
     }, [currentRowIndex, dataRows, previousPageToken, loadPreviousPage]);
 
     const getNextRow = useCallback(async () => {
@@ -200,14 +284,19 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
 
         shouldUpdateDataRow.current = true;
         setCurrentRowIndex(nextIndex);
+        setCurrentDataRow(dataRows[nextIndex]);
     }, [currentRowIndex, dataRows, continuationToken, loadNextPage]);
 
-    const updateSelectedRow = useCallback((index: number | undefined, row?: DataItem) => {
-        if (processingDataRow.current !== null) return;
+    const updateSelectedRow = useCallback(
+        (index: number | undefined, row?: DataItem) => {
+            if (processingDataRow.current !== null) return;
 
-        shouldUpdateDataRow.current = true;
-        setCurrentRowIndex(index ?? 0);
-    }, []);
+            shouldUpdateDataRow.current = true;
+            setCurrentRowIndex(index ?? 0);
+            setCurrentDataRow(row ?? (index !== undefined ? dataRows[index] : undefined));
+        },
+        [dataRows],
+    );
 
     const hasUserAuthorization = useAsyncMemo(async () => {
         if (!connectorId) {
@@ -232,12 +321,15 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
         currentInputRow,
         currentRowIndex,
         currentDataRow,
+        onSelectedRowChanged: setCurrentRowIndex,
 
         getPreviousRow,
         getNextRow,
         updateSelectedRow,
 
         dataRows,
+
+        loadBySelectedItem,
         loadDataRowsByToken,
         loadNextPage,
         loadPreviousPage,
@@ -256,6 +348,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
         error: error?.message,
 
         processingDataRow,
+        onProcessingDataRowChange,
         shouldUpdateDataRow,
     };
 };

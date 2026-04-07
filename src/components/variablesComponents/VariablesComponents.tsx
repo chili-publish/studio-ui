@@ -112,6 +112,7 @@ const VariablesComponents = (props: IVariablesComponents) => {
             )}
             {type === VariableType.dataSource && (
                 <DataSourceVariable
+                    key={variable.id}
                     variable={variable as DataSourceVariableType}
                     validationError={errMsg}
                     onValueChange={onVariableValueChange}

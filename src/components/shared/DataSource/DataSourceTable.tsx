@@ -49,6 +49,7 @@ const DataSourceTable = ({
                 onSelectedRowChanged={onSelectedRowChanged}
                 hasPreviousPage={hasPreviousPage ?? false}
                 previousPageLoading={previousPageLoading ?? false}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 onPreviousPageRequested={onPreviousPageRequested ?? (() => {})}
                 hasNextPage={hasNextPage ?? false}
                 nextPageLoading={nextPageLoading || false}
@@ -58,7 +59,7 @@ const DataSourceTable = ({
                 }}
                 hideIndex
                 {...(selectedRowIndex !== undefined ? { selectedRowIndex } : {})}
-                {...(selectedRowKey !== undefined ? { selectedRow, selectedRowKey } : {})}
+                {...(selectedRow !== undefined ? { selectedRow, selectedRowKey } : {})}
             />
         </InfiniteScrollingTableWithStateMessages>
     );

@@ -24,6 +24,7 @@ const useDataSource = () => {
         resetData,
 
         processingDataRow,
+        onProcessingDataRowChange,
         shouldUpdateDataRow,
         ...sharedDataSourceProps
     } = useSharedDataSource({ connectorId: dataSource?.id });
@@ -43,7 +44,7 @@ const useDataSource = () => {
 
     useEffect(() => {
         if (dataSource) {
-            loadDataRowsByToken(dataSource.id, { continuationToken: null });
+            loadDataRowsByToken(dataSource.id, { continuationToken: null }, { preselectFirstRow: true });
         }
     }, [dataSource, loadDataRowsByToken]);
 
@@ -53,15 +54,15 @@ const useDataSource = () => {
                 await window.StudioUISDK.dataSource.setDataRow(currentDataRow);
             }
         })();
-    }, [currentDataRow]);
+    }, [currentDataRow, shouldUpdateDataRow]);
 
     useEffect(() => {
         (async () => {
             if (!dataSource) return;
-            processingDataRow.current = currentRowIndex;
+            onProcessingDataRowChange(currentRowIndex);
             await window.StudioUISDK.undoManager.addCustomData(SELECTED_ROW_INDEX_KEY, `${currentRowIndex}`);
         })();
-    }, [currentRowIndex, dataSource]);
+    }, [currentRowIndex, dataSource, onProcessingDataRowChange]);
 
     useEffect(() => {
         const handler = (undoData: Record<string, string>) => {
@@ -104,6 +105,8 @@ const useDataSource = () => {
         isLoading: isNextPageLoading,
         hasMoreRows: hasNextPage,
         updateSelectedRow,
+
+        loadDataRowsByToken,
 
         hasDataConnector: !!dataSource,
 

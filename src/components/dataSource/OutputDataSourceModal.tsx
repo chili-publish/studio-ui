@@ -41,12 +41,12 @@ const OutputDataSourceModal = ({
             isOpen={isOpen}
             data={data}
             error={error}
-            hasMoreData={hasMoreData}
-            dataIsLoading={dataIsLoading}
+            hasNextPage={hasMoreData}
+            nextPageLoading={dataIsLoading}
             onNextPageRequested={onNextPageRequested}
-            onClose={onClose}
-            selectedRow={selectedRow}
+            selectedRowIndex={selectedRow}
             onSelectedRowChanged={onSelectedRowChanged}
+            onClose={onClose}
         />
     );
 };
