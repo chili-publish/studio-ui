@@ -23,12 +23,13 @@ export const exportDocument = async (
     outputSettingsId: string | undefined,
     isSandboxMode: boolean,
     environmentApiService: EnvironmentApiService,
+    isDev: boolean,
 ): Promise<StudioDownloadLinkResult> => {
     try {
         const documentResponse = await window.StudioUISDK.document.getCurrentState();
         let engineVersion: string | null = null;
 
-        if (!window.location.hostname.endsWith('chiligrafx.com')) {
+        if (isDev) {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             engineVersion = urlParams.get('engine');

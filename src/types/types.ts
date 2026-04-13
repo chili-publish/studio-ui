@@ -287,6 +287,7 @@ export interface IDefaultStudioUILoaderConfig {
     refreshTokenAction?: () => Promise<string | Error>;
 }
 export interface IStudioUILoaderConfig {
+    isDev?: boolean;
     selector: string;
     projectId?: string;
     graFxStudioEnvironmentApiBaseUrl: string;
