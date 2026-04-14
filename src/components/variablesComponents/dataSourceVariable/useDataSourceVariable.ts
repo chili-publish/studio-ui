@@ -7,12 +7,17 @@ import {
 import { DataItem, DataSourceVariableDataModel } from '@chili-publish/studio-sdk/connector-types/src';
 import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
 import useSharedDataSource from 'src/components/shared/DataSource/useSharedDataSource';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
+import { useAppDispatch } from 'src/store';
+import { validateVariable } from 'src/store/reducers/variableReducer';
 
 interface IUseDataSourceVariable {
     variable: DataSourceVariable;
 }
 const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     const { variable } = props;
+    const { projectConfig } = useUiConfigContext();
+    const dispatch = useAppDispatch();
     const rowKeyNameRef = useRef<string | null>(null);
 
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
@@ -77,9 +82,12 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         (async () => {
             if (currentDataRow && shouldUpdateDataRow.current) {
                 const value = rowKeyNameRef.current ? currentDataRow[rowKeyNameRef.current]?.toString() : undefined;
+
                 if (!value) return;
+
+                dispatch(validateVariable({ ...variable, entryId: value } as DataSourceVariable));
+                projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
                 await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
-                // call it here
             }
         })();
     }, [currentDataRow, variable.id, shouldUpdateDataRow]);
@@ -111,6 +119,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
                 loadPreselectedRow(variable.entryId);
                 return;
             } else {
+                // preselect the first row if no entryId is set
                 loadDataRowsByToken(connectorId ?? '', { continuationToken: null }, { preselectFirstRow: true });
                 return;
             }

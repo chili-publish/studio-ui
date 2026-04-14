@@ -11,11 +11,11 @@ import DataSourceTable from 'src/components/shared/DataSource/DataSourceTable';
 import { useAppDispatch } from 'src/store';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 
 interface IDataSourceVariableTableMode {
     variable: DataSourceVariable;
     validationError: string | undefined;
-    onValueChange?: (value: string, { changed }: { changed: boolean }) => void;
 }
 
 const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
@@ -24,10 +24,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
     const activePanel = useSelector(selectActivePanel);
     const activePanelOnMobile = activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
 
-    // focus and blur events should also be implemented
-    // onValueChange should be called to validate the variable
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variable, validationError, onValueChange } = props;
+    const { variable, validationError } = props;
     const {
         isDataSourceModalOpen,
         setIsDataSourceModalOpen,
@@ -49,6 +46,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
         error,
         requiresUserAuthorizationCheck,
     } = useDataSourceVariable({ variable });
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     const handleDataSourceOpen = useCallback(
         (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
@@ -62,13 +60,28 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
                 } else {
                     setIsDataSourceModalOpen(true);
                 }
+                onVariableFocus?.(variable.id);
             }
         },
-        [requiresUserAuthorizationCheck, loadNextPage, setIsDataSourceModalOpen, dispatch, isMobileSize, variable.id],
+        [
+            requiresUserAuthorizationCheck,
+            loadNextPage,
+            setIsDataSourceModalOpen,
+            dispatch,
+            isMobileSize,
+            variable.id,
+            onVariableFocus,
+        ],
     );
+
+    const handleDataSourceModalClose = useCallback(() => {
+        setIsDataSourceModalOpen(false);
+        onVariableBlur?.(variable.id);
+    }, [setIsDataSourceModalOpen, variable.id, onVariableBlur]);
+
     const placeholder = getVariablePlaceholder(variable);
     const selectedConnector = (variable.value as ConnectorDataSourceVariableSource)?.connectorId;
-    const configuredConnector = !!selectedConnector && !error;
+    const configuredConnector = !!selectedConnector;
 
     if (!configuredConnector) {
         return null;
@@ -99,7 +112,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
             <DataSourceInput
                 isDataRowIndexHidden={true}
                 currentRow={currentInputRow}
-                dataIsLoading={isNextPageLoading || isPreviousPageLoading || !currentDataRow}
+                dataIsLoading={isNextPageLoading || isPreviousPageLoading}
                 isEmptyState={!!error || dataRows.length === 0 || !currentDataRow}
                 isPrevDisabled={isPrevDisabled}
                 isNextDisabled={isNextDisabled}
@@ -123,7 +136,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
                     nextPageLoading={isNextPageLoading}
                     hasNextPage={hasNextPage}
                     onNextPageRequested={loadNextPage}
-                    onClose={() => setIsDataSourceModalOpen(false)}
+                    onClose={handleDataSourceModalClose}
                 />
             ) : null}
             {variable.helpText && !validationError ? (

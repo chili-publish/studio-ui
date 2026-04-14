@@ -15,23 +15,22 @@ import MobileDataSourceListModeControl from './mobile/MobileDataSourceListModeCo
 import { useSelector } from 'react-redux';
 import { PanelType, selectActivePanel } from 'src/store/reducers/panelReducer';
 import MobileDataSourceListModeOptions from './mobile/MobileDataSourceListModeOptions';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
+import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 
 interface IDataSourceVariableListMode {
     variable: DataSourceVariable;
     validationError: string | undefined;
-    onValueChange?: (value: string, { changed }: { changed: boolean }) => void;
 }
 const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
     const isMobileSize = useMobileSize();
     const activePanel = useSelector(selectActivePanel);
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean | null>(null);
+    const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    // focus and blur events should also be implemented
-    // onValueChange should be called to validate the variable
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variable, validationError, onValueChange } = props;
+    const { variable, validationError } = props;
     const {
         currentRowKey,
         updateSelectedRow,
@@ -50,14 +49,18 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
     const displayColumn = (variable.displayOptions as DataSourceVariableDisplayOptionsList)?.displayColumn;
     const options = useMemo(
         () =>
-            dataRows.map((row) => {
-                return {
-                    value: row[currentRowKey]?.toString() ?? '',
-                    label: `${row[displayColumn]?.toString()}`,
-                };
-            }),
+            dataRows
+                .map((row) => {
+                    if (!row[displayColumn]) return null;
+                    return {
+                        value: row[currentRowKey]?.toString() ?? '',
+                        label: `${row[displayColumn]?.toString()}`,
+                    };
+                })
+                .filter((option) => option !== null),
         [dataRows, currentRowKey, displayColumn],
     );
+
     const selectedValue = options.find((option) => option.value?.toString() === variable.entryId?.toString()) ?? null;
 
     const handlePageRequested = async (params: LoadPageParams) => {
@@ -82,7 +85,30 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
 
     const placeholder = getVariablePlaceholder(variable);
     const selectedConnector = (variable.value as ConnectorDataSourceVariableSource)?.connectorId;
-    const configuredConnector = !!selectedConnector && !error;
+    const configuredConnector = !!selectedConnector;
+
+    useEffect(() => {
+        if (isDropdownOpen === null) {
+            return;
+        }
+        if (isDropdownOpen) {
+            onVariableFocus?.(variable.id);
+        } else {
+            onVariableBlur?.(variable.id);
+        }
+    }, [isDropdownOpen, onVariableFocus, onVariableBlur, variable.id]);
+
+    useEffect(() => {
+        if (!isMobileSize) {
+            return;
+        }
+        const dropdownOpenOnMobile = activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE;
+        if (dropdownOpenOnMobile) {
+            onVariableFocus?.(variable.id);
+        } else {
+            onVariableBlur?.(variable.id);
+        }
+    }, [isMobileSize, activePanel, variable.id, onVariableFocus, onVariableBlur]);
 
     if (!configuredConnector) {
         return null;
@@ -107,8 +133,6 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
                 variable={variable}
                 validationError={validationError}
                 isLoading={isNextPageLoading || isPreviousPageLoading}
-                // onValueChange={onValueChange}
-                // onVariableFocus={() => {}}
             />
         );
     }
@@ -126,6 +150,12 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
                 dropDownIcon={AvailableIcons.faTable}
                 {...(dataRows.length > 0 && { initialHasPreviousPage: hasPreviousPage })}
                 {...(dataRows.length > 0 && { initialHasNextPage: hasNextPage })}
+                onMenuOpen={() => {
+                    setIsDropdownOpen(true);
+                }}
+                onMenuClose={() => {
+                    setIsDropdownOpen(false);
+                }}
             />
             {variable.helpText && !validationError ? (
                 <InputLabel labelFor={variable.id} label={variable.helpText} />
