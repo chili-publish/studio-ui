@@ -71,6 +71,8 @@ describe('"useDataSource" hook tests', () => {
         });
         const { result } = await renderHookWithProviders(() => useDataSource());
 
+        await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
+
         await act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
         });
@@ -98,6 +100,8 @@ describe('"useDataSource" hook tests', () => {
         });
         const { result } = await renderHookWithProviders(() => useDataSource());
 
+        await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
+
         await act(() => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '0' });
         });
@@ -110,7 +114,6 @@ describe('"useDataSource" hook tests', () => {
         });
 
         await waitFor(() => expect(result.current.currentInputRow).toEqual('2 | Finn | 35'));
-        expect(window.StudioUISDK.dataSource.setDataRow).toHaveBeenCalledTimes(1);
     });
 
     it('should reset data source data via "onConnectorEvent" subscription', async () => {

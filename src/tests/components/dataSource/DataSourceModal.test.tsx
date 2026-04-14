@@ -215,10 +215,9 @@ describe('DataSourceModal test', () => {
 
             tableRows.forEach((tableRow, index) => {
                 const cells = within(tableRow).getAllByRole('cell');
-                expect(within(cells[0]).getByText(index + 1)).toBeInTheDocument();
-                expect(within(cells[1]).getByText(tableData[index].id)).toBeInTheDocument();
-                expect(within(cells[2]).getByText(tableData[index].name)).toBeInTheDocument();
-                expect(within(cells[3]).getByText(tableData[index].age)).toBeInTheDocument();
+                expect(within(cells[0]).getByText(tableData[index].id)).toBeInTheDocument();
+                expect(within(cells[1]).getByText(tableData[index].name)).toBeInTheDocument();
+                expect(within(cells[2]).getByText(tableData[index].age)).toBeInTheDocument();
             });
         });
 

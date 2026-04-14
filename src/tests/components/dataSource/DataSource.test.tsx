@@ -234,12 +234,14 @@ describe('DataSource test', () => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
         });
 
-        await act(async () => {
-            await user.click(nextIcon);
+        await user.click(nextIcon);
+
+        await waitFor(() => expect(window.StudioUISDK.dataConnector.getPage).toHaveBeenCalledTimes(2));
+        await waitFor(() => {
+            expect(screen.getByText('Row 3')).toBeInTheDocument();
         });
 
         // next page of result is loaded
         expect(await screen.findByDisplayValue('3 | Mary | 15')).toBeInTheDocument();
-        expect(screen.getByText('Row 3')).toBeInTheDocument();
     });
 });

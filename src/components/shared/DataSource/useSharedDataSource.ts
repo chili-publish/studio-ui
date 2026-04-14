@@ -201,6 +201,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
                             shouldUpdateDataRow.current = true;
 
                             setCurrentRowIndex(prevData.length);
+                            setCurrentDataRow(rowsToMerge[0]);
                             return [...prevData, ...rowsToMerge];
                         }
                         return [...prevData, ...rowsToMerge];
@@ -209,6 +210,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
 
                         shouldUpdateDataRow.current = true;
                         setCurrentRowIndex(pickIdx);
+                        setCurrentDataRow(rowsToMerge[rowsToMerge.length - 1]);
                         return [...rowsToMerge, ...prevData];
                     } else {
                         setCurrentRowIndex((prev) => (prev ?? 0) + rowsToMerge.length);
