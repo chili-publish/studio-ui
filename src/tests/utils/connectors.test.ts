@@ -6,6 +6,7 @@ import {
     getRemoteConnector,
     isAuthenticationRequired,
     normalizeSupportedAuth,
+    parseConnectorHubIdFromExternalSourceId,
     verifyAuthentication,
 } from '../../utils/connectors';
 
@@ -53,6 +54,18 @@ describe('utils connectors', () => {
             expect(normalizeSupportedAuth('some-other-auth')).toBe('unknown');
             expect(normalizeSupportedAuth('basic')).toBe('unknown');
             expect(normalizeSupportedAuth('custom')).toBe('unknown');
+        });
+    });
+
+    describe('parseConnectorHubIdFromExternalSourceId', () => {
+        it('returns undefined for null, undefined, and empty string', () => {
+            expect(parseConnectorHubIdFromExternalSourceId(null)).toBeUndefined();
+            expect(parseConnectorHubIdFromExternalSourceId(undefined)).toBeUndefined();
+            expect(parseConnectorHubIdFromExternalSourceId('')).toBeUndefined();
+        });
+
+        it('returns the part before the last underscore as hub id', () => {
+            expect(parseConnectorHubIdFromExternalSourceId('hub_1.0.0')).toBe('hub');
         });
     });
 

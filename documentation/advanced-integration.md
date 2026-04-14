@@ -637,11 +637,12 @@ window.StudioUI.studioUILoaderConfig({
 
 Your callback receives a single object with this shape:
 
-| Field           | Type     | Description                                                                         |
-| --------------- | -------- | ----------------------------------------------------------------------------------- |
-| `id`            | `string` | Remote connector id — refers to the id of the connector in the **Environment API**. |
-| `name`          | `string` | Connector name.                                                                     |
-| `supportedAuth` | `string` | For this flow, Studio UI passes `'none'`.                                           |
+| Field            | Type                | Description                                                                         |
+| ---------------- | ------------------- | ----------------------------------------------------------------------------------- |
+| `id`             | `string`            | Remote connector id — refers to the id of the connector in the **Environment API**. |
+| `name`           | `string`            | Connector name.                                                                     |
+| `supportedAuth`  | `string`            | For this flow, Studio UI passes `'none'`.                                           |
+| `connectorHubId` | `string` (optional) | Additionally passed for hub-based connectors.                                       |
 
 ### Proactive token injection via _setHttpHeaders_
 

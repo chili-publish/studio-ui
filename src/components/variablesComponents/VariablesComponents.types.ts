@@ -40,14 +40,17 @@ export interface IBooleanVariable {
 export interface INumberVariable {
     variable: NumberVariable;
     validationError?: string;
-    onValueChange: (value: number, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
+    onValidateValue: (value: number) => void;
+    onCommitValue: (value: number) => Promise<EditorResponse<null> | null>;
 }
 export interface IDateVariable {
     variable: DateVariable;
     validationError?: string;
-    onValueChange?: (value: string, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
-    onBlur?: (value: string | null | undefined) => void;
-    setDate?: (value: string) => void;
+    /** When set (desktop), ISO 8601 date strings (YYYY-MM-DD) commit via SDK with draft revert on failure. Omit for mobile inline picker. */
+    onValidateValue?: (isoDate: string) => void;
+    onCommitValue?: (isoDate: string) => Promise<EditorResponse<null> | null>;
+    onBlur?: (isoDate: string | null | undefined) => void;
+    setDate?: (isoDate: string) => void;
     onCalendarOpen?: (_: DateVariable) => void;
     inline?: boolean;
     selected?: Date | null;

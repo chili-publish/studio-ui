@@ -50,6 +50,7 @@ import { EngineVersionManager } from './version-manager';
     const baseConfig = {
         projectId,
         projectName: 'Dev Run',
+        isDev: true,
         uiOptions: {
             widgets: {
                 backButton: { visible: true },

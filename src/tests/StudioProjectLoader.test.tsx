@@ -81,6 +81,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -105,6 +106,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiServiceWithNull,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -119,6 +121,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -137,6 +140,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -160,6 +164,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -179,6 +184,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -201,6 +207,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -228,6 +235,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 undefined,
                 undefined, // No upload URL
@@ -250,6 +258,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -296,6 +305,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -337,6 +347,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -351,6 +362,7 @@ describe('StudioProjectLoader', () => {
                 mockOutputSettingsId,
                 false,
                 mockEnvironmentApiService,
+                false,
             );
             expect(mockEnvironmentApiService.getOutputTaskResult).toHaveBeenCalledWith(mockTaskId);
             expect(result).toEqual(mockOutputResult);
@@ -373,6 +385,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -405,6 +418,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -428,6 +442,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 true, // sandbox mode
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -450,6 +465,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -478,6 +494,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiService,
@@ -513,6 +530,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -545,6 +563,7 @@ describe('StudioProjectLoader', () => {
                 mockGraFxStudioEnvironmentApiBaseUrl,
                 false,
                 false,
+                false,
                 mockEnvironmentApiService,
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
@@ -570,6 +589,7 @@ describe('StudioProjectLoader', () => {
             const loader = new StudioProjectLoader(
                 mockProjectId,
                 mockGraFxStudioEnvironmentApiBaseUrl,
+                false,
                 false,
                 false,
                 mockEnvironmentApiServiceWithError,
