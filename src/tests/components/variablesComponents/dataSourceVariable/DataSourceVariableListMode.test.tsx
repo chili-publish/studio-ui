@@ -232,7 +232,14 @@ describe('DataSourceVariableListMode', () => {
         });
 
         it('renders options matching displayColumn values', async () => {
-            renderComponent(createVariable(), undefined);
+            renderComponent(
+                createVariable({
+                    displayOptions: {
+                        displayColumn: 'name',
+                    },
+                } as unknown as Partial<DataSourceVariable>),
+                undefined,
+            );
 
             const combobox = await screen.findByRole('combobox');
             await user.click(combobox);
@@ -296,7 +303,7 @@ describe('DataSourceVariableListMode', () => {
         it('filters out rows where displayColumn is empty', async () => {
             setupSDKMocks([
                 { id: '1', name: 'Joe', age: 15 },
-                { id: '2', name: null, age: 18 },
+                { id: '2', name: 'John', age: 18 },
             ]);
             renderComponent(createVariable(), undefined);
 
