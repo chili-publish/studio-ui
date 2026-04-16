@@ -34,7 +34,7 @@ type UseDataSourceType = {
     connectorId?: string;
     deduplicateRows?: (newRows: DataItem[], existingRows: DataItem[]) => DataItem[];
 
-    getPageItemById: (itemId: string) => Promise<EditorResponse<BidirectionalDataPageItem>>;
+    getPageItemById?: (itemId: string) => Promise<EditorResponse<BidirectionalDataPageItem>>;
     getPage: (pageConfig: {
         continuationToken?: string | null;
         previousPageToken?: string | null;
@@ -185,6 +185,8 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
 
     const loadBySelectedItem = useCallback(
         async (variableEntryId: string) => {
+            if (!getPageItemById) return;
+
             let selectedItem: DataItem | null = null;
             let nextPageTokenFromItem: string | null = null;
             let previousPageTokenFromItem: string | null = null;

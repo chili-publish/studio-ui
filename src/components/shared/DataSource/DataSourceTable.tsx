@@ -37,6 +37,18 @@ const DataSourceTable = ({
     previousPageLoading,
     onPreviousPageRequested,
 }: DataSourceTableProps) => {
+    const previousPageProps = onPreviousPageRequested
+        ? ({
+              hasPreviousPage: hasPreviousPage ?? false,
+              previousPageLoading: previousPageLoading ?? false,
+              onPreviousPageRequested,
+          } as const)
+        : ({
+              hasPreviousPage: undefined as never,
+              previousPageLoading: undefined as never,
+              onPreviousPageRequested: undefined as never,
+          } as const);
+
     return (
         <InfiniteScrollingTableWithStateMessages
             errorMessage={error || ''}
@@ -47,10 +59,6 @@ const DataSourceTable = ({
             <InfiniteScrollingTable
                 rows={data}
                 onSelectedRowChanged={onSelectedRowChanged}
-                hasPreviousPage={hasPreviousPage ?? false}
-                previousPageLoading={previousPageLoading ?? false}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                onPreviousPageRequested={onPreviousPageRequested ?? (() => {})}
                 hasNextPage={hasNextPage ?? false}
                 nextPageLoading={nextPageLoading || false}
                 onNextPageRequested={onNextPageRequested}
@@ -60,6 +68,7 @@ const DataSourceTable = ({
                 hideIndex
                 {...(selectedRowIndex !== undefined ? { selectedRowIndex } : {})}
                 {...(selectedRow !== undefined ? { selectedRow, selectedRowKey } : {})}
+                {...previousPageProps}
             />
         </InfiniteScrollingTableWithStateMessages>
     );

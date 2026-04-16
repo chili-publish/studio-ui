@@ -3,16 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import useSharedDataSource from '../shared/DataSource/useSharedDataSource';
-import { getPage, getPageItemById } from '../shared/DataSource/dataSource.util';
+import { getPage } from '../shared/DataSource/dataSource.util';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
-    const getPageItemByIdFn = useCallback(
-        (itemId: string) => getPageItemById(dataSource?.id ?? '', itemId),
-        [dataSource?.id],
-    );
+
     const getPageFn = useCallback(
         (pageConfig: { continuationToken?: string | null; previousPageToken?: string | null }) =>
             getPage(dataSource?.id ?? '', pageConfig),
@@ -36,7 +33,6 @@ const useDataSource = () => {
         ...sharedDataSourceProps
     } = useSharedDataSource({
         connectorId: dataSource?.id,
-        getPageItemById: getPageItemByIdFn,
         getPage: getPageFn,
     });
 
