@@ -117,7 +117,8 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
                 previousPageToken: previousPageRequested ? tokenConfig.previousPageToken : undefined,
             };
             try {
-                const { parsedData: page } = await getPage(pageConfig);
+                const response = await getPage(pageConfig);
+                const page = response?.parsedData;
 
                 const rowItems = page?.data ?? [];
                 setError(undefined);

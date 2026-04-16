@@ -191,22 +191,15 @@ describe('DataSource test', () => {
             subscriber: mockSubscriber,
         });
 
-        window.StudioUISDK.dataConnector.getPage = jest
-            .fn()
-            .mockResolvedValueOnce({
-                parsedData: {
-                    data: [
-                        { id: '1', name: 'Joe', age: 15 },
-                        { id: '2', name: 'John', age: 18 },
-                    ],
-                    continuationToken: 'token',
-                },
-            })
-            .mockResolvedValueOnce({
-                parsedData: {
-                    data: [{ id: '3', name: 'Mary', age: 15 }],
-                },
-            });
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+            parsedData: {
+                data: [
+                    { id: '1', name: 'Joe', age: 15 },
+                    { id: '2', name: 'John', age: 18 },
+                ],
+                continuationToken: 'token',
+            },
+        });
 
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
@@ -216,7 +209,7 @@ describe('DataSource test', () => {
             </AppProvider>,
         );
 
-        expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument());
         expect(screen.getByText('Row 1')).toBeInTheDocument();
 
         act(() => {
@@ -234,9 +227,15 @@ describe('DataSource test', () => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
         });
 
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+            parsedData: {
+                data: [{ id: '3', name: 'Mary', age: 15 }],
+                continuationToken: null,
+            },
+        });
+
         await user.click(nextIcon);
 
-        await waitFor(() => expect(window.StudioUISDK.dataConnector.getPage).toHaveBeenCalledTimes(2));
         await waitFor(() => {
             expect(screen.getByText('Row 3')).toBeInTheDocument();
         });

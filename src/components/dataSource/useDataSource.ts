@@ -1,5 +1,5 @@
 import { ConnectorEvent, ConnectorEventType } from '@chili-publish/studio-sdk';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import useSharedDataSource from '../shared/DataSource/useSharedDataSource';
@@ -9,6 +9,15 @@ export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
 const useDataSource = () => {
     const { dataSource } = useAppContext();
+    const getPageItemByIdFn = useCallback(
+        (itemId: string) => getPageItemById(dataSource?.id ?? '', itemId),
+        [dataSource?.id],
+    );
+    const getPageFn = useCallback(
+        (pageConfig: { continuationToken?: string | null; previousPageToken?: string | null }) =>
+            getPage(dataSource?.id ?? '', pageConfig),
+        [dataSource?.id],
+    );
     const {
         currentRowIndex,
         currentDataRow,
@@ -27,8 +36,8 @@ const useDataSource = () => {
         ...sharedDataSourceProps
     } = useSharedDataSource({
         connectorId: dataSource?.id,
-        getPageItemById: (itemId: string) => getPageItemById(dataSource?.id ?? '', itemId),
-        getPage: (pageConfig) => getPage(dataSource?.id ?? '', pageConfig),
+        getPageItemById: getPageItemByIdFn,
+        getPage: getPageFn,
     });
 
     const { subscriber } = useSubscriberContext();
@@ -42,10 +51,10 @@ const useDataSource = () => {
     }
 
     useEffect(() => {
-        if (dataSource) {
+        if (dataSource?.id) {
             loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
         }
-    }, [dataSource, loadDataRowsByToken]);
+    }, [dataSource?.id, loadDataRowsByToken]);
 
     useEffect(() => {
         (async () => {
