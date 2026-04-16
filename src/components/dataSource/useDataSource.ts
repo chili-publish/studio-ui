@@ -2,10 +2,8 @@ import { ConnectorEvent, ConnectorEventType } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
-import { useAppDispatch } from '../../store';
-import { validateVariableList } from '../../store/reducers/variableReducer';
-import { useVariableHistory } from './useVariableHistory';
 import useSharedDataSource from '../shared/DataSource/useSharedDataSource';
+import { getPage, getPageItemById } from '../shared/DataSource/dataSource.util';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -27,14 +25,15 @@ const useDataSource = () => {
         onProcessingDataRowChange,
         shouldUpdateDataRow,
         ...sharedDataSourceProps
-    } = useSharedDataSource({ connectorId: dataSource?.id });
-
-    const dispatch = useAppDispatch();
+    } = useSharedDataSource({
+        connectorId: dataSource?.id,
+        getPageItemById: (itemId: string) => getPageItemById(dataSource?.id ?? '', itemId),
+        getPage: (pageConfig) => getPage(dataSource?.id ?? '', pageConfig),
+    });
 
     const { subscriber } = useSubscriberContext();
 
     const [prevDataRowIndex, setPrevDataRowIndex] = useState(currentRowIndex);
-    const { hasChanged: variablesChanged } = useVariableHistory();
 
     // keep track of the change of dataRow in order to be able to trigger variable validation
     // when the source of variable change comes from the undo/redo actions
@@ -44,7 +43,7 @@ const useDataSource = () => {
 
     useEffect(() => {
         if (dataSource) {
-            loadDataRowsByToken(dataSource.id, { continuationToken: null }, { preselectFirstRow: true });
+            loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
         }
     }, [dataSource, loadDataRowsByToken]);
 
@@ -83,22 +82,12 @@ const useDataSource = () => {
         const handler = (event: ConnectorEvent) => {
             if (event.type === ConnectorEventType.reloadRequired && event.id === dataSource?.id) {
                 resetData();
-                loadDataRowsByToken(dataSource.id, { continuationToken: null });
+                loadDataRowsByToken({ continuationToken: null });
             }
         };
         subscriber?.on('onConnectorEvent', handler);
         return () => subscriber?.off('onConnectorEvent', handler);
     }, [subscriber, dataSource, resetData, loadDataRowsByToken]);
-
-    useEffect(() => {
-        // In order to run "dirty" validation of variables at the right time,
-        // we check the ref that will be updated only after the execution of the `setDataRow` method above.
-        // The result of setDataRow leads to changing the variables, which will lead to the re-execution of this useEffect,
-        // since validateVariables is a callback that has a dependency on the "variables" value.
-        if (variablesChanged && currentDataRow) {
-            dispatch(validateVariableList());
-        }
-    }, [currentDataRow, variablesChanged, dispatch]);
 
     return {
         currentRowIndex,

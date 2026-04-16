@@ -1,16 +1,24 @@
 import { formatCell } from '@chili-publish/grafx-shared-components';
-import { ConnectorHttpError, DataItem } from '@chili-publish/studio-sdk';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+    BidirectionalDataPage,
+    BidirectionalDataPageItem,
+    ConnectorHttpError,
+    DataItem,
+    EditorResponse,
+} from '@chili-publish/studio-sdk';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncMemo } from 'use-async-memo';
 import { useUiConfigContext } from '../../../contexts/UiConfigContext';
 import { DataRemoteConnector } from '../../../utils/ApiTypes';
 import { getRemoteConnector, isAuthenticationRequired } from '../../../utils/connectors';
 import { useEnvironmentClientApi } from '../../../hooks/useEnvironmentClientApi';
 import { useDirection } from '../../../hooks/useDirection';
+import { useVariableHistory } from 'src/components/dataSource/useVariableHistory';
+import { validateVariableList } from 'src/store/reducers/variableReducer';
+import { useAppDispatch } from 'src/store';
+import { PAGE_SIZE } from './dataSource.util';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
-
-const PAGE_SIZE = 50;
 
 function getDataSourceErrorText(status?: number) {
     switch (status) {
@@ -25,8 +33,15 @@ function getDataSourceErrorText(status?: number) {
 type UseDataSourceType = {
     connectorId?: string;
     deduplicateRows?: (newRows: DataItem[], existingRows: DataItem[]) => DataItem[];
+
+    getPageItemById: (itemId: string) => Promise<EditorResponse<BidirectionalDataPageItem>>;
+    getPage: (pageConfig: {
+        continuationToken?: string | null;
+        previousPageToken?: string | null;
+    }) => Promise<EditorResponse<BidirectionalDataPage>>;
 };
-const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType) => {
+const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, getPage }: UseDataSourceType) => {
+    const dispatch = useAppDispatch();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { direction } = useDirection();
     const { connectors } = useEnvironmentClientApi();
@@ -46,7 +61,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
     const shouldUpdateDataRow = useRef(true);
     const processingDataRow = useRef<number>(null);
 
-    // const { hasChanged: variablesChanged } = useVariableHistory();
+    const { hasChanged: variablesChanged } = useVariableHistory();
 
     const currentInputRow = useMemo(() => {
         if (!currentDataRow) return '';
@@ -81,83 +96,8 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
         processingDataRow.current = rowIndex;
     }, []);
 
-    const loadBySelectedItem = useCallback(
-        async (connectorIdData: string, variableEntryId: string) => {
-            try {
-                const { parsedData: item } = await window.StudioUISDK.dataConnector.getPageItemById(
-                    connectorIdData,
-                    variableEntryId,
-                    {
-                        limit: PAGE_SIZE,
-                    },
-                );
-                const dataItem = item?.data;
-                const nextPageToken = item?.continuationToken;
-                const previosPageToken = item?.previousPageToken;
-                const isNextPageRequested = !!nextPageToken;
-                const isPreviousPage = !!previosPageToken;
-
-                if (isNextPageRequested) setIsNextPageLoading(true);
-                if (!isNextPageRequested && isPreviousPage) setIsPreviousPageLoading(true);
-
-                const pageConfig = {
-                    limit: PAGE_SIZE,
-                    continuationToken: nextPageToken,
-                    previousPageToken: !nextPageToken ? previosPageToken : undefined,
-                };
-
-                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(
-                    connectorIdData,
-                    pageConfig,
-                );
-                setError(undefined);
-                setPreviousPageToken(page?.previousPageToken ?? null);
-                setContinuationToken(page?.continuationToken ?? null);
-
-                if (isNextPageRequested) {
-                    setDataRows(dataItem ? [dataItem, ...(page?.data ?? [])] : (page?.data ?? []));
-                } else {
-                    setDataRows(dataItem ? [...(page?.data ?? []), dataItem] : (page?.data ?? []));
-                }
-                setIsNextPageLoading(false);
-                setIsPreviousPageLoading(false);
-
-                shouldUpdateDataRow.current = true;
-                setCurrentRowIndex(0);
-                setCurrentDataRow(dataItem ?? undefined);
-                return {
-                    data: dataItem ? [dataItem, ...(page?.data ?? [])] : (page?.data ?? []),
-                    hasNextPage: !!page?.continuationToken,
-                    hasPreviousPage: !!page?.previousPageToken,
-                };
-            } catch (err) {
-                resetData();
-                if (err instanceof ConnectorHttpError) {
-                    setError({
-                        status: err.statusCode,
-                        message: getDataSourceErrorText(err.statusCode),
-                    });
-                } else {
-                    setError({
-                        message: getDataSourceErrorText(),
-                    });
-                }
-                return {
-                    data: [],
-                    hasNextPage: false,
-                    hasPreviousPage: false,
-                };
-            } finally {
-                setIsNextPageLoading(false);
-                setIsPreviousPageLoading(false);
-            }
-        },
-        [resetData],
-    );
-
     const loadDataRowsByToken = useCallback(
         async (
-            connectorDataId: string,
             tokenConfig: { previousPageToken?: string | null } | { continuationToken?: string | null },
             options?: {
                 selectLastIncomingRowFromPreviousPage?: boolean;
@@ -172,20 +112,19 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
             if (previousPageRequested) setIsPreviousPageLoading(true);
 
             const pageConfig = {
-                limit: 15,
+                limit: PAGE_SIZE,
                 continuationToken: nextPageRequested ? tokenConfig.continuationToken : undefined,
                 previousPageToken: previousPageRequested ? tokenConfig.previousPageToken : undefined,
             };
             try {
-                const { parsedData: page } = await window.StudioUISDK.dataConnector.getPage(
-                    connectorDataId,
-                    pageConfig,
-                );
+                const { parsedData: page } = await getPage(pageConfig);
 
                 const rowItems = page?.data ?? [];
                 setError(undefined);
+
                 if (nextPageRequested) setContinuationToken(page?.continuationToken ?? null);
                 if (previousPageRequested) setPreviousPageToken(page?.previousPageToken ?? null);
+
                 if (options?.preselectFirstRow) {
                     setCurrentRowIndex(0);
                     setCurrentDataRow(rowItems[0] ?? undefined);
@@ -240,7 +179,58 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
                 setIsPreviousPageLoading(false);
             }
         },
-        [resetData, deduplicateRows],
+        [resetData, deduplicateRows, getPage],
+    );
+
+    const loadBySelectedItem = useCallback(
+        async (variableEntryId: string) => {
+            let selectedItem: DataItem | null = null;
+            let nextPageTokenFromItem: string | null = null;
+            let previousPageTokenFromItem: string | null = null;
+
+            try {
+                const { parsedData: item } = await getPageItemById(variableEntryId);
+
+                selectedItem = item?.data ?? null;
+                nextPageTokenFromItem = item?.continuationToken ?? null;
+                previousPageTokenFromItem = item?.previousPageToken ?? null;
+            } catch (err) {
+                setCurrentDataRow(undefined);
+                // Ignore failed getPageItemById call
+                // eslint-disable-next-line no-console
+                console.error(err);
+            }
+
+            // loadDataRowsByToken identifies load direction by a single token; prefer continuation over previous.
+            if (nextPageTokenFromItem) {
+                await loadDataRowsByToken({ continuationToken: nextPageTokenFromItem });
+                // In case the item contains a previous page token, update the state to reflect the previous page navigation
+                if (previousPageTokenFromItem) {
+                    setPreviousPageToken(previousPageTokenFromItem);
+                }
+            } else if (previousPageTokenFromItem) {
+                await loadDataRowsByToken({ previousPageToken: previousPageTokenFromItem });
+            } else {
+                await loadDataRowsByToken({ continuationToken: null });
+            }
+
+            if (selectedItem) {
+                setCurrentRowIndex(0);
+                setCurrentDataRow(selectedItem);
+                shouldUpdateDataRow.current = true;
+                setDataRows((prevData) => {
+                    const rowsToMerge = deduplicateRows ? deduplicateRows([selectedItem], prevData) : [selectedItem];
+                    // Next-chunk load: rows follow the selected item → selected row first. Previous-chunk (or first
+                    // page): older rows precede the selected item → selected row last.
+                    if (nextPageTokenFromItem) {
+                        return [...rowsToMerge, ...prevData];
+                    } else {
+                        return [...prevData, ...rowsToMerge];
+                    }
+                });
+            }
+        },
+        [deduplicateRows, loadDataRowsByToken, getPageItemById],
     );
 
     const loadNextPage = useCallback(
@@ -248,7 +238,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
             selectFirstIncomingRowFromNextPage?: boolean;
         }): Promise<{ data: DataItem[]; hasNextPage: boolean; hasPreviousPage: boolean }> => {
             if (!connectorId) return { data: [], hasNextPage: false, hasPreviousPage: false };
-            return loadDataRowsByToken(connectorId ?? '', { continuationToken }, options);
+            return loadDataRowsByToken({ continuationToken }, options);
         },
         [connectorId, continuationToken, loadDataRowsByToken],
     );
@@ -256,7 +246,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
     const loadPreviousPage = useCallback(
         async (options?: { selectLastIncomingRowFromPreviousPage?: boolean }) => {
             if (!connectorId) return { data: [], hasNextPage: false, hasPreviousPage: false };
-            return loadDataRowsByToken(connectorId ?? '', { previousPageToken }, options);
+            return loadDataRowsByToken({ previousPageToken }, options);
         },
         [connectorId, previousPageToken, loadDataRowsByToken],
     );
@@ -318,6 +308,16 @@ const useSharedDataSource = ({ connectorId, deduplicateRows }: UseDataSourceType
     const requiresUserAuthorizationCheck = useMemo(() => {
         return !currentInputRow && hasUserAuthorization && (!error || error.status === 401);
     }, [error, hasUserAuthorization, currentInputRow]);
+
+    useEffect(() => {
+        // In order to run "dirty" validation of variables at the right time,
+        // we check the ref that will be updated only after the execution of the `setDataRow` method above.
+        // The result of setDataRow leads to changing the variables, which will lead to the re-execution of this useEffect,
+        // since validateVariables is a callback that has a dependency on the "variables" value.
+        if (variablesChanged && currentDataRow) {
+            dispatch(validateVariableList());
+        }
+    }, [currentDataRow, variablesChanged, dispatch]);
 
     return {
         currentInputRow,

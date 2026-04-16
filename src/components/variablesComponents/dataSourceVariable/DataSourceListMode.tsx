@@ -9,13 +9,14 @@ import {
     ConnectorDataSourceVariableSource,
     DataSourceVariable,
     DataSourceVariableDisplayOptionsList,
+    DataSourceVariableSourceType,
 } from '@chili-publish/studio-sdk';
 import useDataSourceVariable from './useDataSourceVariable';
 import MobileDataSourceListModeControl from './mobile/MobileDataSourceListModeControl';
 import { useSelector } from 'react-redux';
 import { PanelType, selectActivePanel } from 'src/store/reducers/panelReducer';
 import MobileDataSourceListModeOptions from './mobile/MobileDataSourceListModeOptions';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
@@ -27,17 +28,17 @@ interface IDataSourceVariableListMode {
 const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
     const isMobileSize = useMobileSize();
     const activePanel = useSelector(selectActivePanel);
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean | null>(null);
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
     const { variable, validationError } = props;
     const {
         currentRowKey,
+        isDropdownOpen,
+        setIsDropdownOpen,
         updateSelectedRow,
         dataRows,
         loadPreviousPage,
         loadNextPage,
-        error,
         hasPreviousPage,
         hasNextPage,
         isPreviousPageLoading,
@@ -84,6 +85,7 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
     };
 
     const placeholder = getVariablePlaceholder(variable);
+    const isInjected = variable.value?.type === DataSourceVariableSourceType.injected;
     const selectedConnector = (variable.value as ConnectorDataSourceVariableSource)?.connectorId;
     const configuredConnector = !!selectedConnector;
 
@@ -103,6 +105,7 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
             return;
         }
         const dropdownOpenOnMobile = activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE;
+
         if (dropdownOpenOnMobile) {
             onVariableFocus?.(variable.id);
         } else {
@@ -110,7 +113,7 @@ const DataSourceVariableListMode = (props: IDataSourceVariableListMode) => {
         }
     }, [isMobileSize, activePanel, variable.id, onVariableFocus, onVariableBlur]);
 
-    if (!configuredConnector) {
+    if (!configuredConnector && !isInjected) {
         return null;
     }
 

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import {
     DataSourceVariable,
     DataSourceVariableDisplayOptionsList,
+    DataSourceVariableSourceType,
     VariableType,
     VariableVisibilityType,
 } from '@chili-publish/studio-sdk';
@@ -47,7 +48,7 @@ const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSource
         name: 'DataSourceVar',
         label: 'My Data Source',
         type: VariableType.dataSource,
-        value: { connectorId: 'connector-1' },
+        value: { connectorId: 'connector-1', type: DataSourceVariableSourceType.connector },
         isReadonly: false,
         isRequired: false,
         isVisible: true,

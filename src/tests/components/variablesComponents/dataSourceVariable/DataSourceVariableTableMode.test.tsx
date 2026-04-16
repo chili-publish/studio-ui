@@ -1,6 +1,11 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DataSourceVariable, VariableType, VariableVisibilityType } from '@chili-publish/studio-sdk';
+import {
+    DataSourceVariable,
+    DataSourceVariableSourceType,
+    VariableType,
+    VariableVisibilityType,
+} from '@chili-publish/studio-sdk';
 import { APP_WRAPPER } from '@tests/mocks/app';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSourceVariableTableMode from '../../../../components/variablesComponents/dataSourceVariable/DataSourceTableMode';
@@ -44,7 +49,7 @@ const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSource
         name: 'DataSourceVar',
         label: 'My Data Source',
         type: VariableType.dataSource,
-        value: { connectorId: 'connector-1' },
+        value: { connectorId: 'connector-1', type: DataSourceVariableSourceType.connector },
         isReadonly: false,
         isRequired: false,
         isVisible: true,

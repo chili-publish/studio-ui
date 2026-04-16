@@ -1,6 +1,10 @@
 import DataSourceInput from 'src/components/shared/DataSource/DataSourceInput';
 import useDataSourceVariable from './useDataSourceVariable';
-import { ConnectorDataSourceVariableSource, DataSourceVariable } from '@chili-publish/studio-sdk';
+import {
+    ConnectorDataSourceVariableSource,
+    DataSourceVariable,
+    DataSourceVariableSourceType,
+} from '@chili-publish/studio-sdk';
 import { useCallback } from 'react';
 import DataSourceModal from '../../shared/DataSource/DataSourceModal';
 import { InputLabel, useMobileSize } from '@chili-publish/grafx-shared-components';
@@ -52,7 +56,8 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
         (event: React.MouseEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
             // input value needs to be truncated when datatable is open
             event.currentTarget.blur();
-            if (requiresUserAuthorizationCheck) {
+            const isInjected = variable.value?.type === DataSourceVariableSourceType.injected;
+            if (requiresUserAuthorizationCheck && !isInjected) {
                 loadNextPage();
             } else {
                 if (isMobileSize) {
@@ -69,7 +74,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
             setIsDataSourceModalOpen,
             dispatch,
             isMobileSize,
-            variable.id,
+            variable,
             onVariableFocus,
         ],
     );
@@ -80,10 +85,12 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
     }, [setIsDataSourceModalOpen, variable.id, onVariableBlur]);
 
     const placeholder = getVariablePlaceholder(variable);
+
+    const isInjected = variable.value?.type === DataSourceVariableSourceType.injected;
     const selectedConnector = (variable.value as ConnectorDataSourceVariableSource)?.connectorId;
     const configuredConnector = !!selectedConnector;
 
-    if (!configuredConnector) {
+    if (!configuredConnector && !isInjected) {
         return null;
     }
 
