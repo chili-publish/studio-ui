@@ -58,6 +58,7 @@ jobs:
             subscription_id: ${{ steps.detect.outputs.subscription_id }}
             storage_account_name: ${{ steps.detect.outputs.storage_account_name }}
             purge_destination: ${{ steps.detect.outputs.purge_destination }}
+            update_global_latest: ${{ steps.global_latest.outputs.update_global_latest }}
         steps:
             - name: Detect release type
               id: detect
@@ -91,6 +92,37 @@ jobs:
                   # Extract version from tag (remove v prefix if present)
                   VERSION=$(echo "$TAG_NAME" | sed 's/^v//')
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+            - name: Compute global latest for CDN / main bump
+              id: global_latest
+              run: |
+                  if [ "${{ steps.detect.outputs.is_prd }}" != "true" ]; then
+                    echo "update_global_latest=true" >> $GITHUB_OUTPUT
+                    echo "Non-PRD release: always update upload/latest"
+                    exit 0
+                  fi
+
+                  VERSION="${{ steps.detect.outputs.version }}"
+                  HIGHEST=$(gh api "repos/${{ github.repository }}/releases" --paginate --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name' \
+                    | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+                    | sort -V \
+                    | tail -1)
+
+                  if [ -z "$HIGHEST" ]; then
+                    echo "update_global_latest=true" >> $GITHUB_OUTPUT
+                    echo "No stable semver releases found; updating upload/latest"
+                    exit 0
+                  fi
+
+                  if [ "$VERSION" = "$HIGHEST" ]; then
+                    echo "update_global_latest=true" >> $GITHUB_OUTPUT
+                    echo "PRD tag $VERSION is global highest stable; will update upload/latest and allow main bump"
+                  else
+                    echo "update_global_latest=false" >> $GITHUB_OUTPUT
+                    echo "PRD tag $VERSION is below global highest stable ($HIGHEST); skipping global upload/latest and main bump"
+                  fi
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     deploy-azure:
         needs: [validate-tag-release, detect-release-type]
@@ -147,7 +179,12 @@ jobs:
                   mkdir -p ${versionedLatestPath%"/merge"}
 
                   cp -R dist/* ${buildPath%"/merge"}
-                  cp -R dist/* ${latestPath%"/merge"}
+                  UPDATE_GLOBAL_LATEST="${{ needs.detect-release-type.outputs.update_global_latest }}"
+                  if [ "$UPDATE_GLOBAL_LATEST" = "true" ]; then
+                    cp -R dist/* ${latestPath%"/merge"}
+                  else
+                    echo "Skipping global upload/latest (old-line PRD tag)"
+                  fi
                   cp -R dist/* ${versionedLatestPath%"/merge"}
 
             - name: Azure Login
@@ -224,7 +261,7 @@ jobs:
 
     bump-main-version:
         needs: [validate-tag-release, detect-release-type, deploy-azure]
-        if: needs.validate-tag-release.outputs.release_exists == 'true' && needs.detect-release-type.outputs.is_prd == 'true'
+        if: needs.validate-tag-release.outputs.release_exists == 'true' && needs.detect-release-type.outputs.is_prd == 'true' && needs.detect-release-type.outputs.update_global_latest == 'true'
         runs-on: ubuntu-latest
         permissions:
             contents: write

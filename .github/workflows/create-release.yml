@@ -21,6 +21,11 @@ on:
                 description: "SDK version to use (e.g., 1.35.0 or 1.35.0-rc.0) or 'latest' to keep current version unchanged."
                 required: true
                 type: string
+            old_prd_hotfix_base_tag:
+                description: 'Optional. Old-line PRD hotfix only: existing stable PRD tag being patched (e.g. 1.37.2). Empty keeps current behavior.'
+                required: false
+                type: string
+                default: ''
 
 env:
     NODE_VERSION: 22.x
@@ -37,6 +42,7 @@ jobs:
             release_type: ${{ steps.prepare.outputs.release_type }}
             sdk_version: ${{ steps.prepare.outputs.sdk_version }}
             target_branch: ${{ steps.prepare.outputs.target_branch }}
+            old_prd_hotfix_base_tag: ${{ steps.prepare.outputs.old_prd_hotfix_base_tag }}
         steps:
             - name: Prepare release parameters
               id: prepare
@@ -60,6 +66,15 @@ jobs:
                   fi
                   SDK_VERSION="${{ github.event.inputs.sdk_version }}"
 
+                  OLD_PRD_HOTFIX_BASE_TAG="${{ github.event.inputs.old_prd_hotfix_base_tag }}"
+                  OLD_PRD_HOTFIX_BASE_TAG=$(echo "$OLD_PRD_HOTFIX_BASE_TAG" | xargs)
+                  if [ -n "$OLD_PRD_HOTFIX_BASE_TAG" ]; then
+                    if [ "$ENVIRONMENT" != "prd" ] || [ "$RELEASE_TYPE" != "hotfix" ]; then
+                      echo "❌ Error: old_prd_hotfix_base_tag may only be set when environment is prd and release_type is hotfix."
+                      exit 1
+                    fi
+                  fi
+
                   # Define target branch. It states for the branch that will be used for release commit history merges.
                   TARGET_BRANCH="main"
 
@@ -67,6 +82,7 @@ jobs:
                   echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
                   echo "sdk_version=$SDK_VERSION" >> $GITHUB_OUTPUT
                   echo "target_branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
+                  echo "old_prd_hotfix_base_tag=$OLD_PRD_HOTFIX_BASE_TAG" >> $GITHUB_OUTPUT
 
     uat-regular:
         needs: configure-parameters
@@ -285,6 +301,7 @@ jobs:
             version_commit_sha: ${{ steps.apply_version.outputs.version_commit_sha }}
             version_branch: ${{ steps.apply_version.outputs.version_branch }}
             previous_tag: ${{ steps.previous_tag.outputs.previous_tag }}
+            skip_github_latest: ${{ steps.old_line_context.outputs.skip_github_latest || 'false' }}
         steps:
             - name: Validate branch
               run: |
@@ -360,10 +377,63 @@ jobs:
 
                   echo "✅ UAT tag '$CURRENT_VERSION' found in GitHub releases"
 
+            # The following step will only run if old_prd_hotfix_base_tag is set
+            - name: Validate old-line PRD base tag
+              id: old_line_context
+              if: needs.configure-parameters.outputs.old_prd_hotfix_base_tag != ''
+              run: |
+                  set -euo pipefail
+                  BASE_RAW="${{ needs.configure-parameters.outputs.old_prd_hotfix_base_tag }}"
+                  BASE_RAW=$(echo "$BASE_RAW" | xargs)
+
+                  if ! [[ "$BASE_RAW" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    echo "❌ Error: old_prd_hotfix_base_tag must be semver X.Y.Z (e.g. 1.37.2), got: $BASE_RAW"
+                    exit 1
+                  fi
+
+                  if ! REL_JSON=$(gh release view "$BASE_RAW" --json tagName,isDraft,prerelease 2>/dev/null); then
+                    echo "❌ Error: No GitHub release found for tag $BASE_RAW"
+                    exit 1
+                  fi
+
+                  TAG_FOR_NOTES=$(echo "$REL_JSON" | jq -r '.tagName')
+                  REPO="${{ github.repository }}"
+                  HIGHEST=$(gh api "repos/$REPO/releases" --paginate --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name' \
+                    | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+                    | sort -V \
+                    | tail -1)
+
+                  if [ -z "$HIGHEST" ]; then
+                    echo "❌ Error: Could not determine highest stable PRD version from GitHub releases."
+                    exit 1
+                  fi
+
+                  LOWEST=$(printf '%s\n%s\n' "$BASE_RAW" "$HIGHEST" | sort -V | head -1)
+                  if [ "$BASE_RAW" = "$HIGHEST" ] || [ "$LOWEST" != "$BASE_RAW" ]; then
+                    echo "❌ Error: Old-line hotfix requires base ($BASE_RAW) to be strictly less than the global highest stable release ($HIGHEST)."
+                    echo "❌ If you are releasing the current line, leave old_prd_hotfix_base_tag empty."
+                    exit 1
+                  fi
+
+                  echo "is_old_line=true" >> $GITHUB_OUTPUT
+                  echo "skip_github_latest=true" >> $GITHUB_OUTPUT
+                  echo "base_normalized=$BASE_RAW" >> $GITHUB_OUTPUT
+                  echo "previous_tag_for_notes=$TAG_FOR_NOTES" >> $GITHUB_OUTPUT
+                  echo "✅ Old-line PRD base validated: $TAG_FOR_NOTES < global max $HIGHEST"
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
             - name: Find previous release tag
               id: previous_tag
               run: |
                   RELEASES_FILE="${{ steps.fetch_releases.outputs.releases_file }}"
+
+                  if [ "${{ steps.old_line_context.outputs.is_old_line }}" = "true" ]; then
+                    PREVIOUS_TAG="${{ steps.old_line_context.outputs.previous_tag_for_notes }}"
+                    echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+                    echo "📎 Using old-line base as previous tag for release notes: $PREVIOUS_TAG"
+                    exit 0
+                  fi
 
                   # For PRD releases, always use the latest production release as previous tag
                   PREVIOUS_TAG=$(jq -r '.[] | select(.isPrerelease == false) | .tagName' "$RELEASES_FILE" | head -1)
@@ -381,6 +451,19 @@ jobs:
               uses: ./.github/actions/bump-version
               with:
                   version_strategy: 'patch'
+
+            - name: Assert old-line bump matches expected patch
+              if: steps.old_line_context.outputs.is_old_line == 'true'
+              run: |
+                  BASE="${{ steps.old_line_context.outputs.base_normalized }}"
+                  NEW_TAG="${{ steps.bump_version.outputs.tag_name }}"
+                  IFS=. read -r ma mi pa <<< "$BASE"
+                  EXPECTED="${ma}.${mi}.$((pa + 1))"
+                  if [ "$NEW_TAG" != "$EXPECTED" ]; then
+                    echo "❌ Error: Expected bumped tag $EXPECTED after base $BASE, got $NEW_TAG"
+                    exit 1
+                  fi
+                  echo "✅ Bumped tag $NEW_TAG matches expected patch after base $BASE"
 
             - name: Validate SDK version (production)
               run: |
@@ -622,6 +705,7 @@ jobs:
                     echo "version_branch=${{ needs.production.outputs.version_branch }}" >> $GITHUB_OUTPUT
                     echo "previous_tag=${{ needs.production.outputs.previous_tag }}" >> $GITHUB_OUTPUT
                     echo "version_commit_sha=${{ needs.production.outputs.version_commit_sha }}" >> $GITHUB_OUTPUT
+                    echo "skip_github_latest=${{ needs.production.outputs.skip_github_latest }}" >> $GITHUB_OUTPUT
                   fi
 
                   # Map environment to release_type for create-gh-release action
@@ -667,6 +751,7 @@ jobs:
                   previous_tag: ${{ steps.version.outputs.previous_tag }}
                   target_ref: ${{ steps.version.outputs.version_commit_sha }}
                   release_type: ${{ steps.version.outputs.release_type }}
+                  skip_github_latest: ${{ steps.version.outputs.skip_github_latest || 'false' }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
