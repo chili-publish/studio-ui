@@ -12,6 +12,7 @@ import { getPage, getPageItemById } from 'src/components/shared/DataSource/dataS
 import useSharedDataSource from 'src/components/shared/DataSource/useSharedDataSource';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { useAppDispatch } from 'src/store';
+import { selectDataSourceVariableData, setDataSourceVariableData } from 'src/store/reducers/dataSourceVariableReducer';
 import { PanelType, selectActivePanel } from 'src/store/reducers/panelReducer';
 import { validateVariable } from 'src/store/reducers/variableReducer';
 
@@ -23,6 +24,10 @@ const isInjected = (value: DataSourceVariableSource): value is InjectedDataSourc
 };
 const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     const { variable } = props;
+
+    const cachedDataSourceVariableDataMap = useSelector(selectDataSourceVariableData);
+    const cachedDataSourceVariableData = cachedDataSourceVariableDataMap[variable.id];
+
     const activePanel = useSelector(selectActivePanel);
 
     const { projectConfig } = useUiConfigContext();
@@ -70,11 +75,27 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         return getPage(connectorId ?? '', pageConfig);
     };
 
+    const handleDataLoaded = useCallback(
+        (data: DataItem[], continuationToken: string | null, previousPageToken: string | null) => {
+            dispatch(
+                setDataSourceVariableData({
+                    variableId: variable.id,
+                    rowKey: rowKeyNameRef.current,
+                    data,
+                    continuationToken,
+                    previousPageToken,
+                }),
+            );
+        },
+        [variable.id, dispatch],
+    );
+
     const {
         currentDataRow,
 
         updateSelectedRow,
         dataRows,
+        setDataRowsAndTokens,
 
         isPrevDisabled,
         isNextDisabled,
@@ -97,6 +118,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         deduplicateRows: deduplicateRows,
         getPageItemById: getPageItem,
         getPage: getDataSourcePage,
+        onDataLoaded: handleDataLoaded,
     });
 
     const getRowIdPropName = useCallback(async () => {
@@ -158,6 +180,21 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
             return;
         }
 
+        if (cachedDataSourceVariableData?.data?.length) {
+            setDataRowsAndTokens(
+                cachedDataSourceVariableData.data,
+                cachedDataSourceVariableData.continuationToken,
+                cachedDataSourceVariableData.previousPageToken,
+            );
+            if (cachedDataSourceVariableData.rowKey) {
+                const rowIndex = cachedDataSourceVariableData.data.findIndex(
+                    (item) => item[cachedDataSourceVariableData.rowKey!]?.toString() === variable.entryId,
+                );
+                rowKeyNameRef.current = cachedDataSourceVariableData.rowKey;
+                updateSelectedRow(rowIndex, cachedDataSourceVariableData.data[rowIndex]);
+            }
+            return;
+        }
         if (!dataRows.length) {
             loadData(variable.entryId);
         }
@@ -165,7 +202,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
 
     useEffect(() => {
         loadDataForConnectorSource();
-    }, [connectorReady, dataRows.length]);
+    }, [connectorReady]);
 
     useEffect(() => {
         if (variable.value && !isInjected(variable.value)) {
@@ -183,18 +220,22 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
     }, [variable, activePanel, isDropdownOpen, isDataSourceModalOpen, dataRows.length]);
 
+    const checkConnectorState = useEffectEvent(async () => {
+        if (cachedDataSourceVariableData?.data?.length) {
+            setConnectorReady(true);
+            return;
+        }
+        const connectorState = await window.StudioUISDK.connector.getState(connectorId);
+        if (connectorState.parsedData?.type !== 'ready') {
+            await window.StudioUISDK.connector.waitToBeReady(connectorId, 20000);
+            setConnectorReady(true);
+        } else {
+            setConnectorReady(true);
+        }
+    });
     useEffect(() => {
-        const checkConnectorState = async () => {
-            const connectorState = await window.StudioUISDK.connector.getState(connectorId);
-            if (connectorState.parsedData?.type !== 'ready') {
-                await window.StudioUISDK.connector.waitToBeReady(connectorId, 20000);
-                setConnectorReady(true);
-            } else {
-                setConnectorReady(true);
-            }
-        };
         checkConnectorState();
-    }, [connectorId]);
+    }, [connectorId, cachedDataSourceVariableData?.data?.length]);
 
     return {
         isDataSourceModalOpen,

@@ -10,6 +10,7 @@ import appConfig from './reducers/appConfigReducer';
 import panel from './reducers/panelReducer';
 import variable from './reducers/variableReducer';
 import frames from './reducers/frameReducer';
+import dataSourceVariable from './reducers/dataSourceVariableReducer';
 
 const extraMiddlewares: Middleware[] = [errorHandlerMiddleware];
 
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
     panel,
     variable,
     frames,
+    dataSourceVariable,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -110,6 +110,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
     const isDataSourcePanelOpen = activePanel === PanelType.DATA_SOURCE_TABLE;
     const isListVariablePanelOpen = activePanel === PanelType.LIST_VARIABLE_PANEL;
     // part of the refactoring of the MobileVariablesTray
+
     const isDataSourceVariablePanelOpen =
         activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE ||
         activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
@@ -180,7 +181,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     return (
         <>
-            {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
+            {isDataSourcePanelOpen || isDataSourceVariablePanelOpen ? <DataSourceTrayStyle /> : null}
             {isDataSourceDisplayed && isDefaultPanelView && <DataSourceDefaultTrayStyle />}
             {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray

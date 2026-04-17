@@ -39,8 +39,15 @@ type UseDataSourceType = {
         continuationToken?: string | null;
         previousPageToken?: string | null;
     }) => Promise<EditorResponse<BidirectionalDataPage>>;
+    onDataLoaded?: (data: DataItem[], continuationToken: string | null, previousPageToken: string | null) => void;
 };
-const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, getPage }: UseDataSourceType) => {
+const useSharedDataSource = ({
+    connectorId,
+    deduplicateRows,
+    getPageItemById,
+    getPage,
+    onDataLoaded,
+}: UseDataSourceType) => {
     const dispatch = useAppDispatch();
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { direction } = useDirection();
@@ -48,7 +55,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
 
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
     const [currentDataRow, setCurrentDataRow] = useState<DataItem | undefined>(undefined);
-    const [dataRows, setDataRows] = useState<DataItem[]>([]);
+    const [dataRows, setDataRows] = useState<DataItem[] | null>(null);
 
     const [previousPageToken, setPreviousPageToken] = useState<string | null>(null);
     const [continuationToken, setContinuationToken] = useState<string | null>(null);
@@ -82,9 +89,15 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
     }, [currentRowIndex, isNextPageLoading, isPreviousPageLoading, previousPageToken]);
 
     const isNextDisabled = useMemo(() => {
-        const isLastRow = currentRowIndex === dataRows.length - 1;
+        const isLastRow = currentRowIndex === (dataRows?.length ?? 0) - 1;
         return isNextPageLoading || isPreviousPageLoading || (isLastRow && !continuationToken);
     }, [currentRowIndex, dataRows, isNextPageLoading, isPreviousPageLoading, continuationToken]);
+
+    useEffect(() => {
+        if (dataRows) {
+            onDataLoaded?.(dataRows, continuationToken, previousPageToken);
+        }
+    }, [dataRows, continuationToken, previousPageToken, onDataLoaded]);
 
     const resetData = useCallback(() => {
         setDataRows([]);
@@ -123,8 +136,11 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
                 const rowItems = page?.data ?? [];
                 setError(undefined);
 
-                if (nextPageRequested) setContinuationToken(page?.continuationToken ?? null);
-                if (previousPageRequested) setPreviousPageToken(page?.previousPageToken ?? null);
+                const continuationTokenFromPage = page?.continuationToken ?? null;
+                const previousPageTokenFromPage = page?.previousPageToken ?? null;
+
+                if (nextPageRequested) setContinuationToken(continuationTokenFromPage);
+                if (previousPageRequested) setPreviousPageToken(previousPageTokenFromPage);
 
                 if (options?.preselectFirstRow) {
                     setCurrentRowIndex(0);
@@ -133,28 +149,28 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
                 setDataRows((prevData) => {
                     let rowsToMerge = rowItems;
                     if (deduplicateRows) {
-                        rowsToMerge = deduplicateRows(rowItems, prevData);
+                        rowsToMerge = deduplicateRows(rowItems, prevData ?? []);
                     }
 
                     if (nextPageRequested) {
                         if (options?.selectFirstIncomingRowFromNextPage && rowsToMerge.length > 0) {
                             shouldUpdateDataRow.current = true;
 
-                            setCurrentRowIndex(prevData.length);
+                            setCurrentRowIndex(prevData?.length ?? 0);
                             setCurrentDataRow(rowsToMerge[0]);
-                            return [...prevData, ...rowsToMerge];
+                            return [...(prevData ?? []), ...rowsToMerge];
                         }
-                        return [...prevData, ...rowsToMerge];
+                        return [...(prevData ?? []), ...rowsToMerge];
                     } else if (options?.selectLastIncomingRowFromPreviousPage && rowsToMerge.length > 0) {
                         const pickIdx = rowsToMerge.length - 1;
 
                         shouldUpdateDataRow.current = true;
                         setCurrentRowIndex(pickIdx);
                         setCurrentDataRow(rowsToMerge[rowsToMerge.length - 1]);
-                        return [...rowsToMerge, ...prevData];
+                        return [...rowsToMerge, ...(prevData ?? [])];
                     } else {
                         setCurrentRowIndex((prev) => (prev ?? 0) + rowsToMerge.length);
-                        return [...rowsToMerge, ...prevData];
+                        return [...rowsToMerge, ...(prevData ?? [])];
                     }
                 });
                 return {
@@ -222,13 +238,18 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
                 setCurrentDataRow(selectedItem);
                 shouldUpdateDataRow.current = true;
                 setDataRows((prevData) => {
-                    const rowsToMerge = deduplicateRows ? deduplicateRows([selectedItem], prevData) : [selectedItem];
+                    const rowsToMerge = deduplicateRows
+                        ? deduplicateRows([selectedItem], prevData ?? [])
+                        : [selectedItem];
                     // Next-chunk load: rows follow the selected item → selected row first. Previous-chunk (or first
                     // page): older rows precede the selected item → selected row last.
+
                     if (nextPageTokenFromItem) {
-                        return [...rowsToMerge, ...prevData];
+                        const rows = [...rowsToMerge, ...(prevData ?? [])];
+                        return rows;
                     } else {
-                        return [...prevData, ...rowsToMerge];
+                        const rows = [...(prevData ?? []), ...rowsToMerge];
+                        return rows;
                     }
                 });
             }
@@ -265,21 +286,21 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
 
         shouldUpdateDataRow.current = true;
         setCurrentRowIndex(prevIndex);
-        setCurrentDataRow(dataRows[prevIndex]);
+        setCurrentDataRow(dataRows?.[prevIndex] ?? undefined);
     }, [currentRowIndex, dataRows, previousPageToken, loadPreviousPage]);
 
     const getNextRow = useCallback(async () => {
         if (processingDataRow.current !== null) return;
-        if (continuationToken && currentRowIndex === dataRows.length - 1) {
+        if (continuationToken && currentRowIndex === (dataRows?.length ?? 0) - 1) {
             await loadNextPage({ selectFirstIncomingRowFromNextPage: true });
             return;
         }
         let nextIndex = currentRowIndex + 1;
-        nextIndex = nextIndex < dataRows.length - 1 ? nextIndex : dataRows.length - 1;
+        nextIndex = nextIndex < (dataRows?.length ?? 0) - 1 ? nextIndex : (dataRows?.length ?? 0) - 1;
 
         shouldUpdateDataRow.current = true;
         setCurrentRowIndex(nextIndex);
-        setCurrentDataRow(dataRows[nextIndex]);
+        setCurrentDataRow(dataRows?.[nextIndex] ?? undefined);
     }, [currentRowIndex, dataRows, continuationToken, loadNextPage]);
 
     const updateSelectedRow = useCallback(
@@ -288,7 +309,7 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
 
             shouldUpdateDataRow.current = true;
             setCurrentRowIndex(index ?? 0);
-            setCurrentDataRow(row ?? (index !== undefined ? dataRows[index] : undefined));
+            setCurrentDataRow(row ?? (index !== undefined ? dataRows?.[index] : undefined));
         },
         [dataRows],
     );
@@ -322,6 +343,15 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
         }
     }, [currentDataRow, variablesChanged, dispatch]);
 
+    const setDataRowsAndTokens = useCallback(
+        (data: DataItem[], continuationTokenParam: string | null, previousPageTokenParam: string | null) => {
+            setDataRows(data);
+            setContinuationToken(continuationTokenParam);
+            setPreviousPageToken(previousPageTokenParam);
+        },
+        [],
+    );
+
     return {
         currentInputRow,
         currentRowIndex,
@@ -332,7 +362,8 @@ const useSharedDataSource = ({ connectorId, deduplicateRows, getPageItemById, ge
         getNextRow,
         updateSelectedRow,
 
-        dataRows,
+        dataRows: dataRows ?? [],
+        setDataRowsAndTokens,
 
         loadBySelectedItem,
         loadDataRowsByToken,
