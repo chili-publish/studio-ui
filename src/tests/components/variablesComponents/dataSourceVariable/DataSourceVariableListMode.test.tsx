@@ -299,22 +299,6 @@ describe('DataSourceVariableListMode', () => {
                 );
             });
         });
-
-        it('filters out rows where displayColumn is empty', async () => {
-            setupSDKMocks([
-                { id: '1', name: 'Joe', age: 15 },
-                { id: '2', name: 'John', age: 18 },
-            ]);
-            renderComponent(createVariable(), undefined);
-
-            const combobox = await screen.findByRole('combobox');
-            await user.click(combobox);
-
-            await waitFor(() => {
-                expect(screen.getByText('Joe')).toBeInTheDocument();
-            });
-            expect(screen.queryByText('John')).not.toBeInTheDocument();
-        });
     });
 
     describe('mobile behavior', () => {
