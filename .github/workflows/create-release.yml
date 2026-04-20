@@ -75,7 +75,7 @@ jobs:
                     fi
                   fi
 
-                  # Define target branch. It states for the branch that will be used for release commit history merges.
+                  # Integration branch for branch-validation (UAT from main, PRD not from main). Merge-back uses target_branch below unless old_prd_hotfix_base_tag is set (finalize-release skips merge to main).
                   TARGET_BRANCH="main"
 
                   echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
@@ -780,6 +780,7 @@ jobs:
               with:
                   source_branch: ${{ steps.version.outputs.version_branch }}
                   target_branch: ${{ needs.configure-parameters.outputs.target_branch }}
+                  merge_into_target: ${{ needs.configure-parameters.outputs.old_prd_hotfix_base_tag == '' && 'true' || 'false' }}
               env:
                   GITHUB_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
 
