@@ -351,6 +351,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Validate UAT tag exists
+              if: needs.configure-parameters.outputs.old_prd_hotfix_base_tag == ''
               run: |
                   RELEASES_FILE="${{ steps.fetch_releases.outputs.releases_file }}"
 
