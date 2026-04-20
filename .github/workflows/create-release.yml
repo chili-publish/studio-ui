@@ -395,6 +395,16 @@ jobs:
                     echo "❌ Error: No GitHub release found for tag $BASE_RAW"
                     exit 1
                   fi
+                  IS_DRAFT=$(echo "$REL_JSON" | jq -r '.isDraft')
+                  IS_PRERELEASE=$(echo "$REL_JSON" | jq -r '.prerelease')
+                  if [ "$IS_DRAFT" = "true" ]; then
+                    echo "❌ Error: old_prd_hotfix_base_tag ($BASE_RAW) is a draft release. Only finalized releases can be patched."
+                    exit 1
+                  fi
+                  if [ "$IS_PRERELEASE" = "true" ]; then
+                    echo "❌ Error: old_prd_hotfix_base_tag ($BASE_RAW) is a prerelease. Only stable PRD releases can be patched."
+                    exit 1
+                  fi
 
                   TAG_FOR_NOTES=$(echo "$REL_JSON" | jq -r '.tagName')
                   REPO="${{ github.repository }}"
