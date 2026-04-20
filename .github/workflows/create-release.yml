@@ -418,6 +418,8 @@ jobs:
                     exit 1
                   fi
 
+                  # We need to make sure that the entered version (BASE_RAW) is strictly less than the global highest stable release
+                  # LOWEST is min(base, highest)
                   LOWEST=$(printf '%s\n%s\n' "$BASE_RAW" "$HIGHEST" | sort -V | head -1)
                   if [ "$BASE_RAW" = "$HIGHEST" ] || [ "$LOWEST" != "$BASE_RAW" ]; then
                     echo "❌ Error: Old-line hotfix requires base ($BASE_RAW) to be strictly less than the global highest stable release ($HIGHEST)."
