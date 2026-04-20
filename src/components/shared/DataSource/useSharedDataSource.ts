@@ -169,6 +169,9 @@ const useSharedDataSource = ({
                         setCurrentDataRow(rowsToMerge[rowsToMerge.length - 1]);
                         return [...rowsToMerge, ...(prevData ?? [])];
                     } else {
+                        // when previous page is requested, we need to update the current row index to keep the table selected row in the same position
+                        // what previously was at index 0, now should be at index rowsToMerge.length
+                        // the content of the data row itself does not change
                         setCurrentRowIndex((prev) => (prev ?? 0) + rowsToMerge.length);
                         return [...rowsToMerge, ...(prevData ?? [])];
                     }

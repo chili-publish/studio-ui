@@ -87,7 +87,7 @@ const useDataSource = () => {
         const handler = (event: ConnectorEvent) => {
             if (event.type === ConnectorEventType.reloadRequired && event.id === dataSource?.id) {
                 resetData();
-                loadDataRowsByToken({ continuationToken: null });
+                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
             }
         };
         subscriber?.on('onConnectorEvent', handler);
