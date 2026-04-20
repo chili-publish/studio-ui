@@ -428,6 +428,13 @@ jobs:
                     exit 1
                   fi
 
+                  BASE_LINE="${BASE_RAW%.*}"
+                  HIGHEST_LINE="${HIGHEST%.*}"
+                  if [ "$BASE_LINE" = "$HIGHEST_LINE" ]; then
+                    echo "❌ Error: old_prd_hotfix_base_tag ($BASE_RAW) is on the current release line ($HIGHEST_LINE). Leave it empty for current-line hotfixes."
+                    exit 1
+                  fi
+
                   echo "is_old_line=true" >> $GITHUB_OUTPUT
                   echo "skip_github_latest=true" >> $GITHUB_OUTPUT
                   echo "base_normalized=$BASE_RAW" >> $GITHUB_OUTPUT
