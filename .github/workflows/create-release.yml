@@ -781,7 +781,6 @@ jobs:
               with:
                   source_branch: ${{ steps.version.outputs.version_branch }}
                   target_branch: ${{ needs.configure-parameters.outputs.target_branch }}
-                  merge_into_target: ${{ needs.configure-parameters.outputs.previous_prd_release_version == '' && 'true' || 'false' }}
               env:
                   GITHUB_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
 
