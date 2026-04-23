@@ -22,7 +22,7 @@ on:
                 required: true
                 type: string
             previous_prd_release_version:
-                description: 'Optional. Only for old-line PRD hotfix releases. Existing stable PRD version to patch (e.g. 1.37.2). Empty keeps current behavior.'
+                description: 'Optional. Only for old-line PRD hotfix. Stable PRD to patch (e.g. 1.37.2). Empty = current line. UAT old-line: deploy infers from tag vs GitHub latest.'
                 required: false
                 type: string
                 default: ''
