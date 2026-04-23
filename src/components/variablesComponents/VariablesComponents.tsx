@@ -121,7 +121,7 @@ const VariablesComponents = (props: IVariablesComponents) => {
                     onChange={(val) => dispatch(validateVariable(val))}
                 />
             )}
-            {type === VariableType.dataSource && variable.name.includes('91') && (
+            {type === VariableType.dataSource && (
                 <DataSourceVariable
                     key={variable.id}
                     variable={variable as DataSourceVariableType}
