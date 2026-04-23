@@ -4,7 +4,7 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
 import MobileVariables from '../../../components/variables/mobileVariables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';

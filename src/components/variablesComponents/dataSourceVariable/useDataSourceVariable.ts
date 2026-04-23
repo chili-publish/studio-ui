@@ -156,21 +156,24 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         getRowIdPropName();
     }, [getRowIdPropName]);
 
+    const handleVariableValueChanged = useEffectEvent(async () => {
+        if (currentDataRow) {
+            const value = rowKeyNameRef.current ? currentDataRow[rowKeyNameRef.current]?.toString() : undefined;
+
+            if (!value || value === variable.entryId) return;
+
+            dispatch(validateVariable({ ...variable, entryId: value } as DataSourceVariable));
+            projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
+            await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
+        }
+    });
     useEffect(() => {
         (async () => {
-            if (currentDataRow) {
-                const value = rowKeyNameRef.current ? currentDataRow[rowKeyNameRef.current]?.toString() : undefined;
-
-                if (!value || value === variable.entryId) return;
-
-                dispatch(validateVariable({ ...variable, entryId: value } as DataSourceVariable));
-                projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
-                await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
-            }
+            handleVariableValueChanged();
         })();
-    }, [currentDataRow, variable.id, dispatch, projectConfig, variable]);
+    }, [currentDataRow]);
 
-    const loadDataForConnectorSource = useEffectEvent(() => {
+    const loadDataForConnectorSource = useEffectEvent((entryId?: string) => {
         if (!connectorReady) {
             return;
         }
@@ -188,21 +191,25 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
             );
             if (cachedDataSourceVariableData.rowKey) {
                 const rowIndex = cachedDataSourceVariableData.data.findIndex(
-                    (item) => item[cachedDataSourceVariableData.rowKey!]?.toString() === variable.entryId,
+                    (item) => item[cachedDataSourceVariableData.rowKey!]?.toString() === entryId,
                 );
+                const value = cachedDataSourceVariableData.data[rowIndex];
                 rowKeyNameRef.current = cachedDataSourceVariableData.rowKey;
-                updateSelectedRow(rowIndex, cachedDataSourceVariableData.data[rowIndex]);
+
+                if (value) {
+                    updateSelectedRow(rowIndex, value);
+                }
             }
             return;
         }
         if (!dataRows.length) {
-            loadData(variable.entryId);
+            loadData(entryId);
         }
     });
 
     useEffect(() => {
-        loadDataForConnectorSource();
-    }, [connectorReady]);
+        loadDataForConnectorSource(variable.entryId);
+    }, [connectorReady, variable.entryId]);
 
     useEffect(() => {
         if (variable.value && !isInjected(variable.value)) {
@@ -221,7 +228,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     }, [variable, activePanel, isDropdownOpen, isDataSourceModalOpen, dataRows.length]);
 
     const checkConnectorState = useEffectEvent(async () => {
-        if (cachedDataSourceVariableData?.data?.length) {
+        if (cachedDataSourceVariableData?.data?.length || !connectorId) {
             setConnectorReady(true);
             return;
         }

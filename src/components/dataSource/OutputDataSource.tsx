@@ -5,7 +5,7 @@ import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
 import OutputDataSourceInput from './OutputDataSourceInput';
 import OutputDataSourceModal from './OutputDataSourceModal';
-import useDataSource from './useDataSource';
+import useOutputDataSource from './useOutputDataSource';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
 const OutputDataSource = () => {
@@ -28,7 +28,7 @@ const OutputDataSource = () => {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useOutputDataSource();
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);

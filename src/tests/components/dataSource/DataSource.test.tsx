@@ -8,7 +8,7 @@ import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({

@@ -11,7 +11,7 @@ import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constan
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import DataSourceInput from '../../dataSource/OutputDataSourceInput';
 import DataSourceTable from '../../shared/DataSource/DataSourceTable';
-import useDataSource from '../../dataSource/useDataSource';
+import useOutputDataSource from '../../dataSource/useOutputDataSource';
 import AvailableLayouts from '../../layout-panels/leftPanel/AvailableLayouts';
 import LayoutProperties from '../../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
@@ -83,7 +83,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useOutputDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         requiresUserAuthorizationCheck,

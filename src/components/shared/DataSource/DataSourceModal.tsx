@@ -47,7 +47,7 @@ const DataSourceModal = ({
 }: TableModalProps) => {
     return (
         <>
-            <ModalStyle />
+            <ModalStyle hasError={!!error} />
             <ModalLayout.Container
                 id={MODAL_ID}
                 anchorId={APP_WRAPPER_ID}

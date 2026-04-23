@@ -1,4 +1,3 @@
-import { ConnectorEvent, ConnectorEventType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
@@ -7,7 +6,7 @@ import { getPage } from '../shared/DataSource/dataSource.util';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
-const useDataSource = () => {
+const useOutputDataSource = () => {
     const { dataSource } = useAppContext();
 
     const getPageFn = useCallback(
@@ -25,7 +24,6 @@ const useDataSource = () => {
         updateSelectedRow,
 
         loadDataRowsByToken,
-        resetData,
 
         processingDataRow,
         onProcessingDataRowChange,
@@ -83,17 +81,6 @@ const useDataSource = () => {
         return () => subscriber?.off('onCustomUndoDataChanged', handler);
     }, [subscriber, updateSelectedRow, currentRowIndex]);
 
-    useEffect(() => {
-        const handler = (event: ConnectorEvent) => {
-            if (event.type === ConnectorEventType.reloadRequired && event.id === dataSource?.id) {
-                resetData();
-                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
-            }
-        };
-        subscriber?.on('onConnectorEvent', handler);
-        return () => subscriber?.off('onConnectorEvent', handler);
-    }, [subscriber, dataSource, resetData, loadDataRowsByToken]);
-
     return {
         currentRowIndex,
         isLoading: isNextPageLoading,
@@ -108,4 +95,4 @@ const useDataSource = () => {
     };
 };
 
-export default useDataSource;
+export default useOutputDataSource;
