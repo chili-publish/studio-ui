@@ -2,8 +2,6 @@ import { formatCell } from '@chili-publish/grafx-shared-components';
 import {
     BidirectionalDataPage,
     BidirectionalDataPageItem,
-    ConnectorEvent,
-    ConnectorEventType,
     ConnectorHttpError,
     DataItem,
     EditorResponse,
@@ -19,7 +17,6 @@ import { useVariableHistory } from 'src/components/dataSource/useVariableHistory
 import { validateVariableList } from 'src/store/reducers/variableReducer';
 import { useAppDispatch } from 'src/store';
 import { PAGE_SIZE } from './dataSource.util';
-import { useSubscriberContext } from 'src/contexts/Subscriber';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -72,8 +69,6 @@ const useSharedDataSource = ({
     const processingDataRow = useRef<number>(null);
 
     const { hasChanged: variablesChanged } = useVariableHistory();
-
-    const { subscriber } = useSubscriberContext();
 
     const currentInputRow = useMemo(() => {
         if (!currentDataRow) return '';
@@ -343,6 +338,15 @@ const useSharedDataSource = ({
         return !currentInputRow && hasUserAuthorization && (!error || error.status === 401);
     }, [error, hasUserAuthorization, currentInputRow]);
 
+    const setDataRowsAndTokens = useCallback(
+        (data: DataItem[], continuationTokenParam: string | null, previousPageTokenParam: string | null) => {
+            setDataRows(data);
+            setContinuationToken(continuationTokenParam);
+            setPreviousPageToken(previousPageTokenParam);
+        },
+        [],
+    );
+
     useEffect(() => {
         // In order to run "dirty" validation of variables at the right time,
         // we check the ref that will be updated only after the execution of the `setDataRow` method above.
@@ -352,26 +356,6 @@ const useSharedDataSource = ({
             dispatch(validateVariableList());
         }
     }, [currentDataRow, variablesChanged, dispatch]);
-
-    useEffect(() => {
-        const handler = (event: ConnectorEvent) => {
-            if (event.type === ConnectorEventType.reloadRequired && event.id === connectorId) {
-                resetData();
-                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
-            }
-        };
-        subscriber?.on('onConnectorEvent', handler);
-        return () => subscriber?.off('onConnectorEvent', handler);
-    }, [subscriber, connectorId, loadDataRowsByToken]);
-
-    const setDataRowsAndTokens = useCallback(
-        (data: DataItem[], continuationTokenParam: string | null, previousPageTokenParam: string | null) => {
-            setDataRows(data);
-            setContinuationToken(continuationTokenParam);
-            setPreviousPageToken(previousPageTokenParam);
-        },
-        [],
-    );
 
     return {
         currentInputRow,
@@ -384,12 +368,13 @@ const useSharedDataSource = ({
         updateSelectedRow,
 
         dataRows: dataRows ?? [],
-        setDataRowsAndTokens,
 
         loadBySelectedItem,
         loadDataRowsByToken,
         loadNextPage,
         loadPreviousPage,
+        resetData,
+        setDataRowsAndTokens,
 
         isNextPageLoading,
         isPreviousPageLoading,

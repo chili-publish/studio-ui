@@ -3,6 +3,7 @@ import { useAppContext } from '../../contexts/AppProvider';
 import { useSubscriberContext } from '../../contexts/Subscriber';
 import useSharedDataSource from '../shared/DataSource/useSharedDataSource';
 import { getPage } from '../shared/DataSource/dataSource.util';
+import { ConnectorEvent, ConnectorEventType } from '@chili-publish/studio-sdk';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -24,6 +25,7 @@ const useOutputDataSource = () => {
         updateSelectedRow,
 
         loadDataRowsByToken,
+        resetData,
 
         processingDataRow,
         onProcessingDataRowChange,
@@ -80,6 +82,17 @@ const useOutputDataSource = () => {
         subscriber?.on('onCustomUndoDataChanged', handler);
         return () => subscriber?.off('onCustomUndoDataChanged', handler);
     }, [subscriber, updateSelectedRow, currentRowIndex]);
+
+    useEffect(() => {
+        const handler = (event: ConnectorEvent) => {
+            if (event.type === ConnectorEventType.reloadRequired && event.id === dataSource?.id) {
+                resetData();
+                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
+            }
+        };
+        subscriber?.on('onConnectorEvent', handler);
+        return () => subscriber?.off('onConnectorEvent', handler);
+    }, [subscriber, dataSource?.id, loadDataRowsByToken, resetData]);
 
     return {
         currentRowIndex,

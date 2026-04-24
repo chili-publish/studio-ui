@@ -1,5 +1,7 @@
 import {
     ConnectorDataSourceVariableSource,
+    ConnectorEvent,
+    ConnectorEventType,
     DataSourceVariable,
     DataSourceVariableSource,
     DataSourceVariableSourceType,
@@ -10,6 +12,7 @@ import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { getPage, getPageItemById } from 'src/components/shared/DataSource/dataSource.util';
 import useSharedDataSource from 'src/components/shared/DataSource/useSharedDataSource';
+import { useSubscriberContext } from 'src/contexts/Subscriber';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { useAppDispatch } from 'src/store';
 import { selectDataSourceVariableData, setDataSourceVariableData } from 'src/store/reducers/dataSourceVariableReducer';
@@ -35,6 +38,8 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
 
     const [connectorReady, setConnectorReady] = useState(false);
     const rowKeyNameRef = useRef<string | null>(null);
+
+    const { subscriber } = useSubscriberContext();
 
     // for table mode
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
@@ -111,6 +116,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
 
         loadBySelectedItem,
         loadDataRowsByToken,
+        resetData,
 
         ...sharedDataSourceProps
     } = useSharedDataSource({
@@ -120,19 +126,6 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         getPage: getDataSourcePage,
         onDataLoaded: handleDataLoaded,
     });
-
-    const getRowIdPropName = useCallback(async () => {
-        if (variable.value && isInjected(variable.value)) {
-            const injectedVariable = variable.value as InjectedDataSourceVariableSource;
-            rowKeyNameRef.current = injectedVariable.itemIdPropertyName;
-            return;
-        }
-
-        if (connectorReady && connectorId && !rowKeyNameRef.current) {
-            const model = await window.StudioUISDK.dataConnector.getModel(connectorId);
-            rowKeyNameRef.current = (model.parsedData as DataSourceVariableDataModel)?.itemIdPropertyName;
-        }
-    }, [connectorId, connectorReady, variable.value]);
 
     const loadPreselectedRow = useEffectEvent((entryId: string) => {
         if (!isNextPageLoading && !isPreviousPageLoading) {
@@ -152,10 +145,6 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
     });
 
-    useEffect(() => {
-        getRowIdPropName();
-    }, [getRowIdPropName]);
-
     const handleVariableValueChanged = useEffectEvent(async () => {
         if (currentDataRow) {
             const value = rowKeyNameRef.current ? currentDataRow[rowKeyNameRef.current]?.toString() : undefined;
@@ -173,7 +162,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         })();
     }, [currentDataRow]);
 
-    const loadDataForConnectorSource = useEffectEvent((entryId?: string) => {
+    const loadDataForConnectorSource = useEffectEvent(async (entryId?: string) => {
         if (!connectorReady) {
             return;
         }
@@ -181,6 +170,11 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         const isConnector = variable.value?.type === DataSourceVariableSourceType.connector;
         if (!isConnector) {
             return;
+        }
+
+        if (connectorId && !rowKeyNameRef.current) {
+            const model = await window.StudioUISDK.dataConnector.getModel(connectorId);
+            rowKeyNameRef.current = (model.parsedData as DataSourceVariableDataModel)?.itemIdPropertyName;
         }
 
         if (cachedDataSourceVariableData?.data?.length) {
@@ -215,6 +209,10 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         if (variable.value && !isInjected(variable.value)) {
             return;
         }
+
+        const injectedVariable = variable.value as InjectedDataSourceVariableSource;
+        rowKeyNameRef.current = injectedVariable.itemIdPropertyName;
+
         // for injected source, load data when component open as the data is injected manually by the user
         // and there is no event to trigger the data reload
         const listModeOpenOnMobile = activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE;
@@ -228,7 +226,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     }, [variable, activePanel, isDropdownOpen, isDataSourceModalOpen, dataRows.length]);
 
     const checkConnectorState = useEffectEvent(async () => {
-        if (cachedDataSourceVariableData?.data?.length || !connectorId) {
+        if (dataRows.length || !connectorId) {
             setConnectorReady(true);
             return;
         }
@@ -242,7 +240,19 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     });
     useEffect(() => {
         checkConnectorState();
-    }, [connectorId, cachedDataSourceVariableData?.data?.length]);
+    }, [connectorId, dataRows.length]);
+
+    useEffect(() => {
+        const handler = (event: ConnectorEvent) => {
+            if (!connectorId || !connectorReady) return;
+            if (event.type === ConnectorEventType.reloadRequired && event.id === connectorId) {
+                resetData();
+                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
+            }
+        };
+        subscriber?.on('onConnectorEvent', handler);
+        return () => subscriber?.off('onConnectorEvent', handler);
+    }, [subscriber, connectorId, loadDataRowsByToken, connectorReady, resetData]);
 
     return {
         isDataSourceModalOpen,
