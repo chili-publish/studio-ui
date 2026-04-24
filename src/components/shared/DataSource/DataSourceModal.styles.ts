@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const MODAL_ID = 'data-source-table';
-export const ModalStyle = createGlobalStyle<{ hasError?: boolean }>`
+export const ModalStyle = createGlobalStyle<{ centerContent?: boolean }>`
    #${MODAL_ID} {
         padding-bottom: 0;
         min-height: 38rem;
@@ -18,8 +18,8 @@ export const ModalStyle = createGlobalStyle<{ hasError?: boolean }>`
         display: flex;
         justify-content: center;
 
-        ${({ hasError }) =>
-            hasError &&
+        ${({ centerContent }) =>
+            centerContent &&
             `
             align-items: center;
         `}

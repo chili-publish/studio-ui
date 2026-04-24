@@ -47,7 +47,7 @@ const DataSourceModal = ({
 }: TableModalProps) => {
     return (
         <>
-            <ModalStyle hasError={!!error} />
+            <ModalStyle centerContent={!!error || data.length === 0} />
             <ModalLayout.Container
                 id={MODAL_ID}
                 anchorId={APP_WRAPPER_ID}
