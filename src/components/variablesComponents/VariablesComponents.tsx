@@ -14,9 +14,9 @@ import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppProvider';
 import BooleanVariable from './BooleanVariable';
 import MultiLineTextVariable from './MultiLineTextVariable';
-import NumberVariable from './NumberVariable';
+import NumberVariable from './numberVariable/NumberVariable';
 import TextVariable from './TextVariable';
-import { isDateVariable, isNumberVariable, isTextVariable, TextVariable as TextVariableType } from './Variable';
+import { isTextVariable, TextVariable as TextVariableType } from './Variable';
 import { IVariablesComponents } from './VariablesComponents.types';
 import DateVariable from './dateVariable/DateVariable';
 import ImageVariable from './imageVariable/ImageVariable';
@@ -43,18 +43,27 @@ const VariablesComponents = (props: IVariablesComponents) => {
 
     const onVariableValueChange = useCallback(
         (val: string | number, { changed }: { changed: boolean }) => {
-            if (isTextVariable(variable) || isNumberVariable(variable) || isDateVariable(variable)) {
-                dispatch(
-                    validateVariable({ ...variable, value: val } as
-                        | TextVariableType
-                        | NumberVariableType
-                        | DateVariableType),
-                );
+            if (isTextVariable(variable)) {
+                dispatch(validateVariable({ ...variable, value: val } as TextVariableType));
                 if (changed) return handleValueChange(val);
             }
             return null;
         },
         [handleValueChange, variable, dispatch],
+    );
+
+    const onValidateNumberValue = useCallback(
+        (val: number) => {
+            dispatch(validateVariable({ ...variable, value: val } as NumberVariableType));
+        },
+        [dispatch, variable],
+    );
+
+    const onValidateDateValue = useCallback(
+        (val: string) => {
+            dispatch(validateVariable({ ...variable, value: val } as DateVariableType));
+        },
+        [dispatch, variable],
     );
 
     const onImageVariableRemove = useCallback(async () => {
@@ -94,14 +103,16 @@ const VariablesComponents = (props: IVariablesComponents) => {
                 <NumberVariable
                     variable={variable as NumberVariableType}
                     validationError={errMsg}
-                    onValueChange={onVariableValueChange}
+                    onValidateValue={onValidateNumberValue}
+                    onCommitValue={handleValueChange}
                 />
             )}
             {type === VariableType.date && variable.isVisible && (
                 <DateVariable
                     variable={variable as DateVariableType}
                     validationError={errMsg}
-                    onValueChange={onVariableValueChange}
+                    onValidateValue={onValidateDateValue}
+                    onCommitValue={handleValueChange}
                     onBlur={onValidate}
                     onCalendarOpen={onCalendarOpen}
                     isOpenOnMobile={false}
