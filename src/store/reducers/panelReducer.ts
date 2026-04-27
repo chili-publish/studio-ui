@@ -8,6 +8,8 @@ export const enum PanelType {
     DATE_VARIABLE_PICKER = 'date_variable_picker',
     DATA_SOURCE_TABLE = 'data_source_table',
     LIST_VARIABLE_PANEL = 'list_variable_panel',
+    DATA_SOURCE_VARIABLE_LIST_MODE = 'data_source_variable_list_mode',
+    DATA_SOURCE_VARIABLE_TABLE_MODE = 'data_source_variable_table_mode',
 }
 
 type PanelState = {
@@ -31,6 +33,20 @@ export const showImagePanel = createAsyncThunk(
 
 export const showListVariablePanel = createAsyncThunk(
     'panel/showListVariablePanel',
+    ({ variableId }: { variableId: string }, { dispatch }) => {
+        dispatch(setCurrentSelectedVariableId(variableId));
+    },
+);
+
+export const showDataSourceVariableListModePanel = createAsyncThunk(
+    'panel/showDataSourceVariableListModePanel',
+    ({ variableId }: { variableId: string }, { dispatch }) => {
+        dispatch(setCurrentSelectedVariableId(variableId));
+    },
+);
+
+export const showDataSourceVariableTableModePanel = createAsyncThunk(
+    'panel/showDataSourceVariableTableModePanel',
     ({ variableId }: { variableId: string }, { dispatch }) => {
         dispatch(setCurrentSelectedVariableId(variableId));
     },
@@ -60,6 +76,12 @@ export const panelSlice = createSlice({
         });
         builder.addCase(showListVariablePanel.fulfilled, (state) => {
             state.activePanel = PanelType.LIST_VARIABLE_PANEL;
+        });
+        builder.addCase(showDataSourceVariableListModePanel.fulfilled, (state) => {
+            state.activePanel = PanelType.DATA_SOURCE_VARIABLE_LIST_MODE;
+        });
+        builder.addCase(showDataSourceVariableTableModePanel.fulfilled, (state) => {
+            state.activePanel = PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
         });
     },
 });

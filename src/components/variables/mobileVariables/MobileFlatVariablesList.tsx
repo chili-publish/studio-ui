@@ -7,8 +7,13 @@ import { isListVariable } from '../../variablesComponents/Variable';
 import VariablesComponents from '../../variablesComponents/VariablesComponents';
 import { HelpTextWrapper } from '../../variablesComponents/VariablesComponents.styles';
 import { ComponentWrapper } from '../VariablesPanel.styles';
-import { showDatePickerPanel, showListVariablePanel } from '../../../store/reducers/panelReducer';
-import { selectVariablesValidation } from '../../../store/reducers/variableReducer';
+import {
+    PanelType,
+    selectActivePanel,
+    showDatePickerPanel,
+    showListVariablePanel,
+} from '../../../store/reducers/panelReducer';
+import { selectCurrentVariableId, selectVariablesValidation } from '../../../store/reducers/variableReducer';
 import { useAppDispatch } from '../../../store';
 
 interface MobileFlatVariablesListProps {
@@ -18,10 +23,17 @@ const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) =>
     const dispatch = useAppDispatch();
     const variablesValidation = useSelector(selectVariablesValidation);
 
+    const activePanel = useSelector(selectActivePanel);
+    const currentVariableId = useSelector(selectCurrentVariableId);
+    const isDataSourceVariablePanelOpen =
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE ||
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
     return (
         <>
             {variables.map((variable: Variable) => {
                 if (!variable.isVisible) return null;
+                // initial refactoring of MobileTrayView which is too complex
+                if (isDataSourceVariablePanelOpen && currentVariableId !== variable.id) return null;
 
                 const errMsg = variablesValidation?.[variable.id]?.errorMsg;
                 // custom list variable component for mobile view

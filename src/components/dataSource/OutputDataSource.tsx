@@ -3,12 +3,12 @@ import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { useAppContext } from '../../contexts/AppProvider';
 import { PanelTitle, SectionHelpText, SectionWrapper } from '../shared/Panel.styles';
-import DataSourceInput from './DataSourceInput';
-import DataSourceModal from './DataSourceModal';
-import useDataSource from './useDataSource';
+import OutputDataSourceInput from './OutputDataSourceInput';
+import OutputDataSourceModal from './OutputDataSourceModal';
+import useOutputDataSource from './useOutputDataSource';
 import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
 
-const DataSource = () => {
+const OutputDataSource = () => {
     const { isDataSourceModalOpen, setIsDataSourceModalOpen } = useAppContext();
     const { formBuilder } = useUserInterfaceDetailsContext();
     const { getUITranslation } = useUITranslations();
@@ -22,13 +22,13 @@ const DataSource = () => {
         hasMoreRows,
         isPrevDisabled,
         isNextDisabled,
-        loadDataRows,
+        loadNextPage,
         getPreviousRow,
         getNextRow,
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useOutputDataSource();
 
     const onDataSourceModalClose = useCallback(() => {
         setIsDataSourceModalOpen(false);
@@ -46,12 +46,12 @@ const DataSource = () => {
             // input value needs to be truncated when datatable is open
             event.currentTarget.blur();
             if (requiresUserAuthorizationCheck) {
-                loadDataRows();
+                loadNextPage();
             } else {
                 setIsDataSourceModalOpen(true);
             }
         },
-        [requiresUserAuthorizationCheck, loadDataRows, setIsDataSourceModalOpen],
+        [requiresUserAuthorizationCheck, loadNextPage, setIsDataSourceModalOpen],
     );
 
     const header = getUITranslation(['formBuilder', 'datasource', 'header'], formBuilder.datasource?.header);
@@ -65,7 +65,7 @@ const DataSource = () => {
                 <PanelTitle margin="0">{header}</PanelTitle>
                 {helpText && <SectionHelpText>{helpText}</SectionHelpText>}
             </SectionWrapper>
-            <DataSourceInput
+            <OutputDataSourceInput
                 currentRow={currentInputRow}
                 currentRowIndex={currentRowIndex}
                 dataIsLoading={isLoading}
@@ -77,7 +77,7 @@ const DataSource = () => {
                 onNextClick={getNextRow}
             />
             {isDataSourceModalOpen ? (
-                <DataSourceModal
+                <OutputDataSourceModal
                     isOpen={isDataSourceModalOpen}
                     data={dataRows}
                     error={error}
@@ -85,7 +85,7 @@ const DataSource = () => {
                     onSelectedRowChanged={onSelectedRowChanged}
                     dataIsLoading={isLoading}
                     hasMoreData={hasMoreRows}
-                    onNextPageRequested={loadDataRows}
+                    onNextPageRequested={loadNextPage}
                     onClose={onDataSourceModalClose}
                 />
             ) : null}
@@ -93,4 +93,4 @@ const DataSource = () => {
     );
 };
 
-export default DataSource;
+export default OutputDataSource;

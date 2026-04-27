@@ -5,8 +5,8 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { APP_WRAPPER } from '@tests/mocks/app';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import DataSource from '../../../components/dataSource/DataSource';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import OutputDataSource from '../../../components/dataSource/OutputDataSource';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
@@ -75,7 +75,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -101,7 +101,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -127,7 +127,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -153,7 +153,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -183,7 +183,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,
@@ -215,10 +215,9 @@ describe('DataSourceModal test', () => {
 
             tableRows.forEach((tableRow, index) => {
                 const cells = within(tableRow).getAllByRole('cell');
-                expect(within(cells[0]).getByText(index + 1)).toBeInTheDocument();
-                expect(within(cells[1]).getByText(tableData[index].id)).toBeInTheDocument();
-                expect(within(cells[2]).getByText(tableData[index].name)).toBeInTheDocument();
-                expect(within(cells[3]).getByText(tableData[index].age)).toBeInTheDocument();
+                expect(within(cells[0]).getByText(tableData[index].id)).toBeInTheDocument();
+                expect(within(cells[1]).getByText(tableData[index].name)).toBeInTheDocument();
+                expect(within(cells[2]).getByText(tableData[index].age)).toBeInTheDocument();
             });
         });
 
@@ -243,7 +242,7 @@ describe('DataSourceModal test', () => {
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
                     <div id={APP_WRAPPER_ID}>
-                        <DataSource />
+                        <OutputDataSource />
                     </div>
                 </AppProvider>
             </UiThemeProvider>,

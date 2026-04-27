@@ -1,9 +1,11 @@
 import { FontSizes } from '@chili-publish/grafx-shared-components';
 import styled from 'styled-components';
 
-export const DropdownContainer = styled.div`
+export const DropdownContainer = styled.div<{ disabled?: boolean }>`
     display: flex;
     flex-direction: column;
+    opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export const MobileDropdownValue = styled.div`

@@ -4,7 +4,7 @@ import { mockLayout, mockLayouts } from '@mocks/mockLayout';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
 import MobileVariables from '../../../components/variables/mobileVariables/MobileVariables';
 import AppProvider from '../../../contexts/AppProvider';
 import FeatureFlagProvider from '../../../contexts/FeatureFlagProvider';
@@ -145,10 +145,13 @@ describe('MobileDataSource test', () => {
             await user.click(screen.getByDisplayValue('1 | Joe | 15'));
         });
 
+        let dataRowsTable: HTMLElement;
         await waitFor(() => {
-            const dataRowsTable = screen.getByRole('table');
+            dataRowsTable = screen.getByRole('table');
             expect(dataRowsTable).toBeInTheDocument();
+        });
 
+        await waitFor(() => {
             const allRows = within(dataRowsTable).getAllByRole('row');
             const [header, ...tableRows] = allRows;
             expect(within(header).getByText('id')).toBeInTheDocument();
@@ -159,10 +162,9 @@ describe('MobileDataSource test', () => {
 
             tableRows.forEach((tableRow, index) => {
                 const cells = within(tableRow).getAllByRole('cell');
-                expect(within(cells[0]).getByText(index + 1)).toBeInTheDocument();
-                expect(within(cells[1]).getByText(dataRows[index].id)).toBeInTheDocument();
-                expect(within(cells[2]).getByText(dataRows[index].name)).toBeInTheDocument();
-                expect(within(cells[3]).getByText(dataRows[index].age)).toBeInTheDocument();
+                expect(within(cells[0]).getByText(dataRows[index].id)).toBeInTheDocument();
+                expect(within(cells[1]).getByText(dataRows[index].name)).toBeInTheDocument();
+                expect(within(cells[2]).getByText(dataRows[index].age)).toBeInTheDocument();
             });
         });
         const row = screen.getAllByRole('row')[3];

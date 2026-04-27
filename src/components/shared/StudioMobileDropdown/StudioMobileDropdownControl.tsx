@@ -1,4 +1,4 @@
-import { AvailableIcons, Icon, InputLabel, SelectOptions } from '@chili-publish/grafx-shared-components';
+import { AvailableIcons, Icon, InputLabel, LoadingIcon, SelectOptions } from '@chili-publish/grafx-shared-components';
 import {
     DropdownContainer,
     MobileDropdownOptionContainer,
@@ -14,6 +14,7 @@ interface StudioMobileDropdownControlProps {
     placeholder?: string;
     validationError?: string;
     required?: boolean;
+    isLoading?: boolean;
     onOpen: () => void;
 }
 const StudioMobileDropdownControl = ({
@@ -23,10 +24,16 @@ const StudioMobileDropdownControl = ({
     placeholder,
     validationError,
     required,
+    isLoading,
     onOpen,
 }: StudioMobileDropdownControlProps) => {
     return (
-        <DropdownContainer data-id={dataId} data-testid={dataId} onClick={onOpen}>
+        <DropdownContainer
+            data-id={dataId}
+            data-testid={dataId}
+            disabled={isLoading}
+            onClick={!isLoading ? () => onOpen() : undefined}
+        >
             {label ? <InputLabel labelFor={label} label={label} required={required} /> : null}
             <MobileDropdownOptionContainer hasError={!!validationError}>
                 <MobileDropdownValue>
@@ -37,7 +44,7 @@ const StudioMobileDropdownControl = ({
                         <MobilePlaceholderWrapper>{placeholder ?? 'Select...'}</MobilePlaceholderWrapper>
                     )}
                 </MobileDropdownValue>
-                <Icon icon={AvailableIcons.faChevronDown} />
+                {isLoading ? <LoadingIcon /> : <Icon icon={AvailableIcons.faChevronDown} />}
             </MobileDropdownOptionContainer>
             {validationError ? <ErrorMessage>{validationError}</ErrorMessage> : null}
         </DropdownContainer>

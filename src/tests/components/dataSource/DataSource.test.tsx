@@ -3,12 +3,12 @@ import { ConnectorInstance } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@tests/mocks/Provider';
-import DataSource from '../../../components/dataSource/DataSource';
+import OutputDataSource from '../../../components/dataSource/OutputDataSource';
 import AppProvider from '../../../contexts/AppProvider';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
-import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useDataSource';
+import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -51,7 +51,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -65,7 +65,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -81,7 +81,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -101,7 +101,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -129,7 +129,7 @@ describe('DataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
@@ -191,32 +191,25 @@ describe('DataSource test', () => {
             subscriber: mockSubscriber,
         });
 
-        window.StudioUISDK.dataConnector.getPage = jest
-            .fn()
-            .mockResolvedValueOnce({
-                parsedData: {
-                    data: [
-                        { id: '1', name: 'Joe', age: 15 },
-                        { id: '2', name: 'John', age: 18 },
-                    ],
-                    continuationToken: 'token',
-                },
-            })
-            .mockResolvedValueOnce({
-                parsedData: {
-                    data: [{ id: '3', name: 'Mary', age: 15 }],
-                },
-            });
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+            parsedData: {
+                data: [
+                    { id: '1', name: 'Joe', age: 15 },
+                    { id: '2', name: 'John', age: 18 },
+                ],
+                continuationToken: 'token',
+            },
+        });
 
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <UiThemeProvider theme="platform">
-                    <DataSource />
+                    <OutputDataSource />
                 </UiThemeProvider>
             </AppProvider>,
         );
 
-        expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByDisplayValue('1 | Joe | 15')).toBeInTheDocument());
         expect(screen.getByText('Row 1')).toBeInTheDocument();
 
         act(() => {
@@ -234,12 +227,20 @@ describe('DataSource test', () => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
         });
 
-        await act(async () => {
-            await user.click(nextIcon);
+        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+            parsedData: {
+                data: [{ id: '3', name: 'Mary', age: 15 }],
+                continuationToken: null,
+            },
+        });
+
+        await user.click(nextIcon);
+
+        await waitFor(() => {
+            expect(screen.getByText('Row 3')).toBeInTheDocument();
         });
 
         // next page of result is loaded
         expect(await screen.findByDisplayValue('3 | Mary | 15')).toBeInTheDocument();
-        expect(screen.getByText('Row 3')).toBeInTheDocument();
     });
 });

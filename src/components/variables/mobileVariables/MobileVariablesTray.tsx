@@ -9,9 +9,9 @@ import { useLayoutSection } from '../../../core/hooks/useLayoutSection';
 import { MobileTrayFormBuilderHeader, UiOptions } from '../../../types/types';
 import { APP_WRAPPER_ID, REDO_BTN_ID, UNDO_BTN_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
-import DataSourceInput from '../../dataSource/DataSourceInput';
-import DataSourceTable from '../../dataSource/DataSourceTable';
-import useDataSource from '../../dataSource/useDataSource';
+import DataSourceInput from '../../dataSource/OutputDataSourceInput';
+import DataSourceTable from '../../shared/DataSource/DataSourceTable';
+import useOutputDataSource from '../../dataSource/useOutputDataSource';
 import AvailableLayouts from '../../layout-panels/leftPanel/AvailableLayouts';
 import LayoutProperties from '../../layoutProperties/LayoutProperties';
 import { useUserInterfaceDetailsContext } from '../../navbar/UserInterfaceDetailsContext';
@@ -77,17 +77,17 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
         hasMoreRows,
         isPrevDisabled,
         isNextDisabled,
-        loadDataRows,
+        loadNextPage,
         getPreviousRow,
         getNextRow,
         hasDataConnector,
         requiresUserAuthorizationCheck,
         error,
-    } = useDataSource();
+    } = useOutputDataSource();
 
     const { onInputClick, onSelectedRowChanged } = useDataSourceInputHandler({
         requiresUserAuthorizationCheck,
-        onDataRowsLoad: loadDataRows,
+        onDataRowsLoad: loadNextPage,
         onRowConfirmed: updateSelectedRow,
         onDataSourcePanelOpen: () => dispatch(showDataSourcePanel()),
         onDataSourcePanelClose: () => dispatch(showVariablesPanel()),
@@ -109,6 +109,18 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
     const isImageBrowsePanelOpen = activePanel === PanelType.IMAGE_PANEL;
     const isDataSourcePanelOpen = activePanel === PanelType.DATA_SOURCE_TABLE;
     const isListVariablePanelOpen = activePanel === PanelType.LIST_VARIABLE_PANEL;
+    // part of the refactoring of the MobileVariablesTray
+
+    const isDataSourceVariablePanelOpen =
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_LIST_MODE ||
+        activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
+
+    const fullScreenPanelOpen =
+        isDataSourcePanelOpen ||
+        isDataSourceVariablePanelOpen ||
+        isDateVariablePanelOpen ||
+        isImageBrowsePanelOpen ||
+        isListVariablePanelOpen;
 
     const isDefaultPanelView = !(isDateVariablePanelOpen || isImageBrowsePanelOpen || isDataSourcePanelOpen);
 
@@ -118,8 +130,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     const isAvailableLayoutSubtitleDisplayed = isDataSourceDisplayed;
 
-    const isCustomizeSubtitleDisplayed =
-        (isDataSourceDisplayed || isAvailableLayoutsDisplayed) && !isListVariablePanelOpen && !isDateVariablePanelOpen;
+    const isCustomizeSubtitleDisplayed = (isDataSourceDisplayed || isAvailableLayoutsDisplayed) && !fullScreenPanelOpen;
 
     const isAvailableLayoutsSectionDisplayed =
         isAvailableLayoutsDisplayed && !isDateVariablePanelOpen && !isListVariablePanelOpen;
@@ -170,7 +181,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     return (
         <>
-            {isDataSourcePanelOpen ? <DataSourceTrayStyle /> : null}
+            {isDataSourcePanelOpen || isDataSourceVariablePanelOpen ? <DataSourceTrayStyle /> : null}
             {isDataSourceDisplayed && isDefaultPanelView && <DataSourceDefaultTrayStyle />}
             {mobileOptionListOpen ? <VariablesListTrayStyle /> : null}
             <Tray
@@ -204,7 +215,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
                 <VariablesContainer>
                     {(isDefaultPanelView || isDateVariablePanelOpen) && (
                         <>
-                            {isDataSourceDisplayed && !isDateVariablePanelOpen ? (
+                            {isDataSourceDisplayed && !fullScreenPanelOpen ? (
                                 <DataSourceInput
                                     currentRow={currentInputRow}
                                     currentRowIndex={currentRowIndex}
@@ -245,7 +256,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
                             {!layoutsMobileOptionsListOpen &&
                                 formBuilder.variables.active &&
-                                activePanel === PanelType.DEFAULT && (
+                                (activePanel === PanelType.DEFAULT || isDataSourceVariablePanelOpen) && (
                                     <>
                                         {isCustomizeSubtitleDisplayed && (
                                             <SectionWrapper
@@ -273,10 +284,10 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
                     <DataSourceTableWrapper>
                         <DataSourceTable
                             data={dataRows}
-                            hasMoreData={hasMoreRows}
-                            dataIsLoading={isLoading}
-                            selectedRow={currentRowIndex}
-                            onNextPageRequested={loadDataRows}
+                            hasNextPage={hasMoreRows}
+                            nextPageLoading={isLoading}
+                            selectedRowIndex={currentRowIndex}
+                            onNextPageRequested={loadNextPage}
                             onSelectedRowChanged={onSelectedRowChanged}
                         />
                     </DataSourceTableWrapper>

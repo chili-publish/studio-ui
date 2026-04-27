@@ -1,46 +1,53 @@
 import { ModalLayout, ModalSize } from '@chili-publish/grafx-shared-components';
 import { DataItem } from '@chili-publish/studio-sdk';
-import { useUITranslations } from '../../core/hooks/useUITranslations';
-import { APP_WRAPPER_ID } from '../../utils/constants';
 import { MODAL_ID, ModalStyle } from './DataSourceModal.styles';
 import DataSourceTable from './DataSourceTable';
-import { useUserInterfaceDetailsContext } from '../navbar/UserInterfaceDetailsContext';
+import { APP_WRAPPER_ID } from '../../../utils/constants';
 
 interface TableModalProps {
+    title: string;
+
     isOpen: boolean;
     data: DataItem[];
     error?: string;
     hasMoreData?: boolean;
-    dataIsLoading?: boolean;
-    onNextPageRequested: () => void;
-    onClose: () => void;
 
-    selectedRow: number;
+    previousPageLoading?: boolean;
+    hasPreviousPage?: boolean;
+    onPreviousPageRequested?: () => void;
+
+    nextPageLoading?: boolean;
+    hasNextPage?: boolean;
+    onNextPageRequested: () => void;
+
+    selectedRowIndex?: number;
+    selectedRow?: DataItem;
+    selectedRowKey?: string;
+
     onSelectedRowChanged: (_: number) => void;
+    onClose: () => void;
 }
 
 const DataSourceModal = ({
+    title,
     isOpen,
     data,
     error,
-    hasMoreData,
-    dataIsLoading,
+    hasPreviousPage,
+    hasNextPage,
+    previousPageLoading,
+    nextPageLoading,
+    onPreviousPageRequested,
     onNextPageRequested,
     onClose,
     selectedRow,
+    selectedRowIndex,
+    selectedRowKey,
     onSelectedRowChanged,
 }: TableModalProps) => {
-    const { getUITranslation } = useUITranslations();
-    const { formBuilder } = useUserInterfaceDetailsContext();
-
-    const title = getUITranslation(
-        ['formBuilder', 'datasource', 'header'],
-        formBuilder.datasource?.header ?? 'Data source',
-    );
-
     return (
         <>
-            <ModalStyle />
+            <ModalStyle centerContent={!!error || data.length === 0} />
             <ModalLayout.Container
                 id={MODAL_ID}
                 anchorId={APP_WRAPPER_ID}
@@ -55,10 +62,15 @@ const DataSourceModal = ({
                     <DataSourceTable
                         data={data}
                         error={error}
-                        hasMoreData={hasMoreData}
-                        dataIsLoading={dataIsLoading}
-                        selectedRow={selectedRow}
+                        hasNextPage={hasNextPage}
+                        nextPageLoading={nextPageLoading}
+                        hasPreviousPage={hasPreviousPage}
+                        previousPageLoading={previousPageLoading}
+                        onPreviousPageRequested={onPreviousPageRequested}
                         onNextPageRequested={onNextPageRequested}
+                        selectedRowIndex={selectedRowIndex}
+                        selectedRow={selectedRow}
+                        selectedRowKey={selectedRowKey}
                         onSelectedRowChanged={onSelectedRowChanged}
                     />
                 </ModalLayout.Body>

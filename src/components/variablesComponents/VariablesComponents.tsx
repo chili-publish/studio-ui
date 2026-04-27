@@ -5,9 +5,10 @@ import {
     ImageVariable as ImageVariableType,
     LongTextVariable,
     NumberVariable as NumberVariableType,
-    ShortTextVariable,
+    DataSourceVariable as DataSourceVariableType,
     Variable,
     VariableType,
+    ShortTextVariable,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { useSelector } from 'react-redux';
@@ -24,6 +25,7 @@ import ListVariable from './listVariable/ListVariable';
 import { useVariableComponents } from './useVariablesComponents';
 import { useAppDispatch } from '../../store';
 import { selectVariablesValidation, validateVariable } from '../../store/reducers/variableReducer';
+import DataSourceVariable from './dataSourceVariable/DataSourceVariable';
 
 const VariablesComponents = (props: IVariablesComponents) => {
     const { type, variable, onCalendarOpen } = props;
@@ -123,6 +125,14 @@ const VariablesComponents = (props: IVariablesComponents) => {
                     variable={variable as ListVariableType}
                     validationError={errMsg}
                     onChange={(val) => dispatch(validateVariable(val))}
+                />
+            )}
+            {type === VariableType.dataSource && (
+                <DataSourceVariable
+                    key={variable.id}
+                    variable={variable as DataSourceVariableType}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
                 />
             )}
         </div>

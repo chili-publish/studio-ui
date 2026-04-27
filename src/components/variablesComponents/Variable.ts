@@ -1,5 +1,6 @@
 import {
     BooleanVariable,
+    DataSourceVariable,
     DateVariable,
     ImageVariable,
     LongTextVariable,
@@ -22,6 +23,8 @@ export const isDateVariable = (variable?: Variable): variable is DateVariable =>
 export const isListVariable = (variable?: Variable): variable is ListVariable => variable?.type === VariableType.list;
 export const isImageVariable = (variable?: Variable): variable is ImageVariable =>
     variable?.type === VariableType.image;
+export const isDataSourceVariable = (variable?: Variable): variable is DataSourceVariable =>
+    variable?.type === VariableType.dataSource;
 
 export const validateVariableValue = (variable: Variable) => {
     if (isTextVariable(variable)) return !!variable.value.trim();
@@ -29,6 +32,7 @@ export const validateVariableValue = (variable: Variable) => {
     if (isDateVariable(variable)) return !!variable.value;
     if (isListVariable(variable)) return !!variable.selected;
     if (isImageVariable(variable)) return !!variable.value?.assetId || !!variable.value?.resolved;
+    if (isDataSourceVariable(variable)) return !!variable.entryId;
     if (isBooleanVariable(variable)) return true;
 
     return true;

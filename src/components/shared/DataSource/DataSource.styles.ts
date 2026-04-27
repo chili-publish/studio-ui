@@ -1,5 +1,5 @@
+import { getDataIdForSUI } from '../../../utils/dataIds';
 import styled, { createGlobalStyle, css } from 'styled-components';
-import { getDataIdForSUI } from '../../utils/dataIds';
 
 export const DATA_SOURCE_ID = getDataIdForSUI(`data-source-input`);
 
