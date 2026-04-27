@@ -3,10 +3,12 @@ import { useCallback } from 'react';
 import {
     DateVariable as DateVariableType,
     ImageVariable as ImageVariableType,
+    LongTextVariable,
     NumberVariable as NumberVariableType,
     DataSourceVariable as DataSourceVariableType,
     Variable,
     VariableType,
+    ShortTextVariable,
 } from '@chili-publish/studio-sdk';
 import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
 import { useSelector } from 'react-redux';
@@ -75,13 +77,17 @@ const VariablesComponents = (props: IVariablesComponents) => {
         <div style={{ width: '100%' }}>
             {type === VariableType.longText && (
                 <MultiLineTextVariable
-                    variable={variable}
+                    variable={variable as LongTextVariable}
                     validationError={errMsg}
                     onValueChange={onVariableValueChange}
                 />
             )}
             {type === VariableType.shortText && (
-                <TextVariable variable={variable} validationError={errMsg} onValueChange={onVariableValueChange} />
+                <TextVariable
+                    variable={variable as ShortTextVariable}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
+                />
             )}
             {type === VariableType.image && isDocumentLoaded && (
                 <ImageVariable
