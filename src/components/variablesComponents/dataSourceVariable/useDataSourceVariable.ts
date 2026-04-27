@@ -225,6 +225,24 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
     }, [variable, activePanel, isDropdownOpen, isDataSourceModalOpen, dataRows.length]);
 
+    const updateSelectedValueForInjectedSource = useEffectEvent((entryId?: string) => {
+        if (dataRows.length) {
+            const rowIndex = dataRows.findIndex((item) => item[rowKeyNameRef.current!]?.toString() === entryId);
+            const value = dataRows[rowIndex];
+            if (value) {
+                updateSelectedRow(rowIndex, value);
+            }
+        }
+    });
+
+    // when data changes triggered by undo-redo or other actions, update the selected value of injected source type variable
+    useEffect(() => {
+        if (variable.value && !isInjected(variable.value)) {
+            return;
+        }
+        updateSelectedValueForInjectedSource(variable.entryId);
+    }, [variable.entryId]);
+
     const checkConnectorState = useEffectEvent(async () => {
         if (dataRows.length || !connectorId) {
             setConnectorReady(true);
