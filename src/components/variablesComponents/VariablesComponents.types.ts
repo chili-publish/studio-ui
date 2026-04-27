@@ -2,7 +2,9 @@ import {
     DateVariable,
     EditorResponse,
     ImageVariable,
+    LongTextVariable,
     NumberVariable,
+    ShortTextVariable,
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
@@ -25,8 +27,8 @@ export interface IImageVariable {
     }) => Promise<void>;
 }
 
-export interface ITextVariable {
-    variable: Variable;
+export interface ITextVariable<TVariable extends ShortTextVariable | LongTextVariable> {
+    variable: TVariable;
     validationError?: string;
     onValueChange: (value: string, { changed }: { changed: boolean }) => Promise<EditorResponse<null> | null> | null;
 }

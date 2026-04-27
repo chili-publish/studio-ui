@@ -3,7 +3,9 @@ import { useCallback } from 'react';
 import {
     DateVariable as DateVariableType,
     ImageVariable as ImageVariableType,
+    LongTextVariable,
     NumberVariable as NumberVariableType,
+    ShortTextVariable,
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
@@ -73,13 +75,17 @@ const VariablesComponents = (props: IVariablesComponents) => {
         <div style={{ width: '100%' }}>
             {type === VariableType.longText && (
                 <MultiLineTextVariable
-                    variable={variable}
+                    variable={variable as LongTextVariable}
                     validationError={errMsg}
                     onValueChange={onVariableValueChange}
                 />
             )}
             {type === VariableType.shortText && (
-                <TextVariable variable={variable} validationError={errMsg} onValueChange={onVariableValueChange} />
+                <TextVariable
+                    variable={variable as ShortTextVariable}
+                    validationError={errMsg}
+                    onValueChange={onVariableValueChange}
+                />
             )}
             {type === VariableType.image && isDocumentLoaded && (
                 <ImageVariable
