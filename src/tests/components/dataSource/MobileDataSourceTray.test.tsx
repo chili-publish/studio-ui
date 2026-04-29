@@ -69,7 +69,7 @@ describe('MobileDataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
-                    <FeatureFlagProvider>
+                    <FeatureFlagProvider isDev={true}>
                         <MobileVariables
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
@@ -105,7 +105,7 @@ describe('MobileDataSource test', () => {
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
                 <div id={APP_WRAPPER_ID}>
-                    <FeatureFlagProvider>
+                    <FeatureFlagProvider isDev={true}>
                         <MobileVariables
                             selectedLayout={mockLayout}
                             layouts={mockLayouts}
