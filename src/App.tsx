@@ -53,7 +53,7 @@ const App = ({ projectConfig }: { projectConfig: ProjectConfig }) => {
                 <SubscriberContextProvider subscriber={eventSubscriber}>
                     <UiThemeProvider theme="platform" mode={uiThemeMode} themeUiConfig={projectConfig.uiOptions.theme}>
                         <NotificationManagerProvider>
-                            <FeatureFlagProvider>
+                            <FeatureFlagProvider isDev={!!projectConfig.isDev}>
                                 <EnvironmentClientApiProvider
                                     environmentApiService={projectConfig.environmentApiService}
                                 >

@@ -6,14 +6,15 @@ const STUDIO_VERSION = getSUIVersion();
 
 interface FeatureFlagProviderProps {
     featureFlagConfigURL?: string;
+    isDev: boolean;
     children: React.ReactNode;
 }
 
-const FeatureFlagProvider = ({ featureFlagConfigURL, children }: FeatureFlagProviderProps) => {
+const FeatureFlagProvider = ({ featureFlagConfigURL, isDev, children }: FeatureFlagProviderProps) => {
     const url = featureFlagConfigURL || DEFAULT_FEATURE_FLAGS_URL;
 
     return (
-        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={STUDIO_VERSION}>
+        <StudioFeatureFlagsProvider featureFlagConfigURL={url} studioVersion={STUDIO_VERSION} alwaysOn={isDev}>
             {children}
         </StudioFeatureFlagsProvider>
     );

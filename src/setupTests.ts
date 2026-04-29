@@ -112,7 +112,6 @@ jest.mock('@chili-publish/grafx-shared-components', () => {
         ...actual,
         StudioFeatureFlagsProvider: ({ children }: { children: React.ReactNode }) => children,
         useStudioFeatureFlags: () => ({
-            featureFlags: {},
             isEnabled: () => false,
         }),
     };
