@@ -355,7 +355,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         // eslint-disable-next-line no-console
         console.table({
             'SDK version': packageInfo.dependencies['@chili-publish/studio-sdk'],
-            'Studio UI version': packageInfo.version.split('-')[0],
+            'Studio UI version': packageInfo.version,
         });
         // eslint-disable-next-line consistent-return
         return () => {
