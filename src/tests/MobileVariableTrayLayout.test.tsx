@@ -102,7 +102,7 @@ describe('MobileVariableTrayLayout', () => {
             dataSource: mockDataSource,
         } as IAppContext);
         renderWithProviders(
-            <FeatureFlagProvider>
+            <FeatureFlagProvider isDev={true}>
                 <MobileVariables
                     selectedLayout={mockLayout}
                     layouts={mockLayouts}

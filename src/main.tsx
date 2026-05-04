@@ -61,6 +61,7 @@ export default class StudioUI extends StudioUILoader {
 
         return this.fullStudioIntegrationConfig(selector, {
             projectId,
+            isDev: false,
             outputSettings: defaultOutputSettings,
             uiOptions: defaultPlatformUiOptions,
             onProjectInfoRequested: projectLoader.onProjectInfoRequested,
@@ -209,6 +210,7 @@ export default class StudioUI extends StudioUILoader {
                     uiTheme: uiOptionsConfig.uiTheme || 'light',
                 },
                 featureFlagConfigURL,
+                isDev: projectLoader.isDev,
                 sandboxMode: sandboxMode || false,
                 componentMode: componentMode || false,
                 onSandboxModeToggle,

@@ -25,7 +25,7 @@ export class StudioProjectLoader {
 
     private sandboxMode: boolean;
 
-    private isDev: boolean;
+    private isDevState: boolean;
 
     private componentMode: boolean;
 
@@ -69,7 +69,7 @@ export class StudioProjectLoader {
         this.projectId = projectId;
         this.sandboxMode = sandboxMode;
         this.componentMode = componentMode;
-        this.isDev = isDev;
+        this.isDevState = isDev;
         this.graFxStudioEnvironmentApiBaseUrl = graFxStudioEnvironmentApiBaseUrl;
         this.userInterfaceID = userInterfaceID;
         this.onFetchUserInterfaceDetails = onFetchUserInterfaceDetails;
@@ -77,6 +77,10 @@ export class StudioProjectLoader {
         this.environmentApiService = environmentApiService;
 
         this.projectDataClient = new ProjectDataClient();
+    }
+
+    public get isDev(): boolean {
+        return this.isDevState;
     }
 
     public onProjectInfoRequested = async (): Promise<Project> => {

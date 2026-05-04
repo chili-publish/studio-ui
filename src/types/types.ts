@@ -51,6 +51,8 @@ export type ProjectConfig = {
     graFxStudioEnvironmentApiBaseUrl: string;
     sandboxMode?: boolean;
     componentMode?: boolean;
+    /** Mirrors loader dev mode; when true, feature flag checks treat all flags as enabled. */
+    isDev?: boolean;
     featureFlagConfigURL?: string;
     onSandboxModeToggle?: () => void;
     onProjectInfoRequested: (projectId?: string) => Promise<Project>;
