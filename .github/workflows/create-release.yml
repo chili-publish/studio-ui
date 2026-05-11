@@ -754,25 +754,106 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
 
-    notify-teams:
-        needs: [finalize-release]
+    notify-teams-success:
+        needs: [configure-parameters, finalize-release]
         if: always() && needs.finalize-release.result == 'success'
         runs-on: ubuntu-latest
         permissions:
             contents: read
         steps:
-            - name: Notify Teams
+            - uses: actions/checkout@v4
+
+            - name: Notify Teams success
+              uses: ./.github/actions/cd-notify
+              with:
+                  status: success
+                  pipeline_name: Create GitHub Release
+                  step_name: Release published
+                  environment: ${{ needs.configure-parameters.outputs.environment }}
+                  notification_text: ${{ needs.finalize-release.outputs.notification_text }}
+              env:
+                  TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_RELEASE_HOOK_URL }}
+                  REPOSITORY: ${{ github.repository }}
+                  COMMIT_SHA: ${{ github.sha }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    notify-teams-failure:
+        name: Notify Teams on failure
+        needs:
+            [
+                configure-parameters,
+                uat-regular,
+                uat-hotfix,
+                production,
+                preflight,
+                run-tests,
+                cleanup-on-failure,
+                finalize-release,
+            ]
+        if: |
+            always() && (
+              needs.configure-parameters.result == 'failure' ||
+              needs.uat-regular.result == 'failure' ||
+              needs.uat-hotfix.result == 'failure' ||
+              needs.production.result == 'failure' ||
+              needs.preflight.result == 'failure' ||
+              needs.run-tests.result == 'failure' ||
+              needs.finalize-release.result == 'failure' ||
+              needs.cleanup-on-failure.result == 'failure'
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Determine failed step
+              id: failed-step
               run: |
-                  TEXT="${{ needs.finalize-release.outputs.notification_text }}"
+                  if [ "${{ needs.configure-parameters.result }}" == "failure" ]; then
+                    echo "step=Configure release parameters" >> $GITHUB_OUTPUT
+                    echo "environment=workflow inputs" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.uat-regular.result }}" == "failure" ]; then
+                    echo "step=UAT regular (version bump and branch)" >> $GITHUB_OUTPUT
+                    echo "environment=uat" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.uat-hotfix.result }}" == "failure" ]; then
+                    echo "step=UAT hotfix (version bump and branch)" >> $GITHUB_OUTPUT
+                    echo "environment=uat" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.production.result }}" == "failure" ]; then
+                    echo "step=Production release (version bump and branch)" >> $GITHUB_OUTPUT
+                    echo "environment=prd" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.preflight.result }}" == "failure" ]; then
+                    echo "step=Preflight (lint and build)" >> $GITHUB_OUTPUT
+                    echo "environment=release candidate branch" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.run-tests.result }}" == "failure" ]; then
+                    echo "step=Unit tests (sharded)" >> $GITHUB_OUTPUT
+                    echo "environment=release candidate branch" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.finalize-release.result }}" == "failure" ]; then
+                    echo "step=Finalize release (tag, GitHub release, merge)" >> $GITHUB_OUTPUT
+                    echo "environment=${{ needs.configure-parameters.outputs.environment }}" >> $GITHUB_OUTPUT
+                    echo "is_blocking=true" >> $GITHUB_OUTPUT
+                  elif [ "${{ needs.cleanup-on-failure.result }}" == "failure" ]; then
+                    echo "step=Cleanup after failed preflight or tests" >> $GITHUB_OUTPUT
+                    echo "environment=release candidate branch" >> $GITHUB_OUTPUT
+                    echo "is_blocking=false" >> $GITHUB_OUTPUT
+                  fi
 
-                  payload=$(cat <<EOF
-                  {
-                      "text": "$TEXT"
-                  }
-                  EOF
-                  )
-
-                  curl --request POST \
-                  --header "Content-Type: application/json" \
-                  --data "$payload" \
-                  "${{ secrets.TEAMS_RELEASE_HOOK_URL }}"
+            - name: Notify Teams - Failure
+              uses: ./.github/actions/cd-notify
+              with:
+                  status: failure
+                  pipeline_name: Create GitHub Release
+                  step_name: ${{ steps.failed-step.outputs.step }}
+                  environment: ${{ steps.failed-step.outputs.environment }}
+                  is_blocking: ${{ steps.failed-step.outputs.is_blocking }}
+              env:
+                  TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_RELEASE_HOOK_URL }}
+                  REPOSITORY: ${{ github.repository }}
+                  COMMIT_SHA: ${{ github.sha }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
