@@ -1,6 +1,6 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { LongTextVariable } from '@chili-publish/studio-sdk';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 import { ITextVariable } from './VariablesComponents.types';
@@ -11,16 +11,7 @@ const MultiLineTextVariable = (props: ITextVariable<LongTextVariable>) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const [variableValue, setVariableValue] = useState(variable.value);
     const placeholder = getVariablePlaceholder(variable);
-
-    useEffect(() => {
-        setVariableValue(variable.value);
-    }, [variable]);
-
-    const handleVariableChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setVariableValue(e.target.value);
-    };
 
     return (
         <HelpTextWrapper>
@@ -28,7 +19,7 @@ const MultiLineTextVariable = (props: ITextVariable<LongTextVariable>) => {
                 name="multi-line-text"
                 type="textarea"
                 width="100%"
-                value={variableValue}
+                value={variable.value}
                 label={
                     <Label translationKey={variable?.label ?? variable.name} value={variable?.label ?? variable.name} />
                 }
@@ -42,7 +33,6 @@ const MultiLineTextVariable = (props: ITextVariable<LongTextVariable>) => {
                     onValueChange(newValue, { changed: oldValue !== newValue });
                     onVariableBlur?.(variable.id);
                 }}
-                onChange={handleVariableChange}
                 required={variable.isRequired}
                 dataId={getDataIdForSUI('multi-line-variable')}
                 dataTestId={getDataTestIdForSUI('multi-line-variable')}

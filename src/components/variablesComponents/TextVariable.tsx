@@ -1,6 +1,6 @@
 import { Input, InputLabel, Label, ValidationTypes } from '@chili-publish/grafx-shared-components';
 import { ShortTextVariable } from '@chili-publish/studio-sdk';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent } from 'react';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
 import { HelpTextWrapper } from './VariablesComponents.styles';
 import { ITextVariable } from './VariablesComponents.types';
@@ -11,17 +11,8 @@ const TextVariable = (props: ITextVariable<ShortTextVariable>) => {
     const { variable, validationError, onValueChange } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const [variableValue, setVariableValue] = useState(variable.value);
     const placeholder = getVariablePlaceholder(variable);
     const maxCharacters = variable.maxCharacters;
-
-    useEffect(() => {
-        setVariableValue(variable.value);
-    }, [variable]);
-
-    const handleVariableChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        setVariableValue(e.target.value);
-    };
 
     return (
         <HelpTextWrapper>
@@ -30,10 +21,9 @@ const TextVariable = (props: ITextVariable<ShortTextVariable>) => {
                 dataId={getDataIdForSUI(`input-${variable.id}`)}
                 dataTestId={getDataTestIdForSUI(`input-${variable.id}`)}
                 dataIntercomId={`input-variable-${variable.name}`}
-                value={variableValue}
+                value={variable.value}
                 placeholder={placeholder}
                 required={variable.isRequired}
-                onChange={handleVariableChange}
                 onFocus={() => onVariableFocus?.(variable.id)}
                 onBlur={(event: ChangeEvent<HTMLInputElement>) => {
                     const oldValue = variable.value;
