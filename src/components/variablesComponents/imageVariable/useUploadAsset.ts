@@ -44,8 +44,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, imageVaria
                 setUploadError(undefined);
                 // 1. Stage selected files
                 const filePointers = await window.StudioUISDK.utils.stageFiles(files, remoteConnectorId, {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    mimeTypes: uploadFileMimeTypes as any,
+                    mimeTypes: uploadFileMimeTypes,
                     ...validationConfiguration,
                 });
 
