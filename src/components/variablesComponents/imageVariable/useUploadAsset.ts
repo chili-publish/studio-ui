@@ -7,7 +7,7 @@ import {
 } from '@chili-publish/studio-sdk';
 import { useCallback, useState } from 'react';
 
-export const uploadFileMimeTypes = ['image/jpg' as const, 'image/jpeg' as const, 'image/png' as const];
+export const uploadFileMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/tiff'];
 
 function getUploadError(error: UploadAssetValidationError, imageVariable: ImageVariable) {
     switch (error.type) {
