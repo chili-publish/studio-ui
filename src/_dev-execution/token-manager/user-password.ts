@@ -8,6 +8,7 @@ export class TokenManager {
         this.auth0Client = new Auth0Client({
             domain: `${import.meta.env.VITE_AUTH0_DOMAIN}`,
             clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+            cacheLocation: 'localstorage',
             useRefreshTokens: true,
             authorizationParams: {
                 redirect_uri: window.location.origin,

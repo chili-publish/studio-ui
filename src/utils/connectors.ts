@@ -137,6 +137,6 @@ export async function getConnectorConfigurationOptions(connectorId: string) {
             config[mapping.name] = mapping.value;
             return config;
         },
-        {} as Record<string, string | boolean | null>,
+        {} as Record<string, string | boolean | number | null>,
     );
 }
