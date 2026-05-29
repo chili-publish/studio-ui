@@ -267,7 +267,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
                 }
             },
         );
-        return () => unsubscribe();
+        return () => unsubscribe?.();
     }, [connectorId, loadDataRowsByToken, connectorReady, resetData]);
 
     const reloadInjectedData = useEffectEvent((variableId: string) => {
@@ -289,7 +289,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
                 reloadInjectedData(variableId);
             },
         );
-        return () => unsubscribe();
+        return () => unsubscribe?.();
     }, []);
 
     return {
