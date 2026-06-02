@@ -175,16 +175,17 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
 
         if (cachedDataSourceVariableData?.data?.length) {
+            const cachedRows = cachedDataSourceVariableData.data as DataItem[];
             setDataRowsAndTokens(
-                cachedDataSourceVariableData.data,
+                cachedRows,
                 cachedDataSourceVariableData.continuationToken,
                 cachedDataSourceVariableData.previousPageToken,
             );
             if (cachedDataSourceVariableData.rowKey) {
-                const rowIndex = cachedDataSourceVariableData.data.findIndex(
+                const rowIndex = cachedRows.findIndex(
                     (item) => item[cachedDataSourceVariableData.rowKey!]?.toString() === entryId,
                 );
-                const value = cachedDataSourceVariableData.data[rowIndex];
+                const value = cachedRows[rowIndex];
                 rowKeyNameRef.current = cachedDataSourceVariableData.rowKey;
 
                 if (value) {
