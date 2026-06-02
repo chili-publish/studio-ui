@@ -17,6 +17,8 @@ export type AppConfig = {
 export default class StudioUILoader {
     protected root: Root | undefined;
 
+    protected store: ReturnType<typeof setupStore> | undefined;
+
     constructor(selector: string, projectConfig: ProjectConfig, appConfig: AppConfig = {}) {
         const container = document.getElementById(selector || 'sui-root');
 
@@ -26,13 +28,13 @@ export default class StudioUILoader {
             );
         }
 
-        const store = setupStore({
+        this.store = setupStore({
             appConfig,
         });
         this.root = createRoot(container!);
         this.root.render(
             <React.StrictMode>
-                <Provider store={store}>
+                <Provider store={this.store}>
                     <App projectConfig={projectConfig} />
                 </Provider>
             </React.StrictMode>,
@@ -45,6 +47,7 @@ export default class StudioUILoader {
             console.warn('Destroying Studio UI component...');
             this.root.unmount();
             this.root = undefined;
+            this.store = undefined;
         }
     }
 }

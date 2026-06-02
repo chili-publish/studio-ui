@@ -12,11 +12,44 @@ import {
     ProjectConfig,
 } from './types/types';
 import { validateCoreConfig } from './utils/validateConfig';
+import { validateVariableList } from './store/reducers/variableReducer';
 
 export default class StudioUI extends StudioUILoader {
     protected root: Root | undefined;
 
     private static instance: StudioUI | undefined;
+
+    /**
+     * Validates all currently visible variables and shows the error state on any
+     * field that is required but left empty. This is the same validation the
+     * Download button performs, exposed for host applications that want to gate
+     * their own flow (e.g. a custom "Save" or "Submit" button) before proceeding.
+     *
+     * Calling this updates the UI immediately: every required-but-empty field is
+     * marked with its error message and red styling. Fields that are hidden
+     * (`isVisible === false`) are ignored.
+     *
+     * The method is idempotent: calling it again after values change re-evaluates
+     * every visible field, so fields that have since been filled are un-flagged.
+     *
+     * @returns A promise resolving to the list of variables that failed validation,
+     *  one `{ id }` per failing field. An **empty array means no errors** (the host
+     *  can gate on `result.length`).
+     *
+     * @remarks Meaningful only after the project has loaded (i.e. after the
+     *  `onProjectLoaded` config callback has fired). Called earlier, before any
+     *  variables exist in the store, or after `destroy()`, it is a safe no-op and
+     *  returns `[]`.
+     */
+    public async validateVariables(): Promise<Array<{ id: string }>> {
+        if (!this.store) {
+            return [];
+        }
+        const { validation } = await this.store.dispatch(validateVariableList()).unwrap();
+        return Object.entries(validation)
+            .filter(([, v]) => Boolean(v.errorMsg))
+            .map(([id]) => ({ id }));
+    }
 
     /**
      * Creates a new instance of StudioUI with all integration points available.
