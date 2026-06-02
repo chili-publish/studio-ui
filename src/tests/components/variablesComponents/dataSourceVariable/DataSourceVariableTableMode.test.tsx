@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
     DataSourceVariable,
@@ -6,6 +6,7 @@ import {
     VariableType,
     VariableVisibilityType,
 } from '@chili-publish/studio-sdk';
+import { useState } from 'react';
 import { APP_WRAPPER } from '@tests/mocks/app';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSourceVariableTableMode from '../../../../components/variablesComponents/dataSourceVariable/DataSourceTableMode';
@@ -43,6 +44,12 @@ const { useUiConfigContext } = jest.requireMock('../../../../contexts/UiConfigCo
 const mockOnVariableFocus = jest.fn();
 const mockOnVariableBlur = jest.fn();
 
+const INJECTED_MODEL = [
+    { name: 'id', type: 'singleLine' as const },
+    { name: 'name', type: 'singleLine' as const },
+    { name: 'age', type: 'singleLine' as const },
+];
+
 const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSourceVariable =>
     ({
         id: 'ds-var-1',
@@ -62,6 +69,16 @@ const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSource
         ...overrides,
     }) as DataSourceVariable;
 
+const createInjectedVariable = (overrides: Partial<DataSourceVariable> = {}): DataSourceVariable =>
+    createVariable({
+        value: {
+            type: DataSourceVariableSourceType.injected,
+            model: INJECTED_MODEL,
+            itemIdPropertyName: 'id',
+        },
+        ...overrides,
+    });
+
 const defaultPageData = [
     { id: '1', name: 'Joe', age: 15 },
     { id: '2', name: 'John', age: 18 },
@@ -74,11 +91,13 @@ function getPreloadedState(panelType: PanelType = PanelType.DEFAULT): Partial<Ro
     } as Partial<RootState>;
 }
 
+let injectedDataChangedHandler: ((variableId: string) => void) | undefined;
+
 function setupSDKMocks(
     pageData: Record<string, unknown>[] = defaultPageData,
-    options: { continuationToken?: string | null; modelKey?: string } = {},
+    options: { continuationToken?: string | null; modelKey?: string; sourceType?: 'connector' | 'injected' } = {},
 ) {
-    const { continuationToken = null, modelKey = 'id' } = options;
+    const { continuationToken = null, modelKey = 'id', sourceType = 'connector' } = options;
 
     window.StudioUISDK.dataConnector.getModel = jest.fn().mockResolvedValue({
         parsedData: { itemIdPropertyName: modelKey },
@@ -98,14 +117,42 @@ function setupSDKMocks(
         },
     });
 
+    const injectedDataSourceMocks =
+        sourceType === 'injected'
+            ? {
+                  getInjectedData: jest.fn().mockResolvedValue({
+                      parsedData: {
+                          data: pageData,
+                          continuationToken,
+                          previousPageToken: null,
+                      },
+                  }),
+                  getInjectedItemById: jest.fn().mockResolvedValue({
+                      parsedData: {
+                          data: pageData[0] ?? null,
+                          continuationToken: null,
+                          previousPageToken: null,
+                      },
+                  }),
+              }
+            : {};
+
     window.StudioUISDK.variable.dataSource = {
         setValue: jest.fn().mockResolvedValue(undefined),
+        ...injectedDataSourceMocks,
     } as never;
 
+    injectedDataChangedHandler = undefined;
     window.StudioUISDK.config = {
         events: {
             onConnectorEvent: {
                 registerCallback: jest.fn().mockReturnValue(jest.fn()),
+            },
+            onInjectedDataChanged: {
+                registerCallback: jest.fn().mockImplementation((cb: (variableId: string) => void) => {
+                    injectedDataChangedHandler = cb;
+                    return jest.fn();
+                }),
             },
         },
     } as never;
@@ -367,6 +414,155 @@ describe('DataSourceVariableTableMode', () => {
 
             expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
             expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        });
+    });
+
+    describe('injected data source', () => {
+        beforeEach(() => {
+            setupSDKMocks(defaultPageData, { sourceType: 'injected' });
+        });
+
+        it('does not call connector APIs on mount', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            await waitFor(() => {
+                expect(screen.getByRole('textbox')).toBeInTheDocument();
+            });
+
+            expect(window.StudioUISDK.dataConnector.getPage).not.toHaveBeenCalled();
+            expect(window.StudioUISDK.dataConnector.getModel).not.toHaveBeenCalled();
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).not.toHaveBeenCalled();
+        });
+
+        it('loads injected data when the modal is opened without a preselected row', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+            });
+
+            const table = screen.getByRole('table');
+            const rows = within(table).getAllByRole('row');
+            expect(rows.length).toBeGreaterThan(1);
+        });
+
+        it('loads preselected injected row when the modal is opened with entryId', async () => {
+            renderComponent(createInjectedVariable({ entryId: '1' }), undefined);
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedItemById).toHaveBeenCalledWith(
+                    'ds-var-1',
+                    '1',
+                );
+            });
+            expect(window.StudioUISDK.dataConnector.getPageItemById).not.toHaveBeenCalled();
+        });
+
+        it('preselects and displays the first injected row after opening the modal', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(screen.getByText('Data Source')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByTestId('test-gsc-modal-close-action-button');
+            await user.click(closeButton);
+
+            expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+        });
+
+        it('navigates to the next injected row when the next button is clicked', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(screen.getByText('Data Source')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByTestId('test-gsc-modal-close-action-button');
+            await user.click(closeButton);
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            await user.click(screen.getByTestId('test-sui-data-row-next'));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', '2');
+        });
+
+        it('reloads injected data and preselects the first row when onInjectedDataChanged fires', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            await waitFor(() => {
+                expect(injectedDataChangedHandler).toBeDefined();
+            });
+
+            await act(async () => {
+                injectedDataChangedHandler!('ds-var-1');
+            });
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+            });
+            expect(await screen.findByDisplayValue('1 | Joe | 15')).toBeInTheDocument();
+        });
+
+        it('updates the displayed row when entryId changes after injected data is loaded', async () => {
+            const TestHarness = () => {
+                const [variable, setVariable] = useState(createInjectedVariable());
+
+                return (
+                    <>
+                        <DataSourceVariableTableMode variable={variable} validationError={undefined} />
+                        <button type="button" onClick={() => setVariable((current) => ({ ...current, entryId: '2' }))}>
+                            set-entry-2
+                        </button>
+                    </>
+                );
+            };
+
+            const container = document.body.appendChild(APP_WRAPPER.cloneNode(true) as HTMLElement);
+            renderWithProviders(
+                <div id={APP_WRAPPER_ID}>
+                    <TestHarness />
+                </div>,
+                { preloadedState: getPreloadedState(), container },
+            );
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(screen.getByText('Data Source')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByTestId('test-gsc-modal-close-action-button');
+            await user.click(closeButton);
+            await screen.findByDisplayValue('1 | Joe | 15');
+
+            await user.click(screen.getByRole('button', { name: 'set-entry-2' }));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+        });
+
+        it('loads injected data when the mobile table mode panel is active', async () => {
+            mockUseMobileSize.mockReturnValue(true);
+            renderComponent(createInjectedVariable(), undefined, PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+            });
+            expect(screen.getByRole('table')).toBeInTheDocument();
         });
     });
 

@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
     DataSourceVariable,
@@ -7,6 +7,7 @@ import {
     VariableType,
     VariableVisibilityType,
 } from '@chili-publish/studio-sdk';
+import { useState } from 'react';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSourceVariableListMode from '../../../../components/variablesComponents/dataSourceVariable/DataSourceListMode';
 import { PanelType } from '../../../../store/reducers/panelReducer';
@@ -42,6 +43,12 @@ const { useUiConfigContext } = jest.requireMock('../../../../contexts/UiConfigCo
 const mockOnVariableFocus = jest.fn();
 const mockOnVariableBlur = jest.fn();
 
+const INJECTED_MODEL = [
+    { name: 'id', type: 'singleLine' as const },
+    { name: 'name', type: 'singleLine' as const },
+    { name: 'age', type: 'singleLine' as const },
+];
+
 const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSourceVariable =>
     ({
         id: 'ds-var-1',
@@ -64,6 +71,16 @@ const createVariable = (overrides: Partial<DataSourceVariable> = {}): DataSource
         ...overrides,
     }) as DataSourceVariable;
 
+const createInjectedVariable = (overrides: Partial<DataSourceVariable> = {}): DataSourceVariable =>
+    createVariable({
+        value: {
+            type: DataSourceVariableSourceType.injected,
+            model: INJECTED_MODEL,
+            itemIdPropertyName: 'id',
+        },
+        ...overrides,
+    });
+
 const defaultPageData = [
     { id: '1', name: 'Joe', age: 15 },
     { id: '2', name: 'John', age: 18 },
@@ -76,11 +93,13 @@ function getPreloadedState(panelType: PanelType = PanelType.DEFAULT): Partial<Ro
     } as Partial<RootState>;
 }
 
+let injectedDataChangedHandler: ((variableId: string) => void) | undefined;
+
 function setupSDKMocks(
     pageData: Record<string, unknown>[] = defaultPageData,
-    options: { continuationToken?: string | null; modelKey?: string } = {},
+    options: { continuationToken?: string | null; modelKey?: string; sourceType?: 'connector' | 'injected' } = {},
 ) {
-    const { continuationToken = null, modelKey = 'id' } = options;
+    const { continuationToken = null, modelKey = 'id', sourceType = 'connector' } = options;
 
     window.StudioUISDK.dataConnector.getModel = jest.fn().mockResolvedValue({
         parsedData: { itemIdPropertyName: modelKey },
@@ -100,14 +119,42 @@ function setupSDKMocks(
         },
     });
 
+    const injectedDataSourceMocks =
+        sourceType === 'injected'
+            ? {
+                  getInjectedData: jest.fn().mockResolvedValue({
+                      parsedData: {
+                          data: pageData,
+                          continuationToken,
+                          previousPageToken: null,
+                      },
+                  }),
+                  getInjectedItemById: jest.fn().mockResolvedValue({
+                      parsedData: {
+                          data: pageData[0] ?? null,
+                          continuationToken: null,
+                          previousPageToken: null,
+                      },
+                  }),
+              }
+            : {};
+
     window.StudioUISDK.variable.dataSource = {
         setValue: jest.fn().mockResolvedValue(undefined),
+        ...injectedDataSourceMocks,
     } as never;
 
+    injectedDataChangedHandler = undefined;
     window.StudioUISDK.config = {
         events: {
             onConnectorEvent: {
                 registerCallback: jest.fn().mockReturnValue(jest.fn()),
+            },
+            onInjectedDataChanged: {
+                registerCallback: jest.fn().mockImplementation((cb: (variableId: string) => void) => {
+                    injectedDataChangedHandler = cb;
+                    return jest.fn();
+                }),
             },
         },
     } as never;
@@ -363,6 +410,137 @@ describe('DataSourceVariableListMode', () => {
 
             await waitFor(() => {
                 expect(mockOnVariableBlur).toHaveBeenCalledWith('ds-var-1');
+            });
+        });
+    });
+
+    describe('injected data source', () => {
+        beforeEach(() => {
+            setupSDKMocks(defaultPageData, { sourceType: 'injected' });
+        });
+
+        it('does not call connector APIs on mount', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            await waitFor(() => {
+                expect(screen.getByRole('combobox')).toBeInTheDocument();
+            });
+
+            expect(window.StudioUISDK.dataConnector.getPage).not.toHaveBeenCalled();
+            expect(window.StudioUISDK.dataConnector.getModel).not.toHaveBeenCalled();
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).not.toHaveBeenCalled();
+        });
+
+        it('loads injected options when the dropdown is opened', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            const combobox = await screen.findByRole('combobox');
+            await user.click(combobox);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+                expect(screen.getByText('Joe')).toBeInTheDocument();
+                expect(screen.getByText('John')).toBeInTheDocument();
+            });
+            expect(window.StudioUISDK.dataConnector.getPage).not.toHaveBeenCalled();
+        });
+
+        it('loads preselected injected row when the dropdown is opened with entryId', async () => {
+            renderComponent(createInjectedVariable({ entryId: '1' }), undefined);
+
+            const combobox = await screen.findByRole('combobox');
+            await user.click(combobox);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedItemById).toHaveBeenCalledWith(
+                    'ds-var-1',
+                    '1',
+                );
+            });
+            expect(window.StudioUISDK.dataConnector.getPageItemById).not.toHaveBeenCalled();
+        });
+
+        it('selects an injected row and calls setValue', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            const combobox = await screen.findByRole('combobox');
+            await user.click(combobox);
+
+            await waitFor(() => {
+                expect(screen.getByText('John')).toBeInTheDocument();
+            });
+
+            await user.click(screen.getByText('John'));
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', '2');
+            });
+        });
+
+        it('reloads injected data and preselects the first row when onInjectedDataChanged fires', async () => {
+            renderComponent(createInjectedVariable(), undefined);
+
+            await waitFor(() => {
+                expect(injectedDataChangedHandler).toBeDefined();
+            });
+
+            await act(async () => {
+                injectedDataChangedHandler!('ds-var-1');
+            });
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+            });
+
+            await user.click(screen.getByRole('combobox'));
+
+            await waitFor(() => {
+                expect(screen.getByText('Joe')).toBeInTheDocument();
+                expect(screen.getByText('John')).toBeInTheDocument();
+            });
+        });
+
+        it('updates the selected option when entryId changes after injected data is loaded', async () => {
+            const TestHarness = () => {
+                const [variable, setVariable] = useState(createInjectedVariable());
+
+                return (
+                    <>
+                        <DataSourceVariableListMode variable={variable} validationError={undefined} />
+                        <button type="button" onClick={() => setVariable((current) => ({ ...current, entryId: '2' }))}>
+                            set-entry-2
+                        </button>
+                    </>
+                );
+            };
+
+            renderWithProviders(<TestHarness />, { preloadedState: getPreloadedState() });
+
+            const combobox = await screen.findByRole('combobox');
+            await user.click(combobox);
+
+            await waitFor(() => {
+                expect(screen.getByText('John')).toBeInTheDocument();
+            });
+            await user.keyboard('{Escape}');
+
+            await user.click(screen.getByRole('button', { name: 'set-entry-2' }));
+
+            await user.click(screen.getByRole('combobox'));
+
+            await waitFor(() => {
+                expect(screen.getByRole('option', { name: 'John' })).toHaveAttribute('aria-selected', 'true');
+            });
+        });
+
+        it('loads injected options when the mobile list mode panel is active', async () => {
+            mockUseMobileSize.mockReturnValue(true);
+            renderComponent(createInjectedVariable(), undefined, PanelType.DATA_SOURCE_VARIABLE_LIST_MODE);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith('ds-var-1');
+                expect(screen.getByText('Joe')).toBeInTheDocument();
+                expect(screen.getByText('John')).toBeInTheDocument();
             });
         });
     });

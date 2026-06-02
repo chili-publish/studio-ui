@@ -12,7 +12,6 @@ import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { getPage, getPageItemById } from 'src/components/shared/DataSource/dataSource.util';
 import useSharedDataSource from 'src/components/shared/DataSource/useSharedDataSource';
-import { useSubscriberContext } from 'src/contexts/Subscriber';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { useAppDispatch } from 'src/store';
 import { selectDataSourceVariableData, setDataSourceVariableData } from 'src/store/reducers/dataSourceVariableReducer';
@@ -38,8 +37,6 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
 
     const [connectorReady, setConnectorReady] = useState(false);
     const rowKeyNameRef = useRef<string | null>(null);
-
-    const { subscriber } = useSubscriberContext();
 
     // for table mode
     const [isDataSourceModalOpen, setIsDataSourceModalOpen] = useState(false);
@@ -178,16 +175,17 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
 
         if (cachedDataSourceVariableData?.data?.length) {
+            const cachedRows = cachedDataSourceVariableData.data as DataItem[];
             setDataRowsAndTokens(
-                cachedDataSourceVariableData.data,
+                cachedRows,
                 cachedDataSourceVariableData.continuationToken,
                 cachedDataSourceVariableData.previousPageToken,
             );
             if (cachedDataSourceVariableData.rowKey) {
-                const rowIndex = cachedDataSourceVariableData.data.findIndex(
+                const rowIndex = cachedRows.findIndex(
                     (item) => item[cachedDataSourceVariableData.rowKey!]?.toString() === entryId,
                 );
-                const value = cachedDataSourceVariableData.data[rowIndex];
+                const value = cachedRows[rowIndex];
                 rowKeyNameRef.current = cachedDataSourceVariableData.rowKey;
 
                 if (value) {
@@ -241,7 +239,7 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
             return;
         }
         updateSelectedValueForInjectedSource(variable.entryId);
-    }, [variable.entryId]);
+    }, [variable.entryId, variable.value]);
 
     const checkConnectorState = useEffectEvent(async () => {
         if (dataRows.length || !connectorId) {
@@ -261,16 +259,39 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     }, [connectorId, dataRows.length]);
 
     useEffect(() => {
-        const handler = (event: ConnectorEvent) => {
-            if (!connectorId || !connectorReady) return;
-            if (event.type === ConnectorEventType.reloadRequired && event.id === connectorId) {
-                resetData();
-                loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
-            }
-        };
-        subscriber?.on('onConnectorEvent', handler);
-        return () => subscriber?.off('onConnectorEvent', handler);
-    }, [subscriber, connectorId, loadDataRowsByToken, connectorReady, resetData]);
+        const unsubscribe = window.StudioUISDK?.config.events.onConnectorEvent.registerCallback(
+            (event: ConnectorEvent) => {
+                if (!connectorId || !connectorReady) return;
+                if (event.type === ConnectorEventType.reloadRequired && event.id === connectorId) {
+                    resetData();
+                    loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
+                }
+            },
+        );
+        return () => unsubscribe?.();
+    }, [connectorId, loadDataRowsByToken, connectorReady, resetData]);
+
+    const reloadInjectedData = useEffectEvent((variableId: string) => {
+        if (variableId !== variable.id) {
+            return;
+        }
+        if (!variable.value || !isInjected(variable.value)) {
+            return;
+        }
+
+        rowKeyNameRef.current = variable.value.itemIdPropertyName;
+        resetData();
+        loadDataRowsByToken({ continuationToken: null }, { preselectFirstRow: true });
+    });
+
+    useEffect(() => {
+        const unsubscribe = window.StudioUISDK?.config.events.onInjectedDataChanged.registerCallback(
+            (variableId: string) => {
+                reloadInjectedData(variableId);
+            },
+        );
+        return () => unsubscribe?.();
+    }, []);
 
     return {
         isDataSourceModalOpen,

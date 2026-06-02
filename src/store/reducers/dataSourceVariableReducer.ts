@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '..';
-import { DataItem } from '@chili-publish/studio-sdk';
+
+/** Flat row type for Redux; SDK DataItem is assignable but too recursive for Immer drafts. */
+export type StoredDataItems = Array<Record<string, unknown>>;
+
+type DataSourceVariableCacheEntry = {
+    data: StoredDataItems;
+    continuationToken: string | null;
+    previousPageToken: string | null;
+    rowKey: string | null;
+};
 
 type DataSourceVariableState = {
-    dataSourceVariableData: {
-        [key: string]: {
-            data: DataItem[];
-            continuationToken: string | null;
-            previousPageToken: string | null;
-            rowKey: string | null;
-        };
-    };
+    dataSourceVariableData: Record<string, DataSourceVariableCacheEntry>;
 };
 
 const initialState: DataSourceVariableState = {
@@ -25,7 +27,7 @@ export const dataSourceVariableSlice = createSlice({
             state,
             action: PayloadAction<{
                 variableId: string;
-                data: DataItem[];
+                data: StoredDataItems;
                 continuationToken: string | null;
                 previousPageToken: string | null;
                 rowKey: string | null;
@@ -43,15 +45,7 @@ export const dataSourceVariableSlice = createSlice({
 
 export const { setDataSourceVariableData } = dataSourceVariableSlice.actions;
 
-export const selectDataSourceVariableData = (
-    state: RootState,
-): {
-    [key: string]: {
-        data: DataItem[];
-        continuationToken: string | null;
-        previousPageToken: string | null;
-        rowKey: string | null;
-    };
-} => state.dataSourceVariable.dataSourceVariableData;
+export const selectDataSourceVariableData = (state: RootState): Record<string, DataSourceVariableCacheEntry> =>
+    state.dataSourceVariable.dataSourceVariableData;
 
 export default dataSourceVariableSlice.reducer;
