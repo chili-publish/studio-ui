@@ -665,3 +665,41 @@ By default, connector query calls are cached. This behavior can be overridden us
 `await StudioUISDK.configuration.setValue('ENABLE_QUERY_CALL_CACHE', status)`
 
 Here, status is a string — if sent as 'true', query calls will be cached; if 'false', they will not be cached.
+
+### Host-triggered variable validation (`validateVariables`)
+
+`studioUILoaderConfig` (and the other loaders) return a `StudioUI` instance. Besides `destroy()`, that instance exposes an imperative method that lets a host application validate all variables and gate its own flow:
+
+```typescript
+validateVariables(): Promise<Array<{ id: string }>>;
+```
+
+Calling it runs the **same validation the Download button performs**: it sweeps every currently visible variable and marks any field that is `required` but left empty with its error message and red styling. It then returns the list of variables that failed — one `{ id }` per failing field. An empty array means there are no errors, so the host can gate on `result.length`.
+
+This is useful when you build your own "Save"/"Submit"/"Next step" button outside Studio UI and want to (a) block the workflow until required variables are filled, and (b) show the user exactly which fields are missing — without re-implementing validation yourself.
+
+```js
+const ui = window.StudioUI.studioUILoaderConfig({
+    /* ... config ... */
+});
+
+async function onHostSubmit() {
+    const invalid = await ui.validateVariables();
+    if (invalid.length) {
+        // The required-but-empty fields are now highlighted red in the Studio UI form.
+        // `invalid` is e.g. [{ id: 'var-a' }, { id: 'var-c' }].
+        // Look up names/values from the engine SDK if you want to show your own summary:
+        // const v = await window.StudioUISDK.variable.getById(invalid[0].id);
+        return; // do not proceed with the host workflow
+    }
+    await myHostSubmit();
+}
+```
+
+Notes:
+
+- **Idempotent.** Calling it again after values change re-evaluates every visible field, so fields that have since been filled are automatically un-flagged. There is no separate "clear validation" method — re-running `validateVariables()` (or the user fixing a field and blurring it) clears resolved errors.
+- **Readiness.** It is meaningful only after the project has loaded (after your `onProjectLoaded` callback fires). Called before any variables exist — or after `destroy()` — it is a safe no-op and returns `[]`.
+- **Resolving variable details.** Each element is an object (`{ id }`) rather than a plain string, leaving room for additional fields in future. Use the engine SDK (`window.StudioUISDK.variable.*`) to resolve a variable's name/label/value from its id — the UI label can be a translation key, so `id` is the only unambiguous identifier.
+- **Known limitation — image variables.** A `required` image variable passes validation as soon as it has an asset id; this method does not verify that the image actually resolves, downloads, or renders. A required-but-broken image therefore reports as valid here. Use the SDK media-connector to probe if you need true load verification.
+- **Known limitation — DataSource variables.** A `required` DataSource variable with no selected row fails validation and is reported in the returned array, but it is not visually flagged in the form today — unlike text variables, it receives no red styling or inline error message. The host still gets its `id` in the result, so you can surface the missing field yourself.

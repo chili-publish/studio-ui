@@ -32,7 +32,7 @@ export const validateVariableList = createAsyncThunk('variable/validateVariableL
     const { variable } = getState() as RootState;
     let hasErrors = false;
 
-    const validation = variable.variables.reduce((acc, current) => {
+    const validation = variable.variables.reduce<VariableValidation>((acc, current) => {
         if (!current.isVisible) return acc;
         const errMsg = getVariableErrMsg(current);
         if (errMsg) hasErrors = true;
