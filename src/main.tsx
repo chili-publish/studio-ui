@@ -47,7 +47,7 @@ export default class StudioUI extends StudioUILoader {
         }
         const { validation } = await this.store.dispatch(validateVariableList()).unwrap();
         return Object.entries(validation)
-            .filter(([, v]) => Boolean(v.errorMsg))
+            .filter(([, v]) => !!v.errorMsg)
             .map(([id]) => ({ id }));
     }
 
