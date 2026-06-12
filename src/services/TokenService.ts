@@ -47,8 +47,9 @@ export class TokenService {
 
     /**
      * Refresh the authentication token
+     * @param updateEditorToken - Whether to update the editor token. When we refresh token within Engine context, we shouldn't update its configuration
      */
-    async refreshToken(): Promise<string> {
+    async refreshToken(updateEditorToken: boolean = true): Promise<string> {
         if (!this.refreshTokenAction) {
             throw new Error('The authentication token has expired, and a method to obtain a new one is not provided.');
         }
@@ -60,7 +61,9 @@ export class TokenService {
 
         // Update the current token
         this.currentToken = result;
-        await this.updateEditorToken();
+        if (updateEditorToken) {
+            await this.updateEditorToken();
+        }
         return result;
     }
 
