@@ -4,6 +4,7 @@ import {
     AuthRefreshTypeEnum,
     ConnectorType,
     ConnectorSupportedAuth,
+    GrafxTokenAuthCredentials,
 } from '@chili-publish/studio-sdk';
 import { useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
 import { TokenService } from 'src/services/TokenService';
@@ -203,6 +204,34 @@ describe('useEditorAuthExpired', () => {
             'remote-123',
         );
         expect(authResult).toEqual(errorResult);
+    });
+
+    it('should refresh grafx token without updating editor configuration', async () => {
+        const mockRefreshToken = jest.fn().mockResolvedValue('refreshed-token');
+        (TokenService.getInstance as jest.Mock).mockReturnValue({
+            refreshToken: mockRefreshToken,
+        });
+
+        const { result } = renderHookWithProviders(() =>
+            useEditorAuthExpired(mockOnConnectorAuthenticationRequested, mockCreateProcessFn),
+        );
+        const handleAuthExpired = result.current;
+
+        const request: AuthRefreshRequest = {
+            type: AuthRefreshTypeEnum.grafxToken,
+            connectorId: '',
+            remoteConnectorId: '',
+            headerValue: '',
+            connectorDefinition: {
+                ...baseConnectorDefinition,
+                name: '',
+            },
+        };
+
+        const authResult = await handleAuthExpired(request);
+
+        expect(mockRefreshToken).toHaveBeenCalledWith(false);
+        expect(authResult).toEqual(new GrafxTokenAuthCredentials('refreshed-token'));
     });
 
     it('should handle errors gracefully', async () => {
