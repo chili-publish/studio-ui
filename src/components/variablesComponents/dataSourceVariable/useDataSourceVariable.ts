@@ -6,8 +6,9 @@ import {
     DataSourceVariableSource,
     DataSourceVariableSourceType,
     InjectedDataSourceVariableSource,
+    DataItem,
+    DataSourceVariableDataModel,
 } from '@chili-publish/studio-sdk';
-import { DataItem, DataSourceVariableDataModel } from '@chili-publish/studio-sdk/connector-types/src';
 import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getPage, getPageItemById } from 'src/components/shared/DataSource/dataSource.util';

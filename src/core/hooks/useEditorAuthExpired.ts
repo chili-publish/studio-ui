@@ -33,7 +33,8 @@ export const useEditorAuthExpired = (
     const handleAuthExpired = async (request: AuthRefreshRequest) => {
         try {
             if (request.type === AuthRefreshTypeEnum.grafxToken) {
-                const newToken = await TokenService.getInstance().refreshToken();
+                // Since it runs within Engine refresh context, we don't need to update the editor token via configuration
+                const newToken = await TokenService.getInstance().refreshToken(false);
                 return new GrafxTokenAuthCredentials(newToken);
             }
 
