@@ -1315,10 +1315,10 @@
     is-core-module "2.16.1"
     micromatch "4.0.8"
 
-"@chili-publish/environment-client-api@0.31.9":
-  version "0.31.9"
-  resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.31.9/e126bd54f21fe2780a8dd53787ad92c843a132e3#e126bd54f21fe2780a8dd53787ad92c843a132e3"
-  integrity sha512-IaGMj6UI3eL0ZdSmIsCTKEjI41WCkykQAa9U99k+Iriq6GMbVdQyuzuUrrdstlC0cWkOJQpNAro1ZffynkL73Q==
+"@chili-publish/environment-client-api@0.31.55":
+  version "0.31.55"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.31.55/fa67643574dbd37a5c84fb662cbbd035a5242175#fa67643574dbd37a5c84fb662cbbd035a5242175"
+  integrity sha512-2uEYwRglex7RIHIor5Dgn7cPo3uEeN0nHx77ODY8LMwB/BPAxzkzSsfzxeoQjecYbaKxiYS+IaaHlvAGPMsbrA==
 
 "@chili-publish/grafx-shared-components@0.120.7":
   version "0.120.7"

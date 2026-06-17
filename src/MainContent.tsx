@@ -47,7 +47,9 @@ import { useAppDispatch, useAppSelector } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
+import { useEnvironmentClientApi } from './hooks/useEnvironmentClientApi';
 import { APP_WRAPPER_ID } from './utils/constants';
+import { mapRichTextRulesToSdk } from './utils/mapRichTextRulesToSdk';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
 import { TokenService } from './services/TokenService';
@@ -106,6 +108,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
 
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
+    const { richTextRules } = useEnvironmentClientApi();
     const textProperties = useAppSelector(selectedTextProperties);
     const mobileOrTabletSize = isMobileSize || isTabletSize;
     const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
@@ -400,6 +403,10 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
             if (!fetchedDocument) return;
 
             try {
+                const richTextRulesResponse = await richTextRules.getAll();
+                const ruleSets = richTextRulesResponse.data ?? [];
+                await window.StudioUISDK.variable.setRichTextRules(mapRichTextRulesToSdk(ruleSets));
+
                 const result = await window.StudioUISDK.document.load(fetchedDocument);
                 setIsDocumentLoaded(result.success);
 
@@ -423,7 +430,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         };
 
         loadDocument();
-    }, [fetchedDocument, loadConnectors]);
+    }, [fetchedDocument, loadConnectors, richTextRules]);
 
     useEffect(() => {
         if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
