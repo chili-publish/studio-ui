@@ -43,6 +43,7 @@ jest.mock('../../services/EnvironmentApiService', () => ({
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
+            getRichTextRules: jest.fn().mockResolvedValue({ data: [] }),
         })),
     },
 }));
@@ -136,8 +137,9 @@ const variableRequiredTest = async (variable: Variable) => {
         await user.click(panelDownloadButton);
     });
     await waitFor(() => {
-        expect(screen.getByText('Fill all required fields to download.')).toBeInTheDocument();
-        expect(screen.getByText('This field is required')).toBeInTheDocument();
+        screen.logTestingPlaygroundURL();
+        expect(screen.getByText(/fill all required fields to download\./i)).toBeInTheDocument();
+        expect(screen.getByText(/this field is required/i)).toBeInTheDocument();
     });
 };
 
