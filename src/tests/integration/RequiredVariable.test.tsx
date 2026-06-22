@@ -137,7 +137,6 @@ const variableRequiredTest = async (variable: Variable) => {
         await user.click(panelDownloadButton);
     });
     await waitFor(() => {
-        screen.logTestingPlaygroundURL();
         expect(screen.getByText(/fill all required fields to download\./i)).toBeInTheDocument();
         expect(screen.getByText(/this field is required/i)).toBeInTheDocument();
     });
