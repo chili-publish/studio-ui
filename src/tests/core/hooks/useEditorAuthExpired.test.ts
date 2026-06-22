@@ -219,13 +219,6 @@ describe('useEditorAuthExpired', () => {
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.grafxToken,
-            connectorId: '',
-            remoteConnectorId: '',
-            headerValue: '',
-            connectorDefinition: {
-                ...baseConnectorDefinition,
-                name: '',
-            },
         };
 
         const authResult = await handleAuthExpired(request);
@@ -244,13 +237,6 @@ describe('useEditorAuthExpired', () => {
 
         const request: AuthRefreshRequest = {
             type: AuthRefreshTypeEnum.grafxToken,
-            connectorId: '',
-            remoteConnectorId: '',
-            headerValue: '',
-            connectorDefinition: {
-                ...baseConnectorDefinition,
-                name: '',
-            },
         };
 
         const authResult = await handleAuthExpired(request);
