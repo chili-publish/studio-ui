@@ -47,9 +47,7 @@ import { useAppDispatch, useAppSelector } from './store';
 import { setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
-import { useEnvironmentClientApi } from './hooks/useEnvironmentClientApi';
 import { APP_WRAPPER_ID } from './utils/constants';
-import { mapRichTextRulesToSdk } from './utils/mapRichTextRulesToSdk';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
 import { TokenService } from './services/TokenService';
@@ -64,6 +62,7 @@ import {
 } from './store/reducers/frameReducer';
 import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
 import MobileInlineTextEditingToolbar from './components/inlineTextEditingToolbar/mobile/MobileInlineTextEditingToolbar';
+import { useRichTextInjection } from './hooks/useRichTextInjection';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -108,11 +107,10 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
 
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
-    const { richTextRules } = useEnvironmentClientApi();
     const textProperties = useAppSelector(selectedTextProperties);
     const mobileOrTabletSize = isMobileSize || isTabletSize;
     const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
-
+    const { injectRichTextRules } = useRichTextInjection();
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
     useDocumentTools(sdkRef, activePageId);
@@ -403,9 +401,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
             if (!fetchedDocument) return;
 
             try {
-                const richTextRulesResponse = await richTextRules.getAll();
-                const ruleSets = richTextRulesResponse.data ?? [];
-                await window.StudioUISDK.variable.setRichTextRules(mapRichTextRulesToSdk(ruleSets));
+                await injectRichTextRules();
 
                 const result = await window.StudioUISDK.document.load(fetchedDocument);
                 setIsDocumentLoaded(result.success);
@@ -430,7 +426,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         };
 
         loadDocument();
-    }, [fetchedDocument, loadConnectors, richTextRules]);
+    }, [fetchedDocument, loadConnectors]);
 
     useEffect(() => {
         if (!multiLayoutMode && isDocumentLoaded) zoomToPage();
