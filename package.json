@@ -31,7 +31,7 @@
     },
     "dependencies": {
         "@babel/preset-env": "^7.28.6",
-        "@chili-publish/environment-client-api": "0.31.55",
+        "@chili-publish/environment-client-api": "0.31.59",
         "@chili-publish/grafx-shared-components": "0.120.7",
         "@chili-publish/studio-sdk": "1.44.0-alpha.13",
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
