@@ -155,7 +155,7 @@ describe('FormBuilder functionality', () => {
                 id: 'Datasource',
                 type: 'datasource',
                 active: true,
-                header: 'Data source',
+                header: 'Output data source',
                 helpText: '',
             });
 

@@ -248,7 +248,7 @@ describe('FormBuilder options', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Data source')).toBeInTheDocument();
+            expect(screen.getByText('Output data source')).toBeInTheDocument();
             expect(screen.getByText('Layouts')).toBeInTheDocument();
             expect(screen.getByText('Customize')).toBeInTheDocument();
         });
