@@ -53,6 +53,9 @@ jest.mock('@chili-publish/studio-sdk', () => {
                             Promise.resolve({ parsedData: { intent: { value: LayoutIntent.print } } }),
                         ),
                 },
+                variable: {
+                    setRichTextRules: jest.fn().mockResolvedValue({ parsedData: null }),
+                },
                 document: {
                     load: jest
                         .fn()

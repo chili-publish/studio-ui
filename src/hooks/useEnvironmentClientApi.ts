@@ -18,8 +18,16 @@ export function useEnvironmentClientApi() {
         [environmentApiService],
     );
 
+    const richTextRules = useMemo(
+        () => ({
+            getAll: () => environmentApiService.getRichTextRules(),
+        }),
+        [environmentApiService],
+    );
+
     return {
         // Connectors API wrapper
         connectors,
+        richTextRules,
     };
 }

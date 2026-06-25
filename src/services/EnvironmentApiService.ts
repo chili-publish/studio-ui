@@ -4,6 +4,7 @@ import {
     ProjectsApi,
     UserInterfacesApi,
     OutputApi,
+    internal,
 } from '@chili-publish/environment-client-api';
 import type {
     APIUserInterface,
@@ -29,6 +30,8 @@ export class EnvironmentApiService {
     private userInterfacesApi: UserInterfacesApi;
 
     private outputApi: OutputApi;
+
+    private richTextRulesApi: internal.RichTextRulesApi;
 
     private environment: string;
 
@@ -63,11 +66,14 @@ export class EnvironmentApiService {
             ],
         });
 
+        const internalConfig = new internal.Configuration(config);
+
         // Initialize all API instances
         this.connectorsApi = new ConnectorsApi(config);
         this.projectsApi = new ProjectsApi(config);
         this.userInterfacesApi = new UserInterfacesApi(config);
         this.outputApi = new OutputApi(config);
+        this.richTextRulesApi = new internal.RichTextRulesApi(internalConfig);
     }
 
     /**
@@ -110,6 +116,15 @@ export class EnvironmentApiService {
     async getConnectorByIdAs<T>(connectorId: string): Promise<T> {
         const connector = await this.getConnectorById(connectorId);
         return connector as unknown as T; // TODO: Remove casting when environment client API types are aligned to our code or the other way around
+    }
+
+    // Rich Text Rules API methods
+    async getRichTextRules() {
+        return this.richTextRulesApi.apiV1EnvironmentEnvironmentRichTextRulesGet({
+            environment: this.environment,
+            limit: 50,
+            expand: ['All'],
+        });
     }
 
     // Projects API methods
