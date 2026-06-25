@@ -56,12 +56,21 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
                             variableData?.type &&
                             varTypesWithNoValue.includes(variableData.type))
                     ) {
-                        msg = (
-                            <>
-                                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. A default
-                                value is used.
-                            </>
-                        );
+                        if (variableData?.type === VariableType.dataSource && !!exception.context?.columnName) {
+                            msg = (
+                                <>
+                                    <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. Missing
+                                    data field {`'${exception.context?.columnName}'`}. A default value is used.
+                                </>
+                            );
+                        } else {
+                            msg = (
+                                <>
+                                    <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. A
+                                    default value is used.
+                                </>
+                            );
+                        }
                     }
                     if (msg) {
                         addNotification({
