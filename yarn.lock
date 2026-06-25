@@ -1320,9 +1320,10 @@
   resolved "https://npm.pkg.github.com/download/@chili-publish/environment-client-api/0.31.9/e126bd54f21fe2780a8dd53787ad92c843a132e3#e126bd54f21fe2780a8dd53787ad92c843a132e3"
   integrity sha512-IaGMj6UI3eL0ZdSmIsCTKEjI41WCkykQAa9U99k+Iriq6GMbVdQyuzuUrrdstlC0cWkOJQpNAro1ZffynkL73Q==
 
-"@chili-publish/grafx-shared-components@https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/632/grafx-shared-components.tgz":
-  version "1.2.1"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/grafx-shared-components/dev-shared-components/632/grafx-shared-components.tgz#af3ed6190c90425899e565e98ecbe463a7f58c53"
+"@chili-publish/grafx-shared-components@1.3.1":
+  version "1.3.1"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/1.3.1/57170a7da791fe5587b4d17bb55c4fca6806b80e#57170a7da791fe5587b4d17bb55c4fca6806b80e"
+  integrity sha512-idmhAy7RB5yTgFhLJm1xtuyXjxewu3x677Eg3kTKerFn/rr9yUBPNm0lXFMt47f2WQZBTVWsXRQMJScQcKFnvA==
 
 "@chili-publish/studio-sdk@1.44.0-alpha.13":
   version "1.44.0-alpha.13"
