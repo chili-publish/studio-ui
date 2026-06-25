@@ -139,6 +139,7 @@ jest.mock('./services/EnvironmentApiService', () => ({
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
+            getRichTextRules: jest.fn().mockResolvedValue({ data: [] }),
         })),
     },
 }));

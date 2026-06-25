@@ -62,6 +62,7 @@ import {
 } from './store/reducers/frameReducer';
 import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
 import MobileInlineTextEditingToolbar from './components/inlineTextEditingToolbar/mobile/MobileInlineTextEditingToolbar';
+import { useRichTextInjection } from './hooks/useRichTextInjection';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -109,7 +110,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
     const textProperties = useAppSelector(selectedTextProperties);
     const mobileOrTabletSize = isMobileSize || isTabletSize;
     const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
-
+    const { injectRichTextRules } = useRichTextInjection();
     const [sdkRef, setSDKRef] = useState<StudioSDK>();
     useDataRowExceptionHandler(sdkRef);
     useDocumentTools(sdkRef, activePageId);
@@ -400,6 +401,8 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
             if (!fetchedDocument) return;
 
             try {
+                await injectRichTextRules();
+
                 const result = await window.StudioUISDK.document.load(fetchedDocument);
                 setIsDocumentLoaded(result.success);
 
