@@ -356,7 +356,6 @@ const ItemBrowser = <
                                           }
                                         : undefined
                                 }
-                                isHighlightOnClick
                             />
                         </SearchInputWrapper>
                     ) : null}
