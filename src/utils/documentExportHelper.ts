@@ -31,10 +31,10 @@ const getInjectedVariableEntries = async (body: string) => {
                           const injectedData = await window.StudioUISDK.variable.dataSource.getInjectedData(
                               variable.id,
                           );
-                          if (injectedData.parsedData?.data.length === 0) {
+                          if (injectedData?.parsedData?.data?.length === 0) {
                               return null;
                           }
-                          return { [variable.name]: injectedData.parsedData?.data ?? [] };
+                          return { [variable.name]: injectedData?.parsedData?.data ?? [] };
                       }),
               )
           ).filter((entry: Record<string, DataItem[]> | null) => entry !== null)
