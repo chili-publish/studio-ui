@@ -1,4 +1,4 @@
-import { DownloadFormats } from '@chili-publish/studio-sdk';
+import { DataSourceVariableSourceType, DownloadFormats, VariableType } from '@chili-publish/studio-sdk';
 import { addTrailingSlash, exportDocument } from '../../utils/documentExportHelper';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
 
@@ -283,6 +283,117 @@ describe('"exportDocument', () => {
                 documentContent: JSON.parse('{}'),
                 projectId: 'projectId',
             });
+        });
+    });
+
+    describe('when dataSourceBatchOutputOff is true', () => {
+        const injectedVariable = {
+            id: 'ds-var-1',
+            name: 'InjectedDS',
+            type: VariableType.dataSource,
+            value: { type: DataSourceVariableSourceType.injected },
+        };
+        const injectedVariableEmpty = {
+            id: 'ds-var-empty',
+            name: 'InjectedDSEmpty',
+            type: VariableType.dataSource,
+            value: { type: DataSourceVariableSourceType.injected },
+        };
+        const connectorVariable = {
+            id: 'ds-var-2',
+            name: 'ConnectorDS',
+            type: VariableType.dataSource,
+            value: { type: DataSourceVariableSourceType.connector, connectorId: 'connector-1' },
+        };
+        const shortTextVariable = {
+            id: 'st-var-1',
+            name: 'ShortText',
+            type: VariableType.shortText,
+            value: 'hello',
+        };
+
+        const documentBody = JSON.stringify({
+            variables: [injectedVariable, injectedVariableEmpty, connectorVariable, shortTextVariable],
+        });
+
+        const injectedData = [
+            { id: '1', name: 'Joe' },
+            { id: '2', name: 'John' },
+        ];
+
+        beforeEach(() => {
+            window.StudioUISDK.document.getCurrentState = jest
+                .fn()
+                .mockResolvedValue({ data: documentBody, parsedData: { engineVersion: '1.0.0' } });
+            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+                parsedData: null,
+            });
+            window.StudioUISDK.variable.dataSource = {
+                getInjectedData: jest.fn().mockImplementation((variableId: string) => {
+                    if (variableId === injectedVariableEmpty.id) {
+                        return Promise.resolve({ parsedData: { data: [] } });
+                    }
+                    return Promise.resolve({ parsedData: { data: injectedData } });
+                }),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any;
+        });
+
+        it('should include injected data source variables in the request and skip non-injected and empty ones', async () => {
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
+                true,
+            );
+
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith(injectedVariable.id);
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).toHaveBeenCalledWith(
+                injectedVariableEmpty.id,
+            );
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).not.toHaveBeenCalledWith(
+                connectorVariable.id,
+            );
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).not.toHaveBeenCalledWith(
+                shortTextVariable.id,
+            );
+
+            expect(mockEnvironmentApiService.generateOutput).toHaveBeenCalledWith('pdf', {
+                engineVersion: '1.0.0',
+                dataConnectorConfig: undefined,
+                outputSettingsId: 'outputId',
+                layoutsToExport: ['1'],
+                documentContent: JSON.parse(documentBody),
+                projectId: 'projectId',
+                variables: [{ [injectedVariable.name]: injectedData }],
+            });
+        });
+
+        it('should not include "variables" in the request when there are no injected data source variables', async () => {
+            const bodyWithoutInjected = JSON.stringify({
+                variables: [connectorVariable, shortTextVariable],
+            });
+            window.StudioUISDK.document.getCurrentState = jest
+                .fn()
+                .mockResolvedValue({ data: bodyWithoutInjected, parsedData: { engineVersion: '1.0.0' } });
+
+            await exportDocument(
+                DownloadFormats.PDF,
+                '1',
+                'projectId',
+                'outputId',
+                false,
+                mockEnvironmentApiService,
+                true,
+            );
+
+            expect(window.StudioUISDK.variable.dataSource.getInjectedData).not.toHaveBeenCalled();
+
+            const requestBody = mockEnvironmentApiService.generateOutput.mock.calls[0][1] as Record<string, unknown>;
+            expect(requestBody).not.toHaveProperty('variables');
         });
     });
 

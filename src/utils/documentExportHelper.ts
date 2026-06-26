@@ -1,4 +1,12 @@
-import { DownloadFormats, Id } from '@chili-publish/studio-sdk';
+import {
+    DataItem,
+    DataSourceVariable,
+    DataSourceVariableSourceType,
+    DownloadFormats,
+    Id,
+    Variable,
+    VariableType,
+} from '@chili-publish/studio-sdk';
 import { DataConnectorConfiguration } from '../types/OutputGenerationTypes';
 import { ApiError, DownloadLinkResult } from '../types/types';
 import { getConnectorConfigurationOptions, getEnvId } from './connectors';
@@ -7,6 +15,31 @@ import { EnvironmentApiService } from '../services/EnvironmentApiService';
 type TaskId = string;
 
 type StudioDownloadLinkResult = Omit<DownloadLinkResult, 'success' | 'parsedData'> | TaskId;
+
+const getInjectedVariableEntries = async (body: string) => {
+    const documentVariables = JSON.parse(body)?.variables;
+    return documentVariables?.length > 0
+        ? (
+              await Promise.all(
+                  documentVariables
+                      ?.filter(
+                          (variable: Variable) =>
+                              variable.type === VariableType.dataSource &&
+                              (variable as DataSourceVariable)?.value?.type === DataSourceVariableSourceType.injected,
+                      )
+                      ?.map(async (variable: Variable) => {
+                          const injectedData = await window.StudioUISDK.variable.dataSource.getInjectedData(
+                              variable.id,
+                          );
+                          if (injectedData.parsedData?.data.length === 0) {
+                              return null;
+                          }
+                          return { [variable.name]: injectedData.parsedData?.data ?? [] };
+                      }),
+              )
+          ).filter((entry: Record<string, DataItem[]> | null) => entry !== null)
+        : [];
+};
 /**
  * This method will call an external api to create a download url using environment client API
  * The video will be generated in the dimensions (and resolution) of the layout.
@@ -49,7 +82,14 @@ export const exportDocument = async (
             environmentApiService,
         );
 
+        const dataSourceBatchOutputOff = !dataConnectorConfig;
+
         const body = documentResponse.data as string;
+
+        const injectedVariableEntries: Record<string, DataItem[]>[] = dataSourceBatchOutputOff
+            ? await getInjectedVariableEntries(body)
+            : [];
+
         const requestBody = {
             outputSettingsId,
             layoutsToExport: [layoutId],
@@ -57,6 +97,7 @@ export const exportDocument = async (
             documentContent: JSON.parse(body),
             dataConnectorConfig,
             ...(isSandboxMode ? { templateId: projectId } : { projectId }),
+            ...(injectedVariableEntries.length > 0 ? { variables: injectedVariableEntries } : {}),
         };
 
         const response = await environmentApiService.generateOutput(format, requestBody);
