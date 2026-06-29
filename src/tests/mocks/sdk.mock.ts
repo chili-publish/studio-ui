@@ -55,6 +55,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                         }),
                     ),
                     getAll: jest.fn().mockImplementation(() => Promise.resolve({ parsedData: mockVariables })),
+                    setRichTextRules: jest.fn().mockResolvedValue({ parsedData: null }),
                 },
                 layout: {
                     getSelected: jest

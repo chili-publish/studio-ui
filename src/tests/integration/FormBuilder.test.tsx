@@ -67,6 +67,7 @@ jest.mock('../../services/EnvironmentApiService', () => ({
             getOutputSettingsById: jest.fn().mockResolvedValue({}),
             getTaskStatus: jest.fn().mockResolvedValue({}),
             generateOutput: jest.fn().mockResolvedValue({}),
+            getRichTextRules: jest.fn().mockResolvedValue({ data: [] }),
         })),
     },
 }));
@@ -147,6 +148,9 @@ jest.mock('@chili-publish/studio-sdk', () => {
                             },
                         }),
                     ),
+                },
+                variable: {
+                    setRichTextRules: jest.fn().mockResolvedValue({ parsedData: null }),
                 },
                 connector: {
                     getById: jest.fn().mockResolvedValue({
