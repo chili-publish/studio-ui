@@ -32,7 +32,7 @@ const OutputDataSourceModal = ({
 
     const title = getUITranslation(
         ['formBuilder', 'datasource', 'header'],
-        formBuilder.datasource?.header ?? 'Data source',
+        formBuilder.datasource?.header ?? 'Output data source',
     );
 
     return (

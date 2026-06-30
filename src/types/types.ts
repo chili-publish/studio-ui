@@ -247,7 +247,7 @@ export const defaultFormBuilder: FormBuilderType = {
         id: 'Datasource',
         type: 'datasource',
         active: true,
-        header: 'Data source',
+        header: 'Output data source',
         helpText: '',
     },
     layouts: {
