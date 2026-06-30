@@ -33,7 +33,7 @@ test.describe('mobile UI tests', () => {
 
         const headings = trayPanel.getByRole('heading');
         await expect(headings).toHaveCount(3);
-        await expect(headings.nth(0)).toHaveText('Data source');
+        await expect(headings.nth(0)).toHaveText('Output data source');
         await expect(headings.nth(1)).toHaveText('Layouts');
         await expect(headings.nth(2)).toHaveText('Customize');
     });

@@ -148,7 +148,7 @@ const MobileVariablesPanel = (props: VariablesPanelProps) => {
 
     const datasourceHeader = getUITranslation(
         ['formBuilder', 'datasource', 'header'],
-        formBuilder.datasource?.header ?? 'Data source',
+        formBuilder.datasource?.header ?? 'Output data source',
     );
     const datasourceHelpText = getUITranslation(
         ['formBuilder', 'datasource', 'helpText'],
