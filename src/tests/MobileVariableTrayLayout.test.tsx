@@ -125,7 +125,7 @@ describe('MobileVariableTrayLayout', () => {
             expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument();
         });
 
-        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Data source');
+        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Output data source');
         expect(screen.getByText('Layout')).toBeInTheDocument();
         expect(screen.getByText('Customize')).toBeInTheDocument();
     });
@@ -156,7 +156,7 @@ describe('MobileVariableTrayLayout', () => {
             expect(screen.getByTestId('test-gsc-tray-header')).toBeInTheDocument();
         });
 
-        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Data source');
+        expect(screen.getByTestId('test-gsc-tray-header')).toHaveTextContent('Output data source');
 
         const layoutsDropdown = screen.getByTestId(getDataIdForSUI(`dropdown-available-layout`));
         expect(layoutsDropdown).toBeInTheDocument();
