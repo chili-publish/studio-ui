@@ -1325,9 +1325,10 @@
   resolved "https://npm.pkg.github.com/download/@chili-publish/grafx-shared-components/1.3.1/57170a7da791fe5587b4d17bb55c4fca6806b80e#57170a7da791fe5587b4d17bb55c4fca6806b80e"
   integrity sha512-idmhAy7RB5yTgFhLJm1xtuyXjxewu3x677Eg3kTKerFn/rr9yUBPNm0lXFMt47f2WQZBTVWsXRQMJScQcKFnvA==
 
-"@chili-publish/studio-sdk@https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/796/studio-sdk.tgz":
-  version "1.45.0-alpha.2"
-  resolved "https://stgrafxstudiodevpublic.blob.core.windows.net/sdk/dev-packages/796/studio-sdk.tgz#dc57fa467c070ad6a2fd9fcb91b2e25df08b896b"
+"@chili-publish/studio-sdk@1.45.0-alpha.4":
+  version "1.45.0-alpha.4"
+  resolved "https://npm.pkg.github.com/download/@chili-publish/studio-sdk/1.45.0-alpha.4/4980197171e53f33c70928714df82b5da02fbb3b#4980197171e53f33c70928714df82b5da02fbb3b"
+  integrity sha512-jckyxZGsCPU773HfexGjxRJ1cWcI+rERgYmFCo8v9End7kryFNbrgFqk7O9LpwedskIFTv2+wtxXIXA5gwRmcw==
   dependencies:
     penpal "6.1.0"
 
