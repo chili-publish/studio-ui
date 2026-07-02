@@ -15,6 +15,7 @@ import {
 } from '../../../store/reducers/panelReducer';
 import { selectCurrentVariableId, selectVariablesValidation } from '../../../store/reducers/variableReducer';
 import { useAppDispatch } from '../../../store';
+import type { RootState } from '../../../store';
 
 interface MobileFlatVariablesListProps {
     variables: Variable[];
@@ -22,6 +23,7 @@ interface MobileFlatVariablesListProps {
 const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) => {
     const dispatch = useAppDispatch();
     const variablesValidation = useSelector(selectVariablesValidation);
+    const documentLoadGeneration = useSelector((state: RootState) => state.document.loadGeneration);
 
     const activePanel = useSelector(selectActivePanel);
     const currentVariableId = useSelector(selectCurrentVariableId);
@@ -59,9 +61,13 @@ const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) =>
                             </HelpTextWrapper>
                         </ComponentWrapper>
                     );
+                const key =
+                    variable.type === VariableType.image
+                        ? `variable-component-${variable.id}-${documentLoadGeneration}`
+                        : `variable-component-${variable.id}`;
                 return (
                     <ComponentWrapper
-                        key={`variable-component-${variable.id}`}
+                        key={key}
                         data-id={getDataIdForSUI(`variable-${variable.id}`)}
                         data-testid={getDataTestIdForSUI(`variable-${variable.id}`)}
                     >
