@@ -6,8 +6,9 @@ type DocumentConfiguration = {
 
 type DocumentState = {
     configuration?: DocumentConfiguration;
+    loadGeneration: number;
 };
-const initialState: DocumentState = {};
+const initialState: DocumentState = { loadGeneration: 0 };
 
 export const documentSlice = createSlice({
     name: 'document',
@@ -16,9 +17,12 @@ export const documentSlice = createSlice({
         setConfiguration: (state, action: PayloadAction<DocumentConfiguration>) => {
             state.configuration = action.payload;
         },
+        incrementDocumentLoadGeneration: (state) => {
+            state.loadGeneration += 1;
+        },
     },
 });
 
-export const { setConfiguration } = documentSlice.actions;
+export const { setConfiguration, incrementDocumentLoadGeneration } = documentSlice.actions;
 
 export default documentSlice.reducer;
