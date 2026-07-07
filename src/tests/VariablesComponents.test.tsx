@@ -8,6 +8,7 @@ import AppProvider from '../contexts/AppProvider';
 import { APP_WRAPPER } from './mocks/app';
 import { variables } from './mocks/mockVariables';
 import { renderWithProviders } from './mocks/Provider';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -26,13 +27,13 @@ Object.defineProperty(navigator, 'language', {
 
 describe('Variable Component', () => {
     beforeEach(() => {
-        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getMappings = mockSdkMethod().mockResolvedValue({
             parsedData: null,
         });
-        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = mockSdkMethod().mockResolvedValue({
             parsedData: null,
         });
-        window.StudioUISDK.variable.setValue = jest.fn().mockImplementation(() =>
+        window.StudioUISDK.variable.setValue = mockSdkMethod().mockImplementation(() =>
             Promise.resolve({
                 success: true,
                 data: null,

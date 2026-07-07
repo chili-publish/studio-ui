@@ -44,7 +44,7 @@ describe('ParagraphStyleConstraint', () => {
     });
 
     it('should fetch and display paragraph styles when paragraphStyleIds are provided', async () => {
-        (mockSDK.paragraphStyle.getById as jest.Mock)
+        (mockSDK.paragraphStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle1 })
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle2 });
 
@@ -82,7 +82,7 @@ describe('ParagraphStyleConstraint', () => {
     });
 
     it('should display the selected paragraph style based on textStyle', async () => {
-        (mockSDK.paragraphStyle.getById as jest.Mock)
+        (mockSDK.paragraphStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle1 })
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle2 })
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle3 });
@@ -126,7 +126,7 @@ describe('ParagraphStyleConstraint', () => {
     });
 
     it('should call textSelection.set when a different style is selected', async () => {
-        (mockSDK.paragraphStyle.getById as jest.Mock)
+        (mockSDK.paragraphStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle1 })
             .mockResolvedValueOnce({ parsedData: mockParagraphStyle2 });
 

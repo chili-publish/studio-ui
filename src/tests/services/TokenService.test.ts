@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WellKnownConfigurationKeys } from '@chili-publish/studio-sdk';
 import { TokenService } from '../../services/TokenService';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.unmock('../../services/TokenService');
 
@@ -10,7 +11,7 @@ describe('TokenService', () => {
 
     beforeEach(() => {
         (TokenService as any).instance = null;
-        window.StudioUISDK.configuration.setValue = jest.fn().mockResolvedValue(undefined);
+        window.StudioUISDK.configuration.setValue = mockSdkMethod().mockResolvedValue(undefined);
     });
 
     describe('getInstance', () => {
@@ -58,7 +59,7 @@ describe('TokenService', () => {
         });
 
         it('updates the token and editor configuration by default', async () => {
-            const refreshTokenAction = jest.fn().mockResolvedValue(refreshedToken);
+            const refreshTokenAction = mockSdkMethod().mockResolvedValue(refreshedToken);
             TokenService.initialize(() => initialToken, refreshTokenAction);
 
             const result = await TokenService.getInstance().refreshToken();
@@ -73,7 +74,7 @@ describe('TokenService', () => {
         });
 
         it('updates the token without updating editor configuration when updateEditorToken is false', async () => {
-            const refreshTokenAction = jest.fn().mockResolvedValue(refreshedToken);
+            const refreshTokenAction = mockSdkMethod().mockResolvedValue(refreshedToken);
             TokenService.initialize(() => initialToken, refreshTokenAction);
 
             const result = await TokenService.getInstance().refreshToken(false);

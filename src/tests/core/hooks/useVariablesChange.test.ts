@@ -4,6 +4,7 @@ import { act } from 'react-dom/test-utils';
 import { useVariablesChange } from '../../../core/hooks/useVariablesChange';
 import { Subscriber } from '../../../utils/subscriber';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../contexts/Subscriber', () => ({
     useSubscriberContext: jest.fn().mockReturnValue({
@@ -16,7 +17,7 @@ describe('"useVariablesChange" hook', () => {
         (useSubscriberContext as jest.Mock).mockReturnValue({
             subscriber: new Subscriber(),
         });
-        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = mockSdkMethod().mockResolvedValue({
             parsedData: [
                 {
                     id: '7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2',
@@ -41,7 +42,7 @@ describe('"useVariablesChange" hook', () => {
     });
 
     it('should not update variables if variables are null', async () => {
-        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.variable.getAll = mockSdkMethod().mockResolvedValueOnce({
             parsedData: null,
         });
         const { result } = renderHook(() => useVariablesChange(['7377E97A-5FD9-46B1-A8CF-0C7C776C7DC2']));

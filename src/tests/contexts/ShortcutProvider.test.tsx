@@ -5,21 +5,24 @@ import { mock } from 'jest-mock-extended';
 import AppProvider from '../../contexts/AppProvider';
 import ShortcutProvider from '../../contexts/ShortcutManager/ShortcutProvider';
 import { ProjectConfig } from '../../types/types';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 describe('ShortcutProvider', () => {
     const mockSDK = mock<EditorSDK>();
 
-    mockSDK.undoManager.undo = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
+    mockSDK.undoManager.undo = mockSdkMethod().mockImplementation().mockReturnValue({ success: true, code: 200 });
 
-    mockSDK.undoManager.redo = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
+    mockSDK.undoManager.redo = mockSdkMethod().mockImplementation().mockReturnValue({ success: true, code: 200 });
 
-    mockSDK.canvas.setZoomPercentage = jest.fn().mockImplementation().mockReturnValue({ success: true, code: 200 });
+    mockSDK.canvas.setZoomPercentage = mockSdkMethod()
+        .mockImplementation()
+        .mockReturnValue({ success: true, code: 200 });
 
     window.StudioUISDK = mockSDK;
 
     it('triggers the sandbox toggle shortcut', async () => {
         const user = userEvent.setup();
-        const onSandboxModeToggleFn = jest.fn();
+        const onSandboxModeToggleFn = mockSdkMethod();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
             <AppProvider isDocumentLoaded>
@@ -38,7 +41,7 @@ describe('ShortcutProvider', () => {
     });
 
     it('triggers undo shortcut', async () => {
-        const onSandboxModeToggleFn = jest.fn();
+        const onSandboxModeToggleFn = mockSdkMethod();
         const projectConfig = { onSandboxModeToggle: onSandboxModeToggleFn } as unknown as ProjectConfig;
         render(
             <AppProvider isDocumentLoaded>

@@ -12,6 +12,7 @@ import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 const dataRows = [
     { id: '1', name: 'Joe', age: 15 },
@@ -54,12 +55,12 @@ describe('MobileDataSource test', () => {
                 }) as any,
         );
 
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: { data: dataRows },
         });
 
-        window.StudioUISDK.dataSource.setDataRow = jest.fn();
-        window.StudioUISDK.undoManager.addCustomData = jest.fn();
+        window.StudioUISDK.dataSource.setDataRow = mockSdkMethod();
+        window.StudioUISDK.undoManager.addCustomData = mockSdkMethod();
     });
 
     afterEach(() => {

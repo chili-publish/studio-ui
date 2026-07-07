@@ -16,6 +16,7 @@ import {
     useUploadAsset,
 } from '../../../../components/variablesComponents/imageVariable/useUploadAsset';
 import { variables as mockVariables } from '../../../mocks/mockVariables';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 const mockSDK = mock<EditorSDK>();
 
@@ -29,8 +30,8 @@ describe('useUploadAsset', () => {
 
     beforeEach(() => {
         window.StudioUISDK = mockSDK;
-        mockSDK.utils.stageFiles = jest.fn().mockResolvedValue(filePointers);
-        mockSDK.mediaConnector.upload = jest.fn().mockResolvedValue({ parsedData: [uploadedMedia] });
+        mockSDK.utils.stageFiles = mockSdkMethod().mockResolvedValue(filePointers);
+        mockSDK.mediaConnector.upload = mockSdkMethod().mockResolvedValue({ parsedData: [uploadedMedia] });
 
         (TokenService.getInstance as jest.Mock).mockReturnValue({
             refreshToken: jest.fn().mockResolvedValue('new-token'),
@@ -83,7 +84,7 @@ describe('useUploadAsset', () => {
     ])(
         'maps min dimension validation errors ($expectedMessage)',
         async ({ uploadMinWidth, uploadMinHeight, expectedMessage }) => {
-            (mockSDK.utils.stageFiles as jest.Mock).mockRejectedValue(
+            (mockSDK.utils.stageFiles as unknown as jest.Mock).mockRejectedValue(
                 new UploadAssetValidationError('File is too small', UploadAssetValidationErrorType.minDimension),
             );
 
@@ -104,10 +105,10 @@ describe('useUploadAsset', () => {
     );
 
     it('refreshes the token and retries staging when unauthorized', async () => {
-        const refreshToken = jest.fn().mockResolvedValue('new-token');
+        const refreshToken = mockSdkMethod().mockResolvedValue('new-token');
         (TokenService.getInstance as jest.Mock).mockReturnValue({ refreshToken });
 
-        (mockSDK.utils.stageFiles as jest.Mock)
+        (mockSDK.utils.stageFiles as unknown as jest.Mock)
             .mockRejectedValueOnce(new SDKUnauthorizedError('Unauthorized'))
             .mockResolvedValueOnce(filePointers);
 
@@ -125,7 +126,7 @@ describe('useUploadAsset', () => {
     });
 
     it('sets a generic upload error when media upload fails', async () => {
-        (mockSDK.mediaConnector.upload as jest.Mock).mockRejectedValue(new Error('Upload failed'));
+        (mockSDK.mediaConnector.upload as unknown as jest.Mock).mockRejectedValue(new Error('Upload failed'));
 
         const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
 
@@ -140,7 +141,7 @@ describe('useUploadAsset', () => {
     });
 
     it('sets a generic upload error when staging throws a non-validation error', async () => {
-        (mockSDK.utils.stageFiles as jest.Mock).mockRejectedValue(new Error('Network error'));
+        (mockSDK.utils.stageFiles as unknown as jest.Mock).mockRejectedValue(new Error('Network error'));
 
         const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
 
@@ -158,7 +159,7 @@ describe('useUploadAsset', () => {
         const stageFilesPromise = new Promise<typeof filePointers>((resolve) => {
             resolveStageFiles = resolve;
         });
-        (mockSDK.utils.stageFiles as jest.Mock).mockReturnValue(stageFilesPromise);
+        (mockSDK.utils.stageFiles as unknown as jest.Mock).mockReturnValue(stageFilesPromise);
 
         const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
 
@@ -180,7 +181,7 @@ describe('useUploadAsset', () => {
     });
 
     it('clears upload error at the start of a new upload', async () => {
-        (mockSDK.utils.stageFiles as jest.Mock)
+        (mockSDK.utils.stageFiles as unknown as jest.Mock)
             .mockRejectedValueOnce(
                 new UploadAssetValidationError('File is too small', UploadAssetValidationErrorType.minDimension),
             )
@@ -207,7 +208,7 @@ describe('useUploadAsset', () => {
     });
 
     it('clears upload error via resetUploadError', async () => {
-        (mockSDK.utils.stageFiles as jest.Mock).mockRejectedValue(
+        (mockSDK.utils.stageFiles as unknown as jest.Mock).mockRejectedValue(
             new UploadAssetValidationError('File is too small', UploadAssetValidationErrorType.minDimension),
         );
 

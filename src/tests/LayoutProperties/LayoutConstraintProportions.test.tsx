@@ -11,12 +11,13 @@ import LayoutProperties from 'src/components/layoutProperties/LayoutProperties';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import userEvent from '@testing-library/user-event';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 const mockSDK = mock<EditorSDK>();
 
 describe('Layout constraint proportions', () => {
-    mockSDK.page.setSize = jest.fn().mockRejectedValue(new Error('Error'));
-    mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 100 });
+    mockSDK.page.setSize = mockSdkMethod().mockRejectedValue(new Error('Error'));
+    mockSDK.utils.unitEvaluate = mockSdkMethod().mockResolvedValue({ parsedData: 100 });
     window.StudioUISDK = mockSDK;
 
     const createMockLayout = (resizableByUser: ResizableLayoutProperties): LayoutPropertiesType =>
@@ -77,7 +78,7 @@ describe('Layout constraint proportions', () => {
     });
 
     it('should convert width and height to the unit of the layout', async () => {
-        mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 1889.763 });
+        mockSDK.utils.unitEvaluate = mockSdkMethod().mockResolvedValue({ parsedData: 1889.763 });
 
         const user = userEvent.setup();
 
@@ -126,7 +127,7 @@ describe('Layout constraint proportions', () => {
     });
 
     it('should fallback to 0 when width is undefined', async () => {
-        mockSDK.utils.unitEvaluate = jest.fn().mockResolvedValue({ parsedData: 0 });
+        mockSDK.utils.unitEvaluate = mockSdkMethod().mockResolvedValue({ parsedData: 0 });
 
         const user = userEvent.setup();
         const layout = createMockLayout({

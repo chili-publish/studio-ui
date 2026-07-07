@@ -9,6 +9,7 @@ import { getDataTestIdForSUI } from '../../../utils/dataIds';
 import { Subscriber } from '../../../utils/subscriber';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { SELECTED_ROW_INDEX_KEY } from '../../../components/dataSource/useOutputDataSource';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -33,9 +34,9 @@ describe('DataSource test', () => {
     } as ConnectorInstance;
 
     beforeEach(() => {
-        window.StudioUISDK.undoManager.addCustomData = jest.fn();
-        window.StudioUISDK.dataSource.setDataRow = jest.fn();
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.undoManager.addCustomData = mockSdkMethod();
+        window.StudioUISDK.dataSource.setDataRow = mockSdkMethod();
+        window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 id: '1',
                 name: 'Connector name',
@@ -44,7 +45,7 @@ describe('DataSource test', () => {
     });
 
     it('Should display data connector first row', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: { data: [{ id: '1', name: 'Joe', age: 15 }] },
         });
 
@@ -60,7 +61,7 @@ describe('DataSource test', () => {
     });
 
     it('Data source row should be hidden if data connector is not available', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValueOnce({});
 
         renderWithProviders(
             <AppProvider>
@@ -76,7 +77,7 @@ describe('DataSource test', () => {
     });
 
     it('Should display data connector placeholder when there is an error during page request', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce({});
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValueOnce({});
 
         renderWithProviders(
             <AppProvider dataSource={dataSource}>
@@ -91,7 +92,7 @@ describe('DataSource test', () => {
     });
 
     it('Should display data connector placeholder when there is no page available', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 data: [],
                 continuationToken: null,
@@ -116,7 +117,7 @@ describe('DataSource test', () => {
             subscriber: mockSubscriber,
         });
 
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 data: [
                     { id: '1', name: 'Joe', age: 15 },
@@ -191,7 +192,7 @@ describe('DataSource test', () => {
             subscriber: mockSubscriber,
         });
 
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
             parsedData: {
                 data: [
                     { id: '1', name: 'Joe', age: 15 },
@@ -227,7 +228,7 @@ describe('DataSource test', () => {
             mockSubscriber.emit('onCustomUndoDataChanged', { [SELECTED_ROW_INDEX_KEY]: '1' });
         });
 
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
             parsedData: {
                 data: [{ id: '3', name: 'Mary', age: 15 }],
                 continuationToken: null,

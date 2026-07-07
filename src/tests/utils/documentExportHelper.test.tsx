@@ -1,6 +1,7 @@
 import { DataSourceVariableSourceType, DownloadFormats, VariableType } from '@chili-publish/studio-sdk';
 import { addTrailingSlash, exportDocument } from '../../utils/documentExportHelper';
 import { EnvironmentApiService } from '../../services/EnvironmentApiService';
+import { mockSdkMethod } from './mockSdkMethod';
 
 describe('"exportDocument', () => {
     let mockEnvironmentApiService: jest.Mocked<EnvironmentApiService>;
@@ -25,7 +26,7 @@ describe('"exportDocument', () => {
 
     describe('handle errors correctly', () => {
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({ data: '{}' });
         });
         it('should return "Unexpected error"', async () => {
             // Mock the environment API service to throw an error
@@ -100,17 +101,18 @@ describe('"exportDocument', () => {
 
     describe('handle data source configuration correctly on dev environment', () => {
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest
-                .fn()
-                .mockResolvedValue({ data: '{}', parsedData: { engineVersion: '1.0.0' } });
-            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({
+                data: '{}',
+                parsedData: { engineVersion: '1.0.0' },
+            });
+            window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValue({
                 parsedData: {
                     source: {
                         id: '123',
                     },
                 },
             });
-            window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
+            window.StudioUISDK.connector.getMappings = mockSdkMethod().mockResolvedValue({ parsedData: null });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
             await exportDocument(
@@ -134,7 +136,7 @@ describe('"exportDocument', () => {
         });
 
         it('should skip sending data source if it is not defined', async () => {
-            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+            window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValue({
                 parsedData: null,
             });
             await exportDocument(
@@ -220,17 +222,18 @@ describe('"exportDocument', () => {
     });
     describe('handle data source configuration correctly on production environment', () => {
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest
-                .fn()
-                .mockResolvedValue({ data: '{}', parsedData: { engineVersion: '1.0.0' } });
-            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({
+                data: '{}',
+                parsedData: { engineVersion: '1.0.0' },
+            });
+            window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValue({
                 parsedData: {
                     source: {
                         id: '123',
                     },
                 },
             });
-            window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({ parsedData: null });
+            window.StudioUISDK.connector.getMappings = mockSdkMethod().mockResolvedValue({ parsedData: null });
         });
         it('should skip sending data source if output settings id is not specified', async () => {
             await exportDocument(
@@ -322,10 +325,11 @@ describe('"exportDocument', () => {
         ];
 
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest
-                .fn()
-                .mockResolvedValue({ data: documentBody, parsedData: { engineVersion: '1.0.0' } });
-            window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValue({
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({
+                data: documentBody,
+                parsedData: { engineVersion: '1.0.0' },
+            });
+            window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValue({
                 parsedData: null,
             });
             window.StudioUISDK.variable.dataSource = {
@@ -376,9 +380,10 @@ describe('"exportDocument', () => {
             const bodyWithoutInjected = JSON.stringify({
                 variables: [connectorVariable, shortTextVariable],
             });
-            window.StudioUISDK.document.getCurrentState = jest
-                .fn()
-                .mockResolvedValue({ data: bodyWithoutInjected, parsedData: { engineVersion: '1.0.0' } });
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({
+                data: bodyWithoutInjected,
+                parsedData: { engineVersion: '1.0.0' },
+            });
 
             await exportDocument(
                 DownloadFormats.PDF,
@@ -399,7 +404,7 @@ describe('"exportDocument', () => {
 
     describe('success path', () => {
         beforeEach(() => {
-            window.StudioUISDK.document.getCurrentState = jest.fn().mockResolvedValue({ data: '{}' });
+            window.StudioUISDK.document.getCurrentState = mockSdkMethod().mockResolvedValue({ data: '{}' });
             mockEnvironmentApiService.generateOutput.mockResolvedValue({
                 data: { taskId: 'test-task-id' },
                 links: { taskInfo: 'http://test.com/task-info' },

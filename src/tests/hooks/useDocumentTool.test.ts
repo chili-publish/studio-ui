@@ -60,7 +60,7 @@ describe('useDocumentTools', () => {
                 get: jest.fn(),
             },
         } as unknown as typeof sdk.frame;
-        getConstraintsSpy = sdk.frame.constraints.get as jest.Mock;
+        getConstraintsSpy = sdk.frame.constraints.get as unknown as jest.Mock;
 
         // Set up tool methods
         setSelectSpy = jest.fn();
@@ -68,7 +68,7 @@ describe('useDocumentTools', () => {
             setSelect: setSelectSpy,
             setHand: jest.fn(),
         } as unknown as typeof sdk.tool;
-        setHandSpy = sdk.tool.setHand as jest.Mock;
+        setHandSpy = sdk.tool.setHand as unknown as jest.Mock;
 
         // Set up configuration methods
         updateStudioOptionsSpy = jest.fn();
