@@ -39,7 +39,7 @@ describe('CharacterStyleConstraint', () => {
     });
 
     it('should fetch and display character styles when characterStyleIds are provided', async () => {
-        (mockSDK.characterStyle.getById as jest.Mock)
+        (mockSDK.characterStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle1 })
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
 
@@ -77,7 +77,7 @@ describe('CharacterStyleConstraint', () => {
     });
 
     it('should display the selected character style based on textStyle', async () => {
-        (mockSDK.characterStyle.getById as jest.Mock)
+        (mockSDK.characterStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle1 })
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
 
@@ -120,7 +120,7 @@ describe('CharacterStyleConstraint', () => {
     });
 
     it('should call textSelection.set when a different style is selected', async () => {
-        (mockSDK.characterStyle.getById as jest.Mock)
+        (mockSDK.characterStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle1 })
             .mockResolvedValueOnce({ parsedData: mockCharacterStyle2 });
 

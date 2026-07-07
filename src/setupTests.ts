@@ -1,5 +1,6 @@
 import EditorSDK from '@chili-publish/studio-sdk';
 import '@testing-library/jest-dom';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 import { mock } from 'jest-mock-extended';
 import { TransformStream } from 'stream/web';
 
@@ -35,8 +36,7 @@ window.matchMedia =
     };
 
 const mockSDK = mock<EditorSDK>();
-mockSDK.mediaConnector.detail = jest
-    .fn()
+mockSDK.mediaConnector.detail = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(
         Promise.resolve({
@@ -51,19 +51,16 @@ mockSDK.mediaConnector.detail = jest
         }),
     );
 
-mockSDK.mediaConnector.download = jest
-    .fn()
+mockSDK.mediaConnector.download = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-mockSDK.connector.getState = jest
-    .fn()
+mockSDK.connector.getState = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
-mockSDK.variable.setValue = jest.fn().mockImplementation();
+mockSDK.variable.setValue = mockSdkMethod().mockImplementation();
 
-mockSDK.connector.waitToBeReady = jest
-    .fn()
+mockSDK.connector.waitToBeReady = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
@@ -85,8 +82,8 @@ if (Promise.withResolvers === undefined) {
 /* eslint-enable */
 
 // Mock URL.createObjectURL and URL.revokeObjectURL
-window.URL.createObjectURL = jest.fn();
-window.URL.revokeObjectURL = jest.fn();
+window.URL.createObjectURL = mockSdkMethod();
+window.URL.revokeObjectURL = mockSdkMethod();
 
 // Global TokenService mock
 jest.mock('./services/TokenService', () => ({

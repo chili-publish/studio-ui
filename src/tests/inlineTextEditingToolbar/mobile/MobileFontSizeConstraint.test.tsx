@@ -7,6 +7,7 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { renderWithProviders } from 'src/tests/mocks/Provider';
 import { getDataTestIdForSUI } from 'src/utils/dataIds';
 import MobileFontSizeConstraint from 'src/components/inlineTextEditingToolbar/mobile/fontSizeConstraint/MobileFontSizeConstraint';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -16,7 +17,7 @@ describe('MobileFontSizeConstraint', () => {
     beforeEach(() => {
         mockSDK = mock<EditorSDK>();
         mockSDK.textSelection = {
-            set: jest.fn(),
+            set: mockSdkMethod(),
         } as any;
 
         window.StudioUISDK = mockSDK;

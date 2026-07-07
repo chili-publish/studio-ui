@@ -10,6 +10,7 @@ import { act } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { useLayoutProperties } from '../../../components/layoutProperties/useLayoutProperties';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 describe('useLayoutProperties', () => {
     const createMockPropertyState = <T>(value: T) => ({
@@ -59,8 +60,8 @@ describe('useLayoutProperties', () => {
 
     beforeEach(() => {
         const mockSDK = mock<EditorSDK>();
-        mockSDK.page.setWidth = jest.fn();
-        mockSDK.page.setHeight = jest.fn();
+        mockSDK.page.setWidth = mockSdkMethod();
+        mockSDK.page.setHeight = mockSdkMethod();
         window.StudioUISDK = mockSDK;
     });
 
@@ -181,7 +182,7 @@ describe('useLayoutProperties', () => {
         const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         // Mock SDK error
-        (window.StudioUISDK.page.setWidth as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
+        (window.StudioUISDK.page.setWidth as unknown as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
 
         await act(async () => {
             await result.current.saveChange('width', '600');
@@ -195,7 +196,7 @@ describe('useLayoutProperties', () => {
         const { result } = renderHookWithProviders(() => useLayoutProperties(mockLayout, mockActivePageDetails));
 
         // Mock SDK error
-        (window.StudioUISDK.page.setHeight as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
+        (window.StudioUISDK.page.setHeight as unknown as jest.Mock).mockRejectedValueOnce(new Error('SDK Error'));
 
         await act(async () => {
             await result.current.saveChange('height', '900');

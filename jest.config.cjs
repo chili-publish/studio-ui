@@ -2,7 +2,7 @@ const esModules = ['@chili-publish/environment-client-api'].join('|');
 
 module.exports = {
     roots: ['<rootDir>'],
-    testMatch: ['**/src/tests/**/*.+(ts|tsx|js)'],
+    testMatch: ['**/src/tests/**/*.test.+(ts|tsx|js)', '**/src/tests/**/*.spec.+(ts|tsx|js)'],
     transform: {
         [`(${esModules}).+\\.js$`]: 'babel-jest',
         '^.+\\.(ts|tsx)$': 'ts-jest',

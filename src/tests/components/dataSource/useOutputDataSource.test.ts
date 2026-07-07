@@ -5,6 +5,7 @@ import useOutputDataSource, { SELECTED_ROW_INDEX_KEY } from '../../../components
 import { useAppContext } from '../../../contexts/AppProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { Subscriber } from '../../../utils/subscriber';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../contexts/Subscriber', () => ({
     useSubscriberContext: jest.fn().mockReturnValue({
@@ -28,7 +29,7 @@ jest.mock('../../../contexts/AppProvider', () => ({
 
 describe('"useOutputDataSource" hook tests', () => {
     beforeEach(() => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 data: [
                     { id: '1', name: 'Joe', age: 15 },
@@ -36,12 +37,12 @@ describe('"useOutputDataSource" hook tests', () => {
                 ],
             },
         });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValueOnce({
             parsedData: null,
         });
 
-        window.StudioUISDK.dataSource.setDataRow = jest.fn();
-        window.StudioUISDK.undoManager.addCustomData = jest.fn();
+        window.StudioUISDK.dataSource.setDataRow = mockSdkMethod();
+        window.StudioUISDK.undoManager.addCustomData = mockSdkMethod();
     });
     it('should keep current row, if undo does not have data', async () => {
         const mockSubscriber = new Subscriber();
@@ -124,7 +125,7 @@ describe('"useOutputDataSource" hook tests', () => {
                 name: 'Connector name',
             },
         });
-        window.StudioUISDK.dataSource.getDataSource = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataSource.getDataSource = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 id: '1',
             },
@@ -137,7 +138,7 @@ describe('"useOutputDataSource" hook tests', () => {
 
         await waitFor(() => expect(result.current.dataRows.length).toEqual(2));
 
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: {
                 data: [
                     { id: '1', name: 'Joe', age: 15 },

@@ -9,20 +9,21 @@ import {
     parseConnectorHubIdFromExternalSourceId,
     verifyAuthentication,
 } from '../../utils/connectors';
+import { mockSdkMethod } from './mockSdkMethod';
 
 describe('utils connectors', () => {
     const mockSDK = mock<EditorSDK>();
     mockSDK.next.connector = {} as any;
     mockSDK.next.variable = {} as any;
 
-    mockSDK.next.connector.getById = jest.fn().mockResolvedValue({
+    mockSDK.next.connector.getById = mockSdkMethod().mockResolvedValue({
         parsedData: {
             source: { url: 'http://deploy.com/media-connector' },
         },
     });
-    mockSDK.mediaConnector.query = jest.fn();
-    mockSDK.next.variable.getById = jest.fn();
-    mockSDK.connector.getMappings = jest.fn();
+    mockSDK.mediaConnector.query = mockSdkMethod();
+    mockSDK.next.variable.getById = mockSdkMethod();
+    mockSDK.connector.getMappings = mockSdkMethod();
 
     window.StudioUISDK = mockSDK;
 
@@ -70,7 +71,7 @@ describe('utils connectors', () => {
     });
 
     it('should handle "getRemoteConnector" correctly', async () => {
-        const mockEnvironmentClientApiMethod = jest.fn().mockResolvedValue({
+        const mockEnvironmentClientApiMethod = mockSdkMethod().mockResolvedValue({
             id: 'remote-connector-1',
         });
 
@@ -106,11 +107,11 @@ describe('utils connectors', () => {
     });
 
     it('should "verifyAuthentication" correctly', async () => {
-        (mockSDK.mediaConnector.query as jest.Mock).mockRejectedValueOnce({ message: 'Some error' });
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockRejectedValueOnce({ message: 'Some error' });
 
         await expect(verifyAuthentication('connectorId')).rejects.toEqual(new Error('Unauthorized: Some error'));
 
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValueOnce({ parsedData: {} });
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValueOnce({ parsedData: {} });
 
         await expect(verifyAuthentication('connectorId')).resolves.toBeUndefined();
 
@@ -145,7 +146,7 @@ describe('utils connectors', () => {
                 },
             });
 
-        (mockSDK.connector.getMappings as jest.Mock).mockResolvedValueOnce({
+        (mockSDK.connector.getMappings as unknown as jest.Mock).mockResolvedValueOnce({
             parsedData: [
                 {
                     name: 'option-1',

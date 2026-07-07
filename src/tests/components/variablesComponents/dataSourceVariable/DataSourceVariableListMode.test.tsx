@@ -12,6 +12,7 @@ import { renderWithProviders } from '@tests/mocks/Provider';
 import DataSourceVariableListMode from '../../../../components/variablesComponents/dataSourceVariable/DataSourceListMode';
 import { PanelType } from '../../../../store/reducers/panelReducer';
 import { RootState } from '../../../../store';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -31,7 +32,7 @@ jest.mock('../../../../contexts/UiConfigContext', () => ({
     }),
 }));
 
-const mockUseMobileSize = jest.fn().mockReturnValue(false);
+const mockUseMobileSize = mockSdkMethod().mockReturnValue(false);
 
 jest.mock('@chili-publish/grafx-shared-components', () => ({
     ...jest.requireActual('@chili-publish/grafx-shared-components'),
@@ -40,8 +41,8 @@ jest.mock('@chili-publish/grafx-shared-components', () => ({
 
 const { useUiConfigContext } = jest.requireMock('../../../../contexts/UiConfigContext');
 
-const mockOnVariableFocus = jest.fn();
-const mockOnVariableBlur = jest.fn();
+const mockOnVariableFocus = mockSdkMethod();
+const mockOnVariableBlur = mockSdkMethod();
 
 const INJECTED_MODEL = [
     { name: 'id', type: 'singleLine' as const },
@@ -101,18 +102,18 @@ function setupSDKMocks(
 ) {
     const { continuationToken = null, modelKey = 'id', sourceType = 'connector' } = options;
 
-    window.StudioUISDK.dataConnector.getModel = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getModel = mockSdkMethod().mockResolvedValue({
         parsedData: { itemIdPropertyName: modelKey },
     });
 
-    window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
         parsedData: {
             data: pageData,
             continuationToken,
         },
     });
 
-    window.StudioUISDK.dataConnector.getPageItemById = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getPageItemById = mockSdkMethod().mockResolvedValue({
         parsedData: {
             data: pageData[0] ?? null,
             continuationToken: null,

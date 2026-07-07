@@ -5,6 +5,7 @@ import { mock } from 'jest-mock-extended';
 
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { usePreviewImage } from '../../../../components/variablesComponents/imageVariable/usePreviewImage';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('@chili-publish/grafx-shared-components', () => ({
     ...jest.requireActual('@chili-publish/grafx-shared-components'),
@@ -47,26 +48,26 @@ describe('usePreviewImage', () => {
         });
 
         // Mock SDK functions
-        mockSDK.mediaConnector.download = jest.fn();
-        mockSDK.mediaConnector.query = jest.fn();
-        mockSDK.mediaConnector.detail = jest.fn();
-        mockSDK.connector.getState = jest.fn();
-        mockSDK.connector.waitToBeReady = jest.fn();
-        mockSDK.connector.getMappings = jest.fn();
-        mockSDK.variable.getAll = jest.fn();
+        mockSDK.mediaConnector.download = mockSdkMethod();
+        mockSDK.mediaConnector.query = mockSdkMethod();
+        mockSDK.mediaConnector.detail = mockSdkMethod();
+        mockSDK.connector.getState = mockSdkMethod();
+        mockSDK.connector.waitToBeReady = mockSdkMethod();
+        mockSDK.connector.getMappings = mockSdkMethod();
+        mockSDK.variable.getAll = mockSdkMethod();
 
         // Default connector state
-        (mockSDK.connector.getState as jest.Mock).mockResolvedValue({
+        (mockSDK.connector.getState as unknown as jest.Mock).mockResolvedValue({
             parsedData: { type: 'ready' },
         });
 
         // Default mappings
-        (mockSDK.connector.getMappings as jest.Mock).mockResolvedValue({
+        (mockSDK.connector.getMappings as unknown as jest.Mock).mockResolvedValue({
             parsedData: [],
         });
 
         // Default variables
-        (mockSDK.variable.getAll as jest.Mock).mockResolvedValue({
+        (mockSDK.variable.getAll as unknown as jest.Mock).mockResolvedValue({
             parsedData: [],
         });
     });
@@ -77,7 +78,7 @@ describe('usePreviewImage', () => {
 
     it('should return previewImage when both media details and preview URL are successful', async () => {
         // Mock successful media details fetch
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [mockMediaDetails] },
         });
 
@@ -107,7 +108,7 @@ describe('usePreviewImage', () => {
 
     it('should handle missing asset error when media details query returns no results', async () => {
         // Mock empty media details
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [] },
         });
 
@@ -124,7 +125,7 @@ describe('usePreviewImage', () => {
     it('should handle 401 Unauthorized error in media details fetch', async () => {
         // Mock 401 error for media details fetch
         const unauthorizedError = new ConnectorHttpError(401, 'Unauthorized');
-        (mockSDK.mediaConnector.query as jest.Mock).mockRejectedValue(unauthorizedError);
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockRejectedValue(unauthorizedError);
 
         const { result } = renderHookWithProviders(() => usePreviewImage(mockConnectorId, mockMediaAssetId), {
             preloadedState: mockPreloadedState,
@@ -139,7 +140,7 @@ describe('usePreviewImage', () => {
     it('should handle 404 Not Found error in media details fetch', async () => {
         // Mock 404 error for media details fetch
         const notFoundError = new ConnectorHttpError(404, 'Not Found');
-        (mockSDK.mediaConnector.query as jest.Mock).mockRejectedValue(notFoundError);
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockRejectedValue(notFoundError);
 
         const { result } = renderHookWithProviders(() => usePreviewImage(mockConnectorId, mockMediaAssetId), {
             preloadedState: mockPreloadedState,
@@ -153,7 +154,7 @@ describe('usePreviewImage', () => {
 
     it('should handle 401 Unauthorized error in preview URL', async () => {
         // Mock successful media details
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [mockMediaDetails] },
         });
 
@@ -178,7 +179,7 @@ describe('usePreviewImage', () => {
 
     it('should handle 404 Not Found error in preview URL', async () => {
         // Mock successful media details
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [mockMediaDetails] },
         });
 
@@ -203,7 +204,7 @@ describe('usePreviewImage', () => {
 
     it('should not fetch preview URL when media details are not available', async () => {
         // Mock empty media details
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [] },
         });
 
@@ -221,7 +222,7 @@ describe('usePreviewImage', () => {
 
     it('should handle media details fetch error', async () => {
         // Mock media details fetch error
-        (mockSDK.mediaConnector.query as jest.Mock).mockRejectedValue(new Error('Network error'));
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockRejectedValue(new Error('Network error'));
 
         const { result } = renderHookWithProviders(() => usePreviewImage(mockConnectorId, mockMediaAssetId), {
             preloadedState: mockPreloadedState,
@@ -259,7 +260,7 @@ describe('usePreviewImage', () => {
         };
 
         // Mock successful detail call
-        (mockSDK.mediaConnector.detail as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.detail as unknown as jest.Mock).mockResolvedValue({
             parsedData: mockMediaDetails,
         });
 
@@ -276,7 +277,7 @@ describe('usePreviewImage', () => {
 
     it('should handle default error in preview URL', async () => {
         // Mock successful media details
-        (mockSDK.mediaConnector.query as jest.Mock).mockResolvedValue({
+        (mockSDK.mediaConnector.query as unknown as jest.Mock).mockResolvedValue({
             parsedData: { data: [mockMediaDetails] },
         });
 

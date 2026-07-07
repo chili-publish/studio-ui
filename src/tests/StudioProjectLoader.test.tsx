@@ -6,6 +6,7 @@ import { StudioProjectLoader } from '../StudioProjectLoader';
 import { EnvironmentApiService } from '../services/EnvironmentApiService';
 import { ProjectDataClient } from '../services/ProjectDataClient';
 import { exportDocument } from '../utils/documentExportHelper';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 // Mock ProjectDataClient
 jest.mock('../services/ProjectDataClient', () => ({
@@ -33,7 +34,7 @@ describe('StudioProjectLoader', () => {
     const mockProjectDownloadUrl = 'mockProjectDownloadUrl';
     const mockProjectUploadUrl = 'mockProjectUploadUrl';
     const mockDocument = { data: { mock: 'data' } };
-    const mockGenerateJson = jest.fn().mockResolvedValue(Promise.resolve(JSON.stringify(mockDocument)));
+    const mockGenerateJson = mockSdkMethod().mockResolvedValue(Promise.resolve(JSON.stringify(mockDocument)));
 
     // Mock EnvironmentApiService
     const mockEnvironmentApiService = {
@@ -191,7 +192,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            window.StudioUISDK.configuration.setValue = jest.fn();
+            window.StudioUISDK.configuration.setValue = mockSdkMethod();
 
             loader.onEngineInitialized();
 
@@ -214,7 +215,7 @@ describe('StudioProjectLoader', () => {
                 mockProjectDownloadUrl,
                 mockProjectUploadUrl,
             );
-            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockProject);
+            loader.onProjectInfoRequested = mockSdkMethod().mockResolvedValue(mockProject);
 
             const result = await loader.onProjectSave(mockGenerateJson);
 
@@ -240,7 +241,7 @@ describe('StudioProjectLoader', () => {
                 undefined,
                 undefined, // No upload URL
             );
-            loader.onProjectInfoRequested = jest.fn().mockResolvedValue(mockProject);
+            loader.onProjectInfoRequested = mockSdkMethod().mockResolvedValue(mockProject);
 
             const result = await loader.onProjectSave(mockGenerateJson);
 
@@ -340,7 +341,7 @@ describe('StudioProjectLoader', () => {
             (exportDocument as jest.Mock).mockResolvedValue(mockTaskId);
 
             // Mock the getOutputTaskResult method
-            mockEnvironmentApiService.getOutputTaskResult = jest.fn().mockResolvedValue(mockOutputResult);
+            mockEnvironmentApiService.getOutputTaskResult = mockSdkMethod().mockResolvedValue(mockOutputResult);
 
             const loader = new StudioProjectLoader(
                 mockProjectId,
@@ -380,7 +381,7 @@ describe('StudioProjectLoader', () => {
                 data: null,
             };
 
-            const mockOnProjectGetDownloadLink = jest.fn().mockResolvedValue(mockDownloadLinkResult);
+            const mockOnProjectGetDownloadLink = mockSdkMethod().mockResolvedValue(mockDownloadLinkResult);
 
             const loader = new StudioProjectLoader(
                 mockProjectId,
@@ -523,7 +524,7 @@ describe('StudioProjectLoader', () => {
                 formBuilder: [],
             };
 
-            const mockOnFetchUserInterfaceDetails = jest.fn().mockResolvedValue(mockUserInterface);
+            const mockOnFetchUserInterfaceDetails = mockSdkMethod().mockResolvedValue(mockUserInterface);
 
             const loader = new StudioProjectLoader(
                 mockProjectId,
@@ -556,7 +557,7 @@ describe('StudioProjectLoader', () => {
                 status: 404,
             };
 
-            const mockOnFetchUserInterfaceDetails = jest.fn().mockRejectedValue(mockError);
+            const mockOnFetchUserInterfaceDetails = mockSdkMethod().mockRejectedValue(mockError);
 
             const loader = new StudioProjectLoader(
                 mockProjectId,

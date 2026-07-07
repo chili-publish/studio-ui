@@ -27,6 +27,7 @@ import { getDataTestIdForSUI } from '../../utils/dataIds';
 import { transformFormBuilderArrayToObject } from '../../utils/helpers';
 import { APP_WRAPPER } from '../mocks/app';
 import { renderWithProviders } from '../mocks/Provider';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -85,7 +86,7 @@ const renderComponent = (
     );
 };
 describe('Layout selection', () => {
-    mockSDK.layout.select = jest.fn().mockResolvedValue({
+    mockSDK.layout.select = mockSdkMethod().mockResolvedValue({
         parsedData: null,
     });
     window.StudioUISDK = mockSDK;

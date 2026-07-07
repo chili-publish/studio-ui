@@ -21,6 +21,7 @@ import { setupStore } from '../store';
 import { setVariables } from '../store/reducers/variableReducer';
 import { showVariablesPanel } from '../store/reducers/panelReducer';
 import * as panelReducer from '../store/reducers/panelReducer';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 jest.mock('@chili-publish/studio-sdk');
 jest.mock('../components/variablesComponents/imageVariable/useVariableConnector', () => ({
@@ -35,8 +36,7 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
 const mockSDK = mock<EditorSDK>();
 
 beforeEach(() => {
-    mockSDK.mediaConnector.query = jest
-        .fn()
+    mockSDK.mediaConnector.query = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(
             Promise.resolve({
@@ -50,8 +50,7 @@ beforeEach(() => {
             }),
         );
 
-    mockSDK.mediaConnector.detail = jest
-        .fn()
+    mockSDK.mediaConnector.detail = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(
             Promise.resolve({
@@ -66,15 +65,15 @@ beforeEach(() => {
             }),
         );
 
-    mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
+    mockSDK.mediaConnector.download = mockSdkMethod()
+        .mockImplementation()
+        .mockReturnValue(Promise.resolve(new Uint8Array()));
 
-    mockSDK.connector.getState = jest
-        .fn()
+    mockSDK.connector.getState = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 
-    mockSDK.variable.setValue = jest
-        .fn()
+    mockSDK.variable.setValue = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(
             Promise.resolve({
@@ -84,13 +83,11 @@ beforeEach(() => {
                 parsedData: null,
             }),
         );
-    mockSDK.connector.waitToBeReady = jest
-        .fn()
+    mockSDK.connector.waitToBeReady = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-    mockSDK.mediaConnector.getCapabilities = jest
-        .fn()
+    mockSDK.mediaConnector.getCapabilities = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(
             Promise.resolve({
@@ -98,10 +95,10 @@ beforeEach(() => {
             }),
         );
 
-    mockSDK.connector.getMappings = jest.fn().mockResolvedValue({
+    mockSDK.connector.getMappings = mockSdkMethod().mockResolvedValue({
         parsedData: null,
     });
-    mockSDK.variable.getAll = jest.fn().mockResolvedValue({
+    mockSDK.variable.getAll = mockSdkMethod().mockResolvedValue({
         parsedData: null,
     });
 
@@ -292,8 +289,7 @@ describe('Image Panel', () => {
     });
     test('Do not renderWithProviders search input when filtering is not supported', async () => {
         const user = userEvent.setup();
-        mockSDK.mediaConnector.getCapabilities = jest
-            .fn()
+        mockSDK.mediaConnector.getCapabilities = mockSdkMethod()
             .mockImplementation()
             .mockReturnValue(
                 Promise.resolve({

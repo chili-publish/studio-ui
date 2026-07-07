@@ -213,7 +213,7 @@ describe('ColorConstraint', () => {
             },
         });
 
-        (mockSDK.colorStyle.getById as jest.Mock)
+        (mockSDK.colorStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockColor1 })
             .mockResolvedValueOnce({ parsedData: mockColor2 });
 

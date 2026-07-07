@@ -15,6 +15,7 @@ import { getDataIdForSUI } from '../utils/dataIds';
 import { APP_WRAPPER } from './mocks/app';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
 import { renderWithProviders } from './mocks/Provider';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -37,17 +38,17 @@ jest.mock('../utils/connectors', () => ({
 }));
 
 describe('MobileVariableTrayLayout', () => {
-    mockSDK.layout.select = jest.fn().mockResolvedValue({
+    mockSDK.layout.select = mockSdkMethod().mockResolvedValue({
         parsedData: null,
     });
-    mockSDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+    mockSDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
         parsedData: { page: { data: [] } },
     });
-    mockSDK.undoManager.addCustomData = jest.fn();
+    mockSDK.undoManager.addCustomData = mockSdkMethod();
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     mockSDK.next.connector = {} as any;
 
-    mockSDK.next.connector.getById = jest.fn().mockResolvedValue({
+    mockSDK.next.connector.getById = mockSdkMethod().mockResolvedValue({
         parsedData: {
             source: { url: 'http://deploy.com/data-connector', source: ConnectorRegistrationSource.url },
         },
