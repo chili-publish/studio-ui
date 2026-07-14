@@ -14,7 +14,7 @@ function getStore() {
         preloadedState: {
             document: {
                 configuration: { graFxStudioEnvironmentApiBaseUrl: 'http://env.com' },
-                loadGeneration: 0,
+                documentRefreshCount: 0,
             },
         },
     });

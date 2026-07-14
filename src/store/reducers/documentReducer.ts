@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from '../index';
 
 type DocumentConfiguration = {
     graFxStudioEnvironmentApiBaseUrl: string;
@@ -6,9 +7,9 @@ type DocumentConfiguration = {
 
 type DocumentState = {
     configuration?: DocumentConfiguration;
-    loadGeneration: number;
+    documentRefreshCount: number;
 };
-const initialState: DocumentState = { loadGeneration: 0 };
+const initialState: DocumentState = { documentRefreshCount: 0 };
 
 export const documentSlice = createSlice({
     name: 'document',
@@ -17,12 +18,14 @@ export const documentSlice = createSlice({
         setConfiguration: (state, action: PayloadAction<DocumentConfiguration>) => {
             state.configuration = action.payload;
         },
-        incrementDocumentLoadGeneration: (state) => {
-            state.loadGeneration += 1;
+        incrementDocumentRefreshCount: (state) => {
+            state.documentRefreshCount += 1;
         },
     },
 });
 
-export const { setConfiguration, incrementDocumentLoadGeneration } = documentSlice.actions;
+export const { setConfiguration, incrementDocumentRefreshCount } = documentSlice.actions;
+
+export const selectDocumentRefreshCount = (state: RootState): number => state.document.documentRefreshCount;
 
 export default documentSlice.reducer;

@@ -14,8 +14,8 @@ import {
     showListVariablePanel,
 } from '../../../store/reducers/panelReducer';
 import { selectCurrentVariableId, selectVariablesValidation } from '../../../store/reducers/variableReducer';
+import { selectDocumentRefreshCount } from '../../../store/reducers/documentReducer';
 import { useAppDispatch } from '../../../store';
-import type { RootState } from '../../../store';
 
 interface MobileFlatVariablesListProps {
     variables: Variable[];
@@ -23,7 +23,7 @@ interface MobileFlatVariablesListProps {
 const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) => {
     const dispatch = useAppDispatch();
     const variablesValidation = useSelector(selectVariablesValidation);
-    const documentLoadGeneration = useSelector((state: RootState) => state.document.loadGeneration);
+    const documentRefreshCount = useSelector(selectDocumentRefreshCount);
 
     const activePanel = useSelector(selectActivePanel);
     const currentVariableId = useSelector(selectCurrentVariableId);
@@ -63,7 +63,7 @@ const MobileFlatVariablesList = ({ variables }: MobileFlatVariablesListProps) =>
                     );
                 const key =
                     variable.type === VariableType.image
-                        ? `variable-component-${variable.id}-${documentLoadGeneration}`
+                        ? `variable-component-${variable.id}-${documentRefreshCount}`
                         : `variable-component-${variable.id}`;
                 return (
                     <ComponentWrapper

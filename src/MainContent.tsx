@@ -44,7 +44,7 @@ import { UiConfigContextProvider } from './contexts/UiConfigContext';
 import { useEditorAuthExpired } from './core/hooks/useEditorAuthExpired';
 import { useMediaConnectors } from './editor/useMediaConnectors';
 import { useAppDispatch, useAppSelector } from './store';
-import { incrementDocumentLoadGeneration, setConfiguration } from './store/reducers/documentReducer';
+import { incrementDocumentRefreshCount, setConfiguration } from './store/reducers/documentReducer';
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
@@ -330,7 +330,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
 
         // call onProjectLoaded when the document is loaded
         const onDocumentLoadedUnsubscribe = sdk.config.events.onDocumentLoaded.registerCallback(() => {
-            dispatch(incrementDocumentLoadGeneration());
+            dispatch(incrementDocumentRefreshCount());
             projectConfig.onProjectLoaded?.();
         });
 
