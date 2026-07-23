@@ -45,7 +45,7 @@ Reuse [`.github/pull_request_template.md`](.github/pull_request_template.md).
 
 Related tickets may be a **JIRA** link and/or a **GitHub issue**. [`.github/workflows/check-description.yml`](.github/workflows/check-description.yml) is a **JIRA link check only**. When there is no JIRA ticket (GitHub-issue-only or truly none), apply the `No JIRA ticket` label so that check is skipped — the label does not mean there is no ticket of any kind.
 
-Prefer matching the PR title to the first commit message. Do not hand-write CDN / preview URLs in the PR body when CI comments them.
+Prefer matching the PR title to the first commit message.
 
 ## Checklist
 
