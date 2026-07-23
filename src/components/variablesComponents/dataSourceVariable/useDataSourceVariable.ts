@@ -143,9 +143,22 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
     });
 
+    const getFreshDSVRowKey = useEffectEvent(async () => {
+        if (variable.value && isInjected(variable.value)) {
+            return variable.value.itemIdPropertyName;
+        }
+
+        if (!connectorId) {
+            return null;
+        }
+
+        const model = await window.StudioUISDK.dataConnector.getModel(connectorId);
+        return (model.parsedData as DataSourceVariableDataModel)?.itemIdPropertyName;
+    });
     const handleVariableValueChanged = useEffectEvent(async () => {
         if (currentDataRow) {
-            const value = rowKeyNameRef.current ? currentDataRow[rowKeyNameRef.current]?.toString() : undefined;
+            const rowKey = await getFreshDSVRowKey();
+            const value = rowKey ? currentDataRow[rowKey]?.toString() : undefined;
 
             if (!value || value === variable.entryId) return;
 
