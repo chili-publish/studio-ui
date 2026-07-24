@@ -6,6 +6,7 @@ import {
     Input,
     Label,
     LoadingIcon,
+    ValidationTypes,
 } from '@chili-publish/grafx-shared-components';
 import { useDirection } from '../../../hooks/useDirection';
 import { Text } from '../../../styles/Main.styles';
@@ -31,6 +32,11 @@ interface DataSourceInputProps {
         row?: string;
         placeholder?: string;
     };
+
+    validation?: {
+        isRequired: boolean;
+        errorMessage: string;
+    };
 }
 const DataSourceInput = ({
     currentRow,
@@ -44,6 +50,7 @@ const DataSourceInput = ({
     onPrevClick,
     onNextClick,
     labels,
+    validation,
 }: DataSourceInputProps) => {
     const { direction } = useDirection();
 
@@ -53,6 +60,7 @@ const DataSourceInput = ({
             <Input
                 type="text"
                 readOnly
+                required={validation?.isRequired}
                 disabled={dataIsLoading}
                 dataId={DATA_SOURCE_ID}
                 dataTestId={getDataTestIdForSUI(`data-source-input`)}
@@ -62,6 +70,8 @@ const DataSourceInput = ({
                 placeholder={labels.placeholder ?? 'Select data row'}
                 label={<Label translationKey="dataRow" value={labels.input} />}
                 onClick={onInputClick}
+                validation={validation?.errorMessage ? ValidationTypes.ERROR : undefined}
+                validationErrorMessage={validation?.errorMessage}
                 rightIcon={{
                     label: '',
                     icon: dataIsLoading ? (

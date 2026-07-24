@@ -247,6 +247,29 @@ describe('DataSourceVariableTableMode', () => {
         });
     });
 
+    describe('validation', () => {
+        it('displays validation error message on the input', async () => {
+            renderComponent(createVariable(), 'Field is required');
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            expect(screen.getByText('Field is required')).toBeInTheDocument();
+        });
+
+        it('marks the input as required when the variable is required', async () => {
+            renderComponent(createVariable({ isRequired: true }), undefined);
+
+            const input = await screen.findByDisplayValue('1 | Joe | 15');
+            expect(input).toBeRequired();
+        });
+
+        it('does not mark the input as required when the variable is optional', async () => {
+            renderComponent(createVariable({ isRequired: false }), undefined);
+
+            const input = await screen.findByDisplayValue('1 | Joe | 15');
+            expect(input).not.toBeRequired();
+        });
+    });
+
     describe('desktop interactions', () => {
         it('opens modal with data table on input click', async () => {
             renderComponent(createVariable(), undefined);
@@ -296,6 +319,31 @@ describe('DataSourceVariableTableMode', () => {
             await user.click(screen.getByTestId('test-sui-data-row-next'));
 
             expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+        });
+
+        it('sets the variable value using a freshly resolved row key from the model', async () => {
+            setupSDKMocks(defaultPageData, { modelKey: 'name' });
+            renderComponent(createVariable(), undefined);
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            await user.click(screen.getByTestId('test-sui-data-row-next'));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', 'John');
+            });
+            expect(window.StudioUISDK.dataConnector.getModel).toHaveBeenCalledWith('connector-1');
+        });
+
+        it('does not call setValue when the selected row already matches entryId', async () => {
+            renderComponent(createVariable({ entryId: '1' }), undefined);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.dataConnector.getPageItemById).toHaveBeenCalled();
+            });
+            await screen.findByDisplayValue('1 | Joe | 15');
+
+            expect(window.StudioUISDK.variable.dataSource.setValue).not.toHaveBeenCalled();
         });
 
         it('navigates to previous row when prev button is clicked', async () => {
@@ -499,6 +547,39 @@ describe('DataSourceVariableTableMode', () => {
 
             expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
             expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', '2');
+        });
+
+        it('sets the variable value using the injected itemIdPropertyName as the row key', async () => {
+            setupSDKMocks(defaultPageData, { sourceType: 'injected' });
+            renderComponent(
+                createInjectedVariable({
+                    value: {
+                        type: DataSourceVariableSourceType.injected,
+                        model: INJECTED_MODEL,
+                        itemIdPropertyName: 'name',
+                    },
+                }),
+                undefined,
+            );
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(screen.getByText('Data Source')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByTestId('test-gsc-modal-close-action-button');
+            await user.click(closeButton);
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            await user.click(screen.getByTestId('test-sui-data-row-next'));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', 'John');
+            });
+            expect(window.StudioUISDK.dataConnector.getModel).not.toHaveBeenCalled();
         });
 
         it('reloads injected data and preselects the first row when onInjectedDataChanged fires', async () => {
