@@ -319,7 +319,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 frameEditingMode: FrameEditingMode.followConstraints,
             },
             editorLink: projectConfig.editorLink,
-            isIntegration: firstPartyIntegration,
+            isIntegration: !firstPartyIntegration,
             enableQueryCallCache: true,
             onConnectionError: (error) => {
                 addNotification({

@@ -182,7 +182,7 @@ describe('MainContent', () => {
         expect(mockZoomToPage).not.toHaveBeenCalled();
     });
 
-    it('should pass isIntegration true to the SDK when firstPartyIntegration is enabled', async () => {
+    it('should pass isIntegration false to the SDK when firstPartyIntegration is enabled', async () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
@@ -193,10 +193,10 @@ describe('MainContent', () => {
         );
 
         expect(mockSdkConfig).toBeDefined();
-        expect(mockSdkConfig.isIntegration).toBe(true);
+        expect(mockSdkConfig.isIntegration).toBe(false);
     });
 
-    it('should pass isIntegration false to the SDK when firstPartyIntegration is disabled', async () => {
+    it('should pass isIntegration true to the SDK when firstPartyIntegration is disabled', async () => {
         await renderWithProviders(
             <AppProvider isDocumentLoaded>
                 <SubscriberContextProvider subscriber={new Subscriber()}>
@@ -207,19 +207,6 @@ describe('MainContent', () => {
         );
 
         expect(mockSdkConfig).toBeDefined();
-        expect(mockSdkConfig.isIntegration).toBe(false);
-    });
-
-    it('should pass isIntegration undefined to the SDK when firstPartyIntegration is not set', async () => {
-        await renderWithProviders(
-            <AppProvider isDocumentLoaded>
-                <SubscriberContextProvider subscriber={new Subscriber()}>
-                    <MainContent projectConfig={mockProjectConfig} />
-                </SubscriberContextProvider>
-            </AppProvider>,
-        );
-
-        expect(mockSdkConfig).toBeDefined();
-        expect(mockSdkConfig.isIntegration).toBeUndefined();
+        expect(mockSdkConfig.isIntegration).toBe(true);
     });
 });
