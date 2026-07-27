@@ -8,6 +8,9 @@ import AppProvider from '../contexts/AppProvider';
 import { SubscriberContextProvider } from '../contexts/Subscriber';
 import { Subscriber } from '../utils/subscriber';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockSdkConfig: any;
+
 jest.mock('@chili-publish/studio-sdk', () => {
     const originalModule = jest.requireActual('@chili-publish/studio-sdk');
     return {
@@ -15,6 +18,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
         ...originalModule,
         /* eslint-disable */
         default: function (config: any) {
+            mockSdkConfig = config;
             const sdk = new originalModule.default(config);
             /* eslint-enable */
             return {
@@ -80,6 +84,10 @@ describe('MainContent', () => {
             saveProjectDocument: jest.fn().mockResolvedValue({ success: true }),
         } as unknown as EnvironmentApiService,
     };
+
+    beforeEach(() => {
+        mockSdkConfig = undefined;
+    });
 
     it('should render with default ltr direction', async () => {
         await renderWithProviders(
@@ -172,5 +180,46 @@ describe('MainContent', () => {
 
         // Verify that zoomToPage was not called
         expect(mockZoomToPage).not.toHaveBeenCalled();
+    });
+
+    it('should pass isIntegration true to the SDK when firstPartyIntegration is enabled', async () => {
+        await renderWithProviders(
+            <AppProvider isDocumentLoaded>
+                <SubscriberContextProvider subscriber={new Subscriber()}>
+                    <MainContent projectConfig={mockProjectConfig} />
+                </SubscriberContextProvider>
+            </AppProvider>,
+            { preloadedState: { appConfig: { firstPartyIntegration: true } } },
+        );
+
+        expect(mockSdkConfig).toBeDefined();
+        expect(mockSdkConfig.isIntegration).toBe(true);
+    });
+
+    it('should pass isIntegration false to the SDK when firstPartyIntegration is disabled', async () => {
+        await renderWithProviders(
+            <AppProvider isDocumentLoaded>
+                <SubscriberContextProvider subscriber={new Subscriber()}>
+                    <MainContent projectConfig={mockProjectConfig} />
+                </SubscriberContextProvider>
+            </AppProvider>,
+            { preloadedState: { appConfig: { firstPartyIntegration: false } } },
+        );
+
+        expect(mockSdkConfig).toBeDefined();
+        expect(mockSdkConfig.isIntegration).toBe(false);
+    });
+
+    it('should pass isIntegration undefined to the SDK when firstPartyIntegration is not set', async () => {
+        await renderWithProviders(
+            <AppProvider isDocumentLoaded>
+                <SubscriberContextProvider subscriber={new Subscriber()}>
+                    <MainContent projectConfig={mockProjectConfig} />
+                </SubscriberContextProvider>
+            </AppProvider>,
+        );
+
+        expect(mockSdkConfig).toBeDefined();
+        expect(mockSdkConfig.isIntegration).toBeUndefined();
     });
 });
