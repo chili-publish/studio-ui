@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-// import { DropDown } from '@chili-publish/grafx-shared-components';
 import {
     DateVariable as DateVariableType,
     ImageVariable as ImageVariableType,
@@ -10,7 +9,7 @@ import {
     VariableType,
     ShortTextVariable,
 } from '@chili-publish/studio-sdk';
-import { ListVariable as ListVariableType } from '@chili-publish/studio-sdk/lib/src/next';
+import { ListVariable as ListVariableType } from './VariablesComponents.types';
 import { useSelector } from 'react-redux';
 import { useAppContext } from '../../contexts/AppProvider';
 import BooleanVariable from './BooleanVariable';

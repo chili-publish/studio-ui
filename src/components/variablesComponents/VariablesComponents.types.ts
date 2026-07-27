@@ -9,7 +9,11 @@ import {
     VariableType,
     DataSourceVariable as DataSourceVariableType,
 } from '@chili-publish/studio-sdk';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
+import { ListVariable as ListVariableNext } from '@chili-publish/studio-sdk/lib/src/next';
+
+export interface ListVariable extends ListVariableNext {
+    availableItems: string[];
+}
 
 export interface IVariablesComponents {
     type: VariableType;

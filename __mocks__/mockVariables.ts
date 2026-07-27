@@ -9,7 +9,7 @@ import {
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
+import { ListVariable } from '../src/components/variablesComponents/VariablesComponents.types';
 
 export const mockVariables: [ImageVariable, ...Variable[]] = [
     <ImageVariable>(<unknown>{
@@ -106,6 +106,7 @@ export const mockVariables: [ImageVariable, ...Variable[]] = [
         items: [{ value: 'val 1', displayValue: 'Val 1' }, { value: 'val 2' }],
         isReadonly: false,
         isRequired: false,
+        availableItems: ['val 1', 'val 2'],
     },
 
     <BooleanVariable>{

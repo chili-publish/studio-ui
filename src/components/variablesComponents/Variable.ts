@@ -3,14 +3,14 @@ import {
     DataSourceVariable,
     DateVariable,
     ImageVariable,
+    ListVariableItem,
     LongTextVariable,
     NumberVariable,
     ShortTextVariable,
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
-import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
-
+import type { ListVariable } from './VariablesComponents.types';
 export type TextVariable = ShortTextVariable | LongTextVariable;
 
 export const isBooleanVariable = (variable?: Variable): variable is BooleanVariable =>
@@ -42,4 +42,8 @@ export const getVariableErrMsg = (variable: Variable) => {
     const isValid = variable.isRequired ? validateVariableValue(variable) : true;
 
     return !isValid ? 'This field is required' : '';
+};
+
+export const getVariableListItemsFilteredByAvailableItems = (variable: ListVariable): ListVariableItem[] => {
+    return variable.items.filter(({ value }) => variable.availableItems.includes(value));
 };
