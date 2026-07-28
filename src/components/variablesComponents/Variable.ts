@@ -10,7 +10,7 @@ import {
     Variable,
     VariableType,
 } from '@chili-publish/studio-sdk';
-import type { ListVariable } from './VariablesComponents.types';
+import { ListVariable } from '@chili-publish/studio-sdk/lib/src/next';
 export type TextVariable = ShortTextVariable | LongTextVariable;
 
 export const isBooleanVariable = (variable?: Variable): variable is BooleanVariable =>

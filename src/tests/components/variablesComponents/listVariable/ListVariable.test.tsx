@@ -1,6 +1,5 @@
 import { getDataTestId, UiThemeProvider } from '@chili-publish/grafx-shared-components';
-// import { ListVariable as Type } from '@chili-publish/studio-sdk/lib/src/next';
-import { ListVariable as Type } from '../../../../components/variablesComponents/VariablesComponents.types';
+import { ListVariable as Type } from '@chili-publish/studio-sdk/lib/src/next';
 import { act, render, screen } from '@testing-library/react';
 import { variables } from '@tests/mocks/mockVariables';
 import { mockLayout, mockLayouts } from '@mocks/mockLayout';
