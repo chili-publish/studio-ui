@@ -6,7 +6,7 @@ const BoldText = styled.span`
 `;
 
 type ErrorContext = {
-    errorCode: number;
+    errorCode: number | string;
     columnName?: string;
 };
 const varTypesWithNoValue = [VariableType.number, VariableType.boolean];
