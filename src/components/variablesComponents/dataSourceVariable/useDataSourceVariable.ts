@@ -1,3 +1,4 @@
+import { ToastVariant } from '@chili-publish/grafx-shared-components';
 import {
     ConnectorDataSourceVariableSource,
     ConnectorEvent,
@@ -13,11 +14,13 @@ import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { getPage, getPageItemById } from 'src/components/shared/DataSource/dataSource.util';
 import useSharedDataSource from 'src/components/shared/DataSource/useSharedDataSource';
+import { useNotificationManager } from 'src/contexts/NotificantionManager/NotificationManagerContext';
 import { useUiConfigContext } from 'src/contexts/UiConfigContext';
 import { useAppDispatch } from 'src/store';
 import { selectDataSourceVariableData, setDataSourceVariableData } from 'src/store/reducers/dataSourceVariableReducer';
 import { PanelType, selectActivePanel } from 'src/store/reducers/panelReducer';
 import { validateVariable } from 'src/store/reducers/variableReducer';
+import { dataSourceErrorHandler } from 'src/utils/dataSourceErrorHandler';
 
 interface IUseDataSourceVariable {
     variable: DataSourceVariable;
@@ -27,6 +30,7 @@ const isInjected = (value: DataSourceVariableSource): value is InjectedDataSourc
 };
 const useDataSourceVariable = (props: IUseDataSourceVariable) => {
     const { variable } = props;
+    const { addNotification } = useNotificationManager();
 
     const cachedDataSourceVariableDataMap = useSelector(selectDataSourceVariableData);
     const cachedDataSourceVariableData = cachedDataSourceVariableDataMap[variable.id];
@@ -161,10 +165,24 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
             const value = rowKey ? currentDataRow[rowKey]?.toString() : undefined;
 
             if (!value || value === variable.entryId) return;
-
             dispatch(validateVariable({ ...variable, entryId: value } as DataSourceVariable));
-            projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
-            await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
+            try {
+                await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
+                projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
+            } catch (error) {
+                const msg = dataSourceErrorHandler(
+                    { errorCode: (error as unknown as { cause: { name: number } }).cause.name },
+                    variable,
+                );
+                if (msg) {
+                    addNotification({
+                        id: `data-source-variable-error-${variable?.id}`,
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        message: msg as any,
+                        type: ToastVariant.NEGATIVE,
+                    });
+                }
+            }
         }
     });
     useEffect(() => {
