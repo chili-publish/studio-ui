@@ -46,12 +46,18 @@ jobs:
                   client_payload: '{"PR_NUMBER": "pr_builds/${{ github.event.number }}", "SETTAG": "StudioUI"}'
 
     trigger-playwright-tests:
-        if: github.event.label.name == 'Ready for QA'
+        if: github.event.label.name == 'Ready for QA'  || github.event.label.name == 'Skip QA'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            - name: Skip tests notification
+              if: github.event.label.name == 'Skip QA'
+              run: |
+                  echo "::notice::Automated tests are being skipped due to 'Skip QA' label"
+                  exit 0
             - name: Get GitHub application JWT
               id: get-gh-app-jwt
+              if: github.event.label.name == 'Ready for QA'
               uses: ./.github/actions/get-gh-app-jwt
               with:
                   gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_REPO_ACTIONS }}
@@ -59,12 +65,14 @@ jobs:
 
             - name: Get GitHub application installation access token
               id: get-gh-app-installation-access-token
+              if: github.event.label.name == 'Ready for QA'
               uses: ./.github/actions/get-gh-app-installation-access-token
               with:
                   gh-app-jwt: ${{ steps.get-gh-app-jwt.outputs.gh-app-jwt }}
                   gh-app-installation-id: ${{ vars.GH_APP_INSTALL_ID_CHILI_REPO_ACTIONS }}
 
             - name: Trigger the Playwright tests in qa-playwright-framework
+              if: github.event.label.name == 'Ready for QA'
               uses: convictional/trigger-workflow-and-wait@v1.6.1
               with:
                   owner: chili-publish
