@@ -80,5 +80,14 @@ runs:
                 TYPE="Production Release Created"
               fi
 
-              TEXT="${EMOJI} **$TYPE**\n\n**Release:** $RELEASE_URL\n\n**Version:** $VERSION\n\nRelease has been created and deployment will be triggered automatically."
-              echo "text=$TEXT" >> $GITHUB_OUTPUT
+              # Real newlines + multiline output (bash-literal \n breaks Teams formatting).
+              TEXT=$(printf '%s\n\n%s\n\n%s\n\n%s' \
+                "${EMOJI} ${TYPE}" \
+                "**Version:** ${VERSION}" \
+                "**Release:** ${RELEASE_URL}" \
+                "Release has been created and deployment will be triggered automatically.")
+              {
+                echo "text<<NOTIFICATION_EOF"
+                printf '%s\n' "$TEXT"
+                echo "NOTIFICATION_EOF"
+              } >> "$GITHUB_OUTPUT"
