@@ -127,6 +127,7 @@ const DataSourceVariableTableMode = (props: IDataSourceVariableTableMode) => {
                 onPrevClick={getPreviousRow}
                 onNextClick={getNextRow}
                 labels={{ input: variable.label ?? variable.name, placeholder }}
+                validation={{ isRequired: variable.isRequired, errorMessage: validationError ?? '' }}
             />
             {isDataSourceModalOpen && !activePanelOnMobile ? (
                 <DataSourceModal

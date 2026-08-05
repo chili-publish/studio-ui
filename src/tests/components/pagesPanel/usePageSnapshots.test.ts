@@ -3,6 +3,7 @@ import EditorSDK, { ConfigType, Page } from '@chili-publish/studio-sdk';
 import { usePageSnapshots } from '../../../components/pagesPanel/usePageSnapshots';
 import { renderHookWithProviders } from '../../mocks/Provider';
 import { useProcessingQueue } from '../../../utils/useQueue';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 // Mock the studio-sdk module
 jest.mock('@chili-publish/studio-sdk', () => {
@@ -54,8 +55,8 @@ describe('usePageSnapshots', () => {
 
         window.StudioUISDK = mockSdk;
 
-        mockAddToQueue = jest.fn();
-        mockScheduleProcessing = jest.fn();
+        mockAddToQueue = mockSdkMethod();
+        mockScheduleProcessing = mockSdkMethod();
 
         (useProcessingQueue as jest.Mock).mockReturnValue({
             addToQueue: mockAddToQueue,
@@ -97,7 +98,7 @@ describe('usePageSnapshots', () => {
 
     it('should handle errors in snapshot processing gracefully', async () => {
         // Mock the SDK to throw an error
-        window.StudioUISDK.page.getSnapshot = jest.fn().mockRejectedValue(new Error('Snapshot failed'));
+        window.StudioUISDK.page.getSnapshot = mockSdkMethod().mockRejectedValue(new Error('Snapshot failed'));
 
         const { result } = renderHookWithProviders(() => usePageSnapshots(mockPages.slice(0, 1)));
 

@@ -107,7 +107,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 } as any,
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -129,7 +129,7 @@ describe('MobileInlineTextEditingToolbar', () => {
         it('should not render when text is not in edit mode', async () => {
             const frameConstraints = createMockFrameConstraints();
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -161,7 +161,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             };
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraintsData,
             });
 
@@ -195,7 +195,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -231,7 +231,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -267,7 +267,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -301,7 +301,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -350,7 +350,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -393,7 +393,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -434,7 +434,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -475,7 +475,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -514,7 +514,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 
@@ -553,7 +553,7 @@ describe('MobileInlineTextEditingToolbar', () => {
                 },
             });
 
-            (mockSDK.frame.constraints.get as jest.Mock).mockResolvedValue({
+            (mockSDK.frame.constraints.get as unknown as jest.Mock).mockResolvedValue({
                 parsedData: frameConstraints,
             });
 

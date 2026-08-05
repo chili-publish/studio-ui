@@ -3,14 +3,14 @@ import EditorSDK from '@chili-publish/studio-sdk';
 import { mock } from 'jest-mock-extended';
 import { UiThemeProvider } from '@chili-publish/grafx-shared-components';
 import Zoom from '../components/zoom/Zoom';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 beforeEach(() => {
     jest.mock('@chili-publish/studio-sdk');
     const mockSDK = mock<EditorSDK>();
-    mockSDK.config.onZoomChanged = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(400));
+    mockSDK.config.onZoomChanged = mockSdkMethod().mockImplementation().mockReturnValue(Promise.resolve(400));
 
-    mockSDK.canvas.setZoomPercentage = jest
-        .fn()
+    mockSDK.canvas.setZoomPercentage = mockSdkMethod()
         .mockImplementation()
         .mockReturnValue(
             Promise.resolve({

@@ -8,6 +8,7 @@ import { variables } from '../../mocks/mockVariables';
 import { renderWithProviders } from '../../mocks/Provider';
 import { setupStore } from '../../../store';
 import { setVariables } from '../../../store/reducers/variableReducer';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: () => ({
@@ -23,10 +24,10 @@ describe('Variables List', () => {
     const reduxStore = setupStore();
     reduxStore.dispatch(setVariables(variables));
     beforeEach(() => {
-        window.StudioUISDK.connector.getMappings = jest.fn().mockResolvedValue({
+        window.StudioUISDK.connector.getMappings = mockSdkMethod().mockResolvedValue({
             parsedData: null,
         });
-        window.StudioUISDK.variable.getAll = jest.fn().mockResolvedValue({
+        window.StudioUISDK.variable.getAll = mockSdkMethod().mockResolvedValue({
             parsedData: null,
         });
     });

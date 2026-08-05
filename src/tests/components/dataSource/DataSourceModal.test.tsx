@@ -11,6 +11,7 @@ import AppProvider from '../../../contexts/AppProvider';
 import { useSubscriberContext } from '../../../contexts/Subscriber';
 import { APP_WRAPPER_ID } from '../../../utils/constants';
 import { Subscriber } from '../../../utils/subscriber';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../contexts/Subscriber', () => ({
     useSubscriberContext: jest.fn().mockReturnValue({
@@ -52,15 +53,15 @@ describe('DataSourceModal test', () => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 }) as any,
         );
-        window.console.error = jest.fn();
+        window.console.error = mockSdkMethod();
     });
 
     beforeEach(() => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: { data: tableData },
         });
-        window.StudioUISDK.dataSource.setDataRow = jest.fn();
-        window.StudioUISDK.undoManager.addCustomData = jest.fn();
+        window.StudioUISDK.dataSource.setDataRow = mockSdkMethod();
+        window.StudioUISDK.undoManager.addCustomData = mockSdkMethod();
     });
 
     afterAll(() => {
@@ -68,7 +69,7 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should show empty state correctly', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValueOnce({
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValueOnce({
             parsedData: { data: [] },
         });
         renderWithProviders(
@@ -96,7 +97,7 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should show "401" state correctly', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(401));
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValueOnce(new ConnectorHttpError(401));
         renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
@@ -122,7 +123,7 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should show "404" state correctly', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new ConnectorHttpError(404));
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValueOnce(new ConnectorHttpError(404));
         renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>
@@ -148,7 +149,7 @@ describe('DataSourceModal test', () => {
     });
 
     it('Should show "error" state correctly', async () => {
-        window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValueOnce(new Error());
+        window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValueOnce(new Error());
         renderWithProviders(
             <UiThemeProvider theme="platform">
                 <AppProvider dataSource={dataSource}>

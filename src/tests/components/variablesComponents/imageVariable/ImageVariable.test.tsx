@@ -9,6 +9,7 @@ import { useVariableConnector } from '../../../../components/variablesComponents
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../../../utils/dataIds';
 import { variables } from '../../../mocks/mockVariables';
 import * as panelReducer from '../../../../store/reducers/panelReducer';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../../components/variablesComponents/imageVariable/useVariableConnector', () => ({
     useVariableConnector: jest.fn().mockReturnValue({
@@ -202,7 +203,7 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should handle "remove" event correctly', async () => {
-        const handleRemove = jest.fn();
+        const handleRemove = mockSdkMethod();
         const imageVariable = variables[0];
         renderWithProviders(
             <UiThemeProvider theme="platform">
@@ -223,7 +224,7 @@ describe('"ImageVariable" component ', () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
             remoteConnector: { supportedAuthentication: { browser: ['oAuth2AuthorizationCode'] } },
         });
-        window.StudioUISDK.mediaConnector.query = jest.fn().mockResolvedValueOnce({});
+        window.StudioUISDK.mediaConnector.query = mockSdkMethod().mockResolvedValueOnce({});
         const imageVariable = variables[0];
 
         renderWithProviders(
@@ -378,7 +379,7 @@ describe('"ImageVariable" component ', () => {
 
     it('should not include onUpload prop when allowUpload is false', () => {
         const imageVariable = variables[0];
-        const handleImageChange = jest.fn();
+        const handleImageChange = mockSdkMethod();
 
         renderWithProviders(
             <UiThemeProvider theme="platform">
@@ -399,8 +400,8 @@ describe('"ImageVariable" component ', () => {
             allowUpload: true,
             allowQuery: true,
         };
-        const handleImageChange = jest.fn();
-        const uploadMock = jest.fn().mockResolvedValue({ id: 'media-123' });
+        const handleImageChange = mockSdkMethod();
+        const uploadMock = mockSdkMethod().mockResolvedValue({ id: 'media-123' });
 
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: uploadMock,
@@ -503,7 +504,7 @@ describe('"ImageVariable" component ', () => {
         (useVariableConnector as jest.Mock).mockReturnValueOnce({
             remoteConnector: { supportedAuthentication: { browser: [] } },
         });
-        const resetUploadError = jest.fn();
+        const resetUploadError = mockSdkMethod();
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: jest.fn(),
             pending: false,
@@ -525,7 +526,7 @@ describe('"ImageVariable" component ', () => {
     });
 
     it('should call resetUploadError when removing image', () => {
-        const resetUploadError = jest.fn();
+        const resetUploadError = mockSdkMethod();
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: jest.fn(),
             pending: false,

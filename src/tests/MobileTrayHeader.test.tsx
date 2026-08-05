@@ -20,6 +20,7 @@ import { APP_WRAPPER } from './mocks/app';
 import { ProjectConfigs } from './mocks/MockProjectConfig';
 import { renderWithProviders } from './mocks/Provider';
 import { variables } from './mocks/mockVariables';
+import { mockSdkMethod } from './utils/mockSdkMethod';
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -44,8 +45,7 @@ jest.mock('../components/variablesComponents/imageVariable/useVariableConnector'
     }),
 }));
 
-mockSDK.mediaConnector.query = jest
-    .fn()
+mockSDK.mediaConnector.query = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(
         Promise.resolve({
@@ -59,8 +59,7 @@ mockSDK.mediaConnector.query = jest
         }),
     );
 
-mockSDK.mediaConnector.detail = jest
-    .fn()
+mockSDK.mediaConnector.detail = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(
         Promise.resolve({
@@ -75,15 +74,15 @@ mockSDK.mediaConnector.detail = jest
         }),
     );
 
-mockSDK.mediaConnector.download = jest.fn().mockImplementation().mockReturnValue(Promise.resolve(new Uint8Array()));
+mockSDK.mediaConnector.download = mockSdkMethod()
+    .mockImplementation()
+    .mockReturnValue(Promise.resolve(new Uint8Array()));
 
-mockSDK.connector.getState = jest
-    .fn()
+mockSDK.connector.getState = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(Promise.resolve({ parsedData: { type: 'ready' } }));
 
-mockSDK.variable.setValue = jest
-    .fn()
+mockSDK.variable.setValue = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(
         Promise.resolve({
@@ -93,13 +92,11 @@ mockSDK.variable.setValue = jest
             parsedData: null,
         }),
     );
-mockSDK.connector.waitToBeReady = jest
-    .fn()
+mockSDK.connector.waitToBeReady = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(Promise.resolve([1, 2, 3]));
 
-mockSDK.mediaConnector.getCapabilities = jest
-    .fn()
+mockSDK.mediaConnector.getCapabilities = mockSdkMethod()
     .mockImplementation()
     .mockReturnValue(
         Promise.resolve({
@@ -114,23 +111,23 @@ mockSDK.mediaConnector.getCapabilities = jest
         }),
     );
 
-mockSDK.connector.getMappings = jest.fn().mockResolvedValue({
+mockSDK.connector.getMappings = mockSdkMethod().mockResolvedValue({
     parsedData: null,
 });
-mockSDK.variable.getAll = jest.fn().mockResolvedValue({
+mockSDK.variable.getAll = mockSdkMethod().mockResolvedValue({
     parsedData: null,
 });
-mockSDK.layout.select = jest.fn().mockResolvedValue({
+mockSDK.layout.select = mockSdkMethod().mockResolvedValue({
     parsedData: null,
 });
-mockSDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+mockSDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
     parsedData: { page: { data: [] } },
 });
-mockSDK.undoManager.addCustomData = jest.fn();
+mockSDK.undoManager.addCustomData = mockSdkMethod();
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 mockSDK.next.connector = {} as any;
 
-mockSDK.next.connector.getById = jest.fn().mockResolvedValue({
+mockSDK.next.connector.getById = mockSdkMethod().mockResolvedValue({
     parsedData: {
         source: { url: 'http://deploy.com/data-connector', source: ConnectorRegistrationSource.url },
     },

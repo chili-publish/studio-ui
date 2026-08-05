@@ -13,6 +13,7 @@ import DataSourceVariableTableMode from '../../../../components/variablesCompone
 import { APP_WRAPPER_ID } from '../../../../utils/constants';
 import { PanelType } from '../../../../store/reducers/panelReducer';
 import { RootState } from '../../../../store';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('../../../../utils/connectors', () => ({
     getRemoteConnector: jest.fn().mockResolvedValue({
@@ -32,7 +33,7 @@ jest.mock('../../../../contexts/UiConfigContext', () => ({
     }),
 }));
 
-const mockUseMobileSize = jest.fn().mockReturnValue(false);
+const mockUseMobileSize = mockSdkMethod().mockReturnValue(false);
 
 jest.mock('@chili-publish/grafx-shared-components', () => ({
     ...jest.requireActual('@chili-publish/grafx-shared-components'),
@@ -41,8 +42,8 @@ jest.mock('@chili-publish/grafx-shared-components', () => ({
 
 const { useUiConfigContext } = jest.requireMock('../../../../contexts/UiConfigContext');
 
-const mockOnVariableFocus = jest.fn();
-const mockOnVariableBlur = jest.fn();
+const mockOnVariableFocus = mockSdkMethod();
+const mockOnVariableBlur = mockSdkMethod();
 
 const INJECTED_MODEL = [
     { name: 'id', type: 'singleLine' as const },
@@ -99,18 +100,18 @@ function setupSDKMocks(
 ) {
     const { continuationToken = null, modelKey = 'id', sourceType = 'connector' } = options;
 
-    window.StudioUISDK.dataConnector.getModel = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getModel = mockSdkMethod().mockResolvedValue({
         parsedData: { itemIdPropertyName: modelKey },
     });
 
-    window.StudioUISDK.dataConnector.getPage = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockResolvedValue({
         parsedData: {
             data: pageData,
             continuationToken,
         },
     });
 
-    window.StudioUISDK.dataConnector.getPageItemById = jest.fn().mockResolvedValue({
+    window.StudioUISDK.dataConnector.getPageItemById = mockSdkMethod().mockResolvedValue({
         parsedData: {
             data: pageData[0] ?? null,
             continuationToken: null,
@@ -246,6 +247,29 @@ describe('DataSourceVariableTableMode', () => {
         });
     });
 
+    describe('validation', () => {
+        it('displays validation error message on the input', async () => {
+            renderComponent(createVariable(), 'Field is required');
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            expect(screen.getByText('Field is required')).toBeInTheDocument();
+        });
+
+        it('marks the input as required when the variable is required', async () => {
+            renderComponent(createVariable({ isRequired: true }), undefined);
+
+            const input = await screen.findByDisplayValue('1 | Joe | 15');
+            expect(input).toBeRequired();
+        });
+
+        it('does not mark the input as required when the variable is optional', async () => {
+            renderComponent(createVariable({ isRequired: false }), undefined);
+
+            const input = await screen.findByDisplayValue('1 | Joe | 15');
+            expect(input).not.toBeRequired();
+        });
+    });
+
     describe('desktop interactions', () => {
         it('opens modal with data table on input click', async () => {
             renderComponent(createVariable(), undefined);
@@ -295,6 +319,31 @@ describe('DataSourceVariableTableMode', () => {
             await user.click(screen.getByTestId('test-sui-data-row-next'));
 
             expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+        });
+
+        it('sets the variable value using a freshly resolved row key from the model', async () => {
+            setupSDKMocks(defaultPageData, { modelKey: 'name' });
+            renderComponent(createVariable(), undefined);
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            await user.click(screen.getByTestId('test-sui-data-row-next'));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', 'John');
+            });
+            expect(window.StudioUISDK.dataConnector.getModel).toHaveBeenCalledWith('connector-1');
+        });
+
+        it('does not call setValue when the selected row already matches entryId', async () => {
+            renderComponent(createVariable({ entryId: '1' }), undefined);
+
+            await waitFor(() => {
+                expect(window.StudioUISDK.dataConnector.getPageItemById).toHaveBeenCalled();
+            });
+            await screen.findByDisplayValue('1 | Joe | 15');
+
+            expect(window.StudioUISDK.variable.dataSource.setValue).not.toHaveBeenCalled();
         });
 
         it('navigates to previous row when prev button is clicked', async () => {
@@ -357,7 +406,7 @@ describe('DataSourceVariableTableMode', () => {
         });
 
         it('shows error state when getPage rejects', async () => {
-            window.StudioUISDK.dataConnector.getPage = jest.fn().mockRejectedValue(new Error('Network error'));
+            window.StudioUISDK.dataConnector.getPage = mockSdkMethod().mockRejectedValue(new Error('Network error'));
             renderComponent(createVariable(), undefined);
 
             await waitFor(() => {
@@ -498,6 +547,39 @@ describe('DataSourceVariableTableMode', () => {
 
             expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
             expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', '2');
+        });
+
+        it('sets the variable value using the injected itemIdPropertyName as the row key', async () => {
+            setupSDKMocks(defaultPageData, { sourceType: 'injected' });
+            renderComponent(
+                createInjectedVariable({
+                    value: {
+                        type: DataSourceVariableSourceType.injected,
+                        model: INJECTED_MODEL,
+                        itemIdPropertyName: 'name',
+                    },
+                }),
+                undefined,
+            );
+
+            const input = await screen.findByRole('textbox');
+            await user.click(input);
+
+            await waitFor(() => {
+                expect(screen.getByText('Data Source')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByTestId('test-gsc-modal-close-action-button');
+            await user.click(closeButton);
+
+            await screen.findByDisplayValue('1 | Joe | 15');
+            await user.click(screen.getByTestId('test-sui-data-row-next'));
+
+            expect(await screen.findByDisplayValue('2 | John | 18')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(window.StudioUISDK.variable.dataSource.setValue).toHaveBeenCalledWith('ds-var-1', 'John');
+            });
+            expect(window.StudioUISDK.dataConnector.getModel).not.toHaveBeenCalled();
         });
 
         it('reloads injected data and preselects the first row when onInjectedDataChanged fires', async () => {

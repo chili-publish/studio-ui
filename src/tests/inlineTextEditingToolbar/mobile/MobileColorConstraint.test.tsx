@@ -13,6 +13,7 @@ import userEvent from '@testing-library/user-event';
 import EditorSDK from '@chili-publish/studio-sdk';
 import { renderWithProviders } from '@tests/mocks/Provider';
 import MobileColorConstraint from 'src/components/inlineTextEditingToolbar/mobile/colorConstraint/MobileColorConstraint';
+import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
 
 jest.mock('@chili-publish/studio-sdk');
 
@@ -94,7 +95,7 @@ describe('MobileColorConstraint', () => {
 
         mockSDK = mock<EditorSDK>();
         mockSDK.colorStyle = {
-            getById: jest.fn(),
+            getById: mockSdkMethod(),
         } as any;
         mockSDK.textSelection = {
             set: jest.fn(),
@@ -135,7 +136,7 @@ describe('MobileColorConstraint', () => {
             },
         });
 
-        (mockSDK.colorStyle.getById as jest.Mock)
+        (mockSDK.colorStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockColor1 })
             .mockResolvedValueOnce({ parsedData: mockColor2 });
 
@@ -166,7 +167,7 @@ describe('MobileColorConstraint', () => {
             },
         });
 
-        (mockSDK.colorStyle.getById as jest.Mock)
+        (mockSDK.colorStyle.getById as unknown as jest.Mock)
             .mockResolvedValueOnce({ parsedData: mockColor1 })
             .mockResolvedValueOnce({ parsedData: mockColor2 });
 
