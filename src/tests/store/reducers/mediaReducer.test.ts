@@ -12,7 +12,10 @@ function getStore() {
             media,
         },
         preloadedState: {
-            document: { configuration: { graFxStudioEnvironmentApiBaseUrl: 'http://env.com' } },
+            document: {
+                configuration: { graFxStudioEnvironmentApiBaseUrl: 'http://env.com' },
+                documentRefreshCount: 0,
+            },
         },
     });
 }
