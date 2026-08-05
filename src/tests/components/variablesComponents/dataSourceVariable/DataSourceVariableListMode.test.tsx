@@ -521,16 +521,23 @@ describe('DataSourceVariableListMode', () => {
             await user.click(combobox);
 
             await waitFor(() => {
-                expect(screen.getByText('John')).toBeInTheDocument();
+                expect(screen.getByRole('option', { name: 'John' })).toBeInTheDocument();
             });
             await user.keyboard('{Escape}');
 
+            // Wait for the menu to fully close before changing selection — reopening
+            // react-select immediately after Escape + state updates is flaky in CI.
+            await waitFor(() => {
+                expect(screen.getByRole('combobox')).toHaveAttribute('aria-expanded', 'false');
+                expect(screen.queryByRole('option', { name: 'John' })).not.toBeInTheDocument();
+            });
+
             await user.click(screen.getByRole('button', { name: 'set-entry-2' }));
 
-            await user.click(screen.getByRole('combobox'));
-
+            // Assert the closed select's displayed value (same approach as table mode).
+            // Avoids a second open/close cycle that intermittently leaves the menu closed.
             await waitFor(() => {
-                expect(screen.getByRole('option', { name: 'John' })).toHaveAttribute('aria-selected', 'true');
+                expect(document.querySelector('.grafx-select__single-value--text')).toHaveTextContent('John');
             });
         });
 
