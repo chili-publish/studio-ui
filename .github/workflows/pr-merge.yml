@@ -191,6 +191,44 @@ jobs:
                         --source upload/ \
                         --overwrite true \
                         --auth-mode login
+
+    update-bundle-size:
+        needs: [build-deploy-main]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get GitHub App Access Token
+              id: github-app-access-token
+              uses: actions/create-github-app-token@v3
+              with:
+                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
+                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
+                  owner: ${{ github.repository_owner }}
+                  repositories: ${{ github.repository }}
+                  permission-contents: write
+            - uses: FranzDiebold/github-env-vars-action@v2
+            - uses: actions/checkout@v7
+              with:
+                  ref: main
+                  token: ${{ steps.github-app-access-token.outputs.token }}
+                  persist-credentials: false
+            - uses: actions/download-artifact@v8
+              with:
+                  name: bundle-size-json
+                  path: .
+            - name: Commit and push updated bundle size
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git add bundle-size.json
+                  if git diff --cached --quiet; then
+                    echo "Bundle size unchanged; skipping commit."
+                    exit 0
+                  fi
+                  git commit -m "Update bundle size [skip ci]"
+                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags
+
     purge-cdn:
         needs: build-deploy-main
         name: Cloudflare CDN purge
@@ -238,10 +276,6 @@ jobs:
               with:
                   name: ${{ needs.prepare-coverage.outputs.report_name }}
                   path: coverage
-            - uses: actions/download-artifact@v8
-              with:
-                  name: bundle-size-json
-                  path: .
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -257,12 +291,12 @@ jobs:
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
                   npm version prerelease --preid=alpha --git-tag-version=false
-            - name: Push new version and bundle size
+            - name: Push new version
               env:
                   APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   VERSION=$(jq -r .version < package.json)
-                  git add package.json README.md bundle-size.json
+                  git add package.json README.md
                   git commit -m "CI: Bump version to $VERSION [skip ci]"
                   git tag "$VERSION"
                   git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags
