@@ -153,6 +153,7 @@ jobs:
               with:
                   name: bundle-size-json
                   path: bundle-size.json
+                  overwrite: true
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
@@ -239,6 +240,10 @@ jobs:
               with:
                   name: ${{ needs.prepare-coverage.outputs.report_name }}
                   path: coverage
+            - uses: actions/download-artifact@v8
+              with:
+                  name: bundle-size-json
+                  path: .
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -254,49 +259,12 @@ jobs:
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
                   npm version prerelease --preid=alpha --git-tag-version=false
-            - name: Push new version
+            - name: Push new version and bundle size
               env:
                   APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   VERSION=$(jq -r .version < package.json)
-                  git add package.json README.md
+                  git add package.json README.md bundle-size.json
                   git commit -m "CI: Bump version to $VERSION [skip ci]"
                   git tag "$VERSION"
-                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags
-
-    update-bundle-size:
-        needs: [bump-version]
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get GitHub App Access Token
-              id: github-app-access-token
-              uses: actions/create-github-app-token@v3
-              with:
-                  app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
-                  private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
-                  repositories: ${{ github.repository }}
-                  permission-contents: write
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v7
-              with:
-                  ref: main
-                  token: ${{ steps.github-app-access-token.outputs.token }}
-                  persist-credentials: false
-            - uses: actions/download-artifact@v8
-              with:
-                  name: bundle-size-json
-                  path: .
-            - name: Commit and push updated bundle size
-              env:
-                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
-              run: |
-                  git config --global user.name 'github-actions[bot]'
-                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-                  git add bundle-size.json
-                  if git diff --cached --quiet; then
-                    echo "Bundle size unchanged; skipping commit."
-                    exit 0
-                  fi
-                  git commit -m "Update bundle size [skip ci]"
                   git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags
