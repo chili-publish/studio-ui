@@ -48,6 +48,7 @@ import { incrementDocumentRefreshCount, setConfiguration } from './store/reducer
 import { LoadDocumentError, Project, ProjectConfig } from './types/types';
 import { useDataRowExceptionHandler } from './hooks/useDataRowExceptionHandler';
 import { APP_WRAPPER_ID } from './utils/constants';
+import { teardownSdk } from './utils/sdkTeardown';
 import { useDirection } from './hooks/useDirection';
 import { setVariables } from './store/reducers/variableReducer';
 import { TokenService } from './services/TokenService';
@@ -361,11 +362,24 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
         });
         // eslint-disable-next-line consistent-return
         return () => {
-            // Prevent loading multiple iframes
-            const iframeContainer = document.getElementsByTagName('iframe')[0];
-            iframeContainer?.remove();
             enableAutoSaveRef.current = false;
             onDocumentLoadedUnsubscribe();
+
+            // Shut the engine down and remove its iframe. Previously this removed
+            // `document.getElementsByTagName('iframe')[0]`, which is the first iframe on
+            // the page rather than this engine's, and it never closed the connection - so
+            // every unmount left a fully live engine behind.
+            teardownSdk(sdk, EDITOR_ID);
+
+            // These globals outlive the component, so they have to be released too or they
+            // pin the SDK - and through it the engine realm - for the lifetime of the page.
+            if (window.StudioUISDK === sdk) {
+                window.StudioUISDK = undefined as unknown as StudioSDK;
+            }
+            if (window.SDK === sdk) {
+                window.SDK = undefined as unknown as StudioSDK;
+            }
+            setSDKRef(undefined);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventSubscriber]);
