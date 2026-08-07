@@ -124,4 +124,45 @@ describe('ListVariable', () => {
         expect(config.onVariableFocus).toHaveBeenCalledTimes(1);
         expect(config.onVariableBlur).toHaveBeenCalledTimes(1);
     });
+
+    it('should display list items', async () => {
+        const user = userEvent.setup();
+        const variable = variables.find((item) => item.id === '10');
+        const listVariable = { ...variable } as Type;
+        render(
+            <UiThemeProvider theme="platform">
+                <ListVariable variable={listVariable} onChange={jest.fn()} />;
+            </UiThemeProvider>,
+        );
+
+        const select = screen.getByRole('combobox', {
+            name: /select item/i,
+        });
+        expect(select).toBeInTheDocument();
+        await user.click(select);
+        const options = screen.getAllByRole('option');
+        expect(options).toHaveLength(listVariable.items.length);
+        listVariable.items.forEach((item, i) => {
+            expect(options[i]).toHaveTextContent(new RegExp(item.value, 'i'));
+        });
+    });
+    it('should display filter list items by availableItems', async () => {
+        const user = userEvent.setup();
+        const variable = variables.find((item) => item.id === '10');
+        const listVariable = { ...variable, availableItems: ['val 2'] } as Type;
+        render(
+            <UiThemeProvider theme="platform">
+                <ListVariable variable={listVariable} onChange={jest.fn()} />;
+            </UiThemeProvider>,
+        );
+
+        const select = screen.getByRole('combobox', {
+            name: /select item/i,
+        });
+        expect(select).toBeInTheDocument();
+        await user.click(select);
+        const options = screen.getAllByRole('option');
+        expect(options).toHaveLength(1);
+        expect(options[0]).toHaveTextContent('val 2');
+    });
 });
