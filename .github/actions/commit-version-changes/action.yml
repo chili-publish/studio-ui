@@ -46,7 +46,13 @@ runs:
 
               # Push the branch (tag will be created and pushed later after validation)
               echo "Pushing branch: $BRANCH_TO_PUSH"
-              git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BRANCH_TO_PUSH"
+              echo "::add-mask::${GITHUB_TOKEN}"
+              AUTHORIZATION=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+              echo "::add-mask::${AUTHORIZATION}"
+              GIT_CONFIG_COUNT=1 \
+              GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+              GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                git push "https://github.com/${GITHUB_REPOSITORY}.git" "$BRANCH_TO_PUSH"
 
               echo "✅ Version branch pushed to $BRANCH_TO_PUSH"
           env:

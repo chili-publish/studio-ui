@@ -630,8 +630,14 @@ jobs:
                   echo "⚠️  Preflight failed for UAT regular release"
                   echo "⚠️  Deleting temporary version branch: $BRANCH"
 
+                  echo "::add-mask::${GITHUB_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
                   # Delete the remote temporary branch
-                  git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" --delete "$BRANCH"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" --delete "$BRANCH"
 
                   echo "✅ Cleanup complete: Temporary branch deleted"
               env:
@@ -646,18 +652,24 @@ jobs:
                   echo "⚠️  Preflight failed - reverting version change commit"
                   echo "⚠️  Branch: $BRANCH, Commit: $COMMIT_SHA"
 
-                  AUTH_ORIGIN="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+                  echo "::add-mask::${GITHUB_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
+                  export GIT_CONFIG_COUNT=1
+                  export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+                  export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}"
+                  REMOTE="https://github.com/${{ github.repository }}.git"
 
                   # Checkout the branch and pull latest changes
-                  git fetch "$AUTH_ORIGIN" "$BRANCH"
+                  git fetch "$REMOTE" "$BRANCH"
                   git checkout "$BRANCH"
-                  git pull "$AUTH_ORIGIN" "$BRANCH" || echo "Pull failed or already up to date"
+                  git pull "$REMOTE" "$BRANCH" || echo "Pull failed or already up to date"
 
                   # Revert the version change commit
                   git revert "$COMMIT_SHA" --no-edit
 
                   # Push the revert commit
-                  git push "$AUTH_ORIGIN" "$BRANCH"
+                  git push "$REMOTE" "$BRANCH"
 
                   echo "✅ Cleanup complete: Version change commit reverted, branch kept"
               env:
@@ -735,8 +747,14 @@ jobs:
                   # Create the tag
                   git tag "$TAG" "$COMMIT_SHA"
 
+                  echo "::add-mask::${APP_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${APP_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
                   # Push the tag
-                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" "$TAG"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" "$TAG"
 
                   echo "✅ Successfully created and pushed tag"
 
