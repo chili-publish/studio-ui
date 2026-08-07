@@ -8,6 +8,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Skip tests notification
               if: github.event.label.name == 'Skip QA'
               run: |
@@ -22,6 +24,8 @@ jobs:
                   gh-app-id: ${{ vars.GH_APP_ID_CHILI_REPO_ACTIONS }}
 
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Get GitHub application installation access token
               id: get-gh-app-installation-access-token
               if: github.event.label.name == 'Ready for QA'
@@ -50,6 +54,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Skip tests notification
               if: github.event.label.name == 'Skip QA'
               run: |

@@ -20,6 +20,8 @@ jobs:
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -64,6 +66,8 @@ jobs:
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - uses: actions/upload-artifact/merge@v7
               with:
                   name: coverage-artifacts
@@ -86,6 +90,8 @@ jobs:
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -116,6 +122,8 @@ jobs:
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -185,6 +193,8 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: delivery-infrastructure
+                  permission-actions: write
 
             - name: Dispatch Cloudflare CDN Purge Action
               id: dispatch-cloudflare-cdn-purge
@@ -206,7 +216,7 @@ jobs:
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
+                  permission-contents: write
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:

@@ -679,6 +679,7 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: studio-ui
             - name: Extract version outputs
               id: version
               run: |
@@ -763,6 +764,8 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Notify Teams success
               uses: ./.github/actions/cd-notify
@@ -807,6 +810,8 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Determine failed step
               id: failed-step

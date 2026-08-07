@@ -256,6 +256,7 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: delivery-infrastructure
 
             - name: Dispatch Cloudflare CDN Purge Action
               id: dispatch-cloudflare-cdn-purge
@@ -275,6 +276,8 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Notify Teams success
               uses: ./.github/actions/cd-notify
@@ -309,12 +312,14 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: studio-ui
 
             - name: Checkout main branch
               uses: actions/checkout@v7
               with:
                   ref: main
                   token: ${{ steps.github-app-access-token.outputs.token }}
+                  persist-credentials: false
                   fetch-depth: 0
 
             - name: Setup Node.js
@@ -393,9 +398,12 @@ jobs:
 
             - name: Commit and push version bump
               if: steps.check_hotfix.outputs.is_hotfix != 'true'
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   git add package.json yarn.lock || true
                   git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }} for next dev cycle [skip ci]"
+                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
                   git push origin main
                   echo "Pushed version bump to main branch"
 
@@ -424,6 +432,8 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Determine failed step
               id: failed-step

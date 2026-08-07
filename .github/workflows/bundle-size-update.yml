@@ -20,10 +20,13 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: ${{ github.repository }}
+                  permission-contents: write
             - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   token: ${{ steps.github-app-access-token.outputs.token }}
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
               uses: actions/setup-node@v7
               with:
@@ -56,9 +59,12 @@ jobs:
                   new_bundle_size=${{ steps.get_new_bundle_size.outputs.new_bundle_size }}
                   echo "{ \"bundle_size\": $new_bundle_size }" > bundle-size.json
             - name: Commit and push updated bundle size
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email user.email 'github-actions[bot]@users.noreply.github.com'
                   git add bundle-size.json
                   git commit -m "Update bundle size [skip ci]"
+                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
                   git push origin main --follow-tags
