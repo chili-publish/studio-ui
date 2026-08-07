@@ -267,4 +267,10 @@ jobs:
                   git add package.json README.md bundle-size.json
                   git commit -m "CI: Bump version to $VERSION [skip ci]"
                   git tag "$VERSION"
-                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags
+                  echo "::add-mask::${APP_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${APP_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" HEAD:main --follow-tags
