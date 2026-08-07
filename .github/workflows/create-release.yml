@@ -638,8 +638,7 @@ jobs:
                   echo "⚠️  Deleting temporary version branch: $BRANCH"
 
                   # Delete the remote temporary branch
-                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
-                  git push origin --delete "$BRANCH"
+                  git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" --delete "$BRANCH"
 
                   echo "✅ Cleanup complete: Temporary branch deleted"
               env:
@@ -654,18 +653,18 @@ jobs:
                   echo "⚠️  Preflight failed - reverting version change commit"
                   echo "⚠️  Branch: $BRANCH, Commit: $COMMIT_SHA"
 
-                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+                  AUTH_ORIGIN="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
                   # Checkout the branch and pull latest changes
-                  git fetch origin "$BRANCH"
+                  git fetch "$AUTH_ORIGIN" "$BRANCH"
                   git checkout "$BRANCH"
-                  git pull origin "$BRANCH" || echo "Pull failed or already up to date"
+                  git pull "$AUTH_ORIGIN" "$BRANCH" || echo "Pull failed or already up to date"
 
                   # Revert the version change commit
                   git revert "$COMMIT_SHA" --no-edit
 
                   # Push the revert commit
-                  git push origin "$BRANCH"
+                  git push "$AUTH_ORIGIN" "$BRANCH"
 
                   echo "✅ Cleanup complete: Version change commit reverted, branch kept"
               env:
@@ -739,13 +738,12 @@ jobs:
                   # Configure git to use the token
                   git config user.name 'github-actions[bot]'
                   git config user.email 'github-actions[bot]@users.noreply.github.com'
-                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
 
                   # Create the tag
                   git tag "$TAG" "$COMMIT_SHA"
 
                   # Push the tag
-                  git push origin "$TAG"
+                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" "$TAG"
 
                   echo "✅ Successfully created and pushed tag"
 

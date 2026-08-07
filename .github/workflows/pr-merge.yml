@@ -250,5 +250,4 @@ jobs:
                   git add package.json README.md
                   git commit -m "CI: Bump version to $VERSION [skip ci]"
                   git tag "$VERSION"
-                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
-                  git push origin main --follow-tags
+                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main --follow-tags

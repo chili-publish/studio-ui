@@ -406,8 +406,7 @@ jobs:
               run: |
                   git add package.json yarn.lock || true
                   git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }} for next dev cycle [skip ci]"
-                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
-                  git push origin main
+                  git push "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main
                   echo "Pushed version bump to main branch"
 
     notify-teams-failure:

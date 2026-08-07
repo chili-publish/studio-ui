@@ -46,8 +46,7 @@ runs:
 
               # Push the branch (tag will be created and pushed later after validation)
               echo "Pushing branch: $BRANCH_TO_PUSH"
-              git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-              git push origin "$BRANCH_TO_PUSH"
+              git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BRANCH_TO_PUSH"
 
               echo "✅ Version branch pushed to $BRANCH_TO_PUSH"
           env:

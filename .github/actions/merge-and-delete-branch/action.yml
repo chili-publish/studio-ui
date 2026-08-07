@@ -30,8 +30,7 @@ runs:
               git merge "$SOURCE_BRANCH" --strategy=ours --no-edit -m "chore: merge version bump commit [skip ci]"
 
               # Push the target branch with merge commit
-              git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-              git push origin "$TARGET_BRANCH"
+              git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$TARGET_BRANCH"
           env:
               GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
 
@@ -47,8 +46,7 @@ runs:
               }
 
               # Delete remote branch
-              git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-              git push origin --delete "$SOURCE_BRANCH" || echo "⚠️  Remote branch $SOURCE_BRANCH not found or already deleted"
+              git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --delete "$SOURCE_BRANCH" || echo "⚠️  Remote branch $SOURCE_BRANCH not found or already deleted"
 
               # Delete local branch
               git branch -D "$SOURCE_BRANCH" || echo "⚠️  Local branch $SOURCE_BRANCH not found or already deleted"
