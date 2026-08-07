@@ -26,6 +26,13 @@ env:
     NODE_VERSION: 22.x
     RELEASES_LIMIT: 10
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
+    # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
+    # actions/setup-node with `registry-url` writes an .npmrc containing
+    # `${NODE_AUTH_TOKEN}`. Yarn Classic expands that placeholder on EVERY
+    # yarn/npm command (test, build, lint, validate-*, make-badges, …), not
+    # only on `yarn install`. Scoping the token to install alone fails later
+    # steps with: Failed to replace env in config: ${NODE_AUTH_TOKEN}.
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
     configure-parameters:
@@ -119,8 +126,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -156,8 +161,6 @@ jobs:
               with:
                   sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
                   environment: 'uat'
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Commit and push version changes
               id: apply_version
@@ -219,8 +222,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -262,8 +263,6 @@ jobs:
               with:
                   sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
                   environment: 'uat'
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Commit and push version changes
               id: apply_version
@@ -327,8 +326,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Fetch GH releases
               id: fetch_releases
               uses: ./.github/actions/fetch-gh-releases
@@ -530,8 +527,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run linting
               run: yarn ci-lint
@@ -587,8 +582,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run tests
               run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --runInBand
