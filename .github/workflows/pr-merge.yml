@@ -18,14 +18,14 @@ jobs:
                 shard: [1, 2, 3, 4, 5]
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -46,7 +46,7 @@ jobs:
                   mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
                   mv coverage/coverage-final.json coverage/coverage-final-${{matrix.shard}}.json
             - name: Use UploadArtifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: coverage-artifacts-${{ matrix.shard }}
                   path: |
@@ -62,11 +62,11 @@ jobs:
             report_name: ${{ steps.set-output.outputs.report_name }}
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
-            - uses: actions/upload-artifact/merge@v4
+            - uses: actions/checkout@v7
+            - uses: actions/upload-artifact/merge@v7
               with:
                   name: coverage-artifacts
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: coverage-artifacts
                   path: coverage
@@ -76,7 +76,7 @@ jobs:
               id: set-output
               run: echo "report_name=${{ env.COVERAGE_REPORT_NAME }}" >> $GITHUB_OUTPUT
             - name: Upload coverage report
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: ${{ env.COVERAGE_REPORT_NAME }}
                   path: coverage
@@ -84,14 +84,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -114,14 +114,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -179,7 +179,7 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
@@ -201,23 +201,23 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
             - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   ref: main
                   token: ${{ steps.github-app-access-token.outputs.token }}
                   fetch-depth: 0
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: ${{ needs.prepare-coverage.outputs.report_name }}
                   path: coverage
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'

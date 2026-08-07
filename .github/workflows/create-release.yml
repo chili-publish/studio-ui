@@ -95,20 +95,20 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -194,20 +194,20 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -301,20 +301,20 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -503,13 +503,13 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -518,7 +518,7 @@ jobs:
                       ${{ runner.os }}-node-
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -559,13 +559,13 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -574,7 +574,7 @@ jobs:
                       ${{ runner.os }}-node-
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -614,7 +614,7 @@ jobs:
                   fi
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
 
@@ -673,7 +673,7 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
@@ -709,7 +709,7 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   ref: ${{ steps.version.outputs.version_branch }}
                   fetch-depth: 0
@@ -761,7 +761,7 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
 
             - name: Notify Teams success
               uses: ./.github/actions/cd-notify
@@ -805,7 +805,7 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
 
             - name: Determine failed step
               id: failed-step
