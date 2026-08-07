@@ -312,7 +312,7 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
-                  repositories: studio-ui
+                  repositories: ${{ github.repository }}
 
             - name: Checkout main branch
               uses: actions/checkout@v7
