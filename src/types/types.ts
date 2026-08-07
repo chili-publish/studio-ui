@@ -308,6 +308,7 @@ export interface IStudioUILoaderConfig {
     projectUploadUrl?: string;
     sandboxMode?: boolean;
     componentMode?: boolean;
+    firstPartyIntegration?: boolean;
     /** URL to fetch feature flags from. If not provided, no feature flags are enabled. */
     featureFlagConfigURL?: string;
     variableTranslations?: VariableTranslations;
