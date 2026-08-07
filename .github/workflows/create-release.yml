@@ -26,7 +26,6 @@ env:
     NODE_VERSION: 22.x
     RELEASES_LIMIT: 10
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
-    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
     configure-parameters:
@@ -98,6 +97,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
@@ -197,6 +197,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
@@ -304,6 +305,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
@@ -506,6 +508,7 @@ jobs:
             - name: Checkout version branch
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
@@ -562,6 +565,7 @@ jobs:
             - name: Checkout version branch
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
@@ -617,6 +621,7 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
 
             - name: Configure git
@@ -633,6 +638,7 @@ jobs:
                   echo "⚠️  Deleting temporary version branch: $BRANCH"
 
                   # Delete the remote temporary branch
+                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
                   git push origin --delete "$BRANCH"
 
                   echo "✅ Cleanup complete: Temporary branch deleted"
@@ -647,6 +653,8 @@ jobs:
 
                   echo "⚠️  Preflight failed - reverting version change commit"
                   echo "⚠️  Branch: $BRANCH, Commit: $COMMIT_SHA"
+
+                  git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
                   # Checkout the branch and pull latest changes
                   git fetch origin "$BRANCH"
@@ -680,6 +688,7 @@ jobs:
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
                   repositories: ${{ github.repository }}
+                  permission-contents: write
             - name: Extract version outputs
               id: version
               run: |
@@ -713,11 +722,14 @@ jobs:
             - name: Checkout version branch
               uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
                   fetch-depth: 0
                   token: ${{ steps.github-app-access-token.outputs.token }}
 
             - name: Create and push tag
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   TAG="${{ steps.version.outputs.tag_name }}"
                   COMMIT_SHA="${{ steps.version.outputs.version_commit_sha }}"
@@ -727,6 +739,7 @@ jobs:
                   # Configure git to use the token
                   git config user.name 'github-actions[bot]'
                   git config user.email 'github-actions[bot]@users.noreply.github.com'
+                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
 
                   # Create the tag
                   git tag "$TAG" "$COMMIT_SHA"
