@@ -12,6 +12,7 @@ export type AppConfig = {
     variableTranslations?: VariableTranslations;
     uiTranslations?: UITranslations;
     layoutTranslations?: LayoutTranslations;
+    firstPartyIntegration?: boolean;
 };
 
 export default class StudioUILoader {
