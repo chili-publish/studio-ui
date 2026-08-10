@@ -8,6 +8,13 @@ on:
 env:
     NODE_VERSION: 22.x
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
+    # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
+    # actions/setup-node with `registry-url` writes an .npmrc containing
+    # `${NODE_AUTH_TOKEN}`. Yarn Classic expands that placeholder on EVERY
+    # yarn/npm command (test, build, lint, validate-*, make-badges, …), not
+    # only on `yarn install`. Scoping the token to install alone fails later
+    # steps with: Failed to replace env in config: ${NODE_AUTH_TOKEN}.
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
     validate-tag-release:
         runs-on: ubuntu-latest
@@ -18,8 +25,9 @@ jobs:
             tag_name: ${{ steps.validate_release.outputs.tag_name }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ github.ref }}
                   fetch-depth: 0
 
@@ -165,13 +173,14 @@ jobs:
             packages: read
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ needs.detect-release-type.outputs.tag_name }}
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -180,7 +189,7 @@ jobs:
                       ${{ runner.os }}-node-
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -188,8 +197,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build code
               run: yarn build
@@ -250,11 +257,13 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: delivery-infrastructure
+                  permission-actions: write
 
             - name: Dispatch Cloudflare CDN Purge Action
               id: dispatch-cloudflare-cdn-purge
@@ -273,7 +282,9 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Notify Teams success
               uses: ./.github/actions/cd-notify
@@ -303,21 +314,24 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: ${{ github.repository }}
+                  permission-contents: write
 
             - name: Checkout main branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: main
                   token: ${{ steps.github-app-access-token.outputs.token }}
                   fetch-depth: 0
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -325,7 +339,7 @@ jobs:
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -335,8 +349,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Check if hotfix release
               id: check_hotfix
@@ -392,10 +404,18 @@ jobs:
 
             - name: Commit and push version bump
               if: steps.check_hotfix.outputs.is_hotfix != 'true'
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
+                  echo "::add-mask::${APP_TOKEN}"
                   git add package.json yarn.lock || true
                   git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }} for next dev cycle [skip ci]"
-                  git push origin main
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${APP_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" HEAD:main
                   echo "Pushed version bump to main branch"
 
     notify-teams-failure:
@@ -422,7 +442,9 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Determine failed step
               id: failed-step
