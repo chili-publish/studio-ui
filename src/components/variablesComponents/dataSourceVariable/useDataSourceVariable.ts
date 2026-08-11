@@ -25,6 +25,9 @@ import { dataSourceErrorHandler } from 'src/utils/dataSourceErrorHandler';
 interface IUseDataSourceVariable {
     variable: DataSourceVariable;
 }
+type SdkErrorWithCause = { cause?: { name?: string } };
+export const getSdkErrorCode = (error: unknown): string | undefined => (error as SdkErrorWithCause)?.cause?.name;
+
 const isInjected = (value: DataSourceVariableSource): value is InjectedDataSourceVariableSource => {
     return value.type === DataSourceVariableSourceType.injected;
 };
@@ -170,10 +173,13 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
                 await window.StudioUISDK.variable.dataSource.setValue(variable.id, value);
                 projectConfig?.onVariableValueChangedCompleted?.(variable.id, value as string);
             } catch (error) {
-                const msg = dataSourceErrorHandler(
-                    { errorCode: (error as unknown as { cause: { name: number } }).cause.name },
-                    variable,
-                );
+                const errorCode = getSdkErrorCode(error);
+                if (!errorCode) {
+                    // eslint-disable-next-line no-console
+                    console.error('Error setting data row', error);
+                    return;
+                }
+                const msg = dataSourceErrorHandler({ errorCode }, variable);
                 if (msg) {
                     addNotification({
                         id: `data-source-variable-error-${variable?.id}`,
