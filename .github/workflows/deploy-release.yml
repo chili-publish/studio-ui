@@ -6,7 +6,7 @@ on:
             - '*'
 
 env:
-    NODE_VERSION: 22.x
+    NODE_VERSION: 24.x
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
     # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
     # actions/setup-node with `registry-url` writes an .npmrc containing
