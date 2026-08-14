@@ -71,6 +71,18 @@ jest.mock('@chili-publish/studio-sdk', () => {
                 configuration: {
                     setValue: jest.fn(),
                 },
+                canvas: {
+                    zoomToPage: jest.fn(),
+                },
+                next: {
+                    connector: {
+                        getAllByType: jest.fn().mockResolvedValue({ success: true, parsedData: [] }),
+                    },
+                },
+                undoManager: {
+                    addCustomData: jest.fn(),
+                    setCustomUndoData: jest.fn(),
+                },
                 tool: {
                     setHand: jest.fn(),
                 },
@@ -94,6 +106,7 @@ jest.mock('@chili-publish/studio-sdk', () => {
                     ),
                     setDataRow: jest.fn(),
                 },
+
                 dataConnector: {
                     getPage: jest.fn().mockResolvedValueOnce({
                         parsedData: {

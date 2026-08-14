@@ -65,5 +65,15 @@ export function useNumberVariableDraft(
         [onValidateValue],
     );
 
-    return { draft, commitIfChanged, updateDraftWithoutCommit } as const;
+    // NumericField re-emits onValueChange with the same value once the formatted
+    // draft flows back down as its `initVal` prop (its formatting effect reacts to
+    // any initVal change). variable.value alone can't detect that echo because it
+    // only catches up once the SDK commit round-trips, so callers must also check
+    // pendingRef to tell a genuine new value from our own already-pending one.
+    const isNewChange = useCallback(
+        (num: number) => !Number.isNaN(num) && num !== variable.value && num !== pendingRef.current,
+        [variable.value],
+    );
+
+    return { draft, commitIfChanged, updateDraftWithoutCommit, isNewChange } as const;
 }
