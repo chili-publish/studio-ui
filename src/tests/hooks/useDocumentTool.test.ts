@@ -1,4 +1,11 @@
-import SDK, { FrameLayoutType, FrameConstraints, FrameTypeEnum, FrameType } from '@chili-publish/studio-sdk';
+import SDK, {
+    FrameLayoutType,
+    FrameConstraints,
+    FrameTypeEnum,
+    FrameType,
+    EngineEditMode,
+    EngineEditModeType,
+} from '@chili-publish/studio-sdk';
 import { act, waitFor } from '@testing-library/react';
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
@@ -23,6 +30,11 @@ const createMockFrameLayout = (id: string, isVisible: boolean): NonNullable<Fram
         isVisible: createMockPropertyState(isVisible),
     }) as unknown as NonNullable<FrameLayoutType>;
 
+const createMockEditMode = (mode: EngineEditModeType, frameId: string | null = null): EngineEditMode => ({
+    frameId,
+    mode,
+});
+
 const createMockConstraints = (overrides?: Partial<FrameConstraints>): FrameConstraints =>
     ({
         selectionAllowed: createMockPropertyState(false),
@@ -39,6 +51,7 @@ describe('useDocumentTools', () => {
     let getSelectedFramesSpy: jest.Mock;
     let updateStudioOptionsSpy: jest.Mock;
     let triggerCallback: (framesLayout: FrameLayoutType[]) => void;
+    let triggerEditModeCallback: (editMode: EngineEditMode) => void;
 
     beforeEach(() => {
         // Create a mocked SDK instance
@@ -78,11 +91,18 @@ describe('useDocumentTools', () => {
 
         // Set up event system
         triggerCallback = jest.fn() as (framesLayout: FrameLayoutType[]) => void;
+        triggerEditModeCallback = jest.fn() as (editMode: EngineEditMode) => void;
         sdk.config = {
             events: {
                 onFramesLayoutChanged: {
                     registerCallback: jest.fn((callback) => {
                         triggerCallback = callback as (framesLayout: FrameLayoutType[]) => void;
+                        return jest.fn();
+                    }),
+                },
+                onEngineEditModeChanged: {
+                    registerCallback: jest.fn((callback) => {
+                        triggerEditModeCallback = callback as (editMode: EngineEditMode) => void;
                         return jest.fn();
                     }),
                 },
@@ -269,6 +289,81 @@ describe('useDocumentTools', () => {
 
         await waitFor(() => {
             expect(getAllByPageIdSpy).toHaveBeenCalledTimes(2);
+        });
+    });
+
+    it('should not set select tool when text frame is in text edit mode', async () => {
+        const frame1 = createMockFrame('frame1', 'Frame 1');
+
+        getAllByPageIdSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [frame1],
+        });
+
+        getConstraintsSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: createMockConstraints({
+                selectionAllowed: createMockPropertyState(true),
+            }),
+        });
+
+        renderHookWithProviders(() => useDocumentTools(sdk, 'page1'));
+
+        await act(async () => {
+            await triggerEditModeCallback(createMockEditMode(EngineEditModeType.textEdit, 'frame1'));
+        });
+
+        jest.clearAllMocks();
+
+        await act(async () => {
+            await triggerCallback([createMockFrameLayout('frame1', true)]);
+        });
+
+        await waitFor(() => {
+            expect(getAllByPageIdSpy).toHaveBeenCalledWith('page1');
+            expect(getConstraintsSpy).toHaveBeenCalledWith('frame1');
+            expect(updateStudioOptionsSpy).toHaveBeenCalledWith({
+                shortcutOptions: { hand: { enabled: false } },
+            });
+        });
+        expect(setSelectSpy).not.toHaveBeenCalled();
+        expect(setHandSpy).not.toHaveBeenCalled();
+    });
+
+    it('should set select tool once text edit mode is left', async () => {
+        const frame1 = createMockFrame('frame1', 'Frame 1');
+
+        getAllByPageIdSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: [frame1],
+        });
+
+        getConstraintsSpy.mockResolvedValue({
+            success: true,
+            status: 200,
+            parsedData: createMockConstraints({
+                selectionAllowed: createMockPropertyState(true),
+            }),
+        });
+
+        renderHookWithProviders(() => useDocumentTools(sdk, 'page1'));
+
+        await act(async () => {
+            await triggerEditModeCallback(createMockEditMode(EngineEditModeType.textEdit, 'frame1'));
+            await triggerCallback([createMockFrameLayout('frame1', true)]);
+        });
+
+        jest.clearAllMocks();
+
+        await act(async () => {
+            await triggerEditModeCallback(createMockEditMode(EngineEditModeType.normal));
+        });
+
+        await waitFor(() => {
+            expect(setSelectSpy).toHaveBeenCalled();
         });
     });
 
