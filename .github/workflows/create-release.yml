@@ -23,7 +23,7 @@ on:
                 type: string
 
 env:
-    NODE_VERSION: 22.x
+    NODE_VERSION: 24.x
     RELEASES_LIMIT: 10
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
     # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
