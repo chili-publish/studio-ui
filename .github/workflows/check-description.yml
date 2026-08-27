@@ -2,6 +2,7 @@ name: Check PR description for JIRA ticket
 on:
     pull_request:
         types: [opened, labeled]
+permissions: {}
 jobs:
     check-description:
         runs-on: ubuntu-latest
@@ -12,7 +13,7 @@ jobs:
               with:
                   script: |
                       const body = context.payload.pull_request.body ?? '';
-                      const jiraPattern = /(?:https:\/\/[\w.-]+\.atlassian\.net\/browse\/|[A-Z][A-Z0-9]+-\d+)/i;
+                      const jiraPattern = /(?:https:\/\/[\w.-]+\.atlassian\.net\/browse\/)?\b[A-Z][A-Z0-9]+-\d+\b/i;
                       if (!jiraPattern.test(body)) {
                           core.setFailed('PR description must contain a JIRA ticket link or key (e.g. GRAFX-1234). Add the `No JIRA ticket` label to skip.');
                       }

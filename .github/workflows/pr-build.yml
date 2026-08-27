@@ -146,10 +146,17 @@ jobs:
 
                       await github.rest.issues.createComment({ issue_number, owner, repo, body: 'PR bundle size is ' + formattedSize+ ' and ' +getSizeDif()+'.'  });
             - name: copy file branch
+              env:
+                  PR_HEAD_REF: ${{ github.head_ref }}
               run: |
-                  buildPath=upload/pr_builds/${{ github.head_ref }}
-                  mkdir -p ${buildPath%"/merge"}
-                  cp -R dist/* ${buildPath%"/merge"}
+                  if [[ ! "$PR_HEAD_REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+                      echo "::error::Invalid branch name"
+                      exit 1
+                  fi
+                  buildPath="upload/pr_builds/${PR_HEAD_REF}"
+                  targetDir="${buildPath%"/merge"}"
+                  mkdir -p "$targetDir"
+                  cp -R dist/* "$targetDir"
             - name: Azure Login
               uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
