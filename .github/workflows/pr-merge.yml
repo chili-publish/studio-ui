@@ -24,7 +24,6 @@ jobs:
             matrix:
                 shard: [1, 2, 3, 4, 5]
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   persist-credentials: false
@@ -68,7 +67,6 @@ jobs:
         outputs:
             report_name: ${{ steps.set-output.outputs.report_name }}
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   persist-credentials: false
@@ -92,7 +90,6 @@ jobs:
     build-preflight:
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   persist-credentials: false
@@ -122,7 +119,6 @@ jobs:
         needs: [build-preflight, run-tests]
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   persist-credentials: false
@@ -172,7 +168,7 @@ jobs:
                   cp -R dist/* ${latestPath%"/merge"}
                   cp -R dist/* ${versionedLatestPath%"/merge"}
             - name: Azure Login
-              uses: azure/login@v2
+              uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
                   creds: >-
                       {
@@ -183,7 +179,7 @@ jobs:
                       }
 
             - name: Copy to Azure Blob Storage
-              uses: azure/cli@v2
+              uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
               with:
                   inlineScript: |
                       az storage blob upload-batch \
@@ -229,7 +225,6 @@ jobs:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   permission-contents: write
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   ref: main

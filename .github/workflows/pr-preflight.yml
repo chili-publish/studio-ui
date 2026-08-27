@@ -27,7 +27,6 @@ jobs:
     check-bundle-size:
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
             - uses: actions/checkout@v7
               with:
                   persist-credentials: false

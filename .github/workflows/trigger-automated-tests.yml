@@ -36,7 +36,7 @@ jobs:
 
             - name: Trigger the gauge tests
               if: github.event.label.name == 'Ready for QA'
-              uses: convictional/trigger-workflow-and-wait@v1.6.1
+              uses: convictional/trigger-workflow-and-wait@924e4984551efec603bec665c0663332498c381a # v1.6.1
               with:
                   owner: chili-publish
                   repo: editor-qa-framework
@@ -79,7 +79,7 @@ jobs:
 
             - name: Trigger the Playwright tests in qa-playwright-framework
               if: github.event.label.name == 'Ready for QA'
-              uses: convictional/trigger-workflow-and-wait@v1.6.1
+              uses: convictional/trigger-workflow-and-wait@924e4984551efec603bec665c0663332498c381a # v1.6.1
               with:
                   owner: chili-publish
                   repo: qa-playwright-framework
