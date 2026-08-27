@@ -10,7 +10,7 @@ const NumberVariable = (props: INumberVariable) => {
     const { variable, validationError, onValidateValue, onCommitValue } = props;
     const { onVariableBlur, onVariableFocus } = useUiConfigContext();
 
-    const { draft, commitIfChanged, updateDraftWithoutCommit } = useNumberVariableDraft(
+    const { draft, commitIfChanged, updateDraftWithoutCommit, isNewChange } = useNumberVariableDraft(
         variable,
         onValidateValue,
         onCommitValue,
@@ -23,8 +23,7 @@ const NumberVariable = (props: INumberVariable) => {
 
     const handleChange = (value: string) => {
         const num = Number(value.replace(',', '.'));
-        const prevValue = variable.value;
-        const hasChanged = prevValue !== num;
+        const hasChanged = isNewChange(num);
         if (hasChanged) {
             onVariableFocus?.(variable.id);
             commitIfChanged(value);
