@@ -1,7 +1,7 @@
 {
     "name": "studio-ui",
     "private": true,
-    "version": "1.47.0-alpha.1",
+    "version": "1.47.0-alpha.2",
     "type": "module",
     "description": "The Studio UI for CHILI GraFx",
     "main": "src/main.tsx",
@@ -78,6 +78,7 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-boundaries": "^5.4.0",
+        "globals": "^17.11.0",
         "husky": "^8.0.3",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.5.0",
@@ -91,12 +92,7 @@
         "resize-observer-polyfill": "^1.5.1",
         "ts-jest": "^29.2.5",
         "typescript": "^5.1.6",
-        "vite": "^5.4.20",
+        "vite": "^6.4.3",
         "vite-plugin-css-injected-by-js": "^3.5.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm run format-staged"
-        }
     }
 }
