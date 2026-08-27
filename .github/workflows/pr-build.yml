@@ -146,14 +146,12 @@ jobs:
 
                       await github.rest.issues.createComment({ issue_number, owner, repo, body: 'PR bundle size is ' + formattedSize+ ' and ' +getSizeDif()+'.'  });
             - name: copy file branch
-              env:
-                  PR_HEAD_REF: ${{ github.head_ref }}
               run: |
-                  if [[ ! "$PR_HEAD_REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+                  if [[ ! "$GITHUB_HEAD_REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
                       echo "::error::Invalid branch name"
                       exit 1
                   fi
-                  buildPath="upload/pr_builds/${PR_HEAD_REF}"
+                  buildPath="upload/pr_builds/${GITHUB_HEAD_REF}"
                   targetDir="${buildPath%"/merge"}"
                   mkdir -p "$targetDir"
                   cp -R dist/* "$targetDir"
