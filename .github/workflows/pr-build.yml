@@ -146,13 +146,14 @@ jobs:
 
                       await github.rest.issues.createComment({ issue_number, owner, repo, body: 'PR bundle size is ' + formattedSize+ ' and ' +getSizeDif()+'.'  });
             - name: copy file branch
+              env:
+                  PR_NUMBER: ${{ github.event.number }}
               run: |
-                  if [[ ! "$GITHUB_HEAD_REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
-                      echo "::error::Invalid branch name"
+                  if [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+                      echo "::error::Invalid PR number"
                       exit 1
                   fi
-                  buildPath="upload/pr_builds/${GITHUB_HEAD_REF}"
-                  targetDir="${buildPath%"/merge"}"
+                  targetDir="upload/pr_builds/${PR_NUMBER}"
                   mkdir -p "$targetDir"
                   cp -R dist/* "$targetDir"
             - name: Azure Login
