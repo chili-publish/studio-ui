@@ -226,7 +226,7 @@ jobs:
                   cp -R dist/* ${versionedLatestPath%"/merge"}
 
             - name: Azure Login
-              uses: azure/login@v2
+              uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
                   creds: >-
                       {
@@ -237,7 +237,7 @@ jobs:
                       }
 
             - name: Copy Studio UI to Azure Blob Storage
-              uses: azure/cli@v2
+              uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
               with:
                   inlineScript: |
                       az storage blob upload-batch \
