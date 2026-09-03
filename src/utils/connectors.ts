@@ -66,8 +66,12 @@ export async function getRemoteConnector<RC extends RemoteConnector = RemoteConn
     }
 }
 
-export function isAuthenticationRequired(connector: RemoteConnector) {
-    return connector.supportedAuthentication.browser.includes('oAuth2AuthorizationCode');
+export function isAuthenticationRequired(connector: RemoteConnector, isIntegration?: boolean) {
+    if (isIntegration) {
+        // early return for integrators, we prevent running the auth flow that will end up in failure anyways
+        return false;
+    }
+    return connector.supportedAuthentication.browser.includes('none');
 }
 
 // The idea is to make any call to connector and if it's unathorized corresponding "onAuthExpired" callback is going to be called in App.tsx

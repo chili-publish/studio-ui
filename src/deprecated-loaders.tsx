@@ -29,8 +29,12 @@ export default class StudioUILoader {
             );
         }
 
+        const { firstPartyIntegration, ...rest } = appConfig;
         this.store = setupStore({
-            appConfig,
+            appConfig: {
+                isIntegration: !firstPartyIntegration,
+                ...rest,
+            },
         });
         this.root = createRoot(container!);
         this.root.render(

@@ -17,6 +17,8 @@ import { useVariableHistory } from 'src/components/dataSource/useVariableHistory
 import { validateVariableList } from 'src/store/reducers/variableReducer';
 import { useAppDispatch } from 'src/store';
 import { PAGE_SIZE } from './dataSource.util';
+import { useSelector } from 'react-redux';
+import { selectIsIntegration } from 'src/store/reducers/appConfigReducer';
 
 export const SELECTED_ROW_INDEX_KEY = 'DataSourceSelectedRowIdex';
 
@@ -52,7 +54,7 @@ const useSharedDataSource = ({
     const { graFxStudioEnvironmentApiBaseUrl } = useUiConfigContext();
     const { direction } = useDirection();
     const { connectors } = useEnvironmentClientApi();
-
+    const isIntegration = useSelector(selectIsIntegration);
     const [currentRowIndex, setCurrentRowIndex] = useState(0);
     const [currentDataRow, setCurrentDataRow] = useState<DataItem | undefined>(undefined);
     const [dataRows, setDataRows] = useState<DataItem[] | null>(null);
@@ -328,7 +330,7 @@ const useSharedDataSource = ({
                 connectorId,
                 (envConnectorId) => connectors.getByIdAs<DataRemoteConnector>(envConnectorId), // Pass the environment client API method
             );
-            return isAuthenticationRequired(connector);
+            return isAuthenticationRequired(connector, isIntegration);
         } catch {
             return false;
         }
