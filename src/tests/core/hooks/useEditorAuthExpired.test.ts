@@ -6,7 +6,7 @@ import {
     ConnectorSupportedAuth,
     GrafxTokenAuthCredentials,
 } from '@chili-publish/studio-sdk';
-import { resolveConnectorSupportedAuth, useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
+import { selectConnectorAuthStrategy, useEditorAuthExpired } from 'src/core/hooks/useEditorAuthExpired';
 import { TokenService } from 'src/services/TokenService';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
@@ -547,7 +547,7 @@ describe('useEditorAuthExpired', () => {
 describe('resolveConnectorSupportedAuth', () => {
     it('returns browser auth when not in integration mode', () => {
         expect(
-            resolveConnectorSupportedAuth(false, {
+            selectConnectorAuthStrategy(false, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
@@ -556,7 +556,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns none when integration is none and browser is oAuth2AuthorizationCode', () => {
         expect(
-            resolveConnectorSupportedAuth(true, {
+            selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
@@ -565,7 +565,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns integration auth when it is not none', () => {
         expect(
-            resolveConnectorSupportedAuth(true, {
+            selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.StaticKey],
             }),
@@ -574,7 +574,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns browser auth when integration is none and browser is not oAuth2AuthorizationCode', () => {
         expect(
-            resolveConnectorSupportedAuth(true, {
+            selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.StaticKey],
                 integration: [ConnectorSupportedAuth.None],
             }),
@@ -583,7 +583,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns browser auth when isIntegration is undefined', () => {
         expect(
-            resolveConnectorSupportedAuth(undefined, {
+            selectConnectorAuthStrategy(undefined, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
@@ -592,7 +592,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns browser auth when integration auth is missing', () => {
         expect(
-            resolveConnectorSupportedAuth(true, {
+            selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
             }),
         ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
@@ -600,7 +600,7 @@ describe('resolveConnectorSupportedAuth', () => {
 
     it('returns integration oAuth2AuthorizationCode when that is the integration auth', () => {
         expect(
-            resolveConnectorSupportedAuth(true, {
+            selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.None],
                 integration: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
             }),
