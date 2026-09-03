@@ -1,8 +1,9 @@
-import SDK, { FrameLayoutType } from '@chili-publish/studio-sdk';
+import SDK, { EngineEditModeType, FrameLayoutType } from '@chili-publish/studio-sdk';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string | null) => {
     const [visibleFrames, setVisibleFrames] = useState<NonNullable<FrameLayoutType>[]>([]);
+    const [inTextEditMode, setInTextEditMode] = useState<boolean>(false);
 
     const toggleTool = useCallback(async () => {
         if (!selectedPageId || !sdkRef) return;
@@ -21,8 +22,11 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
         const framesWithEnabledConstraints = constraintsArray.some(({ parsedData: constraints }) => {
             return constraints?.selectionAllowed.value;
         });
+
         if (framesWithEnabledConstraints) {
-            await sdkRef.tool.setSelect();
+            if (!inTextEditMode) {
+                await sdkRef.tool.setSelect();
+            }
             await sdkRef.configuration.updateStudioOptions({
                 shortcutOptions: { hand: { enabled: false } },
             });
@@ -34,7 +38,7 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
 
             await sdkRef.tool.setHand();
         }
-    }, [sdkRef, selectedPageId, visibleFrames]);
+    }, [inTextEditMode, sdkRef, selectedPageId, visibleFrames]);
 
     useEffect(() => {
         toggleTool();
@@ -48,6 +52,15 @@ export const useDocumentTools = (sdkRef: SDK | undefined, selectedPageId: string
         });
         return () => {
             unsubscriber?.();
+        };
+    }, [sdkRef]);
+
+    useEffect(() => {
+        const unsubscribeInstance = sdkRef?.config.events.onEngineEditModeChanged.registerCallback(async (editMode) => {
+            setInTextEditMode(editMode.mode === EngineEditModeType.textEdit);
+        });
+        return () => {
+            unsubscribeInstance?.();
         };
     }, [sdkRef]);
 };

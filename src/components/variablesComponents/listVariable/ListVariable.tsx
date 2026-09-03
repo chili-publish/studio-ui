@@ -6,6 +6,7 @@ import { ComponentWrapper } from '../../variables/VariablesPanel.styles';
 import { getVariablePlaceholder } from '../variablePlaceholder.util';
 import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IListVariable } from '../VariablesComponents.types';
+import { getVariableListItemsFilteredByAvailableItems } from '../Variable';
 
 const ListVariable = (props: IListVariable) => {
     const { variable, validationError, onChange } = props;
@@ -13,7 +14,7 @@ const ListVariable = (props: IListVariable) => {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean | null>(null);
 
-    const options = variable.items.map((item) => ({
+    const options = getVariableListItemsFilteredByAvailableItems(variable).map((item) => ({
         label: item.displayValue || item.value,
         value: item.value,
     }));

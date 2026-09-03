@@ -1,16 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SDK, { DataRowAsyncError, Variable, VariableType } from '@chili-publish/studio-sdk';
+import SDK, { DataRowAsyncError, Variable } from '@chili-publish/studio-sdk';
 import { ToastVariant } from '@chili-publish/grafx-shared-components';
-import styled from 'styled-components';
 import { useCallback, useEffect } from 'react';
 import { useNotificationManager } from '../contexts/NotificantionManager/NotificationManagerContext';
+import { dataSourceErrorHandler } from 'src/utils/dataSourceErrorHandler';
 
 const DATA_SOURCE_TOAST_ID = 'data-source-toast';
-const varTypesWithNoValue = [VariableType.number, VariableType.boolean];
-
-const BoldText = styled.span`
-    font-weight: bold;
-`;
 
 type ExceptionWithVariableInfo = { exception: DataRowAsyncError['exceptions'][0]; variableData: Variable | null };
 
@@ -38,40 +33,10 @@ export const useDataRowExceptionHandler = (sdkRef?: SDK) => {
             exceptionsWithVariableInfo
                 .filter((data) => !!data)
                 .forEach(({ exception, variableData }) => {
-                    let msg;
-                    if (
-                        exception.code === 403104 ||
-                        (exception.code === 403062 && variableData?.type === VariableType.image)
-                    ) {
-                        msg = (
-                            <>
-                                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. The value
-                                is cleared.
-                            </>
-                        );
-                    }
-                    if (
-                        exception.code === 403032 ||
-                        (exception.code === 403105 &&
-                            variableData?.type &&
-                            varTypesWithNoValue.includes(variableData.type))
-                    ) {
-                        if (variableData?.type === VariableType.dataSource && !!exception.context?.columnName) {
-                            msg = (
-                                <>
-                                    <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. Missing
-                                    data field {`'${exception.context?.columnName}'`}. A default value is used.
-                                </>
-                            );
-                        } else {
-                            msg = (
-                                <>
-                                    <BoldText>{variableData?.label ?? variableData?.name}</BoldText> is invalid. A
-                                    default value is used.
-                                </>
-                            );
-                        }
-                    }
+                    const msg = dataSourceErrorHandler(
+                        { errorCode: exception.code, columnName: exception.context?.columnName },
+                        variableData,
+                    );
                     if (msg) {
                         addNotification({
                             id: `${DATA_SOURCE_TOAST_ID}-${variableData?.id}`,

@@ -4,8 +4,15 @@ on:
         branches:
             - main
 env:
-    NODE_VERSION: 22.x
+    NODE_VERSION: 24.x
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
+    # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
+    # actions/setup-node with `registry-url` writes an .npmrc containing
+    # `${NODE_AUTH_TOKEN}`. Yarn Classic expands that placeholder on EVERY
+    # yarn/npm command (test, build, lint, validate-*, make-badges, …), not
+    # only on `yarn install`. Scoping the token to install alone fails later
+    # steps with: Failed to replace env in config: ${NODE_AUTH_TOKEN}.
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 permissions:
     contents: read
     packages: read
@@ -17,15 +24,16 @@ jobs:
             matrix:
                 shard: [1, 2, 3, 4, 5]
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -34,8 +42,6 @@ jobs:
             - name: install dependencies
               run: |
                   yarn install
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: run tests
               run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --coverage --runInBand
               env:
@@ -46,7 +52,7 @@ jobs:
                   mv coverage/lcov.info coverage/lcov-${{matrix.shard}}.info
                   mv coverage/coverage-final.json coverage/coverage-final-${{matrix.shard}}.json
             - name: Use UploadArtifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: coverage-artifacts-${{ matrix.shard }}
                   path: |
@@ -61,12 +67,13 @@ jobs:
         outputs:
             report_name: ${{ steps.set-output.outputs.report_name }}
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
-            - uses: actions/upload-artifact/merge@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+            - uses: actions/upload-artifact/merge@v7
               with:
                   name: coverage-artifacts
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: coverage-artifacts
                   path: coverage
@@ -76,22 +83,23 @@ jobs:
               id: set-output
               run: echo "report_name=${{ env.COVERAGE_REPORT_NAME }}" >> $GITHUB_OUTPUT
             - name: Upload coverage report
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: ${{ env.COVERAGE_REPORT_NAME }}
                   path: coverage
     build-preflight:
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -100,8 +108,6 @@ jobs:
             - name: install dependencies
               run: |
                   yarn install
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: run package versions check
               run: yarn validate-versions
             - name: run license check
@@ -113,15 +119,16 @@ jobs:
         needs: [build-preflight, run-tests]
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -130,10 +137,19 @@ jobs:
             - name: install dependencies
               run: |
                   yarn install
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: build code
               run: yarn build
+            - name: Record bundle size
+              run: |
+                  new_bundle_size=$(du -sb dist/bundle.js | cut -f1)
+                  echo "Bundle size: $new_bundle_size bytes"
+                  echo "{ \"bundle_size\": $new_bundle_size }" > bundle-size.json
+            - name: Upload bundle-size.json
+              uses: actions/upload-artifact@v7
+              with:
+                  name: bundle-size-json
+                  path: bundle-size.json
+                  overwrite: true
             - name: copy file branch
               run: |
                   export CURRENT_PACKAGE_VERSION=$(node --eval="var pjson = require('./package.json');console.log(pjson.version);")
@@ -152,7 +168,7 @@ jobs:
                   cp -R dist/* ${latestPath%"/merge"}
                   cp -R dist/* ${versionedLatestPath%"/merge"}
             - name: Azure Login
-              uses: azure/login@v2
+              uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
                   creds: >-
                       {
@@ -163,7 +179,7 @@ jobs:
                       }
 
             - name: Copy to Azure Blob Storage
-              uses: azure/cli@v2
+              uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
               with:
                   inlineScript: |
                       az storage blob upload-batch \
@@ -172,6 +188,7 @@ jobs:
                         --source upload/ \
                         --overwrite true \
                         --auth-mode login
+
     purge-cdn:
         needs: build-deploy-main
         name: Cloudflare CDN purge
@@ -179,11 +196,13 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: delivery-infrastructure
+                  permission-actions: write
 
             - name: Dispatch Cloudflare CDN Purge Action
               id: dispatch-cloudflare-cdn-purge
@@ -201,23 +220,27 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
-                  owner: ${{ github.repository_owner }}
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+                  permission-contents: write
+            - uses: actions/checkout@v7
               with:
                   ref: main
                   token: ${{ steps.github-app-access-token.outputs.token }}
+                  persist-credentials: false
                   fetch-depth: 0
-            - uses: actions/download-artifact@v4
+            - uses: actions/download-artifact@v8
               with:
                   name: ${{ needs.prepare-coverage.outputs.report_name }}
                   path: coverage
+            - uses: actions/download-artifact@v8
+              with:
+                  name: bundle-size-json
+                  path: .
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -231,10 +254,18 @@ jobs:
                   git config --global user.name 'github-actions[bot]'
                   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
                   npm version prerelease --preid=alpha --git-tag-version=false
-            - name: Push new version
+            - name: Push new version and bundle size
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   VERSION=$(jq -r .version < package.json)
-                  git add package.json README.md
+                  git add package.json README.md bundle-size.json
                   git commit -m "CI: Bump version to $VERSION [skip ci]"
                   git tag "$VERSION"
-                  git push origin main --follow-tags
+                  echo "::add-mask::${APP_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${APP_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" HEAD:main --follow-tags

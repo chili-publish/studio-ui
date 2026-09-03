@@ -4,29 +4,39 @@ on:
         branches:
             - main
 env:
-    NODE_VERSION: 22.x
+    NODE_VERSION: 24.x
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
+    # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
+    # actions/setup-node with `registry-url` writes an .npmrc containing
+    # `${NODE_AUTH_TOKEN}`. Yarn Classic expands that placeholder on EVERY
+    # yarn/npm command (test, build, lint, validate-*, make-badges, …), not
+    # only on `yarn install`. Scoping the token to install alone fails later
+    # steps with: Failed to replace env in config: ${NODE_AUTH_TOKEN}.
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 permissions:
     packages: read
 jobs:
     validate-versions:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: validate package versions
               run: yarn validate-versions
     check-bundle-size:
         runs-on: ubuntu-latest
         steps:
-            - uses: FranzDiebold/github-env-vars-action@v2
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
             - name: Use Node ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
-            - uses: actions/cache@v4
+            - uses: actions/cache@v6
               with:
                   path: ~/.cache/yarn
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -35,8 +45,6 @@ jobs:
             - name: install dependencies
               run: |
                   yarn install
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Build project
               run: yarn build
             - name: Get bundle size for current PR

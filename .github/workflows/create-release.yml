@@ -23,9 +23,16 @@ on:
                 type: string
 
 env:
-    NODE_VERSION: 22.x
+    NODE_VERSION: 24.x
     RELEASES_LIMIT: 10
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
+    # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
+    # actions/setup-node with `registry-url` writes an .npmrc containing
+    # `${NODE_AUTH_TOKEN}`. Yarn Classic expands that placeholder on EVERY
+    # yarn/npm command (test, build, lint, validate-*, make-badges, …), not
+    # only on `yarn install`. Scoping the token to install alone fails later
+    # steps with: Failed to replace env in config: ${NODE_AUTH_TOKEN}.
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
     configure-parameters:
@@ -95,20 +102,21 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -118,8 +126,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -155,8 +161,6 @@ jobs:
               with:
                   sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
                   environment: 'uat'
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Commit and push version changes
               id: apply_version
@@ -194,20 +198,21 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -217,8 +222,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Fetch GH releases
               id: fetch_releases
@@ -260,8 +263,6 @@ jobs:
               with:
                   sdk_version: ${{ needs.configure-parameters.outputs.sdk_version }}
                   environment: 'uat'
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Commit and push version changes
               id: apply_version
@@ -301,20 +302,21 @@ jobs:
                   echo "workflow_branch=$WORKFLOW_BRANCH" >> $GITHUB_ENV
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
                   ref: ${{ github.ref }}
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@chili-publish'
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -324,8 +326,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Fetch GH releases
               id: fetch_releases
               uses: ./.github/actions/fetch-gh-releases
@@ -503,13 +503,14 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -518,7 +519,7 @@ jobs:
                       ${{ runner.os }}-node-
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -526,8 +527,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run linting
               run: yarn ci-lint
@@ -559,13 +558,14 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
 
             - name: Check cache
               id: cache
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       node_modules
@@ -574,7 +574,7 @@ jobs:
                       ${{ runner.os }}-node-
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   registry-url: 'https://npm.pkg.github.com'
@@ -582,8 +582,6 @@ jobs:
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run tests
               run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --runInBand
@@ -614,8 +612,9 @@ jobs:
                   fi
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   fetch-depth: 0
 
             - name: Configure git
@@ -631,8 +630,14 @@ jobs:
                   echo "⚠️  Preflight failed for UAT regular release"
                   echo "⚠️  Deleting temporary version branch: $BRANCH"
 
+                  echo "::add-mask::${GITHUB_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
                   # Delete the remote temporary branch
-                  git push origin --delete "$BRANCH"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" --delete "$BRANCH"
 
                   echo "✅ Cleanup complete: Temporary branch deleted"
               env:
@@ -647,16 +652,24 @@ jobs:
                   echo "⚠️  Preflight failed - reverting version change commit"
                   echo "⚠️  Branch: $BRANCH, Commit: $COMMIT_SHA"
 
+                  echo "::add-mask::${GITHUB_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
+                  export GIT_CONFIG_COUNT=1
+                  export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+                  export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}"
+                  REMOTE="https://github.com/${{ github.repository }}.git"
+
                   # Checkout the branch and pull latest changes
-                  git fetch origin "$BRANCH"
+                  git fetch "$REMOTE" "$BRANCH"
                   git checkout "$BRANCH"
-                  git pull origin "$BRANCH" || echo "Pull failed or already up to date"
+                  git pull "$REMOTE" "$BRANCH" || echo "Pull failed or already up to date"
 
                   # Revert the version change commit
                   git revert "$COMMIT_SHA" --no-edit
 
                   # Push the revert commit
-                  git push origin "$BRANCH"
+                  git push "$REMOTE" "$BRANCH"
 
                   echo "✅ Cleanup complete: Version change commit reverted, branch kept"
               env:
@@ -673,11 +686,13 @@ jobs:
         steps:
             - name: Get GitHub App Access Token
               id: github-app-access-token
-              uses: actions/create-github-app-token@v2
+              uses: actions/create-github-app-token@v3
               with:
                   app-id: ${{ vars.GH_APP_ID_CHILI_FRONTEND_VERSION_MANAGER }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY_CHILI_FRONTEND_VERSION_MANAGER }}
                   owner: ${{ github.repository_owner }}
+                  repositories: ${{ github.repository }}
+                  permission-contents: write
             - name: Extract version outputs
               id: version
               run: |
@@ -709,13 +724,16 @@ jobs:
                   fi
 
             - name: Checkout version branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
+                  persist-credentials: false
                   ref: ${{ steps.version.outputs.version_branch }}
                   fetch-depth: 0
                   token: ${{ steps.github-app-access-token.outputs.token }}
 
             - name: Create and push tag
+              env:
+                  APP_TOKEN: ${{ steps.github-app-access-token.outputs.token }}
               run: |
                   TAG="${{ steps.version.outputs.tag_name }}"
                   COMMIT_SHA="${{ steps.version.outputs.version_commit_sha }}"
@@ -729,8 +747,14 @@ jobs:
                   # Create the tag
                   git tag "$TAG" "$COMMIT_SHA"
 
+                  echo "::add-mask::${APP_TOKEN}"
+                  AUTHORIZATION=$(printf 'x-access-token:%s' "${APP_TOKEN}" | base64 | tr -d '\n')
+                  echo "::add-mask::${AUTHORIZATION}"
                   # Push the tag
-                  git push origin "$TAG"
+                  GIT_CONFIG_COUNT=1 \
+                  GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+                  GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${AUTHORIZATION}" \
+                    git push "https://github.com/${{ github.repository }}.git" "$TAG"
 
                   echo "✅ Successfully created and pushed tag"
 
@@ -761,7 +785,9 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Notify Teams success
               uses: ./.github/actions/cd-notify
@@ -805,7 +831,9 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
             - name: Determine failed step
               id: failed-step

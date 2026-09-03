@@ -161,7 +161,7 @@ Use **Yarn Classic (v1)** — not npm, not pnpm, not Yarn Berry.
 | Requirement | Value                          |
 | ----------- | ------------------------------ |
 | Yarn        | `1.22.x` (lockfile is Yarn v1) |
-| Node        | CI uses `22.x`                 |
+| Node        | CI uses `24.x`                 |
 
 ```bash
 yarn install
