@@ -189,7 +189,7 @@ describe('MainContent', () => {
                     <MainContent projectConfig={mockProjectConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
-            { preloadedState: { appConfig: { firstPartyIntegration: true } } },
+            { preloadedState: { appConfig: { isIntegration: false } } },
         );
 
         expect(mockSdkConfig).toBeDefined();
@@ -203,7 +203,7 @@ describe('MainContent', () => {
                     <MainContent projectConfig={mockProjectConfig} />
                 </SubscriberContextProvider>
             </AppProvider>,
-            { preloadedState: { appConfig: { firstPartyIntegration: false } } },
+            { preloadedState: { appConfig: { isIntegration: true } } },
         );
 
         expect(mockSdkConfig).toBeDefined();
