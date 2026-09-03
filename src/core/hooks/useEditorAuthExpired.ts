@@ -4,8 +4,10 @@ import {
     GrafxTokenAuthCredentials,
     ConnectorSupportedAuth,
 } from '@chili-publish/studio-sdk';
+import { useSelector } from 'react-redux';
 import { CreateProcessFn } from 'src/components/connector-authentication/useConnectorAuthentication';
 import { TokenService } from 'src/services/TokenService';
+import { selectIsIntegration } from 'src/store/reducers/appConfigReducer';
 import { ConnectorAuthenticationResult } from 'src/types/ConnectorAuthenticationResult';
 import { ConnectorAuthenticationRequest } from 'src/types/types';
 import { parseConnectorHubIdFromExternalSourceId } from 'src/utils/connectors';
@@ -24,12 +26,57 @@ const SUPPORTED_AUTH_HANDLING: Partial<Record<ConnectorSupportedAuth, ConnectorA
     [ConnectorSupportedAuth.None]: 'directCall',
 };
 
+type ConnectorAuthSelection = {
+    browser: ConnectorSupportedAuth[];
+    integration?: ConnectorSupportedAuth[];
+};
+
+/**
+ * Picks the auth type to run when connector auth expires.
+ * - Integration + integration auth `none` + browser auth `oAuth2AuthorizationCode` → integration auth (`none`, token injection)
+ * - Integration + integration auth other than `none` → integration auth (OAuth2 authorization code is always an error)
+ * - Otherwise → browser auth
+ */
+export function selectConnectorAuthStrategy(
+    isIntegration: boolean | undefined,
+    supportedAuthentication: ConnectorAuthSelection,
+): { handling: ConnectorAuthHandling; supportedAuth: ConnectorSupportedAuth } {
+    const browserAuth = supportedAuthentication.browser[0];
+    const integrationAuth = supportedAuthentication.integration?.[0];
+
+    let supportedAuth = browserAuth;
+    if (
+        isIntegration &&
+        integrationAuth === ConnectorSupportedAuth.None &&
+        browserAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode
+    ) {
+        supportedAuth = ConnectorSupportedAuth.None;
+    }
+
+    if (isIntegration && integrationAuth != null && integrationAuth !== ConnectorSupportedAuth.None) {
+        supportedAuth = integrationAuth;
+    }
+
+    const isUnsupportedIntegrationOAuth =
+        isIntegration &&
+        integrationAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode &&
+        supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
+
+    const handling: ConnectorAuthHandling = isUnsupportedIntegrationOAuth
+        ? 'alwaysError'
+        : (SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError');
+
+    return { handling, supportedAuth };
+}
+
 export const useEditorAuthExpired = (
     onConnectorAuthenticationRequested:
         | undefined
         | ((request: ConnectorAuthenticationRequest) => Promise<ConnectorAuthenticationResult>),
     createProcessFn: CreateProcessFn,
 ) => {
+    const isIntegration = useSelector(selectIsIntegration);
+
     const handleAuthExpired = async (request: AuthRefreshRequest) => {
         try {
             if (request.type === AuthRefreshTypeEnum.grafxToken) {
@@ -41,8 +88,12 @@ export const useEditorAuthExpired = (
             if (request.type === AuthRefreshTypeEnum.any) {
                 const { connectorDefinition } = request;
                 const name = connectorDefinition.name;
-                const supportedAuth = connectorDefinition.supportedAuthentication.browser[0];
-                const handling = SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError';
+
+                const { supportedAuth, handling } = selectConnectorAuthStrategy(
+                    isIntegration,
+                    connectorDefinition.supportedAuthentication,
+                );
+
                 const connectorHubId = parseConnectorHubIdFromExternalSourceId(connectorDefinition.externalSourceId);
 
                 const authRequest: ConnectorAuthenticationRequest = {
