@@ -337,9 +337,7 @@ describe('useEditorAuthExpired', () => {
         it('should error clearly when integration auth is oAuth2AuthorizationCode', async () => {
             const errorResult = {
                 type: 'error',
-                error: new Error(
-                    'oAuth2AuthorizationCode is not supported for connector "Integration Connector" in integration mode',
-                ),
+                error: new Error('Authorization failed for connector "Integration Connector"'),
             };
 
             mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
@@ -396,9 +394,7 @@ describe('useEditorAuthExpired', () => {
             expect(mockCreateProcessFn).toHaveBeenCalledWith(
                 {
                     type: 'error',
-                    error: new Error(
-                        'oAuth2AuthorizationCode is not supported for connector "Integration Connector" in integration mode',
-                    ),
+                    error: new Error('Authorization failed for connector "Integration Connector"'),
                 },
                 'Integration Connector',
                 'remote-123',
@@ -555,7 +551,7 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
-        ).toBe(ConnectorSupportedAuth.OAuth2AuthorizationCode);
+        ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 
     it('returns none when integration is none and browser is oAuth2AuthorizationCode', () => {
@@ -564,7 +560,7 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
-        ).toBe(ConnectorSupportedAuth.None);
+        ).toEqual({ handling: 'directCall', supportedAuth: ConnectorSupportedAuth.None });
     });
 
     it('returns integration auth when it is not none', () => {
@@ -573,7 +569,7 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.StaticKey],
             }),
-        ).toBe(ConnectorSupportedAuth.StaticKey);
+        ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.StaticKey });
     });
 
     it('returns browser auth when integration is none and browser is not oAuth2AuthorizationCode', () => {
@@ -582,7 +578,7 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.StaticKey],
                 integration: [ConnectorSupportedAuth.None],
             }),
-        ).toBe(ConnectorSupportedAuth.StaticKey);
+        ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.StaticKey });
     });
 
     it('returns browser auth when isIntegration is undefined', () => {
@@ -591,7 +587,7 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
                 integration: [ConnectorSupportedAuth.None],
             }),
-        ).toBe(ConnectorSupportedAuth.OAuth2AuthorizationCode);
+        ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 
     it('returns browser auth when integration auth is missing', () => {
@@ -599,7 +595,7 @@ describe('resolveConnectorSupportedAuth', () => {
             resolveConnectorSupportedAuth(true, {
                 browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
             }),
-        ).toBe(ConnectorSupportedAuth.OAuth2AuthorizationCode);
+        ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 
     it('returns integration oAuth2AuthorizationCode when that is the integration auth', () => {
@@ -608,6 +604,6 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.None],
                 integration: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
             }),
-        ).toBe(ConnectorSupportedAuth.OAuth2AuthorizationCode);
+        ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 });

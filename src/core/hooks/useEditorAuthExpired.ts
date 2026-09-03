@@ -37,26 +37,36 @@ type ConnectorAuthSelection = {
  * - Integration + integration auth other than `none` → integration auth (OAuth2 authorization code is always an error)
  * - Otherwise → browser auth
  */
-export function resolveConnectorSupportedAuth(
+export function selectConnectorAuthStrategy(
     isIntegration: boolean | undefined,
     supportedAuthentication: ConnectorAuthSelection,
-): ConnectorSupportedAuth {
+): { handling: ConnectorAuthHandling; supportedAuth: ConnectorSupportedAuth } {
     const browserAuth = supportedAuthentication.browser[0];
     const integrationAuth = supportedAuthentication.integration?.[0];
 
+    let supportedAuth = browserAuth;
     if (
         isIntegration &&
         integrationAuth === ConnectorSupportedAuth.None &&
         browserAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode
     ) {
-        return ConnectorSupportedAuth.None;
+        supportedAuth = ConnectorSupportedAuth.None;
     }
 
     if (isIntegration && integrationAuth != null && integrationAuth !== ConnectorSupportedAuth.None) {
-        return integrationAuth;
+        supportedAuth = integrationAuth;
     }
 
-    return browserAuth;
+    const isUnsupportedIntegrationOAuth =
+        isIntegration &&
+        integrationAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode &&
+        supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
+
+    const handling: ConnectorAuthHandling = isUnsupportedIntegrationOAuth
+        ? 'alwaysError'
+        : (SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError');
+
+    return { handling, supportedAuth };
 }
 
 export const useEditorAuthExpired = (
@@ -78,18 +88,12 @@ export const useEditorAuthExpired = (
             if (request.type === AuthRefreshTypeEnum.any) {
                 const { connectorDefinition } = request;
                 const name = connectorDefinition.name;
-                const integrationAuth = connectorDefinition.supportedAuthentication.integration?.[0];
-                const supportedAuth = resolveConnectorSupportedAuth(
+
+                const { supportedAuth, handling } = selectConnectorAuthStrategy(
                     isIntegration,
                     connectorDefinition.supportedAuthentication,
                 );
-                const isUnsupportedIntegrationOAuth =
-                    isIntegration &&
-                    integrationAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode &&
-                    supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
-                const handling: ConnectorAuthHandling = isUnsupportedIntegrationOAuth
-                    ? 'alwaysError'
-                    : (SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError');
+
                 const connectorHubId = parseConnectorHubIdFromExternalSourceId(connectorDefinition.externalSourceId);
 
                 const authRequest: ConnectorAuthenticationRequest = {
@@ -134,13 +138,10 @@ export const useEditorAuthExpired = (
                 }
 
                 if (handling === 'alwaysError') {
-                    const errorMessage = isUnsupportedIntegrationOAuth
-                        ? `oAuth2AuthorizationCode is not supported for connector "${name}" in integration mode`
-                        : `Authorization failed for connector "${name}"`;
                     return await createProcessFn(
                         {
                             type: 'error',
-                            error: new Error(errorMessage),
+                            error: new Error(`Authorization failed for connector "${name}"`),
                         },
                         name,
                         request.remoteConnectorId,

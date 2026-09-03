@@ -334,7 +334,7 @@ const useSharedDataSource = ({
         } catch {
             return false;
         }
-    }, [connectorId, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, connectors]);
+    }, [connectorId, getRemoteConnector, graFxStudioEnvironmentApiBaseUrl, connectors, isIntegration]);
 
     const requiresUserAuthorizationCheck = useMemo(() => {
         return !currentInputRow && hasUserAuthorization && (!error || error.status === 401);
