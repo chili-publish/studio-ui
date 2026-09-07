@@ -3,7 +3,6 @@ import {
     DataSourceVariable,
     DateVariable,
     ImageVariable,
-    ListVariableItem,
     LongTextVariable,
     NumberVariable,
     ShortTextVariable,
@@ -42,8 +41,4 @@ export const getVariableErrMsg = (variable: Variable) => {
     const isValid = variable.isRequired ? validateVariableValue(variable) : true;
 
     return !isValid ? 'This field is required' : '';
-};
-
-export const getVariableListItemsFilteredByAvailableItems = (variable: ListVariable): ListVariableItem[] => {
-    return variable.items.filter(({ value }) => variable.availableItems.includes(value));
 };
