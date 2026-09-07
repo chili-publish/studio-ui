@@ -172,6 +172,7 @@ export default class StudioUI extends StudioUILoader {
             featureFlagConfigURL,
             sandboxMode,
             componentMode,
+            firstPartyIntegration,
             variableTranslations,
             uiTranslations,
             layoutTranslations,
@@ -272,6 +273,7 @@ export default class StudioUI extends StudioUILoader {
                 variableTranslations,
                 uiTranslations,
                 layoutTranslations,
+                firstPartyIntegration: firstPartyIntegration || false,
             },
         );
     }
