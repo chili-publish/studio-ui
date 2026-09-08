@@ -47,6 +47,12 @@ Related tickets may be a **JIRA** link and/or a **GitHub issue**. [`.github/work
 
 Prefer matching the PR title to the first commit message.
 
+## Dependabot
+
+Dependabot `github-actions` PRs are auto-labeled `No JIRA ticket` and `Skip QA`, and the CI test / build / bundle-size jobs are skipped on them (Dependabot PRs run without repo secrets, so `yarn install` cannot auth). Review them as pin bumps — check the publisher, the pinned SHA and the changelog — not as CI-certified changes. The next human PR or the merge-to-`main` build is the real integration test; revert the bump if that build fails.
+
+Because those checks are skipped, **do not enable auto-merge for these PRs and do not merge one without a human review**. A person must confirm the pin bump, then click merge.
+
 ## Checklist
 
 - Use Yarn Classic for install and scripts.
