@@ -58,9 +58,29 @@ export default class StudioUI extends StudioUILoader {
      * @returns
      */
     private static fullStudioIntegrationConfig(selector: string, projectConfig: ProjectConfig, appConfig?: AppConfig) {
+        // Every mount creates its own engine, so the previous one has to be shut down here.
+        // This is the single funnel all loader entry points go through; without it a host
+        // that re-configures Studio UI (switching in and out of sandbox mode, for example)
+        // stacks a second live engine on top of the first and leaks around 190MB each time.
+        this.instance?.destroy();
+        this.instance = undefined;
+
         const instance = new StudioUI(selector, projectConfig, appConfig);
         this.instance = instance;
         return instance;
+    }
+
+    /**
+     * Unmounts this Studio UI instance and releases the engine it loaded.
+     *
+     * Hosts should call this when they remove Studio UI from the page - hiding its
+     * container is not enough, the engine keeps running behind it.
+     */
+    override destroy() {
+        super.destroy();
+        if (StudioUI.instance === this) {
+            StudioUI.instance = undefined;
+        }
     }
 
     /**
