@@ -1,8 +1,7 @@
 version: 2
 updates:
-    # github-actions scope only: a `uses:` bump can't touch code, tests or the
-    # bundle, so pr-build.yml skips its install jobs for dependabot[bot]. Adding
-    # an npm/yarn ecosystem here means removing those skips first.
+    # FONTAWESOME_NPM_TOKEN is in the Dependabot secrets store.
+    # PRs only skip the secret-backed steps (Sonar, Azure, integration secrets, etc)
     - package-ecosystem: github-actions
       directory: /
       schedule:

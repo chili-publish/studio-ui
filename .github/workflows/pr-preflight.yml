@@ -25,9 +25,6 @@ jobs:
             - name: validate package versions
               run: yarn validate-versions
     check-bundle-size:
-        # Skipped on Dependabot github-actions PRs: they run without repo secrets,
-        # so `yarn install` cannot auth against the FontAwesome registry.
-        if: github.event.pull_request.user.login != 'dependabot[bot]'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
