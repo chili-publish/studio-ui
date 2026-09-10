@@ -1,7 +1,7 @@
 version: 2
 updates:
-    # FONTAWESOME_NPM_TOKEN is in the Dependabot secrets store.
-    # PRs only skip the secret-backed steps (Sonar, Azure, integration secrets, etc)
+    # github-actions scope only. These PRs run the full install / lint / test / build;
+    # only skips the secret-backed steps (Sonar, Azure, the EnricoMi check, the PR comment, Playwright)
     - package-ecosystem: github-actions
       directory: /
       schedule:

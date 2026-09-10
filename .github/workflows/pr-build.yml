@@ -2,10 +2,6 @@ name: Build and deploy PR
 on: [pull_request]
 env:
     NODE_VERSION: 24.x
-    # FONTAWESOME_NPM_TOKEN is in the Dependabot secrets store also, so Dependabot
-    # `github-actions` PRs run the full install / lint / test / build. Only steps
-    # that need a secret Dependabot does NOT have are skipped: SonarQube, the
-    # EnricoMi check, the PR-size comment, and Azure login/upload.
     FONTAWESOME_NPM_TOKEN: ${{ secrets.FONTAWESOME_NPM_TOKEN }}
     # REQUIRED AT WORKFLOW SCOPE — do not move this to the install step only.
     # actions/setup-node with `registry-url` writes an .npmrc containing
@@ -83,7 +79,6 @@ jobs:
               with:
                   files: coverage/**/*.xml
             - name: SonarQube analysis
-              # does not have SONAR_TOKEN
               if: github.actor != 'dependabot[bot]'
               uses: sonarsource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
               env:
@@ -163,7 +158,6 @@ jobs:
                   mkdir -p "$targetDir"
                   cp -R dist/* "$targetDir"
             - name: Azure Login
-              # needs the CICD service-principal secret
               if: github.actor != 'dependabot[bot]'
               uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
@@ -216,7 +210,6 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-playwright-
             - name: Install Playwright Browsers
-              # skipped on Dependabot PRs — the test run below needs integration secrets
               if: ${{ steps.playwright-cache.outputs.cache-hit != 'true' && github.actor != 'dependabot[bot]' }}
               run: npx playwright install --with-deps
             - name: Extract PR number from GITHUB_REF
@@ -225,7 +218,6 @@ jobs:
                   PR_NUMBER=$(echo "${{ github.ref }}" | sed 's|refs/pull/||' | sed 's|/merge||')
                   echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
             - name: Run Playwright tests
-              # needs INTEGRATION_CLIENT_* secrets
               if: github.actor != 'dependabot[bot]'
               run: yarn playwright-test
               env:

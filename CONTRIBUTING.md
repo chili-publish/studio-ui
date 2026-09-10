@@ -49,9 +49,9 @@ Prefer matching the PR title to the first commit message.
 
 ## Dependabot
 
-Dependabot `github-actions` PRs are auto-labeled `No JIRA ticket` and `Skip QA`. They run the full install / lint / test / build (the FontAwesome token is in the Dependabot secrets store); only the steps that are skipped are secret-backed steps that Dependabot does not have (SonarQube, Azure, Playwright integration secrets).
+Dependabot `github-actions` PRs are auto-labeled `No JIRA ticket` and `Skip QA`. They run the full install / lint / test / build. The SonarQube analysis, the unit-test-results publish, the Azure upload, the PR comment and the Playwright integration tests are skipped on the bot's own runs, so a bump that only affects one of those is not exercised there.
 
-Because those steps are skipped on the bot's own runs, a bump that only touches one of them is not exercised there. **Do not enable auto-merge for these PRs and do not merge one without a human review** — check the publisher, the pinned SHA and the changelog. The next human PR or the merge-to-`main` build is what actually exercises the new action version; revert the bump if that build fails.
+**Do not enable auto-merge for these PRs and do not merge one without a human review** — check the publisher, the pinned SHA and the changelog. The next human PR or the merge-to-`main` build is what actually exercises the new action version; revert the bump if that build fails.
 
 ## Checklist
 
