@@ -1,6 +1,11 @@
 version: 2
 updates:
+    # github-actions scope only. These PRs run the full install / lint / test / build;
+    # only skips the secret-backed steps (Sonar, Azure, the EnricoMi check, the PR comment, Playwright)
     - package-ecosystem: github-actions
       directory: /
       schedule:
           interval: weekly
+      labels:
+          - 'No JIRA ticket'
+          - 'Skip QA'

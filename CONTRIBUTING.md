@@ -47,6 +47,12 @@ Related tickets may be a **JIRA** link and/or a **GitHub issue**. [`.github/work
 
 Prefer matching the PR title to the first commit message.
 
+## Dependabot
+
+Dependabot `github-actions` PRs are auto-labeled `No JIRA ticket` and `Skip QA`. They run the full install / lint / test / build. The SonarQube analysis, the unit-test-results publish, the Azure upload, the PR comment and the Playwright integration tests are skipped on the bot's own runs, so a bump that only affects one of those is not exercised there.
+
+**Do not enable auto-merge for these PRs and do not merge one without a human review** — check the publisher, the pinned SHA and the changelog. The next human PR or the merge-to-`main` build is what actually exercises the new action version; revert the bump if that build fails.
+
 ## Checklist
 
 - Use Yarn Classic for install and scripts.

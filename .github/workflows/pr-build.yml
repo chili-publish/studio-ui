@@ -75,10 +75,11 @@ jobs:
               run: npx nyc report --reporter lcov --reporter json --reporter html -t coverage
             - name: Publish Unit Test Results
               uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
-              if: always()
+              if: ${{ always() && github.actor != 'dependabot[bot]' }}
               with:
                   files: coverage/**/*.xml
             - name: SonarQube analysis
+              if: github.actor != 'dependabot[bot]'
               uses: sonarsource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -113,7 +114,7 @@ jobs:
               run: yarn build
             - name: 'Comment on PR'
               uses: actions/github-script@v9
-              if: github.event_name == 'pull_request'
+              if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   script: |
@@ -157,6 +158,7 @@ jobs:
                   mkdir -p "$targetDir"
                   cp -R dist/* "$targetDir"
             - name: Azure Login
+              if: github.actor != 'dependabot[bot]'
               uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
               with:
                   creds: >-
@@ -168,6 +170,7 @@ jobs:
                       }
 
             - name: Copy to Azure Blob Storage
+              if: github.actor != 'dependabot[bot]'
               uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
               with:
                   inlineScript: |
@@ -207,7 +210,7 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-playwright-
             - name: Install Playwright Browsers
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
+              if: ${{ steps.playwright-cache.outputs.cache-hit != 'true' && github.actor != 'dependabot[bot]' }}
               run: npx playwright install --with-deps
             - name: Extract PR number from GITHUB_REF
               id: extract-pr-number
@@ -215,13 +218,14 @@ jobs:
                   PR_NUMBER=$(echo "${{ github.ref }}" | sed 's|refs/pull/||' | sed 's|/merge||')
                   echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
             - name: Run Playwright tests
+              if: github.actor != 'dependabot[bot]'
               run: yarn playwright-test
               env:
                   GITHUB_PR_NUMBER: ${{ steps.extract-pr-number.outputs.pr_number }}
                   INTEGRATION_CLIENT_ID: ${{ secrets.INTEGRATION_CLIENT_ID }}
                   INTEGRATION_CLIENT_SECRET: ${{ secrets.INTEGRATION_CLIENT_SECRET }}
             - uses: actions/upload-artifact@v7
-              if: ${{ !cancelled() }}
+              if: ${{ !cancelled() && github.actor != 'dependabot[bot]' }}
               with:
                   name: playwright-report
                   path: playwright-report/
