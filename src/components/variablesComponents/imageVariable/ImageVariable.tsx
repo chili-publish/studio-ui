@@ -13,6 +13,7 @@ import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
 import { showImagePanel } from '../../../store/reducers/panelReducer';
+import { selectIsIntegration } from 'src/store/reducers/appConfigReducer';
 
 const ImageVariable = (props: IImageVariable) => {
     const { variable, validationError, handleImageRemove, handleImageChange } = props;
@@ -25,6 +26,7 @@ const ImageVariable = (props: IImageVariable) => {
     const [selectedMediaAssetId, setSelectedMediaAssetId] = useState<string | undefined>();
 
     const { remoteConnector } = useVariableConnector(variable);
+    const isIntegration = useSelector(selectIsIntegration);
 
     const updateSelectedMediaAssetId = useCallback(() => {
         setSelectedMediaAssetId(variable.value?.resolved?.mediaId ?? variable?.value?.assetId);
@@ -83,7 +85,7 @@ const ImageVariable = (props: IImageVariable) => {
         setSelectedMediaAssetId(undefined);
         resetUploadError();
         try {
-            if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector)) {
+            if (variable.value?.connectorId && isAuthenticationRequired(remoteConnector, isIntegration)) {
                 await verifyAuthentication(variable.value.connectorId);
             }
             resetMediaError();

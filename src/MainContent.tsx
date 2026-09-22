@@ -63,6 +63,7 @@ import {
 import InlineTextEditingToolbar from './components/inlineTextEditingToolbar/desktop/InlineTextEditingToolbar';
 import MobileInlineTextEditingToolbar from './components/inlineTextEditingToolbar/mobile/MobileInlineTextEditingToolbar';
 import { useRichTextInjection } from './hooks/useRichTextInjection';
+import { selectIsIntegration } from './store/reducers/appConfigReducer';
 
 const EDITOR_ID = 'studio-ui-chili-editor';
 interface MainContentProps {
@@ -107,6 +108,8 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
 
     const { canvas } = useTheme();
     const { loadConnectors } = useMediaConnectors();
+    const isIntegration = useAppSelector(selectIsIntegration);
+
     const textProperties = useAppSelector(selectedTextProperties);
     const mobileOrTabletSize = isMobileSize || isTabletSize;
     const mobileInlineTextEditingMode = mobileOrTabletSize && !!textProperties;
@@ -316,6 +319,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                 frameEditingMode: FrameEditingMode.followConstraints,
             },
             editorLink: projectConfig.editorLink,
+            isIntegration,
             enableQueryCallCache: true,
             onConnectionError: (error) => {
                 addNotification({
@@ -368,7 +372,7 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
             onDocumentLoadedUnsubscribe();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventSubscriber]);
+    }, [eventSubscriber, isIntegration]);
 
     useEffect(() => {
         if (currentProject?.template?.id) {
