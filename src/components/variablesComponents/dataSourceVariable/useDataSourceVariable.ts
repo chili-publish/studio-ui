@@ -22,6 +22,8 @@ import { PanelType, selectActivePanel } from 'src/store/reducers/panelReducer';
 import { validateVariable } from 'src/store/reducers/variableReducer';
 import { dataSourceErrorHandler } from 'src/utils/dataSourceErrorHandler';
 
+type SdkErrorWithCause = { cause?: { name?: string } };
+export const getSdkErrorCode = (error: unknown): string | undefined => (error as SdkErrorWithCause)?.cause?.name;
 interface IUseDataSourceVariable {
     variable: DataSourceVariable;
 }
