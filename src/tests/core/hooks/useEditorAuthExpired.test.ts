@@ -334,13 +334,13 @@ describe('useEditorAuthExpired', () => {
             expect(authResult).toEqual(errorResult);
         });
 
-        it('should error clearly when integration auth is oAuth2AuthorizationCode', async () => {
-            const errorResult = {
-                type: 'error',
-                error: new Error('Authorization failed for connector "Integration Connector"'),
+        it('should use the modal when integration auth is oAuth2AuthorizationCode', async () => {
+            const mockAuthResult: ConnectorAuthenticationResult = {
+                type: 'authenticated',
             };
 
-            mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
+            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
+            mockCreateProcessFn.mockImplementation((fn) => (typeof fn === 'function' ? fn() : fn));
 
             const handleAuthExpired = renderIntegrationHook();
 
@@ -362,13 +362,22 @@ describe('useEditorAuthExpired', () => {
 
             const authResult = await handleAuthExpired(request);
 
-            expect(mockOnConnectorAuthenticationRequested).not.toHaveBeenCalled();
-            expect(mockCreateProcessFn).toHaveBeenCalledWith(errorResult, 'Integration Connector', 'remote-123');
-            expect(authResult).toEqual(errorResult);
+            expect(mockCreateProcessFn).toHaveBeenCalled();
+            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
+                id: 'remote-123',
+                name: 'Integration Connector',
+                supportedAuth: 'oAuth2AuthorizationCode',
+            });
+            expect(authResult).toEqual(mockAuthResult);
         });
 
-        it('should error clearly when both browser and integration auth are oAuth2AuthorizationCode', async () => {
-            mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
+        it('should use the modal when both browser and integration auth are oAuth2AuthorizationCode', async () => {
+            const mockAuthResult: ConnectorAuthenticationResult = {
+                type: 'authenticated',
+            };
+
+            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
+            mockCreateProcessFn.mockImplementation((fn) => (typeof fn === 'function' ? fn() : fn));
 
             const handleAuthExpired = renderIntegrationHook();
 
@@ -388,17 +397,15 @@ describe('useEditorAuthExpired', () => {
                 },
             };
 
-            await handleAuthExpired(request);
+            const authResult = await handleAuthExpired(request);
 
-            expect(mockOnConnectorAuthenticationRequested).not.toHaveBeenCalled();
-            expect(mockCreateProcessFn).toHaveBeenCalledWith(
-                {
-                    type: 'error',
-                    error: new Error('Authorization failed for connector "Integration Connector"'),
-                },
-                'Integration Connector',
-                'remote-123',
-            );
+            expect(mockCreateProcessFn).toHaveBeenCalled();
+            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
+                id: 'remote-123',
+                name: 'Integration Connector',
+                supportedAuth: 'oAuth2AuthorizationCode',
+            });
+            expect(authResult).toEqual(mockAuthResult);
         });
 
         it('should authenticate against non-none integration auth', async () => {
@@ -615,6 +622,6 @@ describe('resolveConnectorSupportedAuth', () => {
                 browser: [ConnectorSupportedAuth.None],
                 integration: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
             }),
-        ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
+        ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 });

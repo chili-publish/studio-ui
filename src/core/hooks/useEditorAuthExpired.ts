@@ -44,13 +44,7 @@ export function selectConnectorAuthStrategy(
     const useIntegrationAuth = !!isIntegration && !!integrationAuth;
 
     const supportedAuth = useIntegrationAuth ? integrationAuth : supportedAuthentication.browser[0];
-
-    const isUnsupportedIntegrationOAuth =
-        useIntegrationAuth && supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
-
-    const handling: ConnectorAuthHandling = isUnsupportedIntegrationOAuth
-        ? 'alwaysError'
-        : (SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError');
+    const handling: ConnectorAuthHandling = SUPPORTED_AUTH_HANDLING[supportedAuth] ?? 'alwaysError';
 
     return { handling, supportedAuth };
 }
