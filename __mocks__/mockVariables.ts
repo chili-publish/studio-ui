@@ -106,7 +106,6 @@ export const mockVariables: [ImageVariable, ...Variable[]] = [
         items: [{ value: 'val 1', displayValue: 'Val 1' }, { value: 'val 2' }],
         isReadonly: false,
         isRequired: false,
-        availableItems: ['val 1', 'val 2'],
     },
 
     <BooleanVariable>{

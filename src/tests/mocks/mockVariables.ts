@@ -113,7 +113,6 @@ export const variablesWithGroups = [
         occurrences: 0,
         privateData: {},
         removeParagraphIfEmpty: false,
-        availableItems: ['1', '2', '3'],
     },
     {
         id: '8d9be0ee-3fe9-4b2f-82a4-2c60d122e186',

@@ -197,7 +197,7 @@ const ItemBrowser = <
                 setIsLoading(true);
                 return toNavigationStack(formatRelativePath(item));
             });
-            setBreadcrumbStack((currentStack) => [...currentStack, item.name]);
+            setBreadcrumbStack((currentStack) => [...currentStack, item.name.trim()]);
         } else {
             await onSelect(item);
             setNavigationStack([]);
