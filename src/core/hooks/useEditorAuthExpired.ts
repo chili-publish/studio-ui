@@ -33,34 +33,20 @@ type ConnectorAuthSelection = {
 
 /**
  * Picks the auth type to run when connector auth expires.
- * - Integration + integration auth `none` + browser auth `oAuth2AuthorizationCode` → integration auth (`none`, token injection)
- * - Integration + integration auth other than `none` → integration auth (OAuth2 authorization code is always an error)
+ * - Integration + non-empty integration auth → integration auth (OAuth2 authorization code is always an error)
  * - Otherwise → browser auth
  */
 export function selectConnectorAuthStrategy(
     isIntegration: boolean | undefined,
     supportedAuthentication: ConnectorAuthSelection,
 ): { handling: ConnectorAuthHandling; supportedAuth: ConnectorSupportedAuth } {
-    const browserAuth = supportedAuthentication.browser[0];
     const integrationAuth = supportedAuthentication.integration?.[0];
+    const useIntegrationAuth = !!isIntegration && !!integrationAuth;
 
-    let supportedAuth = browserAuth;
-    if (
-        isIntegration &&
-        integrationAuth === ConnectorSupportedAuth.None &&
-        browserAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode
-    ) {
-        supportedAuth = ConnectorSupportedAuth.None;
-    }
-
-    if (isIntegration && integrationAuth != null && integrationAuth !== ConnectorSupportedAuth.None) {
-        supportedAuth = integrationAuth;
-    }
+    const supportedAuth = useIntegrationAuth ? integrationAuth : supportedAuthentication.browser[0];
 
     const isUnsupportedIntegrationOAuth =
-        isIntegration &&
-        integrationAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode &&
-        supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
+        useIntegrationAuth && supportedAuth === ConnectorSupportedAuth.OAuth2AuthorizationCode;
 
     const handling: ConnectorAuthHandling = isUnsupportedIntegrationOAuth
         ? 'alwaysError'

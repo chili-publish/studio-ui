@@ -434,12 +434,10 @@ describe('useEditorAuthExpired', () => {
             expect(authResult).toEqual(errorResult);
         });
 
-        it('should fall back to browser auth when integration auth is none but browser auth is not oAuth2', async () => {
-            const errorResult = {
-                type: 'error',
-                error: new Error('Authorization failed for connector "Integration Connector"'),
-            };
+        it('should use integration auth none even when browser auth is not oAuth2', async () => {
+            const mockAuthResult: ConnectorAuthenticationResult = { type: 'authenticated' };
 
+            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
             mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
 
             const handleAuthExpired = renderIntegrationHook();
@@ -462,9 +460,13 @@ describe('useEditorAuthExpired', () => {
 
             const authResult = await handleAuthExpired(request);
 
-            expect(mockOnConnectorAuthenticationRequested).not.toHaveBeenCalled();
-            expect(mockCreateProcessFn).toHaveBeenCalledWith(errorResult, 'Integration Connector', 'remote-123');
-            expect(authResult).toEqual(errorResult);
+            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
+                id: 'remote-123',
+                name: 'Integration Connector',
+                supportedAuth: ConnectorSupportedAuth.None,
+            });
+            expect(mockCreateProcessFn).toHaveBeenCalledWith(mockAuthResult, 'Integration Connector', 'remote-123');
+            expect(authResult).toEqual(mockAuthResult);
         });
 
         it('should fall back to browser oAuth2 when integration auth is empty', async () => {
@@ -572,13 +574,22 @@ describe('resolveConnectorSupportedAuth', () => {
         ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.StaticKey });
     });
 
-    it('returns browser auth when integration is none and browser is not oAuth2AuthorizationCode', () => {
+    it('returns integration auth when integration is none regardless of browser auth', () => {
         expect(
             selectConnectorAuthStrategy(true, {
                 browser: [ConnectorSupportedAuth.StaticKey],
                 integration: [ConnectorSupportedAuth.None],
             }),
-        ).toEqual({ handling: 'alwaysError', supportedAuth: ConnectorSupportedAuth.StaticKey });
+        ).toEqual({ handling: 'directCall', supportedAuth: ConnectorSupportedAuth.None });
+    });
+
+    it('returns browser auth when integration auth is empty', () => {
+        expect(
+            selectConnectorAuthStrategy(true, {
+                browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                integration: [],
+            }),
+        ).toEqual({ handling: 'viaModal', supportedAuth: ConnectorSupportedAuth.OAuth2AuthorizationCode });
     });
 
     it('returns browser auth when isIntegration is undefined', () => {
