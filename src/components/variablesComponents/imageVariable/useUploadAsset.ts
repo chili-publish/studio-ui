@@ -10,7 +10,7 @@ import {
 import { useCallback, useState } from 'react';
 import { TokenService } from 'src/services/TokenService';
 
-export const uploadFileMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/tiff'];
+export const uploadFileMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/tiff', 'application/pdf'];
 
 function getUploadError(
     error: UploadAssetValidationError,

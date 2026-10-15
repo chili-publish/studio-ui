@@ -42,6 +42,24 @@ describe('useUploadAsset', () => {
         jest.clearAllMocks();
     });
 
+    it('allows PDF uploads alongside the existing image types', () => {
+        expect(uploadFileMimeTypes).toEqual(['image/jpg', 'image/jpeg', 'image/png', 'image/tiff', 'application/pdf']);
+    });
+
+    it('stages PDF files with the full mime type list', async () => {
+        const pdfFile = new File(['file'], 'logo.pdf', { type: 'application/pdf' });
+        const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
+
+        await act(async () => {
+            await result.current.upload([pdfFile], validationConfiguration);
+        });
+
+        expect(mockSDK.utils.stageFiles).toHaveBeenCalledWith([pdfFile], remoteConnectorId, {
+            mimeTypes: expect.arrayContaining(['application/pdf']),
+            ...validationConfiguration,
+        });
+    });
+
     it('stages files and uploads through the media connector on success', async () => {
         const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
 
