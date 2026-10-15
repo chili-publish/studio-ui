@@ -261,43 +261,6 @@ describe('useEditorAuthExpired', () => {
                 integrationHookOptions,
             ).result.current;
 
-        it('should use none (token injection) when integration auth is none and browser auth is oAuth2', async () => {
-            const mockAuthResult: ConnectorAuthenticationResult = {
-                type: 'authenticated',
-            };
-
-            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
-            mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
-
-            const handleAuthExpired = renderIntegrationHook();
-
-            const request: AuthRefreshRequest = {
-                type: AuthRefreshTypeEnum.any,
-                connectorId: 'connector-123',
-                remoteConnectorId: 'remote-123',
-                headerValue: 'oAuth2AuthorizationCode',
-                connectorDefinition: {
-                    ...baseConnectorDefinition,
-                    name: 'Integration Connector',
-                    supportedAuthentication: {
-                        browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
-                        server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
-                        integration: [ConnectorSupportedAuth.None],
-                    },
-                },
-            };
-
-            const authResult = await handleAuthExpired(request);
-
-            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
-                id: 'remote-123',
-                name: 'Integration Connector',
-                supportedAuth: 'none',
-            });
-            expect(mockCreateProcessFn).toHaveBeenCalledWith(mockAuthResult, 'Integration Connector', 'remote-123');
-            expect(authResult).toEqual(mockAuthResult);
-        });
-
         it('should error when token-injection handler is not configured', async () => {
             const errorResult = {
                 type: 'error',
@@ -441,41 +404,6 @@ describe('useEditorAuthExpired', () => {
             expect(authResult).toEqual(errorResult);
         });
 
-        it('should use integration auth none even when browser auth is not oAuth2', async () => {
-            const mockAuthResult: ConnectorAuthenticationResult = { type: 'authenticated' };
-
-            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
-            mockCreateProcessFn.mockImplementation((res) => Promise.resolve(res as any));
-
-            const handleAuthExpired = renderIntegrationHook();
-
-            const request: AuthRefreshRequest = {
-                type: AuthRefreshTypeEnum.any,
-                connectorId: 'connector-123',
-                remoteConnectorId: 'remote-123',
-                headerValue: 'staticKey',
-                connectorDefinition: {
-                    ...baseConnectorDefinition,
-                    name: 'Integration Connector',
-                    supportedAuthentication: {
-                        browser: [ConnectorSupportedAuth.StaticKey],
-                        server: [ConnectorSupportedAuth.StaticKey],
-                        integration: [ConnectorSupportedAuth.None],
-                    },
-                },
-            };
-
-            const authResult = await handleAuthExpired(request);
-
-            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
-                id: 'remote-123',
-                name: 'Integration Connector',
-                supportedAuth: ConnectorSupportedAuth.None,
-            });
-            expect(mockCreateProcessFn).toHaveBeenCalledWith(mockAuthResult, 'Integration Connector', 'remote-123');
-            expect(authResult).toEqual(mockAuthResult);
-        });
-
         it('should fall back to browser oAuth2 when integration auth is empty', async () => {
             const mockAuthResult: ConnectorAuthenticationResult = {
                 type: 'authenticated',
@@ -507,45 +435,6 @@ describe('useEditorAuthExpired', () => {
             expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
                 id: 'remote-123',
                 name: 'Integration Connector',
-                supportedAuth: 'oAuth2AuthorizationCode',
-            });
-            expect(authResult).toEqual(mockAuthResult);
-        });
-
-        it('should keep using browser oAuth2 when not in integration mode even if integration auth is none', async () => {
-            const mockAuthResult: ConnectorAuthenticationResult = {
-                type: 'authenticated',
-            };
-
-            mockOnConnectorAuthenticationRequested.mockResolvedValue(mockAuthResult);
-            mockCreateProcessFn.mockImplementation((fn) => (typeof fn === 'function' ? fn() : fn));
-
-            const { result } = renderHookWithProviders(() =>
-                useEditorAuthExpired(mockOnConnectorAuthenticationRequested, mockCreateProcessFn),
-            );
-            const handleAuthExpired = result.current;
-
-            const request: AuthRefreshRequest = {
-                type: AuthRefreshTypeEnum.any,
-                connectorId: 'connector-123',
-                remoteConnectorId: 'remote-123',
-                headerValue: 'oAuth2AuthorizationCode',
-                connectorDefinition: {
-                    ...baseConnectorDefinition,
-                    name: 'Browser Connector',
-                    supportedAuthentication: {
-                        browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
-                        server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
-                        integration: [ConnectorSupportedAuth.None],
-                    },
-                },
-            };
-
-            const authResult = await handleAuthExpired(request);
-
-            expect(mockOnConnectorAuthenticationRequested).toHaveBeenCalledWith({
-                id: 'remote-123',
-                name: 'Browser Connector',
                 supportedAuth: 'oAuth2AuthorizationCode',
             });
             expect(authResult).toEqual(mockAuthResult);
