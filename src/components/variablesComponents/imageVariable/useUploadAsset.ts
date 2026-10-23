@@ -7,10 +7,15 @@ import {
     UploadAssetValidationErrorType,
     UploadValidationConfiguration,
 } from '@chili-publish/studio-sdk';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
 import { TokenService } from 'src/services/TokenService';
 
 export const uploadFileMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/tiff'];
+
+const getAllowedFileMimeTypes = (allowPdfUpload: boolean) => {
+    return [...uploadFileMimeTypes, ...(allowPdfUpload ? ['application/pdf'] : [])];
+};
 
 function getUploadError(
     error: UploadAssetValidationError,
@@ -36,6 +41,9 @@ function getUploadError(
 export const useUploadAsset = (remoteConnectorId: string | undefined, imageVariable: ImageVariable) => {
     const [pending, setPending] = useState(false);
     const [uploadError, setUploadError] = useState<string>();
+    const { isEnabled } = useFeatureFlagContext();
+
+    const allowedUploadFileMimeTypes = useMemo(() => getAllowedFileMimeTypes(isEnabled('allowPdfUpload')), [isEnabled]);
 
     const stageFiles = useCallback(
         async (
@@ -48,7 +56,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, imageVaria
                 }
                 try {
                     return await window.StudioUISDK.utils.stageFiles(files, remoteConnectorId, {
-                        mimeTypes: uploadFileMimeTypes,
+                        mimeTypes: allowedUploadFileMimeTypes,
                         ...validationConfiguration,
                     });
                 } catch (error) {
@@ -75,7 +83,7 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, imageVaria
                 throw error;
             }
         },
-        [remoteConnectorId, imageVariable.uploadMinWidth, imageVariable.uploadMinHeight],
+        [remoteConnectorId, imageVariable.uploadMinWidth, imageVariable.uploadMinHeight, allowedUploadFileMimeTypes],
     );
 
     const upload = useCallback(
@@ -121,5 +129,6 @@ export const useUploadAsset = (remoteConnectorId: string | undefined, imageVaria
         pending,
         uploadError,
         resetUploadError,
+        allowedUploadFileMimeTypes,
     };
 };
