@@ -9,7 +9,7 @@ import { HelpTextWrapper } from '../VariablesComponents.styles';
 import { IImageVariable } from '../VariablesComponents.types';
 import { getImageVariablePendingLabel, getImageVariablePlaceholder } from '../variablePlaceholder.util';
 import { usePreviewImage } from './usePreviewImage';
-import { uploadFileMimeTypes, useUploadAsset } from './useUploadAsset';
+import { useUploadAsset } from './useUploadAsset';
 import { useVariableConnector } from './useVariableConnector';
 import { useAppDispatch } from '../../../store';
 import { showImagePanel } from '../../../store/reducers/panelReducer';
@@ -46,6 +46,7 @@ const ImageVariable = (props: IImageVariable) => {
         pending: uploadPending,
         uploadError,
         resetUploadError,
+        allowedUploadFileMimeTypes,
     } = useUploadAsset(remoteConnector?.id, variable);
 
     const pendingLabel = getImageVariablePendingLabel(uploadPending);
@@ -134,7 +135,7 @@ const ImageVariable = (props: IImageVariable) => {
                 onRemove={onRemove}
                 pending={isPending}
                 pendingLabel={pendingLabel}
-                uploadFilesFormat={uploadFileMimeTypes.join(', ')}
+                uploadFilesFormat={allowedUploadFileMimeTypes.join(', ')}
                 onBrowse={variable.allowQuery ? handleImageBrowse : undefined}
                 onUpload={variable.allowUpload ? handleImageUpload : undefined}
             />

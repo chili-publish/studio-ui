@@ -11,12 +11,18 @@ jest.unmock('@chili-publish/studio-sdk');
 import { mock } from 'jest-mock-extended';
 import { renderHookWithProviders } from '@tests/mocks/Provider';
 import { TokenService } from 'src/services/TokenService';
+import { useFeatureFlagContext } from 'src/contexts/FeatureFlagProvider';
 import {
     uploadFileMimeTypes,
     useUploadAsset,
 } from '../../../../components/variablesComponents/imageVariable/useUploadAsset';
 import { variables as mockVariables } from '../../../mocks/mockVariables';
 import { mockSdkMethod } from '@tests/utils/mockSdkMethod';
+
+jest.mock('src/contexts/FeatureFlagProvider', () => ({
+    ...jest.requireActual('src/contexts/FeatureFlagProvider'),
+    useFeatureFlagContext: jest.fn(),
+}));
 
 const mockSDK = mock<EditorSDK>();
 
@@ -36,10 +42,47 @@ describe('useUploadAsset', () => {
         (TokenService.getInstance as jest.Mock).mockReturnValue({
             refreshToken: jest.fn().mockResolvedValue('new-token'),
         });
+        (useFeatureFlagContext as jest.Mock).mockReturnValue({ isEnabled: () => false });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+    });
+
+    it('allows jpg, jpeg, png and tiff uploads by default', () => {
+        expect(uploadFileMimeTypes).toEqual(['image/jpg', 'image/jpeg', 'image/png', 'image/tiff']);
+    });
+
+    it('does not allow pdf uploads when the allowPdfUpload flag is off', async () => {
+        const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
+
+        await act(async () => {
+            await result.current.upload([testFile], validationConfiguration);
+        });
+
+        expect(result.current.allowedUploadFileMimeTypes).toEqual(uploadFileMimeTypes);
+        expect(mockSDK.utils.stageFiles).toHaveBeenCalledWith([testFile], remoteConnectorId, {
+            mimeTypes: uploadFileMimeTypes,
+            ...validationConfiguration,
+        });
+    });
+
+    it('allows pdf uploads when the allowPdfUpload flag is on', async () => {
+        (useFeatureFlagContext as jest.Mock).mockReturnValue({
+            isEnabled: (flagName: string) => flagName === 'allowPdfUpload',
+        });
+        const pdfFile = new File(['file'], 'logo.pdf', { type: 'application/pdf' });
+        const { result } = renderHookWithProviders(() => useUploadAsset(remoteConnectorId, baseImageVariable));
+
+        await act(async () => {
+            await result.current.upload([pdfFile], validationConfiguration);
+        });
+
+        expect(result.current.allowedUploadFileMimeTypes).toEqual([...uploadFileMimeTypes, 'application/pdf']);
+        expect(mockSDK.utils.stageFiles).toHaveBeenCalledWith([pdfFile], remoteConnectorId, {
+            mimeTypes: [...uploadFileMimeTypes, 'application/pdf'],
+            ...validationConfiguration,
+        });
     });
 
     it('stages files and uploads through the media connector on success', async () => {
