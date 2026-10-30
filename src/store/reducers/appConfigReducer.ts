@@ -8,6 +8,7 @@ type AppConfigState = {
     variableTranslations?: VariableTranslations;
     uiTranslations?: UITranslations;
     layoutTranslations?: LayoutTranslations;
+    isIntegration?: boolean;
 };
 const initialState: AppConfigState = {};
 
@@ -30,5 +31,6 @@ export const selectUITranslations = (state: RootState): AppConfigState['uiTransl
     state.appConfig.uiTranslations;
 export const selectLayoutTranslations = (state: RootState): AppConfigState['layoutTranslations'] =>
     state.appConfig.layoutTranslations;
+export const selectIsIntegration = (state: RootState): AppConfigState['isIntegration'] => state.appConfig.isIntegration;
 
 export default appConfigSlice.reducer;

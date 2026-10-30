@@ -12,6 +12,7 @@ export type AppConfig = {
     variableTranslations?: VariableTranslations;
     uiTranslations?: UITranslations;
     layoutTranslations?: LayoutTranslations;
+    firstPartyIntegration?: boolean;
 };
 
 export default class StudioUILoader {
@@ -28,8 +29,12 @@ export default class StudioUILoader {
             );
         }
 
+        const { firstPartyIntegration, ...rest } = appConfig;
         this.store = setupStore({
-            appConfig,
+            appConfig: {
+                isIntegration: !firstPartyIntegration,
+                ...rest,
+            },
         });
         this.root = createRoot(container!);
         this.root.render(
