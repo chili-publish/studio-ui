@@ -41,6 +41,7 @@ jest.mock('../../../../components/variablesComponents/imageVariable/useUploadAss
     useUploadAsset: jest.fn().mockReturnValue({
         upload: jest.fn().mockImplementation(() => Promise.resolve(null)),
         pending: false,
+        allowedUploadFileMimeTypes: ['image/png'],
         uploadError: undefined,
         resetUploadError: jest.fn(),
     }),
@@ -406,6 +407,7 @@ describe('"ImageVariable" component ', () => {
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: uploadMock,
             pending: false,
+            allowedUploadFileMimeTypes: ['image/png'],
             errorMsg: undefined,
         });
 
@@ -486,6 +488,7 @@ describe('"ImageVariable" component ', () => {
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: jest.fn().mockImplementation(() => Promise.resolve(null)),
             pending: true,
+            allowedUploadFileMimeTypes: ['image/png'],
             errorMsg: undefined,
         });
 
@@ -508,6 +511,7 @@ describe('"ImageVariable" component ', () => {
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: jest.fn(),
             pending: false,
+            allowedUploadFileMimeTypes: ['image/png'],
             uploadError: undefined,
             resetUploadError,
         });
@@ -530,6 +534,7 @@ describe('"ImageVariable" component ', () => {
         (useUploadAsset as jest.Mock).mockReturnValue({
             upload: jest.fn(),
             pending: false,
+            allowedUploadFileMimeTypes: ['image/png'],
             uploadError: undefined,
             resetUploadError,
         });
