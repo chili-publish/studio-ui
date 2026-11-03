@@ -261,6 +261,19 @@ const useDataSourceVariable = (props: IUseDataSourceVariable) => {
         }
     }, [variable, activePanel, isDropdownOpen, isDataSourceModalOpen, dataRows.length]);
 
+    const handleTableModeOpenForConnectorSource = useEffectEvent((isOpen: boolean) => {
+        const isConnector = variable.value?.type === DataSourceVariableSourceType.connector;
+        if (!isOpen || !isConnector || dataRows.length || isNextPageLoading || isPreviousPageLoading) {
+            return;
+        }
+        loadData(variable.entryId);
+    });
+
+    useEffect(() => {
+        const tableModeOpenOnMobile = activePanel === PanelType.DATA_SOURCE_VARIABLE_TABLE_MODE;
+        handleTableModeOpenForConnectorSource(isDataSourceModalOpen || tableModeOpenOnMobile);
+    }, [isDataSourceModalOpen, activePanel]);
+
     const updateSelectedValueForInjectedSource = useEffectEvent((entryId?: string) => {
         if (dataRows.length) {
             const rowIndex = dataRows.findIndex((item) => item[rowKeyNameRef.current!]?.toString() === entryId);
