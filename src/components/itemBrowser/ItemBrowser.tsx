@@ -22,7 +22,7 @@ import { APP_WRAPPER_ID, FOLDER_PREVIEW_THUMBNAIL } from 'src/utils/constants';
 import { useUITranslations } from '../../core/hooks/useUITranslations';
 import { AssetType } from '../../utils/ApiTypes';
 import { getDataIdForSUI, getDataTestIdForSUI } from '../../utils/dataIds';
-import { UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
+import { stacksAfterBreadcrumbClick, UNABLE_TO_LOAD_PANEL } from '../../utils/mediaUtils';
 import {
     BreadCrumbsWrapper,
     EmptySearchResultContainer,
@@ -264,11 +264,9 @@ const ItemBrowser = <
     const updateNavigationStack = useCallback(
         (selected: SelectOptions) => {
             const pathIndex = selected.value as number;
-
-            const newNavigationStack = navigationStack?.splice(0, pathIndex);
-            const newBreadcrumbStack = breadcrumbStack?.splice(0, pathIndex);
-            setNavigationStack(newNavigationStack);
-            setBreadcrumbStack(newBreadcrumbStack);
+            const nextStacks = stacksAfterBreadcrumbClick(navigationStack, breadcrumbStack, pathIndex);
+            setNavigationStack(nextStacks.navigationStack);
+            setBreadcrumbStack(nextStacks.breadcrumbStack);
         },
         [navigationStack, breadcrumbStack],
     );
