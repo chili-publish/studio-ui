@@ -50,6 +50,11 @@ describe('useEditorAuthExpired', () => {
                 ...baseConnectorDefinition,
                 name: 'Test Connector',
                 externalSourceId: 'hub-abc_1.0.0',
+                supportedAuthentication: {
+                    browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                    server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                    integration: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                },
             },
         };
 
@@ -89,6 +94,7 @@ describe('useEditorAuthExpired', () => {
                 supportedAuthentication: {
                     browser: [ConnectorSupportedAuth.None],
                     server: [ConnectorSupportedAuth.None],
+                    integration: [ConnectorSupportedAuth.None],
                 },
             },
         };
@@ -123,6 +129,11 @@ describe('useEditorAuthExpired', () => {
             connectorDefinition: {
                 ...baseConnectorDefinition,
                 name: 'OAuth Connector',
+                supportedAuthentication: {
+                    browser: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                    server: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                    integration: [ConnectorSupportedAuth.OAuth2AuthorizationCode],
+                },
             },
         };
 
@@ -154,6 +165,7 @@ describe('useEditorAuthExpired', () => {
                 supportedAuthentication: {
                     browser: [ConnectorSupportedAuth.None],
                     server: [ConnectorSupportedAuth.None],
+                    integration: [ConnectorSupportedAuth.None],
                 },
             },
         };
@@ -188,6 +200,7 @@ describe('useEditorAuthExpired', () => {
                 supportedAuthentication: {
                     browser: [ConnectorSupportedAuth.StaticKey],
                     server: [ConnectorSupportedAuth.StaticKey],
+                    integration: [ConnectorSupportedAuth.StaticKey],
                 },
             },
         };
