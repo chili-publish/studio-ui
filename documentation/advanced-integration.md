@@ -610,7 +610,7 @@ Studio UI calls `onConnectorAuthenticationRequested` whenever a connector receiv
 
 For connectors with a **browser** `supportedAuth` of `'none'`, you are responsible for fetching credentials and returning them via the **token** field of the result. Studio UI then injects the supplied header into subsequent connector requests.
 
-> **IMPORTANT:** This only covers the browser-side authentication used for asset loading in the editor. For output generation to work, the connector must still have an appropriate **server** `supportedAuth` configured separately.
+> **IMPORTANT:** This only covers the integration-side authentication used for asset loading in the editor. For output generation to work, the connector must still have an appropriate **server** `supportedAuth` configured separately.
 
 **Example**
 
