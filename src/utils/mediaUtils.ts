@@ -22,4 +22,20 @@ export const toNavigationStack = (path: string): string[] => {
     return path.replace(regex, '/').replace(/^\/+/, '').split('/');
 };
 
+export function stacksAfterBreadcrumbClick(
+    navigationStack: string[],
+    breadcrumbStack: string[],
+    pathIndex: number,
+): { navigationStack: string[]; breadcrumbStack: string[] } {
+    if (pathIndex <= 0) {
+        return { navigationStack: [], breadcrumbStack: [] };
+    }
+
+    const mappedRootLength = Math.max(navigationStack.length - breadcrumbStack.length, 0);
+    return {
+        navigationStack: navigationStack.slice(0, mappedRootLength + pathIndex),
+        breadcrumbStack: breadcrumbStack.slice(0, pathIndex),
+    };
+}
+
 export const UNABLE_TO_LOAD_PANEL = 'https://studio-cdn.chiligrafx.com/shared/assets/unable-to-load-panel.svg';
