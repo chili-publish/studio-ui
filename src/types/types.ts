@@ -45,6 +45,12 @@ export enum LoadDocumentError {
 export type ProjectConfig = {
     projectId?: string;
     projectName?: string;
+    /**
+     * New project from a template. Studio loads that template for preview, asks for a
+     * name, and calls `onSave`. Existing projects leave this unset.
+     */
+    isNewProject?: boolean;
+    onSave?: (name: string) => Promise<void>;
     uiOptions: UiOptions;
     outputSettings: OutputSettings;
     userInterfaceID?: string;
@@ -295,6 +301,10 @@ export interface IStudioUILoaderConfig {
     graFxStudioEnvironmentApiBaseUrl: string;
     authToken: string;
     projectName?: string;
+    /** When true, preview the template and ask for a name before a project exists. */
+    isNewProject?: boolean;
+    /** Host creates the project after the user confirms a name, then opens it. */
+    onSave?: (name: string) => Promise<void>;
     refreshTokenAction?: () => Promise<string | Error>;
     uiOptions?: UiOptions;
     userInterfaceID?: string;

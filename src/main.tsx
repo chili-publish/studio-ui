@@ -161,6 +161,8 @@ export default class StudioUI extends StudioUILoader {
             projectUploadUrl,
             projectId,
             projectName,
+            isNewProject,
+            onSave,
             graFxStudioEnvironmentApiBaseUrl,
             isDev,
             editorLink,
@@ -235,6 +237,8 @@ export default class StudioUI extends StudioUILoader {
             {
                 projectId,
                 projectName,
+                isNewProject: isNewProject || false,
+                onSave,
                 userInterfaceID,
                 userInterfaceFormBuilderData,
                 graFxStudioEnvironmentApiBaseUrl,

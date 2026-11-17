@@ -31,6 +31,7 @@ import {
 } from './components/connector-authentication';
 import HtmlRenderer from './components/htmlRenderer/HtmlRenderer';
 import LeftPanel from './components/layout-panels/leftPanel/LeftPanel';
+import CreateProjectNameModal from './components/create-project/CreateProjectNameModal';
 import LoadDocumentErrorDialog from './components/load-document-error/LoadDocumentErrorDialog';
 import Navbar from './components/navbar/Navbar';
 import StudioNavbar from './components/navbar/studioNavbar/StudioNavbar';
@@ -178,7 +179,8 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
 
     useEffect(() => {
         const unsubscriber = sdkRef?.config.events.onUndoStackStateChanged.registerCallback(async (stack) => {
-            const shouldSaveDocument = enableAutoSaveRef.current === true && !projectConfig.sandboxMode;
+            const shouldSaveDocument =
+                enableAutoSaveRef.current === true && !projectConfig.sandboxMode && !projectConfig.isNewProject;
             if ((stack.canUndo || stack.canRedo) && shouldSaveDocument) {
                 saveDocumentDebounced();
             }
@@ -540,6 +542,18 @@ const MainContent = ({ projectConfig }: MainContentProps) => {
                             </MainContentContainer>
                         </UserInterfaceDetailsContextProvider>
                         <LoadDocumentErrorDialog loadDocumentError={loadDocumentError} goBack={projectConfig?.onBack} />
+                        {projectConfig.isNewProject && (
+                            <CreateProjectNameModal
+                                initialName={projectConfig.projectName || ''}
+                                onConfirm={async (name) => {
+                                    if (!projectConfig.onSave) {
+                                        throw new Error('Creating a project is not available');
+                                    }
+                                    await projectConfig.onSave(name);
+                                }}
+                                onCancel={projectConfig.onBack}
+                            />
+                        )}
                         {pendingAuthentications.length > 0 &&
                             pendingAuthentications.map((authFlow) => (
                                 <ConnectorAuthenticationModal
