@@ -124,6 +124,17 @@ export interface ModalsTranslations {
         approveBtnLabel?: string;
         cancelBtnLabel?: string;
     };
+    createProject?: {
+        title?: string;
+        description?: string;
+        nameLabel?: string;
+        namePlaceholder?: string;
+        emptyNameError?: string;
+        invalidNameError?: string;
+        createError?: string;
+        approveBtnLabel?: string;
+        cancelBtnLabel?: string;
+    };
     loadDocumentError?: LoadDocumentErrorTranslations;
 }
 
