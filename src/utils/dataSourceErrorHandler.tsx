@@ -25,7 +25,7 @@ export const dataSourceErrorHandler = (errorContext: ErrorContext, variableData:
     if (errCode === '403032' && variableData?.type === VariableType.richText) {
         return (
             <>
-                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> has invalid rich textmarkup.
+                <BoldText>{variableData?.label ?? variableData?.name}</BoldText> has invalid rich text markup.
             </>
         );
     }
