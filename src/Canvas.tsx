@@ -2,6 +2,7 @@ import { LayoutIntent, Page } from '@chili-publish/studio-sdk';
 import { useEffect, useState } from 'react';
 import { SuiCanvas } from './MainContent.styles';
 import { ProjectConfig } from './types/types';
+import { blockEngineFocusSteal } from './utils/blockEngineFocusSteal';
 import { getDataIdForSUI, getDataTestIdForSUI } from './utils/dataIds';
 import { ChiliEditor } from './App.styles';
 
@@ -18,11 +19,13 @@ const Canvas = ({ layoutIntent, pages, projectConfig, multiLayoutMode, editorId 
     useEffect(() => {
         const iframeContainer = document.getElementById(editorId);
         if (!iframeContainer) return undefined;
+        let removeFocusGuard: (() => void) | undefined;
         const observer = new MutationObserver(() => {
             const iframeElement = iframeContainer.querySelector('iframe');
             const windowRef = iframeElement?.contentWindow;
-            if (windowRef) {
+            if (windowRef && iframeElement) {
                 setIframeWindow(windowRef);
+                removeFocusGuard = blockEngineFocusSteal(iframeElement);
                 observer.disconnect();
             }
         });
@@ -32,7 +35,10 @@ const Canvas = ({ layoutIntent, pages, projectConfig, multiLayoutMode, editorId 
             subtree: true,
         });
 
-        return () => observer.disconnect();
+        return () => {
+            observer.disconnect();
+            removeFocusGuard?.();
+        };
     }, []);
 
     useEffect(() => {
